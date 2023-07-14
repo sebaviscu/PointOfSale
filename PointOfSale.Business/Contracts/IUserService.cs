@@ -15,5 +15,7 @@ namespace PointOfSale.Business.Contracts
         Task<bool> Delete(int idUser);
         Task<User> GetByCredentials(string email, string password);
         Task<User> GetById(int IdUser);
+
+        Task<User> GetByIdWithRol(int IdUser);
     }
 }

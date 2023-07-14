@@ -125,5 +125,12 @@ namespace PointOfSale.Business.Services
 
             return user_found;
         }
+
+        public async Task<User> GetByIdWithRol(int IdUser)
+        {
+            IQueryable<User> query = await _repository.Query(u => u.IdUsers == IdUser);
+            var user = query.Include(r => r.IdRolNavigation).First();
+            return user;
+        }
     }
 }

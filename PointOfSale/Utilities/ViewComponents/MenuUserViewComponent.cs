@@ -20,9 +20,10 @@ namespace PointOfSale.Utilities.ViewComponents
             ClaimsPrincipal claimuser = HttpContext.User;
 
 
-            string userName = "";
-            string photoUser = "";
-            string emailUser = "";
+            string userName = string.Empty;
+            string photoUser = string.Empty;
+            string emailUser = string.Empty;
+            string rolUser = string.Empty;
 
             if (claimuser.Identity.IsAuthenticated)
             {
@@ -34,10 +35,12 @@ namespace PointOfSale.Utilities.ViewComponents
                     .Where(c => c.Type == ClaimTypes.NameIdentifier)
                     .Select(c => c.Value).SingleOrDefault());
 
-                User user_found = await _userService.GetById(IdUser);
+                User user_found = await _userService.GetByIdWithRol(IdUser);
 
-                if (user_found.Photo != null)
-                    photoUser = Convert.ToBase64String(user_found.Photo);
+                rolUser = user_found.IdRolNavigation.Description;
+
+                //if (user_found.Photo != null)
+                //    photoUser = Convert.ToBase64String(user_found.Photo);
 
                 emailUser = ((ClaimsIdentity)claimuser.Identity).FindFirst("Email").Value;
             }
@@ -45,6 +48,7 @@ namespace PointOfSale.Utilities.ViewComponents
             ViewData["userName"] = userName;
             ViewData["photoUser"] = photoUser;
             ViewData["emailUser"] = emailUser;
+            ViewData["rolUser"] = rolUser;
 
             return View();
         }

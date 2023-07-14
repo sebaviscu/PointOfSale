@@ -1,5 +1,5 @@
 ﻿
-let TaxValue = 18;
+let TaxValue = 0;
 let ProductsForSale = [];
 
 $(document).ready(function () {
@@ -66,7 +66,7 @@ $(document).ready(function () {
                 };
             }
         },
-        placeholder: 'Search product...',
+        placeholder: 'Buscando producto...',
         minimumInputLength: 1,
         templateResult: formatResults
     });
@@ -117,18 +117,18 @@ $('#cboSearchProduct').on('select2:select', function (e) {
         type: "input",
         showCancelButton: true,
         closeOnConfirm: false,
-        inputPlaceholder: "Enter quantity"
+        inputPlaceholder: "Ingrese cantidad"
     }, function (value) {
 
         if (value === false) return false;
 
         if (value === "") {
-            toastr.warning("", "You need to enter the amount");
+            toastr.warning("", "Debes ingresar el monto");
             return false
         }
 
         if (isNaN(parseInt(value))) {
-            toastr.warning("", "You must enter a numeric value");
+            toastr.warning("", "Debes ingresar un valor numérico");
             return false
         }
 
@@ -202,7 +202,7 @@ $(document).on("click", "button.btn-delete", function () {
 $("#btnFinalizeSale").click(function () {
 
     if (ProductsForSale.length < 1) {
-        toastr.warning("", "You must enter products");
+        toastr.warning("", "Debe ingresar productos");
         return;
     }
 
@@ -238,10 +238,10 @@ $("#btnFinalizeSale").click(function () {
             $("#txtNameClient").val("");
             $("#cboTypeDocumentSale").val($("#cboTypeDocumentSale option:first").val());
 
-            swal("Registered!", `Sale Number : ${responseJson.object.saleNumber}`, "success");
+            swal("Registrado!", `Número de venta : ${responseJson.object.saleNumber}`, "success");
 
         } else {
-            swal("We're sorry", "The sale could not be registered", "error");
+            swal("Lo sentimos", "La venta no fué registrada", "error");
         }
     }).catch((error) => {
         $("#btnFinalizeSale").closest("div.card-body").LoadingOverlay("hide")

@@ -23,6 +23,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<Product>> GetProducts(string search)
         {
+            var split = search.Split(' ');
             IQueryable<Product> query = await _repositoryProduct.Query(p =>
            p.IsActive == true &&
            string.Concat(p.BarCode, p.Brand, p.Description).Contains(search)

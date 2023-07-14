@@ -42,11 +42,6 @@ $(document).ready(function () {
                 "visible": false,
                 "searchable": false
             },
-            {
-                "data": "photoBase64", render: function (data) {
-                    return `<img style="height:60px;" src="data:image/png;base64,${data}" class="rounded mx-auto d-block" />`;
-                }
-            },
             { "data": "name" },
             { "data": "email" },
             { "data": "phone" },
@@ -54,9 +49,9 @@ $(document).ready(function () {
             {
                 "data": "isActive", render: function (data) {
                     if (data == 1)
-                        return '<span class="badge badge-info">Active</span>';
+                        return '<span class="badge badge-info">Activo</span>';
                     else
-                        return '<span class="badge badge-danger">Inactive</span>';
+                        return '<span class="badge badge-danger">Inactivo</span>';
                 }
             },
             {
@@ -71,12 +66,12 @@ $(document).ready(function () {
         dom: "Bfrtip",
         buttons: [
             {
-                text: 'Export Excel',
+                text: 'Exportar Excel',
                 extend: 'excelHtml5',
                 title: '',
                 filename: 'Report Users',
                 exportOptions: {
-                    columns: [2, 3, 4, 5, 6]
+                    columns: [1, 2, 3, 4, 5, 6]
                 }
             }, 'pageLength'
         ]
@@ -107,7 +102,7 @@ $("#btnSave").on("click", function () {
     const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
 
     if (inputs_without_value.length > 0) {
-        const msg = `You must complete the field : "${inputs_without_value[0].name}"`;
+        const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
         toastr.warning(msg,"");
         $(`input[name="${inputs_without_value[0].name}"]`).focus();
         return;
@@ -143,10 +138,10 @@ $("#btnSave").on("click", function () {
 
                 tableData.row.add(responseJson.object).draw(false);
                 $("#modalData").modal("hide");
-                swal("Successful!", "The user was created", "success");
+                swal("Exitoso!", "El usuario fué creado", "success");
 
             } else {
-                swal("We're sorry", responseJson.message, "error");
+                swal("Lo sentimos", responseJson.message, "error");
             }
         }).catch((error) => {
             $("#modalData").find("div.modal-content").LoadingOverlay("hide")
@@ -165,10 +160,10 @@ $("#btnSave").on("click", function () {
                 tableData.row(rowSelected).data(responseJson.object).draw(false);
                 rowSelected = null;
                 $("#modalData").modal("hide");
-                swal("Successful!", "The user was modified", "success");
+                swal("Exitoso!", "El usuario fué modificado", "success");
 
             } else {
-                swal("We're sorry", responseJson.message, "error");
+                swal("Lo sentimos", responseJson.message, "error");
             }
         }).catch((error) => {
             $("#modalData").find("div.modal-content").LoadingOverlay("hide")
@@ -204,13 +199,13 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
     const data = tableData.row(row).data();
 
     swal({
-        title: "¿Are you sure?",
-        text: `Delete the user "${data.name}"`,
+        title: "¿Estas seguro?",
+        text: `Que desea eliminar el usuario "${data.name}"`,
         type: "warning",
         showCancelButton: true,
         confirmButtonClass: "btn-danger",
-        confirmButtonText: "Yes, delete",
-        cancelButtonText: "No, cancel",
+        confirmButtonText: "Si, eliminar",
+        cancelButtonText: "No, cancelar",
         closeOnConfirm: false,
         closeOnCancel: true
     },
@@ -229,10 +224,10 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                     if (responseJson.state) {
 
                         tableData.row(row).remove().draw();
-                        swal("Successful!", "User was deleted", "success");
+                        swal("Exitoso!", "El usuario fué eliminado", "success");
 
                     } else {
-                        swal("We're sorry", responseJson.message, "error");
+                        swal("Lo sentimos", responseJson.message, "error");
                     }
                 })
                     .catch((error) => {
