@@ -2,6 +2,12 @@
 let TaxValue = 0;
 let ProductsForSale = [];
 
+document.onkeyup = function (e) {
+    if (e.altKey && e.which == 78) {
+        alert("Alt + N shortcut combination was pressed");
+    }
+};
+
 $(document).ready(function () {
 
     fetch("/Sales/ListTypeDocumentSale")
@@ -86,8 +92,8 @@ function formatResults(data) {
                     <img style="height:60px;width:60px;margin-right:10px" src="data:image/png;base64,${data.photoBase64}"/>
                 </td>
                 <td>
-                    <p style="font-weight: bolder;margin:2px">${data.brand}</p>
-                    <p style="margin:2px">${data.text}</p>
+                    <p style="font-weight: bolder;margin:2px">${data.text}</p>
+                    <p style="margin:2px">${data.brand}</p>
                 </td>
             </tr>
          </table>`
@@ -112,8 +118,8 @@ $('#cboSearchProduct').on('select2:select', function (e) {
     }
 
     swal({
-        title: data.brand,
-        text: data.text,
+        title: data.text,
+        text: data.brand,
         type: "input",
         showCancelButton: true,
         closeOnConfirm: false,
@@ -225,7 +231,7 @@ $("#btnFinalizeSale").click(function () {
         headers: { 'Content-Type': 'application/json;charset=utf-8' },
         body: JSON.stringify(sale)
     }).then(response => {
-   
+
         $("#btnFinalizeSale").closest("div.card-body").LoadingOverlay("hide")
         return response.ok ? response.json() : Promise.reject(response);
     }).then(responseJson => {
