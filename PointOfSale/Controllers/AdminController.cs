@@ -44,7 +44,7 @@ namespace PointOfSale.Controllers
                 VMDashBoard vmDashboard = new VMDashBoard();
 
                 vmDashboard.TotalSales = await _dashboardService.TotalSalesLastWeek();
-                vmDashboard.TotalIncome = await _dashboardService.TotalIncomeLastWeek();
+                vmDashboard.TotalIncome = "$ " + await _dashboardService.TotalIncomeLastWeek();
                 vmDashboard.TotalProducts = await _dashboardService.TotalProducts();
                 vmDashboard.TotalCategories = await _dashboardService.TotalCategories();
 
