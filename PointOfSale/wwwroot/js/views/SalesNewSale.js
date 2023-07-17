@@ -2,12 +2,6 @@
 let TaxValue = 0;
 let ProductsForSale = [];
 
-document.onkeyup = function (e) {
-    if (e.altKey && e.which == 78) {
-        alert("Alt + N shortcut combination was pressed");
-    }
-};
-
 $(document).ready(function () {
 
     fetch("/Sales/ListTypeDocumentSale")
@@ -24,26 +18,6 @@ $(document).ready(function () {
                 });
             }
         })
-
-    //fetch("/Negocio/Obtener")
-    //    .then(response => {
-    //        return response.ok ? response.json() : Promise.reject(response);
-    //    }).then(responseJson => {
-    //        if (responseJson.estado) {
-
-    //            const d = responseJson.objeto;
-
-    //            $("#inputGroupSubTotal").text(`Sub Total - ${d.simboloMoneda}`)
-    //            $("#inputGroupIGV").text(`IGV(${d.porcentajeImpuesto}%) - ${d.simboloMoneda}`)
-    //            $("#inputGroupTotal").text(`Total - ${d.simboloMoneda}`)
-
-    //            TaxValue = parseFloat(d.porcentajeImpuesto)
-
-    //        } else {
-    //            $("#inputGroupIGV").text(`IGV(0}%)`)
-    //            TaxValue = 0
-    //        }
-    //    })
 
     $("#cboSearchProduct").select2({
         ajax: {
@@ -216,8 +190,8 @@ $("#btnFinalizeSale").click(function () {
 
     const sale = {
         idTypeDocumentSale: $("#cboTypeDocumentSale").val(),
-        customerDocument: $("#txtDocumentClient").val(),
-        clientName: $("#txtNameClient").val(),
+        //customerDocument: $("#txtDocumentClient").val(),
+        //clientName: $("#txtNameClient").val(),
         subtotal: $("#txtSubTotal").val(),
         totalTaxes: $("#txtTotalTaxes").val(),
         total: $("#txtTotal").val(),
@@ -255,3 +229,59 @@ $("#btnFinalizeSale").click(function () {
 
 
 })
+
+
+document.onkeyup = function (e) {
+    if (e.altKey && e.which == 78) {
+        newTab();
+    }
+};
+
+var button = '<button class="close" type="button" title="Remove this page">×</button>';
+var tabID = 1;
+function resetTab() {
+    var tabs = $("#tab-list li:not(:first)");
+    var len = 1
+    $(tabs).each(function (k, v) {
+        len++;
+        $(this).find('a').html('Tab ' + len + button);
+    })
+    tabID--;
+}
+
+$('#btn-add-tab').click(function () {
+    newTab();
+});
+
+$('#tab-list').on('click', '.close', function () {
+    var tabID = $(this).parents('button').attr('data-bs-target');
+    $(this).parents('li').remove();
+    $(tabID).remove();
+
+    if ($('.nav-item').length === 0) {
+        newTab();
+    }
+    else {
+        lastTab();
+    }
+});
+
+function newTab() {
+    tabID++;
+
+    $('#tab-list').append($('<li class="nav-item" role="presentation">    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#tab' + tabID + '" type="button" role="tab" aria-controls="tab' + tabID + '" aria-selected="false">     <span>Nueva venta &nbsp;</span> <a class="close" type="button" title="Remove this page">×</a>   </button>   </li>'));
+    $('#tab-content').append($('<div class="tab-pane fade" id="tab' + tabID + '">Tab ' + tabID + ' content</div>'));
+
+    lastTab();
+
+    var clone = original.cloneNode(true); // "deep" clone
+    clone.id = "nuevaVenta" + ++i;
+    $('#tab' + tabID).append(clone);
+}
+
+function lastTab() {
+    var tabFirst = $('#tab-list button:last');
+    tabFirst.tab('show');
+}
+var i = 0;
+var original = document.getElementById('nuevaVenta');

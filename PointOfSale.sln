@@ -5,11 +5,11 @@ VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PointOfSale", "PointOfSale\PointOfSale.csproj", "{28B659DB-717A-407A-973E-FD3BDCD13878}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PointOfSale.Model", "PointOfSale.Model\PointOfSale.Model.csproj", "{F230DD70-670F-464E-B464-CF1227FC4BE6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PointOfSale.Model", "PointOfSale.Model\PointOfSale.Model.csproj", "{F230DD70-670F-464E-B464-CF1227FC4BE6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PointOfSale.Data", "PointOfSale.Data\PointOfSale.Data.csproj", "{3B5BC470-051C-4A9E-BBC8-32015B6BF4FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PointOfSale.Data", "PointOfSale.Data\PointOfSale.Data.csproj", "{3B5BC470-051C-4A9E-BBC8-32015B6BF4FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PointOfSale.Business", "PointOfSale.Business\PointOfSale.Business.csproj", "{2F1C2904-AE81-4447-963E-B9BA9DD59226}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PointOfSale.Business", "PointOfSale.Business\PointOfSale.Business.csproj", "{2F1C2904-AE81-4447-963E-B9BA9DD59226}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

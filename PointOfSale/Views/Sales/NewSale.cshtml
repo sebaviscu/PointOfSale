@@ -16,27 +16,21 @@
 }
 
 <div>
-    <button class="btn btn-success">Nueva Venta</button>
+    <button id="btn-add-tab" type="button" class="btn btn-primary pull-right">Nueva Venta</button>
 </div>
 
-<ul class="nav nav-tabs d-lg-flex" id="myTab" role="tablist">
+<ul class="nav nav-tabs d-lg-flex" id="tab-list" role="tablist">
     <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Home</button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Profile</button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact-tab-pane" type="button" role="tab" aria-controls="contact-tab-pane" aria-selected="false">Contact</button>
+        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Home <a class="close" type="button" title="Remove this page">×</a> </button>
     </li>
 </ul>
 
-<div class="tab-content" id="myTabContent">
+<div class="tab-content" id="tab-content">
     <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
 
-        <div class="row">
+        <div class="row" id="nuevaVenta">
             <div class="col-sm-8">
-                <div class="row">
+@*                <div class="row">
                     <div class="col-sm-12">
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
@@ -54,7 +48,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>*@
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="card shadow mb-4">
@@ -146,16 +140,6 @@
                 </div>
             </div>
         </div>
-
-    </div>
-    <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
-
-        text 2
-
-    </div>
-    <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="0">
-
-        texto 3
 
     </div>
 </div>
