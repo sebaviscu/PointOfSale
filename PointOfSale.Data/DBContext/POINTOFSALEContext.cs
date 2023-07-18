@@ -21,7 +21,7 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<CorrelativeNumber> CorrelativeNumbers { get; set; } = null!;
         public virtual DbSet<DetailSale> DetailSales { get; set; } = null!;
         public virtual DbSet<Menu> Menus { get; set; } = null!;
-        public virtual DbSet<Negocio> Negocios { get; set; } = null!;
+        public virtual DbSet<Tienda> Tienda { get; set; } = null!;
         public virtual DbSet<Product> Products { get; set; } = null!;
         public virtual DbSet<Rol> Rols { get; set; } = null!;
         public virtual DbSet<RolMenu> RolMenus { get; set; } = null!;
@@ -168,16 +168,15 @@ namespace PointOfSale.Data.DBContext
                     .HasConstraintName("FK__Menu__idMenuPare__108B795B");
             });
 
-            modelBuilder.Entity<Negocio>(entity =>
+            modelBuilder.Entity<Tienda>(entity =>
             {
-                entity.HasKey(e => e.IdNegocio)
-                    .HasName("PK__Negocio__70E1E107B97CE30F");
+                entity.HasKey(e => e.IdTienda)
+                    .HasName("PK__Tienda__CF09B22C0A792CB4");
 
-                entity.ToTable("Negocio");
+                entity.ToTable("Tienda");
 
-                entity.Property(e => e.IdNegocio)
-                    .ValueGeneratedNever()
-                    .HasColumnName("idNegocio");
+                entity.Property(e => e.IdTienda)
+                    .HasColumnName("idTienda");
 
                 entity.Property(e => e.Nombre)
                     .HasMaxLength(50)

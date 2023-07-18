@@ -209,7 +209,11 @@ namespace PointOfSale.Utilities.Automapper
                 .ForMember(destiny =>
                 destiny.SubMenus,
                 opt => opt.MapFrom(source => source.InverseIdMenuParentNavigation));
-            #endregion Menu
-        }
+			#endregion Menu
+
+			CreateMap<Tienda, VMTienda>();
+
+			CreateMap<VMTienda, Tienda>();
+		}
     }
 }

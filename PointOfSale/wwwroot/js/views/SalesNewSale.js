@@ -1,6 +1,8 @@
 ﻿
 let TaxValue = 0;
 let ProductsForSale = [];
+var listProducts;
+var original = document.getElementById('nuevaVenta');
 
 $(document).ready(function () {
 
@@ -19,39 +21,8 @@ $(document).ready(function () {
             }
         })
 
-    $("#cboSearchProduct").select2({
-        ajax: {
-            url: "/Sales/GetProducts",
-            dataType: 'json',
-            contentType: "application/json; charset=utf-8",
-            delay: 250,
-            data: function (params) {
-                return {
-                    search: params.term
-                };
-            },
-            processResults: function (data) {
-                return {
-                    results: data.map((item) => (
-                        {
-                            id: item.idProduct,
-                            text: item.description,
 
-                            brand: item.brand,
-                            category: item.nameCategory,
-                            photoBase64: item.photoBase64,
-                            price: parseFloat(item.price)
-                        }
-                    ))
-                };
-            }
-        },
-        placeholder: 'Buscando producto...',
-        minimumInputLength: 1,
-        templateResult: formatResults
-    });
-
-
+    newTab();
 })
 
 function formatResults(data) {
@@ -81,95 +52,44 @@ $(document).on('select2:open', () => {
     document.querySelector('.select2-search__field').focus();
 });
 
-$('#cboSearchProduct').on('select2:select', function (e) {
-    var data = e.params.data;
 
-    let product_found = ProductsForSale.filter(prod => prod.idProduct == data.id)
-    if (product_found.length > 0) {
-        $("#cboSearchProduct").val("").trigger('change');
-        toastr.warning("", "The product has already been added");
-        return false
-    }
+//function showProducts_Prices() {
 
-    swal({
-        title: data.text,
-        text: data.brand,
-        type: "input",
-        showCancelButton: true,
-        closeOnConfirm: false,
-        inputPlaceholder: "Ingrese cantidad"
-    }, function (value) {
+//    let total = 0;
+//    let tax = 0;
+//    let subtotal = 0;
+//    let percentage = TaxValue / 100;
 
-        if (value === false) return false;
+//    $("#tbProduct tbody").html("")
 
-        if (value === "") {
-            toastr.warning("", "Debes ingresar el monto");
-            return false
-        }
+//    ProductsForSale.forEach((item) => {
 
-        if (isNaN(parseInt(value))) {
-            toastr.warning("", "Debes ingresar un valor numérico");
-            return false
-        }
+//        total = total + parseFloat(item.total);
 
+//        $("#tbProduct tbody").append(
+//            $("<tr>").append(
+//                $("<td>").append(
+//                    $("<button>").addClass("btn btn-danger btn-delete btn-sm").append(
+//                        $("<i>").addClass("mdi mdi-trash-can")
+//                    ).data("idProduct", item.idProduct)
+//                ),
+//                $("<td>").text(item.descriptionProduct),
+//                $("<td>").text(item.quantity),
+//                $("<td>").text(item.price),
+//                $("<td>").text(item.total)
+//            )
+//        )
 
-        let product = {
-            idProduct: data.id,
-            brandProduct: data.brand,
-            descriptionProduct: data.text,
-            categoryProducty: data.category,
-            quantity: parseInt(value),
-            price: data.price.toString(),
-            total: (parseFloat(value) * data.price).toString()
-        }
+//    })
 
-        ProductsForSale.push(product)
-        showProducts_Prices();
+//    subtotal = total / (1 + percentage);
+//    tax = total - subtotal;
 
-        $("#cboSearchProduct").val("").trigger('change');
-        swal.close();
+//    $("#txtSubTotal").val(subtotal.toFixed(2))
+//    $("#txtTotalTaxes").val(tax.toFixed(2))
+//    $("#txtTotal").val(total.toFixed(2))
 
-    });
-
-});
-
-function showProducts_Prices() {
-
-    let total = 0;
-    let tax = 0;
-    let subtotal = 0;
-    let percentage = TaxValue / 100;
-
-    $("#tbProduct tbody").html("")
-
-    ProductsForSale.forEach((item) => {
-
-        total = total + parseFloat(item.total);
-
-        $("#tbProduct tbody").append(
-            $("<tr>").append(
-                $("<td>").append(
-                    $("<button>").addClass("btn btn-danger btn-delete btn-sm").append(
-                        $("<i>").addClass("mdi mdi-trash-can")
-                    ).data("idProduct", item.idProduct)
-                ),
-                $("<td>").text(item.descriptionProduct),
-                $("<td>").text(item.quantity),
-                $("<td>").text(item.price),
-                $("<td>").text(item.total)
-            )
-        )
-
-    })
-
-    subtotal = total / (1 + percentage);
-    tax = total - subtotal;
-
-    $("#txtSubTotal").val(subtotal.toFixed(2))
-    $("#txtTotalTaxes").val(tax.toFixed(2))
-    $("#txtTotal").val(total.toFixed(2))
-
-}
+//}
 
 $(document).on("click", "button.btn-delete", function () {
     const _idproduct = $(this).data("idProduct")
@@ -238,7 +158,7 @@ document.onkeyup = function (e) {
 };
 
 var button = '<button class="close" type="button" title="Remove this page">×</button>';
-var tabID = 1;
+var tabID = 0;
 function resetTab() {
     var tabs = $("#tab-list li:not(:first)");
     var len = 1
@@ -258,7 +178,7 @@ $('#tab-list').on('click', '.close', function () {
     $(this).parents('li').remove();
     $(tabID).remove();
 
-    if ($('.nav-item').length === 0) {
+    if ($('.nav-item').length === 1) {
         newTab();
     }
     else {
@@ -270,18 +190,142 @@ function newTab() {
     tabID++;
 
     $('#tab-list').append($('<li class="nav-item" role="presentation">    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#tab' + tabID + '" type="button" role="tab" aria-controls="tab' + tabID + '" aria-selected="false">     <span>Nueva venta &nbsp;</span> <a class="close" type="button" title="Remove this page">×</a>   </button>   </li>'));
-    $('#tab-content').append($('<div class="tab-pane fade" id="tab' + tabID + '">Tab ' + tabID + ' content</div>'));
+    $('#tab-content').append($('<div class="tab-pane fade" id="tab' + tabID + '">    </div>'));
 
-    lastTab();
 
     var clone = original.cloneNode(true); // "deep" clone
-    clone.id = "nuevaVenta" + ++i;
+    clone.id = "nuevaVenta" + tabID;
+    clone.querySelector("#cboSearchProduct").id = "cboSearchProduct" + tabID;
+    clone.querySelector("#tbProduct").id = "tbProduct" + tabID;
+    clone.querySelector("#cboTypeDocumentSale").id = "cboTypeDocumentSale" + tabID;
+    //clone.querySelector("#txtSubTotal").id = "txtSubTotal" + tabID;
+    //clone.querySelector("#txtTotalTaxes").id = "txtTotalTaxes" + tabID;
+    clone.querySelector("#txtTotal").id = "txtTotal" + tabID;
+    clone.querySelector("#btnFinalizeSale").id = "btnFinalizeSale" + tabID;
+
     $('#tab' + tabID).append(clone);
+
+    addFunctions(tabID);
+
+    lastTab();
+}
+
+function addFunctions(id) {
+    $('#cboSearchProduct' + id).select2({
+        ajax: {
+            url: "/Sales/GetProducts",
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            delay: 250,
+            data: function (params) {
+                return {
+                    search: params.term
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data.map((item) => (
+                        {
+                            id: item.idProduct,
+                            text: item.description,
+
+                            brand: item.brand,
+                            category: item.nameCategory,
+                            photoBase64: item.photoBase64,
+                            price: parseFloat(item.price)
+                        }
+                    ))
+                };
+            }
+        },
+        placeholder: 'Buscando producto...',
+        minimumInputLength: 1,
+        templateResult: formatResults
+    });
+
+    $('#cboSearchProduct' + id).on('select2:select', function (e) {
+        var data = e.params.data;
+
+        let product_found = ProductsForSale.filter(prod => prod.idProduct == data.id)
+        if (product_found.length > 0) {
+            $('#cboSearchProduct' + id).val("").trigger('change');
+            toastr.warning("", "The product has already been added");
+            return false
+        }
+
+        swal({
+            title: data.text,
+            text: data.brand,
+            type: "input",
+            showcancelbutton: true,
+            closeonconfirm: false,
+            inputplaceholder: "ingrese cantidad"
+        }, function (value) {
+
+            if (value === false) return false;
+
+            if (value === "") {
+                toastr.warning("", "debes ingresar el monto");
+                return false
+            }
+
+            if (isNaN(parseInt(value))) {
+                toastr.warning("", "debes ingresar un valor numérico");
+                return false
+            }
+
+
+            let product = {
+                idproduct: data.id,
+                brandproduct: data.brand,
+                descriptionproduct: data.text,
+                categoryproducty: data.category,
+                quantity: parseInt(value),
+                price: data.price.toString(),
+                total: (parseFloat(value) * data.price).toString()
+            }
+
+            ProductsForSale.push(product)
+
+            let total = 0;
+
+            $('#tbProduct'+ id+' tbody').html("")
+
+            ProductsForSale.forEach((item) => {
+
+                total = total + parseFloat(item.total);
+
+                $('#tbProduct' + id + ' tbody').append(
+                    $("<tr>").append(
+                        $("<td>").append(
+                            $("<button>").addClass("btn btn-danger btn-delete btn-sm").append(
+                                $("<i>").addClass("mdi mdi-trash-can")
+                            ).data("idProduct", item.idProduct)
+                        ),
+                        $("<td>").text(item.descriptionproduct),
+                        $("<td>").text(item.quantity),
+                        $("<td>").text(item.price),
+                        $("<td>").text(item.total)
+                    )
+                )
+
+            })
+
+            var texts = $('#tbProduct1 tbody tr td').map(function () {
+                return $(this).text();
+            }).get();
+            console.log(texts);
+
+            $('#txtTotal' + id).val(total.toFixed(2))
+
+            $('#cboSearchProduct' + id).val("").trigger('change');
+            swal.close();
+        });
+    })
+    
 }
 
 function lastTab() {
     var tabFirst = $('#tab-list button:last');
     tabFirst.tab('show');
 }
-var i = 0;
-var original = document.getElementById('nuevaVenta');

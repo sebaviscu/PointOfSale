@@ -20,13 +20,13 @@
 </div>
 
 <ul class="nav nav-tabs d-lg-flex" id="tab-list" role="tablist">
-    <li class="nav-item" role="presentation">
+    <li class="nav-item" role="presentation" hidden>
         <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Home <a class="close" type="button" title="Remove this page">×</a> </button>
     </li>
 </ul>
 
 <div class="tab-content" id="tab-content">
-    <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+    <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0" hidden>
 
         <div class="row" id="nuevaVenta">
             <div class="col-sm-8">
@@ -103,21 +103,21 @@
                                     <select class="form-control" id="cboTypeDocumentSale">
                                     </select>
                                 </div>
-                                <div class="input-group input-group-sm mb-3">
+@*                                <div class="input-group input-group-sm mb-3">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text" id="inputGroupSubTotal">Sub Total</span>
+                                        <span class="input-group-text">Sub Total</span>
                                     </div>
                                     <input type="text" class="form-control text-end" aria-label="Small" aria-describedby="inputGroupSubTotal" id="txtSubTotal" disabled>
                                 </div>
                                 <div class="input-group input-group-sm mb-3">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text" id="inputGroupIGV">Total Taxes(18%)</span>
+                                        <span class="input-group-text">Total Taxes(18%)</span>
                                     </div>
                                     <input type="text" class="form-control text-end" aria-label="Small" aria-describedby="inputGroupIGV" id="txtTotalTaxes" disabled>
-                                </div>
+                                </div>*@
                                 <div class="input-group input-group-sm mb-3">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text" id="inputGroupTotal">Total</span>
+                                        <span class="input-group-text">Total</span>
                                     </div>
                                     <input type="text" class="form-control text-end" aria-label="Small" aria-describedby="inputGroupTotal" id="txtTotal" disabled>
                                 </div>
