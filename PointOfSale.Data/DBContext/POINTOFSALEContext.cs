@@ -179,49 +179,10 @@ namespace PointOfSale.Data.DBContext
                     .ValueGeneratedNever()
                     .HasColumnName("idNegocio");
 
-                entity.Property(e => e.Correo)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("correo");
-
-                entity.Property(e => e.Direccion)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("direccion");
-
                 entity.Property(e => e.Nombre)
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("nombre");
-
-                entity.Property(e => e.NombreLogo)
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("nombreLogo");
-
-                entity.Property(e => e.NumeroDocumento)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("numeroDocumento");
-
-                entity.Property(e => e.PorcentajeImpuesto)
-                    .HasColumnType("decimal(10, 2)")
-                    .HasColumnName("porcentajeImpuesto");
-
-                entity.Property(e => e.SimboloMoneda)
-                    .HasMaxLength(5)
-                    .IsUnicode(false)
-                    .HasColumnName("simboloMoneda");
-
-                entity.Property(e => e.Telefono)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("telefono");
-
-                entity.Property(e => e.UrlLogo)
-                    .HasMaxLength(500)
-                    .IsUnicode(false)
-                    .HasColumnName("urlLogo");
             });
 
             modelBuilder.Entity<Product>(entity =>
