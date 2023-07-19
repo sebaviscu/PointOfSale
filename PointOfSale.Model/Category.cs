@@ -14,7 +14,9 @@ namespace PointOfSale.Model
         public string? Description { get; set; }
         public bool? IsActive { get; set; }
         public DateTime? RegistrationDate { get; set; }
+		public DateTime? ModificationDate { get; set; }
+		public int? ModificationUser { get; set; }
 
-        public virtual ICollection<Product> Products { get; set; }
+		public virtual ICollection<Product> Products { get; set; }
     }
 }

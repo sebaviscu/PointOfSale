@@ -7,8 +7,8 @@ using PointOfSale.Models;
 namespace PointOfSale.Controllers
 {
     [Authorize]
-    public class ReportsController : Controller
-    {
+    public class ReportsController : BaseController
+	{
         private readonly ISaleService _saleService;
         private readonly IMapper _mapper;
         public ReportsController(ISaleService saleService, IMapper mapper)

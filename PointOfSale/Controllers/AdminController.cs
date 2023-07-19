@@ -6,12 +6,13 @@ using PointOfSale.Business.Contracts;
 using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
+using static PointOfSale.Business.Utilities.Enum;
 
 namespace PointOfSale.Controllers
 {
     [Authorize]
-    public class AdminController : Controller
-    {
+    public class AdminController : BaseController
+	{
         private readonly IUserService _userService;
         private readonly IRolService _rolService;
         private readonly IDashBoardService _dashboardService;
@@ -136,12 +137,15 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateUser([FromForm] IFormFile photo, [FromForm] string model)
         {
-            GenericResponse<VMUser> gResponse = new GenericResponse<VMUser>();
+			var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+
+			GenericResponse<VMUser> gResponse = new GenericResponse<VMUser>();
             try
             {
                 VMUser vmUser = JsonConvert.DeserializeObject<VMUser>(model);
+                vmUser.ModificationUser = user.UsuarioId;
 
-                if (photo != null)
+				if (photo != null)
                 {
                     using (var ms = new MemoryStream())
                     {
@@ -170,7 +174,9 @@ namespace PointOfSale.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteUser(int IdUser)
         {
-            GenericResponse<string> gResponse = new GenericResponse<string>();
+			ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+
+			GenericResponse<string> gResponse = new GenericResponse<string>();
             try
             {
                 gResponse.State = await _userService.Delete(IdUser);

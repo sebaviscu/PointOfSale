@@ -225,7 +225,14 @@ namespace PointOfSale.Data.DBContext
                     .HasColumnName("registrationDate")
                     .HasDefaultValueSql("(getdate())");
 
-                entity.HasOne(d => d.IdCategoryNavigation)
+                entity.Property(e => e.ModificationDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("modificationDate");
+
+				entity.Property(e => e.ModificationUser)
+	                .HasColumnName("modificationUser");
+
+				entity.HasOne(d => d.IdCategoryNavigation)
                     .WithMany(p => p.Products)
                     .HasForeignKey(d => d.IdCategory)
                     .HasConstraintName("FK__Product__idCateg__22AA2996");

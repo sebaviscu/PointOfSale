@@ -47,6 +47,8 @@ namespace PointOfSale.Business.Services
 				Tienda Tienda_found = await _repository.Get(c => c.IdTienda == entity.IdTienda);
 
 				Tienda_found.Nombre = entity.Nombre;
+				Tienda_found.ModificationDate = DateTime.Now;
+				Tienda_found.ModificationUser = entity.ModificationUser;
 
 				bool response = await _repository.Edit(Tienda_found);
 

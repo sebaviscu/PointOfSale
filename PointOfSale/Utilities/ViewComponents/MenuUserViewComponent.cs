@@ -37,7 +37,11 @@ namespace PointOfSale.Utilities.ViewComponents
 
                 User user_found = await _userService.GetByIdWithRol(IdUser);
 
-                rolUser = user_found.IdRolNavigation.Description;
+                var s = claimuser.Claims
+		.Where(c => c.Type == ClaimTypes.Role)
+		.Select(c => c.Value).SingleOrDefault();
+
+				rolUser = user_found.IdRolNavigation.Description;
 
                 //if (user_found.Photo != null)
                 //    photoUser = Convert.ToBase64String(user_found.Photo);

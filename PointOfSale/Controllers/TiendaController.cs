@@ -6,11 +6,12 @@ using PointOfSale.Business.Contracts;
 using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
+using static PointOfSale.Business.Utilities.Enum;
 
 namespace PointOfSale.Controllers
 {
 	[Authorize]
-	public class TiendaController : Controller
+	public class TiendaController : BaseController
 	{
 		private readonly ITiendaService _TiendaService;
 		private readonly IMapper _mapper;
@@ -58,9 +59,12 @@ namespace PointOfSale.Controllers
 		[HttpPut]
 		public async Task<IActionResult> UpdateTienda([FromBody] VMTienda model)
 		{
+			var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+
 			GenericResponse<VMTienda> gResponse = new GenericResponse<VMTienda>();
 			try
 			{
+				model.ModificationUser = user.UsuarioId;
 
 				Tienda edited_Tienda = await _TiendaService.Edit(_mapper.Map<Tienda>(model));
 
@@ -82,6 +86,8 @@ namespace PointOfSale.Controllers
 		[HttpDelete]
 		public async Task<IActionResult> DeleteTienda(int idTienda)
 		{
+			var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+
 			GenericResponse<string> gResponse = new GenericResponse<string>();
 			try
 			{

@@ -13,5 +13,6 @@
         public byte[]? Photo { get; set; }
         public string? PhotoBase64 { get; set; }
         public int? IsActive { get; set; }
-    }
+		public int? ModificationUser { get; set; }
+	}
 }

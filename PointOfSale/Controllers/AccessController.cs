@@ -8,8 +8,8 @@ using System.Security.Claims;
 
 namespace PointOfSale.Controllers
 {
-    public class AccessController : Controller
-    {
+    public class AccessController : BaseController
+	{
         private readonly IUserService _userService;
 
 

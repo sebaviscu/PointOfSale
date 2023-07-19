@@ -49,8 +49,10 @@ namespace PointOfSale.Business.Services
 
                 category_found.Description = entity.Description;
                 category_found.IsActive = entity.IsActive;
+				category_found.ModificationDate = DateTime.Now;
+				category_found.ModificationUser = entity.ModificationUser;
 
-                bool response = await _repository.Edit(category_found);
+				bool response = await _repository.Edit(category_found);
 
                 if (!response)
                     throw new TaskCanceledException("Category could not be changed.");

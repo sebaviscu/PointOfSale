@@ -15,7 +15,9 @@ namespace PointOfSale.Model
         public byte[]? Photo { get; set; }
         public bool? IsActive { get; set; }
         public DateTime? RegistrationDate { get; set; }
+		public DateTime? ModificationDate { get; set; }
+		public int? ModificationUser { get; set; }
 
-        public virtual Category? IdCategoryNavigation { get; set; }
+		public virtual Category? IdCategoryNavigation { get; set; }
     }
 }

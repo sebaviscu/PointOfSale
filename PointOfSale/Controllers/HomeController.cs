@@ -8,8 +8,8 @@ using System.Diagnostics;
 namespace PointOfSale.Controllers
 {
     [Authorize]
-    public class HomeController : Controller
-    {
+    public class HomeController : BaseController
+	{
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(ILogger<HomeController> logger)

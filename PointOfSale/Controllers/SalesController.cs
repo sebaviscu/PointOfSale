@@ -12,8 +12,8 @@ using System.Security.Claims;
 namespace PointOfSale.Controllers
 {
     [Authorize]
-    public class SalesController : Controller
-    {
+    public class SalesController : BaseController
+	{
         private readonly ITypeDocumentSaleService _typeDocumentSaleService;
         private readonly ISaleService _saleService;
         private readonly IMapper _mapper;

@@ -6,8 +6,8 @@ using PointOfSale.Models;
 
 namespace PointOfSale.Controllers
 {
-    public class TemplateController : Controller
-    {
+    public class TemplateController : BaseController
+	{
         private readonly ISaleService _saleService;
         private readonly IMapper _mapper;
         public TemplateController(ISaleService saleService, IMapper mapper)

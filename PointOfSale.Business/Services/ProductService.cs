@@ -69,8 +69,10 @@ namespace PointOfSale.Business.Services
                 if (entity.Photo != null && entity.Photo.Length > 0)
                     product_edit.Photo = entity.Photo;
                 product_edit.IsActive = entity.IsActive;
+				product_edit.ModificationDate = DateTime.Now;
+				product_edit.ModificationUser= entity.ModificationUser;
 
-                bool response = await _repository.Edit(product_edit);
+				bool response = await _repository.Edit(product_edit);
                 if (!response)
                     throw new TaskCanceledException("The product could not be modified");
 
