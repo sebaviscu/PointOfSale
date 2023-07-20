@@ -1,8 +1,12 @@
 ﻿
-let TaxValue = 0;
 let ProductsForSale = [];
-var listProducts;
-var original = document.getElementById('nuevaVenta');
+var originalTab = document.getElementById('nuevaVenta');
+let AllTabsForSale = [];
+
+const ProducstTab = {
+    idTab: 0,
+    products: []
+}
 
 $(document).ready(function () {
 
@@ -53,50 +57,51 @@ $(document).on('select2:open', () => {
 });
 
 
-//function showProducts_Prices() {
+function showProducts_Prices(idTab) {
 
-//    let total = 0;
-//    let tax = 0;
-//    let subtotal = 0;
-//    let percentage = TaxValue / 100;
+    var currentTab = AllTabsForSale.find(item => item.idTab == idTab);
 
-//    $("#tbProduct tbody").html("")
+    let total = 0;
 
-//    ProductsForSale.forEach((item) => {
+    $('#tbProduct' + idTab + ' tbody').html("")
 
-//        total = total + parseFloat(item.total);
+    currentTab.products.forEach((item) => {
 
-//        $("#tbProduct tbody").append(
-//            $("<tr>").append(
-//                $("<td>").append(
-//                    $("<button>").addClass("btn btn-danger btn-delete btn-sm").append(
-//                        $("<i>").addClass("mdi mdi-trash-can")
-//                    ).data("idProduct", item.idProduct)
-//                ),
-//                $("<td>").text(item.descriptionProduct),
-//                $("<td>").text(item.quantity),
-//                $("<td>").text(item.price),
-//                $("<td>").text(item.total)
-//            )
-//        )
+        total = total + parseFloat(item.total);
 
-//    })
+        $('#tbProduct' + idTab + ' tbody').append(
+            $("<tr>").append(
+                $("<td>").append(
+                    $("<button>").addClass("btn btn-danger btn-delete btn-sm").append(
+                        $("<i>").addClass("mdi mdi-trash-can")
+                    ).data("idproduct", item.idproduct).data("idTab", idTab)
+                ),
+                $("<td>").text(item.descriptionproduct),
+                $("<td>").text(item.quantity),
+                $("<td>").text(item.price),
+                $("<td>").text(item.total)
+            )
+        )
 
-//    subtotal = total / (1 + percentage);
-//    tax = total - subtotal;
+    })
 
-//    $("#txtSubTotal").val(subtotal.toFixed(2))
-//    $("#txtTotalTaxes").val(tax.toFixed(2))
-//    $("#txtTotal").val(total.toFixed(2))
+    var texts = $('#tbProduct1 tbody tr td').map(function () {
+        return $(this).text();
+    }).get();
+    console.log(texts);
 
-//}
+    $('#txtTotal' + id).val(total.toFixed(2))
+}
 
 $(document).on("click", "button.btn-delete", function () {
-    const _idproduct = $(this).data("idProduct")
+    const _idproduct = $(this).data("idproduct");
+    const currentTabId = $(this).data("idTab");
 
-    ProductsForSale = ProductsForSale.filter(p => p.idProduct != _idproduct)
+    var currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
 
-    showProducts_Prices()
+    currentTab.products = currentTab.products.filter(p => p.idproduct != _idproduct)
+
+    showProducts_Prices(currentTabId);
 })
 
 $("#btnFinalizeSale").click(function () {
@@ -193,7 +198,7 @@ function newTab() {
     $('#tab-content').append($('<div class="tab-pane fade" id="tab' + tabID + '">    </div>'));
 
 
-    var clone = original.cloneNode(true); // "deep" clone
+    var clone = originalTab.cloneNode(true); // "deep" clone
     clone.id = "nuevaVenta" + tabID;
     clone.querySelector("#cboSearchProduct").id = "cboSearchProduct" + tabID;
     clone.querySelector("#tbProduct").id = "tbProduct" + tabID;
@@ -204,6 +209,13 @@ function newTab() {
     clone.querySelector("#btnFinalizeSale").id = "btnFinalizeSale" + tabID;
 
     $('#tab' + tabID).append(clone);
+
+
+    var newTab = {
+        idTab: tabID,
+        products: []
+    }
+    AllTabsForSale.push(newTab);
 
     addFunctions(tabID);
 
@@ -285,13 +297,14 @@ function addFunctions(id) {
                 total: (parseFloat(value) * data.price).toString()
             }
 
-            ProductsForSale.push(product)
+            var currentTab = AllTabsForSale.find(item => item.idTab == id);
+            currentTab.products.push(product);
 
             let total = 0;
 
-            $('#tbProduct'+ id+' tbody').html("")
+            $('#tbProduct' + id + ' tbody').html("")
 
-            ProductsForSale.forEach((item) => {
+            currentTab.products.forEach((item) => {
 
                 total = total + parseFloat(item.total);
 
@@ -300,7 +313,7 @@ function addFunctions(id) {
                         $("<td>").append(
                             $("<button>").addClass("btn btn-danger btn-delete btn-sm").append(
                                 $("<i>").addClass("mdi mdi-trash-can")
-                            ).data("idProduct", item.idProduct)
+                            ).data("idproduct", item.idproduct).data("idTab", id)
                         ),
                         $("<td>").text(item.descriptionproduct),
                         $("<td>").text(item.quantity),
@@ -322,7 +335,7 @@ function addFunctions(id) {
             swal.close();
         });
     })
-    
+
 }
 
 function lastTab() {
