@@ -10,7 +10,9 @@ const BASIC_MODEL = {
     quantity: 0,
     price: 0,
     isActive: 1,
-    photo: ""
+    photo: "",
+    modificationDate: null,
+    modificationUser: null
 }
 
 
@@ -99,6 +101,17 @@ const openModal = (model = BASIC_MODEL) => {
     $("#cboState").val(model.isActive);
     $("#txtPhoto").val("");
     $("#imgProduct").attr("src", `data:image/png;base64,${model.photoBase64}`);
+
+    if (model.modificationUser === null)
+        document.getElementById("divModif").style.display = 'none';
+    else {
+        document.getElementById("divModif").style.display = '';
+        var dateTimeModif = new Date(model.modificationDate);
+
+        $("#txtModificado").val(dateTimeModif.toLocaleString());
+        $("#txtModificadoUsuario").val(model.modificationUser);
+    }
+
 
     $("#modalData").modal("show")
 

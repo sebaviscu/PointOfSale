@@ -6,6 +6,6 @@
         public string? Description { get; set; }
         public int? IsActive { get; set; }
 		public DateTime? ModificationDate { get; set; }
-		public int? ModificationUser { get; set; }
+		public string? ModificationUser { get; set; }
 	}
 }

@@ -4,7 +4,8 @@ let rowSelected;
 const BASIC_MODEL = {
     idTienda: 0,
     nombre: "",
-    isActive: 1
+    modificationDate: null,
+    modificationUser: null
 }
 
 
@@ -52,6 +53,16 @@ $(document).ready(function () {
 const openModal = (model = BASIC_MODEL) => {
     $("#txtId").val(model.idTienda);
     $("#txtNombre").val(model.nombre);
+
+    if (model.modificationUser === null)
+        document.getElementById("divModif").style.display = 'none';
+    else {
+        document.getElementById("divModif").style.display = '';
+        var dateTimeModif = new Date(model.modificationDate);
+
+        $("#txtModificado").val(dateTimeModif.toLocaleString());
+        $("#txtModificadoUsuario").val(model.modificationUser);
+    }
 
     $("#modalData").modal("show")
 

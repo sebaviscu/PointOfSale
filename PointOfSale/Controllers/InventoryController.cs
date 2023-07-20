@@ -46,7 +46,7 @@ namespace PointOfSale.Controllers
 		[HttpPost]
 		public async Task<IActionResult> CreateCategory([FromBody] VMCategory model)
 		{
-			var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+			ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
 
 			GenericResponse<VMCategory> gResponse = new GenericResponse<VMCategory>();
 			try
@@ -73,11 +73,11 @@ namespace PointOfSale.Controllers
 			var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
 
 			GenericResponse<VMCategory> gResponse = new GenericResponse<VMCategory>();
-			model.ModificationUser = user.UsuarioId;
 			try
 			{
 
 				Category edited_category = await _categoryService.Edit(_mapper.Map<Category>(model));
+				edited_category.ModificationUser = user.UserName;
 
 				model = _mapper.Map<VMCategory>(edited_category);
 
@@ -166,7 +166,7 @@ namespace PointOfSale.Controllers
 			try
 			{
 				VMProduct vmProduct = JsonConvert.DeserializeObject<VMProduct>(model);
-				vmProduct.ModificationUser = user.UsuarioId;
+				vmProduct.ModificationUser = user.UserName;
 
 				if (photo != null)
 				{

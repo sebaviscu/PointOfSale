@@ -5,6 +5,6 @@
 		public int IdTienda { get; set; }
 		public string? Nombre { get; set; }
 		public DateTime? ModificationDate { get; set; }
-		public int? ModificationUser { get; set; }
+		public string? ModificationUser { get; set; }
 	}
 }

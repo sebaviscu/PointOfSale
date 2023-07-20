@@ -29,7 +29,6 @@ namespace PointOfSale.Controllers
 		[HttpGet]
 		public async Task<IActionResult> GetTienda()
 		{
-			var dd = await _TiendaService.List();
 			List<VMTienda> vmTiendaList = _mapper.Map<List<VMTienda>>(await _TiendaService.List());
 			return StatusCode(StatusCodes.Status200OK, new { data = vmTiendaList });
 		}
@@ -37,6 +36,8 @@ namespace PointOfSale.Controllers
 		[HttpPost]
 		public async Task<IActionResult> CreateTienda([FromBody] VMTienda model)
 		{
+			ValidarAutorizacion(new Roles[] { Roles.Administrador });
+
 			GenericResponse<VMTienda> gResponse = new GenericResponse<VMTienda>();
 			try
 			{
@@ -59,14 +60,14 @@ namespace PointOfSale.Controllers
 		[HttpPut]
 		public async Task<IActionResult> UpdateTienda([FromBody] VMTienda model)
 		{
-			var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+			var user = ValidarAutorizacion(new Roles[] { Roles.Administrador});
 
 			GenericResponse<VMTienda> gResponse = new GenericResponse<VMTienda>();
 			try
 			{
-				model.ModificationUser = user.UsuarioId;
-
+				var ss = _mapper.Map<Tienda>(model);
 				Tienda edited_Tienda = await _TiendaService.Edit(_mapper.Map<Tienda>(model));
+				edited_Tienda.ModificationUser = user.UserName;
 
 				model = _mapper.Map<VMTienda>(edited_Tienda);
 
@@ -86,7 +87,7 @@ namespace PointOfSale.Controllers
 		[HttpDelete]
 		public async Task<IActionResult> DeleteTienda(int idTienda)
 		{
-			var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+			ValidarAutorizacion(new Roles[] { Roles.Administrador});
 
 			GenericResponse<string> gResponse = new GenericResponse<string>();
 			try

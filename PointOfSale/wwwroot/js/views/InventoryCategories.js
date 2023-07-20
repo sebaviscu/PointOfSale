@@ -4,7 +4,9 @@ let rowSelected;
 const BASIC_MODEL = {
     idCategory: 0,
     description:"",
-    isActive: 1
+    isActive: 1,
+    modificationDate: null,
+    modificationUser: null
 }
 
 
@@ -61,6 +63,16 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtId").val(model.idCategory);
     $("#txtDescription").val(model.description);
     $("#cboState").val(model.isActive);
+
+    if (model.modificationUser === null)
+        document.getElementById("divModif").style.display = 'none';
+    else {
+        document.getElementById("divModif").style.display = '';
+        var dateTimeModif = new Date(model.modificationDate);
+
+        $("#txtModificado").val(dateTimeModif.toLocaleString());
+        $("#txtModificadoUsuario").val(model.modificationUser);
+    }
 
     $("#modalData").modal("show")
 

@@ -143,7 +143,7 @@ namespace PointOfSale.Controllers
             try
             {
                 VMUser vmUser = JsonConvert.DeserializeObject<VMUser>(model);
-                vmUser.ModificationUser = user.UsuarioId;
+                vmUser.ModificationUser = user.UserName;
 
 				if (photo != null)
                 {

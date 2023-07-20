@@ -9,7 +9,9 @@ const BASIC_MODEL = {
     idRol: 0,
     password:"",
     isActive: 1,
-    photo: ""
+    photo: "",
+    modificationDate: "",
+    modificationUser: null
 }
 
 
@@ -88,6 +90,16 @@ const openModal = (model = BASIC_MODEL ) => {
     $("#txtPassWord").val(model.password);
     $("#txtPhoto").val("");
     $("#imgUser").attr("src", `data:image/png;base64,${model.photoBase64}`);
+
+    if (model.modificationUser === null)
+        document.getElementById("divModif").style.display = 'none';
+    else {
+        document.getElementById("divModif").style.display = '';
+        var dateTimeModif = new Date(model.modificationDate);
+
+        $("#txtModificado").val(dateTimeModif.toLocaleString());
+        $("#txtModificadoUsuario").val(model.modificationUser);
+    }
 
     $("#modalData").modal("show")
 

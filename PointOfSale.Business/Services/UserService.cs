@@ -69,6 +69,9 @@ namespace PointOfSale.Business.Services
                 user_edit.IdRol = entity.IdRol;
                 user_edit.IsActive = entity.IsActive;
                 user_edit.Password = entity.Password;
+                user_edit.ModificationUser = entity.ModificationUser;
+                user_edit.ModificationDate = DateTime.Now;
+
 
                 if (entity.Photo != null && entity.Photo.Length > 0)
                 {
