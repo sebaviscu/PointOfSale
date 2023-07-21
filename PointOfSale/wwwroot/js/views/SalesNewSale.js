@@ -1,7 +1,8 @@
 ﻿
-let ProductsForSale = [];
 var originalTab = document.getElementById('nuevaVenta');
 let AllTabsForSale = [];
+var buttonCerrarTab = '<button class="close" type="button" title="Cerrar tab">×</button>';
+var tabID = 0;
 
 const ProducstTab = {
     idTab: 0,
@@ -23,10 +24,8 @@ $(document).ready(function () {
                     )
                 });
             }
+            newTab();
         })
-
-
-    newTab();
 })
 
 function formatResults(data) {
@@ -57,10 +56,7 @@ $(document).on('select2:open', () => {
 });
 
 
-function showProducts_Prices(idTab) {
-
-    var currentTab = AllTabsForSale.find(item => item.idTab == idTab);
-
+function showProducts_Prices(idTab, currentTab) {
     let total = 0;
 
     $('#tbProduct' + idTab + ' tbody').html("")
@@ -78,19 +74,14 @@ function showProducts_Prices(idTab) {
                 ),
                 $("<td>").text(item.descriptionproduct),
                 $("<td>").text(item.quantity),
-                $("<td>").text(item.price),
-                $("<td>").text(item.total)
+                $("<td>").text("$ " + item.price),
+                $("<td>").text("$ " + item.total)
             )
         )
 
     })
 
-    var texts = $('#tbProduct1 tbody tr td').map(function () {
-        return $(this).text();
-    }).get();
-    console.log(texts);
-
-    $('#txtTotal' + id).val(total.toFixed(2))
+    $('#txtTotal' + idTab).val(total.toFixed(2))
 }
 
 $(document).on("click", "button.btn-delete", function () {
@@ -98,32 +89,33 @@ $(document).on("click", "button.btn-delete", function () {
     const currentTabId = $(this).data("idTab");
 
     var currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
-
     currentTab.products = currentTab.products.filter(p => p.idproduct != _idproduct)
 
-    showProducts_Prices(currentTabId);
+    showProducts_Prices(currentTabId, currentTab);
 })
 
-$("#btnFinalizeSale").click(function () {
+$(document).on("click", "button.finalizeSale", function () {
+    var currentTabId = $(this).attr("tabId");
+    var currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
 
-    if (ProductsForSale.length < 1) {
+    if (currentTab.products.length < 1) {
         toastr.warning("", "Debe ingresar productos");
         return;
     }
 
-    const vmDetailSale = ProductsForSale;
+    const vmDetailSale = currentTab.products;
 
     const sale = {
-        idTypeDocumentSale: $("#cboTypeDocumentSale").val(),
+        idTypeDocumentSale: $("#cboTypeDocumentSale" + currentTabId).val(),
         //customerDocument: $("#txtDocumentClient").val(),
         //clientName: $("#txtNameClient").val(),
-        subtotal: $("#txtSubTotal").val(),
-        totalTaxes: $("#txtTotalTaxes").val(),
-        total: $("#txtTotal").val(),
+        subtotal: $("#txtSubTotal" + currentTabId).val(),
+        totalTaxes: $("#txtTotalTaxes" + currentTabId).val(),
+        total: $("#txtTotal" + currentTabId).val(),
         detailSales: vmDetailSale
     }
 
-    $("#btnFinalizeSale").closest("div.card-body").LoadingOverlay("show")
+    $("#btnFinalizeSale" + currentTabId).closest("div.card-body").LoadingOverlay("show")
 
     fetch("/Sales/RegisterSale", {
         method: "POST",
@@ -131,17 +123,19 @@ $("#btnFinalizeSale").click(function () {
         body: JSON.stringify(sale)
     }).then(response => {
 
-        $("#btnFinalizeSale").closest("div.card-body").LoadingOverlay("hide")
+        $("#btnFinalizeSale" + currentTabId).closest("div.card-body").LoadingOverlay("hide")
         return response.ok ? response.json() : Promise.reject(response);
     }).then(responseJson => {
 
         if (responseJson.state) {
 
-            ProductsForSale = [];
-            showProducts_Prices();
-            $("#txtDocumentClient").val("");
-            $("#txtNameClient").val("");
+            //showProducts_Prices();
+            //$("#txtDocumentClient").val("");
+            //$("#txtNameClient").val("");
             $("#cboTypeDocumentSale").val($("#cboTypeDocumentSale option:first").val());
+
+            AllTabsForSale = AllTabsForSale.filter(p => p.idTab != currentTabId)
+            document.getElementById('cerrarTab' + currentTabId).click()
 
             swal("Registrado!", `Número de venta : ${responseJson.object.saleNumber}`, "success");
 
@@ -149,30 +143,17 @@ $("#btnFinalizeSale").click(function () {
             swal("Lo sentimos", "La venta no fué registrada", "error");
         }
     }).catch((error) => {
-        $("#btnFinalizeSale").closest("div.card-body").LoadingOverlay("hide")
+        $("#btnFinalizeSale" + currentTabId).closest("div.card-body").LoadingOverlay("hide")
     })
 
 
 })
-
 
 document.onkeyup = function (e) {
     if (e.altKey && e.which == 78) {
         newTab();
     }
 };
-
-var button = '<button class="close" type="button" title="Remove this page">×</button>';
-var tabID = 0;
-function resetTab() {
-    var tabs = $("#tab-list li:not(:first)");
-    var len = 1
-    $(tabs).each(function (k, v) {
-        len++;
-        $(this).find('a').html('Tab ' + len + button);
-    })
-    tabID--;
-}
 
 $('#btn-add-tab').click(function () {
     newTab();
@@ -194,7 +175,7 @@ $('#tab-list').on('click', '.close', function () {
 function newTab() {
     tabID++;
 
-    $('#tab-list').append($('<li class="nav-item" role="presentation">    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#tab' + tabID + '" type="button" role="tab" aria-controls="tab' + tabID + '" aria-selected="false">     <span>Nueva venta &nbsp;</span> <a class="close" type="button" title="Remove this page">×</a>   </button>   </li>'));
+    $('#tab-list').append($('<li class="nav-item" role="presentation">    <button class="nav-link" id="profile-tab' + tabID + '" data-bs-toggle="tab" data-bs-target="#tab' + tabID + '" type="button" role="tab" aria-controls="tab' + tabID + '" aria-selected="false">     <span>Nueva venta &nbsp;</span> <a class="close" type="button" title="Cerrar tab" id="cerrarTab' + tabID + '">×</a>   </button>   </li>'));
     $('#tab-content').append($('<div class="tab-pane fade" id="tab' + tabID + '">    </div>'));
 
 
@@ -203,13 +184,12 @@ function newTab() {
     clone.querySelector("#cboSearchProduct").id = "cboSearchProduct" + tabID;
     clone.querySelector("#tbProduct").id = "tbProduct" + tabID;
     clone.querySelector("#cboTypeDocumentSale").id = "cboTypeDocumentSale" + tabID;
-    //clone.querySelector("#txtSubTotal").id = "txtSubTotal" + tabID;
-    //clone.querySelector("#txtTotalTaxes").id = "txtTotalTaxes" + tabID;
     clone.querySelector("#txtTotal").id = "txtTotal" + tabID;
     clone.querySelector("#btnFinalizeSale").id = "btnFinalizeSale" + tabID;
 
     $('#tab' + tabID).append(clone);
 
+    $("#btnFinalizeSale" + tabID).attr("tabId", tabID);
 
     var newTab = {
         idTab: tabID,
@@ -222,8 +202,8 @@ function newTab() {
     lastTab();
 }
 
-function addFunctions(id) {
-    $('#cboSearchProduct' + id).select2({
+function addFunctions(idTab) {
+    $('#cboSearchProduct' + idTab).select2({
         ajax: {
             url: "/Sales/GetProducts",
             dataType: 'json',
@@ -251,18 +231,23 @@ function addFunctions(id) {
             }
         },
         placeholder: 'Buscando producto...',
-        minimumInputLength: 1,
+        minimumInputLength: 2,
         templateResult: formatResults
     });
 
-    $('#cboSearchProduct' + id).on('select2:select', function (e) {
+    $('#cboSearchProduct' + idTab).on('select2:select', function (e) {
         var data = e.params.data;
+        var quantity_product_found = 0;
+        var currentTab = AllTabsForSale.find(item => item.idTab == idTab);
 
-        let product_found = ProductsForSale.filter(prod => prod.idProduct == data.id)
-        if (product_found.length > 0) {
-            $('#cboSearchProduct' + id).val("").trigger('change');
-            toastr.warning("", "The product has already been added");
-            return false
+        if (currentTab.products.length !== 0) {
+
+            let product_found = currentTab.products.filter(prod => prod.idproduct == data.id)
+            if (product_found.length > 0) {
+
+                quantity_product_found = product_found[0].quantity;
+            }
+            currentTab.products = currentTab.products.filter(p => p.idproduct != data.id)
         }
 
         swal({
@@ -286,52 +271,24 @@ function addFunctions(id) {
                 return false
             }
 
+            let totalQuantity = parseFloat(value) + parseFloat(quantity_product_found);
 
             let product = {
                 idproduct: data.id,
                 brandproduct: data.brand,
                 descriptionproduct: data.text,
                 categoryproducty: data.category,
-                quantity: parseInt(value),
+                quantity: totalQuantity,
                 price: data.price.toString(),
-                total: (parseFloat(value) * data.price).toString()
+                total: (totalQuantity * data.price).toString()
             }
 
-            var currentTab = AllTabsForSale.find(item => item.idTab == id);
             currentTab.products.push(product);
 
-            let total = 0;
+            showProducts_Prices(idTab, currentTab);
 
-            $('#tbProduct' + id + ' tbody').html("")
-
-            currentTab.products.forEach((item) => {
-
-                total = total + parseFloat(item.total);
-
-                $('#tbProduct' + id + ' tbody').append(
-                    $("<tr>").append(
-                        $("<td>").append(
-                            $("<button>").addClass("btn btn-danger btn-delete btn-sm").append(
-                                $("<i>").addClass("mdi mdi-trash-can")
-                            ).data("idproduct", item.idproduct).data("idTab", id)
-                        ),
-                        $("<td>").text(item.descriptionproduct),
-                        $("<td>").text(item.quantity),
-                        $("<td>").text(item.price),
-                        $("<td>").text(item.total)
-                    )
-                )
-
-            })
-
-            var texts = $('#tbProduct1 tbody tr td').map(function () {
-                return $(this).text();
-            }).get();
-            console.log(texts);
-
-            $('#txtTotal' + id).val(total.toFixed(2))
-
-            $('#cboSearchProduct' + id).val("").trigger('change');
+            $('#cboSearchProduct' + idTab).val("").trigger('change');
+            $('#cboSearchProduct' + idTab).select2('open');
             swal.close();
         });
     })
