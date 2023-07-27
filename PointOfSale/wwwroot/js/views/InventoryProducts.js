@@ -12,7 +12,11 @@ const BASIC_MODEL = {
     isActive: 1,
     photo: "",
     modificationDate: null,
-    modificationUser: null
+    modificationUser: null,
+    priceWeb: "",
+    porcentajeProfit: "",
+    costPrice: "",
+    tipoVenta: ""
 }
 
 
@@ -58,6 +62,17 @@ $(document).ready(function () {
             { "data": "nameCategory" },
             { "data": "quantity" },
             { "data": "price" },
+            { "data": "priceWeb" },
+            { "data": "porcentajeProfit" },
+            { "data": "costPrice" },
+            {
+                "data": "tipoVenta", render: function (data) {
+                    if (data == 1)
+                        return '<span class="badge badge-info">Kg</span>';
+                    else
+                        return '<span class="badge badge-danger">Unidad</span>';
+                }
+            },
             {
                 "data": "isActive", render: function (data) {
                     if (data == 1)
@@ -98,6 +113,10 @@ const openModal = (model = BASIC_MODEL) => {
     $("#cboCategory").val(model.idCategory == 0 ? $("#cboCategory option:first").val() : model.idCategory);
     $("#txtQuantity").val(model.quantity);
     $("#txtPrice").val(model.price);
+    $("#txtPriceWeb").val(model.priceWeb);
+    $("#txtProfit").val(model.porcentajeProfit);
+    $("#txtCosto").val(model.costPrice);
+    $("#cboTipoVenta").val(model.tipoVenta);
     $("#cboState").val(model.isActive);
     $("#txtPhoto").val("");
     $("#imgProduct").attr("src", `data:image/png;base64,${model.photoBase64}`);
@@ -140,6 +159,10 @@ $("#btnSave").on("click", function () {
     model["idCategory"] = $("#cboCategory").val();
     model["quantity"] = $("#txtQuantity").val();
     model["price"] = $("#txtPrice").val();
+    model["priceWeb"] = $("#txtPriceWeb").val();
+    model["profit"] = $("#txtProfit").val();
+    model["costo"] = $("#txtCosto").val();
+    model["tipoVenta"] = $("#cboTipoVenta").val();
     model["isActive"] = $("#cboState").val();
     const inputPhoto = document.getElementById('txtPhoto');
 

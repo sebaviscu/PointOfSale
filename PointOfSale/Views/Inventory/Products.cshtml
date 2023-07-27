@@ -57,7 +57,7 @@
 
 <!-- Grid Modal -->
 <div class="modal fade" id="modalData" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalGridTitle">Detalle de productos</h5>
@@ -71,43 +71,62 @@
                     <div class="row">
                         <div class="col-sm-8">
                             <div class="form-row">
-                                <div class="form-group col-sm-6">
+                                <div class="form-group col-sm-7">
                                     <label for="txBarCode">BarCode</label>
                                     <input type="text" class="form-control form-control-sm input-validate" id="txtBarCode" name="BarCode">
                                 </div>
-                                <div class="form-group col-sm-6">
+                                <div class="form-group col-sm-5">
                                     <label for="txtBrand">Proveedor</label>
                                     <input type="text" class="form-control form-control-sm input-validate" id="txtBrand" name="Brand">
                                 </div>
                             </div>
                             <div class="form-row">
-                                <div class="form-group col-sm-12">
+                                <div class="form-group col-sm-9">
                                     <label for="txtDescription">Descripcion</label>
                                     <input type="text" class="form-control form-control-sm input-validate" id="txtDescription" name="Description">
                                 </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-sm-6">
-                                    <label for="cboCategory">Categoria</label>
-                                    <select class="form-control form-control-sm" id="cboCategory">
-                                    </select>
-                                </div>
-                                <div class="form-group col-sm-6">
-                                    <label for="txtQuantity">Cantidad</label>
-                                    <input type="text" class="form-control form-control-sm input-validate" id="txtQuantity" name="Quantity">
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-sm-6">
-                                    <label for="txtPrice">Price</label>
-                                    <input type="text" class="form-control form-control-sm input-validate" id="txtPrice" name="Price">
-                                </div>
-                                <div class="form-group col-sm-6">
+                                <div class="form-group col-sm-3">
                                     <label for="cboState">Estado</label>
                                     <select class="form-control form-control-sm" id="cboState">
                                         <option value="1">Activo</option>
                                         <option value="0">Inactrivo</option>
                                     </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-4">
+                                    <label for="cboCategory">Categoria</label>
+                                    <select class="form-control form-control-sm" id="cboCategory">
+                                    </select>
+                                </div>
+                                <div class="form-group col-sm-4">
+                                    <label for="txtQuantity">Cantidad</label>
+                                    <input type="text" class="form-control form-control-sm input-validate" id="txtQuantity" name="Quantity">
+                                </div>
+                                <div class="form-group col-sm-4">
+                                    <label for="cboTipoVenta">Tipo Venta</label>
+                                    <select class="form-control form-control-sm  input-validate" id="cboTipoVenta">
+                                        <option value="1">Kg</option>
+                                        <option value="2">Unidad</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-3">
+                                    <label for="txtCosto">Costo</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtCosto" name="Costo">
+                                </div>
+                                <div class="form-group col-sm-3">
+                                    <label for="txtProfit">Ganancia %</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtProfit" name="Profit">
+                                </div>
+                                <div class="form-group col-sm-3">
+                                    <label for="txtPrice">Price</label>
+                                    <input type="text" class="form-control form-control-sm input-validate" id="txtPrice" name="Price">
+                                </div>
+                                <div class="form-group col-sm-3">
+                                    <label for="txtPriceWeb">Precio Web</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtPriceWeb" name="PriceWeb">
                                 </div>
                             </div>
                             <div class="form-row" id="divModif">
@@ -120,14 +139,14 @@
                                     <input type="text" class="form-control form-control-sm" id="txtModificadoUsuario" name="usuarioModificado" readonly>
                                 </div>
                             </div>
+                        </div>
+                        <div class="col-sm-4">
                             <div class="form-row">
-                                <div class="form-group col-sm-6">
+                                <div class="form-group">
                                     <label for="txtPhoto">Foto</label>
                                     <input class="form-control-file" type="file" id="txtPhoto" />
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-sm-4">
                             <div class="form-row">
                                 <img id="imgProduct" style="max-width:200px;" src="" class="rounded mx-auto d-block" alt="Photo Product">
                             </div>

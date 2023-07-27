@@ -17,7 +17,11 @@ namespace PointOfSale.Model
         public DateTime? RegistrationDate { get; set; }
 		public DateTime? ModificationDate { get; set; }
 		public string? ModificationUser { get; set; }
+        public decimal? PriceWeb { get; set; }
+        public int? PorcentajeProfit { get; set; }
+        public decimal? CostPrice { get; set; }
+        public int TipoVenta { get; set; }
 
-		public virtual Category? IdCategoryNavigation { get; set; }
+        public virtual Category? IdCategoryNavigation { get; set; }
     }
 }

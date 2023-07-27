@@ -14,5 +14,11 @@ namespace PointOfSale.Business.Utilities
 			Empleado = 2,
 			Encargado = 3
 		}
+
+		public enum TipoVenta
+		{
+			Kg = 1,
+			Unidad = 2
+		}
 	}
 }
