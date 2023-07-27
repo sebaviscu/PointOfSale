@@ -155,7 +155,7 @@ namespace PointOfSale.Controllers
                     }
                 }
 
-                User user_edited = await _userService.Edit(_mapper.Map<User>(vmUser));
+				User user_edited = await _userService.Edit(_mapper.Map<User>(vmUser));
 
                 vmUser = _mapper.Map<VMUser>(user_edited);
 

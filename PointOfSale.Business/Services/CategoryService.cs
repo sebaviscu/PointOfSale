@@ -31,7 +31,7 @@ namespace PointOfSale.Business.Services
             {
                 Category category_created = await _repository.Add(entity);
                 if (category_created.IdCategory == 0)
-                    throw new TaskCanceledException("Category could not be created");
+                    throw new TaskCanceledException("Category no se pudo crear.");
 
                 return category_created;
             }
@@ -55,7 +55,7 @@ namespace PointOfSale.Business.Services
 				bool response = await _repository.Edit(category_found);
 
                 if (!response)
-                    throw new TaskCanceledException("Category could not be changed.");
+                    throw new TaskCanceledException("Category no se pudo cambiar.");
 
                 return category_found;
             }

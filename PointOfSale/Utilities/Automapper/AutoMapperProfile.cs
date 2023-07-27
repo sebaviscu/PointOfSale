@@ -30,7 +30,15 @@ namespace PointOfSale.Utilities.Automapper
             .ForMember(destiny =>
                 destiny.Photo,
                 opt => opt.Ignore()
-            );
+			)
+            .ForMember(destiny =>
+				destiny.IdTienda,
+				opt => opt.MapFrom(source => source.IdTienda)
+			)
+			.ForMember(destiny =>
+				destiny.TiendaName,
+				opt => opt.MapFrom(source => source.Tienda.Nombre)
+                );
 
             CreateMap<VMUser, User>()
             .ForMember(destiny =>
@@ -38,6 +46,10 @@ namespace PointOfSale.Utilities.Automapper
                 opt => opt.MapFrom(source => source.IsActive == 1 ? true : false)
             )
             .ForMember(destiny =>
+				destiny.IdTienda,
+				opt => opt.MapFrom(source => source.IdTienda)
+			)
+			.ForMember(destiny =>
                 destiny.IdRolNavigation,
                 opt => opt.Ignore()
             );
@@ -72,6 +84,9 @@ namespace PointOfSale.Utilities.Automapper
                 opt => opt.MapFrom(source => Convert.ToString(source.Price.Value, new CultureInfo("es-PE")))
             )
             .ForMember(destiny =>
+                destiny.PhotoBase64,
+                opt => opt.MapFrom(source => Convert.ToBase64String(source.Photo))
+            ).ForMember(destiny =>
                 destiny.PhotoBase64,
                 opt => opt.MapFrom(source => Convert.ToBase64String(source.Photo))
             );
@@ -214,6 +229,11 @@ namespace PointOfSale.Utilities.Automapper
 			CreateMap<Tienda, VMTienda>();
 
 			CreateMap<VMTienda, Tienda>();
-		}
+
+
+            CreateMap<Turno, VMTurno>();
+
+            CreateMap<VMTurno, Turno>();
+        }
     }
 }

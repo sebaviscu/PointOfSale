@@ -5,7 +5,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -20,53 +20,61 @@
     <!-- SLEEK CSS -->
     <link id="sleek-css" rel="stylesheet" href="~/css/sleek.css" />
 
-  </head>
+</head>
 
-  <body class="" id="body">
+<body class="" id="body">
     <div class="container d-flex align-items-center justify-content-center vh-100">
-      <div class="row justify-content-center">
-        <div class="col-lg-6 col-md-10">
-          <div class="card">
-            <div class="card-header bg-primary">
-              <div class="app-brand">
-                <a href="#">
-                  <span class="brand-name">Example Store</span>
-                </a>
-              </div>
-            </div>
-
-            <div class="card-body p-5">
-              <h4 class="text-dark mb-5">Sign In</h4>
-              
-              <form  asp-controller="Access" asp-action="Login" method="post">
-                <div class="row">
-                  <div class="form-group col-md-12 mb-4">
-                    <input type="email" class="form-control input-lg" asp-for="Email" placeholder="Email">
-                  </div>
-
-                  <div class="form-group col-md-12 ">
-                    <input type="password" class="form-control input-lg" asp-for="PassWord" placeholder="Password">
-                  </div>
-
-                  <div class="col-md-12">
-                    <div class="d-flex my-2 justify-content-between">
-                      <div class="d-inline-block me-3">
-                        <label class="control control-checkbox">Keep me logged In.
-                          <input type="checkbox" asp-for="KeepLoggedIn" />
-                          <div class="control-indicator"></div>
-                        </label>
-                      </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-10">
+                <div class="card">
+                    <div class="card-header bg-primary">
+                        <div class="app-brand">
+                            <a href="#">
+                                <span class="brand-name">Example Store</span>
+                            </a>
+                        </div>
                     </div>
 
-                    <button type="submit" class="btn btn-lg btn-primary w-100 mb-4">Sign In</button>
+                    <div class="card-body p-5">
+                        <h4 class="text-dark mb-5">Sign In</h4>
 
-                  </div>
+                        <form asp-controller="Access" asp-action="Login" method="post">
+                            <div class="row">
+                                <div class="form-group col-md-12 mb-4">
+                                    <input type="email" class="form-control input-lg" asp-for="Email" placeholder="Email">
+                                </div>
+
+                                <div class="form-group col-md-12 ">
+                                    <input type="password" class="form-control input-lg" asp-for="PassWord" placeholder="Password">
+                                </div>
+                                @{
+                                    if (Model != null && Model.IsAdmin)
+                                    {
+                                        <div class="input-group-prepend">
+                                            <label class="input-group-text" for="cboTiendas">Tipo</label>
+                                        </div>
+                                        <select class="form-control" id="cboTiendas" asp-for="TiendaId"></select>
+                                    }
+                                }
+                                <div class="col-md-12">
+                                    <div class="d-flex my-2 justify-content-between">
+                                        <div class="d-inline-block me-3">
+                                            <label class="control control-checkbox">
+                                                Keep me logged In.
+                                                <input type="checkbox" asp-for="KeepLoggedIn" />
+                                                <div class="control-indicator"></div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-lg btn-primary w-100 mb-4">Sign In</button>
+
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-              </form>
             </div>
-          </div>
         </div>
-      </div>
     </div>
 
 
@@ -74,6 +82,7 @@
     <!-- Javascript -->
     <script src="~/plugins/jquery/jquery.min.js"></script>
     <script src="~/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/views/login.js"></script>
 
 </body>
 </html>

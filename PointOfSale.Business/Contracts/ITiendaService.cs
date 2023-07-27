@@ -8,5 +8,7 @@ namespace PointOfSale.Business.Contracts
 		Task<Tienda> Add(Tienda entity);
 		Task<Tienda> Edit(Tienda entity);
 		Task<bool> Delete(int idTienda);
-	}
+		Task<Tienda> Get(int tiendaId);
+
+    }
 }

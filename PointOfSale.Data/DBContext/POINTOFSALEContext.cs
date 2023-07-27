@@ -28,6 +28,8 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<Sale> Sales { get; set; } = null!;
         public virtual DbSet<TypeDocumentSale> TypeDocumentSales { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
+        public virtual DbSet<Turno> Turno { get; set; } = null!;
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -35,6 +37,47 @@ namespace PointOfSale.Data.DBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Turno>(entity =>
+            {
+                entity.HasKey(e => e.IdTurno)
+                    .HasName("PK__Turno__AA068B01D5580F03");
+
+                entity.ToTable("Turno");
+
+                entity.Property(e => e.IdTurno)
+                    .HasColumnName("idTurno");
+
+                //entity.Property(e => e.Descripcion)
+                //    .HasMaxLength(50)
+                //    .IsUnicode(false)
+                //    .HasColumnName("descripcion");
+
+                entity.Property(e => e.IdTurno).HasColumnName("idTurno");
+
+                entity.HasOne(d => d.Tienda)
+                    .WithMany(p => p.Turnos)
+                    .HasForeignKey(d => d.IdTienda)
+                    .HasConstraintName("FK__Turno__idTurno__4F7CD00D");
+
+                //entity.Property(e => e.RegistrationDate)
+                //    .HasColumnType("datetime")
+                //    .HasColumnName("registrationDate");
+
+                //entity.Property(e => e.RegistrationUser)
+                //    .HasColumnName("registrationUser");
+
+                //entity.Property(e => e.FechaInicio)
+                //    .HasColumnType("datetime")
+                //    .HasColumnName("fechaInicio");
+
+                //entity.Property(e => e.FechaFin)
+                //    .HasColumnType("datetime")
+                //    .HasColumnName("fechaFin");
+
+                //entity.Property(e => e.ModificationUser)
+                //    .HasColumnName("modificationUser");
+            });
+
             modelBuilder.Entity<Category>(entity =>
             {
                 entity.HasKey(e => e.IdCategory)
@@ -343,6 +386,11 @@ namespace PointOfSale.Data.DBContext
                     .WithMany(p => p.Sales)
                     .HasForeignKey(d => d.IdUsers)
                     .HasConstraintName("FK__Sale__idUsers__2C3393D0");
+
+                entity.HasOne(d => d.Turno)
+                    .WithMany(p => p.Sales)
+                    .HasForeignKey(d => d.IdTurno)
+                    .HasConstraintName("FK__Sale__idTurno__5CD6CB2B");
             });
 
             modelBuilder.Entity<TypeDocumentSale>(entity =>
@@ -409,6 +457,13 @@ namespace PointOfSale.Data.DBContext
                     .WithMany(p => p.Users)
                     .HasForeignKey(d => d.IdRol)
                     .HasConstraintName("FK__Users__idRol__1BFD2C07");
+
+				entity.Property(e => e.IdTienda).HasColumnName("idTienda");
+
+				entity.HasOne(d => d.Tienda)
+                    .WithMany(p => p.Usuarios)
+                    .HasForeignKey(d => d.IdTienda)
+                    .HasConstraintName("FK__Users__idTienda__5812160E");
             });
 
             OnModelCreatingPartial(modelBuilder);

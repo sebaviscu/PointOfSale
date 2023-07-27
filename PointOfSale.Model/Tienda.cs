@@ -11,5 +11,9 @@ namespace PointOfSale.Model
 		public string? Nombre { get; set; }
 		public DateTime? ModificationDate { get; set; }
 		public string? ModificationUser { get; set; }
-	}
+        public IEnumerable<Turno>? Turnos { get; set; }
+        public IEnumerable<User>? Usuarios { get; set; }
+
+
+    }
 }

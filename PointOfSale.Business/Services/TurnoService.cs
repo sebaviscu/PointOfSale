@@ -1,0 +1,108 @@
+﻿using PointOfSale.Business.Contracts;
+using PointOfSale.Data.Repository;
+using PointOfSale.Model;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PointOfSale.Business.Services
+{
+    public class TurnoService : ITurnoService
+    {
+        private readonly IGenericRepository<Turno> _repository;
+        public TurnoService(IGenericRepository<Turno> repository)
+        {
+            _repository = repository;
+        }
+        public async Task<Turno> Add(Turno entity)
+        {
+            Turno Turno_created = await _repository.Add(entity);
+            if (Turno_created.IdTurno == 0)
+                throw new TaskCanceledException("Turno no se pudo crear.");
+
+            return Turno_created;
+        }
+
+        public async Task<Turno> Edit(Turno entity)
+        {
+            try
+            {
+                Turno Turno_found = await _repository.Get(c => c.IdTurno == entity.IdTurno);
+
+                Turno_found.Descripcion = entity.Descripcion;
+                Turno_found.ModificationUser = entity.ModificationUser;
+
+                bool response = await _repository.Edit(Turno_found);
+
+                if (!response)
+                    throw new TaskCanceledException("Turno no se pudo cambiar.");
+
+                return Turno_found;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task<Turno> CloseTurno(Turno entity)
+        {
+            try
+            {
+                Turno Turno_found = await _repository.Get(c => c.IdTurno == entity.IdTurno);
+
+                Turno_found.FechaFin = DateTime.Now;
+                Turno_found.ModificationUser = entity.ModificationUser ?? "Automatico";
+
+                bool response = await _repository.Edit(Turno_found);
+
+                if (!response)
+                    throw new TaskCanceledException("Turno no se pudo cambiar.");
+
+                return Turno_found;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task<Turno> GetTurnoAnterior()
+        {
+            var query = await _repository.Query();
+            var turno = query.Single(_ => _.FechaFin == null
+                                            && _.FechaInicio.Day == DateTime.Now.Day
+                                            && _.FechaInicio.Month == DateTime.Now.Month
+                                            && _.FechaInicio.Year == DateTime.Now.Year);
+            return turno;
+        }
+
+        public async Task CheckTurnosViejos()
+        {
+            var query = await _repository.Query();
+            var turnos = query.Where(_ => _.FechaFin == null && _.FechaInicio.Date <= DateTime.Now.AddDays(-1).Date).ToList();
+
+            foreach (var t in turnos)
+            {
+                await CloseTurno(t);
+            }
+        }
+
+        public async Task<Turno> GetTurno(int idTienda, string usuario)
+        {
+            var query = await _repository.Query();
+            var turno = query.SingleOrDefault(_ => _.IdTienda == idTienda
+                                            && _.FechaFin == null
+                                            && _.FechaInicio.Date == DateTime.Now.Date);
+
+            if (turno == null)
+            {
+                var t = new Turno(idTienda, usuario);
+                turno = await Add(t);
+            }
+            return turno;
+        }
+    }
+}

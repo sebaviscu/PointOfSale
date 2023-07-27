@@ -24,5 +24,12 @@ namespace PointOfSale.Model
         public virtual ICollection<Sale> Sales { get; set; }
 		public DateTime? ModificationDate { get; set; }
 		public string? ModificationUser { get; set; }
+        public int? IdTienda { get; set; }
+        public Tienda? Tienda { get; set; }
+
+        public bool IsAdmin()
+        {
+            return IdRol == 1;
+        }
 	}
 }

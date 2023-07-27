@@ -66,10 +66,14 @@ namespace PointOfSale.Controllers
                         .Where(c => c.Type == ClaimTypes.NameIdentifier)
                         .Select(c => c.Value).SingleOrDefault();
 
-                model.IdUsers = int.Parse(idUsuario);
+				string idTurno = claimuser.Claims
+		                .Where(c => c.Type == "Turno")
+		                .Select(c => c.Value).SingleOrDefault();
 
+				model.IdUsers = int.Parse(idUsuario);
+				model.IdTurno = int.Parse(idTurno);
 
-                Sale sale_created = await _saleService.Register(_mapper.Map<Sale>(model));
+				Sale sale_created = await _saleService.Register(_mapper.Map<Sale>(model));
                 model = _mapper.Map<VMSale>(sale_created);
 
                 gResponse.State = true;

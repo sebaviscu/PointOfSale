@@ -9,14 +9,13 @@ using System.Security.Claims;
 namespace PointOfSale.Controllers
 {
     public class AccessController : BaseController
-	{
+    {
         private readonly IUserService _userService;
-
-
-        public AccessController(IUserService userService)
+        private readonly ITurnoService _turnoService;
+        public AccessController(IUserService userService, ITurnoService turnoService)
         {
             _userService = userService;
-
+            _turnoService = turnoService;
         }
 
         public IActionResult Login()
@@ -38,7 +37,16 @@ namespace PointOfSale.Controllers
                 return View();
             }
 
-            ViewData["Message"] = null;
+            if (model.TiendaId == null && user_found.IdRol == 1)
+            {
+                model.IsAdmin = true;
+                return View(model);
+            }
+
+            var idTienda = user_found.IsAdmin() ? model.TiendaId.Value : user_found.IdTienda;
+
+            await _turnoService.CheckTurnosViejos();
+            var turno = await _turnoService.GetTurno(idTienda.Value, user_found.Name);
 
             List<Claim> claims = new List<Claim>()
                 {
@@ -46,6 +54,8 @@ namespace PointOfSale.Controllers
                     new Claim(ClaimTypes.NameIdentifier, user_found.IdUsers.ToString()),
                     new Claim(ClaimTypes.Role,user_found.IdRol.ToString()),
                     new Claim("Email",user_found.Email),
+                    new Claim("Tienda",idTienda.ToString()),
+                    new Claim("Turno",turno.IdTurno.ToString()),
                 };
 
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -56,6 +66,8 @@ namespace PointOfSale.Controllers
             };
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), properties);
+
+            ViewData["Message"] = null;
 
             return RedirectToAction("Index", "Home");
 

@@ -7,9 +7,11 @@ const BASIC_MODEL = {
     email: "",
     phone: "",
     idRol: 0,
-    password:"",
+    password: "",
     isActive: 1,
     photo: "",
+    idTienda: 0,
+    tiendaName: "",
     modificationDate: "",
     modificationUser: null
 }
@@ -21,6 +23,7 @@ $(document).ready(function () {
         .then(response => {
             return response.ok ? response.json() : Promise.reject(response);
         }).then(responseJson => {
+
             if (responseJson.length > 0) {
                 responseJson.forEach((item) => {
                     $("#cboRol").append(
@@ -30,6 +33,21 @@ $(document).ready(function () {
             }
         })
 
+    fetch("/Tienda/GetTienda")
+        .then(response => {
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+            $("#cboTiendas").append(
+                $("<option>").val('-1').text(''))
+
+            if (responseJson.data.length > 0) {
+                responseJson.data.forEach((item) => {
+                    $("#cboTiendas").append(
+                        $("<option>").val(item.idTienda).text(item.nombre)
+                    )
+                });
+            }
+        })
 
     tableData = $("#tbData").DataTable({
         responsive: true,
@@ -48,6 +66,7 @@ $(document).ready(function () {
             { "data": "email" },
             { "data": "phone" },
             { "data": "nameRol" },
+            { "data": "tiendaName" },
             {
                 "data": "isActive", render: function (data) {
                     if (data == 1)
@@ -78,16 +97,20 @@ $(document).ready(function () {
             }, 'pageLength'
         ]
     });
+
 })
 
-const openModal = (model = BASIC_MODEL ) => {
+const openModal = (model = BASIC_MODEL) => {
+    var rol = model.idRol == 0 ? $("#cboRol option:first").val() : model.idRol;
+    var tienda = model.idTienda == 0 ? $("#cboTiendas option:first").val() : model.idTienda;
     $("#txtId").val(model.idUsers);
     $("#txtName").val(model.name);
     $("#txtEmail").val(model.email);
     $("#txtPhone").val(model.phone);
-    $("#cboRol").val(model.idRol == 0 ? $("#cboRol option:first").val() : model.idRol);
+    $("#cboRol").val(rol);
     $("#cboState").val(model.isActive);
     $("#txtPassWord").val(model.password);
+    $("#cboTiendas").val(tienda);
     $("#txtPhoto").val("");
     $("#imgUser").attr("src", `data:image/png;base64,${model.photoBase64}`);
 
@@ -115,8 +138,21 @@ $("#btnSave").on("click", function () {
 
     if (inputs_without_value.length > 0) {
         const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
-        toastr.warning(msg,"");
+        toastr.warning(msg, "");
         $(`input[name="${inputs_without_value[0].name}"]`).focus();
+        return;
+    }
+
+    var rol = $("#cboRol").val();
+    var tienda = $("#cboTiendas").val();
+
+    if (rol !== '1' && tienda === '-1') {
+        toastr.warning("Se debe seleccionar una tienda", "");
+        return;
+    }
+    else
+    if (rol === '1' &&  tienda !== '-1') {
+        toastr.warning("No se debe seleccionar tienda para un Administrador", "");
         return;
     }
 
@@ -125,9 +161,10 @@ $("#btnSave").on("click", function () {
     model["name"] = $("#txtName").val();
     model["email"] = $("#txtEmail").val();
     model["phone"] = $("#txtPhone").val();
-    model["idRol"] = $("#cboRol").val();
+    model["idRol"] = rol
     model["password"] = $("#txtPassWord").val();
     model["isActive"] = $("#cboState").val();
+    model["idTienda"] = tienda;
     const inputPhoto = document.getElementById('txtPhoto');
 
     const formData = new FormData();
@@ -248,3 +285,4 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
             }
         });
 })
+

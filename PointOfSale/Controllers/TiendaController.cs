@@ -10,7 +10,6 @@ using static PointOfSale.Business.Utilities.Enum;
 
 namespace PointOfSale.Controllers
 {
-	[Authorize]
 	public class TiendaController : BaseController
 	{
 		private readonly ITiendaService _TiendaService;

@@ -30,7 +30,7 @@ namespace PointOfSale.Business.Services
 			{
 				Tienda Tienda_created = await _repository.Add(entity);
 				if (Tienda_created.IdTienda == 0)
-					throw new TaskCanceledException("Tienda could not be created");
+					throw new TaskCanceledException("Tienda no se pudo crear.");
 
 				return Tienda_created;
 			}
@@ -53,7 +53,7 @@ namespace PointOfSale.Business.Services
 				bool response = await _repository.Edit(Tienda_found);
 
 				if (!response)
-					throw new TaskCanceledException("Tienda could not be changed.");
+					throw new TaskCanceledException("Tienda no se pudo cambiar.");
 
 				return Tienda_found;
 			}
@@ -84,6 +84,22 @@ namespace PointOfSale.Business.Services
 		}
 
 
+        public async Task<Tienda> Get(int tiendaId)
+        {
+            try
+            {
+                Tienda Tienda_found = await _repository.Get(c => c.IdTienda == tiendaId);
 
-	}
+                if (Tienda_found == null)
+                    throw new TaskCanceledException("Tienda no se pudo cambiar.");
+
+                return Tienda_found;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+    }
 }
