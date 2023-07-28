@@ -36,7 +36,7 @@ namespace PointOfSale.Business.Services
                 User user_created = await _repository.Add(entity);
 
                 if (user_created.IdUsers == 0)
-                    throw new TaskCanceledException("Failed to create user");
+                    throw new TaskCanceledException("Error al crear user");
 
                 IQueryable<User> query = await _repository.Query(u => u.IdUsers == user_created.IdUsers);
                 user_created = query.Include(r => r.IdRolNavigation).First();
@@ -81,7 +81,7 @@ namespace PointOfSale.Business.Services
 
                 bool response = await _repository.Edit(user_edit);
                 if (!response)
-                    throw new TaskCanceledException("Could not modify user");
+                    throw new TaskCanceledException("No se pudo modificar user");
 
                 User user_edited = queryUser.Include(r => r.IdRolNavigation).First();
 
@@ -100,7 +100,7 @@ namespace PointOfSale.Business.Services
                 User user_found = await _repository.Get(u => u.IdUsers == idUser);
 
                 if (user_found == null)
-                    throw new TaskCanceledException("Username does not exist");
+                    throw new TaskCanceledException("Username no existe");
       
                 bool response = await _repository.Delete(user_found);
 

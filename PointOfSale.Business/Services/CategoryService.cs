@@ -72,7 +72,7 @@ namespace PointOfSale.Business.Services
                 Category category_found = await _repository.Get(c => c.IdCategory == idCategory);
 
                 if (category_found == null)
-                    throw new TaskCanceledException("The category does not exist");
+                    throw new TaskCanceledException("The category no existe");
 
 
                 bool response = await _repository.Delete(category_found);

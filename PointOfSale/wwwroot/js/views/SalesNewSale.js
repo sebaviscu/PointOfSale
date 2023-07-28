@@ -50,6 +50,27 @@ function formatResults(data) {
     return container;
 }
 
+function formatResultsClients(data) {
+
+    if (data.loading)
+        return data.text;
+
+    var container = $(
+        `<table width="100%">
+            <tr>
+                <td class="col-sm-8">
+                    <p style="font-weight: bolder;margin:2px">${data.text}</p>
+                    <em style="font-weight: bolder;margin:2px">${data.cuil}</em>
+                </td>
+                <td class="col-sm-4">
+                    <p style="font-weight: bolder;" class="${data.color}">${data.total}</p>
+                </td>
+            </tr>
+         </table>`
+    );
+
+    return container;
+}
 
 $(document).on('select2:open', () => {
     document.querySelector('.select2-search__field').focus();
@@ -107,10 +128,7 @@ $(document).on("click", "button.finalizeSale", function () {
 
     const sale = {
         idTypeDocumentSale: $("#cboTypeDocumentSale" + currentTabId).val(),
-        //customerDocument: $("#txtDocumentClient").val(),
-        //clientName: $("#txtNameClient").val(),
-        subtotal: $("#txtSubTotal" + currentTabId).val(),
-        totalTaxes: $("#txtTotalTaxes" + currentTabId).val(),
+        clientId: $("#cboCliente" + currentTabId).val(),
         total: $("#txtTotal" + currentTabId).val(),
         detailSales: vmDetailSale
     }
@@ -186,6 +204,7 @@ function newTab() {
     clone.querySelector("#cboTypeDocumentSale").id = "cboTypeDocumentSale" + tabID;
     clone.querySelector("#txtTotal").id = "txtTotal" + tabID;
     clone.querySelector("#btnFinalizeSale").id = "btnFinalizeSale" + tabID;
+    clone.querySelector("#cboCliente").id = "cboCliente" + tabID;
 
     $('#tab' + tabID).append(clone);
 
@@ -203,6 +222,41 @@ function newTab() {
 }
 
 function addFunctions(idTab) {
+    $('#cboCliente' + idTab).select2({
+        ajax: {
+            url: "/Sales/GetClientes",
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            delay: 250,
+            data: function (params) {
+                return {
+                    search: params.term
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data.map((item) => (
+                        {
+                            id: item.idCliente,
+                            text: item.nombre,
+                            total: item.total,
+                            cuil: item.cuil,
+                            color: item.color
+                        }
+                    ))
+                };
+            }
+        },
+        placeholder: 'Buscando cliente...',
+        minimumInputLength: 3,
+        templateResult: formatResultsClients,
+        allowClear: true
+    });
+
+    $('#cboCliente' + idTab).on('select2:select', function (e) {
+        var data = e.params.data;
+    })
+
     $('#cboSearchProduct' + idTab).select2({
         ajax: {
             url: "/Sales/GetProducts",
@@ -232,7 +286,8 @@ function addFunctions(idTab) {
         },
         placeholder: 'Buscando producto...',
         minimumInputLength: 2,
-        templateResult: formatResults
+        templateResult: formatResults,
+        allowClear: true
     });
 
     $('#cboSearchProduct' + idTab).on('select2:select', function (e) {

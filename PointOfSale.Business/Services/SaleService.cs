@@ -14,11 +14,13 @@ namespace PointOfSale.Business.Services
     public class SaleService : ISaleService
     {
         private readonly IGenericRepository<Product> _repositoryProduct;
+        private readonly IGenericRepository<Cliente> _repositoryCliente;
         private readonly ISaleRepository _repositorySale;
-        public SaleService(IGenericRepository<Product> repositoryProduct, ISaleRepository repositorySale)
+        public SaleService(IGenericRepository<Product> repositoryProduct, ISaleRepository repositorySale, IGenericRepository<Cliente> repositoryCliente)
         {
             _repositoryProduct = repositoryProduct;
             _repositorySale = repositorySale;
+            _repositoryCliente = repositoryCliente;
         }
 
         public async Task<List<Product>> GetProducts(string search)
@@ -30,6 +32,15 @@ namespace PointOfSale.Business.Services
            );
 
             return query.Include(c => c.IdCategoryNavigation).ToList();
+        }
+
+        public async Task<List<Cliente>> GetClients(string search)
+        {
+            var split = search.Split(' ');
+            IQueryable<Cliente> query = await _repositoryCliente.Query(p =>
+           string.Concat(p.Cuil, p.Nombre).Contains(search));
+
+            return query.ToList();
         }
 
         public async Task<Sale> Register(Sale entity)
@@ -96,6 +107,6 @@ namespace PointOfSale.Business.Services
             return lista;
         }
 
-        
+
     }
 }

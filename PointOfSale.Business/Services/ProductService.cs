@@ -35,7 +35,7 @@ namespace PointOfSale.Business.Services
                 Product product_created = await _repository.Add(entity);
 
                 if (product_created.IdProduct == 0)
-                    throw new TaskCanceledException("Failed to create product");
+                    throw new TaskCanceledException("Error al crear product");
 
                 IQueryable<Product> query = await _repository.Query(p => p.IdProduct == product_created.IdProduct);
                 product_created = query.Include(c => c.IdCategoryNavigation).First();
@@ -92,7 +92,7 @@ namespace PointOfSale.Business.Services
                 Product product_found = await _repository.Get(p => p.IdProduct == idProduct);
 
                 if (product_found == null)
-                    throw new TaskCanceledException("The product does not exist");
+                    throw new TaskCanceledException("The product no existe");
 
                 bool response = await _repository.Delete(product_found);
 

@@ -11,6 +11,7 @@ namespace PointOfSale.Business.Contracts
     {
         Task<List<Product>> GetProducts(string search);
 
+        Task<List<Cliente>> GetClients(string search);
         Task<Sale> Register(Sale entity);
 
         Task<List<Sale>> SaleHistory(string SaleNumber, string StarDate, string EndDate);

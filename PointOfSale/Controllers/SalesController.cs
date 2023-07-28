@@ -4,6 +4,7 @@ using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PointOfSale.Business.Contracts;
+using PointOfSale.Business.Services;
 using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
@@ -42,7 +43,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> ListTypeDocumentSale()
         {
-            List<VMTypeDocumentSale> vmListTypeDocumentSale = _mapper.Map<List<VMTypeDocumentSale>>(await _typeDocumentSaleService.List());
+            List<VMTypeDocumentSale> vmListTypeDocumentSale = _mapper.Map<List<VMTypeDocumentSale>>(await _typeDocumentSaleService.GetActive());
             return StatusCode(StatusCodes.Status200OK, vmListTypeDocumentSale);
         }
 
@@ -51,6 +52,19 @@ namespace PointOfSale.Controllers
         {
             List<VMProduct> vmListProducts = _mapper.Map<List<VMProduct>>(await _saleService.GetProducts(search));
             return StatusCode(StatusCodes.Status200OK, vmListProducts);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetClientes(string search)
+        {
+            List<VMCliente> vmListClients = _mapper.Map<List<VMCliente>>(await _saleService.GetClients(search));
+            foreach (var c in vmListClients)
+            {
+                c.Total = "$100";
+                c.Color = "text-success";
+                //c.Color = c.ClienteMovimientos.Sum(x => x.Total) > 0 ? "text-success" : "text-danger";
+            }
+            return StatusCode(StatusCodes.Status200OK, vmListClients);
         }
 
         [HttpPost]

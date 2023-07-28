@@ -30,25 +30,6 @@
 
         <div class="row" id="nuevaVenta">
             <div class="col-sm-8">
-@*                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h4>Client</h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="form-row">
-                                    <div class="form-group col-sm-6">
-                                        <input type="text" class="form-control form-control-sm" id="txtDocumentClient" placeholder="document number">
-                                    </div>
-                                    <div class="form-group col-sm-6">
-                                        <input type="text" class="form-control form-control-sm" id="txtNameClient" placeholder="full name">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>*@
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="card shadow mb-4">
@@ -103,18 +84,6 @@
                                     <select class="form-control" id="cboTypeDocumentSale">
                                     </select>
                                 </div>
-@*                                <div class="input-group input-group-sm mb-3">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">Sub Total</span>
-                                    </div>
-                                    <input type="text" class="form-control text-end" aria-label="Small" aria-describedby="inputGroupSubTotal" id="txtSubTotal" disabled>
-                                </div>
-                                <div class="input-group input-group-sm mb-3">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">Total Taxes(18%)</span>
-                                    </div>
-                                    <input type="text" class="form-control text-end" aria-label="Small" aria-describedby="inputGroupIGV" id="txtTotalTaxes" disabled>
-                                </div>*@
                                 <div class="input-group input-group-sm mb-3">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Total</span>
@@ -125,9 +94,23 @@
                         </div>
                     </div>
                 </div>
-
-
                 <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h4>Clientes</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-row">
+                                    <div class="form-group col-sm-12">
+                                        <select class="form-control form-control-sm" id="cboCliente">
+                                            <option value=""></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-sm-12">
                         <div class="card shadow">
                             <div class="card-body">

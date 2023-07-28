@@ -24,8 +24,10 @@ namespace PointOfSale.Model
 		public virtual TypeDocumentSale? IdTypeDocumentSaleNavigation { get; set; }
 		public virtual User? IdUsersNavigation { get; set; }
 		public virtual ICollection<DetailSale> DetailSales { get; set; }
-
 		public int IdTurno { get; set; }
 		public Turno Turno { get; set; }
-	}
+        public int? IdClienteMovimiento { get; set; }
+        public ClienteMovimiento? ClienteMovimiento { get; set; }
+
+    }
 }

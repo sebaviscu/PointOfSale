@@ -29,7 +29,8 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<TypeDocumentSale> TypeDocumentSales { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<Turno> Turno { get; set; } = null!;
-
+        public virtual DbSet<Cliente> Clientes { get; set; } = null!;
+        public virtual DbSet<ClienteMovimiento> ClienteMovimientos { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -37,6 +38,38 @@ namespace PointOfSale.Data.DBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<ClienteMovimiento>(entity =>
+            {
+                entity.HasKey(e => e.IdClienteMovimiento);
+
+                entity.ToTable("ClienteMovimiento");
+
+                entity.HasOne(d => d.Cliente)
+                    .WithMany(p => p.ClienteMovimientos)
+                    .HasForeignKey(d => d.IdCliente);
+
+                entity.HasOne(d => d.Sale)
+                    .WithOne(p => p.ClienteMovimiento)
+                    .HasForeignKey<Sale>(c => c.IdClienteMovimiento);
+
+                entity.Property(e => e.RegistrationDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("registrationDate")
+                    .HasDefaultValueSql("(getdate())");
+            });
+
+            modelBuilder.Entity<Cliente>(entity =>
+            {
+                entity.HasKey(e => e.IdCliente);
+
+                entity.ToTable("Cliente");
+
+                entity.Property(e => e.RegistrationDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("registrationDate")
+                    .HasDefaultValueSql("(getdate())");
+            });
+
             modelBuilder.Entity<Turno>(entity =>
             {
                 entity.HasKey(e => e.IdTurno)
@@ -47,11 +80,6 @@ namespace PointOfSale.Data.DBContext
                 entity.Property(e => e.IdTurno)
                     .HasColumnName("idTurno");
 
-                //entity.Property(e => e.Descripcion)
-                //    .HasMaxLength(50)
-                //    .IsUnicode(false)
-                //    .HasColumnName("descripcion");
-
                 entity.Property(e => e.IdTurno).HasColumnName("idTurno");
 
                 entity.HasOne(d => d.Tienda)
@@ -59,23 +87,6 @@ namespace PointOfSale.Data.DBContext
                     .HasForeignKey(d => d.IdTienda)
                     .HasConstraintName("FK__Turno__idTurno__4F7CD00D");
 
-                //entity.Property(e => e.RegistrationDate)
-                //    .HasColumnType("datetime")
-                //    .HasColumnName("registrationDate");
-
-                //entity.Property(e => e.RegistrationUser)
-                //    .HasColumnName("registrationUser");
-
-                //entity.Property(e => e.FechaInicio)
-                //    .HasColumnType("datetime")
-                //    .HasColumnName("fechaInicio");
-
-                //entity.Property(e => e.FechaFin)
-                //    .HasColumnType("datetime")
-                //    .HasColumnName("fechaFin");
-
-                //entity.Property(e => e.ModificationUser)
-                //    .HasColumnName("modificationUser");
             });
 
             modelBuilder.Entity<Category>(entity =>
@@ -391,6 +402,7 @@ namespace PointOfSale.Data.DBContext
                     .WithMany(p => p.Sales)
                     .HasForeignKey(d => d.IdTurno)
                     .HasConstraintName("FK__Sale__idTurno__5CD6CB2B");
+
             });
 
             modelBuilder.Entity<TypeDocumentSale>(entity =>

@@ -70,7 +70,7 @@ namespace PointOfSale.Business.Services
 				Tienda Tienda_found = await _repository.Get(c => c.IdTienda == idTienda);
 
 				if (Tienda_found == null)
-					throw new TaskCanceledException("The Tienda does not exist");
+					throw new TaskCanceledException("The Tienda no existe");
 
 
 				bool response = await _repository.Delete(Tienda_found);

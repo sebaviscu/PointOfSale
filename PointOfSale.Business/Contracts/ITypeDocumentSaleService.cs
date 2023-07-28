@@ -10,5 +10,9 @@ namespace PointOfSale.Business.Contracts
     public interface ITypeDocumentSaleService
     {
         Task<List<TypeDocumentSale>> List();
+        Task<TypeDocumentSale> Add(TypeDocumentSale entity);
+        Task<TypeDocumentSale> Edit(TypeDocumentSale entity);
+        Task<bool> Delete(int idUser);
+        Task<List<TypeDocumentSale>> GetActive();
     }
 }

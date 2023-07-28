@@ -5639,7 +5639,7 @@ Docs & License: https://fullcalendar.io/
                 var generator = calendar.dateProfileGenerators[viewType];
                 if (!generator) {
                     throw new Error(viewType ?
-                        'The FullCalendar view "' + viewType + '" does not exist. Make sure your plugins are loaded correctly.' :
+                        'The FullCalendar view "' + viewType + '" no existe. Make sure your plugins are loaded correctly.' :
                         'No available FullCalendar view plugins.');
                 }
                 newDateProfile = generator.build(action.dateMarker || currentDate, undefined, true // forceToValid

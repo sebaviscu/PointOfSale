@@ -7031,7 +7031,7 @@ $.widget( "ui.button", {
 		} else {
 
 			// Position is beginning or end so remove the ui-widget-icon-block class and add the
-			// space if it does not exist
+			// space if it no existe
 			if ( !this.iconSpace ) {
 				this.iconSpace = $( "<span> </span>" );
 				this._addClass( this.iconSpace, "ui-button-icon-space" );

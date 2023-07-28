@@ -304,7 +304,7 @@ const executeAfterTransition = (callback, transitionElement, waitForTransition =
 
 const getNextActiveElement = (list, activeElement, shouldGetNext, isCycleAllowed) => {
   const listLength = list.length;
-  let index = list.indexOf(activeElement); // if the element does not exist in the list return an element
+  let index = list.indexOf(activeElement); // if the element no existe in the list return an element
   // depending on the direction and if cycle is allowed
 
   if (index === -1) {
