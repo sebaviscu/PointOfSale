@@ -19,5 +19,7 @@
         public int? PorcentajeProfit { get; set; }
         public decimal? CostPrice { get; set; }
         public int TipoVenta { get; set; }
+        public string NameProveedor { get; set; }
+        public int? IdProveedor { get; set; }
     }
 }

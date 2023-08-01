@@ -4,7 +4,6 @@ let rowSelected;
 const BASIC_MODEL = {
     idProduct: 0,
     barCode: "",
-    brand: "",
     description: "",
     idCategory: 0,
     quantity: 0,
@@ -16,7 +15,8 @@ const BASIC_MODEL = {
     priceWeb: "",
     porcentajeProfit: "",
     costPrice: "",
-    tipoVenta: ""
+    tipoVenta: "",
+    idProveedor: ""
 }
 
 
@@ -37,6 +37,22 @@ $(document).ready(function () {
             }
         })
 
+    fetch("/Admin/GetProveedor")
+        .then(response => {
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+            if (responseJson.data.length > 0) {
+                $("#cboProveedor").append(
+                    $("<option>").val('').text('')
+                )
+                responseJson.data.forEach((item) => {
+                    $("#cboProveedor").append(
+                        $("<option>").val(item.idProveedor).text(item.nombre)
+                    )
+                });
+
+            }
+        })
 
     tableData = $("#tbData").DataTable({
         responsive: true,
@@ -57,22 +73,11 @@ $(document).ready(function () {
                 }
             },
             { "data": "barCode" },
-            { "data": "brand" },
+            { "data": "nameProveedor" },
             { "data": "description" },
             { "data": "nameCategory" },
             { "data": "quantity" },
             { "data": "price" },
-            { "data": "priceWeb" },
-            { "data": "porcentajeProfit" },
-            { "data": "costPrice" },
-            {
-                "data": "tipoVenta", render: function (data) {
-                    if (data == 1)
-                        return '<span class="badge badge-info">Kg</span>';
-                    else
-                        return '<span class="badge badge-danger">Unidad</span>';
-                }
-            },
             {
                 "data": "isActive", render: function (data) {
                     if (data == 1)
@@ -108,7 +113,6 @@ $(document).ready(function () {
 const openModal = (model = BASIC_MODEL) => {
     $("#txtId").val(model.idProduct);
     $("#txtBarCode").val(model.barCode);
-    $("#txtBrand").val(model.brand);
     $("#txtDescription").val(model.description);
     $("#cboCategory").val(model.idCategory == 0 ? $("#cboCategory option:first").val() : model.idCategory);
     $("#txtQuantity").val(model.quantity);
@@ -119,6 +123,8 @@ const openModal = (model = BASIC_MODEL) => {
     $("#cboTipoVenta").val(model.tipoVenta);
     $("#cboState").val(model.isActive);
     $("#txtPhoto").val("");
+    $("#cboProveedor").val(model.idProveedor == 0 ? $("#cboProveedor option:first").val() : model.idProveedor);
+
     $("#imgProduct").attr("src", `data:image/png;base64,${model.photoBase64}`);
 
     if (model.modificationUser === null)
@@ -141,20 +147,31 @@ $("#btnNewProduct").on("click", function () {
 })
 
 $("#btnSave").on("click", function () {
-    const inputs = $("input.input-validate").serializeArray();
-    const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
+    const inputs = $(".input-validate").serializeArray();
+    const inputs_without_value = inputs.filter((item) => item.value.trim() == "" || item.value.trim() == null)
 
     if (inputs_without_value.length > 0) {
-        const msg = `You must complete the field : "${inputs_without_value[0].name}"`;
+        const msg = `Debe completaro el campo : "${inputs_without_value[0].name}"`;
         toastr.warning(msg, "");
         $(`input[name="${inputs_without_value[0].name}"]`).focus();
+        return;
+    }
+
+    if (document.getElementById("cboProveedor").value == '') {
+        const msg = `Debe completaro el campo Proveedor"`;
+        toastr.warning(msg, "");
+        return;
+    }
+
+    if (document.getElementById("cboTipoVenta").value == '') {
+        const msg = `Debe completaro el campo Tipo Venta"`;
+        toastr.warning(msg, "");
         return;
     }
 
     const model = structuredClone(BASIC_MODEL);
     model["idProduct"] = parseInt($("#txtId").val());
     model["barCode"] = $("#txtBarCode").val();
-    model["brand"] = $("#txtBrand").val();
     model["description"] = $("#txtDescription").val();
     model["idCategory"] = $("#cboCategory").val();
     model["quantity"] = $("#txtQuantity").val();
@@ -164,6 +181,8 @@ $("#btnSave").on("click", function () {
     model["costo"] = $("#txtCosto").val();
     model["tipoVenta"] = $("#cboTipoVenta").val();
     model["isActive"] = $("#cboState").val();
+    model["idProveedor"] = $("#cboProveedor").val();
+
     const inputPhoto = document.getElementById('txtPhoto');
 
     const formData = new FormData();

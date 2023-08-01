@@ -21,7 +21,7 @@ namespace PointOfSale.Business.Services
         public async Task<List<Product>> List()
         {
             IQueryable<Product> query = await _repository.Query();
-            return query.Include(c => c.IdCategoryNavigation).ToList();
+            return query.Include(c => c.IdCategoryNavigation).Include(_=>_.Proveedor).ToList();
         }
         public async Task<Product> Add(Product entity)
         {
@@ -38,7 +38,7 @@ namespace PointOfSale.Business.Services
                     throw new TaskCanceledException("Error al crear product");
 
                 IQueryable<Product> query = await _repository.Query(p => p.IdProduct == product_created.IdProduct);
-                product_created = query.Include(c => c.IdCategoryNavigation).First();
+                product_created = query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).First();
 
                 return product_created;
             }
@@ -71,12 +71,13 @@ namespace PointOfSale.Business.Services
                 product_edit.IsActive = entity.IsActive;
 				product_edit.ModificationDate = DateTime.Now;
 				product_edit.ModificationUser= entity.ModificationUser;
+                product_edit.IdProveedor = entity.IdProveedor;
 
 				bool response = await _repository.Edit(product_edit);
                 if (!response)
                     throw new TaskCanceledException("The product could not be modified");
 
-                Product product_edited = queryProduct.Include(c => c.IdCategoryNavigation).First();
+                Product product_edited = queryProduct.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).First();
 
                 return product_edited;
             }

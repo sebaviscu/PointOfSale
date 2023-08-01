@@ -8,6 +8,7 @@ using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
 using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using static PointOfSale.Business.Utilities.Enum;
 
 namespace PointOfSale.Controllers
@@ -117,6 +118,7 @@ namespace PointOfSale.Controllers
 		[HttpGet]
 		public async Task<IActionResult> GetProducts()
 		{
+			var s = await _productService.List();
 			List<VMProduct> vmProductList = _mapper.Map<List<VMProduct>>(await _productService.List());
 			return StatusCode(StatusCodes.Status200OK, new { data = vmProductList });
 		}

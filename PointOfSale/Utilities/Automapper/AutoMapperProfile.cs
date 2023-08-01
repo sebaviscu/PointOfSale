@@ -8,7 +8,8 @@ namespace PointOfSale.Utilities.Automapper
 {
     public class AutoMapperProfile : Profile
     {
-        public AutoMapperProfile() {
+        public AutoMapperProfile()
+        {
 
             #region Rol
             CreateMap<Rol, VMRol>().ReverseMap();
@@ -30,14 +31,14 @@ namespace PointOfSale.Utilities.Automapper
             .ForMember(destiny =>
                 destiny.Photo,
                 opt => opt.Ignore()
-			)
+            )
             .ForMember(destiny =>
-				destiny.IdTienda,
-				opt => opt.MapFrom(source => source.IdTienda)
-			)
-			.ForMember(destiny =>
-				destiny.TiendaName,
-				opt => opt.MapFrom(source => source.Tienda.Nombre)
+                destiny.IdTienda,
+                opt => opt.MapFrom(source => source.IdTienda)
+            )
+            .ForMember(destiny =>
+                destiny.TiendaName,
+                opt => opt.MapFrom(source => source.Tienda.Nombre)
                 );
 
             CreateMap<VMUser, User>()
@@ -46,10 +47,10 @@ namespace PointOfSale.Utilities.Automapper
                 opt => opt.MapFrom(source => source.IsActive == 1 ? true : false)
             )
             .ForMember(destiny =>
-				destiny.IdTienda,
-				opt => opt.MapFrom(source => source.IdTienda)
-			)
-			.ForMember(destiny =>
+                destiny.IdTienda,
+                opt => opt.MapFrom(source => source.IdTienda)
+            )
+            .ForMember(destiny =>
                 destiny.IdRolNavigation,
                 opt => opt.Ignore()
             );
@@ -80,6 +81,10 @@ namespace PointOfSale.Utilities.Automapper
                 opt => opt.MapFrom(source => source.IdCategoryNavigation.Description)
             )
             .ForMember(destiny =>
+                destiny.NameProveedor,
+                opt => opt.MapFrom(source => source.Proveedor.Nombre)
+            )
+            .ForMember(destiny =>
                 destiny.Price,
                 opt => opt.MapFrom(source => Convert.ToString(source.Price.Value, new CultureInfo("es-PE")))
             )
@@ -98,6 +103,10 @@ namespace PointOfSale.Utilities.Automapper
             )
             .ForMember(destiny =>
                 destiny.IdCategoryNavigation,
+                opt => opt.Ignore()
+            )
+            .ForMember(destiny =>
+                destiny.Proveedor,
                 opt => opt.Ignore()
             )
             .ForMember(destiono =>
@@ -224,11 +233,11 @@ namespace PointOfSale.Utilities.Automapper
                 .ForMember(destiny =>
                 destiny.SubMenus,
                 opt => opt.MapFrom(source => source.InverseIdMenuParentNavigation));
-			#endregion Menu
+            #endregion Menu
 
-			CreateMap<Tienda, VMTienda>();
+            CreateMap<Tienda, VMTienda>();
 
-			CreateMap<VMTienda, Tienda>();
+            CreateMap<VMTienda, Tienda>();
 
 
             CreateMap<Turno, VMTurno>();
