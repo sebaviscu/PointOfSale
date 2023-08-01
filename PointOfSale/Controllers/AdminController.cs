@@ -19,13 +19,16 @@ namespace PointOfSale.Controllers
         private readonly IDashBoardService _dashboardService;
         private readonly ITypeDocumentSaleService _typeDocumentSaleService;
         private readonly IClienteService _clienteService;
+        private readonly IProveedorService _proveedorService;
         private readonly IMapper _mapper;
+
         public AdminController(
             IDashBoardService dashboardService,
             IUserService userService,
             IRolService rolService,
             ITypeDocumentSaleService typeDocumentSaleService,
             IClienteService clienteService,
+            IProveedorService proveedorService,
             IMapper mapper)
         {
             _dashboardService = dashboardService;
@@ -34,6 +37,7 @@ namespace PointOfSale.Controllers
             _mapper = mapper;
             _typeDocumentSaleService = typeDocumentSaleService;
             _clienteService = clienteService;
+            _proveedorService = proveedorService;
         }
 
         public IActionResult DashBoard()
@@ -295,19 +299,17 @@ namespace PointOfSale.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCliente([FromBody] string model)
+        public async Task<IActionResult> CreateCliente([FromBody] VMCliente model)
         {
             var gResponse = new GenericResponse<VMCliente>();
             try
             {
-                VMCliente vmUser = JsonConvert.DeserializeObject<VMCliente>(model);
+                var usuario_creado = await _clienteService.Add(_mapper.Map<Cliente>(model));
 
-                var usuario_creado = await _clienteService.Add(_mapper.Map<Cliente>(vmUser));
-
-                vmUser = _mapper.Map<VMCliente>(usuario_creado);
+                model = _mapper.Map<VMCliente>(usuario_creado);
 
                 gResponse.State = true;
-                gResponse.Object = vmUser;
+                gResponse.Object = model;
             }
             catch (Exception ex)
             {
@@ -351,6 +353,83 @@ namespace PointOfSale.Controllers
             try
             {
                 gResponse.State = await _clienteService.Delete(idCliente);
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+        public IActionResult Proveedor()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetProveedor()
+        {
+            var listProveedor = _mapper.Map<List<VMProveedor>>(await _proveedorService.List());
+            return StatusCode(StatusCodes.Status200OK, new { data = listProveedor });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateProveedor([FromBody] VMProveedor model)
+        {
+            var gResponse = new GenericResponse<VMProveedor>();
+            try
+            {
+                var usuario_creado = await _proveedorService.Add(_mapper.Map<Proveedor>(model));
+
+                model = _mapper.Map<VMProveedor>(usuario_creado);
+
+                gResponse.State = true;
+                gResponse.Object = model;
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateProveedor([FromBody] VMProveedor vmUser)
+        {
+            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+
+            var gResponse = new GenericResponse<VMProveedor>();
+            try
+            {
+                var user_edited = await _proveedorService.Edit(_mapper.Map<Proveedor>(vmUser));
+
+                vmUser = _mapper.Map<VMProveedor>(user_edited);
+
+                gResponse.State = true;
+                gResponse.Object = vmUser;
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteProveedor(int idProveedor)
+        {
+            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+
+            var gResponse = new GenericResponse<string>();
+            try
+            {
+                gResponse.State = await _proveedorService.Delete(idProveedor);
             }
             catch (Exception ex)
             {

@@ -100,7 +100,7 @@ namespace PointOfSale.Business.Services
                 User user_found = await _repository.Get(u => u.IdUsers == idUser);
 
                 if (user_found == null)
-                    throw new TaskCanceledException("Username no existe");
+                    throw new TaskCanceledException("Userno existe");
       
                 bool response = await _repository.Delete(user_found);
 

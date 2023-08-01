@@ -88,7 +88,7 @@ namespace PointOfSale.Business.Services
                 TypeDocumentSale TypeDocumentSale_found = await _repository.Get(u => u.IdTypeDocumentSale == idTypeDocumentSale);
 
                 if (TypeDocumentSale_found == null)
-                    throw new TaskCanceledException("TypeDocumentSalename no existe");
+                    throw new TaskCanceledException("TypeDocumentSaleno existe");
 
                 bool response = await _repository.Delete(TypeDocumentSale_found);
 

@@ -33,7 +33,7 @@ namespace PointOfSale.Business.Services
 
             try
             {
-
+                entity.RegistrationDate = DateTime.Now;
                 Cliente Cliente_created = await _repository.Add(entity);
 
                 if (Cliente_created.IdCliente == 0)
@@ -84,7 +84,7 @@ namespace PointOfSale.Business.Services
                 Cliente Cliente_found = await _repository.Get(u => u.IdCliente == idCliente);
 
                 if (Cliente_found == null)
-                    throw new TaskCanceledException("Cliente name no existe");
+                    throw new TaskCanceledException("Cliente no existe");
 
                 bool response = await _repository.Delete(Cliente_found);
 

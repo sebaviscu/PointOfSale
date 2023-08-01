@@ -235,9 +235,15 @@ namespace PointOfSale.Utilities.Automapper
 
             CreateMap<VMTurno, Turno>();
 
+
             CreateMap<Cliente, VMCliente>();
 
             CreateMap<VMCliente, Cliente>();
+
+
+            CreateMap<Proveedor, VMProveedor>();
+
+            CreateMap<VMProveedor, Proveedor>();
         }
     }
 }

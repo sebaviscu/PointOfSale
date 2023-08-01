@@ -23,5 +23,8 @@ namespace PointOfSale.Model
         public int TipoVenta { get; set; }
 
         public virtual Category? IdCategoryNavigation { get; set; }
+
+        public int? IdProveedor { get; set; }
+        public Proveedor? Proveedor { get; set; }
     }
 }

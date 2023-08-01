@@ -31,6 +31,7 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<Turno> Turno { get; set; } = null!;
         public virtual DbSet<Cliente> Clientes { get; set; } = null!;
         public virtual DbSet<ClienteMovimiento> ClienteMovimientos { get; set; } = null!;
+        public virtual DbSet<Proveedor> Proveedor { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -38,6 +39,19 @@ namespace PointOfSale.Data.DBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<Proveedor>(entity =>
+            {
+                entity.HasKey(e => e.IdProveedor);
+
+                entity.ToTable("Proveedor");
+
+                entity.Property(e => e.RegistrationDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("registrationDate")
+                    .HasDefaultValueSql("(getdate())");
+            });
+
             modelBuilder.Entity<ClienteMovimiento>(entity =>
             {
                 entity.HasKey(e => e.IdClienteMovimiento);
@@ -290,6 +304,11 @@ namespace PointOfSale.Data.DBContext
                     .WithMany(p => p.Products)
                     .HasForeignKey(d => d.IdCategory)
                     .HasConstraintName("FK__Product__idCateg__22AA2996");
+
+
+                entity.HasOne(d => d.Proveedor)
+                    .WithMany(p => p.Products)
+                    .HasForeignKey(d => d.IdProveedor);
             });
 
             modelBuilder.Entity<Rol>(entity =>

@@ -76,13 +76,9 @@ namespace PointOfSale.Controllers
 
                 ClaimsPrincipal claimuser = HttpContext.User;
 
-                string idUsuario = claimuser.Claims
-                        .Where(c => c.Type == ClaimTypes.NameIdentifier)
-                        .Select(c => c.Value).SingleOrDefault();
+                string idUsuario = claimuser.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).Select(c => c.Value).SingleOrDefault();
 
-				string idTurno = claimuser.Claims
-		                .Where(c => c.Type == "Turno")
-		                .Select(c => c.Value).SingleOrDefault();
+				string idTurno = claimuser.Claims.Where(c => c.Type == "Turno").Select(c => c.Value).SingleOrDefault();
 
 				model.IdUsers = int.Parse(idUsuario);
 				model.IdTurno = int.Parse(idTurno);
