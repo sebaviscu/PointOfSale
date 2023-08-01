@@ -8,10 +8,19 @@ namespace PointOfSale.Model
 {
     public partial class ClienteMovimiento
     {
+        public ClienteMovimiento(int idCliente, decimal total, string registrationUser, int? idSale)
+        {
+            IdCliente = idCliente;
+            IdSale = idSale;
+            Total = total;
+            RegistrationDate = DateTime.Now;
+            RegistrationUser = registrationUser;
+        }
+
         public int IdClienteMovimiento { get; set; }
         public int IdCliente { get; set; }
         public int? IdSale { get; set; }
-        public float Total { get; set; }
+        public decimal Total { get; set; }
         public DateTime RegistrationDate { get; set; }
         public string RegistrationUser { get; set; }
         public Cliente Cliente { get; set; }

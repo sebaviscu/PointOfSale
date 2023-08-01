@@ -21,7 +21,7 @@ namespace PointOfSale.Business.Services
         public async Task<List<Proveedor>> List()
         {
             IQueryable<Proveedor> query = await _repository.Query();
-            return query.ToList();
+            return query.OrderBy(_ => _.Nombre).ToList();
         }
 
         public async Task<Proveedor> Add(Proveedor entity)

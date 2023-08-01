@@ -22,13 +22,13 @@ namespace PointOfSale.Business.Services
         public async Task<List<TypeDocumentSale>> List()
         {
             IQueryable<TypeDocumentSale> query = await _repository.Query();
-            return query.ToList();
+            return query.OrderBy(_ => _.Description).ToList();
         }
 
         public async Task<List<TypeDocumentSale>> GetActive()
         {
             IQueryable<TypeDocumentSale> query = await _repository.Query(u => u.IsActive == true);
-            return query.ToList();
+            return query.OrderBy(_ => _.Description).ToList();
         }
 
         public async Task<TypeDocumentSale> Add(TypeDocumentSale entity)

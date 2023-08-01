@@ -23,7 +23,6 @@ namespace PointOfSale.Data.Repository
 
         public async Task<Sale> Register(Sale entity)
         {
-
             Sale SaleGenerated = new Sale();
             using (var transaction = _dbcontext.Database.BeginTransaction())
             {

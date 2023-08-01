@@ -87,10 +87,6 @@ namespace PointOfSale.Utilities.Automapper
             .ForMember(destiny =>
                 destiny.Price,
                 opt => opt.MapFrom(source => Convert.ToString(source.Price.Value, new CultureInfo("es-PE")))
-            )
-            .ForMember(destiny =>
-                destiny.PhotoBase64,
-                opt => opt.MapFrom(source => Convert.ToBase64String(source.Photo))
             ).ForMember(destiny =>
                 destiny.PhotoBase64,
                 opt => opt.MapFrom(source => Convert.ToBase64String(source.Photo))

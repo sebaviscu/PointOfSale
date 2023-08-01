@@ -21,7 +21,7 @@ namespace PointOfSale.Business.Services
         public async Task<List<Product>> List()
         {
             IQueryable<Product> query = await _repository.Query();
-            return query.Include(c => c.IdCategoryNavigation).Include(_=>_.Proveedor).ToList();
+            return query.Include(c => c.IdCategoryNavigation).Include(_=>_.Proveedor).OrderBy(_=>_.Description).ToList();
         }
         public async Task<Product> Add(Product entity)
         {

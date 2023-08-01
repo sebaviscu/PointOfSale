@@ -13,5 +13,7 @@ namespace PointOfSale.Business.Contracts
         Task<Cliente> Add(Cliente entity);
         Task<Cliente> Edit(Cliente entity);
         Task<bool> Delete(int idUser);
+
+        Task<ClienteMovimiento> RegistrarMovimiento(int idCliente, decimal total, string registrationUser, int? idSale);
     }
 }

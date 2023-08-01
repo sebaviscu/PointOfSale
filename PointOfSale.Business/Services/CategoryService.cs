@@ -22,7 +22,7 @@ namespace PointOfSale.Business.Services
         public async Task<List<Category>> List()
         {
             IQueryable<Category> query = await _repository.Query();
-            return query.ToList();
+            return query.OrderBy(_ => _.Description).ToList();
         }
 
         public async Task<Category> Add(Category entity)

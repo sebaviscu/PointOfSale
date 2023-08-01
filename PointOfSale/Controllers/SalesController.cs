@@ -9,24 +9,27 @@ using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
 using System.Security.Claims;
+using static PointOfSale.Business.Utilities.Enum;
 
 namespace PointOfSale.Controllers
 {
     [Authorize]
     public class SalesController : BaseController
-	{
+    {
         private readonly ITypeDocumentSaleService _typeDocumentSaleService;
         private readonly ISaleService _saleService;
         private readonly IMapper _mapper;
         private readonly IConverter _converter;
+        private readonly IClienteService _clienteService;
 
         public SalesController(ITypeDocumentSaleService typeDocumentSaleService,
-            ISaleService saleService, IMapper mapper, IConverter converter)
+            ISaleService saleService, IMapper mapper, IConverter converter, IClienteService clienteService)
         {
             _typeDocumentSaleService = typeDocumentSaleService;
             _saleService = saleService;
             _mapper = mapper;
             _converter = converter;
+            _clienteService = clienteService;
         }
         public IActionResult NewSale()
         {
@@ -70,6 +73,8 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> RegisterSale([FromBody] VMSale model)
         {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado, Roles.Empleado });
+
             GenericResponse<VMSale> gResponse = new GenericResponse<VMSale>();
             try
             {
@@ -78,12 +83,21 @@ namespace PointOfSale.Controllers
 
                 string idUsuario = claimuser.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).Select(c => c.Value).SingleOrDefault();
 
-				string idTurno = claimuser.Claims.Where(c => c.Type == "Turno").Select(c => c.Value).SingleOrDefault();
+                string idTurno = claimuser.Claims.Where(c => c.Type == "Turno").Select(c => c.Value).SingleOrDefault();
 
-				model.IdUsers = int.Parse(idUsuario);
-				model.IdTurno = int.Parse(idTurno);
+                model.IdUsers = int.Parse(idUsuario);
+                model.IdTurno = int.Parse(idTurno);
 
-				Sale sale_created = await _saleService.Register(_mapper.Map<Sale>(model));
+                Sale sale_created = await _saleService.Register(_mapper.Map<Sale>(model));
+
+                if (model.ClientId.HasValue)
+                {
+                    await _clienteService.RegistrarMovimiento(model.ClientId.Value,
+                        decimal.Parse(model.Total.Replace('.', ',')),
+                        user.UserName,
+                        sale_created.IdSale);
+                }
+
                 model = _mapper.Map<VMSale>(sale_created);
 
                 gResponse.State = true;
@@ -103,7 +117,7 @@ namespace PointOfSale.Controllers
         public async Task<IActionResult> History(string saleNumber, string startDate, string endDate)
         {
 
-            List<VMSale> vmHistorySale= _mapper.Map<List<VMSale>>(await _saleService.SaleHistory(saleNumber, startDate, endDate));
+            List<VMSale> vmHistorySale = _mapper.Map<List<VMSale>>(await _saleService.SaleHistory(saleNumber, startDate, endDate));
             return StatusCode(StatusCodes.Status200OK, vmHistorySale);
         }
 

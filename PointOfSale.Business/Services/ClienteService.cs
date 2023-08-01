@@ -12,16 +12,18 @@ namespace PointOfSale.Business.Services
     public class ClienteService : IClienteService
     {
         private readonly IGenericRepository<Cliente> _repository;
+        private readonly IGenericRepository<ClienteMovimiento> _clienteMovimiento;
 
-        public ClienteService(IGenericRepository<Cliente> repository)
+        public ClienteService(IGenericRepository<Cliente> repository, IGenericRepository<ClienteMovimiento> clienteMovimiento)
         {
             _repository = repository;
+            _clienteMovimiento = clienteMovimiento;
         }
 
         public async Task<List<Cliente>> List()
         {
             IQueryable<Cliente> query = await _repository.Query();
-            return query.ToList();
+            return query.OrderBy(_ => _.Nombre).ToList();
         }
 
         public async Task<Cliente> Add(Cliente entity)
@@ -96,5 +98,10 @@ namespace PointOfSale.Business.Services
             }
         }
 
+        public async Task<ClienteMovimiento> RegistrarMovimiento(int idCliente, decimal total, string registrationUser, int? idSale)
+        {
+            var mc = new ClienteMovimiento(idCliente, total, registrationUser, idSale);
+            return await _clienteMovimiento.Add(mc);
+        }
     }
 }

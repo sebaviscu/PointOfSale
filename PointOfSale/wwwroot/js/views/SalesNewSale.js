@@ -15,7 +15,9 @@ $(document).ready(function () {
         .then(response => {
             return response.ok ? response.json() : Promise.reject(response);
         }).then(responseJson => {
-
+            $("#cboTypeDocumentSale").append(
+                $("<option>").val('').text('')
+            )
             //borrar los options de cboTipoDocumentoVenta
             if (responseJson.length > 0) {
                 responseJson.forEach((item) => {
@@ -124,11 +126,17 @@ $(document).on("click", "button.finalizeSale", function () {
         return;
     }
 
+    if (document.getElementById("cboTypeDocumentSale" + currentTabId).value == '') {
+        const msg = `Debe completaro el campo Tipo de Venta`;
+        toastr.warning(msg, "");
+        return;
+    }
+
     const vmDetailSale = currentTab.products;
 
     const sale = {
         idTypeDocumentSale: $("#cboTypeDocumentSale" + currentTabId).val(),
-        clientId: $("#cboCliente" + currentTabId).val(),
+        clientId: $("#cboCliente" + currentTabId).val() != '' ? $("#cboCliente" + currentTabId).val() : null,
         total: $("#txtTotal" + currentTabId).val(),
         detailSales: vmDetailSale
     }
@@ -147,9 +155,6 @@ $(document).on("click", "button.finalizeSale", function () {
 
         if (responseJson.state) {
 
-            //showProducts_Prices();
-            //$("#txtDocumentClient").val("");
-            //$("#txtNameClient").val("");
             $("#cboTypeDocumentSale").val($("#cboTypeDocumentSale option:first").val());
 
             AllTabsForSale = AllTabsForSale.filter(p => p.idTab != currentTabId)
@@ -278,7 +283,8 @@ function addFunctions(idTab) {
                             brand: item.brand,
                             category: item.nameCategory,
                             photoBase64: item.photoBase64,
-                            price: parseFloat(item.price)
+                            price: parseFloat(item.price),
+                            tipoVenta: item.tipoVenta
                         }
                     ))
                 };
@@ -304,7 +310,10 @@ function addFunctions(idTab) {
             }
             currentTab.products = currentTab.products.filter(p => p.idproduct != data.id)
         }
-
+        if (data.tipoVenta == 2) {
+            setNewProduct(1, quantity_product_found, data, currentTab, idTab);
+            return;
+        }
         swal({
             title: data.text,
             text: data.brand,
@@ -326,21 +335,7 @@ function addFunctions(idTab) {
                 return false
             }
 
-            let totalQuantity = parseFloat(value) + parseFloat(quantity_product_found);
-
-            let product = {
-                idproduct: data.id,
-                brandproduct: data.brand,
-                descriptionproduct: data.text,
-                categoryproducty: data.category,
-                quantity: totalQuantity,
-                price: data.price.toString(),
-                total: (totalQuantity * data.price).toString()
-            }
-
-            currentTab.products.push(product);
-
-            showProducts_Prices(idTab, currentTab);
+            setNewProduct(value, quantity_product_found, data, currentTab, idTab);
 
             $('#cboSearchProduct' + idTab).val("").trigger('change');
             $('#cboSearchProduct' + idTab).select2('open');
@@ -350,7 +345,38 @@ function addFunctions(idTab) {
 
 }
 
+function setNewProduct(value, quantity_product_found, data, currentTab, idTab) {
+
+    let totalQuantity = parseFloat(value) + parseFloat(quantity_product_found);
+
+    let product = {
+        idproduct: data.id,
+        brandproduct: data.brand,
+        descriptionproduct: data.text,
+        categoryproducty: data.category,
+        quantity: totalQuantity,
+        price: data.price.toString(),
+        total: (totalQuantity * data.price).toString()
+    };
+
+    currentTab.products.push(product);
+
+    showProducts_Prices(idTab, currentTab);
+    $('#cboSearchProduct' + idTab).val("").trigger('change');
+    $('#cboSearchProduct' + idTab).select2('open');
+}
+
 function lastTab() {
     var tabFirst = $('#tab-list button:last');
     tabFirst.tab('show');
+}
+
+function hiddenCliente() {
+    var value = document.getElementById("card-cliente").hidden;
+    if (value) {
+        $("#card-cliente").attr("hidden", false);
+    }
+    else {
+        $("#card-cliente").attr("hidden", true);
+    }
 }

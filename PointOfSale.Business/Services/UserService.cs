@@ -21,7 +21,7 @@ namespace PointOfSale.Business.Services
         public async Task<List<User>> List()
         {
             IQueryable<User> query = await _repository.Query();
-            return query.Include(r => r.IdRolNavigation).Include(t=>t.Tienda).ToList();
+            return query.Include(r => r.IdRolNavigation).Include(t=>t.Tienda).OrderBy(_ => _.Name).ToList();
         }
         public async Task<User> Add(User entity)
         {
