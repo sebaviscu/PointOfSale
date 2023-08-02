@@ -103,5 +103,12 @@ namespace PointOfSale.Business.Services
             var mc = new ClienteMovimiento(idCliente, total, registrationUser, idSale);
             return await _clienteMovimiento.Add(mc);
         }
+
+
+        public async Task<List<ClienteMovimiento>> ListMovimientoscliente(int idCliente)
+        {
+            IQueryable<ClienteMovimiento> query = await _clienteMovimiento.Query(u => u.IdCliente == idCliente);
+            return query.OrderBy(_ => _.RegistrationUser).ToList();
+        }
     }
 }

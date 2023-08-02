@@ -246,6 +246,11 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<VMCliente, Cliente>();
 
 
+            CreateMap<ClienteMovimiento, VMClienteMovimiento>();
+
+            CreateMap<VMClienteMovimiento, ClienteMovimiento>();
+
+
             CreateMap<Proveedor, VMProveedor>();
 
             CreateMap<VMProveedor, Proveedor>();

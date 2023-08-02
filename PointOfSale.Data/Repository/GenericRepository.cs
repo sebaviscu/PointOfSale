@@ -16,6 +16,8 @@ namespace PointOfSale.Data.Repository
         {
             _dbcontext = context;
         }
+
+
         public async Task<TEntity> Get(Expression<Func<TEntity, bool>> filter)
         {
             try
@@ -77,5 +79,11 @@ namespace PointOfSale.Data.Repository
             IQueryable<TEntity> queryentity = filter == null ? _dbcontext.Set<TEntity>() : _dbcontext.Set<TEntity>().Where(filter);
             return queryentity;
         }
+
+        public IQueryable<TEntity> SqlRaw(string query)
+        {
+            return _dbcontext.Set<TEntity>().FromSqlRaw(query);
+        }
+
     }
 }

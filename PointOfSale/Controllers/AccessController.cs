@@ -12,10 +12,13 @@ namespace PointOfSale.Controllers
     {
         private readonly IUserService _userService;
         private readonly ITurnoService _turnoService;
-        public AccessController(IUserService userService, ITurnoService turnoService)
+        private readonly ITiendaService _tiendaService;
+
+        public AccessController(IUserService userService, ITurnoService turnoService, ITiendaService tiendaService)
         {
             _userService = userService;
             _turnoService = turnoService;
+            _tiendaService = tiendaService;
         }
 
         public IActionResult Login()
@@ -36,17 +39,26 @@ namespace PointOfSale.Controllers
                 ViewData["Message"] = "No matches found";
                 return View();
             }
+            int idTienda;
+            var tiendas = await _tiendaService.List();
 
-            if (model.TiendaId == null && user_found.IdRol == 1)
+            if (tiendas.Count == 1)
             {
-                model.IsAdmin = true;
-                return View(model);
+                idTienda = tiendas.First().IdTienda;
+            }
+            else
+            {
+                if (model.TiendaId == null && user_found.IdRol == 1)
+                {
+                    model.IsAdmin = true;
+                    return View(model);
+                }
+
+                idTienda = (int)(user_found.IsAdmin() ? model.TiendaId.Value : user_found.IdTienda);
             }
 
-            var idTienda = user_found.IsAdmin() ? model.TiendaId.Value : user_found.IdTienda;
-
             await _turnoService.CheckTurnosViejos();
-            var turno = await _turnoService.GetTurno(idTienda.Value, user_found.Name);
+            var turno = await _turnoService.GetTurno(idTienda, user_found.Name);
 
             List<Claim> claims = new List<Claim>()
                 {

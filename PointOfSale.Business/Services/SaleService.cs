@@ -25,18 +25,32 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<Product>> GetProducts(string search)
         {
-            var split = search.Split(' ');
-            IQueryable<Product> query = await _repositoryProduct.Query(p =>
-           p.IsActive == true &&
-           string.Concat(p.BarCode, p.Brand, p.Description).Contains(search)
-           );
+            var list = new List<Product>();
+            if (search.Contains(' '))
+            {
+                var split = search.Split(' ');
+                var query = "select * from Product where ";
+                for (int i = 0; i < split.Length; i++)
+                {
+                    query += $"description LIKE '%{split[i]}%' ";
+                    if (i < split.Length - 1) query += " and ";
+                }
+                list = _repositoryProduct.SqlRaw(query).ToList();
+            }
+            else
+            {
+                IQueryable<Product> query = await _repositoryProduct.Query(p =>
+                           p.IsActive == true &&
+                           string.Concat(p.BarCode, p.Description).Contains(search));
 
-            return query.Include(c => c.IdCategoryNavigation).ToList();
+                list = query.Include(c => c.IdCategoryNavigation).ToList();
+            }
+
+            return list;
         }
 
         public async Task<List<Cliente>> GetClients(string search)
         {
-            var split = search.Split(' ');
             IQueryable<Cliente> query = await _repositoryCliente.Query(p =>
            string.Concat(p.Cuil, p.Nombre).Contains(search));
 
@@ -108,5 +122,25 @@ namespace PointOfSale.Business.Services
         }
 
 
+        public async Task<Sale> Edit(Sale entity)
+        {
+            try
+            {
+                Sale sale_found = await _repositorySale.Get(c => c.IdSale == entity.IdSale);
+
+                sale_found.IdClienteMovimiento = entity.IdClienteMovimiento;
+
+                bool response = await _repositorySale.Edit(entity);
+
+                if (!response)
+                    throw new TaskCanceledException("Venta no se pudo cambiar.");
+
+                return sale_found;
+            }
+            catch
+            {
+                throw;
+            }
+        }
     }
 }

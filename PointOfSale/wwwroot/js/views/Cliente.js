@@ -72,7 +72,82 @@ const openModal = (model = BASIC_MODEL) => {
         $("#txtModificadoUsuario").val(model.modificationUser);
     }
 
+    $('#tbMovimientos tbody').html("")
+
+    fetch("/Admin/GetMovimientoCliente?idCliente=" + model.idCliente, {
+        method: "GET",
+        headers: { 'Content-Type': 'application/json;charset=utf-8' }
+    }).then(response => {
+        $("#modalData").find("div.modal-content").LoadingOverlay("hide")
+        return response.ok ? response.json() : Promise.reject(response);
+    }).then(responseJson => {
+        var totalCli = 0;
+        if (responseJson.data.length > 0) {
+
+            responseJson.data.forEach((item) => {
+
+                totalCli = totalCli + parseFloat(item.total);
+
+                $('#tbMovimientos tbody').append(
+                    $("<tr>").append(
+                        $("<td>").text("$ " + item.total),
+                        $("<td>").text(item.registrationDate),
+                        $("<td>").text(item.registrationUser),
+                        $("<td>").append(
+                            $("<button>").addClass("btn btn-danger btn-delete btn-sm").append(
+                                $("<i>").addClass("mdi mdi-trash-can")
+                            ).data("idSale", item.idSale)
+                        )
+                    )
+                )
+
+            })
+
+        }
+    }).catch((error) => {
+    })
+
+    //var url = '/Admin/GetMovimientoCliente?idCliente=' + model.idCliente;
+    //tableData = $("#tbMovimientos").DataTable({
+    //    responsive: true,
+    //    "ajax": {
+    //        "url": url,
+    //        "type": "GET",
+    //        "datatype": "json"
+    //    },
+    //    "columns": [
+    //        {
+    //            "data": "idCliente",
+    //            "visible": false,
+    //            "searchable": false
+    //        },
+    //        { "data": "total" },
+    //        { "data": "registrationDate" },
+    //        { "data": "registrationUser" },
+    //        {
+    //            "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>',
+    //            "orderable": false,
+    //            "searchable": false,
+    //            "width": "80px"
+    //        }
+    //    ],
+    //    order: [[0, "desc"]],
+    //    dom: "Bfrtip",
+    //    buttons: [
+    //        {
+    //            text: 'Exportar Excel',
+    //            extend: 'excelHtml5',
+    //            title: '',
+    //            filename: 'Reporte Clientes',
+    //            exportOptions: {
+    //                columns: [1, 2]
+    //            }
+    //        }, 'pageLength'
+    //    ]
+    //});
+
     $("#modalData").modal("show")
+
 }
 
 $("#btnNew").on("click", function () {

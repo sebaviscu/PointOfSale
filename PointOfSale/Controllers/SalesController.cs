@@ -53,7 +53,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProducts(string search)
         {
-            List<VMProduct> vmListProducts = _mapper.Map<List<VMProduct>>(await _saleService.GetProducts(search));
+            List<VMProduct> vmListProducts = _mapper.Map<List<VMProduct>>(await _saleService.GetProducts(search.Trim()));
             return StatusCode(StatusCodes.Status200OK, vmListProducts);
         }
 
@@ -92,10 +92,13 @@ namespace PointOfSale.Controllers
 
                 if (model.ClientId.HasValue)
                 {
-                    await _clienteService.RegistrarMovimiento(model.ClientId.Value,
+                    var mov = await _clienteService.RegistrarMovimiento(model.ClientId.Value,
                         decimal.Parse(model.Total.Replace('.', ',')),
                         user.UserName,
                         sale_created.IdSale);
+
+                    sale_created.IdClienteMovimiento = mov.IdClienteMovimiento;
+                    sale_created = await _saleService.Edit(sale_created);
                 }
 
                 model = _mapper.Map<VMSale>(sale_created);

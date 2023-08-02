@@ -52,7 +52,7 @@
 
 <!-- Grid Modal -->
 <div class="modal fade" id="modalData" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalGridTitle">Detalle Clientes</h5>
@@ -64,7 +64,7 @@
                 <form>
                     <input type="hidden" value="0" id="txtId">
                     <div class="row">
-                        <div class="col-sm-12">
+                        <div class="col-sm-6">
                             <div class="form-row">
                                 <div class="form-group col-sm-6">
                                     <label for="txtNombre">Nombre</label>
@@ -93,6 +93,24 @@
                                 <div class="form-group col-sm-6">
                                     <label for="txtModificadoUsuario">Por:</label>
                                     <input type="text" class="form-control form-control-sm" id="txtModificadoUsuario" name="usuarioModificado" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <table id="tbMovimientos" class="table" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Total</th>
+                                                <th>Fecha</th>
+                                                <th>Registrado por</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>

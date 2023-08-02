@@ -17,5 +17,7 @@ namespace PointOfSale.Business.Contracts
         Task<List<Sale>> SaleHistory(string SaleNumber, string StarDate, string EndDate);
         Task<Sale> Detail(string SaleNumber);
         Task<List<DetailSale>> Report(string StarDate, string EndDate);
+
+        Task<Sale> Edit(Sale entity);
     }
 }

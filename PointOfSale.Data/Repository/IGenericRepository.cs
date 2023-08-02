@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PointOfSale.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -14,5 +15,7 @@ namespace PointOfSale.Data.Repository
         Task<bool> Edit(TEntity entity);
         Task<bool> Delete(TEntity entity);
         Task<IQueryable<TEntity>> Query(Expression<Func<TEntity, bool>> filter = null);
+
+        IQueryable<TEntity> SqlRaw(string query);
     }
 }

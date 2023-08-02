@@ -15,5 +15,6 @@ namespace PointOfSale.Business.Contracts
         Task<bool> Delete(int idUser);
 
         Task<ClienteMovimiento> RegistrarMovimiento(int idCliente, decimal total, string registrationUser, int? idSale);
+        Task<List<ClienteMovimiento>> ListMovimientoscliente(int idCliente);
     }
 }

@@ -292,9 +292,16 @@ namespace PointOfSale.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetCliente()
+        public async Task<IActionResult> GetCliente(int idCliente)
         {
             var listUsers = _mapper.Map<List<VMCliente>>(await _clienteService.List());
+            return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetMovimientoCliente(int idCliente)
+        {
+            var listUsers = _mapper.Map<List<VMClienteMovimiento>>(await _clienteService.ListMovimientoscliente(idCliente));
             return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
         }
 
@@ -323,11 +330,12 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateCliente([FromBody] VMCliente vmUser)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
 
             var gResponse = new GenericResponse<VMCliente>();
             try
             {
+                vmUser.ModificationUser = user.UserName;
                 var user_edited = await _clienteService.Edit(_mapper.Map<Cliente>(vmUser));
 
                 vmUser = _mapper.Map<VMCliente>(user_edited);

@@ -36,14 +36,14 @@ function formatResults(data) {
         return data.text;
 
     var container = $(
-        `<table width="100%">
+        `<table width="90%">
             <tr>
                 <td style="width:60px">
                     <img style="height:60px;width:60px;margin-right:10px" src="data:image/png;base64,${data.photoBase64}"/>
                 </td>
                 <td>
                     <p style="font-weight: bolder;margin:2px">${data.text}</p>
-                    <p style="margin:2px">${data.brand}</p>
+                    <p>$ ${data.price}</p>
                 </td>
             </tr>
          </table>`
