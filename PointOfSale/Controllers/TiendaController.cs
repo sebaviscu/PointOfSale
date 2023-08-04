@@ -6,7 +6,7 @@ using PointOfSale.Business.Contracts;
 using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
-using static PointOfSale.Business.Utilities.Enum;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Controllers
 {

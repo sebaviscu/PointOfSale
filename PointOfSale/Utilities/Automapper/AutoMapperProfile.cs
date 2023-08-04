@@ -254,6 +254,17 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<Proveedor, VMProveedor>();
 
             CreateMap<VMProveedor, Proveedor>();
+
+
+            CreateMap<Promocion, VMPromocion>()
+                .ForMember(user => user.IdCategory, opt => opt.MapFrom(userEdit => userEdit.IdCategory.Split(",", System.StringSplitOptions.None)))
+                .ForMember(user => user.Dias, opt => opt.MapFrom(userEdit => userEdit.Dias.Split(",", System.StringSplitOptions.None)));;
+
+            CreateMap<VMPromocion, Promocion>()
+                .ForMember(userEdit => userEdit.IdCategory, opt => opt.MapFrom(user => string.Join(", ", user.IdCategory)))
+                .ForMember(userEdit => userEdit.Dias, opt => opt.MapFrom(user => string.Join(", ", user.Dias)));
+
+
         }
     }
 }

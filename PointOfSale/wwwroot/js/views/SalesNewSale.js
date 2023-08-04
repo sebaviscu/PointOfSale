@@ -138,7 +138,8 @@ $(document).on("click", "button.finalizeSale", function () {
         idTypeDocumentSale: $("#cboTypeDocumentSale" + currentTabId).val(),
         clientId: $("#cboCliente" + currentTabId).val() != '' ? $("#cboCliente" + currentTabId).val() : null,
         total: $("#txtTotal" + currentTabId).val(),
-        detailSales: vmDetailSale
+        detailSales: vmDetailSale,
+        tipoMovimiento: $("#cboCliente" + currentTabId).val() != '' ? 2 : null
     }
 
     $("#btnFinalizeSale" + currentTabId).closest("div.card-body").LoadingOverlay("show")

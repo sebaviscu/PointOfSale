@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Model
 {
@@ -25,6 +26,7 @@ namespace PointOfSale.Model
         public string RegistrationUser { get; set; }
         public Cliente Cliente { get; set; }
         public Sale? Sale { get; set; }
+        public TipoMovimientoCliente TipoMovimiento { get; set; }
 
     }
 }

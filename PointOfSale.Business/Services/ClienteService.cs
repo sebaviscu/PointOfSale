@@ -1,4 +1,5 @@
-﻿using PointOfSale.Business.Contracts;
+﻿using Microsoft.EntityFrameworkCore;
+using PointOfSale.Business.Contracts;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
 using System;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services
 {
@@ -65,7 +67,7 @@ namespace PointOfSale.Business.Services
                 Cliente_edit.Telefono = entity.Telefono;
                 Cliente_edit.Direccion = entity.Direccion;
                 Cliente_edit.ModificationDate = DateTime.Now;
-                Cliente_edit.ModificationUser= entity.ModificationUser;
+                Cliente_edit.ModificationUser = entity.ModificationUser;
 
                 bool response = await _repository.Edit(Cliente_edit);
                 if (!response)
@@ -98,9 +100,10 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task<ClienteMovimiento> RegistrarMovimiento(int idCliente, decimal total, string registrationUser, int? idSale)
+        public async Task<ClienteMovimiento> RegistrarMovimiento(int idCliente, decimal total, string registrationUser, int? idSale, TipoMovimientoCliente tipo)
         {
             var mc = new ClienteMovimiento(idCliente, total, registrationUser, idSale);
+            mc.TipoMovimiento = tipo;
             return await _clienteMovimiento.Add(mc);
         }
 
@@ -108,7 +111,13 @@ namespace PointOfSale.Business.Services
         public async Task<List<ClienteMovimiento>> ListMovimientoscliente(int idCliente)
         {
             IQueryable<ClienteMovimiento> query = await _clienteMovimiento.Query(u => u.IdCliente == idCliente);
-            return query.OrderBy(_ => _.RegistrationUser).ToList();
+            var result = query.OrderByDescending(_ => _.RegistrationUser).ToList();
+            result.Where(_ => _.TipoMovimiento == TipoMovimientoCliente.Egreso).ToList().ForEach(_ =>
+            {
+                _.Total = _.Total * -1;
+            }
+            );
+            return query.ToList();
         }
     }
 }

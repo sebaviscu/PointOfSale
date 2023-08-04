@@ -95,23 +95,50 @@
                                     <input type="text" class="form-control form-control-sm" id="txtModificadoUsuario" name="usuarioModificado" readonly>
                                 </div>
                             </div>
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h4>Ingresar a Cuenta Corriente</h4>
+                                </div>
+                                <div class="form-row py-3">
+                                    <div class="input-group input-group-sm col-sm-5">
+                                        <div class="input-group-prepend">
+                                            <label class="input-group-text" for="cboTypeDocumentSale">Tipo</label>
+                                        </div>
+                                        <select class="form-control" id="cboTypeDocumentSale">
+                                        </select>
+                                    </div>
+                                    <div class="input-group input-group-sm col-sm-4">
+                                        <div class="input-group-prepend">
+                                            <label class="input-group-text" for="txtImporte">Importe</label>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm" id="txtImporte" name="importe">
+                                    </div>
+                                    <div class="input-group input-group-sm col-sm-3">
+                                        <button class="btn btn-success btn-sm w-100 finalizeSale" id="btnFinalizeSale">Finalizar venta</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label class="input-group" for="txtTotal">Total:</label>
+                                <input type="text" class="form-control form-control-sm" id="txtTotal" name="total">
+                            </div>
+
+
                         </div>
 
                         <div class="col-sm-6">
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <table id="tbMovimientos" class="table" style="width:100%">
-                                        <thead>
-                                            <tr>
-                                                <th>Total</th>
-                                                <th>Fecha</th>
-                                                <th>Registrado por</th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody></tbody>
-                                    </table>
-                                </div>
+                            <div class="col-sm-12">
+                                <table id="tbMovimientos" class="table" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Total</th>
+                                            <th>Fecha</th>
+                                            <th>Registrado por</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
                             </div>
                         </div>
                     </div>

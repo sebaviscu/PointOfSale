@@ -32,6 +32,7 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<Cliente> Clientes { get; set; } = null!;
         public virtual DbSet<ClienteMovimiento> ClienteMovimientos { get; set; } = null!;
         public virtual DbSet<Proveedor> Proveedor { get; set; } = null!;
+        public virtual DbSet<Promocion> Promocion { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -39,6 +40,17 @@ namespace PointOfSale.Data.DBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Promocion>(entity =>
+            {
+                entity.HasKey(e => e.IdPromocion);
+
+                entity.ToTable("Promocion");
+
+                entity.Property(e => e.RegistrationDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("registrationDate")
+                    .HasDefaultValueSql("(getdate())");
+            });
 
             modelBuilder.Entity<Proveedor>(entity =>
             {

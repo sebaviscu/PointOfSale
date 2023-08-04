@@ -18,5 +18,6 @@ namespace PointOfSale.Model
 		public string? ModificationUser { get; set; }
 
 		public virtual ICollection<Product> Products { get; set; }
+
     }
 }

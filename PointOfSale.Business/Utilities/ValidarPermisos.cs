@@ -8,9 +8,9 @@ namespace PointOfSale.Business.Utilities
 {
 	public class ValidarPermisos
 	{
-		public static bool IsValid(int rol, Enum.Roles[] rolesPermitidos)
+		public static bool IsValid(int rol, Model.Enum.Roles[] rolesPermitidos)
 		{
-			return rolesPermitidos.Contains((Enum.Roles)rol);
+			return rolesPermitidos.Contains((Model.Enum.Roles)rol);
 		}
 	}
 }

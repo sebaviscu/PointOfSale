@@ -7,7 +7,7 @@ using PointOfSale.Business.Services;
 using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
-using static PointOfSale.Business.Utilities.Enum;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Controllers
 {
@@ -20,6 +20,7 @@ namespace PointOfSale.Controllers
         private readonly ITypeDocumentSaleService _typeDocumentSaleService;
         private readonly IClienteService _clienteService;
         private readonly IProveedorService _proveedorService;
+        private readonly IPromocionService _promocionService;
         private readonly IMapper _mapper;
 
         public AdminController(
@@ -29,7 +30,8 @@ namespace PointOfSale.Controllers
             ITypeDocumentSaleService typeDocumentSaleService,
             IClienteService clienteService,
             IProveedorService proveedorService,
-            IMapper mapper)
+            IMapper mapper,
+            IPromocionService promocionService)
         {
             _dashboardService = dashboardService;
             _userService = userService;
@@ -38,6 +40,7 @@ namespace PointOfSale.Controllers
             _typeDocumentSaleService = typeDocumentSaleService;
             _clienteService = clienteService;
             _proveedorService = proveedorService;
+            _promocionService = promocionService;
         }
 
         public IActionResult DashBoard()
@@ -438,6 +441,94 @@ namespace PointOfSale.Controllers
             try
             {
                 gResponse.State = await _proveedorService.Delete(idProveedor);
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+
+        public IActionResult Promociones()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPromociones()
+        {
+            try
+            {
+            var listPromocion = _mapper.Map<List<VMPromocion>>(await _promocionService.List());
+            return StatusCode(StatusCodes.Status200OK, new { data = listPromocion });
+
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+            return default;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreatePromociones([FromBody] VMPromocion model)
+        {
+            var gResponse = new GenericResponse<VMPromocion>();
+            try
+            {
+                var usuario_creado = await _promocionService.Add(_mapper.Map<Promocion>(model));
+
+                model = _mapper.Map<VMPromocion>(usuario_creado);
+
+                gResponse.State = true;
+                gResponse.Object = model;
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdatePromociones([FromBody] VMPromocion vmUser)
+        {
+            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+
+            var gResponse = new GenericResponse<VMPromocion>();
+            try
+            {
+                var user_edited = await _promocionService.Edit(_mapper.Map<Promocion>(vmUser));
+
+                vmUser = _mapper.Map<VMPromocion>(user_edited);
+
+                gResponse.State = true;
+                gResponse.Object = vmUser;
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeletePromociones(int idPromocion)
+        {
+            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+
+            var gResponse = new GenericResponse<string>();
+            try
+            {
+                gResponse.State = await _promocionService.Delete(idPromocion);
             }
             catch (Exception ex)
             {

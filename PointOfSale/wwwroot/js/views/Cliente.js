@@ -15,6 +15,21 @@ const BASIC_MODEL = {
 
 $(document).ready(function () {
 
+    fetch("/Sales/ListTypeDocumentSale")
+        .then(response => {
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+            $("#cboTypeDocumentSale").append(
+                $("<option>").val('').text('')
+            )
+            if (responseJson.length > 0) {
+                responseJson.forEach((item) => {
+                    $("#cboTypeDocumentSale").append(
+                        $("<option>").val(item.idTypeDocumentSale).text(item.description)
+                    )
+                });
+            }
+        })
 
     tableData = $("#tbData").DataTable({
         responsive: true,
@@ -87,11 +102,12 @@ const openModal = (model = BASIC_MODEL) => {
             responseJson.data.forEach((item) => {
 
                 totalCli = totalCli + parseFloat(item.total);
+                var registrationDate = new Date(item.registrationDate);
 
                 $('#tbMovimientos tbody').append(
                     $("<tr>").append(
                         $("<td>").text("$ " + item.total),
-                        $("<td>").text(item.registrationDate),
+                        $("<td>").text(registrationDate.toLocaleString()),
                         $("<td>").text(item.registrationUser),
                         $("<td>").append(
                             $("<button>").addClass("btn btn-danger btn-delete btn-sm").append(
@@ -103,6 +119,7 @@ const openModal = (model = BASIC_MODEL) => {
 
             })
 
+            $("#txtTotal").val(totalCli);
         }
     }).catch((error) => {
     })
@@ -287,4 +304,53 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                     })
             }
         });
+})
+
+
+$(document).on("click", "button.finalizeSale", function () {
+    if (document.getElementById("cboTypeDocumentSale").value == '') {
+        const msg = `Debe completaro el campo Tipo de Venta`;
+        toastr.warning(msg, "");
+        return;
+    }
+
+    if (document.getElementById("txtImporte").value == '') {
+        const msg = `Debe completaro el campo Importe`;
+        toastr.warning(msg, "");
+        return;
+    }
+
+    const sale = {
+        idTypeDocumentSale: $("#cboTypeDocumentSale").val(),
+        clientId: $("#txtId").val(),
+        total: $("#txtImporte").val(),
+        tipoMovimiento: 1
+    }
+
+    $("#btnFinalizeSale").closest("div.card-body").LoadingOverlay("show")
+
+    fetch("/Sales/RegisterSale", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json;charset=utf-8' },
+        body: JSON.stringify(sale)
+    }).then(response => {
+
+        $("#btnFinalizeSale").closest("div.card-body").LoadingOverlay("hide")
+        return response.ok ? response.json() : Promise.reject(response);
+    }).then(responseJson => {
+
+        if (responseJson.state) {
+
+            $("#cboTypeDocumentSale").val($("#cboTypeDocumentSale option:first").val());
+
+            swal("Registrado!", "success");
+
+        } else {
+            swal("Lo sentimos", "La venta no fué registrada", "error");
+        }
+    }).catch((error) => {
+        $("#btnFinalizeSale").closest("div.card-body").LoadingOverlay("hide")
+    })
+
+
 })

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Contracts
 {
@@ -14,7 +15,7 @@ namespace PointOfSale.Business.Contracts
         Task<Cliente> Edit(Cliente entity);
         Task<bool> Delete(int idUser);
 
-        Task<ClienteMovimiento> RegistrarMovimiento(int idCliente, decimal total, string registrationUser, int? idSale);
+        Task<ClienteMovimiento> RegistrarMovimiento(int idCliente, decimal total, string registrationUser, int? idSale, TipoMovimientoCliente tipo);
         Task<List<ClienteMovimiento>> ListMovimientoscliente(int idCliente);
     }
 }

@@ -9,7 +9,7 @@ using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
 using System.Security.Claims;
-using static PointOfSale.Business.Utilities.Enum;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Controllers
 {
@@ -78,7 +78,6 @@ namespace PointOfSale.Controllers
             GenericResponse<VMSale> gResponse = new GenericResponse<VMSale>();
             try
             {
-
                 ClaimsPrincipal claimuser = HttpContext.User;
 
                 string idUsuario = claimuser.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).Select(c => c.Value).SingleOrDefault();
@@ -92,10 +91,12 @@ namespace PointOfSale.Controllers
 
                 if (model.ClientId.HasValue)
                 {
-                    var mov = await _clienteService.RegistrarMovimiento(model.ClientId.Value,
+                    var mov = await _clienteService.RegistrarMovimiento(
+                        model.ClientId.Value,
                         decimal.Parse(model.Total.Replace('.', ',')),
                         user.UserName,
-                        sale_created.IdSale);
+                        sale_created.IdSale,
+                        model.TipoMovimiento.Value);
 
                     sale_created.IdClienteMovimiento = mov.IdClienteMovimiento;
                     sale_created = await _saleService.Edit(sale_created);

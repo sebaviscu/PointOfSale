@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PointOfSale.Business.Utilities;
 using System.Security.Claims;
-using static PointOfSale.Business.Utilities.Enum;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Controllers
 {
