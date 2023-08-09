@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using PointOfSale.Business.Contracts;
+using PointOfSale.Business.Services;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
 using PointOfSale.Models;
@@ -18,13 +19,15 @@ namespace PointOfSale.Controllers
 	{
 		private readonly ICategoryService _categoryService;
 		private readonly IProductService _productService;
-		private readonly IMapper _mapper;
-		public InventoryController(ICategoryService categoryService, IProductService productService, IMapper mapper)
+        private readonly ISaleService _saleService;
+        private readonly IMapper _mapper;
+		public InventoryController(ICategoryService categoryService, IProductService productService, IMapper mapper, ISaleService saleService)
 		{
 			_categoryService = categoryService;
 			_productService = productService;
 			_mapper = mapper;
-		}
+            _saleService = saleService;
+        }
 
 		public IActionResult Categories()
 		{
@@ -217,5 +220,19 @@ namespace PointOfSale.Controllers
 			return StatusCode(StatusCodes.Status200OK, gResponse);
 		}
 
-	}
+        [HttpGet]
+        public async Task<IActionResult> GetProductsSearch(string search)
+		{
+            List<VMProduct> vmListProducts = _mapper.Map<List<VMProduct>>(await _saleService.GetProducts(search.Trim()));
+            return StatusCode(StatusCodes.Status200OK, vmListProducts);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetCategoriesSearch(string search)
+			{
+            List<VMCategory> vmListCategories = _mapper.Map<List<VMCategory>>(await _categoryService.GetCategoriesSearch(search.Trim()));
+            return StatusCode(StatusCodes.Status200OK, vmListCategories);
+        }
+    }
 }

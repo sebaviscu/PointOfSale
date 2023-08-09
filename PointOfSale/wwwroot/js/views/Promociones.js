@@ -29,7 +29,7 @@ $(document).ready(function () {
 
     $('#cboCategoria').select2({
         ajax: {
-            url: "/Inventory/GetCategories",
+            url: "/Inventory/GetCategoriesSearch",
             dataType: 'json',
             contentType: "application/json; charset=utf-8",
             delay: 250,
@@ -40,7 +40,7 @@ $(document).ready(function () {
             },
             processResults: function (data) {
                 return {
-                    results: data.data.map((item) => (
+                    results: data.map((item) => (
                         {
                             id: item.idCategory,
                             text: item.description,
@@ -51,12 +51,15 @@ $(document).ready(function () {
         },
         allowClear: true,
         multiple: true,
-        placeholder: 'Buscar categorias...'
+        placeholder: 'Buscar categorias...',
+        debug: true,
+        minimumInputLength: 1,
+        dropdownParent: $('#modalData .modal-content')
     });
 
     $('#cboProducto').select2({
         ajax: {
-            url: "/Inventory/GetProducts",
+            url: "/Inventory/GetProductsSearch",
             dataType: 'json',
             contentType: "application/json; charset=utf-8",
             delay: 250,
@@ -67,7 +70,7 @@ $(document).ready(function () {
             },
             processResults: function (data) {
                 return {
-                    results: data.data.map((item) => (
+                    results: data.map((item) => (
                         {
                             id: item.idProduct,
                             text: item.description,
@@ -78,14 +81,19 @@ $(document).ready(function () {
         },
         allowClear: true,
         debug: true,
-        placeholder: 'Buscar producto...'
+        placeholder: 'Buscar producto...',
+        minimumInputLength: 1,
+        dropdownParent: $('#modalData .modal-content')
+
     });
 
     $('#cboDias').select2({
         allowClear: true,
+        debug: true,
         data: dataDays,
         multiple: true,
-        placeholder: 'Buscar dias...'
+        placeholder: 'Buscar dias...',
+        dropdownParent: $('#modalData .modal-content')
     });
 
     tableData = $("#tbData").DataTable({
@@ -115,7 +123,7 @@ $(document).ready(function () {
                     '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-trash-can"></i></button>',
                 "orderable": false,
                 "searchable": false,
-                "width": "80px"
+                "width": "110px"
             }
         ],
         order: [[0, "desc"]],
@@ -134,6 +142,7 @@ $(document).ready(function () {
     });
 })
 
+
 $("#btnNew").on("click", function () {
     openModal()
 })
@@ -147,14 +156,13 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtId").val(model.idPromocion);
     $("#txtNombre").val(model.nombre);
     $("#cboState").val(model.isActive ? 1 : 0);
-    $("#cboProducto").val(model.idProducto == 0 ? null : model.idProducto).trigger("change");
+    $("#cboProducto").select2().val(model.idProducto == 0 ? null : model.idProducto).trigger("change");
     $("#cboOperador").val(model.operador);
     $("#txtCantidad").val(model.cantidadProducto);
-    $("#cboCategoria").val(model.idCategory == 0 ? null : model.idCategory).trigger("change");
-    $("#cboDias").val(model.dias == 0 ? null : model.dias).trigger("change");
+    $("#cboCategoria").select2().val(model.idCategory == 0 ? null : model.idCategory).trigger("change");
+    $("#cboDias").select2().val(model.dias == 0 ? null : model.dias).trigger("change");
     $("#txtPrecio").val(model.precio);
     $("#txtPorcentaje").val(model.porcentaje);
-
 
     if (model.modificationUser === null)
         document.getElementById("divModif").style.display = 'none';
@@ -181,11 +189,11 @@ $("#btnSave").on("click", function () {
         return;
     }
 
-    if ($("#cboProducto").val() != null && ($("#cboOperador").val() == '' || $("#txtCantidad").val() == '')) { 
-        const msg = `Debe completar los campos Operador y Cantidad`;
-        toastr.warning(msg, "");
-        return;
-    }
+    //if ($("#cboProducto").val() != null && ($("#cboOperador").val() == '' || $("#txtCantidad").val() == '')) { 
+    //    const msg = `Debe completar los campos Operador y Cantidad`;
+    //    toastr.warning(msg, "");
+    //    return;
+    //}
 
 
     if ($("#cboProducto").val() == null) {

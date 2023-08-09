@@ -11,7 +11,7 @@ using PointOfSale.Model;
 
 namespace PointOfSale.Business.Services
 {
-    public class CategoryService:ICategoryService
+    public class CategoryService : ICategoryService
     {
         private readonly IGenericRepository<Category> _repository;
         public CategoryService(IGenericRepository<Category> repository)
@@ -49,10 +49,10 @@ namespace PointOfSale.Business.Services
 
                 category_found.Description = entity.Description;
                 category_found.IsActive = entity.IsActive;
-				category_found.ModificationDate = DateTime.Now;
-				category_found.ModificationUser = entity.ModificationUser;
+                category_found.ModificationDate = DateTime.Now;
+                category_found.ModificationUser = entity.ModificationUser;
 
-				bool response = await _repository.Edit(category_found);
+                bool response = await _repository.Edit(category_found);
 
                 if (!response)
                     throw new TaskCanceledException("Category no se pudo cambiar.");
@@ -85,7 +85,24 @@ namespace PointOfSale.Business.Services
             }
         }
 
-      
+        public async Task<List<Category>> GetCategoriesSearch(string search)
+        {
+            try
+            {
+
+            IQueryable<Category> query = await _repository.Query(p =>
+                       p.IsActive == true && p.Description.Contains(search));
+
+            var s = query.OrderBy(_=>_.Description).ToList();
+                return s;
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+            return default;
+        }
 
     }
 }

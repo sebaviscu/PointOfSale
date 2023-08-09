@@ -460,18 +460,15 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPromociones()
         {
-            try
-            {
             var listPromocion = _mapper.Map<List<VMPromocion>>(await _promocionService.List());
             return StatusCode(StatusCodes.Status200OK, new { data = listPromocion });
+        }
 
-            }
-            catch (Exception e)
-            {
-
-                throw;
-            }
-            return default;
+        [HttpGet]
+        public async Task<IActionResult> GetPromocionesActivas()
+        {
+            var listPromocion = _mapper.Map<List<VMPromocion>>(await _promocionService.Activas());
+            return StatusCode(StatusCodes.Status200OK, new { data = listPromocion });
         }
 
         [HttpPost]

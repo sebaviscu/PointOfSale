@@ -3,6 +3,7 @@ var originalTab = document.getElementById('nuevaVenta');
 let AllTabsForSale = [];
 var buttonCerrarTab = '<button class="close" type="button" title="Cerrar tab">×</button>';
 var tabID = 0;
+var promociones = [];
 
 const ProducstTab = {
     idTab: 0,
@@ -27,6 +28,13 @@ $(document).ready(function () {
                 });
             }
             newTab();
+        })
+
+    fetch("/Admin/GetPromocionesActivas")
+        .then(response => {
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+            promociones = responseJson.data;
         })
 })
 
@@ -81,11 +89,11 @@ $(document).on('select2:open', () => {
 
 function showProducts_Prices(idTab, currentTab) {
     let total = 0;
-
+    let row = 0;
     $('#tbProduct' + idTab + ' tbody').html("")
 
     currentTab.products.forEach((item) => {
-
+        item.row = row;
         total = total + parseFloat(item.total);
 
         $('#tbProduct' + idTab + ' tbody').append(
@@ -93,26 +101,29 @@ function showProducts_Prices(idTab, currentTab) {
                 $("<td>").append(
                     $("<button>").addClass("btn btn-danger btn-delete btn-sm").append(
                         $("<i>").addClass("mdi mdi-trash-can")
-                    ).data("idproduct", item.idproduct).data("idTab", idTab)
+                    ).data("idproduct", item.idproduct).data("idTab", idTab).data("row", row)
                 ),
                 $("<td>").text(item.descriptionproduct),
                 $("<td>").text(item.quantity),
                 $("<td>").text("$ " + item.price),
-                $("<td>").text("$ " + item.total)
+                $("<td>").text("$ " + item.total),
+                $("<td>").append(item.promocion != null ?
+                    $("<i>").addClass("mdi mdi-percent").attr("data-toggle", "tooltip").attr("title", item.promocion) : "")
             )
         )
-
+        row++;
     })
 
     $('#txtTotal' + idTab).val(total.toFixed(2))
 }
 
 $(document).on("click", "button.btn-delete", function () {
-    const _idproduct = $(this).data("idproduct");
     const currentTabId = $(this).data("idTab");
+    const row = $(this).data("row");
 
     var currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
-    currentTab.products = currentTab.products.filter(p => p.idproduct != _idproduct)
+
+    currentTab.products.splice(row, 1);
 
     showProducts_Prices(currentTabId, currentTab);
 })
@@ -203,7 +214,7 @@ function newTab() {
     $('#tab-content').append($('<div class="tab-pane fade" id="tab' + tabID + '">    </div>'));
 
 
-    var clone = originalTab.cloneNode(true); // "deep" clone
+    var clone = originalTab.cloneNode(true);
     clone.id = "nuevaVenta" + tabID;
     clone.querySelector("#cboSearchProduct").id = "cboSearchProduct" + tabID;
     clone.querySelector("#tbProduct").id = "tbProduct" + tabID;
@@ -304,12 +315,12 @@ function addFunctions(idTab) {
 
         if (currentTab.products.length !== 0) {
 
-            let product_found = currentTab.products.filter(prod => prod.idproduct == data.id)
-            if (product_found.length > 0) {
+            let product_found = currentTab.products.filter(prod => prod.idproduct == data.id && prod.promocion == null)
+            if (product_found.length == 1) {
 
                 quantity_product_found = product_found[0].quantity;
+                currentTab.products.splice(product_found.row, 1);
             }
-            currentTab.products = currentTab.products.filter(p => p.idproduct != data.id)
         }
         if (data.tipoVenta == 2) {
             setNewProduct(1, quantity_product_found, data, currentTab, idTab);
@@ -328,7 +339,7 @@ function addFunctions(idTab) {
 
             if (value === "") {
                 toastr.warning("", "debes ingresar el monto");
-                return false
+                return;
             }
 
             if (isNaN(parseInt(value))) {
@@ -346,18 +357,23 @@ function addFunctions(idTab) {
 
 }
 
-function setNewProduct(value, quantity_product_found, data, currentTab, idTab) {
+function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
 
-    let totalQuantity = parseFloat(value) + parseFloat(quantity_product_found);
+    let totalQuantity = parseFloat(cant) + parseFloat(quantity_product_found);
+    data.total = totalQuantity * data.price;
+    data.quantity = totalQuantity;
+
+    data = applayPromociones(totalQuantity, data, currentTab);
 
     let product = {
         idproduct: data.id,
         brandproduct: data.brand,
         descriptionproduct: data.text,
         categoryproducty: data.category,
-        quantity: totalQuantity,
+        quantity: data.quantity,
         price: data.price.toString(),
-        total: (totalQuantity * data.price).toString()
+        total: (data.total).toString(),
+        promocion: data.promocion
     };
 
     currentTab.products.push(product);
@@ -365,6 +381,145 @@ function setNewProduct(value, quantity_product_found, data, currentTab, idTab) {
     showProducts_Prices(idTab, currentTab);
     $('#cboSearchProduct' + idTab).val("").trigger('change');
     $('#cboSearchProduct' + idTab).select2('open');
+}
+
+function applayPromociones(totalQuantity, data, currentTab) {
+    let promPorProducto = promociones.find(item => item.idProducto == data.id);
+
+    if (promPorProducto != null) {
+        if (promPorProducto.idProducto != null && promPorProducto.idCategory.length == 0 && promPorProducto.dias.length == 0) { // producto
+            data = applyForProduct(promPorProducto, totalQuantity, data, currentTab);
+
+        } else if (promPorProducto.idProducto != null && promPorProducto.idCategory.length != 0 && promPorProducto.dias.length == 0) { //producto categoria
+            if (containsCategoria(idCategory, data.idCategory)) {
+                data = applyForProduct(promPorProducto, totalQuantity, data, currentTab);
+            }
+
+        } else if (promPorProducto.idProducto != null && promPorProducto.idCategory.length == 0 && promPorProducto.dias.length != 0) { // producto dia
+            if (containsDias(promPorProducto.dias)) {
+                data = applyForProduct(promPorProducto, totalQuantity, data, currentTab);
+            }
+
+        } else if (promPorProducto.idProducto != null && promPorProducto.idCategory.length != 0 && promPorProducto.dias.length != 0) { // producto categoria dia
+            if (containsDias(promPorProducto.dias) && containsCategoria(idCategory, data.idCategory)) {
+                data = applyForProduct(promPorProducto, totalQuantity, data, currentTab);
+            }
+        }
+    }
+
+    let promPorCat = promociones.find(item => item.idCategory.includes(data.idCategory));
+
+    if (promPorCat != null) {
+        if (promPorCat.idProducto == null && promPorCat.idCategory.length != 0 && promPorCat.dias.length == 0) { // categoria
+            if (containsCategoria(idCategory, data.idCategory)) {
+                data = calcularPrecioPorcentaje(data, promPorCat, totalQuantity);
+                data.promocion = promPorCat.nombre;
+            }
+
+        }
+        if (promPorCat.idProducto == null && promPorCat.idCategory.length != 0 && promPorCat.dias.length != 0) { // categoria dia
+            if (containsDias(promPorCat.dias) && containsCategoria(idCategory, data.idCategory)) {
+                data = calcularPrecioPorcentaje(data, promPorCat, totalQuantity);
+                data.promocion = promPorCat.nombre;
+            }
+        }
+    }
+
+    let currentdate = new Date();
+    let today = currentdate.getDay().toString();
+
+    let promPorDia = promociones.find(item => item.dias.includes(today));
+
+    if (promPorDia != null) {
+        if (promPorDia.idProducto == null && promPorDia.idCategory.length == 0 && promPorDia.dias.length != 0) { // dia
+            data = calcularPrecioPorcentaje(data, promPorDia, totalQuantity);
+            data.promocion = promPorDia.nombre;
+        }
+    }
+
+    return data;
+}
+
+function containsCategoria(cat, catProducto) {
+    if (cat.includes(catProducto))
+        true;
+    false
+}
+
+function containsDias(dias) {
+
+    let currentdate = new Date();
+    let today = currentdate.getDay().toString();
+
+    if (dias.includes(today))
+        true;
+    false
+}
+
+function applyForProduct(prom, totalQuantity, data, currentTab) {
+    let applay = false;
+
+    switch (prom.operador) {
+        case 0:
+            if (totalQuantity < prom.cantidadProducto)
+                return data;
+
+            let diffDividido = totalQuantity % prom.cantidadProducto;
+
+            if (diffDividido == 0) {
+                data = calcularPrecioPorcentaje(data, prom, totalQuantity);
+                applay = true;
+
+            } else if (diffDividido > 0) {
+                let newProd = {
+                    idproduct: data.id,
+                    brandproduct: data.brand,
+                    descriptionproduct: data.text,
+                    categoryproducty: data.category,
+                    quantity: diffDividido,
+                    price: data.price.toString(),
+                    total: data.price * diffDividido
+                };
+                currentTab.products.push(newProd);
+
+                let difCant = totalQuantity - diffDividido;
+                data = calcularPrecioPorcentaje(data, prom, difCant);
+
+                applay = true;
+            }
+
+            break;
+
+        case 1:
+            if (totalQuantity > prom.cantidadProducto) {
+                data = calcularPrecioPorcentaje(data, prom, totalQuantity);
+                applay = true;
+            }
+            break;
+    }
+
+
+    if (applay)
+        data.promocion = prom.nombre;
+
+    return data;
+}
+
+function calcularPrecioPorcentaje(data, prom, totalQuantity) {
+    let precio = 0;
+
+    if (prom.precio != null) {
+        precio = prom.precio;
+    }
+    else if (prom.porcentaje != null) {
+        precio = data.price * (1 - (prom.porcentaje / 100));
+    }
+
+    data.total = precio * totalQuantity;
+    data.price = precio;
+    data.quantity = totalQuantity;
+
+    return data;
 }
 
 function lastTab() {

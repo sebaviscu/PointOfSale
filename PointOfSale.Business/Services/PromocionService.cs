@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PointOfSale.Business.Services
 {
-    public class PromocionService: IPromocionService
+    public class PromocionService : IPromocionService
     {
         private readonly IGenericRepository<Promocion> _repository;
 
@@ -21,6 +21,12 @@ namespace PointOfSale.Business.Services
         public async Task<List<Promocion>> List()
         {
             IQueryable<Promocion> query = await _repository.Query();
+            return query.OrderBy(_ => _.Nombre).ToList();
+        }
+
+        public async Task<List<Promocion>> Activas()
+        {
+            IQueryable<Promocion> query = await _repository.Query(_ => _.IsActive);
             return query.OrderBy(_ => _.Nombre).ToList();
         }
 
@@ -93,6 +99,5 @@ namespace PointOfSale.Business.Services
                 throw;
             }
         }
-
     }
 }

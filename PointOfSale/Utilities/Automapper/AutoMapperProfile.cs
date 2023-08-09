@@ -264,7 +264,6 @@ namespace PointOfSale.Utilities.Automapper
                 .ForMember(userEdit => userEdit.IdCategory, opt => opt.MapFrom(user => string.Join(", ", user.IdCategory)))
                 .ForMember(userEdit => userEdit.Dias, opt => opt.MapFrom(user => string.Join(", ", user.Dias)));
 
-
         }
     }
 }
