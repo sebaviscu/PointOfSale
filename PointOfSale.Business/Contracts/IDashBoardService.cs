@@ -1,8 +1,10 @@
-﻿using System;
+﻿using PointOfSale.Business.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Contracts
 {
@@ -12,7 +14,8 @@ namespace PointOfSale.Business.Contracts
         Task<string> TotalIncomeLastWeek();
         Task<int> TotalProducts();
         Task<int> TotalCategories();
-        Task<Dictionary<string, int>> SalesLastWeek();
-        Task<Dictionary<string, int>> ProductsTopLastWeek();
+        Task<GraficoVentasConComparacion> GetSales(TypeValuesDashboard typeValues);
+        Task<Dictionary<string, int>> ProductsTop(TypeValuesDashboard typeValues);
+        Task<Dictionary<string, decimal>> GetSalesByTypoVenta(TypeValuesDashboard typeValues);
     }
 }

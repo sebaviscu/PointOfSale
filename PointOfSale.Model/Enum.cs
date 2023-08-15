@@ -27,5 +27,22 @@ namespace PointOfSale.Model
             Egreso = 2
         }
 
+        public enum TypeValuesDashboard
+        {
+            Dia = 0,
+            Semana =1,
+            Mes= 2
+        }
+
+        public enum DiasSemana
+        {
+            Lunes = 1,
+            Martes = 2,
+            Miercoles = 3,
+            Jueves = 4,
+            Viernes = 5,
+            Sabado = 6,
+            Domingo = 7
+        }
     }
 }

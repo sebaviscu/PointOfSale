@@ -1,8 +1,8 @@
 ﻿namespace PointOfSale.Models
 {
-    public class VMSalesWeek
+    public class VMVentasPorTipoDeVenta
     {
-        //public string? Date { get; set; }
+        public string Descripcion { get; set; }
         public decimal Total { get; set; }
     }
 }

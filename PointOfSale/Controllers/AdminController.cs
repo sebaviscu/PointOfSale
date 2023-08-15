@@ -7,6 +7,7 @@ using PointOfSale.Business.Services;
 using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
+using System.Globalization;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Controllers
@@ -41,6 +42,8 @@ namespace PointOfSale.Controllers
             _clienteService = clienteService;
             _proveedorService = proveedorService;
             _promocionService = promocionService;
+
+
         }
 
         public IActionResult DashBoard()
@@ -54,31 +57,136 @@ namespace PointOfSale.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetSummary()
+        public async Task<IActionResult> GetSummary(TypeValuesDashboard typeValues)
         {
+            var vmDashboard = new VMDashBoard();
+
+            var ejeXint = new int[0];
+            var ejeX = new string[0];
+            var dateCompare = DateTime.Now;
+
+            switch (typeValues)
+            {
+                case TypeValuesDashboard.Dia:
+
+                    vmDashboard.Actual = "Hoy";
+                    vmDashboard.Anterior = "Ayer";
+                    vmDashboard.EjeXLeyenda = "Horas";
+                    break;
+                case TypeValuesDashboard.Semana:
+                    ejeXint = new int[7];
+                    ejeX = new string[7];
+                    dateCompare = DateTime.Now.AddDays(-(6 + (int)DateTime.Now.DayOfWeek));
+
+                    for (int i = 0; i < 7; i++)
+                    {
+                        ejeXint[i] = i;
+                        ejeX[i] = ((DiasSemana)i + 1).ToString();
+                    }
+
+                    vmDashboard.Actual = "Semana actual";
+                    vmDashboard.Anterior = "Semana pasada";
+                    vmDashboard.EjeXLeyenda = "Dias";
+
+                    break;
+                case TypeValuesDashboard.Mes:
+                    var cantDaysInMonth = DateTime.DaysInMonth(DateTime.Now.Date.Year, DateTime.Now.Date.Month);
+                    ejeXint = new int[cantDaysInMonth];
+                    ejeX = new string[cantDaysInMonth];
+                    dateCompare = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+
+                    for (int i = 0; i < cantDaysInMonth; i++)
+                    {
+                        ejeXint[i] = i;
+                        ejeX[i] = (i + 1).ToString();
+                    }
+                    vmDashboard.Actual = "Mes actual";
+                    vmDashboard.Anterior = "Mes pasado";
+                    vmDashboard.EjeXLeyenda = "Dias";
+                    break;
+            }
+
+
             GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
 
             try
             {
-                VMDashBoard vmDashboard = new VMDashBoard();
+                List<VMSalesWeek> listSales = new List<VMSalesWeek>();
+                List<VMSalesWeek> listSalesComparacion = new List<VMSalesWeek>();
 
-                vmDashboard.TotalSales = await _dashboardService.TotalSalesLastWeek();
-                vmDashboard.TotalIncome = "$ " + await _dashboardService.TotalIncomeLastWeek();
-                vmDashboard.TotalProducts = await _dashboardService.TotalProducts();
-                vmDashboard.TotalCategories = await _dashboardService.TotalCategories();
 
-                List<VMSalesWeek> listSalesWeek = new List<VMSalesWeek>();
-                List<VMProductsWeek> ProductListWeek = new List<VMProductsWeek>();
+                int i = 0;
+                var resultados = await _dashboardService.GetSales(typeValues);
 
-                foreach (KeyValuePair<string, int> item in await _dashboardService.SalesLastWeek())
+
+                switch (typeValues)
                 {
-                    listSalesWeek.Add(new VMSalesWeek()
-                    {
-                        Date = item.Key,
-                        Total = item.Value
-                    });
+                    case TypeValuesDashboard.Dia:
+                        var first = resultados.VentasComparacionHour.FirstOrDefault().Key;
+                        var last = resultados.VentasComparacionHour.Last().Key;
+                        ejeXint = new int[(last - first) + 1];
+                        ejeX = new string[(last - first) + 1];
+
+                        for (i = 0; i < (last - first) + 1; i++)
+                        {
+                            ejeXint[i] = (i + first);
+                            ejeX[i] = (i + first).ToString();
+                        }
+                        i = 0;
+
+                        foreach (KeyValuePair<int, decimal> item in resultados.VentasActualesHour)
+                        {
+                            while ((int)item.Key > ejeXint[i])
+                            {
+                                listSales.Add(new VMSalesWeek() { Total = 0m });
+                                i++;
+                            }
+
+                            listSales.Add(new VMSalesWeek() { Total = item.Value });
+
+                            i++;
+                        }
+
+                        listSalesComparacion.AddRange(GetSalesComparacionHour(ejeXint, dateCompare, resultados));
+
+                        break;
+                    case TypeValuesDashboard.Semana:
+                        foreach (KeyValuePair<DateTime, decimal> item in resultados.VentasActuales)
+                        {
+                            while ((int)item.Key.Date.DayOfWeek > (int)dateCompare.AddDays(ejeXint[i]).DayOfWeek)
+                            {
+                                listSales.Add(new VMSalesWeek() { Total = 0m });
+                                i++;
+                            }
+
+                            listSales.Add(new VMSalesWeek() { Total = item.Value });
+
+                            i++;
+                        }
+                        listSalesComparacion.AddRange(GetSalesComparacion(ejeXint, dateCompare, resultados));
+
+                        break;
+                    case TypeValuesDashboard.Mes:
+                        foreach (KeyValuePair<DateTime, decimal> item in resultados.VentasActuales)
+                        {
+                            while (item.Key.Date > dateCompare.AddDays(ejeXint[i]))
+                            {
+                                listSales.Add(new VMSalesWeek() { Total = 0m });
+                                i++;
+                            }
+
+                            listSales.Add(new VMSalesWeek() { Total = item.Value });
+
+                            i++;
+                        }
+                        listSalesComparacion.AddRange(GetSalesComparacion(ejeXint, dateCompare, resultados));
+
+                        break;
                 }
-                foreach (KeyValuePair<string, int> item in await _dashboardService.ProductsTopLastWeek())
+
+                var ProductListWeek = new List<VMProductsWeek>();
+
+                foreach (KeyValuePair<string, int> item in await _dashboardService.ProductsTop(typeValues))
                 {
                     ProductListWeek.Add(new VMProductsWeek()
                     {
@@ -87,8 +195,30 @@ namespace PointOfSale.Controllers
                     });
                 }
 
-                vmDashboard.SalesLastWeek = listSalesWeek;
+                vmDashboard.EjeX = ejeX;
+                vmDashboard.SalesList = listSales.Select(_ => _.Total).ToList();
+                vmDashboard.SalesListComparacion = listSalesComparacion.Select(_ => _.Total).ToList();
+
+
+                vmDashboard.TotalSales = "$ " + listSales.Sum(_ => _.Total);
+                vmDashboard.TotalSalesComparacion = "$ " + listSalesComparacion.Sum(_ => _.Total);
+
                 vmDashboard.ProductsTopLastWeek = ProductListWeek;
+                //vmDashboard.TotalIncome = "$ " + await _dashboardService.TotalIncomeLastWeek();
+                //vmDashboard.TotalProducts = await _dashboardService.TotalProducts();
+                //vmDashboard.TotalCategories = await _dashboardService.TotalCategories();
+
+                var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
+
+                foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetSalesByTypoVenta(typeValues))
+                {
+                    VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
+                    {
+                        Descripcion = item.Key,
+                        Total = item.Value
+                    });
+                }
+                vmDashboard.VentasPorTipoVenta = VentasPorTipoVenta;
 
                 gResponse.State = true;
                 gResponse.Object = vmDashboard;
@@ -100,6 +230,45 @@ namespace PointOfSale.Controllers
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+        private static List<VMSalesWeek> GetSalesComparacion(int[] ejeXint, DateTime dateCompare, GraficoVentasConComparacion resultados)
+        {
+            var lis = new List<VMSalesWeek>();
+            for (int x = 0; x < ejeXint.Length; x++)
+            {
+
+                var item = resultados.VentasComparacion.FirstOrDefault(_ => _.Key.Date.Day == dateCompare.AddDays(ejeXint[x]).Day);
+                if (item.Value == 0)
+                {
+                    lis.Add(new VMSalesWeek() { Total = 0m });
+                }
+                else
+                {
+                    lis.Add(new VMSalesWeek() { Total = item.Value });
+                }
+            }
+            return lis;
+        }
+
+        private static List<VMSalesWeek> GetSalesComparacionHour(int[] ejeXint, DateTime dateCompare, GraficoVentasConComparacion resultados)
+        {
+
+            var lis = new List<VMSalesWeek>();
+
+            for (int x = 0; x < ejeXint.Length; x++)
+            {
+                var item = resultados.VentasComparacionHour.FirstOrDefault(_ => _.Key == ejeXint[x]);
+                if (item.Value == 0)
+                {
+                    lis.Add(new VMSalesWeek() { Total = 0m });
+                }
+                else
+                {
+                    lis.Add(new VMSalesWeek() { Total = item.Value });
+                }
+            }
+            return lis;
         }
 
         [HttpGet]

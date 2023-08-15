@@ -2,11 +2,20 @@
 {
     public class VMDashBoard
     {
-        public int TotalSales { get; set; }
+        public string TotalSales { get; set; }
+        public string TotalSalesComparacion { get; set; }
         public string? TotalIncome { get; set; }
         public int TotalProducts { get; set; }
         public int TotalCategories { get; set; }
-        public List<VMSalesWeek> SalesLastWeek { get; set; }
+        public List<decimal> SalesList { get; set; }
+        public List<decimal> SalesListComparacion { get; set; }
         public List<VMProductsWeek> ProductsTopLastWeek { get; set; }
+        public List<VMVentasPorTipoDeVenta> VentasPorTipoVenta { get; set; }
+
+        public string[] EjeX { get; set; }
+        public string Actual { get; set; }
+        public string Anterior { get; set; }
+        public string EjeXLeyenda { get; set; }
+
     }
 }
