@@ -35,7 +35,9 @@
                                 <tr>
                                     <th></th>
                                     <th>Nombre</th>
-                                    <th>Estado</th>
+                                    <th>Cuil</th>
+                                    <th>Telefono</th>
+                                    <th>Agregar Pago</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -50,7 +52,7 @@
 
 <!-- Grid Modal -->
 <div class="modal fade" id="modalData" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalGridTitle">Detalle Proveedors</h5>
@@ -62,23 +64,26 @@
                 <form>
                     <input type="hidden" value="0" id="txtId">
                     <div class="row">
-                        <div class="col-sm-12">
+                        <div class="col-sm-4">
                             <div class="form-row">
-                                <div class="form-group col-sm-6">
+                                <div class="form-group col-sm-12">
                                     <label for="txtNombre">Nombre</label>
                                     <input type="text" class="form-control form-control-sm input-validate" id="txtNombre" name="Nombre">
                                 </div>
+                                
+                            </div>
+                            <div class="form-row">
                                 <div class="form-group col-sm-6">
                                     <label for="txtCuil">Cuil</label>
                                     <input type="text" class="form-control form-control-sm" id="txtCuil" name="Cuil">
                                 </div>
-                            </div>
-                            <div class="form-row">
                                 <div class="form-group col-sm-6">
                                     <label for="txtTelefono">Telefono</label>
                                     <input type="text" class="form-control form-control-sm" id="txtTelefono" name="telefono">
                                 </div>
-                                <div class="form-group col-sm-6">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-12">
                                     <label for="txtDireccion">Direccion</label>
                                     <input type="text" class="form-control form-control-sm" id="txtDireccion" name="Direccion">
                                 </div>
@@ -94,6 +99,23 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-sm-8">
+                            <div class="col-sm-12">
+                                <table id="tbMovimientos" class="table" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Importe</th>
+                                            <th>Tipo</th>
+                                            <th>Factura Nro.</th>
+                                            <th>Registrado por</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
 
                 </form>
@@ -107,6 +129,93 @@
         </div>
     </div>
 </div>
+
+
+<!-- Grid Modal Pago -->
+<div class="modal fade" id="modalPago" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalGridTitle">Ingresar Pago</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <input type="hidden" value="0" id="txtIdProveedor">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-row">
+                                <div class="form-group col-sm-4">
+                                    <label for="txtNombrePago">Nombre</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtNombrePago" name="Nombre" disabled>
+                                </div>
+                                <div class="form-group col-sm-3">
+                                    <label for="txtCuilPago">Cuil</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtCuilPago" name="Cuil" disabled>
+                                </div>
+                                <div class="form-group col-sm-5">
+                                    <label for="txtDireccionPago">Direccion</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtDireccionPago" name="Direccion" disabled>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-2">
+                                    <label for="cboTipoFactura">Tipo</label>
+                                    <select class="form-control form-control-sm" id="cboTipoFactura" name="Tipo Factura">
+                                        <option value=""></option>
+                                        <option value="0">A</option>
+                                        <option value="1">B</option>
+                                        <option value="2">C</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-sm-10">
+                                    <label for="txtNroFactura">Nro Factura</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtNroFactura" name="Factura">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-5">
+                                    <label for="txtIva">IVA</label>
+                                    <input type="number" class="form-control form-control-sm" id="txtIva" name="IVA">
+                                </div>
+                                <div class="form-group col-sm-7">
+                                    <label for="txtImporte">Importe</label>
+                                    <input type="number" class="form-control form-control-sm input-validate pagoValid" id="txtImporte" name="Importe">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-6">
+                                    <label for="txtImporteIva">Importe IVA</label>
+                                    <input type="number" class="form-control form-control-sm" id="txtImporteIva" name="Importe IVA">
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="txtImporteSinIva">Importe sin IVA</label>
+                                    <input type="number" class="form-control form-control-sm" id="txtImporteSinIva" name="Importe sin IVA">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-12">
+                                    <label for="txtComentario">Comentario</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="btnSavePago">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 @section Scripts{

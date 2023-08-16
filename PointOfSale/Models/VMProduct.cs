@@ -8,7 +8,7 @@
         public string? Description { get; set; }
         public int? IdCategory { get; set; }
         public string? NameCategory { get; set; }
-        public int? Quantity { get; set; }
+        public decimal? Quantity { get; set; }
         public string? Price { get; set; }
         public byte[]? Photo { get; set; }
         public string? PhotoBase64 { get; set; }

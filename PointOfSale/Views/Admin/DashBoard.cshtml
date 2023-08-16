@@ -38,8 +38,8 @@
     <!-- Total de ventas -->
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card border-left-primary shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row g-0 align-items-center">
+            <div class="card-body row">
+                <div class="row g-0 align-items-center col-md-6">
                     <div class="col me-2">
                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                             Total ventas
@@ -49,6 +49,9 @@
                     <div class="col-auto">
                         <i class="fas fa-shopping-basket fa-2x text-gray-300"></i>
                     </div>
+                </div>
+                <div class="col-md-6">
+                    <div id='containerMetodosPago'></div>
                 </div>
             </div>
         </div>
@@ -123,16 +126,14 @@
         <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
             <div class="card-header py-3">
-                <h6>Last week sales</h6>
+                <h6>Ventas</h6>
             </div>
             <!-- Card Body -->
             <div class="card-body">
                 @*                <div class="chart-area" style="height: 350px !important;">
                 <canvas id="charSales"></canvas>
                 </div>*@
-                <div id="chartVentas0"></div>
-                <div id="chartVentas1"></div>
-                <div id="chartVentas2"></div>
+                <div id="chartVentas"></div>
 
             </div>
         </div>
@@ -143,20 +144,24 @@
         <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
             <div class="card-header py-3">
-                <h6>Top selling products</h6>
+                <h6>Top Venta de Productos</h6>
             </div>
             <!-- Card Body -->
             <div class="card-body">
-                <div class="chart-pie" style="height: 350px !important ;">
-                    <canvas id="charProducts0"></canvas>
-                    <canvas id="charProducts1"></canvas>
-                    <canvas id="charProducts2"></canvas>
+                <div>
+                    <label for="cboCategory">Categoria</label>
+                    <select class="form-control form-control-sm" id="cboCategory">
+                    </select>
+                </div>
+                <div class="chart-pie" @*style="height: 350px !important ;"*@>
+                    <div id="charProducts"></div>
 
                 </div>
             </div>
         </div>
-    </div>  
+    </div>
 </div>
+
 
 @section Scripts{
     <script src="~/plugins/charts/Chart.min.js"></script>

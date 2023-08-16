@@ -86,6 +86,7 @@ namespace PointOfSale.Controllers
 
                 model.IdUsers = int.Parse(idUsuario);
                 model.IdTurno = int.Parse(idTurno);
+                model.IdTienda= user.IdTienda;
 
                 Sale sale_created = await _saleService.Register(_mapper.Map<Sale>(model));
 

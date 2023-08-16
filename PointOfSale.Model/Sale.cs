@@ -16,8 +16,6 @@ namespace PointOfSale.Model
         public int? IdUsers { get; set; }
         public string? CustomerDocument { get; set; }
         public string? ClientName { get; set; }
-        public decimal? Subtotal { get; set; }
-        public decimal? TotalTaxes { get; set; }
         public decimal? Total { get; set; }
         public DateTime? RegistrationDate { get; set; }
 
@@ -28,5 +26,6 @@ namespace PointOfSale.Model
         public Turno Turno { get; set; }
         public int? IdClienteMovimiento { get; set; }
         public ClienteMovimiento? ClienteMovimiento { get; set; }
+        public int IdTienda { get; set; }
     }
 }

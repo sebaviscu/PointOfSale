@@ -12,6 +12,16 @@ const BASIC_MODEL = {
     modificationUser: null
 }
 
+const BASIC_MODEL_PÂGO = {
+    idProveedor: 0,
+    tipoFactura: null,
+    nroFactura: null,
+    iva: 0,
+    ivaImporte: 0,
+    importe: 0,
+    importeSinIva: 0,
+    comentario: null
+}
 
 $(document).ready(function () {
 
@@ -30,6 +40,16 @@ $(document).ready(function () {
                 "searchable": false
             },
             { "data": "nombre" },
+            { "data": "cuil" },
+            { "data": "telefono" },
+            {
+                "defaultContent":
+                    '<button class="btn btn-info btn-sm btn-pago"><i class="mdi mdi-cash-usd"></i></button>',
+                "orderable": false,
+                "searchable": false,
+                "width": "100px",
+                "className": "text-center"
+            },
             {
                 "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
                     '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-trash-can"></i></button>',
@@ -70,6 +90,40 @@ const openModal = (model = BASIC_MODEL) => {
         $("#txtModificado").val(dateTimeModif.toLocaleString());
         $("#txtModificadoUsuario").val(model.modificationUser);
     }
+    $('#tbMovimientos tbody').html("")
+
+    fetch("/Admin/GetMovimientoProveedor?idProveedor=" + model.idProveedor, {
+        method: "GET",
+        headers: { 'Content-Type': 'application/json;charset=utf-8' }
+    }).then(response => {
+        $("#modalData").find("div.modal-content").LoadingOverlay("hide")
+        return response.ok ? response.json() : Promise.reject(response);
+    }).then(responseJson => {
+        if (responseJson.data.length > 0) {
+
+            responseJson.data.forEach((item) => {
+
+                var registrationDate = new Date(item.registrationDate);
+
+                $('#tbMovimientos tbody').append(
+                    $("<tr>").append(
+                        $("<td>").text(registrationDate.toLocaleString()),
+                        $("<td>").text("$ " + item.importe),
+                        $("<td>").text(item.TipoFactura),
+                        $("<td>").text(item.NroFactura),
+                        $("<td>").text(item.registrationUser),
+                        $("<td>").append(
+                            $("<button>").addClass("btn btn-info btn-delete btn-sm").append(
+                                $("<i>").addClass("mdi mdi-eye")
+                            ).data("idSale", item.idSale)
+                        )
+                    )
+                )
+            })
+
+        }
+    }).catch((error) => {
+    })
 
     $("#modalData").modal("show")
 }
@@ -147,6 +201,75 @@ $("#btnSave").on("click", function () {
     }
 
 })
+
+$("#tbData tbody").on("click", ".btn-pago", function () {
+
+    if ($(this).closest('tr').hasClass('child')) {
+        rowSelected = $(this).closest('tr').prev();
+    } else {
+        rowSelected = $(this).closest('tr');
+    }
+
+    const data = tableData.row(rowSelected).data();
+
+    openModalPago(data);
+})
+
+
+$("#btnSavePago").on("click", function () {
+    const inputs = $("input.input-validate.pagoValid").serializeArray();
+    const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
+
+    if (inputs_without_value.length > 0) {
+        const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
+        toastr.warning(msg, "");
+        $(`input[name="${inputs_without_value[0].name}"]`).focus();
+        return;
+    }
+
+    const model = structuredClone(BASIC_MODEL_PÂGO);
+    model["idProveedor"] = $("#txtIdProveedor").val();
+    model["tipoFactura"] = $("#cboTipoFactura").val();
+    model["nroFactura"] = $("#txtNroFactura").val();
+    model["iva"] = $("#txtIva").val() != '' ? $("#txtIva").val() : 0;
+    model["ivaImporte"] = $("#txtImporteIva").val() != '' ? $("#txtImporteIva").val() : 0;
+    model["importe"] = $("#txtImporte").val();
+    model["importeSinIva"] = $("#txtImporteSinIva").val() != '' ? $("#txtImporteSinIva").val() : 0;
+    model["comentario"] = $("#txtComentario").val();
+
+    $("#modalPago").find("div.modal-content").LoadingOverlay("show")
+
+    fetch("/Admin/RegistrarPagoProveedor", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json;charset=utf-8' },
+        body: JSON.stringify(model)
+    }).then(response => {
+        $("#modalPago").find("div.modal-content").LoadingOverlay("hide")
+        return response.ok ? response.json() : Promise.reject(response);
+    }).then(responseJson => {
+
+        if (responseJson.state) {
+            $("#modalPago").modal("hide");
+            swal("Exitoso!", "Proveedor fué creada", "success");
+
+        } else {
+            swal("Lo sentimos", responseJson.message, "error");
+        }
+    }).catch((error) => {
+        $("#modalPago").find("div.modal-content").LoadingOverlay("hide")
+    })
+
+
+})
+
+const openModalPago = (model = BASIC_MODEL_PÂGO) => {
+    $("#txtIdProveedor").val(model.idProveedor);
+    $("#txtNombrePago").val(model.nombre);
+    $("#txtCuilPago").val(model.cuil);
+    $("#txtDireccionPago").val(model.direccion);
+
+    $("#modalPago").modal("show")
+}
 
 $("#tbData tbody").on("click", ".btn-edit", function () {
 

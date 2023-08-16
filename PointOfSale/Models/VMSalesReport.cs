@@ -7,8 +7,6 @@
         public string? DocumentType { get; set; }
         public string? DocumentClient { get; set; }
         public string? ClientName { get; set; }
-        public string? SubTotalSale { get; set; }
-        public string? TaxTotalSale { get; set; }
         public string? TotalSale { get; set; }
         public string? Product { get; set; }
         public int Quantity { get; set; }

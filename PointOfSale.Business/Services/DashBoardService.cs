@@ -17,85 +17,20 @@ namespace PointOfSale.Business.Services
     {
         private readonly ISaleRepository _repositorySale;
         private readonly IGenericRepository<DetailSale> _repositoryDetailSale;
-        private readonly IGenericRepository<Category> _repositoryCategory;
-        private readonly IGenericRepository<Product> _repositoryProduct;
-        private DateTime StartDate = DateTime.Now;
 
         public DashBoardService(
             ISaleRepository repositorySale,
-            IGenericRepository<DetailSale> repositoryDetailSale,
-            IGenericRepository<Category> repositoryCategory,
-            IGenericRepository<Product> repositoryProduct
+            IGenericRepository<DetailSale> repositoryDetailSale
             )
         {
 
             _repositorySale = repositorySale;
             _repositoryDetailSale = repositoryDetailSale;
-            _repositoryCategory = repositoryCategory;
-            _repositoryProduct = repositoryProduct;
 
-            //StartDate = StartDate.AddDays(-7);
 
         }
-        public async Task<int> TotalSalesLastWeek()
-        {
-            try
-            {
-                IQueryable<Sale> query = await _repositorySale.Query(v => v.RegistrationDate.Value.Date >= StartDate.Date);
-                int total = query.Count();
-                return total;
-            }
-            catch
-            {
-                throw;
-            }
-        }
 
-        public async Task<string> TotalIncomeLastWeek()
-        {
-            try
-            {
-                IQueryable<Sale> query = await _repositorySale.Query(v => v.RegistrationDate.Value.Date >= StartDate.Date);
-
-                decimal resultado = query
-                    .Select(v => v.Total)
-                    .Sum(v => v.Value);
-
-                return Convert.ToString(resultado, new CultureInfo("es-PE"));
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        public async Task<int> TotalProducts()
-        {
-            try
-            {
-                IQueryable<Product> query = await _repositoryProduct.Query();
-                int total = query.Count();
-                return total;
-            }
-            catch
-            {
-                throw;
-            }
-        }
-        public async Task<int> TotalCategories()
-        {
-            try
-            {
-                IQueryable<Category> query = await _repositoryCategory.Query();
-                int total = query.Count();
-                return total;
-            }
-            catch
-            {
-                throw;
-            }
-        }
-        public async Task<GraficoVentasConComparacion> GetSales(TypeValuesDashboard typeValues)
+        public async Task<GraficoVentasConComparacion> GetSales(TypeValuesDashboard typeValues, int idTienda)
         {
             var start = DateTime.Now;
             var resultados = new GraficoVentasConComparacion();
@@ -107,23 +42,23 @@ namespace PointOfSale.Business.Services
                 {
                     case TypeValuesDashboard.Dia:
                         dateCompare = start.AddDays(-1);
-                        resultados.VentasActualesHour = await GetSalesHour(start);
-                        resultados.VentasComparacionHour = await GetComparationHour(start, dateCompare);
+                        resultados.VentasActualesHour = await GetSalesHour(start, idTienda);
+                        resultados.VentasComparacionHour = await GetComparationHour(start, dateCompare, idTienda);
                         break;
 
                     case TypeValuesDashboard.Semana:
                         start = start.AddDays((-(int)DateTime.Now.Date.DayOfWeek) + 1);
                         dateCompare = start.AddDays(-7);
-                        resultados.VentasActuales = await GetSalesActuales(start);
-                        resultados.VentasComparacion = await GetComparation(start, dateCompare);
+                        resultados.VentasActuales = await GetSalesActuales(start, idTienda);
+                        resultados.VentasComparacion = await GetComparation(start, dateCompare, idTienda);
 
                         break;
 
                     case TypeValuesDashboard.Mes:
                         start = start.AddDays((-DateTime.Now.Date.Day) + 1);
                         dateCompare = start.AddMonths(-1);
-                        resultados.VentasActuales = await GetSalesActuales(start);
-                        resultados.VentasComparacion = await GetComparation(start, dateCompare);
+                        resultados.VentasActuales = await GetSalesActuales(start, idTienda);
+                        resultados.VentasComparacion = await GetComparation(start, dateCompare, idTienda);
 
                         break;
                 }
@@ -138,7 +73,7 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task<Dictionary<string, decimal>> GetSalesByTypoVenta(TypeValuesDashboard typeValues)
+        public async Task<Dictionary<string, decimal>> GetSalesByTypoVenta(TypeValuesDashboard typeValues, int idTienda)
         {
             DateTime dateCompare, start;
             FechasParaQuery(typeValues, out dateCompare, out start);
@@ -147,17 +82,21 @@ namespace PointOfSale.Business.Services
 
             Dictionary<string, decimal> resultado = query
                 .Include(v => v.IdTypeDocumentSaleNavigation)
-                .Where(vd => vd.RegistrationDate.Value.Date >= start.Date)
-                .GroupBy(v => v.IdTypeDocumentSaleNavigation.Description).OrderByDescending(g => g.Sum(_=>_.Total))
-                .Select(dv => new { descripcion = dv.Key, total = dv.Sum(_=>_.Total.Value) })
+                .Where(vd => vd.RegistrationDate.Value.Date >= start.Date && vd.IdClienteMovimiento == null && vd.IdTienda == idTienda)
+                .GroupBy(v => v.IdTypeDocumentSaleNavigation.Description).OrderByDescending(g => g.Sum(_ => _.Total))
+                .Select(dv => new { descripcion = dv.Key, total = dv.Sum(_ => _.Total.Value) })
                 .ToDictionary(keySelector: r => r.descripcion, elementSelector: r => r.total);
 
             return resultado;
         }
 
-        private async Task<Dictionary<DateTime, decimal>> GetSalesActuales(DateTime start)
+
+        private async Task<Dictionary<DateTime, decimal>> GetSalesActuales(DateTime start, int idTienda)
         {
-            IQueryable<Sale> queryVentasActuales = await _repositorySale.Query(v => v.RegistrationDate.Value.Date >= start.Date);
+            IQueryable<Sale> queryVentasActuales = await _repositorySale.Query(v => 
+                            v.RegistrationDate.Value.Date >= start.Date 
+                            && v.IdClienteMovimiento == null
+                            && v.IdTienda == idTienda);
             return queryVentasActuales
                 .GroupBy(v => v.RegistrationDate.Value.Date).OrderByDescending(g => g.Key)
                 .Select(dv => new { date = dv.Key, total = dv.Sum(v => v.Total.Value) })
@@ -165,11 +104,14 @@ namespace PointOfSale.Business.Services
                 .ToDictionary(keySelector: r => r.date, elementSelector: r => r.total);
         }
 
-        private async Task<Dictionary<int, decimal>> GetSalesHour(DateTime start)
+        private async Task<Dictionary<int, decimal>> GetSalesHour(DateTime start, int idTienda)
         {
             var resultados = new GraficoVentasConComparacion();
 
-            IQueryable<Sale> queryVentasActuales = await _repositorySale.Query(v => v.RegistrationDate.Value.Date >= start.Date);
+            IQueryable<Sale> queryVentasActuales = await _repositorySale.Query(v => 
+                            v.RegistrationDate.Value.Date >= start.Date 
+                            && v.IdClienteMovimiento == null
+                            && v.IdTienda == idTienda);
             return queryVentasActuales.ToList()
                 .GroupBy(_ => _.RegistrationDate.Value.Hour).OrderByDescending(g => g.Key)
                 .Select(dv => new { date = dv.Key, total = dv.Sum(v => v.Total.Value) })
@@ -177,9 +119,13 @@ namespace PointOfSale.Business.Services
                 .ToDictionary(keySelector: r => r.date, elementSelector: r => r.total);
         }
 
-        private async Task<Dictionary<DateTime, decimal>> GetComparation(DateTime start, DateTime dateCompare)
+        private async Task<Dictionary<DateTime, decimal>> GetComparation(DateTime start, DateTime dateCompare, int idTienda)
         {
-            var queryVentasComparacion = await _repositorySale.Query(v => v.RegistrationDate.Value.Date < start.Date && v.RegistrationDate.Value.Date >= dateCompare.Date);
+            var queryVentasComparacion = await _repositorySale.Query(v => 
+                            v.RegistrationDate.Value.Date < start.Date 
+                            && v.RegistrationDate.Value.Date >= dateCompare.Date 
+                            && v.IdClienteMovimiento == null
+                            && v.IdTienda == idTienda);
             return queryVentasComparacion
                 .GroupBy(_ => _.RegistrationDate.Value.Date).OrderByDescending(g => g.Key)
                 .Select(dv => new { date = dv.Key, total = dv.Sum(v => v.Total.Value) })
@@ -187,11 +133,15 @@ namespace PointOfSale.Business.Services
                 .ToDictionary(keySelector: r => r.date, elementSelector: r => r.total);
         }
 
-        private async Task<Dictionary<int, decimal>> GetComparationHour(DateTime start, DateTime dateCompare)
+        private async Task<Dictionary<int, decimal>> GetComparationHour(DateTime start, DateTime dateCompare, int idTienda)
         {
             var resultados = new GraficoVentasConComparacion();
 
-            var queryVentasComparacionHour = await _repositorySale.Query(v => v.RegistrationDate.Value.Date < start.Date && v.RegistrationDate.Value.Date >= dateCompare.Date);
+            var queryVentasComparacionHour = await _repositorySale.Query(v => 
+                            v.RegistrationDate.Value.Date < start.Date 
+                            && v.RegistrationDate.Value.Date >= dateCompare.Date 
+                            && v.IdClienteMovimiento == null
+                            && v.IdTienda == idTienda);
             return queryVentasComparacionHour.ToList()
                 .GroupBy(_ => _.RegistrationDate.Value.Hour).OrderByDescending(g => g.Key)
                 .Select(dv => new { date = dv.Key, total = dv.Sum(v => v.Total.Value) })
@@ -199,21 +149,36 @@ namespace PointOfSale.Business.Services
                 .ToDictionary(keySelector: r => r.date, elementSelector: r => r.total);
         }
 
-        public async Task<Dictionary<string, int>> ProductsTop(TypeValuesDashboard typeValues)
+        public async Task<Dictionary<string, decimal?>> ProductsTopByCategory(TypeValuesDashboard typeValues, string category, int idTienda)
         {
             DateTime dateCompare, start;
             FechasParaQuery(typeValues, out dateCompare, out start);
-
             try
             {
                 IQueryable<DetailSale> query = await _repositoryDetailSale.Query();
 
-                Dictionary<string, int> resultado = query
-                    .Include(v => v.IdSaleNavigation)
-                    .Where(dv => dv.IdSaleNavigation.RegistrationDate.Value.Date < start && dv.IdSaleNavigation.RegistrationDate.Value.Date > dateCompare.Date)
-                    .GroupBy(dv => dv.DescriptionProduct).OrderByDescending(g => g.Count())
-                    .Select(dv => new { product = dv.Key, total = dv.Count() }).Take(10)
-                    .ToDictionary(keySelector: r => r.product, elementSelector: r => r.total);
+                if (category == "Todo")
+                {
+                    query = query
+                            .Include(v => v.IdSaleNavigation)
+                            .Where(dv =>
+                                    dv.IdSaleNavigation.RegistrationDate.Value.Date >= start
+                                    && dv.IdSaleNavigation.IdTienda == idTienda);
+                }
+                else
+                {
+                    query = query
+                            .Include(v => v.IdSaleNavigation)
+                            .Where(dv => 
+                                    dv.IdSaleNavigation.RegistrationDate.Value.Date >= start
+                                    && dv.IdSaleNavigation.IdTienda == idTienda
+                                    && dv.CategoryProducty == category);
+                }
+
+                Dictionary<string, decimal?> resultado = query
+                .GroupBy(dv => dv.DescriptionProduct).OrderByDescending(g => g.Sum(_ => _.Quantity))
+                .Select(dv => new { product = dv.Key, total = dv.Sum(_ => _.Quantity) }).Take(10)
+                .ToDictionary(keySelector: r => r.product, elementSelector: r => r.total);
 
                 return resultado;
             }
@@ -221,6 +186,25 @@ namespace PointOfSale.Business.Services
             {
                 throw;
             }
+        }
+        public async Task<Dictionary<string, decimal>> GetSalesByTypoVentaByTurno(TypeValuesDashboard typeValues, int turno, int idTienda)
+        {
+            DateTime dateCompare, start;
+            FechasParaQuery(typeValues, out dateCompare, out start);
+
+            IQueryable<Sale> query = await _repositorySale.Query();
+
+            Dictionary<string, decimal> resultado = query
+                .Include(v => v.IdTypeDocumentSaleNavigation)
+                .Where(vd => vd.RegistrationDate.Value.Date >= start.Date
+                        && vd.IdClienteMovimiento == null
+                        && vd.IdTurno == turno
+                        && vd.IdTienda == idTienda)
+                .GroupBy(v => v.IdTypeDocumentSaleNavigation.Description).OrderByDescending(g => g.Sum(_ => _.Total))
+                .Select(dv => new { descripcion = dv.Key, total = dv.Sum(_ => _.Total.Value) })
+                .ToDictionary(keySelector: r => r.descripcion, elementSelector: r => r.total);
+
+            return resultado;
         }
 
         private static void FechasParaQuery(TypeValuesDashboard typeValues, out DateTime dateCompare, out DateTime start)
@@ -230,7 +214,6 @@ namespace PointOfSale.Business.Services
             switch (typeValues)
             {
                 case TypeValuesDashboard.Dia:
-                    dateCompare = start.AddDays(-1);
                     break;
 
                 case TypeValuesDashboard.Semana:

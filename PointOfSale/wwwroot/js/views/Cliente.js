@@ -110,8 +110,8 @@ const openModal = (model = BASIC_MODEL) => {
                         $("<td>").text(registrationDate.toLocaleString()),
                         $("<td>").text(item.registrationUser),
                         $("<td>").append(
-                            $("<button>").addClass("btn btn-danger btn-delete btn-sm").append(
-                                $("<i>").addClass("mdi mdi-trash-can")
+                            $("<button>").addClass("btn btn-info btn-delete btn-sm").append(
+                                $("<i>").addClass("mdi mdi-eye")
                             ).data("idSale", item.idSale)
                         )
                     )

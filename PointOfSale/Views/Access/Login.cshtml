@@ -50,10 +50,13 @@
                                 @{
                                     if (Model != null && Model.IsAdmin)
                                     {
-                                        <div class="input-group-prepend">
-                                            <label class="input-group-text" for="cboTiendas">Tipo</label>
+                                        <div class="input-group input-group-sm mb-3 col-md-12">
+
+                                            <div class="input-group-prepend">
+                                                <label class="input-group-text" for="cboTiendas">Tienda</label>
+                                            </div>
+                                            <select class="form-control" id="cboTiendas" asp-for="TiendaId"></select>
                                         </div>
-                                        <select class="form-control" id="cboTiendas" asp-for="TiendaId"></select>
                                     }
                                 }
                                 <div class="col-md-12">

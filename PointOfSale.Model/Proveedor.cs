@@ -17,5 +17,6 @@ namespace PointOfSale.Model
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }
         public ICollection<Product>? Products { get; set; }
+        public ICollection<ProveedorMovimiento>? ProveedorMovimiento { get; set; }
     }
 }

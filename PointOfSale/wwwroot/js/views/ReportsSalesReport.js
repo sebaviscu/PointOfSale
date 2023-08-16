@@ -18,8 +18,6 @@ $(document).ready(function () {
             { "data": "documentType" },
             { "data": "documentClient" },
             { "data": "clientName" },
-            { "data": "subTotalSale" },
-            { "data": "taxTotalSale" },
             { "data": "totalSale" },
             { "data": "product" },
             { "data": "quantity" },

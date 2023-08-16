@@ -8,6 +8,7 @@ using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
 using System.Globalization;
+using System.Security.Claims;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Controllers
@@ -59,6 +60,8 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetSummary(TypeValuesDashboard typeValues)
         {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+
             var vmDashboard = new VMDashBoard();
 
             var ejeXint = new int[0];
@@ -116,7 +119,7 @@ namespace PointOfSale.Controllers
 
 
                 int i = 0;
-                var resultados = await _dashboardService.GetSales(typeValues);
+                var resultados = await _dashboardService.GetSales(typeValues, user.IdTienda);
 
 
                 switch (typeValues)
@@ -184,17 +187,6 @@ namespace PointOfSale.Controllers
                         break;
                 }
 
-                var ProductListWeek = new List<VMProductsWeek>();
-
-                foreach (KeyValuePair<string, int> item in await _dashboardService.ProductsTop(typeValues))
-                {
-                    ProductListWeek.Add(new VMProductsWeek()
-                    {
-                        Product = item.Key,
-                        Quantity = item.Value
-                    });
-                }
-
                 vmDashboard.EjeX = ejeX;
                 vmDashboard.SalesList = listSales.Select(_ => _.Total).ToList();
                 vmDashboard.SalesListComparacion = listSalesComparacion.Select(_ => _.Total).ToList();
@@ -203,14 +195,9 @@ namespace PointOfSale.Controllers
                 vmDashboard.TotalSales = "$ " + listSales.Sum(_ => _.Total);
                 vmDashboard.TotalSalesComparacion = "$ " + listSalesComparacion.Sum(_ => _.Total);
 
-                vmDashboard.ProductsTopLastWeek = ProductListWeek;
-                //vmDashboard.TotalIncome = "$ " + await _dashboardService.TotalIncomeLastWeek();
-                //vmDashboard.TotalProducts = await _dashboardService.TotalProducts();
-                //vmDashboard.TotalCategories = await _dashboardService.TotalCategories();
-
                 var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
 
-                foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetSalesByTypoVenta(typeValues))
+                foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetSalesByTypoVenta(typeValues, user.IdTienda))
                 {
                     VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
                     {
@@ -230,6 +217,26 @@ namespace PointOfSale.Controllers
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetSalesByTypoVenta(TypeValuesDashboard typeValues, string idCategoria)
+        {
+            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var tiendaId = Convert.ToInt32(((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value);
+
+            var ProductListWeek = new List<VMProductsWeek>();
+
+            foreach (KeyValuePair<string, decimal?> item in await _dashboardService.ProductsTopByCategory(typeValues, idCategoria, tiendaId))
+            {
+                ProductListWeek.Add(new VMProductsWeek()
+                {
+                    Product = item.Key,
+                    Quantity = item.Value.Value
+                });
+            }
+
+            return StatusCode(StatusCodes.Status200OK, ProductListWeek);
         }
 
         private static List<VMSalesWeek> GetSalesComparacion(int[] ejeXint, DateTime dateCompare, GraficoVentasConComparacion resultados)
@@ -575,6 +582,39 @@ namespace PointOfSale.Controllers
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RegistrarPagoProveedor([FromBody] VMProveedorMovimiento model)
+        {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+
+            var gResponse = new GenericResponse<VMProveedorMovimiento>();
+            try
+            {
+                model.RegistrationUser = user.UserName;
+                model.RegistrationDate = DateTime.Now;
+                var usuario_creado = await _proveedorService.Add(_mapper.Map<ProveedorMovimiento>(model));
+
+                model = _mapper.Map<VMProveedorMovimiento>(usuario_creado);
+
+                gResponse.State = true;
+                gResponse.Object = model;
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetMovimientoProveedor(int idProveedor)
+        {
+            var listUsers = _mapper.Map<List<VMProveedorMovimiento>>(await _proveedorService.ListMovimientosProveedor(idProveedor));
+            return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
         }
 
         [HttpPut]

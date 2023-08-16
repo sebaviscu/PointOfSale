@@ -1,4 +1,5 @@
-﻿using PointOfSale.Business.Contracts;
+﻿using Microsoft.EntityFrameworkCore;
+using PointOfSale.Business.Contracts;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
 using System;
@@ -47,11 +48,11 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task<Turno> CloseTurno(Turno entity)
+        public async Task<Turno> CloseTurno(int idtienda, Turno entity)
         {
             try
             {
-                Turno Turno_found = await _repository.Get(c => c.IdTurno == entity.IdTurno);
+                Turno Turno_found = await _repository.Get(c => c.IdTurno == entity.IdTurno && c.IdTienda == idtienda);
 
                 Turno_found.FechaFin = DateTime.Now;
                 Turno_found.ModificationUser = entity.ModificationUser ?? "Automatico";
@@ -69,24 +70,36 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task<Turno> GetTurnoAnterior()
+        public async Task<Turno> GetTurnoActualConVentas(int idtienda)
+        {
+            var query = await _repository.Query();
+            var turno = query.Include(_ => _.Sales).Single(_ => _.FechaFin == null
+                                            && _.FechaInicio.Day == DateTime.Now.Day
+                                            && _.FechaInicio.Month == DateTime.Now.Month
+                                            && _.FechaInicio.Year == DateTime.Now.Year
+                                            && _.IdTienda == idtienda);
+            return turno;
+        }
+
+        public async Task<Turno> GetTurnoActual(int idtienda)
         {
             var query = await _repository.Query();
             var turno = query.Single(_ => _.FechaFin == null
                                             && _.FechaInicio.Day == DateTime.Now.Day
                                             && _.FechaInicio.Month == DateTime.Now.Month
-                                            && _.FechaInicio.Year == DateTime.Now.Year);
+                                            && _.FechaInicio.Year == DateTime.Now.Year
+                                            && _.IdTienda == idtienda);
             return turno;
         }
 
-        public async Task CheckTurnosViejos()
+        public async Task CheckTurnosViejos(int idtienda)
         {
             var query = await _repository.Query();
-            var turnos = query.Where(_ => _.FechaFin == null && _.FechaInicio.Date <= DateTime.Now.AddDays(-1).Date).ToList();
+            var turnos = query.Where(_ => _.FechaFin == null && _.FechaInicio.Date <= DateTime.Now.AddDays(-1).Date && _.IdTienda == idtienda).ToList();
 
             foreach (var t in turnos)
             {
-                await CloseTurno(t);
+                await CloseTurno(idtienda, t);
             }
         }
 
@@ -102,6 +115,13 @@ namespace PointOfSale.Business.Services
                 var t = new Turno(idTienda, usuario);
                 turno = await Add(t);
             }
+            return turno;
+        }
+
+        public async Task<Turno> AbrirTurno(int idTienda, string usuario)
+        {
+            var turno = await Add(new Turno(idTienda, usuario));
+
             return turno;
         }
     }

@@ -11,7 +11,14 @@ namespace PointOfSale.Business.Contracts
     {
         Task<Turno> Add(Turno entity);
         Task<Turno> Edit(Turno entity);
-        Task CheckTurnosViejos();
+        Task CheckTurnosViejos(int idtienda);
         Task<Turno> GetTurno(int idTienda, string usuario);
+        Task<Turno> GetTurnoActual(int idtienda);
+        Task<Turno> CloseTurno(int idtienda, Turno entity);
+        Task<Turno> GetTurnoActualConVentas(int idtienda);
+
+        Task<Turno> AbrirTurno(int idTienda, string usuario);
+
+
     }
 }

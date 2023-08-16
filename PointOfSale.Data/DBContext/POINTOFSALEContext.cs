@@ -32,6 +32,7 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<Cliente> Clientes { get; set; } = null!;
         public virtual DbSet<ClienteMovimiento> ClienteMovimientos { get; set; } = null!;
         public virtual DbSet<Proveedor> Proveedor { get; set; } = null!;
+        public virtual DbSet<ProveedorMovimiento> ProveedorMovimiento { get; set; } = null!;
         public virtual DbSet<Promocion> Promocion { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -45,6 +46,22 @@ namespace PointOfSale.Data.DBContext
                 entity.HasKey(e => e.IdPromocion);
 
                 entity.ToTable("Promocion");
+
+                entity.Property(e => e.RegistrationDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("registrationDate")
+                    .HasDefaultValueSql("(getdate())");
+            });
+
+            modelBuilder.Entity<ProveedorMovimiento>(entity =>
+            {
+                entity.HasKey(e => e.IdProveedorMovimiento);
+
+                entity.ToTable("ProveedorMovimiento");
+
+                entity.HasOne(d => d.Proveedor)
+                    .WithMany(p => p.ProveedorMovimiento)
+                    .HasForeignKey(d => d.IdProveedor);
 
                 entity.Property(e => e.RegistrationDate)
                     .HasColumnType("datetime")
@@ -409,15 +426,10 @@ namespace PointOfSale.Data.DBContext
                     .IsUnicode(false)
                     .HasColumnName("saleNumber");
 
-                entity.Property(e => e.Subtotal).HasColumnType("decimal(10, 2)");
-
                 entity.Property(e => e.Total)
                     .HasColumnType("decimal(10, 2)")
                     .HasColumnName("total");
 
-                entity.Property(e => e.TotalTaxes)
-                    .HasColumnType("decimal(10, 2)")
-                    .HasColumnName("totalTaxes");
 
                 entity.HasOne(d => d.IdTypeDocumentSaleNavigation)
                     .WithMany(p => p.Sales)

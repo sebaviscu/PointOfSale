@@ -1,14 +1,36 @@
-﻿$(document).ready(function () {
+﻿var typeValuesGlobal = 0;
+
+$(document).ready(function () {
 
 
-    //document.querySelector('input[name="radioButton"]:checked').value
+    fetch("/Inventory/GetCategories")
+        .then(response => {
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+            $("#cboCategory").append(
+                $("<option>").val('Todo').text('Todo')
+            )
+            if (responseJson.data.length > 0) {
+
+                responseJson.data.forEach((item) => {
+                    $("#cboCategory").append(
+                        $("<option>").val(item.description).text(item.description)
+                    )
+                });
+
+            }
+        })
 
     changeChart(1);
+})
 
-
+$('#cboCategory').change(function () {
+    SetTopSeler(typeValuesGlobal, $(this).val());
 })
 
 function changeChart(typeValues) {
+    typeValuesGlobal = typeValues;
+
     $("div.container-fluid").LoadingOverlay("show")
 
     fetch(`/Admin/GetSummary?typeValues=${typeValues}`, {
@@ -28,27 +50,20 @@ function changeChart(typeValues) {
                 $("#totalProducts").text(d.totalProducts)
                 $("#totalCategories").text(d.totalCategories)
 
-                //let barchart_labels;
-                //let barchar_data;
-                //if (d.salesLastWeek.length > 0) {
-                //    barchart_labels = d.salesLastWeek.map((item) => { return item.date })
-                //    barchar_data = d.salesLastWeek.map((item) => { return item.total })
-                //} else {
-                //    barchart_labels = ["without results"]
-                //    barchar_data = [0]
-                //}
+                var cont = document.getElementById('containerMetodosPago');
+                cont.innerHTML = "";
+                // Lista tipo de ventas
+                var ul = document.createElement('ul');
+                ul.setAttribute('style', 'padding: 0; margin: 0;');
+                ul.setAttribute('id', 'theList');
 
-                let piechart_labels;
-                let piechart_data;
-                if (d.productsTopLastWeek.length > 0) {
-                    piechart_labels = d.productsTopLastWeek.map((item) => { return item.product })
-                    piechart_data = d.productsTopLastWeek.map((item) => { return item.quantity })
-                } else {
-                    piechart_labels = ["without results"];
-                    piechart_data = [0];
+                for (i = 0; i <= d.ventasPorTipoVenta.length - 1; i++) {
+                    var li = document.createElement('li');     
+                    li.innerHTML = d.ventasPorTipoVenta[i].descripcion + ": $" + d.ventasPorTipoVenta[i].total;      
+                    li.setAttribute('style', 'display: block;');    // remove the bullets.
+                    ul.appendChild(li);     // append li to ul.
                 }
-
-                
+                cont.appendChild(ul);       // add list to the container.
 
 
                 var options = {
@@ -118,62 +133,88 @@ function changeChart(typeValues) {
                     }
                 };
 
-                const chartIds = ['chartVentas0', 'chartVentas1', 'chartVentas2'];
-                const chartProductsIds = ['charProducts0', 'charProducts1', 'charProducts2'];
-
-                for (let i = 0; i < chartIds.length; i++) {
-                    const chartElement = document.getElementById(chartIds[i]);
-                    chartElement.hidden = i !== typeValues;
-
-                    const chartProductsElement = document.getElementById(chartProductsIds[i]);
-                    chartProductsElement.hidden = i !== typeValues;
-                }
-
-                // Graficvo de Lineas
-                var chartNew = new ApexCharts(document.querySelector("#chartVentas" + typeValues), options);
+                // Grafico de Lineas
+                var chartNew = new ApexCharts(document.querySelector("#chartVentas"), options);
                 chartNew.render();
 
 
-                // Grafico de Tortas
-                let controlProduct = document.getElementById("charProducts" + typeValues);
-                let myPieChart = new Chart(controlProduct, {
-                    type: 'doughnut',
-                    data: {
-                        labels: piechart_labels,
-                        datasets: [{
-                            data: piechart_data,
-                            backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', "#FF785B"],
-                            hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', "#FF5733"],
-                            hoverBorderColor: "rgba(234, 236, 244, 1)",
-                        }],
-                    },
-                    options: {
-                        maintainAspectRatio: false,
-                        tooltips: {
-                            backgroundColor: "rgb(255,255,255)",
-                            bodyFontColor: "#858796",
-                            borderColor: '#dddfeb',
-                            borderWidth: 1,
-                            xPadding: 15,
-                            yPadding: 15,
-                            displayColors: false,
-                            caretPadding: 10,
+                chartNew.updateOptions({
+                    series: [
+                        {
+                            name: d.actual,
+                            data: d.salesList
                         },
-                        legend: {
-                            display: true
-                        },
-                        cutoutPercentage: 80,
-                    },
-                });
+                        {
+                            name: d.anterior,
+                            data: d.salesListComparacion
+                        }
+                    ]
 
+                })
+
+                SetTopSeler(typeValuesGlobal, $('#cboCategory').val());
             }
         })
         .catch((error) => {
             $("div.container-fluid").LoadingOverlay("hide")
         });
+}
+
+function SetTopSeler(typeValues, idCategory) {
+
+    fetch(`/Admin/GetSalesByTypoVenta?typeValues=${typeValues}&idCategoria=${idCategory}`, {
+        method: "GET"
+    })
+        .then(response => {
+            $("div.container-fluid").LoadingOverlay("hide")
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+
+            var options = {
+                series: responseJson.map((item) => { return item.quantity }),
+                chart: {
+                    type: 'donut',
+                },
+                labels: responseJson.map((item) => { return item.product }),
+                responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        chart: {
+                            width: 200
+                        },
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }]
+            };
+
+            var chartNew = new ApexCharts(document.querySelector("#charProducts"), options);
+            chartNew.render();
+
+            chartNew.updateOptions({
+                series: responseJson.map((item) => { return item.quantity }),
+                chart: {
+                    type: 'donut',
+                },
+                labels: responseJson.map((item) => { return item.product }),
+                responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        chart: {
+                            width: 200
+                        },
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }]
+            })
 
 
-
-
+        })
+        .catch((error) => {
+            $("div.container-fluid").LoadingOverlay("hide")
+        });
 
 }

@@ -5,25 +5,29 @@ using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Controllers
 {
-	public class BaseController : Controller
-	{
-		public (bool Resultado, string UserName) ValidarAutorizacion(Roles[] rolesPermitidos)
-		{
-			var claimuser = HttpContext.User;
+    public class BaseController : Controller
+    {
+        public (bool Resultado, string UserName, int IdTienda) ValidarAutorizacion(Roles[] rolesPermitidos)
+        {
+            var claimuser = HttpContext.User;
 
-			var userRol = Convert.ToInt32(claimuser.Claims
-				.Where(c => c.Type == ClaimTypes.Role)
-				.Select(c => c.Value).SingleOrDefault());
+            var userRol = Convert.ToInt32(claimuser.Claims
+                .Where(c => c.Type == ClaimTypes.Role)
+                .Select(c => c.Value).SingleOrDefault());
 
-			if (!ValidarPermisos.IsValid(userRol, rolesPermitidos))
-			{
-				throw new AccessViolationException("USUARIO CON PERMISOS INSUFICIENTES");
-			}
-			var userName = claimuser.Claims
-				.Where(c => c.Type == ClaimTypes.Name)
-				.Select(c => c.Value).SingleOrDefault();
+            if (!ValidarPermisos.IsValid(userRol, rolesPermitidos))
+            {
+                throw new AccessViolationException("USUARIO CON PERMISOS INSUFICIENTES");
+            }
+            var userName = claimuser.Claims
+                .Where(c => c.Type == ClaimTypes.Name)
+                .Select(c => c.Value).SingleOrDefault();
 
-			return (true, userName);
-		}
-	}
+            var idTienda = Convert.ToInt32(claimuser.Claims
+                .Where(c => c.Type == "Tienda")
+                .Select(c => c.Value).SingleOrDefault());
+
+            return (true, userName, idTienda);
+        }
+    }
 }

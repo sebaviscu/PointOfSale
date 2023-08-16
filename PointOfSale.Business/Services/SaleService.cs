@@ -44,6 +44,7 @@ namespace PointOfSale.Business.Services
                            string.Concat(p.BarCode, p.Description).Contains(search));
 
                 list = query.Include(c => c.IdCategoryNavigation).ToList();
+
             }
 
             return list;

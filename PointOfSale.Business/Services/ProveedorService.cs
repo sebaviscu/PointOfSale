@@ -6,16 +6,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services
 {
     public class ProveedorService : IProveedorService
     {
         private readonly IGenericRepository<Proveedor> _repository;
+        private readonly IGenericRepository<ProveedorMovimiento> _proveedorMovimiento;
 
-        public ProveedorService(IGenericRepository<Proveedor> repository)
+        public ProveedorService(IGenericRepository<Proveedor> repository, IGenericRepository<ProveedorMovimiento> proveedorMovimiento)
         {
             _repository = repository;
+            _proveedorMovimiento = proveedorMovimiento;
         }
 
         public async Task<List<Proveedor>> List()
@@ -39,8 +42,6 @@ namespace PointOfSale.Business.Services
                 if (Proveedor_created.IdProveedor == 0)
                     throw new TaskCanceledException("Error al crear Proveedor");
 
-                IQueryable<Proveedor> query = await _repository.Query(u => u.IdProveedor == Proveedor_created.IdProveedor);
-
                 return Proveedor_created;
             }
             catch (Exception ex)
@@ -49,6 +50,23 @@ namespace PointOfSale.Business.Services
             }
         }
 
+        public async Task<ProveedorMovimiento> Add(ProveedorMovimiento entity)
+        {
+            try
+            {
+                ProveedorMovimiento Proveedor_created = await _proveedorMovimiento.Add(entity);
+
+                if (Proveedor_created.IdProveedorMovimiento == 0)
+                    throw new TaskCanceledException("Error al crear Pago");
+
+
+                return Proveedor_created;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
         public async Task<Proveedor> Edit(Proveedor entity)
         {
 
@@ -96,5 +114,11 @@ namespace PointOfSale.Business.Services
             }
         }
 
+        public async Task<List<ProveedorMovimiento>> ListMovimientosProveedor(int idProveedor)
+        {
+            IQueryable<ProveedorMovimiento> query = await _proveedorMovimiento.Query(u => u.IdProveedor == idProveedor);
+
+            return query.OrderByDescending(_ => _.RegistrationUser).ToList();
+        }
     }
 }

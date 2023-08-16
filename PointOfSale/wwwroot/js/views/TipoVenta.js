@@ -57,7 +57,7 @@ $(document).ready(function () {
                 text: 'Exportar Excel',
                 extend: 'excelHtml5',
                 title: '',
-                filename: 'Reporte Tipo Ventas',
+                filename: 'Reporte Formas de Pago',
                 exportOptions: {
                     columns: [1, 2]
                 }

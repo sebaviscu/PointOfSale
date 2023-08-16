@@ -13,5 +13,7 @@ namespace PointOfSale.Models
         public DateTime RegistrationDate { get; set; }
         public string RegistrationUser { get; set; }
         public string? ModificationUser { get; set; }
+        public List<VMVentasPorTipoDeVenta> VentasPorTipoVenta { get; set; }
+
     }
 }

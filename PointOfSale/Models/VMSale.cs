@@ -13,14 +13,13 @@ namespace PointOfSale.Models
         public string? Users { get; set; }
         public string? CustomerDocument { get; set; }
         public string? ClientName { get; set; }
-        public string? Subtotal { get; set; }
-        public string? TotalTaxes { get; set; }
         public string? Total { get; set; }
         public string? RegistrationDate { get; set; }
         public virtual ICollection<VMDetailSale>? DetailSales { get; set; }
 		public int? IdTurno { get; set; }
         public int? ClientId { get; set; }
         public TipoMovimientoCliente? TipoMovimiento { get; set; }
+        public int IdTienda { get; set; }
 
     }
 }

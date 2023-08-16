@@ -10,12 +10,9 @@ namespace PointOfSale.Business.Contracts
 {
     public interface IDashBoardService
     {
-        Task<int> TotalSalesLastWeek();
-        Task<string> TotalIncomeLastWeek();
-        Task<int> TotalProducts();
-        Task<int> TotalCategories();
-        Task<GraficoVentasConComparacion> GetSales(TypeValuesDashboard typeValues);
-        Task<Dictionary<string, int>> ProductsTop(TypeValuesDashboard typeValues);
-        Task<Dictionary<string, decimal>> GetSalesByTypoVenta(TypeValuesDashboard typeValues);
+        Task<GraficoVentasConComparacion> GetSales(TypeValuesDashboard typeValues, int idTienda);
+        Task<Dictionary<string, decimal>> GetSalesByTypoVenta(TypeValuesDashboard typeValues, int idTienda);
+        Task<Dictionary<string, decimal?>> ProductsTopByCategory(TypeValuesDashboard typeValues, string category, int idTienda);
+        Task<Dictionary<string, decimal>> GetSalesByTypoVentaByTurno(TypeValuesDashboard typeValues, int turno, int idTienda);
     }
 }

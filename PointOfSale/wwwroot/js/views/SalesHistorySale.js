@@ -99,8 +99,6 @@ $("#tbsale tbody").on("click", ".btn-info", function () {
     $("#txtDocumentType").val(d.typeDocumentSale)
     $("#txtClientDocument").val(d.customerDocument)
     $("#txtClientName").val(d.clientName)
-    $("#txtSubTotal").val(d.subtotal)
-    $("#txtTaxes").val(d.totalTaxes)
     $("#txtTotal").val(d.total)
 
     $("#tbProducts tbody").html("")

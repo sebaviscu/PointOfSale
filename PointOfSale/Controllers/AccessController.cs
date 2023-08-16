@@ -25,7 +25,14 @@ namespace PointOfSale.Controllers
         {
             ClaimsPrincipal claimuser = HttpContext.User;
             if (claimuser.Identity.IsAuthenticated)
-                return RedirectToAction("Index", "Home");
+            {
+                var rol = claimuser.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).SingleOrDefault();
+                if (rol == "1")
+                    return RedirectToAction("DashBoard", "Admin");
+                else
+                    return RedirectToAction("NewSale", "Sales");
+
+            }
             return View();
         }
 
@@ -57,7 +64,7 @@ namespace PointOfSale.Controllers
                 idTienda = (int)(user_found.IsAdmin() ? model.TiendaId.Value : user_found.IdTienda);
             }
 
-            await _turnoService.CheckTurnosViejos();
+            await _turnoService.CheckTurnosViejos(idTienda);
             var turno = await _turnoService.GetTurno(idTienda, user_found.Name);
 
             List<Claim> claims = new List<Claim>()
@@ -81,8 +88,10 @@ namespace PointOfSale.Controllers
 
             ViewData["Message"] = null;
 
-            return RedirectToAction("Index", "Home");
-
+            if (user_found.IdRol == 1)
+                return RedirectToAction("DashBoard", "Admin");
+            else
+                return RedirectToAction("NewSale", "Sales");
 
         }
     }
