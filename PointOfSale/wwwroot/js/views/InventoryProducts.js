@@ -68,8 +68,14 @@ $(document).ready(function () {
                 "searchable": false
             },
             {
+                "defaultContent": `<input type="checkbox" class="chkProducto">`,
+                "orderable": false,
+                "searchable": false,
+                "width": "40px"
+            },
+            {
                 "data": "photoBase64", render: function (data) {
-                    return `<img style="height:60px;" src="data:image/png;base64,${data}" class="rounded mx-auto d-block" />`;
+                    return `<img style="height:40px;" src="data:image/png;base64,${data}" class="rounded mx-auto d-block" />`;
                 }
             },
             { "data": "barCode" },
@@ -109,6 +115,24 @@ $(document).ready(function () {
         ]
     });
 })
+
+$("#chkSelectAll").on("click", function () {
+    var estado = document.querySelector('#chkSelectAll').checked;
+
+    var checkboxes = document.querySelectorAll('input[type="checkbox"].chkProducto');
+
+    for (var i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].checked = estado;
+    }
+})
+
+function getAllRowsCheck() {
+    document.querySelectorAll('.tbData tr').forEach((row, i) => {
+        if (row.querySelector('input[type=checkbox]').checked) {
+            console.log(`the first checkbox of row ${i} is checked`);
+        }
+    })
+}
 
 const openModal = (model = BASIC_MODEL) => {
     $("#txtId").val(model.idProduct);

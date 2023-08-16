@@ -8,6 +8,10 @@
         public List<decimal> SalesListComparacion { get; set; }
         public List<VMVentasPorTipoDeVenta> VentasPorTipoVenta { get; set; }
 
+        public int CantidadClientes { get; set; }
+        public string Gastos { get; set; }
+        public string Ganancia { get; set; }
+
         public string[] EjeX { get; set; }
         public string Actual { get; set; }
         public string Anterior { get; set; }

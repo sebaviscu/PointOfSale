@@ -45,10 +45,10 @@ function changeChart(typeValues) {
 
                 let d = responseJson.object;
 
-                $("#totalSale").text(d.totalSales);
-                $("#totalIncome").text(d.totalIncome)
-                $("#totalProducts").text(d.totalProducts)
-                $("#totalCategories").text(d.totalCategories)
+                $("#txtTotalSale").text(d.totalSales);
+                $("#txtTotalGastos").text(d.gastos)
+                $("#txtCantidadClientes").text(d.cantidadClientes)
+                $("#txtGanancia").text(d.ganancia)
 
                 var cont = document.getElementById('containerMetodosPago');
                 cont.innerHTML = "";

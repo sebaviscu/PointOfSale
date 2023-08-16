@@ -187,14 +187,6 @@ namespace PointOfSale.Controllers
                         break;
                 }
 
-                vmDashboard.EjeX = ejeX;
-                vmDashboard.SalesList = listSales.Select(_ => _.Total).ToList();
-                vmDashboard.SalesListComparacion = listSalesComparacion.Select(_ => _.Total).ToList();
-
-
-                vmDashboard.TotalSales = "$ " + listSales.Sum(_ => _.Total);
-                vmDashboard.TotalSalesComparacion = "$ " + listSalesComparacion.Sum(_ => _.Total);
-
                 var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
 
                 foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetSalesByTypoVenta(typeValues, user.IdTienda))
@@ -205,7 +197,19 @@ namespace PointOfSale.Controllers
                         Total = item.Value
                     });
                 }
+
+                var movimientosProv = await  _dashboardService.GetMovimientosProveedoresByTienda(typeValues, user.IdTienda);
+                var gastosTotales = movimientosProv.Sum(_ => _.Importe);
+                var gananciaBruta = listSales.Sum(_ => _.Total);
+                vmDashboard.EjeX = ejeX;
+                vmDashboard.SalesList = listSales.Select(_ => _.Total).ToList();
+                vmDashboard.SalesListComparacion = listSalesComparacion.Select(_ => _.Total).ToList();
+                vmDashboard.TotalSales = "$ " + listSales.Sum(_ => _.Total);
+                vmDashboard.TotalSalesComparacion = "$ " + listSalesComparacion.Sum(_ => _.Total);
                 vmDashboard.VentasPorTipoVenta = VentasPorTipoVenta;
+                vmDashboard.Gastos = "$ " + gastosTotales.ToString();
+                vmDashboard.CantidadClientes = resultados.CantidadClientes;
+                vmDashboard.Ganancia = "$ " + (gananciaBruta - gastosTotales).ToString();
 
                 gResponse.State = true;
                 gResponse.Object = vmDashboard;
@@ -594,6 +598,7 @@ namespace PointOfSale.Controllers
             {
                 model.RegistrationUser = user.UserName;
                 model.RegistrationDate = DateTime.Now;
+                model.idTienda = user.IdTienda;
                 var usuario_creado = await _proveedorService.Add(_mapper.Map<ProveedorMovimiento>(model));
 
                 model = _mapper.Map<VMProveedorMovimiento>(usuario_creado);

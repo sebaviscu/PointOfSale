@@ -17,17 +17,18 @@ namespace PointOfSale.Business.Services
     {
         private readonly ISaleRepository _repositorySale;
         private readonly IGenericRepository<DetailSale> _repositoryDetailSale;
+        private readonly IGenericRepository<ProveedorMovimiento> _proveedorMovimiento;
 
         public DashBoardService(
             ISaleRepository repositorySale,
-            IGenericRepository<DetailSale> repositoryDetailSale
+            IGenericRepository<DetailSale> repositoryDetailSale, 
+            IGenericRepository<ProveedorMovimiento> proveedorMovimiento
             )
         {
 
             _repositorySale = repositorySale;
             _repositoryDetailSale = repositoryDetailSale;
-
-
+            _proveedorMovimiento = proveedorMovimiento;
         }
 
         public async Task<GraficoVentasConComparacion> GetSales(TypeValuesDashboard typeValues, int idTienda)
@@ -42,14 +43,18 @@ namespace PointOfSale.Business.Services
                 {
                     case TypeValuesDashboard.Dia:
                         dateCompare = start.AddDays(-1);
-                        resultados.VentasActualesHour = await GetSalesHour(start, idTienda);
+                        var resp = await GetSalesHour(start, idTienda);
+                        resultados.VentasActualesHour = resp.Ventas;
+                        resultados.CantidadClientes = resp.CantidadVentas;
                         resultados.VentasComparacionHour = await GetComparationHour(start, dateCompare, idTienda);
                         break;
 
                     case TypeValuesDashboard.Semana:
                         start = start.AddDays((-(int)DateTime.Now.Date.DayOfWeek) + 1);
                         dateCompare = start.AddDays(-7);
-                        resultados.VentasActuales = await GetSalesActuales(start, idTienda);
+                        var resp2 = await GetSalesActuales(start, idTienda);
+                        resultados.VentasActuales = resp2.Ventas;
+                        resultados.CantidadClientes = resp2.CantidadVentas;
                         resultados.VentasComparacion = await GetComparation(start, dateCompare, idTienda);
 
                         break;
@@ -57,7 +62,9 @@ namespace PointOfSale.Business.Services
                     case TypeValuesDashboard.Mes:
                         start = start.AddDays((-DateTime.Now.Date.Day) + 1);
                         dateCompare = start.AddMonths(-1);
-                        resultados.VentasActuales = await GetSalesActuales(start, idTienda);
+                        var resp3 = await GetSalesActuales(start, idTienda);
+                        resultados.VentasActuales = resp3.Ventas;
+                        resultados.CantidadClientes = resp3.CantidadVentas;
                         resultados.VentasComparacion = await GetComparation(start, dateCompare, idTienda);
 
                         break;
@@ -71,6 +78,15 @@ namespace PointOfSale.Business.Services
             {
                 throw;
             }
+        }
+        public async Task<List<ProveedorMovimiento>> GetMovimientosProveedoresByTienda(TypeValuesDashboard typeValues, int idTienda)
+        {
+            DateTime dateCompare, start;
+            FechasParaQuery(typeValues, out dateCompare, out start);
+
+            IQueryable<ProveedorMovimiento> query = await _proveedorMovimiento.Query(_=> _.RegistrationDate.Date >= start.Date && _.idTienda == idTienda);
+
+            return query.ToList();
         }
 
         public async Task<Dictionary<string, decimal>> GetSalesByTypoVenta(TypeValuesDashboard typeValues, int idTienda)
@@ -91,20 +107,26 @@ namespace PointOfSale.Business.Services
         }
 
 
-        private async Task<Dictionary<DateTime, decimal>> GetSalesActuales(DateTime start, int idTienda)
+        private async Task<(Dictionary<DateTime, decimal> Ventas, int CantidadVentas)> GetSalesActuales(DateTime start, int idTienda)
         {
             IQueryable<Sale> queryVentasActuales = await _repositorySale.Query(v => 
                             v.RegistrationDate.Value.Date >= start.Date 
                             && v.IdClienteMovimiento == null
                             && v.IdTienda == idTienda);
-            return queryVentasActuales
+
+            var cantVentas = queryVentasActuales.Count();
+
+
+            var resp = queryVentasActuales
                 .GroupBy(v => v.RegistrationDate.Value.Date).OrderByDescending(g => g.Key)
                 .Select(dv => new { date = dv.Key, total = dv.Sum(v => v.Total.Value) })
                 .OrderBy(_ => _.date)
                 .ToDictionary(keySelector: r => r.date, elementSelector: r => r.total);
+
+            return (resp, cantVentas);
         }
 
-        private async Task<Dictionary<int, decimal>> GetSalesHour(DateTime start, int idTienda)
+        private async Task<(Dictionary<int, decimal> Ventas, int CantidadVentas)> GetSalesHour(DateTime start, int idTienda)
         {
             var resultados = new GraficoVentasConComparacion();
 
@@ -112,11 +134,16 @@ namespace PointOfSale.Business.Services
                             v.RegistrationDate.Value.Date >= start.Date 
                             && v.IdClienteMovimiento == null
                             && v.IdTienda == idTienda);
-            return queryVentasActuales.ToList()
+
+            var cantVentas = queryVentasActuales.Count();
+
+            var resp = queryVentasActuales.ToList()
                 .GroupBy(_ => _.RegistrationDate.Value.Hour).OrderByDescending(g => g.Key)
                 .Select(dv => new { date = dv.Key, total = dv.Sum(v => v.Total.Value) })
                 .OrderBy(_ => _.date)
                 .ToDictionary(keySelector: r => r.date, elementSelector: r => r.total);
+
+            return (resp, cantVentas);
         }
 
         private async Task<Dictionary<DateTime, decimal>> GetComparation(DateTime start, DateTime dateCompare, int idTienda)
@@ -238,5 +265,7 @@ namespace PointOfSale.Business.Services
         public Dictionary<int, decimal> VentasActualesHour { get; set; }
         public Dictionary<int, decimal> VentasComparacionHour { get; set; }
         public Dictionary<string, decimal> VentasPorTipoVenta { get; set; }
+
+        public int CantidadClientes { get; set; }
     }
 }

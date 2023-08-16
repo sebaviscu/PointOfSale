@@ -17,42 +17,50 @@
     <div class="col-sm-12">
 
         <div class="card card-default">
-            <div class="card-header card-header-border-bottom">
-                <div class="row justify-content-between w-100">
-                    <div class="col-sm-4">
+            <div class="col-md-12">
+                <div class="card-header card-header-border-bottom">
+                    <div class="row col-md 3">
                         <h4>Productos</h4>
                     </div>
-                    <div class="col-sm-4 text-end">
-                        <button class="btn btn-success" id="btnNewProduct">Nuevo Producto</button>
-                    </div>
-                </div>
-            </div>
+                    <div class="row col-md-7 d-flex flex-row-reverse bd-highlight">
+                        <button class="btn btn-success ms-3" id="btnNewProduct">Nuevo Producto</button>
 
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <table id="tbData" class="table" style="width:100%">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Foto</th>
-                                    <th>Barcode</th>
-                                    <th>Proveedor</th>
-                                    <th>Descripción</th>
-                                    <th>Categoria</th>
-                                    <th>Cantidad</th>
-                                    <th>Precio</th>
-                                    <th>Estado</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
+                        <button class="btn btn-info ms-3" id="btnEditAll">Editar Seleccion</button>
+
+                        <label class="form-label">
+                            <input type="checkbox" id="chkSelectAll">
+                            Seleccionar Todo
+                        </label>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-12">
+                    <table id="tbData" class="table" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th>Foto</th>
+                                <th>Barcode</th>
+                                <th>Proveedor</th>
+                                <th>Descripción</th>
+                                <th>Categoria</th>
+                                <th>Cantidad</th>
+                                <th>Precio</th>
+                                <th>Estado</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 </div>
 
 <!-- Grid Modal -->
