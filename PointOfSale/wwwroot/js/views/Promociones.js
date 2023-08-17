@@ -3,7 +3,7 @@
 const BASIC_MODEL = {
     idPromocion: 0,
     nombre: '',
-    isProducto: null,
+    idProducto: null,
     operador: null,
     cantidadProducto: null,
     idCategory: null,
@@ -26,6 +26,40 @@ const dataDays = [
 ]
 
 $(document).ready(function () {
+    $('#cboProducto').select2({
+        ajax: {
+            url: "/Sales/GetProducts",
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            delay: 250,
+            data: function (params) {
+                return {
+                    search: params.term
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data.map((item) => (
+                        {
+                            id: item.idProduct,
+                            text: item.description,
+
+                            brand: item.brand,
+                            category: item.nameCategory,
+                            photoBase64: item.photoBase64,
+                            price: parseFloat(item.price),
+                            tipoVenta: item.tipoVenta
+                        }
+                    ))
+                };
+            }
+        },
+        placeholder: 'Buscando producto...',
+        minimumInputLength: 1,
+        templateResult: formatResults,
+        allowClear: true,
+        dropdownParent: $('#modalData .modal-content')
+    });
 
     $('#cboCategoria').select2({
         ajax: {
@@ -55,36 +89,6 @@ $(document).ready(function () {
         debug: true,
         minimumInputLength: 1,
         dropdownParent: $('#modalData .modal-content')
-    });
-
-    $('#cboProducto').select2({
-        ajax: {
-            url: "/Inventory/GetProductsSearch",
-            dataType: 'json',
-            contentType: "application/json; charset=utf-8",
-            delay: 250,
-            data: function (params) {
-                return {
-                    search: params.term
-                };
-            },
-            processResults: function (data) {
-                return {
-                    results: data.map((item) => (
-                        {
-                            id: item.idProduct,
-                            text: item.description,
-                        }
-                    ))
-                };
-            }
-        },
-        allowClear: true,
-        debug: true,
-        placeholder: 'Buscar producto...',
-        minimumInputLength: 1,
-        dropdownParent: $('#modalData .modal-content')
-
     });
 
     $('#cboDias').select2({
@@ -142,6 +146,28 @@ $(document).ready(function () {
     });
 })
 
+function formatResults(data) {
+
+    if (data.loading)
+        return data.text;
+
+    var container = $(
+        `<table width="90%">
+            <tr>
+                <td style="width:60px">
+                    <img style="height:60px;width:60px;margin-right:10px" src="data:image/png;base64,${data.photoBase64}"/>
+                </td>
+                <td>
+                    <p style="font-weight: bolder;margin:2px">${data.text}</p>
+                    <p>$ ${data.price}</p>
+                </td>
+            </tr>
+         </table>`
+    );
+
+    return container;
+}
+
 
 $("#btnNew").on("click", function () {
     openModal()
@@ -153,14 +179,22 @@ $(document).on('select2:open', () => {
 
 
 const openModal = (model = BASIC_MODEL) => {
+    if (model.idPromocion != 0) {
+        //$("#cboProducto").select2().val(model.idProducto).trigger("change");
+        //$("#cboCategoria").select2().val(model.idCategory).trigger("change");
+        $("#cboDias").select2().val(model.dias).trigger("change");
+    }
+    else {
+        $("#cboDias").val(null).trigger("change");
+        $("#cboCategoria").val(null).trigger("change");
+        $("#cboProducto").val(null).trigger("change");
+    }
+
     $("#txtId").val(model.idPromocion);
     $("#txtNombre").val(model.nombre);
     $("#cboState").val(model.isActive ? 1 : 0);
-    $("#cboProducto").select2().val(model.idProducto == 0 ? null : model.idProducto).trigger("change");
     $("#cboOperador").val(model.operador);
     $("#txtCantidad").val(model.cantidadProducto);
-    $("#cboCategoria").select2().val(model.idCategory == 0 ? null : model.idCategory).trigger("change");
-    $("#cboDias").select2().val(model.dias == 0 ? null : model.dias).trigger("change");
     $("#txtPrecio").val(model.precio);
     $("#txtPorcentaje").val(model.porcentaje);
 
@@ -209,7 +243,7 @@ $("#btnSave").on("click", function () {
 
     if ($("#txtPorcentaje").val() == '' && $("#txtPrecio").val() == '') {
         const msg = `Debe completar al menos un campo de PRECIO o PORCENTAJE`;
-        toastr.warning(msg,"");
+        toastr.warning(msg, "");
         return;
     }
 
@@ -217,9 +251,9 @@ $("#btnSave").on("click", function () {
     model["idPromocion"] = $("#txtId").val();
     model["nombre"] = $("#txtNombre").val();
     model["isActive"] = $("#cboState").val() === '1' ? true : false;
-    model["idProducto"] = $("#cboProducto").val() != '' ? $("#cboProducto").val() : null;
     model["operador"] = $("#cboOperador").val() != '' ? $("#cboOperador").val() : null;
     model["cantidadProducto"] = $("#txtCantidad").val() != '' ? $("#txtCantidad").val() : null;
+    model["idProducto"] = $("#cboProducto").val() != '' ? $("#cboProducto").val() : null;
     model["idCategory"] = $("#cboCategoria").val() != '' ? $("#cboCategoria").val() : null;
     model["dias"] = $("#cboDias").val() != '' ? $("#cboDias").val() : null;
     model["precio"] = $("#txtPrecio").val() != '' ? $("#txtPrecio").val() : null;
