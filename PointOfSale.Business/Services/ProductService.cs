@@ -21,7 +21,7 @@ namespace PointOfSale.Business.Services
         public async Task<List<Product>> List()
         {
             IQueryable<Product> query = await _repository.Query();
-            return query.Include(c => c.IdCategoryNavigation).Include(_=>_.Proveedor).OrderBy(_=>_.Description).ToList();
+            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).OrderBy(_ => _.Description).ToList();
         }
         public async Task<Product> Add(Product entity)
         {
@@ -66,14 +66,17 @@ namespace PointOfSale.Business.Services
                 product_edit.IdCategory = entity.IdCategory;
                 product_edit.Quantity = entity.Quantity;
                 product_edit.Price = entity.Price;
+                product_edit.CostPrice = entity.CostPrice;
+                product_edit.PriceWeb = entity.PriceWeb;
+                product_edit.PorcentajeProfit = entity.PorcentajeProfit;
                 if (entity.Photo != null && entity.Photo.Length > 0)
                     product_edit.Photo = entity.Photo;
                 product_edit.IsActive = entity.IsActive;
-				product_edit.ModificationDate = DateTime.Now;
-				product_edit.ModificationUser= entity.ModificationUser;
+                product_edit.ModificationDate = DateTime.Now;
+                product_edit.ModificationUser = entity.ModificationUser;
                 product_edit.IdProveedor = entity.IdProveedor;
 
-				bool response = await _repository.Edit(product_edit);
+                bool response = await _repository.Edit(product_edit);
                 if (!response)
                     throw new TaskCanceledException("The product could not be modified");
 
@@ -86,6 +89,41 @@ namespace PointOfSale.Business.Services
                 throw;
             }
         }
+
+        public async Task<bool> EditMassive(string user, EditeMassiveProducts data)
+        {
+            try
+            {
+                foreach (var p in data.idProductos)
+                {
+
+                    Product product_edit = await _repository.Get(_ => _.IdProduct == p);
+
+                    if (product_edit == null)
+                        throw new TaskCanceledException($"El producto con Id {p} no existe");
+
+
+                    product_edit.Price = data.Precio != "" ? Convert.ToDecimal(data.Precio) : product_edit.Price;
+                    product_edit.PriceWeb = data.PriceWeb != "" ? Convert.ToDecimal(data.PriceWeb) : product_edit.PriceWeb;
+                    product_edit.CostPrice = data.Costo != "" ? Convert.ToDecimal(data.Costo) : product_edit.CostPrice;
+                    product_edit.PorcentajeProfit = data.Profit != "" ? Convert.ToInt32(data.Profit) : product_edit.PorcentajeProfit;
+                    product_edit.IsActive = data.IsActive;
+                    product_edit.ModificationUser = user;
+                    product_edit.ModificationDate = DateTime.Now;
+
+                    bool response = await _repository.Edit(product_edit);
+                    if (!response)
+                        throw new TaskCanceledException("The product could not be modified");
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+
         public async Task<bool> Delete(int idProduct)
         {
             try

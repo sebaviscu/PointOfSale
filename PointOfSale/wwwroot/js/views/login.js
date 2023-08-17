@@ -8,7 +8,6 @@
                 $("#cboTiendas").append(
                     $("<option>").val('-1').text(''))
             }
-            //borrar los options de cboTipoDocumentoVenta
             if (responseJson.data.length > 0) {
                 responseJson.data.forEach((item) => {
                     $("#cboTiendas").append(

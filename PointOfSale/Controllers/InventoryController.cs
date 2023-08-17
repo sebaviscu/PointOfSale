@@ -201,7 +201,28 @@ namespace PointOfSale.Controllers
 			return StatusCode(StatusCodes.Status200OK, gResponse);
 		}
 
-		[HttpDelete]
+        [HttpPut]
+        public async Task<IActionResult> EditMassiveProducts([FromBody] EditeMassiveProducts data)
+        {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+
+            GenericResponse<VMProduct> gResponse = new GenericResponse<VMProduct>();
+            try
+            {
+				var resp = await _productService.EditMassive(user.UserName, data);
+
+				gResponse.State = resp;
+			}
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+        [HttpDelete]
 		public async Task<IActionResult> DeleteProduct(int IdProduct)
 		{
 			ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });

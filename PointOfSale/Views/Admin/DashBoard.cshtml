@@ -5,8 +5,16 @@
 
 
 <!-- Page Heading -->
-<div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+<div class="row col-md-12">
+
+    <div class="col-md-2 d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+    </div>
+    <div class="row col-md-10 d-flex flex-row-reverse bd-highlight">
+        <button class="btn btn-success ms-3" id="btnNuevoGasto"><i class="mdi mdi-cash-multiple mdi-24px"></i>&nbsp;Nuevo Gasto</button>
+
+        <button class="btn btn-info ms-3" id="btnNuevoPago"><i class="mdi mdi-account-minus mdi-24px"></i>&nbsp;Nuevo Pago</button>
+    </div>
 </div>
 
 <!-- Dias Semana Mes -->
@@ -38,26 +46,35 @@
     <!-- Total de ventas -->
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card border-left-primary shadow h-100 py-2">
-            <div class="card-body row">
-                <div class="row g-0 align-items-center col-md-6">
-                    <div class="col me-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Total ventas
+            <div class="card-body">
+                <div class="accordion">
+                    <div class="accordion-item">
+                        <div class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+
+                            <div class="col me-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Total ventas
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="txtTotalSale"></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-shopping-basket fa-2x text-gray-300"></i>
+                            </div>
+
                         </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="txtTotalSale"></div>
+                        <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <br />
+                                <div id='containerMetodosPago'></div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-auto">
-                        <i class="fas fa-shopping-basket fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div id='containerMetodosPago'></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Total de Ingresos -->
+    <!-- Total de Clientes -->
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card border-left-success shadow h-100 py-2">
             <div class="card-body">
@@ -76,19 +93,32 @@
         </div>
     </div>
 
-    <!-- Total de Productos -->
+    <!-- Total de Gastos -->
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card border-left-info shadow h-100 py-2">
             <div class="card-body">
-                <div class="row g-0 align-items-center">
-                    <div class="col me-2">
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                            Gastos
+                <div class="accordion">
+                    <div class="accordion-item">
+                        <div class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+
+                            <div class="row g-0 align-items-center">
+                                <div class="col me-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                        Gastos
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="txtTotalGastos"></div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionGastos">
+                                <div class="accordion-body">
+                                    <br />
+                                    ACORDEON
+                                </div>
+                            </div>
                         </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="txtTotalGastos"></div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>
@@ -97,7 +127,7 @@
 
 
 
-    <!-- Total de Categorias -->
+    <!-- Total de Ganancias -->
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card border-left-warning shadow h-100 py-2">
             <div class="card-body">
@@ -144,7 +174,7 @@
         <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
             <div class="card-header py-3">
-                <h6>Top Venta de Productos</h6>
+                <h6>Top Venta de Productos <i class="mdi mdi-fire mdi-24px"></i></h6>
             </div>
             <!-- Card Body -->
             <div class="card-body">
@@ -168,4 +198,4 @@
     <script src="~/js/views/AdminDashBoard.js"></script>
     <script src="~/plugins/apexcharts/js/apexcharts.min.js"></script>
 
-   }
+    }

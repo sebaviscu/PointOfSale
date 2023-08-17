@@ -125,8 +125,14 @@ namespace PointOfSale.Controllers
                 switch (typeValues)
                 {
                     case TypeValuesDashboard.Dia:
-                        var first = resultados.VentasComparacionHour.FirstOrDefault().Key;
-                        var last = resultados.VentasComparacionHour.Last().Key;
+                        var firstComp = resultados.VentasComparacionHour.FirstOrDefault().Key;
+                        var firstVenta = resultados.VentasActualesHour.FirstOrDefault().Key;
+                        var first = Math.Min(firstComp, firstVenta);
+
+                        var lastComp = resultados.VentasComparacionHour.Last().Key;
+                        var lastVenta = resultados.VentasActualesHour.Last().Key;
+                        var last = Math.Max(lastComp, lastVenta);
+
                         ejeXint = new int[(last - first) + 1];
                         ejeX = new string[(last - first) + 1];
 

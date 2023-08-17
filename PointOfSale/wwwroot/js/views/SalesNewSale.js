@@ -526,13 +526,3 @@ function lastTab() {
     var tabFirst = $('#tab-list button:last');
     tabFirst.tab('show');
 }
-
-function hiddenCliente() {
-    var value = document.getElementById("card-cliente").hidden;
-    if (value) {
-        $("#card-cliente").attr("hidden", false);
-    }
-    else {
-        $("#card-cliente").attr("hidden", true);
-    }
-}

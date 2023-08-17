@@ -1,5 +1,7 @@
 ﻿let tableData;
 let rowSelected;
+let edicionMasiva = false;
+var aProductos = [];
 
 const BASIC_MODEL = {
     idProduct: 0,
@@ -19,6 +21,11 @@ const BASIC_MODEL = {
     idProveedor: ""
 }
 
+const BASIC_MASSIVE_EDIT = {
+    precio: 0,
+    idProductos: [],
+    isActive: 1
+}
 
 $(document).ready(function () {
 
@@ -61,6 +68,7 @@ $(document).ready(function () {
             "type": "GET",
             "datatype": "json"
         },
+        rowId: 'idProduct',
         "columns": [
             {
                 "data": "idProduct",
@@ -71,18 +79,18 @@ $(document).ready(function () {
                 "defaultContent": `<input type="checkbox" class="chkProducto">`,
                 "orderable": false,
                 "searchable": false,
-                "width": "40px"
+                "width": "40px",
+                "className": "text-center"
             },
             {
                 "data": "photoBase64", render: function (data) {
                     return `<img style="height:40px;" src="data:image/png;base64,${data}" class="rounded mx-auto d-block" />`;
-                }
+                },
+                "className": "text-center"
             },
-            { "data": "barCode" },
             { "data": "nameProveedor" },
             { "data": "description" },
             { "data": "nameCategory" },
-            { "data": "quantity" },
             { "data": "price" },
             {
                 "data": "isActive", render: function (data) {
@@ -97,7 +105,7 @@ $(document).ready(function () {
                     '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-trash-can"></i></button>',
                 "orderable": false,
                 "searchable": false,
-                "width": "80px"
+                "width": "100px"
             }
         ],
         order: [[0, "desc"]],
@@ -126,15 +134,51 @@ $("#chkSelectAll").on("click", function () {
     }
 })
 
-function getAllRowsCheck() {
-    document.querySelectorAll('.tbData tr').forEach((row, i) => {
-        if (row.querySelector('input[type=checkbox]').checked) {
-            console.log(`the first checkbox of row ${i} is checked`);
+function editAll() {
+    if (document.querySelectorAll('input[type=checkbox]:checked').length == 0)
+        return;
+
+    aProductos = [];
+
+    document.querySelectorAll('#tbData tr').forEach((row, i) => {
+        if (row.querySelector('input[type=checkbox]') != null && row.querySelector('input[type=checkbox]').checked && row.id !== '') {
+            aProductos.push([row.id, row.childNodes[4].textContent, row.childNodes[7].textContent]);
         }
     })
+
+    $(".hideAllEdit").hide();
+    $("#listProd").show();
+
+    document.getElementById("modalGridTitle").innerHTML = "Edicion Masiva";
+
+    // Lista tipo de ventas
+    var cont = document.getElementById('listProductosEditar');
+    cont.innerHTML = "";
+    var ul = document.createElement('ul');
+    ul.setAttribute('style', 'padding: 0; margin: 0;');
+    ul.setAttribute('id', 'theList');
+    //ul.classList.add("list-group");
+
+    for (i = 0; i <= aProductos.length - 1; i++) {
+        var li = document.createElement('li');
+        li.innerHTML = aProductos[i][1] + ": $" + aProductos[i][2];
+        li.setAttribute('style', 'display: block;');
+        //li.classList.add("list-group-item");
+        ul.appendChild(li);
+    }
+    cont.appendChild(ul);
+
+    edicionMasiva = true;
+
+    $("#modalData").modal("show")
 }
 
 const openModal = (model = BASIC_MODEL) => {
+    $(".hideAllEdit").show();
+    $("#listProd").hide();
+
+    document.getElementById("modalGridTitle").innerHTML = "Detalle de productos"
+
     $("#txtId").val(model.idProduct);
     $("#txtBarCode").val(model.barCode);
     $("#txtDescription").val(model.description);
@@ -161,6 +205,7 @@ const openModal = (model = BASIC_MODEL) => {
         $("#txtModificadoUsuario").val(model.modificationUser);
     }
 
+    edicionMasiva = false;
 
     $("#modalData").modal("show")
 
@@ -171,6 +216,49 @@ $("#btnNewProduct").on("click", function () {
 })
 
 $("#btnSave").on("click", function () {
+
+    if (edicionMasiva) {
+        saveMassiveProducts();
+
+    } else {
+        saveOneProduct();
+
+    }
+
+})
+
+function saveMassiveProducts() {
+
+    const model = structuredClone(BASIC_MASSIVE_EDIT);
+    model["idProductos"] = aProductos.map(d => d[0]);
+    model["precio"] = $("#txtPrice").val();
+    model["priceWeb"] = $("#txtPriceWeb").val();
+    model["profit"] = $("#txtProfit").val();
+    model["costo"] = $("#txtCosto").val();
+    model["isActive"] = $("#cboState").val() == '1' ? true : false;
+
+    fetch("/Inventory/EditMassiveProducts", {
+        method: "PUT",
+        headers: { 'Content-Type': 'application/json;charset=utf-8' },
+        body: JSON.stringify(model)
+    }).then(response => {
+        $("#modalData").find("div.modal-content").LoadingOverlay("hide")
+        return response.ok ? response.json() : Promise.reject(response);
+    }).then(responseJson => {
+        if (responseJson.state) {
+            $("#modalData").modal("hide");
+            //swal("Exitoso!", "Los productos fueron modificados", "success");
+            location.reload();
+
+        } else {
+            swal("Lo sentimos", responseJson.message, "error");
+        }
+    }).catch((error) => {
+        $("#modalData").find("div.modal-content").LoadingOverlay("hide")
+    })
+}
+
+function saveOneProduct() {
     const inputs = $(".input-validate").serializeArray();
     const inputs_without_value = inputs.filter((item) => item.value.trim() == "" || item.value.trim() == null)
 
@@ -260,8 +348,8 @@ $("#btnSave").on("click", function () {
             $("#modalData").find("div.modal-content").LoadingOverlay("hide")
         })
     }
+}
 
-})
 
 $("#tbData tbody").on("click", ".btn-edit", function () {
 

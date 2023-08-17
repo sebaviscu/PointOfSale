@@ -25,12 +25,7 @@
                     <div class="row col-md-7 d-flex flex-row-reverse bd-highlight">
                         <button class="btn btn-success ms-3" id="btnNewProduct">Nuevo Producto</button>
 
-                        <button class="btn btn-info ms-3" id="btnEditAll">Editar Seleccion</button>
-
-                        <label class="form-label">
-                            <input type="checkbox" id="chkSelectAll">
-                            Seleccionar Todo
-                        </label>
+                        <button class="btn btn-info ms-3" id="btnEditAll" onclick="editAll()">Editar Seleccion</button>
                     </div>
                 </div>
             </div>
@@ -42,13 +37,13 @@
                         <thead>
                             <tr>
                                 <th></th>
-                                <th></th>
+                                <th>
+                                    <input type="checkbox" id="chkSelectAll">
+                                </th>
                                 <th>Foto</th>
-                                <th>Barcode</th>
                                 <th>Proveedor</th>
                                 <th>Descripción</th>
                                 <th>Categoria</th>
-                                <th>Cantidad</th>
                                 <th>Precio</th>
                                 <th>Estado</th>
                                 <th></th>
@@ -68,7 +63,7 @@
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalGridTitle">Detalle de productos</h5>
+                <h5 class="modal-title" id="modalGridTitle">Detalle de productos</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -78,10 +73,10 @@
                     <input type="hidden" value="0" id="txtId">
                     <div class="row">
                         <div class="col-sm-8">
-                            <div class="form-row">
+                            <div class="form-row hideAllEdit">
                                 <div class="form-group col-sm-7">
                                     <label for="txBarCode">BarCode</label>
-                                    <input type="text" class="form-control form-control-sm input-validate" id="txtBarCode" name="BarCode">
+                                    <input type="text" class="form-control form-control-sm" id="txtBarCode" name="BarCode">
                                 </div>
                                 <div class="form-group col-sm-5">
                                     <label for="cboProveedor">Proveedor</label>
@@ -89,20 +84,13 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-row">
-                                <div class="form-group col-sm-9">
+                            <div class="form-row hideAllEdit">
+                                <div class="form-group col-sm-12">
                                     <label for="txtDescription">Descripcion</label>
                                     <input type="text" class="form-control form-control-sm input-validate" id="txtDescription" name="Description">
                                 </div>
-                                <div class="form-group col-sm-3">
-                                    <label for="cboState">Estado</label>
-                                    <select class="form-control form-control-sm" id="cboState">
-                                        <option value="1">Activo</option>
-                                        <option value="0">Inactrivo</option>
-                                    </select>
-                                </div>
                             </div>
-                            <div class="form-row">
+                            <div class="form-row hideAllEdit">
                                 <div class="form-group col-sm-4">
                                     <label for="cboCategory">Categoria</label>
                                     <select class="form-control form-control-sm" id="cboCategory">
@@ -110,7 +98,7 @@
                                 </div>
                                 <div class="form-group col-sm-4">
                                     <label for="txtQuantity">Cantidad</label>
-                                    <input type="text" class="form-control form-control-sm input-validate" id="txtQuantity" name="Quantity">
+                                    <input type="number" class="form-control form-control-sm input-validate" id="txtQuantity" name="Quantity">
                                 </div>
                                 <div class="form-group col-sm-4">
                                     <label for="cboTipoVenta">Tipo Venta</label>
@@ -123,22 +111,22 @@
                             <div class="form-row">
                                 <div class="form-group col-sm-3">
                                     <label for="txtCosto">Costo</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtCosto" name="Costo">
+                                    <input type="number" class="form-control form-control-sm" id="txtCosto" name="Costo">
                                 </div>
                                 <div class="form-group col-sm-3">
                                     <label for="txtProfit">Ganancia %</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtProfit" name="Profit">
+                                    <input type="number" class="form-control form-control-sm" id="txtProfit" name="Profit">
                                 </div>
                                 <div class="form-group col-sm-3">
-                                    <label for="txtPrice">Price</label>
-                                    <input type="text" class="form-control form-control-sm input-validate" id="txtPrice" name="Price">
+                                    <label for="txtPrice">Precio</label>
+                                    <input type="number" class="form-control form-control-sm input-validate" id="txtPrice" name="Price">
                                 </div>
                                 <div class="form-group col-sm-3">
                                     <label for="txtPriceWeb">Precio Web</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtPriceWeb" name="PriceWeb">
+                                    <input type="number" class="form-control form-control-sm" id="txtPriceWeb" name="PriceWeb">
                                 </div>
                             </div>
-                            <div class="form-row" id="divModif">
+                            <div class="form-row hideAllEdit" id="divModif">
                                 <div class="form-group col-sm-6">
                                     <label for="txtModificado">Fecha Modificado</label>
                                     <input type="text" class="form-control form-control-sm" id="txtModificado" name="fechaModificado" readonly>
@@ -148,16 +136,36 @@
                                     <input type="text" class="form-control form-control-sm" id="txtModificadoUsuario" name="usuarioModificado" readonly>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="txtPhoto">Foto</label>
-                                    <input class="form-control-file" type="file" id="txtPhoto" />
+                            <div class="form-row" id="listProd">
+                                <div class="form-group col-sm-6">
+                                    <h5 for="listProductosEditar">
+                                        Productos a Modificar:
+                                    </h5>
+                                    <br />
+                                    <div id='listProductosEditar'></div>
                                 </div>
                             </div>
-                            <div class="form-row">
-                                <img id="imgProduct" style="max-width:200px;" src="" class="rounded mx-auto d-block" alt="Photo Product">
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group col-md-7">
+                                <label for="cboState">Estado</label>
+                                <select class="form-control form-control-sm" id="cboState">
+                                    <option value="1">Activo</option>
+                                    <option value="0">Inactrivo</option>
+                                </select>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="hideAllEdit">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="txtPhoto">Foto</label>
+                                            <input class="form-control-file" type="file" id="txtPhoto" />
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <img id="imgProduct" style="max-width:200px;" src="" class="rounded mx-auto d-block" alt="Photo Product">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
