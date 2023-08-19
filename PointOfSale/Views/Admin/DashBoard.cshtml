@@ -13,7 +13,7 @@
     <div class="row col-md-10 d-flex flex-row-reverse bd-highlight">
         <button class="btn btn-success ms-3" id="btnNuevoGasto"><i class="mdi mdi-cash-multiple mdi-24px"></i>&nbsp;Nuevo Gasto</button>
 
-        <button class="btn btn-info ms-3" id="btnNuevoPago"><i class="mdi mdi-account-minus mdi-24px"></i>&nbsp;Nuevo Pago</button>
+        <button class="btn btn-info ms-3" id="btnNuevoPagoProveedor"><i class="mdi mdi-account-minus mdi-24px"></i>&nbsp;Pago Proveedor</button>
     </div>
 </div>
 
@@ -44,7 +44,7 @@
 <div class="row">
 
     <!-- Total de ventas -->
-    <div class="col-xl-3 col-md-6 mb-4">
+    <div class="col-xl-4 col-md-7 mb-4">
         <div class="card border-left-primary shadow h-100 py-2">
             <div class="card-body">
                 <div class="accordion">
@@ -65,7 +65,7 @@
                         <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 <br />
-                                <div id='containerMetodosPago'></div>
+                                <div id="charTipoVentas"></div>
                             </div>
                         </div>
                     </div>
@@ -75,18 +75,20 @@
     </div>
 
     <!-- Total de Clientes -->
-    <div class="col-xl-3 col-md-6 mb-4">
+    <div class="col-xl-2 col-md-5 mb-4">
         <div class="card border-left-success shadow h-100 py-2">
             <div class="card-body">
                 <div class="row g-0 align-items-center">
-                    <div class="col me-2">
-                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                            Total Clientes
+                    <div class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        <div class="col me-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Total Clientes
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="txtCantidadClientes"></div>
                         </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="txtCantidadClientes"></div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -94,12 +96,12 @@
     </div>
 
     <!-- Total de Gastos -->
-    <div class="col-xl-3 col-md-6 mb-4">
+    <div class="col-xl-4 col-md-7 mb-4">
         <div class="card border-left-info shadow h-100 py-2">
             <div class="card-body">
                 <div class="accordion">
                     <div class="accordion-item">
-                        <div class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                        <div class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
 
                             <div class="row g-0 align-items-center">
                                 <div class="col me-2">
@@ -112,10 +114,10 @@
                                     <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
                                 </div>
                             </div>
-                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionGastos">
+                            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionGastos">
                                 <div class="accordion-body">
                                     <br />
-                                    ACORDEON
+                                    <div id="charGastos"></div>
                                 </div>
                             </div>
                         </div>
@@ -128,18 +130,21 @@
 
 
     <!-- Total de Ganancias -->
-    <div class="col-xl-3 col-md-6 mb-4">
+    <div class="col-xl-2 col-md-5 mb-4">
         <div class="card border-left-warning shadow h-100 py-2">
             <div class="card-body">
                 <div class="row g-0 align-items-center">
-                    <div class="col me-2">
-                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                            Ganancia
+                    <div class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+
+                        <div class="col me-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Ganancia
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="txtGanancia"></div>
                         </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="txtGanancia"></div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-tags fa-2x text-gray-300"></i>
+                        <div class="col-auto">
+                            <i class="fas fa-tags fa-2x text-gray-300"></i>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -184,9 +189,151 @@
                     </select>
                 </div>
                 <div class="chart-pie" @*style="height: 350px !important ;"*@>
-                    <div id="charProducts"></div>
-
+                    <br />
+                    <div id='containerTopSeller'></div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Grid Modal Gasto -->
+<div class="modal fade" id="modalNuevoGasto" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalGridTitle">Nuevo Gasto</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <input type="hidden" value="0" id="txtIdGastos">
+                    <div class="row">
+                        <div class="col-sm-12">
+
+                            <div class="form-row">
+                                <div class="form-group col-sm-6">
+                                    <label for="cboTipoDeGastoEnGasto">Tipo de Gasto</label>
+                                    <select class="form-control form-control-sm input-validate" id="cboTipoDeGastoEnGasto" style="background-color: beige">
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="txtImporte">Importe</label>
+                                    <input type="number" class="form-control form-control-sm input-validate-gasto" id="txtImporte" name="Importe" style="background-color: beige">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-6">
+                                    <label for="txtComentario">Descripción</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario">
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="cboUsuario">Usuario</label>
+                                    <select class="form-control form-control-sm" id="cboUsuario">
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="btnSaveGasto">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Grid Modal Pago Proveedor -->
+<div class="modal fade" id="modalPagoProveedor" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalGridTitle">Ingresar Pago Proveedor</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <input type="hidden" value="0" id="txtIdProveedor">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-row">
+                                <div class="form-group col-sm-4">
+                                    <label for="txtNombrePago">Nombre</label>
+                                    <select class="form-control form-control-sm input-validate" id="cboProveedor" style="background-color: beige">
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-sm-3">
+                                    <label for="txtCuilPago">Cuil</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtCuilPago" name="Cuil" disabled>
+                                </div>
+                                <div class="form-group col-sm-5">
+                                    <label for="txtDireccionPago">Direccion</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtDireccionPago" name="Direccion" disabled>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-2">
+                                    <label for="cboTipoFactura">Tipo</label>
+                                    <select class="form-control form-control-sm" id="cboTipoFactura" name="Tipo Factura">
+                                        <option value=""></option>
+                                        <option value="0">A</option>
+                                        <option value="1">B</option>
+                                        <option value="2">C</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-sm-10">
+                                    <label for="txtNroFactura">Nro Factura</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtNroFactura" name="Factura">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-5">
+                                    <label for="txtIva">IVA</label>
+                                    <input type="number" class="form-control form-control-sm" id="txtIva" name="IVA">
+                                </div>
+                                <div class="form-group col-sm-7">
+                                    <label for="txtImporteProveedor">Importe</label>
+                                    <input type="number" class="form-control form-control-sm input-validate-proveedor" style="background-color: beige" id="txtImporteProveedor" name="Importe">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-6">
+                                    <label for="txtImporteIva">Importe IVA</label>
+                                    <input type="number" class="form-control form-control-sm" id="txtImporteIva" name="Importe IVA">
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="txtImporteSinIva">Importe sin IVA</label>
+                                    <input type="number" class="form-control form-control-sm" id="txtImporteSinIva" name="Importe sin IVA">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-12">
+                                    <label for="txtComentario">Comentario</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="btnSavePagoProveedor">Guardar Cambios</button>
             </div>
         </div>
     </div>

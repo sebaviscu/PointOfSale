@@ -1,7 +1,72 @@
 ﻿var typeValuesGlobal = 0;
+var proveedoresList = [];
+
+const BASIC_MODEL_GASTO = {
+    idGastos: 0,
+    idTipoGasto: 0,
+    importe: 0,
+    comentario: null,
+    idUsuario: 0,
+    modificationDate: null,
+    modificationUser: ""
+}
+
+const BASIC_MODEL_PAGO_PROVEEDOR = {
+    idProveedor: 0,
+    tipoFactura: null,
+    nroFactura: null,
+    iva: 0,
+    ivaImporte: 0,
+    importe: 0,
+    importeSinIva: 0,
+    comentario: null
+}
 
 $(document).ready(function () {
 
+    fetch("/Gastos/GetTipoDeGasto")
+        .then(response => {
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+
+            if (responseJson.data.length > 0) {
+                responseJson.data.forEach((item) => {
+                    $("#cboTipoDeGastoEnGasto").append(
+                        $("<option>").val(item.idTipoGastos).text(item.descripcion)
+                    )
+                });
+            }
+        })
+
+    fetch("/Access/GetAllUsers")
+        .then(response => {
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+
+            if (responseJson.length > 0) {
+                responseJson.forEach((item) => {
+                    $("#cboUsuario").append(
+                        $("<option>").val(item.idUsers).text(item.name)
+                    )
+                });
+            }
+        })
+
+    fetch("/Admin/GetProveedor")
+        .then(response => {
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+
+            if (responseJson.data.length > 0) {
+                proveedoresList = responseJson.data;
+
+                responseJson.data.forEach((item) => {
+                    $("#cboProveedor").append(
+                        $("<option>").val(item.idProveedor).text(item.nombre)
+                    )
+                });
+            }
+        })
 
     fetch("/Inventory/GetCategories")
         .then(response => {
@@ -30,14 +95,12 @@ $('#cboCategory').change(function () {
 
 function changeChart(typeValues) {
     typeValuesGlobal = typeValues;
-
-    $("div.container-fluid").LoadingOverlay("show")
+    showLoading();
 
     fetch(`/Admin/GetSummary?typeValues=${typeValues}`, {
         method: "GET"
     })
         .then(response => {
-            $("div.container-fluid").LoadingOverlay("hide")
             return response.ok ? response.json() : Promise.reject(response);
         }).then(responseJson => {
 
@@ -50,114 +113,102 @@ function changeChart(typeValues) {
                 $("#txtCantidadClientes").text(d.cantidadClientes)
                 $("#txtGanancia").text(d.ganancia)
 
-                var cont = document.getElementById('containerMetodosPago');
-                cont.innerHTML = "";
-                // Lista tipo de ventas
-                var ul = document.createElement('ul');
-                ul.setAttribute('style', 'padding: 0; margin: 0;');
-                ul.setAttribute('id', 'theList');
 
-                for (i = 0; i <= d.ventasPorTipoVenta.length - 1; i++) {
-                    var li = document.createElement('li');     
-                    li.innerHTML = d.ventasPorTipoVenta[i].descripcion + ": $" + d.ventasPorTipoVenta[i].total;      
-                    li.setAttribute('style', 'display: block;');    // remove the bullets.
-                    ul.appendChild(li);     // append li to ul.
-                }
-                cont.appendChild(ul);       // add list to the container.
-
-
-                var options = {
-                    series: [
-                        {
-                            name: d.actual,
-                            data: d.salesList
-                        },
-                        {
-                            name: d.anterior,
-                            data: d.salesListComparacion
-                        }
-                    ],
-                    chart: {
-                        height: 350,
-                        type: 'line',
-                        dropShadow: {
-                            enabled: true,
-                            color: '#000',
-                            top: 18,
-                            left: 7,
-                            blur: 10,
-                            opacity: 0.2
-                        },
-                        toolbar: {
-                            show: false
-                        }
-                    },
-                    colors: ['#2275ba', '#c4c4c4'],
-                    dataLabels: {
-                        enabled: true,
-                    },
-                    stroke: {
-                        curve: 'smooth'
-                    },
-                    title: {
-                        text: 'Ventas',
-                        align: 'left'
-                    },
-                    grid: {
-                        borderColor: '#e7e7e7',
-                        row: {
-                            colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-                            opacity: 0.5
-                        },
-                    },
-                    markers: {
-                        size: 1
-                    },
-                    xaxis: {
-                        categories: d.ejeX,
-                        title: {
-                            text: d.ejeXLeyenda
-                        }
-                    },
-                    yaxis: {
-                        title: {
-                            text: '$'
-                        }
-                    },
-                    legend: {
-                        position: 'top',
-                        horizontalAlign: 'right',
-                        floating: true,
-                        offsetY: -25,
-                        offsetX: -5
-                    }
-                };
-
-                // Grafico de Lineas
-                var chartNew = new ApexCharts(document.querySelector("#chartVentas"), options);
-                chartNew.render();
-
-
-                chartNew.updateOptions({
-                    series: [
-                        {
-                            name: d.actual,
-                            data: d.salesList
-                        },
-                        {
-                            name: d.anterior,
-                            data: d.salesListComparacion
-                        }
-                    ]
-
-                })
-
+                SetGraficoVentas(d);
                 SetTopSeler(typeValuesGlobal, $('#cboCategory').val());
+                SetGraficoGastos(d.gastosPorTipo);
+                SetTipoVentas(d.ventasPorTipoVenta);
+                removeLoading();
             }
-        })
-        .catch((error) => {
-            $("div.container-fluid").LoadingOverlay("hide")
         });
+}
+
+function SetGraficoVentas(d) {
+    var options = {
+        series: [
+            {
+                name: d.actual,
+                data: d.salesList
+            },
+            {
+                name: d.anterior,
+                data: d.salesListComparacion
+            }
+        ],
+        chart: {
+            height: 350,
+            type: 'line',
+            dropShadow: {
+                enabled: true,
+                color: '#000',
+                top: 18,
+                left: 7,
+                blur: 10,
+                opacity: 0.2
+            },
+            toolbar: {
+                show: false
+            }
+        },
+        colors: ['#2275ba', '#c4c4c4'],
+        dataLabels: {
+            enabled: true,
+        },
+        stroke: {
+            curve: 'smooth'
+        },
+        title: {
+            text: 'Ventas',
+            align: 'left'
+        },
+        grid: {
+            borderColor: '#e7e7e7',
+            row: {
+                colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                opacity: 0.5
+            },
+        },
+        markers: {
+            size: 1
+        },
+        xaxis: {
+            categories: d.ejeX,
+            title: {
+                text: d.ejeXLeyenda
+            }
+        },
+        yaxis: {
+            title: {
+                text: '$'
+            }
+        },
+        legend: {
+            position: 'top',
+            horizontalAlign: 'right',
+            floating: true,
+            offsetY: -25,
+            offsetX: -5
+        }
+    };
+
+    // Grafico de Lineas
+    var chartNew = new ApexCharts(document.querySelector("#chartVentas"), options);
+    chartNew.render();
+
+    // Actualiza Grafico
+    chartNew.updateOptions({
+        series: [
+            {
+                name: d.actual,
+                data: d.salesList
+            },
+            {
+                name: d.anterior,
+                data: d.salesListComparacion
+            }
+        ]
+
+    })
 }
 
 function SetTopSeler(typeValues, idCategory) {
@@ -170,51 +221,213 @@ function SetTopSeler(typeValues, idCategory) {
             return response.ok ? response.json() : Promise.reject(response);
         }).then(responseJson => {
 
-            var options = {
-                series: responseJson.map((item) => { return item.quantity }),
-                chart: {
-                    type: 'donut',
-                },
-                labels: responseJson.map((item) => { return item.product }),
-                responsive: [{
-                    breakpoint: 480,
-                    options: {
-                        chart: {
-                            width: 200
-                        },
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }]
-            };
+            let d = responseJson;
+            // Lista tipo de gastos
+            var topSeller = document.getElementById('containerTopSeller');
+            topSeller.innerHTML = "";
+            var ul = document.createElement('ul');
+            ul.setAttribute('style', 'padding: 0; margin: 0;');
+            ul.setAttribute('id', 'theList');
 
-            var chartNew = new ApexCharts(document.querySelector("#charProducts"), options);
-            chartNew.render();
-
-            chartNew.updateOptions({
-                series: responseJson.map((item) => { return item.quantity }),
-                chart: {
-                    type: 'donut',
-                },
-                labels: responseJson.map((item) => { return item.product }),
-                responsive: [{
-                    breakpoint: 480,
-                    options: {
-                        chart: {
-                            width: 200
-                        },
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }]
-            })
-
+            for (i = 0; i <= d.length - 1; i++) {
+                var li = document.createElement('li');
+                li.innerHTML = d[i].product + ": " + d[i].quantity + "";
+                li.setAttribute('style', 'display: block;');    // remove the bullets.
+                ul.appendChild(li);     // append li to ul.
+            }
+            topSeller.appendChild(ul);       // add list to the container.
 
         })
         .catch((error) => {
             $("div.container-fluid").LoadingOverlay("hide")
         });
-
 }
+
+function SetGraficoGastos(gastosPorTipo) {
+
+    var options = {
+        series: gastosPorTipo.map((item) => { return item.total }),
+        chart: {
+            type: 'pie',
+        },
+        labels: gastosPorTipo.map((item) => { return item.descripcion }),
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: '100%'
+                }
+            }
+        }]
+    };
+
+    var chartNew = new ApexCharts(document.querySelector("#charGastos"), options);
+    chartNew.render();
+
+    chartNew.updateOptions({
+        series: gastosPorTipo.map((item) => { return item.total }),
+        labels: gastosPorTipo.map((item) => { return item.descripcion })
+    })
+}
+
+function SetGraficoProveedores(gastosPorTipo) {
+
+    var options = {
+        series: gastosPorTipo.map((item) => { return item.total }),
+        chart: {
+            type: 'pie',
+        },
+        labels: gastosPorTipo.map((item) => { return item.descripcion }),
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: '100%'
+                }
+            }
+        }]
+    };
+
+    var chartNew = new ApexCharts(document.querySelector("#charGastos"), options);
+    chartNew.render();
+
+    chartNew.updateOptions({
+        series: gastosPorTipo.map((item) => { return item.total }),
+        labels: gastosPorTipo.map((item) => { return item.descripcion })
+    })
+}
+
+function SetTipoVentas(tipoVentas) {
+
+    var options = {
+        series: tipoVentas.map((item) => { return item.total }),
+        chart: {
+            type: 'pie',
+        },
+        labels: tipoVentas.map((item) => { return item.descripcion }),
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: '100%'
+                }
+            }
+        }]
+    };
+
+    var chartNew = new ApexCharts(document.querySelector("#charTipoVentas"), options);
+    chartNew.render();
+
+    chartNew.updateOptions({
+        series: tipoVentas.map((item) => { return item.total }),
+        labels: tipoVentas.map((item) => { return item.descripcion })
+    })
+}
+
+$("#btnNuevoGasto").on("click", function () {
+
+    $("#modalNuevoGasto").modal("show")
+})
+
+$("#btnSaveGasto").on("click", function () {
+    const inputs = $("input.input-validate-gasto").serializeArray();
+    const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
+
+    if (inputs_without_value.length > 0) {
+        const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
+        toastr.warning(msg, "");
+        $(`input[name="${inputs_without_value[0].name}"]`).focus();
+        return;
+    }
+
+    const model = structuredClone(BASIC_MODEL_GASTO);
+    model["idGastos"] = parseInt($("#txtIdGastos").val());
+    model["idTipoGasto"] = $("#cboTipoDeGastoEnGasto").val();
+    model["importe"] = $("#txtImporte").val();
+    model["comentario"] = $("#txtComentario").val();
+    model["idUsuario"] = $("#cboUsuario").val() != 0 ? $("#cboUsuario").val() : null;
+
+
+    if (model.idGastos == 0) {
+        fetch("/Gastos/CreateGastos", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json;charset=utf-8' },
+            body: JSON.stringify(model)
+        }).then(response => {
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+
+            if (responseJson.state) {
+
+                $("#modalNuevoGasto").modal("hide");
+                swal("Exitoso!", "El gasto fué guardado con éxito", "success");
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+        })
+    }
+})
+
+$('#cboProveedor').change(function () {
+    var idProv = $(this).val();
+    var proveedor = proveedoresList.find(_ => _.idProveedor == idProv);
+
+    if (proveedor != null) {
+        $("#txtCuilPago").val(proveedor.cuil);
+        $("#txtDireccionPago").val(proveedor.direccion);
+    }
+    else {
+        $("#txtCuilPago").val('');
+        $("#txtDireccionPago").val('');
+    }
+})
+
+$("#btnNuevoPagoProveedor").on("click", function () {
+    $("#modalPagoProveedor").modal("show")
+})
+
+$("#btnSavePagoProveedor").on("click", function () {
+    const inputs = $(".input-validate-proveedor").serializeArray();
+    const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
+
+    if (inputs_without_value.length > 0) {
+        const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
+        toastr.warning(msg, "");
+        $(`input[name="${inputs_without_value[0].name}"]`).focus();
+        return;
+    }
+
+    if ($("#cboProveedor").val() == '') {
+        const msg = `Debe completar el campo del Proveedor`;
+        toastr.warning(msg, "");
+        return;
+    }
+
+    const model = structuredClone(BASIC_MODEL_PAGO_PROVEEDOR);
+    model["idProveedor"] = parseInt($("#cboProveedor").val());
+    model["tipoFactura"] = $("#cboTipoFactura").val();
+    model["nroFactura"] = $("#txtNroFactura").val();
+    model["iva"] = $("#txtIva").val() != '' ? $("#txtIva").val() : 0;
+    model["ivaImporte"] = $("#txtImporteIva").val() != '' ? $("#txtImporteIva").val() : 0;
+    model["importe"] = $("#txtImporteProveedor").val();
+    model["importeSinIva"] = $("#txtImporteSinIva").val() != '' ? $("#txtImporteSinIva").val() : 0;
+    model["comentario"] = $("#txtComentario").val();
+
+
+    fetch("/Admin/RegistrarPagoProveedor", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json;charset=utf-8' },
+        body: JSON.stringify(model)
+    }).then(response => {
+        return response.ok ? response.json() : Promise.reject(response);
+    }).then(responseJson => {
+
+        if (responseJson.state) {
+            $("#modalPagoProveedor").modal("hide");
+            swal("Exitoso!", "Pago a Proveedor creado con éxito", "success");
+
+        } else {
+            swal("Lo sentimos", responseJson.message, "error");
+        }
+    })
+})

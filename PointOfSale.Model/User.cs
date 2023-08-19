@@ -26,6 +26,7 @@ namespace PointOfSale.Model
 		public string? ModificationUser { get; set; }
         public int? IdTienda { get; set; }
         public Tienda? Tienda { get; set; }
+        public ICollection<Gastos>? Gastos { get; set; }
 
         public bool IsAdmin()
         {

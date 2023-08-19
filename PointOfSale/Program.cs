@@ -44,6 +44,7 @@ builder.Services.AddScoped<ITurnoService, TurnoService>();
 builder.Services.AddScoped<IClienteService, ClienteService>();
 builder.Services.AddScoped<IProveedorService, ProveedorService>();
 builder.Services.AddScoped<IPromocionService, PromocionService>();
+builder.Services.AddScoped<IGastosService, GastosService>();
 
 var context = new CustomAssemblyLoadContext();
 context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "Utilities/LibraryPDF/libwkhtmltox.dll"));

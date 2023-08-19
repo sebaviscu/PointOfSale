@@ -2,7 +2,7 @@
 using System.Globalization;
 using PointOfSale.Model;
 using AutoMapper;
-
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Utilities.Automapper
 {
@@ -234,7 +234,7 @@ namespace PointOfSale.Utilities.Automapper
 
             CreateMap<Promocion, VMPromocion>()
                 .ForMember(user => user.IdCategory, opt => opt.MapFrom(userEdit => userEdit.IdCategory.Split(",", System.StringSplitOptions.None)))
-                .ForMember(user => user.Dias, opt => opt.MapFrom(userEdit => userEdit.Dias.Split(",", System.StringSplitOptions.None)));;
+                .ForMember(user => user.Dias, opt => opt.MapFrom(userEdit => userEdit.Dias.Split(",", System.StringSplitOptions.None)));
 
             CreateMap<VMPromocion, Promocion>()
                 .ForMember(userEdit => userEdit.IdCategory, opt => opt.MapFrom(user => string.Join(", ", user.IdCategory)))
@@ -244,6 +244,21 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<ProveedorMovimiento, VMProveedorMovimiento>();
 
             CreateMap<VMProveedorMovimiento, ProveedorMovimiento>();
+
+
+            CreateMap<Gastos, VMGastos>()
+                .ForMember(user => user.Comentario, opt => opt.MapFrom(userEdit => userEdit.Comentario != string.Empty ? userEdit.Comentario : userEdit.IdUsuario != null ? userEdit.User.Name : string.Empty))
+                .ForMember(user => user.TipoGastoString, opt => opt.MapFrom(userEdit => userEdit.TipoDeGasto != null && userEdit.TipoDeGasto.GastoParticular != 0 ? userEdit.TipoDeGasto.Descripcion : string.Empty))
+                .ForMember(user => user.GastoParticular, opt => opt.MapFrom(userEdit => userEdit.TipoDeGasto != null ? userEdit.TipoDeGasto.GastoParticular.ToString() : string.Empty))
+                .ForMember(user => user.ImporteString, opt => opt.MapFrom(userEdit => "$" + userEdit.Importe))
+                .ForMember(user => user.FechaString, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.ToString("dd/MM/yyyy h:mm tt")));
+
+
+            CreateMap<VMGastos, Gastos>();
+
+            CreateMap<TipoDeGasto, VMTipoDeGasto>();
+
+            CreateMap<VMTipoDeGasto, TipoDeGasto>();
         }
     }
 }

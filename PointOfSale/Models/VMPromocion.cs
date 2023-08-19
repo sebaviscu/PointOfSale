@@ -20,5 +20,6 @@ namespace PointOfSale.Models
         public string? Promocion { get; set; }
         public int? Row { get; set; }
         public decimal Total { get; set; }
+        public string PromocionString { get; set; }
     }
 }

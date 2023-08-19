@@ -14,5 +14,6 @@ namespace PointOfSale.Business.Contracts
         Task<Product> Edit(Product entity);
         Task<bool> Delete(int idProduct);
         Task<bool> EditMassive(string usuario, EditeMassiveProducts data);
+        Task<Product> Get(int idProducto);
     }
 }

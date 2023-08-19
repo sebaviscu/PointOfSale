@@ -51,7 +51,7 @@
           ——— LEFT SIDEBAR WITH OUT FOOTER
         ===================================== -->
         <aside class="left-sidebar bg-sidebar">
-            <div id="sidebar" class="sidebar sidebar-with-footer">
+            <div id="sidebar" class="sidebar">
                 <!-- Aplication Brand -->
                 <div class="app-brand">
                     <a href="#" title="Example Store">
@@ -67,7 +67,8 @@
                         @await Component.InvokeAsync("Menu")
                     </ul>
                 </div>
-
+                <button class="btn btn-outline-danger" onclick='generarDatos()'>Generar Datos</button>
+                <br />
                 <button class="btn btn-outline-info" onclick='cerrarTurno()'>Cerrar turno</button>
             </div>
         </aside>
@@ -169,7 +170,6 @@
             </div>
         </div>
     </div>
-
 
     <!-- Javascript -->
     <script src="~/plugins/jquery/jquery.min.js"></script>

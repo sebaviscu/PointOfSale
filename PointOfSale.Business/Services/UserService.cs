@@ -136,5 +136,11 @@ namespace PointOfSale.Business.Services
             var user = query.Include(r => r.IdRolNavigation).First();
             return user;
         }
+
+        public async Task<List<User>> GetAllUsers()
+        {
+            IQueryable<User> query = await _repository.Query(u => u.IsActive == true);
+            return query.OrderBy(_ => _.Name).ToList();
+        }
     }
 }

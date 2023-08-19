@@ -19,6 +19,22 @@ namespace PointOfSale.Business.Services
             _repository = repository;
         }
 
+        public async Task<Category> Get(int idCategory)
+        {
+            return await _repository.Get(p => p.IdCategory == idCategory);
+
+        }
+
+        public async Task<List<Category>> GetMultiple(int[] idCategorys)
+        {
+            var catList = new List<Category>();
+            foreach (var c in idCategorys)
+            {
+                catList.Add(await _repository.Get(p => p.IdCategory == c));
+            }
+            return catList;
+        }
+
         public async Task<List<Category>> List()
         {
             IQueryable<Category> query = await _repository.Query();
@@ -90,10 +106,10 @@ namespace PointOfSale.Business.Services
             try
             {
 
-            IQueryable<Category> query = await _repository.Query(p =>
-                       p.IsActive == true && p.Description.Contains(search));
+                IQueryable<Category> query = await _repository.Query(p =>
+                           p.IsActive == true && p.Description.Contains(search));
 
-            var s = query.OrderBy(_=>_.Description).ToList();
+                var s = query.OrderBy(_ => _.Description).ToList();
                 return s;
             }
             catch (Exception e)

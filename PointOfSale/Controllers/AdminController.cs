@@ -24,6 +24,8 @@ namespace PointOfSale.Controllers
         private readonly IProveedorService _proveedorService;
         private readonly IPromocionService _promocionService;
         private readonly IMapper _mapper;
+        private readonly IProductService _productService;
+        private readonly ICategoryService _categoryService;
 
         public AdminController(
             IDashBoardService dashboardService,
@@ -33,7 +35,7 @@ namespace PointOfSale.Controllers
             IClienteService clienteService,
             IProveedorService proveedorService,
             IMapper mapper,
-            IPromocionService promocionService)
+            IPromocionService promocionService, IProductService productService, ICategoryService categoryService)
         {
             _dashboardService = dashboardService;
             _userService = userService;
@@ -43,8 +45,8 @@ namespace PointOfSale.Controllers
             _clienteService = clienteService;
             _proveedorService = proveedorService;
             _promocionService = promocionService;
-
-
+            _productService = productService;
+            _categoryService = categoryService;
         }
 
         public IActionResult DashBoard()
@@ -126,11 +128,11 @@ namespace PointOfSale.Controllers
                 {
                     case TypeValuesDashboard.Dia:
                         var firstComp = resultados.VentasComparacionHour.FirstOrDefault().Key;
-                        var firstVenta = resultados.VentasActualesHour.FirstOrDefault().Key;
+                        var firstVenta = resultados.VentasActualesHour.Count() > 0 ? resultados.VentasActualesHour.FirstOrDefault().Key : firstComp;
                         var first = Math.Min(firstComp, firstVenta);
 
                         var lastComp = resultados.VentasComparacionHour.Last().Key;
-                        var lastVenta = resultados.VentasActualesHour.Last().Key;
+                        var lastVenta = resultados.VentasActualesHour.Count() > 0 ? resultados.VentasActualesHour.Last().Key : lastComp;
                         var last = Math.Max(lastComp, lastVenta);
 
                         ejeXint = new int[(last - first) + 1];
@@ -204,9 +206,32 @@ namespace PointOfSale.Controllers
                     });
                 }
 
-                var movimientosProv = await  _dashboardService.GetMovimientosProveedoresByTienda(typeValues, user.IdTienda);
-                var gastosTotales = movimientosProv.Sum(_ => _.Importe);
+                var gastosParticualresList = new List<VMVentasPorTipoDeVenta>();
+                foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetGastos(typeValues, user.IdTienda))
+                {
+                    gastosParticualresList.Add(new VMVentasPorTipoDeVenta()
+                    {
+                        Descripcion = item.Key,
+                        Total = item.Value
+                    });
+                };
+                var totGastosParticualres = gastosParticualresList.Sum(_ => _.Total);
+
+                var movimientosProv = await _dashboardService.GetMovimientosProveedoresByTienda(typeValues, user.IdTienda);
+                var gastosProvTotales = movimientosProv.Sum(_ => _.Importe);
+
+                //foreach (var item in await _dashboardService.GetMovimientosProveedoresByTienda(typeValues, user.IdTienda))
+                //{
+                //    gastosParticualresList.Add(new VMVentasPorTipoDeVenta()
+                //    {
+                //        Descripcion = item.Key,
+                //        Total = item.Value
+                //    });
+                //};
+
                 var gananciaBruta = listSales.Sum(_ => _.Total);
+                var gastosTotales = gastosProvTotales + totGastosParticualres;
+
                 vmDashboard.EjeX = ejeX;
                 vmDashboard.SalesList = listSales.Select(_ => _.Total).ToList();
                 vmDashboard.SalesListComparacion = listSalesComparacion.Select(_ => _.Total).ToList();
@@ -216,6 +241,7 @@ namespace PointOfSale.Controllers
                 vmDashboard.Gastos = "$ " + gastosTotales.ToString();
                 vmDashboard.CantidadClientes = resultados.CantidadClientes;
                 vmDashboard.Ganancia = "$ " + (gananciaBruta - gastosTotales).ToString();
+                vmDashboard.GastosPorTipo = gastosParticualresList;
 
                 gResponse.State = true;
                 gResponse.Object = vmDashboard;
@@ -681,6 +707,33 @@ namespace PointOfSale.Controllers
         public async Task<IActionResult> GetPromociones()
         {
             var listPromocion = _mapper.Map<List<VMPromocion>>(await _promocionService.List());
+            foreach (var p in listPromocion)
+            {
+                var dias = string.Empty;
+                var producto = string.Empty;
+                var categoria = string.Empty;
+
+                if (p.IdProducto != null)
+                {
+                    var prod = await _productService.Get(Convert.ToInt32(p.IdProducto));
+                    p.PromocionString += " [" + string.Join(", ", prod.Description) + "]";
+                }
+
+                if (p.IdCategory != null)
+                {
+                    var catList = await _categoryService.GetMultiple(p.IdCategory);
+                    p.PromocionString += " [" + string.Join(", ", catList.Select(_ => _.Description)) + "]";
+                }
+
+                if (p.Dias != null)
+                {
+                    var diasList = p.Dias.Select(_ => (Model.Enum.DiasSemana)_).ToList();
+                    p.PromocionString += " [" + string.Join(", ", diasList.Select(_ => _.ToString())) + "]";
+                }
+                p.PromocionString += " -> ";
+                p.PromocionString += p.Precio != null ? $"Precio fijo: ${p.Precio}" : $"Precio {p.Porcentaje}%: ";
+
+            }
             return StatusCode(StatusCodes.Status200OK, new { data = listPromocion });
         }
 

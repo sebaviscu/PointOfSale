@@ -114,6 +114,7 @@ $(document).ready(function () {
                 "searchable": false
             },
             { "data": "nombre" },
+            { "data": "promocionString" },
             {
                 "data": "isActive", render: function (data) {
                     if (data == 1)

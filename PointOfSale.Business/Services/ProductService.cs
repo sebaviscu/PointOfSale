@@ -18,6 +18,12 @@ namespace PointOfSale.Business.Services
             _repository = repository;
         }
 
+        public async Task<Product> Get(int idProducto)
+        {
+            return await _repository.Get(p => p.IdProduct == idProducto);
+
+        }
+
         public async Task<List<Product>> List()
         {
             IQueryable<Product> query = await _repository.Query();

@@ -94,5 +94,19 @@ namespace PointOfSale.Controllers
                 return RedirectToAction("NewSale", "Sales");
 
         }
+
+        [HttpGet]
+        public async Task<List<User>> GetAllUsers()
+        {
+            var users = await _userService.GetAllUsers();
+            return users;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult?> GenerarDatos()
+        {
+
+            return default;
+        }
     }
 }

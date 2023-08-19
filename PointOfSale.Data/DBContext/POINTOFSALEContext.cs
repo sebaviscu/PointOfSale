@@ -34,6 +34,8 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<Proveedor> Proveedor { get; set; } = null!;
         public virtual DbSet<ProveedorMovimiento> ProveedorMovimiento { get; set; } = null!;
         public virtual DbSet<Promocion> Promocion { get; set; } = null!;
+        public virtual DbSet<Gastos> Gastos { get; set; } = null!;
+        public virtual DbSet<TipoDeGasto> TipoDeGasto { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -41,6 +43,34 @@ namespace PointOfSale.Data.DBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<TipoDeGasto>(entity =>
+            {
+                entity.HasKey(e => e.IdTipoGastos);
+
+                entity.ToTable("TipoGastos");
+
+            });
+
+            modelBuilder.Entity<Gastos>(entity =>
+            {
+                entity.HasKey(e => e.IdGastos);
+
+                entity.ToTable("Gastos");
+
+                entity.HasOne(d => d.TipoDeGasto)
+                    .WithMany(p => p.Gastos)
+                    .HasForeignKey(d => d.IdTipoGasto);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Gastos)
+                    .HasForeignKey(d => d.IdUsuario);
+
+                entity.Property(e => e.RegistrationDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("registrationDate")
+                    .HasDefaultValueSql("(getdate())");
+            });
+
             modelBuilder.Entity<Promocion>(entity =>
             {
                 entity.HasKey(e => e.IdPromocion);

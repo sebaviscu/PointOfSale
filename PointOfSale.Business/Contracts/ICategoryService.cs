@@ -14,5 +14,7 @@ namespace PointOfSale.Business.Contracts
         Task<Category> Edit(Category entity);
         Task<bool> Delete(int idCategory);
         Task<List<Category>> GetCategoriesSearch(string search);
+        Task<Category> Get(int idProducto);
+        Task<List<Category>> GetMultiple(int[] idCategorys);
     }
 }

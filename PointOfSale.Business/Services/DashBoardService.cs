@@ -18,17 +18,20 @@ namespace PointOfSale.Business.Services
         private readonly ISaleRepository _repositorySale;
         private readonly IGenericRepository<DetailSale> _repositoryDetailSale;
         private readonly IGenericRepository<ProveedorMovimiento> _proveedorMovimiento;
+        private readonly IGenericRepository<Gastos> _gastosRepository;
 
         public DashBoardService(
             ISaleRepository repositorySale,
             IGenericRepository<DetailSale> repositoryDetailSale, 
-            IGenericRepository<ProveedorMovimiento> proveedorMovimiento
+            IGenericRepository<ProveedorMovimiento> proveedorMovimiento, 
+            IGenericRepository<Gastos> gastosRepository
             )
         {
 
             _repositorySale = repositorySale;
             _repositoryDetailSale = repositoryDetailSale;
             _proveedorMovimiento = proveedorMovimiento;
+            _gastosRepository= gastosRepository;
         }
 
         public async Task<GraficoVentasConComparacion> GetSales(TypeValuesDashboard typeValues, int idTienda)
@@ -79,6 +82,7 @@ namespace PointOfSale.Business.Services
                 throw;
             }
         }
+
         public async Task<List<ProveedorMovimiento>> GetMovimientosProveedoresByTienda(TypeValuesDashboard typeValues, int idTienda)
         {
             DateTime dateCompare, start;
@@ -214,6 +218,7 @@ namespace PointOfSale.Business.Services
                 throw;
             }
         }
+
         public async Task<Dictionary<string, decimal>> GetSalesByTypoVentaByTurno(TypeValuesDashboard typeValues, int turno, int idTienda)
         {
             DateTime dateCompare, start;
@@ -229,6 +234,24 @@ namespace PointOfSale.Business.Services
                         && vd.IdTienda == idTienda)
                 .GroupBy(v => v.IdTypeDocumentSaleNavigation.Description).OrderByDescending(g => g.Sum(_ => _.Total))
                 .Select(dv => new { descripcion = dv.Key, total = dv.Sum(_ => _.Total.Value) })
+                .ToDictionary(keySelector: r => r.descripcion, elementSelector: r => r.total);
+
+            return resultado;
+        }
+
+        public async Task<Dictionary<string, decimal>> GetGastos(TypeValuesDashboard typeValues, int idTienda)
+        {
+            DateTime dateCompare, start;
+            FechasParaQuery(typeValues, out dateCompare, out start);
+
+            IQueryable<Gastos> query = await _gastosRepository.Query();
+
+            Dictionary<string, decimal> resultado = query
+                .Include(v => v.TipoDeGasto)
+                .Where(vd => vd.RegistrationDate.Date >= start.Date
+                        && vd.IdTienda == idTienda)
+                .GroupBy(v => v.TipoDeGasto.Descripcion).OrderByDescending(g => g.Sum(_ => _.Importe))
+                .Select(dv => new { descripcion = dv.Key, total = dv.Sum(_ => _.Importe) })
                 .ToDictionary(keySelector: r => r.descripcion, elementSelector: r => r.total);
 
             return resultado;

@@ -12,7 +12,7 @@ const BASIC_MODEL = {
     modificationUser: null
 }
 
-const BASIC_MODEL_PÂGO = {
+const BASIC_MODEL_PAGO = {
     idProveedor: 0,
     tipoFactura: null,
     nroFactura: null,
@@ -227,7 +227,7 @@ $("#btnSavePago").on("click", function () {
         return;
     }
 
-    const model = structuredClone(BASIC_MODEL_PÂGO);
+    const model = structuredClone(BASIC_MODEL_PAGO);
     model["idProveedor"] = $("#txtIdProveedor").val();
     model["tipoFactura"] = $("#cboTipoFactura").val();
     model["nroFactura"] = $("#txtNroFactura").val();
@@ -262,7 +262,7 @@ $("#btnSavePago").on("click", function () {
 
 })
 
-const openModalPago = (model = BASIC_MODEL_PÂGO) => {
+const openModalPago = (model = BASIC_MODEL_PAGO) => {
     $("#txtIdProveedor").val(model.idProveedor);
     $("#txtNombrePago").val(model.nombre);
     $("#txtCuilPago").val(model.cuil);

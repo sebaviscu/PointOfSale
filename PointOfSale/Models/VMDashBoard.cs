@@ -7,6 +7,7 @@
         public List<decimal> SalesList { get; set; }
         public List<decimal> SalesListComparacion { get; set; }
         public List<VMVentasPorTipoDeVenta> VentasPorTipoVenta { get; set; }
+        public List<VMVentasPorTipoDeVenta> GastosPorTipo { get; set; }
 
         public int CantidadClientes { get; set; }
         public string Gastos { get; set; }

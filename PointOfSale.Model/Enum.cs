@@ -44,5 +44,12 @@ namespace PointOfSale.Model
             Sabado = 6,
             Domingo = 7
         }
+
+        public enum TipoDeGastoEnum
+        {
+            Sueldos = 0,
+            Fijo = 1,
+            Variable = 2,
+        }
     }
 }

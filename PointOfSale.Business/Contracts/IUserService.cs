@@ -17,5 +17,7 @@ namespace PointOfSale.Business.Contracts
         Task<User> GetById(int IdUser);
 
         Task<User> GetByIdWithRol(int IdUser);
+
+        Task<List<User>> GetAllUsers();
     }
 }
