@@ -170,7 +170,7 @@ namespace PointOfSale.Business.Services
             var cantproductos = productos.Count;
             try
             {
-                for (int i = 0; i < 1200; i++) /*1200*/
+                for (int i = 0; i < 10; i++) /*1200*/
                 {
                     var dia = RandomDay();
 
