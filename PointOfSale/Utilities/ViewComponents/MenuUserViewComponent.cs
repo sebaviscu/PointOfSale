@@ -47,10 +47,10 @@ namespace PointOfSale.Utilities.ViewComponents
 
                 emailUser = ((ClaimsIdentity)claimuser.Identity).FindFirst("Email").Value;
 
-                var tiendaId = ((ClaimsIdentity)claimuser.Identity).FindFirst("Tienda").Value;
+                //var tiendaId = ((ClaimsIdentity)claimuser.Identity).FindFirst("Tienda").Value;
 
-                var tienda = await _tiendaService.Get(Convert.ToInt32(tiendaId));
-                tiendaName = tienda.Nombre;
+                //var tienda = await _tiendaService.Get(Convert.ToInt32(tiendaId));
+                //tiendaName = tienda.Nombre;
             }
 
             ViewData["userName"] = userName;

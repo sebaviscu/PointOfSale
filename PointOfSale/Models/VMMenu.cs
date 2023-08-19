@@ -7,5 +7,6 @@
         public string? Controller { get; set; }
         public string? PageAction { get; set; }
         public virtual ICollection<VMMenu> SubMenus { get; set; }
+
     }
 }

@@ -9,7 +9,6 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Sleek Dashboard - Free Bootstrap 4 Admin Dashboard Template and UI Kit. It is very powerful bootstrap admin dashboard, which allows you to build products like admin panels, content management systems and CRMs etc.">
 
     <title>Sign In - Sleek Admin Dashboard Template</title>
 
@@ -30,18 +29,18 @@
                     <div class="card-header bg-primary">
                         <div class="app-brand">
                             <a href="#">
-                                <span class="brand-name">Example Store</span>
+                                <h2 style="color:whitesmoke" class="brand-name"><i class="mdi mdi-account mdi-24px"></i> Administración</h2>
                             </a>
                         </div>
                     </div>
 
                     <div class="card-body p-5">
-                        <h4 class="text-dark mb-5">Sign In</h4>
+                        <h4 class="text-dark mb-5">Login</h4>
 
                         <form asp-controller="Access" asp-action="Login" method="post">
                             <div class="row">
                                 <div class="form-group col-md-12 mb-4">
-                                    <input type="text" class="form-control input-lg" asp-for="Email" placeholder="Email">
+                                    <input type="text" class="form-control input-lg" asp-for="Email" placeholder="Usuario">
                                 </div>
 
                                 <div class="form-group col-md-12 ">
@@ -63,13 +62,13 @@
                                     <div class="d-flex my-2 justify-content-between">
                                         <div class="d-inline-block me-3">
                                             <label class="control control-checkbox">
-                                                Keep me logged In.
+                                                Mantener sesion abierta.
                                                 <input type="checkbox" asp-for="KeepLoggedIn" />
                                                 <div class="control-indicator"></div>
                                             </label>
                                         </div>
                                     </div>
-                                    <button type="submit" class="btn btn-lg btn-primary w-100 mb-4">Sign In</button>
+                                    <button type="submit" class="btn btn-lg btn-primary w-100 mb-4">Ingresar</button>
 
                                 </div>
                             </div>

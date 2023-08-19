@@ -54,8 +54,11 @@
             <div id="sidebar" class="sidebar">
                 <!-- Aplication Brand -->
                 <div class="app-brand">
-                    <a href="#" title="Example Store">
-                        <span class="brand-name text-truncate">Example Store</span>
+                    <a href="#" title="Store">
+                        @*<span class="brand-name text-truncate">*@
+                        <span>
+                            @await Component.InvokeAsync("NombreTienda")
+                        </span>
                     </a>
                 </div>
 

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PointOfSale.Business.Services
 {
-    public class MenuService: IMenuService
+    public class MenuService : IMenuService
     {
         private readonly IGenericRepository<Menu> _repositoryMenu;
         private readonly IGenericRepository<RolMenu> _repositoryRolMenu;
@@ -32,10 +32,10 @@ namespace PointOfSale.Business.Services
 
 
             IQueryable<Menu> MenuParent = (from u in tbUser
-                                          join rm in tbRolmenu on u.IdRol equals rm.IdRol
-                                          join m in tbMenu on rm.IdMenu equals m.IdMenu
-                                          join mparent in tbMenu on m.IdMenuParent equals mparent.IdMenu
-                                          select mparent).Distinct().AsQueryable();
+                                           join rm in tbRolmenu on u.IdRol equals rm.IdRol
+                                           join m in tbMenu on rm.IdMenu equals m.IdMenu
+                                           join mparent in tbMenu on m.IdMenuParent equals mparent.IdMenu
+                                           select mparent).Distinct().AsQueryable();
 
             IQueryable<Menu> MenuChild = (from u in tbUser
                                           join rm in tbRolmenu on u.IdRol equals rm.IdRol
@@ -44,18 +44,21 @@ namespace PointOfSale.Business.Services
                                           select m).Distinct().AsQueryable();
 
             List<Menu> listMenu = (from mpadre in MenuParent
-                                    select new Menu()
-                                    {
-                                        Description = mpadre.Description,
-                                        Icon = mpadre.Icon,
-                                        Controller = mpadre.Controller,
-                                        PageAction = mpadre.PageAction,
-                                        InverseIdMenuParentNavigation = (from mchild in MenuChild
+                                   select new Menu()
+                                   {
+                                       Orden = mpadre.Orden,
+                                       Description = mpadre.Description,
+                                       Icon = mpadre.Icon,
+                                       Controller = mpadre.Controller,
+                                       PageAction = mpadre.PageAction,
+                                       InverseIdMenuParentNavigation = (from mchild in MenuChild
                                                                         where mchild.IdMenuParent == mpadre.IdMenu
                                                                         select mchild).ToList()
-                                    }).ToList();
+                                   }).ToList();
 
-            return listMenu;
+            listMenu.AddRange(tbMenu.Where(_ => _.IdMenuParent == null));
+
+            return listMenu.OrderBy(_ => _.Orden).ToList();
         }
     }
 }

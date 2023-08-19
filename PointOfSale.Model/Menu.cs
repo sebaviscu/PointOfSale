@@ -23,5 +23,7 @@ namespace PointOfSale.Model
         public virtual Menu? IdMenuParentNavigation { get; set; }
         public virtual ICollection<Menu> InverseIdMenuParentNavigation { get; set; }
         public virtual ICollection<RolMenu> RolMenus { get; set; }
+
+        public int? Orden { get; set; }
     }
 }
