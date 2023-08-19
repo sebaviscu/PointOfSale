@@ -60,9 +60,7 @@ function generarDatos() {
 
     fetch(`/Access/GenerarDatos`, {
         method: "POST"
-    })
-        .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+
         }).then(responseJson => {
 
             removeLoading();

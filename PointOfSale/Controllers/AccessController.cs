@@ -5,6 +5,7 @@ using PointOfSale.Business.Contracts;
 using PointOfSale.Model;
 using PointOfSale.Models;
 using System.Security.Claims;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Controllers
 {
@@ -13,12 +14,14 @@ namespace PointOfSale.Controllers
         private readonly IUserService _userService;
         private readonly ITurnoService _turnoService;
         private readonly ITiendaService _tiendaService;
+        private readonly ISaleService _saleService;
 
-        public AccessController(IUserService userService, ITurnoService turnoService, ITiendaService tiendaService)
+        public AccessController(IUserService userService, ITurnoService turnoService, ITiendaService tiendaService, ISaleService saleService)
         {
             _userService = userService;
             _turnoService = turnoService;
             _tiendaService = tiendaService;
+            _saleService = saleService;
         }
 
         public IActionResult Login()
@@ -105,7 +108,12 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult?> GenerarDatos()
         {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado, Roles.Empleado });
+            ClaimsPrincipal claimuser = HttpContext.User;
 
+            string idUsuario = claimuser.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).Select(c => c.Value).SingleOrDefault();
+
+            await _saleService.GenerarVentas(user.IdTienda, int.Parse(idUsuario));
             return default;
         }
     }

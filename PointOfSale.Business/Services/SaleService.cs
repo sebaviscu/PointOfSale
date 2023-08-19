@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services
 {
@@ -16,11 +17,24 @@ namespace PointOfSale.Business.Services
         private readonly IGenericRepository<Product> _repositoryProduct;
         private readonly IGenericRepository<Cliente> _repositoryCliente;
         private readonly ISaleRepository _repositorySale;
-        public SaleService(IGenericRepository<Product> repositoryProduct, ISaleRepository repositorySale, IGenericRepository<Cliente> repositoryCliente)
+        private readonly ITypeDocumentSaleService _rTypeNumber;
+        private readonly IProductService _rProduct;
+        private readonly ITurnoService _turnoService;
+
+        public SaleService(
+            IGenericRepository<Product> repositoryProduct,
+            ISaleRepository repositorySale,
+            IGenericRepository<Cliente> repositoryCliente,
+            ITypeDocumentSaleService rTypeNumber,
+            IProductService rProduct,
+            ITurnoService turnoService)
         {
             _repositoryProduct = repositoryProduct;
             _repositorySale = repositorySale;
             _repositoryCliente = repositoryCliente;
+            _rTypeNumber = rTypeNumber;
+            _rProduct = rProduct;
+            _turnoService = turnoService;
         }
 
         public async Task<List<Product>> GetProducts(string search)
@@ -143,5 +157,101 @@ namespace PointOfSale.Business.Services
                 throw;
             }
         }
+
+        public async Task<int> GenerarVentas(int idTienda, int idUser)
+        {
+
+            var tiposVentas = await _rTypeNumber.List();
+            var productos = await _rProduct.List();
+            var turno = await _turnoService.GetTurnoActual(idTienda);
+
+            var random = new Random();
+            var cantTipoVentas = tiposVentas.Count;
+            var cantproductos = productos.Count;
+            try
+            {
+                for (int i = 0; i < 1200; i++) /*1200*/
+                {
+                    var dia = RandomDay();
+
+                    var sale = new Sale();
+                    sale.RegistrationDate = dia;
+                    sale.IdTypeDocumentSale = tiposVentas[random.Next(0, cantTipoVentas - 1)].IdTypeDocumentSale;
+                    sale.IdTienda = idTienda;
+                    sale.IdTurno = turno.IdTurno;
+                    sale.IdUsers = idUser;
+
+                    var catProdVenta = random.Next(0, 6);
+
+                    var listDet = new List<DetailSale>();
+
+                    for (int a = 0; a < catProdVenta; a++)
+                    {
+                        var detalle = new DetailSale();
+                        var p = productos[random.Next(0, cantproductos - 1)];
+                        if (!listDet.Any(_ => _.IdProduct == p.IdProduct))
+                        {
+                            detalle.IdProduct = p.IdProduct;
+                            detalle.BrandProduct = p.Brand;
+                            detalle.CategoryProducty = p.IdCategoryNavigation.Description;
+                            detalle.DescriptionProduct = p.Description;
+                            detalle.Price = p.Price;
+                            detalle.Quantity = random.Next(0, 4);
+                            detalle.Total = detalle.Price * detalle.Quantity;
+                            listDet.Add(detalle);
+                        }
+                    }
+
+                    if (listDet.Count() == 0)
+                    {
+                        catProdVenta = random.Next(0, 6);
+
+                        var detalle = new DetailSale();
+                        var p = productos[random.Next(0, cantproductos - 1)];
+                        if (!listDet.Any(_ => _.IdProduct == p.IdProduct))
+                        {
+                            detalle.IdProduct = p.IdProduct;
+                            detalle.BrandProduct = p.Brand;
+                            detalle.CategoryProducty = p.IdCategoryNavigation.Description;
+                            detalle.DescriptionProduct = p.Description;
+                            detalle.Price = p.Price;
+                            detalle.Quantity = random.Next(0, 4);
+                            detalle.Total = detalle.Price * detalle.Quantity;
+                            listDet.Add(detalle);
+                        }
+                    }
+
+                    sale.Total = listDet.Sum(d => d.Total);
+                    sale.DetailSales = listDet;
+
+                    if (sale.Total > 0)
+                        await _repositorySale.Add(sale);
+                }
+
+                return 1;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        public DateTime RandomDay()
+        {
+            var diaHoy = DateTime.Now;
+            var inicioMes = DateTime.Now.Day - 1;
+            var diaInicio = diaHoy.AddDays(-inicioMes).AddMonths(-1);
+
+            var gen = new Random();
+            int range = (DateTime.Today - diaInicio).Days;
+
+            var day = diaInicio.AddDays(gen.Next(range)).Date;
+
+            var random = new Random();
+            var horas = random.Next(0, 13) + 8;
+            var minutos = random.Next(0, 60);
+
+            return day.AddHours(horas).AddMinutes(minutos);
+        }
+
     }
 }

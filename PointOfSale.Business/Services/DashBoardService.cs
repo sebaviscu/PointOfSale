@@ -193,7 +193,7 @@ namespace PointOfSale.Business.Services
                     query = query
                             .Include(v => v.IdSaleNavigation)
                             .Where(dv =>
-                                    dv.IdSaleNavigation.RegistrationDate.Value.Date >= start
+                                    dv.IdSaleNavigation.RegistrationDate.Value.Date >= start.Date
                                     && dv.IdSaleNavigation.IdTienda == idTienda);
                 }
                 else
@@ -201,7 +201,7 @@ namespace PointOfSale.Business.Services
                     query = query
                             .Include(v => v.IdSaleNavigation)
                             .Where(dv => 
-                                    dv.IdSaleNavigation.RegistrationDate.Value.Date >= start
+                                    dv.IdSaleNavigation.RegistrationDate.Value.Date >= start.Date
                                     && dv.IdSaleNavigation.IdTienda == idTienda
                                     && dv.CategoryProducty == category);
                 }

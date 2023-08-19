@@ -31,7 +31,7 @@ namespace PointOfSale.Business.Services
         }
         public async Task<Product> Add(Product entity)
         {
-            Product product_exists = await _repository.Get(p => p.BarCode == entity.BarCode);
+            Product product_exists = await _repository.Get(p =>p.BarCode != string.Empty && p.BarCode == entity.BarCode);
 
             if (product_exists != null)
                 throw new TaskCanceledException("The barcode already exists");

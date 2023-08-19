@@ -131,8 +131,8 @@ namespace PointOfSale.Controllers
                         var firstVenta = resultados.VentasActualesHour.Count() > 0 ? resultados.VentasActualesHour.FirstOrDefault().Key : firstComp;
                         var first = Math.Min(firstComp, firstVenta);
 
-                        var lastComp = resultados.VentasComparacionHour.Last().Key;
-                        var lastVenta = resultados.VentasActualesHour.Count() > 0 ? resultados.VentasActualesHour.Last().Key : lastComp;
+                        var lastComp = resultados.VentasComparacionHour.LastOrDefault().Key;
+                        var lastVenta = resultados.VentasActualesHour.Count() > 0 ? resultados.VentasActualesHour.LastOrDefault().Key : lastComp;
                         var last = Math.Max(lastComp, lastVenta);
 
                         ejeXint = new int[(last - first) + 1];

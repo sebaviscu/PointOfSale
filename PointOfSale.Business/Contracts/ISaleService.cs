@@ -19,5 +19,7 @@ namespace PointOfSale.Business.Contracts
         Task<List<DetailSale>> Report(string StarDate, string EndDate);
 
         Task<Sale> Edit(Sale entity);
+
+        Task<int> GenerarVentas(int idTienda, int idUser);
     }
 }
