@@ -33,10 +33,16 @@ function cerrarTurno() {
 
 
 $("#btnSaveTurno").on("click", function () {
+    let desc = $("#txtDescripcion").val();
+
+    var modelTurno = {
+        descripcion: desc
+    };
 
     fetch("/Turno/CerrarTurno", {
         method: "POST",
-        headers: { 'Content-Type': 'application/json;charset=utf-8' }
+        headers: { 'Content-Type': 'application/json;charset=utf-8' },
+        body: JSON.stringify(modelTurno)
     }).then(response => {
         $("#modalDataTurno").find("div.modal-content").LoadingOverlay("hide")
         return response.ok ? response.json() : Promise.reject(response);
@@ -61,12 +67,12 @@ function generarDatos() {
     fetch(`/Access/GenerarDatos`, {
         method: "POST"
 
-        }).then(responseJson => {
+    }).then(responseJson => {
 
-            removeLoading();
-            swal("Exitoso!", "Datos generados con éxito", "success");
+        removeLoading();
+        swal("Exitoso!", "Datos generados con éxito", "success");
 
-        })
+    })
         .catch((error) => {
             $("div.container-fluid").LoadingOverlay("hide")
         });

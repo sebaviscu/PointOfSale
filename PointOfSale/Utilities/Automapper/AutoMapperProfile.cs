@@ -130,7 +130,7 @@ namespace PointOfSale.Utilities.Automapper
                     opt => opt.MapFrom(source => Convert.ToString(source.Total.Value, new CultureInfo("es-PE")))
                 ).ForMember(destiny =>
                     destiny.RegistrationDate,
-                    opt => opt.MapFrom(source => source.RegistrationDate.Value.ToString("dd/MM/yyyy"))
+                    opt => opt.MapFrom(source => source.RegistrationDate.Value.ToString("dd/MM/yyyy h:mm tt"))
                 );
 
             CreateMap<VMSale, Sale>()
@@ -164,7 +164,7 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<DetailSale, VMSalesReport>()
                 .ForMember(destiny =>
                     destiny.RegistrationDate,
-                    opt => opt.MapFrom(source => source.IdSaleNavigation.RegistrationDate.Value.ToString("dd/MM/yyyy"))
+                    opt => opt.MapFrom(source => source.IdSaleNavigation.RegistrationDate.Value.ToString("dd/MM/yyyy h:mm tt"))
                 )
                 .ForMember(destiny =>
                     destiny.SaleNumber,
@@ -212,7 +212,11 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<VMTienda, Tienda>();
 
 
-            CreateMap<Turno, VMTurno>();
+            CreateMap<Turno, VMTurno>()
+                .ForMember(user => user.Fecha, opt => opt.MapFrom(userEdit => userEdit.FechaInicio.ToShortDateString()))
+                .ForMember(user => user.HoraInicio, opt => opt.MapFrom(userEdit => userEdit.FechaInicio.ToShortTimeString()))
+                .ForMember(user => user.HoraFin, opt => opt.MapFrom(userEdit => userEdit.FechaFin.HasValue ? userEdit.FechaFin.Value.ToShortTimeString() : string.Empty))
+                .ForMember(user => user.Total, opt => opt.MapFrom(userEdit => userEdit.Sales.Any() ? "$" + userEdit.Sales.Sum(_ => _.Total).ToString() : string.Empty));
 
             CreateMap<VMTurno, Turno>();
 

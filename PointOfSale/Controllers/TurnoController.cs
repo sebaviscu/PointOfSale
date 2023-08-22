@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Scaffolding;
 using PointOfSale.Business.Contracts;
+using PointOfSale.Business.Services;
 using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
@@ -21,9 +23,17 @@ namespace PointOfSale.Controllers
             _dashBoardService = dashBoardService;
         }
 
-        public IActionResult Index()
+        public IActionResult Turno()
         {
             return View();
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetTurnos()
+        {
+            List<VMTurno> vmTiendaList = _mapper.Map<List<VMTurno>>(await _turnoService.List());
+            return StatusCode(StatusCodes.Status200OK, new { data = vmTiendaList });
         }
 
         [HttpGet]
@@ -49,7 +59,7 @@ namespace PointOfSale.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CerrarTurno()
+        public async Task<IActionResult> CerrarTurno([FromBody] VMSaveTurno modelTurno)
         {
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado, Roles.Empleado });
 
@@ -60,7 +70,7 @@ namespace PointOfSale.Controllers
             {
                 model.ModificationUser = user.UserName;
                 var tiendaId = ((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value;
-
+                model.Descripcion = modelTurno.Descripcion;
                 var turno_cerrar = await _turnoService.CloseTurno(user.IdTienda, _mapper.Map<Turno>(model));
 
                 var nuevoTurno = await _turnoService.AbrirTurno(Convert.ToInt32(tiendaId), user.UserName);

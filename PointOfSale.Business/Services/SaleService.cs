@@ -103,6 +103,7 @@ namespace PointOfSale.Business.Services
                 .Include(tdv => tdv.IdTypeDocumentSaleNavigation)
                 .Include(u => u.IdUsersNavigation)
                 .Include(dv => dv.DetailSales)
+                .OrderByDescending(_=>_.IdSale)
                 .ToList();
             }
             else
@@ -111,6 +112,7 @@ namespace PointOfSale.Business.Services
                 .Include(tdv => tdv.IdTypeDocumentSaleNavigation)
                 .Include(u => u.IdUsersNavigation)
                 .Include(dv => dv.DetailSales)
+                .OrderByDescending(_ => _.IdSale)
                 .ToList();
             }
         }

@@ -9,6 +9,7 @@ namespace PointOfSale.Business.Contracts
 {
     public interface ITurnoService
     {
+        Task<List<Turno>> List();
         Task<Turno> Add(Turno entity);
         Task<Turno> Edit(Turno entity);
         Task CheckTurnosViejos(int idtienda);

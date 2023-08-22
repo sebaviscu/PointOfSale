@@ -17,6 +17,13 @@ namespace PointOfSale.Business.Services
         {
             _repository = repository;
         }
+
+        public async Task<List<Turno>> List()
+        {
+            var result = await _repository.Query();
+            var s= result.Include(_ => _.Sales).OrderByDescending(_=>_.IdTurno).ToList();
+            return s;
+        }
         public async Task<Turno> Add(Turno entity)
         {
             Turno Turno_created = await _repository.Add(entity);
@@ -54,8 +61,17 @@ namespace PointOfSale.Business.Services
             {
                 Turno Turno_found = await _repository.Get(c => c.IdTurno == entity.IdTurno && c.IdTienda == idtienda);
 
-                Turno_found.FechaFin = DateTime.Now;
-                Turno_found.ModificationUser = entity.ModificationUser ?? "Automatico";
+                if(entity.ModificationUser == null)
+                {
+                    Turno_found.FechaFin = Turno_found.FechaInicio.Date.AddDays(1).AddMinutes(-1);
+                    Turno_found.ModificationUser = "Automatico";
+                }
+                else
+                {
+                    Turno_found.FechaFin = DateTime.Now;
+                    Turno_found.ModificationUser = entity.ModificationUser;
+                }
+                Turno_found.Descripcion = entity.Descripcion;
 
                 bool response = await _repository.Edit(Turno_found);
 

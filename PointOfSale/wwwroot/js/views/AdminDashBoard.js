@@ -225,14 +225,14 @@ function SetTopSeler(typeValues, idCategory) {
             // Lista tipo de gastos
             var topSeller = document.getElementById('containerTopSeller');
             topSeller.innerHTML = "";
-            var ul = document.createElement('ul');
+            var ul = document.createElement('ol');
             ul.setAttribute('style', 'padding: 0; margin: 0;');
             ul.setAttribute('id', 'theList');
 
             for (i = 0; i <= d.length - 1; i++) {
                 var li = document.createElement('li');
                 li.innerHTML = d[i].product + ": " + d[i].quantity + "";
-                li.setAttribute('style', 'display: block;');    // remove the bullets.
+                li.setAttribute('class', 'h3');    
                 ul.appendChild(li);     // append li to ul.
             }
             topSeller.appendChild(ul);       // add list to the container.

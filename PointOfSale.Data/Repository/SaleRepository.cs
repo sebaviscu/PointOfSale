@@ -37,20 +37,20 @@ namespace PointOfSale.Data.Repository
                     }
                     await _dbcontext.SaveChangesAsync();
 
-                    //CorrelativeNumber correlative = _dbcontext.CorrelativeNumbers.Where(n => n.Management == "Sale").First();
+                    CorrelativeNumber correlative = _dbcontext.CorrelativeNumbers.Where(n => n.Management == "Sale").First();
 
-                    //correlative.LastNumber = correlative.LastNumber + 1;
-                    //correlative.DateUpdate = DateTime.Now;
+                    correlative.LastNumber = correlative.LastNumber + 1;
+                    correlative.DateUpdate = DateTime.Now;
 
-                    //_dbcontext.CorrelativeNumbers.Update(correlative);
-                    //await _dbcontext.SaveChangesAsync();
+                    _dbcontext.CorrelativeNumbers.Update(correlative);
+                    await _dbcontext.SaveChangesAsync();
 
 
-                    //string ceros = string.Concat(Enumerable.Repeat("0", correlative.QuantityDigits.Value));
-                    //string saleNumber = ceros + correlative.LastNumber.ToString();
-                    //saleNumber = saleNumber.Substring(saleNumber.Length - correlative.QuantityDigits.Value, correlative.QuantityDigits.Value);
+                    string ceros = string.Concat(Enumerable.Repeat("0", correlative.QuantityDigits.Value));
+                    string saleNumber = ceros + correlative.LastNumber.ToString();
+                    saleNumber = saleNumber.Substring(saleNumber.Length - correlative.QuantityDigits.Value, correlative.QuantityDigits.Value);
 
-                    //entity.SaleNumber = saleNumber;
+                    entity.SaleNumber = saleNumber;
 
                     await _dbcontext.Sales.AddAsync(entity);
                     await _dbcontext.SaveChangesAsync();

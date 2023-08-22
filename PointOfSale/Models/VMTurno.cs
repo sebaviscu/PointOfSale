@@ -14,6 +14,11 @@ namespace PointOfSale.Models
         public string RegistrationUser { get; set; }
         public string? ModificationUser { get; set; }
         public List<VMVentasPorTipoDeVenta> VentasPorTipoVenta { get; set; }
+        public string Fecha { get; set; }
+        public string HoraInicio { get; set; }
+        public string HoraFin { get; set; }
+
+        public string Total { get; set; }
 
     }
 }
