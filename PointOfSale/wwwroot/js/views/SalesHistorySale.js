@@ -106,7 +106,8 @@ $("#tbsale tbody").on("click", ".btn-info", function () {
             $("<tr>").append(
                 $("<td>").text(item.descriptionProduct),
                 $("<td>").text(item.quantity),
-                $("<td>").text(item.price),
+                $("<td>").text(item.price+" ").append(item.promocion != null ?
+                    $("<i>").addClass("mdi mdi-percent").attr("data-toggle", "tooltip").attr("title", item.promocion) : ""),
                 $("<td>").text(item.total)
             )
         )

@@ -17,6 +17,6 @@ namespace PointOfSale.Model
 
         public virtual Sale? IdSaleNavigation { get; set; }
         public virtual Product? Producto { get; set; }
-
+        public string? Promocion { get; set; }
     }
 }

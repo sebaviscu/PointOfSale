@@ -31,7 +31,7 @@
             <ul class="collapse " id="@($"{menucollapse}{correlative}")" data-bs-parent="#sidebar-menu">
                 <div class="sub-menu">
 
-                    @foreach (var submenu in menu.SubMenus)
+                    @foreach (var submenu in menu.SubMenus.OrderBy(_=>_.Description))
                     {
                     <li class="">
                         <a class="sidenav-item-link" href="@($"/{submenu.Controller}/{submenu.PageAction}")">

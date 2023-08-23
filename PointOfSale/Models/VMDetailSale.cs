@@ -9,5 +9,6 @@
         public decimal? Quantity { get; set; }
         public string? Price { get; set; }
         public string? Total { get; set; }
+        public string? Promocion { get; set; }
     }
 }

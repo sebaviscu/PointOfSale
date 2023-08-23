@@ -426,7 +426,7 @@ function applayPromociones(totalQuantity, data, currentTab) {
     }
 
     let currentdate = new Date();
-    let today = currentdate.getDay().toString();
+    let today = currentdate.getDay();
 
     let promPorDia = promociones.find(item => item.dias.includes(today));
 

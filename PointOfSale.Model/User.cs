@@ -22,15 +22,15 @@ namespace PointOfSale.Model
 
         public virtual Rol? IdRolNavigation { get; set; }
         public virtual ICollection<Sale> Sales { get; set; }
-		public DateTime? ModificationDate { get; set; }
-		public string? ModificationUser { get; set; }
+        public DateTime? ModificationDate { get; set; }
+        public string? ModificationUser { get; set; }
         public int? IdTienda { get; set; }
         public Tienda? Tienda { get; set; }
         public ICollection<Gastos>? Gastos { get; set; }
 
-        public bool IsAdmin()
+        public bool IsAdmin
         {
-            return IdRol == 1;
+            get { return IdRol == 1; }
         }
-	}
+    }
 }

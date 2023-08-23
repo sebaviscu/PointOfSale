@@ -21,7 +21,7 @@ namespace PointOfSale.Business.Services
         public async Task<List<User>> List()
         {
             IQueryable<User> query = await _repository.Query();
-            return query.Include(r => r.IdRolNavigation).Include(t=>t.Tienda).OrderBy(_ => _.Name).ToList();
+            return query.Include(r => r.IdRolNavigation).Include(t => t.Tienda).OrderBy(_ => _.Name).ToList();
         }
         public async Task<User> Add(User entity)
         {
@@ -71,10 +71,10 @@ namespace PointOfSale.Business.Services
                 user_edit.Password = entity.Password;
                 user_edit.ModificationUser = entity.ModificationUser;
                 user_edit.ModificationDate = DateTime.Now;
-                user_edit.IdTienda = entity.IdTienda  == -1 ? null : entity.IdTienda;
+                user_edit.IdTienda = entity.IdTienda == -1 ? null : entity.IdTienda;
 
 
-				if (entity.Photo != null && entity.Photo.Length > 0)
+                if (entity.Photo != null && entity.Photo.Length > 0)
                 {
                     user_edit.Photo = entity.Photo;
                 }
@@ -100,8 +100,17 @@ namespace PointOfSale.Business.Services
                 User user_found = await _repository.Get(u => u.IdUsers == idUser);
 
                 if (user_found == null)
-                    throw new TaskCanceledException("Userno existe");
-      
+                    throw new TaskCanceledException("User no existe");
+
+                var usersList = await List();
+
+                if (usersList.Count == 1)
+                    throw new TaskCanceledException("Debe existir al menos un usuario en el sistema");
+
+
+                if (user_found.IsAdmin && usersList.Count(_ => _.IsAdmin) == 1)
+                    throw new TaskCanceledException("Debe existir al menos un usuario Administrador");
+
                 bool response = await _repository.Delete(user_found);
 
                 return response;
@@ -112,14 +121,14 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        
+
 
         public async Task<User> GetByCredentials(string email, string password)
         {
-			var query = await _repository.Query();
-			var user_found = query.SingleOrDefault(u => u.Email.Equals(email) && u.Password.Equals(password));
+            var query = await _repository.Query();
+            var user_found = query.SingleOrDefault(u => u.Email.Equals(email) && u.Password.Equals(password));
 
-			return user_found;
+            return user_found;
         }
 
         public async Task<User> GetById(int IdUser)

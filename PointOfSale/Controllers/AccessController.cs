@@ -64,7 +64,7 @@ namespace PointOfSale.Controllers
                     return View(model);
                 }
 
-                idTienda = (int)(user_found.IsAdmin() ? model.TiendaId.Value : user_found.IdTienda);
+                idTienda = (int)(user_found.IsAdmin ? model.TiendaId.Value : user_found.IdTienda);
             }
 
             await _turnoService.CheckTurnosViejos(idTienda);
