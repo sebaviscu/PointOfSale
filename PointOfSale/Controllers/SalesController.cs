@@ -95,6 +95,7 @@ namespace PointOfSale.Controllers
                         model.ClientId.Value,
                         decimal.Parse(model.Total.Replace('.', ',')),
                         user.UserName,
+                        user.IdTienda,
                         sale_created.IdSale,
                         model.TipoMovimiento.Value);
 

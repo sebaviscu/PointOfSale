@@ -15,7 +15,7 @@ namespace PointOfSale.Business.Contracts
         Task<Cliente> Edit(Cliente entity);
         Task<bool> Delete(int idUser);
 
-        Task<ClienteMovimiento> RegistrarMovimiento(int idCliente, decimal total, string registrationUser, int? idSale, TipoMovimientoCliente tipo);
+        Task<ClienteMovimiento> RegistrarMovimiento(int idCliente, decimal total, string registrationUser, int idTienda, int? idSale, TipoMovimientoCliente tipo);
         Task<List<ClienteMovimiento>> ListMovimientoscliente(int idCliente, int idTienda);
         Task<List<ClienteMovimiento>> GetClienteByMovimientos(List<int>? idMovs, int idTienda);
     }

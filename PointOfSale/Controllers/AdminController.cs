@@ -263,13 +263,13 @@ namespace PointOfSale.Controllers
 
             var ProductListWeek = new List<VMProductsWeek>();
             var prods = await _productService.List();
-
+            int i = 0;
             foreach (KeyValuePair<string, string?> item in await _dashboardService.ProductsTopByCategory(typeValues, idCategoria, tiendaId))
             {
-                var prod = prods.FirstOrDefault(_=>_.Description == item.Key);
+                var prod = prods.FirstOrDefault(_ => _.Description == item.Key);
                 ProductListWeek.Add(new VMProductsWeek()
                 {
-                    Product = item.Key,
+                    Product = $"{++i}. {item.Key} ",
                     Quantity = $" {item.Value} {(prod.TipoVenta == Model.Enum.TipoVenta.Unidad ? "U." : prod.TipoVenta)}"
                 });
             }
@@ -509,7 +509,7 @@ namespace PointOfSale.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetCliente(int idCliente)
+        public async Task<IActionResult> GetCliente()
         {
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
 
@@ -529,9 +529,12 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCliente([FromBody] VMCliente model)
         {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+
             var gResponse = new GenericResponse<VMCliente>();
             try
             {
+                model.IdTienda = user.IdTienda;
                 var usuario_creado = await _clienteService.Add(_mapper.Map<Cliente>(model));
 
                 model = _mapper.Map<VMCliente>(usuario_creado);
@@ -729,7 +732,7 @@ namespace PointOfSale.Controllers
                     p.PromocionString += " [" + string.Join(", ", prod.Description) + "]";
                 }
 
-                if (p.IdCategory != null)
+                if (p.IdCategory != null && p.IdCategory.Any())
                 {
                     var catList = await _categoryService.GetMultiple(p.IdCategory);
                     p.PromocionString += " [" + string.Join(", ", catList.Select(_ => _.Description)) + "]";
@@ -759,11 +762,12 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePromociones([FromBody] VMPromocion model)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
 
             var gResponse = new GenericResponse<VMPromocion>();
             try
             {
+                model.IdTienda = user.IdTienda;
                 var usuario_creado = await _promocionService.Add(_mapper.Map<Promocion>(model));
 
                 model = _mapper.Map<VMPromocion>(usuario_creado);

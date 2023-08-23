@@ -16,6 +16,7 @@ namespace PointOfSale.Models
         public int IdProveedor { get; set; }
         public Proveedor? Proveedor { get; set; }
         public DateTime? RegistrationDate { get; set; }
+        public string? RegistrationDateString { get; set; }
         public string? RegistrationUser { get; set; }
 
         public string TipoFacturaString

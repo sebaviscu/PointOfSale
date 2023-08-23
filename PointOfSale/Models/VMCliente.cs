@@ -16,5 +16,7 @@ namespace PointOfSale.Models
         public IEnumerable<ClienteMovimiento>? ClienteMovimientos { get; set; }
 
         public string Color { get; set; }
+        public int IdTienda { get; set; }
+
     }
 }

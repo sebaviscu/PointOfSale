@@ -101,9 +101,9 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task<ClienteMovimiento> RegistrarMovimiento(int idCliente, decimal total, string registrationUser, int? idSale, TipoMovimientoCliente tipo)
+        public async Task<ClienteMovimiento> RegistrarMovimiento(int idCliente, decimal total, string registrationUser,int idTienda, int? idSale, TipoMovimientoCliente tipo)
         {
-            var mc = new ClienteMovimiento(idCliente, total, registrationUser, idSale);
+            var mc = new ClienteMovimiento(idCliente, total, registrationUser, idTienda, idSale);
             mc.TipoMovimiento = tipo;
             return await _clienteMovimiento.Add(mc);
         }
@@ -111,8 +111,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<ClienteMovimiento>> ListMovimientoscliente(int idCliente, int idTienda)
         {
-            //IQueryable<ClienteMovimiento> query = await _clienteMovimiento.Query(u => u.IdCliente == idCliente && u.IdTienda == idTienda);
-            IQueryable<ClienteMovimiento> query = await _clienteMovimiento.Query(u => u.IdCliente == idCliente);
+            IQueryable<ClienteMovimiento> query = await _clienteMovimiento.Query(u => u.IdCliente == idCliente && u.IdTienda == idTienda);
             var result = query.OrderByDescending(_ => _.RegistrationUser).ToList();
             result.Where(_ => _.TipoMovimiento == TipoMovimientoCliente.Egreso).ToList().ForEach(_ =>
             {
@@ -123,8 +122,7 @@ namespace PointOfSale.Business.Services
         }
         public async Task<List<ClienteMovimiento>> GetClienteByMovimientos(List<int>? idMovs, int idTienda)
         {
-            //IQueryable<ClienteMovimiento> query = await _clienteMovimiento.Query(u => idMovs.Contains(u.IdClienteMovimiento) && u.IdTienda == idTienda);
-            IQueryable<ClienteMovimiento> query = await _clienteMovimiento.Query(u => idMovs.Contains( u.IdClienteMovimiento));
+            IQueryable<ClienteMovimiento> query = await _clienteMovimiento.Query(u => idMovs.Contains(u.IdClienteMovimiento) && u.IdTienda == idTienda);
             var result = query.Include(_=>_.Cliente).ToList();
             return result;
         }

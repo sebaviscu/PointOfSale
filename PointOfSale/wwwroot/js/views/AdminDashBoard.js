@@ -222,20 +222,35 @@ function SetTopSeler(typeValues, idCategory) {
         }).then(responseJson => {
 
             let d = responseJson;
-            // Lista tipo de gastos
-            var topSeller = document.getElementById('containerTopSeller');
-            topSeller.innerHTML = "";
-            var ul = document.createElement('ol');
-            ul.setAttribute('style', 'padding: 0; margin: 0;');
-            ul.setAttribute('id', 'theList');
 
-            for (i = 0; i <= d.length - 1; i++) {
-                var li = document.createElement('li');
-                li.innerHTML = d[i].product + ":&nbsp " + d[i].quantity + "";
-                li.setAttribute('class', 'h3');    
-                ul.appendChild(li);     // append li to ul.
-            }
-            topSeller.appendChild(ul);       // add list to the container.
+            //var topSeller = document.getElementById('containerTopSeller');
+            //topSeller.innerHTML = "";
+            //var ul = document.createElement('ol');
+            //ul.setAttribute('style', 'padding: 0; margin: 0;');
+            //ul.setAttribute('id', 'theList');
+
+            //for (i = 0; i <= d.length - 1; i++) {
+            //    var li = document.createElement('li');
+            //    li.innerHTML = d[i].product + ":&nbsp " + d[i].quantity + "";
+            //    li.setAttribute('class', 'h3');    
+            //    ul.appendChild(li);
+            //}
+            //topSeller.appendChild(ul);
+
+
+            // Lista tipo de gastos
+
+            const tableData = d.map(value => {
+                return (
+                    `<tr>
+                       <td><h3>${value.product}</h3></td>
+                       <td style="text-align: right;"><h4>${value.quantity}</h4></td>
+                    </tr>`
+                );
+            }).join('');
+
+            const tableBody = document.querySelector("#tableTopSeller");
+            tableBody.innerHTML = tableData;
 
         })
         .catch((error) => {

@@ -229,7 +229,7 @@ namespace PointOfSale.Utilities.Automapper
 
             CreateMap<ClienteMovimiento, VMClienteMovimiento>()
                 .ForMember(user => user.TotalString, opt => opt.MapFrom(userEdit => "$" + userEdit.Total.ToString()))
-                .ForMember(user => user.RegistrationDate, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.ToString("dd/MM/yyyy h:mm tt")));
+                .ForMember(user => user.RegistrationDateString, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.ToString("dd/MM/yyyy HH:mm")));
 
             CreateMap<VMClienteMovimiento, ClienteMovimiento>();
 
@@ -253,7 +253,7 @@ namespace PointOfSale.Utilities.Automapper
                 .ForMember(user => user.ImporteString, opt => opt.MapFrom(userEdit => "$" + userEdit.Importe.ToString()))
                 .ForMember(user => user.ImporteSinIvaString, opt => opt.MapFrom(userEdit => "$" + userEdit.ImporteSinIva.ToString()))
                 .ForMember(user => user.IvaImporteString, opt => opt.MapFrom(userEdit => "$" + userEdit.IvaImporte.ToString()))
-                .ForMember(user => user.RegistrationDate, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.ToString("dd/MM/yyyy h:mm tt")));
+                .ForMember(user => user.RegistrationDateString, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.ToString("dd/MM/yyyy HH:mm")));
 
             CreateMap<VMProveedorMovimiento, ProveedorMovimiento>();
 
@@ -263,7 +263,7 @@ namespace PointOfSale.Utilities.Automapper
                 .ForMember(user => user.TipoGastoString, opt => opt.MapFrom(userEdit => userEdit.TipoDeGasto != null && userEdit.TipoDeGasto.GastoParticular != 0 ? userEdit.TipoDeGasto.Descripcion : string.Empty))
                 .ForMember(user => user.GastoParticular, opt => opt.MapFrom(userEdit => userEdit.TipoDeGasto != null ? userEdit.TipoDeGasto.GastoParticular.ToString() : string.Empty))
                 .ForMember(user => user.ImporteString, opt => opt.MapFrom(userEdit => "$" + userEdit.Importe))
-                .ForMember(user => user.FechaString, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.ToString("dd/MM/yyyy h:mm tt")));
+                .ForMember(user => user.FechaString, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.ToString("dd/MM/yyyy HH:mm")));
 
 
             CreateMap<VMGastos, Gastos>();

@@ -20,16 +20,13 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<Promocion>> List(int idTienda)
         {
-            //IQueryable<Promocion> query = await _repository.Query(_ => _.idTienda);
-            IQueryable<Promocion> query = await _repository.Query();
+            IQueryable<Promocion> query = await _repository.Query(_ => _.IdTienda == idTienda);
             return query.OrderByDescending(_ => _.IdPromocion).ToList();
         }
 
         public async Task<List<Promocion>> Activas(int idTienda)
         {
-            //IQueryable<Promocion> query = await _repository.Query(_ => _.IsActive && _.idTienda);
-            IQueryable<Promocion> query = await _repository.Query(_ => _.IsActive);
-
+            IQueryable<Promocion> query = await _repository.Query(_ => _.IsActive && _.IdTienda == idTienda);
             return query.OrderByDescending(_ => _.IdPromocion).ToList();
         }
 

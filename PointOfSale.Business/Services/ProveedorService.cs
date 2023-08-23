@@ -1,4 +1,5 @@
-﻿using PointOfSale.Business.Contracts;
+﻿using Microsoft.EntityFrameworkCore;
+using PointOfSale.Business.Contracts;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
 using System;

@@ -113,7 +113,7 @@ const openModal = (model = BASIC_MODEL) => {
             { "data": "importeString" },
             { "data": "tipoFacturaString" },
             { "data": "nroFactura" },
-            { "data": "registrationDate" },
+            { "data": "registrationDateString" },
             { "data": "registrationUser" }
         ],
         order: [[0, "desc"]],

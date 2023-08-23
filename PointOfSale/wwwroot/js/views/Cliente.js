@@ -46,6 +46,8 @@ $(document).ready(function () {
                 "searchable": false
             },
             { "data": "nombre" },
+            { "data": "cuil" },
+            { "data": "telefono" },
             { "data": "total" },
             {
                 "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
@@ -108,7 +110,7 @@ const openModal = (model = BASIC_MODEL) => {
                 "searchable": false
             },
             { "data": "totalString" },
-            { "data": "registrationDate" },
+            { "data": "registrationDateString" },
             { "data": "registrationUser" },
             {
                 "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-eye"></i></button>',

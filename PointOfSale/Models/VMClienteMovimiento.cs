@@ -10,9 +10,11 @@ namespace PointOfSale.Models
         public int? IdSale { get; set; }
         public decimal Total { get; set; }
         public DateTime RegistrationDate { get; set; }
+        public string? RegistrationDateString { get; set; }
         public string RegistrationUser { get; set; }
         public Cliente Cliente { get; set; }
         public Sale? Sale { get; set; }
         public string TotalString { get; set; }
+        public int IdTienda { get; set; }
     }
 }
