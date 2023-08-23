@@ -62,6 +62,7 @@ namespace PointOfSale.Business.Services
 
             try
             {
+
                 Product product_edit = await _repository.First(u => u.IdProduct == entity.IdProduct);
 
                 product_edit.BarCode = entity.BarCode;
@@ -85,11 +86,13 @@ namespace PointOfSale.Business.Services
                 if (!response)
                     throw new TaskCanceledException("The product could not be modified");
 
+                IQueryable<Product> queryProduct = await _repository.Query(u => u.IdProduct == entity.IdProduct);
+
                 Product product_edited = queryProduct.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).First();
 
                 return product_edited;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
