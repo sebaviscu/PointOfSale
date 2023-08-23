@@ -55,16 +55,14 @@ namespace PointOfSale.Business.Services
         }
         public async Task<Product> Edit(Product entity)
         {
-            Product product_exists = await _repository.Get(p => p.BarCode == entity.BarCode && p.IdProduct != entity.IdProduct);
+            Product product_exists = await _repository.Get(p => (p.BarCode != string.Empty && p.BarCode == entity.BarCode) && p.IdProduct != entity.IdProduct);
 
             if (product_exists != null)
                 throw new TaskCanceledException("The barcode already exists");
 
             try
             {
-                IQueryable<Product> queryProduct = await _repository.Query(u => u.IdProduct == entity.IdProduct);
-
-                Product product_edit = queryProduct.First();
+                Product product_edit = await _repository.First(u => u.IdProduct == entity.IdProduct);
 
                 product_edit.BarCode = entity.BarCode;
                 product_edit.Brand = entity.Brand;

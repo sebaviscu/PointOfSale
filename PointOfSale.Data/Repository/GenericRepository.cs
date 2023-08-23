@@ -85,5 +85,11 @@ namespace PointOfSale.Data.Repository
             return _dbcontext.Set<TEntity>().FromSqlRaw(query);
         }
 
+        public async Task<TEntity?> First(Expression<Func<TEntity, bool>> filter)
+        {
+            IQueryable<TEntity> queryentity = filter == null ? _dbcontext.Set<TEntity>() : _dbcontext.Set<TEntity>().Where(filter);
+            return queryentity.FirstOrDefault(); ;
+        }
+
     }
 }
