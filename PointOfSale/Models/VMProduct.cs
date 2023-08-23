@@ -1,4 +1,6 @@
-﻿namespace PointOfSale.Models
+﻿using static PointOfSale.Model.Enum;
+
+namespace PointOfSale.Models
 {
     public class VMProduct
     {
@@ -18,7 +20,7 @@
         public decimal? PriceWeb { get; set; }
         public int? PorcentajeProfit { get; set; }
         public decimal? CostPrice { get; set; }
-        public int TipoVenta { get; set; }
+        public TipoVenta TipoVenta { get; set; }
         public string NameProveedor { get; set; }
         public int? IdProveedor { get; set; }
     }

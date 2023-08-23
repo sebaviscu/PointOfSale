@@ -231,7 +231,7 @@ function SetTopSeler(typeValues, idCategory) {
 
             for (i = 0; i <= d.length - 1; i++) {
                 var li = document.createElement('li');
-                li.innerHTML = d[i].product + ": " + d[i].quantity + "";
+                li.innerHTML = d[i].product + ":&nbsp " + d[i].quantity + "";
                 li.setAttribute('class', 'h3');    
                 ul.appendChild(li);     // append li to ul.
             }

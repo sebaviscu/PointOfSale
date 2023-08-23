@@ -22,8 +22,8 @@ namespace PointOfSale.Business.Services
 
         public DashBoardService(
             ISaleRepository repositorySale,
-            IGenericRepository<DetailSale> repositoryDetailSale, 
-            IGenericRepository<ProveedorMovimiento> proveedorMovimiento, 
+            IGenericRepository<DetailSale> repositoryDetailSale,
+            IGenericRepository<ProveedorMovimiento> proveedorMovimiento,
             IGenericRepository<Gastos> gastosRepository
             )
         {
@@ -31,7 +31,7 @@ namespace PointOfSale.Business.Services
             _repositorySale = repositorySale;
             _repositoryDetailSale = repositoryDetailSale;
             _proveedorMovimiento = proveedorMovimiento;
-            _gastosRepository= gastosRepository;
+            _gastosRepository = gastosRepository;
         }
 
         public async Task<GraficoVentasConComparacion> GetSales(TypeValuesDashboard typeValues, int idTienda)
@@ -88,7 +88,7 @@ namespace PointOfSale.Business.Services
             DateTime dateCompare, start;
             FechasParaQuery(typeValues, out dateCompare, out start);
 
-            IQueryable<ProveedorMovimiento> query = await _proveedorMovimiento.Query(_=> _.RegistrationDate.Date >= start.Date && _.idTienda == idTienda);
+            IQueryable<ProveedorMovimiento> query = await _proveedorMovimiento.Query(_ => _.RegistrationDate.Date >= start.Date && _.idTienda == idTienda);
 
             return query.ToList();
         }
@@ -113,8 +113,8 @@ namespace PointOfSale.Business.Services
 
         private async Task<(Dictionary<DateTime, decimal> Ventas, int CantidadVentas)> GetSalesActuales(DateTime start, int idTienda)
         {
-            IQueryable<Sale> queryVentasActuales = await _repositorySale.Query(v => 
-                            v.RegistrationDate.Value.Date >= start.Date 
+            IQueryable<Sale> queryVentasActuales = await _repositorySale.Query(v =>
+                            v.RegistrationDate.Value.Date >= start.Date
                             && v.IdClienteMovimiento == null
                             && v.IdTienda == idTienda);
 
@@ -134,8 +134,8 @@ namespace PointOfSale.Business.Services
         {
             var resultados = new GraficoVentasConComparacion();
 
-            IQueryable<Sale> queryVentasActuales = await _repositorySale.Query(v => 
-                            v.RegistrationDate.Value.Date >= start.Date 
+            IQueryable<Sale> queryVentasActuales = await _repositorySale.Query(v =>
+                            v.RegistrationDate.Value.Date >= start.Date
                             && v.IdClienteMovimiento == null
                             && v.IdTienda == idTienda);
 
@@ -152,9 +152,9 @@ namespace PointOfSale.Business.Services
 
         private async Task<Dictionary<DateTime, decimal>> GetComparation(DateTime start, DateTime dateCompare, int idTienda)
         {
-            var queryVentasComparacion = await _repositorySale.Query(v => 
-                            v.RegistrationDate.Value.Date < start.Date 
-                            && v.RegistrationDate.Value.Date >= dateCompare.Date 
+            var queryVentasComparacion = await _repositorySale.Query(v =>
+                            v.RegistrationDate.Value.Date < start.Date
+                            && v.RegistrationDate.Value.Date >= dateCompare.Date
                             && v.IdClienteMovimiento == null
                             && v.IdTienda == idTienda);
             return queryVentasComparacion
@@ -168,9 +168,9 @@ namespace PointOfSale.Business.Services
         {
             var resultados = new GraficoVentasConComparacion();
 
-            var queryVentasComparacionHour = await _repositorySale.Query(v => 
-                            v.RegistrationDate.Value.Date < start.Date 
-                            && v.RegistrationDate.Value.Date >= dateCompare.Date 
+            var queryVentasComparacionHour = await _repositorySale.Query(v =>
+                            v.RegistrationDate.Value.Date < start.Date
+                            && v.RegistrationDate.Value.Date >= dateCompare.Date
                             && v.IdClienteMovimiento == null
                             && v.IdTienda == idTienda);
             return queryVentasComparacionHour.ToList()
@@ -180,7 +180,7 @@ namespace PointOfSale.Business.Services
                 .ToDictionary(keySelector: r => r.date, elementSelector: r => r.total);
         }
 
-        public async Task<Dictionary<string, decimal?>> ProductsTopByCategory(TypeValuesDashboard typeValues, string category, int idTienda)
+        public async Task<Dictionary<string, string?>> ProductsTopByCategory(TypeValuesDashboard typeValues, string category, int idTienda)
         {
             DateTime dateCompare, start;
             FechasParaQuery(typeValues, out dateCompare, out start);
@@ -192,24 +192,33 @@ namespace PointOfSale.Business.Services
                 {
                     query = query
                             .Include(v => v.IdSaleNavigation)
+                            .Include(v => v.Producto)
                             .Where(dv =>
                                     dv.IdSaleNavigation.RegistrationDate.Value.Date >= start.Date
                                     && dv.IdSaleNavigation.IdTienda == idTienda);
+
+                    var s = query
+                            .Include(v => v.IdSaleNavigation)
+                            .Include(v => v.Producto)
+                            .Where(dv =>
+                                    dv.IdSaleNavigation.RegistrationDate.Value.Date >= start.Date
+                                    && dv.IdSaleNavigation.IdTienda == idTienda).ToList();
                 }
                 else
                 {
                     query = query
                             .Include(v => v.IdSaleNavigation)
-                            .Where(dv => 
+                            .Include(v => v.Producto)
+                            .Where(dv =>
                                     dv.IdSaleNavigation.RegistrationDate.Value.Date >= start.Date
                                     && dv.IdSaleNavigation.IdTienda == idTienda
                                     && dv.CategoryProducty == category);
                 }
 
-                Dictionary<string, decimal?> resultado = query
+                Dictionary<string, string?> resultado = query
                 .GroupBy(dv => dv.DescriptionProduct).OrderByDescending(g => g.Sum(_ => _.Quantity))
                 .Select(dv => new { product = dv.Key, total = dv.Sum(_ => _.Quantity) }).Take(10)
-                .ToDictionary(keySelector: r => r.product, elementSelector: r => r.total);
+                .ToDictionary(keySelector: r => r.product, elementSelector: r => Math.Truncate(r.total.Value).ToString());
 
                 return resultado;
             }

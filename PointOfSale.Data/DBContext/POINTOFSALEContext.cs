@@ -233,6 +233,10 @@ namespace PointOfSale.Data.DBContext
 
                 entity.Property(e => e.IdProduct).HasColumnName("idProduct");
 
+                entity.HasOne(d => d.Producto)
+                    .WithMany(p => p.DetalleVentas)
+                    .HasForeignKey(d => d.IdProduct);
+
                 entity.Property(e => e.IdSale).HasColumnName("idSale");
 
                 entity.Property(e => e.Price)

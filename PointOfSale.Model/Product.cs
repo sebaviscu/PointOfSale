@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Model
 {
@@ -20,11 +21,12 @@ namespace PointOfSale.Model
         public decimal? PriceWeb { get; set; }
         public int? PorcentajeProfit { get; set; }
         public decimal? CostPrice { get; set; }
-        public int TipoVenta { get; set; }
+        public TipoVenta TipoVenta { get; set; }
 
         public virtual Category? IdCategoryNavigation { get; set; }
 
         public int? IdProveedor { get; set; }
         public Proveedor? Proveedor { get; set; }
+        public IEnumerable<DetailSale>? DetalleVentas { get; set; }
     }
 }

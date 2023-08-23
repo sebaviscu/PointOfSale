@@ -262,13 +262,15 @@ namespace PointOfSale.Controllers
             var tiendaId = Convert.ToInt32(((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value);
 
             var ProductListWeek = new List<VMProductsWeek>();
+            var prods = await _productService.List();
 
-            foreach (KeyValuePair<string, decimal?> item in await _dashboardService.ProductsTopByCategory(typeValues, idCategoria, tiendaId))
+            foreach (KeyValuePair<string, string?> item in await _dashboardService.ProductsTopByCategory(typeValues, idCategoria, tiendaId))
             {
+                var prod = prods.FirstOrDefault(_=>_.Description == item.Key);
                 ProductListWeek.Add(new VMProductsWeek()
                 {
                     Product = item.Key,
-                    Quantity = item.Value.Value
+                    Quantity = $" {item.Value} {(prod.TipoVenta == Model.Enum.TipoVenta.Unidad ? "U." : prod.TipoVenta)}"
                 });
             }
 

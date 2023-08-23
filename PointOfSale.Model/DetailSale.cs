@@ -16,5 +16,7 @@ namespace PointOfSale.Model
         public decimal? Total { get; set; }
 
         public virtual Sale? IdSaleNavigation { get; set; }
+        public virtual Product? Producto { get; set; }
+
     }
 }
