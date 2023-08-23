@@ -51,5 +51,11 @@ namespace PointOfSale.Model
             Fijo = 1,
             Variable = 2,
         }
+        public enum TipoFactura
+        {
+            A = 0,
+            B = 1,
+            C = 2,
+        }
     }
 }

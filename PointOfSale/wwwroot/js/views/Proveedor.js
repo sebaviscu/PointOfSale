@@ -1,5 +1,6 @@
 ﻿let tableData;
 let rowSelected;
+let tableDataMovimientos;
 
 const BASIC_MODEL = {
     idProveedor: 0,
@@ -90,40 +91,46 @@ const openModal = (model = BASIC_MODEL) => {
         $("#txtModificado").val(dateTimeModif.toLocaleString());
         $("#txtModificadoUsuario").val(model.modificationUser);
     }
-    $('#tbMovimientos tbody').html("")
 
-    fetch("/Admin/GetMovimientoProveedor?idProveedor=" + model.idProveedor, {
-        method: "GET",
-        headers: { 'Content-Type': 'application/json;charset=utf-8' }
-    }).then(response => {
-        $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-        return response.ok ? response.json() : Promise.reject(response);
-    }).then(responseJson => {
-        if (responseJson.data.length > 0) {
+    if (tableDataMovimientos != null)
+        tableDataMovimientos.destroy();
 
-            responseJson.data.forEach((item) => {
+    var url = "/Admin/GetMovimientoProveedor?idProveedor=" + model.idProveedor;
 
-                var registrationDate = new Date(item.registrationDate);
+    tableDataMovimientos = $("#tbMovimientos").DataTable({
+        responsive: true,
+        "ajax": {
+            "url": url,
+            "type": "GET",
+            "datatype": "json"
+        },
+        "columns": [
+            {
+                "data": "idProveedorMovimiento",
+                "visible": false,
+                "searchable": false
+            },
+            { "data": "importeString" },
+            { "data": "tipoFacturaString" },
+            { "data": "nroFactura" },
+            { "data": "registrationDate" },
+            { "data": "registrationUser" }
+        ],
+        order: [[0, "desc"]],
+        dom: "Bfrtip",
+        buttons: [
+            {
+                text: 'Exportar Excel',
+                extend: 'excelHtml5',
+                title: '',
+                filename: 'Reporte Clientes',
+                exportOptions: {
+                    columns: [1, 2]
+                }
+            }, 'pageLength'
+        ]
+    });
 
-                $('#tbMovimientos tbody').append(
-                    $("<tr>").append(
-                        $("<td>").text(registrationDate.toLocaleString()),
-                        $("<td>").text("$ " + item.importe),
-                        $("<td>").text(item.TipoFactura),
-                        $("<td>").text(item.NroFactura),
-                        $("<td>").text(item.registrationUser),
-                        $("<td>").append(
-                            $("<button>").addClass("btn btn-info btn-delete btn-sm").append(
-                                $("<i>").addClass("mdi mdi-eye")
-                            ).data("idSale", item.idSale)
-                        )
-                    )
-                )
-            })
-
-        }
-    }).catch((error) => {
-    })
 
     $("#modalData").modal("show")
 }

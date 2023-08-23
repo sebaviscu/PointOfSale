@@ -17,5 +17,14 @@ namespace PointOfSale.Models
         public Proveedor? Proveedor { get; set; }
         public DateTime? RegistrationDate { get; set; }
         public string? RegistrationUser { get; set; }
+
+        public string TipoFacturaString
+        {
+            get { return (!string.IsNullOrEmpty(TipoFactura) ? ((Model.Enum.TipoFactura)Convert.ToInt32(TipoFactura)).ToString() : string.Empty); }
+        }
+
+        public string? ImporteString { get; set; }
+        public string? ImporteSinIvaString { get; set; }
+        public string? IvaImporteString { get; set; }
     }
 }

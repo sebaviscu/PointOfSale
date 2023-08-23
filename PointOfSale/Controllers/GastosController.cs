@@ -26,7 +26,9 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetGastos()
         {
-            List<VMGastos> vmGastosList = _mapper.Map<List<VMGastos>>(await _GastosService.List());
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+
+            List<VMGastos> vmGastosList = _mapper.Map<List<VMGastos>>(await _GastosService.List(user.IdTienda));
             return StatusCode(StatusCodes.Status200OK, new { data = vmGastosList });
         }
 

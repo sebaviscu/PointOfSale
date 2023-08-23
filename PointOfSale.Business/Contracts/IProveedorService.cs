@@ -14,6 +14,6 @@ namespace PointOfSale.Business.Contracts
         Task<Proveedor> Edit(Proveedor entity);
         Task<bool> Delete(int idUser);
         Task<ProveedorMovimiento> Add(ProveedorMovimiento entity);
-        Task<List<ProveedorMovimiento>> ListMovimientosProveedor(int idProveedor);
+        Task<List<ProveedorMovimiento>> ListMovimientosProveedor(int idProveedor, int idTienda);
     }
 }

@@ -121,9 +121,9 @@ namespace PointOfSale.Data.DBContext
                     .WithMany(p => p.ClienteMovimientos)
                     .HasForeignKey(d => d.IdCliente);
 
-                entity.HasOne(d => d.Sale)
-                    .WithOne(p => p.ClienteMovimiento)
-                    .HasForeignKey<Sale>(c => c.IdClienteMovimiento);
+                //entity.HasOne(d => d.Sale)
+                //    .WithOne(p => p.ClienteMovimiento)
+                //    .HasForeignKey<Sale>(c => c.IdSale);
 
                 entity.Property(e => e.RegistrationDate)
                     .HasColumnType("datetime")
@@ -476,6 +476,9 @@ namespace PointOfSale.Data.DBContext
                     .HasForeignKey(d => d.IdTurno)
                     .HasConstraintName("FK__Sale__idTurno__5CD6CB2B");
 
+                entity.HasOne(d => d.ClienteMovimiento)
+                    .WithOne(p => p.Sale)
+                    .HasForeignKey<Sale>(c => c.IdClienteMovimiento);
             });
 
             modelBuilder.Entity<TypeDocumentSale>(entity =>

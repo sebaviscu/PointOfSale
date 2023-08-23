@@ -21,10 +21,10 @@ namespace PointOfSale.Business.Services
             _repositoryTipoDeGasto = repositoryTipoDeGasto;
         }
 
-        public async Task<List<Gastos>> List()
+        public async Task<List<Gastos>> List(int idTienda)
         {
 
-            IQueryable<Gastos> query = await _repository.Query();
+            IQueryable<Gastos> query = await _repository.Query(_=>_.IdTienda == idTienda);
             var resp =  query.Include(_=>_.TipoDeGasto).Include(_ => _.User).OrderBy(_ => _.TipoDeGasto.Descripcion).ToList();
             return resp;
         }

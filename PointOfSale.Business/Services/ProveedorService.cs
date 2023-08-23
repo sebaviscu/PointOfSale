@@ -114,9 +114,9 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task<List<ProveedorMovimiento>> ListMovimientosProveedor(int idProveedor)
+        public async Task<List<ProveedorMovimiento>> ListMovimientosProveedor(int idProveedor, int idTienda)
         {
-            IQueryable<ProveedorMovimiento> query = await _proveedorMovimiento.Query(u => u.IdProveedor == idProveedor);
+            IQueryable<ProveedorMovimiento> query = await _proveedorMovimiento.Query(u => u.IdProveedor == idProveedor && u.idTienda == idTienda);
 
             return query.OrderByDescending(_ => _.RegistrationUser).ToList();
         }

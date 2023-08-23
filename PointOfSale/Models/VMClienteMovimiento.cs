@@ -13,5 +13,6 @@ namespace PointOfSale.Models
         public string RegistrationUser { get; set; }
         public Cliente Cliente { get; set; }
         public Sale? Sale { get; set; }
+        public string TotalString { get; set; }
     }
 }

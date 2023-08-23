@@ -509,14 +509,18 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCliente(int idCliente)
         {
-            var listUsers = _mapper.Map<List<VMCliente>>(await _clienteService.List());
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+
+            var listUsers = _mapper.Map<List<VMCliente>>(await _clienteService.List(user.IdTienda));
             return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
         }
 
         [HttpGet]
         public async Task<IActionResult> GetMovimientoCliente(int idCliente)
         {
-            var listUsers = _mapper.Map<List<VMClienteMovimiento>>(await _clienteService.ListMovimientoscliente(idCliente));
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+
+            var listUsers = _mapper.Map<List<VMClienteMovimiento>>(await _clienteService.ListMovimientoscliente(idCliente, user.IdTienda));
             return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
         }
 
@@ -650,7 +654,9 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetMovimientoProveedor(int idProveedor)
         {
-            var listUsers = _mapper.Map<List<VMProveedorMovimiento>>(await _proveedorService.ListMovimientosProveedor(idProveedor));
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+
+            var listUsers = _mapper.Map<List<VMProveedorMovimiento>>(await _proveedorService.ListMovimientosProveedor(idProveedor, user.IdTienda));
             return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
         }
 
@@ -706,7 +712,9 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPromociones()
         {
-            var listPromocion = _mapper.Map<List<VMPromocion>>(await _promocionService.List());
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+
+            var listPromocion = _mapper.Map<List<VMPromocion>>(await _promocionService.List(user.IdTienda));
             foreach (var p in listPromocion)
             {
                 var dias = string.Empty;
@@ -740,13 +748,17 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPromocionesActivas()
         {
-            var listPromocion = _mapper.Map<List<VMPromocion>>(await _promocionService.Activas());
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+
+            var listPromocion = _mapper.Map<List<VMPromocion>>(await _promocionService.Activas(user.IdTienda));
             return StatusCode(StatusCodes.Status200OK, new { data = listPromocion });
         }
 
         [HttpPost]
         public async Task<IActionResult> CreatePromociones([FromBody] VMPromocion model)
         {
+            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+
             var gResponse = new GenericResponse<VMPromocion>();
             try
             {

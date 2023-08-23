@@ -35,7 +35,6 @@
                                     <th></th>
                                     <th>Nombre</th>
                                     <th>Total</th>
-                                    <th>Estado</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -62,7 +61,7 @@
                 <form>
                     <input type="hidden" value="0" id="txtId">
                     <div class="row">
-                        <div class="col-sm-6">
+                        <div class="col-sm-5">
                             <div class="form-row">
                                 <div class="form-group col-sm-6">
                                     <label for="txtNombre">Nombre</label>
@@ -116,19 +115,20 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group col-sm-6">
+                            <div class="input-group input-group-sm  col-sm-6">
                                 <label class="input-group" for="txtTotal">Total:</label>
-                                <input type="text" class="form-control form-control-sm" id="txtTotal" name="total">
+                                <input type="text" class="form-control form-control-sm" id="txtTotal" name="total" disabled>
                             </div>
 
 
                         </div>
 
-                        <div class="col-sm-6">
+                        <div class="col-sm-7">
                             <div class="col-sm-12">
                                 <table id="tbMovimientos" class="table" style="width:100%">
                                     <thead>
                                         <tr>
+                                            <th></th>
                                             <th>Total</th>
                                             <th>Fecha</th>
                                             <th>Registrado por</th>

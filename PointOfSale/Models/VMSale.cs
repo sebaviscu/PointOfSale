@@ -20,6 +20,8 @@ namespace PointOfSale.Models
         public int? ClientId { get; set; }
         public TipoMovimientoCliente? TipoMovimiento { get; set; }
         public int IdTienda { get; set; }
+        public int? IdClienteMovimiento { get; set; }
+        public ClienteMovimiento? ClienteMovimiento { get; set; }
 
     }
 }

@@ -10,12 +10,13 @@ namespace PointOfSale.Business.Contracts
 {
     public interface IClienteService
     {
-        Task<List<Cliente>> List();
+        Task<List<Cliente>> List(int idTienda);
         Task<Cliente> Add(Cliente entity);
         Task<Cliente> Edit(Cliente entity);
         Task<bool> Delete(int idUser);
 
         Task<ClienteMovimiento> RegistrarMovimiento(int idCliente, decimal total, string registrationUser, int? idSale, TipoMovimientoCliente tipo);
-        Task<List<ClienteMovimiento>> ListMovimientoscliente(int idCliente);
+        Task<List<ClienteMovimiento>> ListMovimientoscliente(int idCliente, int idTienda);
+        Task<List<ClienteMovimiento>> GetClienteByMovimientos(List<int>? idMovs, int idTienda);
     }
 }

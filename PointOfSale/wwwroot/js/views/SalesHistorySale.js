@@ -73,7 +73,6 @@ $("#btnSearch").click(function () {
                             $("<td>").text(sale.registrationDate),
                             $("<td>").text(sale.saleNumber),
                             $("<td>").text(sale.typeDocumentSale),
-                            $("<td>").text(sale.customerDocument),
                             $("<td>").text(sale.clientName),
                             $("<td>").text(sale.total),
                             $("<td>").append(
@@ -97,7 +96,6 @@ $("#tbsale tbody").on("click", ".btn-info", function () {
     $("#txtSaleNumber").val(d.saleNumber)
     $("#txtRegisterUser").val(d.users)
     $("#txtDocumentType").val(d.typeDocumentSale)
-    $("#txtClientDocument").val(d.customerDocument)
     $("#txtClientName").val(d.clientName)
     $("#txtTotal").val(d.total)
 

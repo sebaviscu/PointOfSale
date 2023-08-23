@@ -18,10 +18,10 @@ namespace PointOfSale.Business.Services
             _repository = repository;
         }
 
-        public async Task<List<Turno>> List()
+        public async Task<List<Turno>> List(int idtienda)
         {
             var result = await _repository.Query();
-            var s= result.Include(_ => _.Sales).OrderByDescending(_=>_.IdTurno).ToList();
+            var s = result.Include(_ => _.Sales).OrderByDescending(_ => _.IdTurno).ToList();
             return s;
         }
         public async Task<Turno> Add(Turno entity)
@@ -59,24 +59,37 @@ namespace PointOfSale.Business.Services
         {
             try
             {
-                Turno Turno_found = await _repository.Get(c => c.IdTurno == entity.IdTurno && c.IdTienda == idtienda);
+                var query = await _repository.Query();
+                var Turno_found = query.Include(_ => _.Sales).FirstOrDefault(c => c.IdTurno == entity.IdTurno && c.IdTienda == idtienda);
 
-                if(entity.ModificationUser == null)
+                if(Turno_found == null)
+                    throw new TaskCanceledException("Turno no encontrado.");
+
+                if (Turno_found.Sales.Any())
                 {
-                    Turno_found.FechaFin = Turno_found.FechaInicio.Date.AddDays(1).AddMinutes(-1);
-                    Turno_found.ModificationUser = "Automatico";
+                    if (entity.ModificationUser == null)
+                    {
+                        Turno_found.FechaFin = Turno_found.FechaInicio.Date.AddDays(1).AddMinutes(-1);
+                        Turno_found.ModificationUser = "Automatico";
+                    }
+                    else
+                    {
+                        Turno_found.FechaFin = DateTime.Now;
+                        Turno_found.ModificationUser = entity.ModificationUser;
+                    }
+                    Turno_found.Descripcion = entity.Descripcion;
+
+                    bool response = await _repository.Edit(Turno_found);
+
+                    if (!response)
+                        throw new TaskCanceledException("Turno no se pudo actualizar.");
                 }
                 else
                 {
-                    Turno_found.FechaFin = DateTime.Now;
-                    Turno_found.ModificationUser = entity.ModificationUser;
+                    bool response = await _repository.Delete(Turno_found);
+                    if (!response)
+                        throw new TaskCanceledException("Turno no se pudo eliminar.");
                 }
-                Turno_found.Descripcion = entity.Descripcion;
-
-                bool response = await _repository.Edit(Turno_found);
-
-                if (!response)
-                    throw new TaskCanceledException("Turno no se pudo cambiar.");
 
                 return Turno_found;
             }

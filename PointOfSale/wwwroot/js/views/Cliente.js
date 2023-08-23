@@ -1,4 +1,5 @@
 ﻿let tableData;
+let tableDataMovimientos;
 let rowSelected;
 
 const BASIC_MODEL = {
@@ -76,6 +77,7 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtCuil").val(model.cuil);
     $("#txtDireccion").val(model.direccion);
     $("#txtTelefono").val(model.telefono);
+    $("#txtTotal").val(model.total);
 
     if (model.modificationUser === null)
         document.getElementById("divModif").style.display = 'none';
@@ -87,84 +89,50 @@ const openModal = (model = BASIC_MODEL) => {
         $("#txtModificadoUsuario").val(model.modificationUser);
     }
 
-    $('#tbMovimientos tbody').html("")
+    if (tableDataMovimientos != null)
+        tableDataMovimientos.destroy();
 
-    fetch("/Admin/GetMovimientoCliente?idCliente=" + model.idCliente, {
-        method: "GET",
-        headers: { 'Content-Type': 'application/json;charset=utf-8' }
-    }).then(response => {
-        $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-        return response.ok ? response.json() : Promise.reject(response);
-    }).then(responseJson => {
-        var totalCli = 0;
-        if (responseJson.data.length > 0) {
+    var url = '/Admin/GetMovimientoCliente?idCliente=' + model.idCliente;
 
-            responseJson.data.forEach((item) => {
-
-                totalCli = totalCli + parseFloat(item.total);
-                var registrationDate = new Date(item.registrationDate);
-
-                $('#tbMovimientos tbody').append(
-                    $("<tr>").append(
-                        $("<td>").text("$ " + item.total),
-                        $("<td>").text(registrationDate.toLocaleString()),
-                        $("<td>").text(item.registrationUser),
-                        $("<td>").append(
-                            $("<button>").addClass("btn btn-info btn-delete btn-sm").append(
-                                $("<i>").addClass("mdi mdi-eye")
-                            ).data("idSale", item.idSale)
-                        )
-                    )
-                )
-
-            })
-
-            $("#txtTotal").val(totalCli);
-        }
-    }).catch((error) => {
-    })
-
-    //var url = '/Admin/GetMovimientoCliente?idCliente=' + model.idCliente;
-    //tableData = $("#tbMovimientos").DataTable({
-    //    responsive: true,
-    //    "ajax": {
-    //        "url": url,
-    //        "type": "GET",
-    //        "datatype": "json"
-    //    },
-    //    "columns": [
-    //        {
-    //            "data": "idCliente",
-    //            "visible": false,
-    //            "searchable": false
-    //        },
-    //        { "data": "total" },
-    //        { "data": "registrationDate" },
-    //        { "data": "registrationUser" },
-    //        {
-    //            "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>',
-    //            "orderable": false,
-    //            "searchable": false,
-    //            "width": "80px"
-    //        }
-    //    ],
-    //    order: [[0, "desc"]],
-    //    dom: "Bfrtip",
-    //    buttons: [
-    //        {
-    //            text: 'Exportar Excel',
-    //            extend: 'excelHtml5',
-    //            title: '',
-    //            filename: 'Reporte Clientes',
-    //            exportOptions: {
-    //                columns: [1, 2]
-    //            }
-    //        }, 'pageLength'
-    //    ]
-    //});
+    tableDataMovimientos = $("#tbMovimientos").DataTable({
+        responsive: true,
+        "ajax": {
+            "url": url,
+            "type": "GET",
+            "datatype": "json"
+        },
+        "columns": [
+            {
+                "data": "idClienteMovimiento",
+                "visible": false,
+                "searchable": false
+            },
+            { "data": "totalString" },
+            { "data": "registrationDate" },
+            { "data": "registrationUser" },
+            {
+                "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-eye"></i></button>',
+                "orderable": false,
+                "searchable": false,
+                "width": "40px"
+            }
+        ],
+        order: [[0, "desc"]],
+        dom: "Bfrtip",
+        buttons: [
+            {
+                text: 'Exportar Excel',
+                extend: 'excelHtml5',
+                title: '',
+                filename: 'Reporte Clientes',
+                exportOptions: {
+                    columns: [1, 2]
+                }
+            }, 'pageLength'
+        ]
+    });
 
     $("#modalData").modal("show")
-
 }
 
 $("#btnNew").on("click", function () {

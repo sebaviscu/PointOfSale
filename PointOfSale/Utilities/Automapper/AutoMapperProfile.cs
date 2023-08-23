@@ -127,7 +127,7 @@ namespace PointOfSale.Utilities.Automapper
                 )
                 .ForMember(destiny =>
                     destiny.Total,
-                    opt => opt.MapFrom(source => Convert.ToString(source.Total.Value, new CultureInfo("es-PE")))
+                    opt => opt.MapFrom(source => "$" + Convert.ToString(source.Total.Value, new CultureInfo("es-PE")))
                 ).ForMember(destiny =>
                     destiny.RegistrationDate,
                     opt => opt.MapFrom(source => source.RegistrationDate.Value.ToString("dd/MM/yyyy h:mm tt"))
@@ -216,17 +216,20 @@ namespace PointOfSale.Utilities.Automapper
                 .ForMember(user => user.Fecha, opt => opt.MapFrom(userEdit => userEdit.FechaInicio.ToShortDateString()))
                 .ForMember(user => user.HoraInicio, opt => opt.MapFrom(userEdit => userEdit.FechaInicio.ToShortTimeString()))
                 .ForMember(user => user.HoraFin, opt => opt.MapFrom(userEdit => userEdit.FechaFin.HasValue ? userEdit.FechaFin.Value.ToShortTimeString() : string.Empty))
-                .ForMember(user => user.Total, opt => opt.MapFrom(userEdit => userEdit.Sales.Any() ? "$" + userEdit.Sales.Sum(_ => _.Total).ToString() : string.Empty));
+                .ForMember(user => user.Total, opt => opt.MapFrom(userEdit => userEdit.Sales.Any() ? "$" + userEdit.Sales.Where(s => s.IdClienteMovimiento == null).Sum(_ => _.Total).ToString() : string.Empty));
 
             CreateMap<VMTurno, Turno>();
 
 
-            CreateMap<Cliente, VMCliente>();
+            CreateMap<Cliente, VMCliente>()
+                    .ForMember(user => user.Total, opt => opt.MapFrom(userEdit => userEdit.ClienteMovimientos != null ? "$" + (userEdit.ClienteMovimientos.Where(_ => _.TipoMovimiento == TipoMovimientoCliente.Ingreso).Sum(_ => _.Total) - userEdit.ClienteMovimientos.Where(_ => _.TipoMovimiento == TipoMovimientoCliente.Egreso).Sum(_ => _.Total)).ToString() : string.Empty));
 
             CreateMap<VMCliente, Cliente>();
 
 
-            CreateMap<ClienteMovimiento, VMClienteMovimiento>();
+            CreateMap<ClienteMovimiento, VMClienteMovimiento>()
+                .ForMember(user => user.TotalString, opt => opt.MapFrom(userEdit => "$" + userEdit.Total.ToString()))
+                .ForMember(user => user.RegistrationDate, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.ToString("dd/MM/yyyy h:mm tt")));
 
             CreateMap<VMClienteMovimiento, ClienteMovimiento>();
 
@@ -246,7 +249,11 @@ namespace PointOfSale.Utilities.Automapper
                 .ForMember(userEdit => userEdit.Dias, opt => opt.MapFrom(user => string.Join(", ", user.Dias)));
 
 
-            CreateMap<ProveedorMovimiento, VMProveedorMovimiento>();
+            CreateMap<ProveedorMovimiento, VMProveedorMovimiento>()
+                .ForMember(user => user.ImporteString, opt => opt.MapFrom(userEdit => "$" + userEdit.Importe.ToString()))
+                .ForMember(user => user.ImporteSinIvaString, opt => opt.MapFrom(userEdit => "$" + userEdit.ImporteSinIva.ToString()))
+                .ForMember(user => user.IvaImporteString, opt => opt.MapFrom(userEdit => "$" + userEdit.IvaImporte.ToString()))
+                .ForMember(user => user.RegistrationDate, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.ToString("dd/MM/yyyy h:mm tt")));
 
             CreateMap<VMProveedorMovimiento, ProveedorMovimiento>();
 

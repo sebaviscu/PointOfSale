@@ -20,5 +20,7 @@ namespace PointOfSale.Models
 
         public string Total { get; set; }
 
+        public Sale Sale { get; set; }
+
     }
 }

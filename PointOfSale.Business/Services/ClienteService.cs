@@ -22,10 +22,11 @@ namespace PointOfSale.Business.Services
             _clienteMovimiento = clienteMovimiento;
         }
 
-        public async Task<List<Cliente>> List()
+        public async Task<List<Cliente>> List(int idTienda)
         {
+            //IQueryable<Cliente> query = await _repository.Query(_ => _.IdTienda == idTienda);
             IQueryable<Cliente> query = await _repository.Query();
-            return query.OrderBy(_ => _.Nombre).ToList();
+            return query.Include(_=>_.ClienteMovimientos).OrderBy(_ => _.Nombre).ToList();
         }
 
         public async Task<Cliente> Add(Cliente entity)
@@ -108,8 +109,9 @@ namespace PointOfSale.Business.Services
         }
 
 
-        public async Task<List<ClienteMovimiento>> ListMovimientoscliente(int idCliente)
+        public async Task<List<ClienteMovimiento>> ListMovimientoscliente(int idCliente, int idTienda)
         {
+            //IQueryable<ClienteMovimiento> query = await _clienteMovimiento.Query(u => u.IdCliente == idCliente && u.IdTienda == idTienda);
             IQueryable<ClienteMovimiento> query = await _clienteMovimiento.Query(u => u.IdCliente == idCliente);
             var result = query.OrderByDescending(_ => _.RegistrationUser).ToList();
             result.Where(_ => _.TipoMovimiento == TipoMovimientoCliente.Egreso).ToList().ForEach(_ =>
@@ -118,6 +120,13 @@ namespace PointOfSale.Business.Services
             }
             );
             return query.ToList();
+        }
+        public async Task<List<ClienteMovimiento>> GetClienteByMovimientos(List<int>? idMovs, int idTienda)
+        {
+            //IQueryable<ClienteMovimiento> query = await _clienteMovimiento.Query(u => idMovs.Contains(u.IdClienteMovimiento) && u.IdTienda == idTienda);
+            IQueryable<ClienteMovimiento> query = await _clienteMovimiento.Query(u => idMovs.Contains( u.IdClienteMovimiento));
+            var result = query.Include(_=>_.Cliente).ToList();
+            return result;
         }
     }
 }

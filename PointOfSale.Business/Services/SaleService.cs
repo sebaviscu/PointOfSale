@@ -108,7 +108,7 @@ namespace PointOfSale.Business.Services
             }
             else
             {
-                return query.Where(v => v.SaleNumber == SaleNumber)
+                return query.Where(v => v.SaleNumber.EndsWith(SaleNumber))
                 .Include(tdv => tdv.IdTypeDocumentSaleNavigation)
                 .Include(u => u.IdUsersNavigation)
                 .Include(dv => dv.DetailSales)
@@ -174,60 +174,20 @@ namespace PointOfSale.Business.Services
             {
                 for (int i = 0; i < 10; i++) /*1200*/
                 {
-                    var dia = RandomDay();
+                    var dia = RandomDayMes();
 
                     var sale = new Sale();
                     sale.RegistrationDate = dia;
-                    sale.IdTypeDocumentSale = tiposVentas[random.Next(0, cantTipoVentas - 1)].IdTypeDocumentSale;
-                    sale.IdTienda = idTienda;
-                    sale.IdTurno = turno.IdTurno;
-                    sale.IdUsers = idUser;
+                    await CrearVentaGenerada(idTienda, idUser, tiposVentas, productos, turno, random, cantTipoVentas, cantproductos, sale);
+                }
 
-                    var catProdVenta = random.Next(0, 6);
+                for (int i = 0; i < 50; i++) // ayer y hoy
+                {
+                    var dia = RandomDayDias();
 
-                    var listDet = new List<DetailSale>();
-
-                    for (int a = 0; a < catProdVenta; a++)
-                    {
-                        var detalle = new DetailSale();
-                        var p = productos[random.Next(0, cantproductos - 1)];
-                        if (!listDet.Any(_ => _.IdProduct == p.IdProduct))
-                        {
-                            detalle.IdProduct = p.IdProduct;
-                            detalle.BrandProduct = p.Brand;
-                            detalle.CategoryProducty = p.IdCategoryNavigation.Description;
-                            detalle.DescriptionProduct = p.Description;
-                            detalle.Price = p.Price;
-                            detalle.Quantity = random.Next(0, 4);
-                            detalle.Total = detalle.Price * detalle.Quantity;
-                            listDet.Add(detalle);
-                        }
-                    }
-
-                    if (listDet.Count() == 0)
-                    {
-                        catProdVenta = random.Next(0, 6);
-
-                        var detalle = new DetailSale();
-                        var p = productos[random.Next(0, cantproductos - 1)];
-                        if (!listDet.Any(_ => _.IdProduct == p.IdProduct))
-                        {
-                            detalle.IdProduct = p.IdProduct;
-                            detalle.BrandProduct = p.Brand;
-                            detalle.CategoryProducty = p.IdCategoryNavigation.Description;
-                            detalle.DescriptionProduct = p.Description;
-                            detalle.Price = p.Price;
-                            detalle.Quantity = random.Next(0, 4);
-                            detalle.Total = detalle.Price * detalle.Quantity;
-                            listDet.Add(detalle);
-                        }
-                    }
-
-                    sale.Total = listDet.Sum(d => d.Total);
-                    sale.DetailSales = listDet;
-
-                    if (sale.Total > 0)
-                        await _repositorySale.Add(sale);
+                    var sale = new Sale();
+                    sale.RegistrationDate = dia;
+                    await CrearVentaGenerada(idTienda, idUser, tiposVentas, productos, turno, random, cantTipoVentas, cantproductos, sale);
                 }
 
                 return 1;
@@ -237,7 +197,62 @@ namespace PointOfSale.Business.Services
                 throw;
             }
         }
-        public DateTime RandomDay()
+
+        private async Task CrearVentaGenerada(int idTienda, int idUser, List<TypeDocumentSale> tiposVentas, List<Product> productos, Turno turno, Random random, int cantTipoVentas, int cantproductos, Sale sale)
+        {
+            sale.IdTypeDocumentSale = tiposVentas[random.Next(0, cantTipoVentas - 1)].IdTypeDocumentSale;
+            sale.IdTienda = idTienda;
+            sale.IdTurno = turno.IdTurno;
+            sale.IdUsers = idUser;
+
+            var catProdVenta = random.Next(0, 6);
+
+            var listDet = new List<DetailSale>();
+
+            for (int a = 0; a < catProdVenta; a++)
+            {
+                var detalle = new DetailSale();
+                var p = productos[random.Next(0, cantproductos - 1)];
+                if (!listDet.Any(_ => _.IdProduct == p.IdProduct))
+                {
+                    detalle.IdProduct = p.IdProduct;
+                    detalle.BrandProduct = p.Brand;
+                    detalle.CategoryProducty = p.IdCategoryNavigation.Description;
+                    detalle.DescriptionProduct = p.Description;
+                    detalle.Price = p.Price;
+                    detalle.Quantity = random.Next(0, 4);
+                    detalle.Total = detalle.Price * detalle.Quantity;
+                    listDet.Add(detalle);
+                }
+            }
+
+            if (listDet.Count() == 0)
+            {
+                catProdVenta = random.Next(0, 6);
+
+                var detalle = new DetailSale();
+                var p = productos[random.Next(0, cantproductos - 1)];
+                if (!listDet.Any(_ => _.IdProduct == p.IdProduct))
+                {
+                    detalle.IdProduct = p.IdProduct;
+                    detalle.BrandProduct = p.Brand;
+                    detalle.CategoryProducty = p.IdCategoryNavigation.Description;
+                    detalle.DescriptionProduct = p.Description;
+                    detalle.Price = p.Price;
+                    detalle.Quantity = random.Next(0, 4);
+                    detalle.Total = detalle.Price * detalle.Quantity;
+                    listDet.Add(detalle);
+                }
+            }
+
+            sale.Total = listDet.Sum(d => d.Total);
+            sale.DetailSales = listDet;
+
+            if (sale.Total > 0)
+                await _repositorySale.Add(sale);
+        }
+
+        public DateTime RandomDayMes()
         {
             var diaHoy = DateTime.Now;
             var inicioMes = DateTime.Now.Day - 1;
@@ -247,6 +262,21 @@ namespace PointOfSale.Business.Services
             int range = (DateTime.Today - diaInicio).Days;
 
             var day = diaInicio.AddDays(gen.Next(range)).Date;
+
+            var random = new Random();
+            var horas = random.Next(0, 13) + 8;
+            var minutos = random.Next(0, 60);
+
+            return day.AddHours(horas).AddMinutes(minutos);
+        }
+        public DateTime RandomDayDias()
+        {
+            var diaInicio = DateTime.Now.AddDays(-1);
+
+            var gen = new Random();
+            int range = (DateTime.Today - diaInicio).Days;
+
+            var day = diaInicio.AddDays(gen.Next(2)).Date;
 
             var random = new Random();
             var horas = random.Next(0, 13) + 8;

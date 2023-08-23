@@ -21,7 +21,6 @@ namespace PointOfSale.Controllers
         private readonly IMapper _mapper;
         private readonly IConverter _converter;
         private readonly IClienteService _clienteService;
-
         public SalesController(ITypeDocumentSaleService typeDocumentSaleService,
             ISaleService saleService, IMapper mapper, IConverter converter, IClienteService clienteService)
         {
@@ -86,7 +85,7 @@ namespace PointOfSale.Controllers
 
                 model.IdUsers = int.Parse(idUsuario);
                 model.IdTurno = int.Parse(idTurno);
-                model.IdTienda= user.IdTienda;
+                model.IdTienda = user.IdTienda;
 
                 Sale sale_created = await _saleService.Register(_mapper.Map<Sale>(model));
 
@@ -121,8 +120,23 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> History(string saleNumber, string startDate, string endDate)
         {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador});
 
             List<VMSale> vmHistorySale = _mapper.Map<List<VMSale>>(await _saleService.SaleHistory(saleNumber, startDate, endDate));
+
+            if (vmHistorySale.Any(_ => _.IdClienteMovimiento != null))
+            {
+                var movslist = vmHistorySale.Where(_ => _.IdClienteMovimiento != null).ToList();
+                var idMov = movslist. Select(_ => _.IdClienteMovimiento.Value).ToList();
+                var movs = await _clienteService.GetClienteByMovimientos(idMov, user.IdTienda);
+
+                foreach (var m in movslist)
+                {
+                    var cliente = movs.FirstOrDefault(_ => _.IdClienteMovimiento == m.IdClienteMovimiento).Cliente;
+                    m.ClientName = cliente.Nombre;
+                }
+            }
+
             return StatusCode(StatusCodes.Status200OK, vmHistorySale);
         }
 

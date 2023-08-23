@@ -9,7 +9,7 @@ namespace PointOfSale.Business.Contracts
 {
     public interface IGastosService
     {
-        Task<List<Gastos>> List();
+        Task<List<Gastos>> List(int idTienda);
         Task<Gastos> Add(Gastos entity);
         Task<Gastos> Edit(Gastos entity);
         Task<bool> Delete(int idGastos);
