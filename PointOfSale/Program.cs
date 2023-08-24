@@ -65,6 +65,8 @@ public class Program
         builder.Services.AddScoped<IPromocionService, PromocionService>();
         builder.Services.AddScoped<IGastosService, GastosService>();
         builder.Services.AddScoped<IGastosService, GastosService>();
+        builder.Services.AddScoped<ITicketService, TicketService>();
+
         builder.Services.AddAFIPConfiguration(x =>
         {
             x.CertificatePassword = "";

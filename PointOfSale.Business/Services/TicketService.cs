@@ -12,7 +12,7 @@ namespace PointOfSale.Business.Services
     public class TicketService : ITicketService
     {
 
-        public StringBuilder CrearLineas(Sale sale)
+        public bool ImprimirTicket(Sale sale)
         {
             var Ticket1 = new TicketModel();
 
@@ -25,44 +25,42 @@ namespace PointOfSale.Business.Services
             Ticket1.TextoIzquierda("Fecha:" + DateTime.Now.ToShortDateString() + " Hora:" + DateTime.Now.ToShortTimeString());
             Ticket1.TextoIzquierda("Le Atendio: xxxx");
             Ticket1.TextoIzquierda("");
-            TicketModel.LineasGuion();
+            Ticket1.LineasGuion();
+            Ticket1.TextoIzquierda("");
 
-            TicketModel.EncabezadoVenta();
-            TicketModel.LineasGuion();
 
             foreach (var d in sale.DetailSales)
             {
-                Ticket1.AgregaArticulo(d.DescriptionProduct.ToString(), 
-                    double.Parse(d.Price.Value.ToString()), 
-                    int.Parse(d.Quantity.Value.ToString()), 
-                    double.Parse(d.Total.ToString())); //imprime una linea de descripcion
+                Ticket1.AgregaArticulo(d.DescriptionProduct.ToUpper(),
+                   d.Price.Value,
+                   d.Quantity.Value,
+                   d.Total.Value); //imprime una linea de descripcion
             }
 
 
-            TicketModel.LineasGuion();
             Ticket1.TextoIzquierda(" ");
-            Ticket1.AgregaTotales("Total", double.Parse("100")); // imprime linea con total
             Ticket1.TextoIzquierda(" ");
-            Ticket1.AgregaTotales("Efectivo Entregado:", double.Parse("150"));
-            Ticket1.AgregaTotales("Efectivo Devuelto:", double.Parse("50"));
+            Ticket1.LineasTotal();
+            Ticket1.AgregaTotales("Total", double.Parse(sale.Total.ToString())); // imprime linea con total
+            Ticket1.LineasTotal();
+            Ticket1.TextoIzquierda(" ");
 
 
             // Ticket1.LineasTotales(); // imprime linea 
 
-            Ticket1.TextoIzquierda(" ");
-            Ticket1.TextoCentro("**********************************");
-            Ticket1.TextoCentro("*     Gracias por preferirnos    *");
+            //Ticket1.TextoIzquierda(" ");
+            //Ticket1.TextoCentro("**********************************");
+            //Ticket1.TextoCentro("*     Gracias por preferirnos    *");
 
-            Ticket1.TextoCentro("**********************************");
+            //Ticket1.TextoCentro("**********************************");
             Ticket1.TextoIzquierda(" ");
 
-            return Ticket1.Lineas;
+            return ImprimirTiket("Microsoft XPS Document Writer", Ticket1.Lineas);
         }
 
-        public void ImprimirTiket(string stringimpresora, StringBuilder line)
+        private bool ImprimirTiket(string stringimpresora, StringBuilder line)
         {
-            PrinterModel.SendStringToPrinter(stringimpresora, line.ToString());
-            line = new StringBuilder();
+            return PrinterModel.SendStringToPrinter(stringimpresora, line.ToString());
         }
     }
 }

@@ -8,11 +8,15 @@ namespace PointOfSale.Business.Utilities
 {
     public class TicketModel
     {
+        public TicketModel()
+        {
+            line = new StringBuilder();
+        }
         public static StringBuilder line = new StringBuilder();
         string ticket = "";
         string parte1, parte2;
 
-        public static int max = 40;
+        int MAX = 30;
         int cort;
 
         public StringBuilder Lineas
@@ -20,26 +24,36 @@ namespace PointOfSale.Business.Utilities
             get { return line; }
         }
 
-        public static string LineasGuion()
+        public void LineasGuion()
         {
-            string LineaGuion = "----------------------------------------";   // agrega lineas separadoras -
+            string LineaGuion = string.Empty;
 
-            return line.AppendLine(LineaGuion).ToString();
+            for (int i = 0; i < MAX; i++)
+            {
+                LineaGuion += "-";   // agrega lineas separadoras -
+            }
+
+            line.AppendLine(LineaGuion);
+        }
+        public void LineasTotal()
+        {
+            string LineaGuion = string.Empty;
+
+            for (int i = 0; i < MAX; i++)
+            {
+                LineaGuion += "=";   // agrega lineas separadoras -
+            }
+
+            line.AppendLine(LineaGuion);
         }
 
-
-        public static void EncabezadoVenta()
-        {
-            string LineEncavesado = " Prod          Cant   Precio    Total";   // agrega lineas de  encabezados
-            line.AppendLine(LineEncavesado);
-        }
         public void TextoIzquierda(string par1)                          // agrega texto a la izquierda
         {
-            max = par1.Length;
-            if (max > 40)                                 // **********
+            var m = par1.Length;
+            if (m > MAX)                                 // **********
             {
-                cort = max - 40;
-                parte1 = par1.Remove(40, cort);        // si es mayor que 40 caracteres, lo corta
+                cort = m - MAX;
+                parte1 = par1.Remove(MAX, cort);        // si es mayor que 40 caracteres, lo corta
             }
             else { parte1 = par1; }                      // **********
             line.AppendLine(ticket = parte1);
@@ -48,15 +62,15 @@ namespace PointOfSale.Business.Utilities
         public void TextoDerecha(string par1)
         {
             ticket = "";
-            max = par1.Length;
-            if (max > 40)                                 // **********
+            var m = par1.Length;
+            if (m > MAX)                                 // **********
             {
-                cort = max - 40;
-                parte1 = par1.Remove(40, cort);           // si es mayor que 40 caracteres, lo corta
+                cort = MAX - m;
+                parte1 = par1.Remove(m, cort);           // si es mayor que 40 caracteres, lo corta
             }
             else { parte1 = par1; }                      // **********
-            max = 40 - par1.Length;                     // obtiene la cantidad de espacios para llegar a 40
-            for (int i = 0; i < max; i++)
+            m = MAX - par1.Length;                     // obtiene la cantidad de espacios para llegar a 40
+            for (int i = 0; i < m; i++)
             {
                 ticket += " ";                          // agrega espacios para alinear a la derecha
             }
@@ -66,15 +80,15 @@ namespace PointOfSale.Business.Utilities
         public void TextoCentro(string par1)
         {
             ticket = "";
-            max = par1.Length;
-            if (max > 40)                                 // **********
+            var m = par1.Length;
+            if (m > MAX)                                 // **********
             {
-                cort = max - 40;
-                parte1 = par1.Remove(40, cort);          // si es mayor que 40 caracteres, lo corta
+                cort = m - MAX;
+                parte1 = par1.Remove(MAX, cort);          // si es mayor que 40 caracteres, lo corta
             }
             else { parte1 = par1; }                      // **********
-            max = (int)(40 - parte1.Length) / 2;         // saca la cantidad de espacios libres y divide entre dos
-            for (int i = 0; i < max; i++)                // **********
+            m = (int)(MAX - parte1.Length) / 2;         // saca la cantidad de espacios libres y divide entre dos
+            for (int i = 0; i < m; i++)                // **********
             {
                 ticket += " ";                           // Agrega espacios antes del texto a centrar
             }                                            // **********
@@ -83,23 +97,23 @@ namespace PointOfSale.Business.Utilities
         }
         public void TextoExtremos(string par1, string par2)
         {
-            max = par1.Length;
-            if (max > 18)                                 // **********
+            var m = par1.Length;
+            if (m > 18)                                 // **********
             {
-                cort = max - 18;
+                cort = m - 18;
                 parte1 = par1.Remove(18, cort);          // si par1 es mayor que 18 lo corta
             }
             else { parte1 = par1; }                      // **********
             ticket = parte1;                             // agrega el primer parametro
-            max = par2.Length;
-            if (max > 18)                                 // **********
+            m = par2.Length;
+            if (m > 18)                                 // **********
             {
-                cort = max - 18;
+                cort = m - 18;
                 parte2 = par2.Remove(18, cort);          // si par2 es mayor que 18 lo corta
             }
             else { parte2 = par2; }
-            max = 40 - (parte1.Length + parte2.Length);
-            for (int i = 0; i < max; i++)                 // **********
+            m = MAX - (parte1.Length + parte2.Length);
+            for (int i = 0; i < m; i++)                 // **********
             {
                 ticket += " ";                            // Agrega espacios para poner par2 al final
             }                                             // **********
@@ -108,17 +122,17 @@ namespace PointOfSale.Business.Utilities
         }
         public void AgregaTotales(string par1, double total)
         {
-            max = par1.Length;
-            if (max > 25)                                 // **********
+            var m = par1.Length;
+            if (m > 25)                                 // **********
             {
-                cort = max - 25;
+                cort = m - 25;
                 parte1 = par1.Remove(25, cort);          // si es mayor que 25 lo corta
             }
             else { parte1 = par1; }                      // **********
             ticket = parte1;
-            parte2 = total.ToString("c");
-            max = 40 - (parte1.Length + parte2.Length);
-            for (int i = 0; i < max; i++)                // **********
+            parte2 = "$"+total.ToString();
+            m = MAX - (parte1.Length + parte2.Length);
+            for (int i = 0; i < m; i++)                // **********
             {
                 ticket += " ";                           // Agrega espacios para poner el valor de moneda al final
             }                                            // **********
@@ -127,7 +141,7 @@ namespace PointOfSale.Business.Utilities
         }
 
         // se le pasan los Aticulos  con sus detalles
-        public void AgregaArticulo(string Articulo, double precio, int cant, double subtotal)
+        public void AgregaArticulo(string Articulo, decimal precio, decimal cant, decimal subtotal)
         {
             if (cant.ToString().Length <= 3 && precio.ToString("c").Length <= 10 && subtotal.ToString("c").Length <= 11) // valida que cant precio y total esten dentro de rango
             {
@@ -135,7 +149,7 @@ namespace PointOfSale.Business.Utilities
                 bool bandera = false;
                 int nroEspacios = 0;
 
-                if (Articulo.Length > 40)                                 // **********
+                if (Articulo.Length > MAX)                                 // **********
                 {
                     //cort = max - 16;
                     //parte1 = Articulo.Remove(16, cort);          // corta a 16 la descripcion del articulo
@@ -188,13 +202,16 @@ namespace PointOfSale.Business.Utilities
                 }
                 else
                 {
-                    for (int i = 0; i < (16 - Articulo.Length); i++)
+                    for (int i = 0; i < (MAX - Articulo.Length); i++)
                     {
                         espacios += " ";
 
                     }
                     elementos = Articulo + espacios;
-                    nroEspacios = (3 - cant.ToString().Length);
+                    line.AppendLine(elementos);
+                    elementos = string.Empty;
+
+                    nroEspacios = (7 - cant.ToString().Length);
                     espacios = "";
                     for (int i = 0; i < nroEspacios; i++)
                     {
@@ -203,25 +220,61 @@ namespace PointOfSale.Business.Utilities
                     elementos += espacios + cant.ToString();
 
                     // colocamos el precio a la derecha
-                    nroEspacios = (10 - precio.ToString().Length);
-                    espacios = "";
+                    //nroEspacios = (10 - precio.ToString().Length);
+                    //espacios = "";
 
-                    for (int i = 0; i < nroEspacios; i++)
-                    {
-                        espacios += " ";
-                    }
-                    elementos += espacios + precio.ToString();
+                    //for (int i = 0; i < nroEspacios; i++)
+                    //{
+                    //    espacios += " ";
+                    //}
+                    elementos += " x $" + precio.ToString();
 
                     //colocar el subtotal a la dercha
-                    nroEspacios = (11 - subtotal.ToString().Length);
+                    nroEspacios = ((MAX - subtotal.ToString().Length) - elementos.Length) - 1;
                     espacios = "";
 
                     for (int i = 0; i < nroEspacios; i++)
                     {
                         espacios += " ";
                     }
-                    elementos += espacios + subtotal.ToString();
+                    elementos += espacios + "$" + subtotal.ToString();
                     line.AppendLine(elementos);
+
+
+                    //for (int i = 0; i < (16 - Articulo.Length); i++)
+                    //{
+                    //    espacios += " ";
+
+                    //}
+                    //elementos = Articulo + espacios;
+                    //nroEspacios = (3 - cant.ToString().Length);
+                    //espacios = "";
+                    //for (int i = 0; i < nroEspacios; i++)
+                    //{
+                    //    espacios += " ";
+                    //}
+                    //elementos += espacios + cant.ToString();
+
+                    //// colocamos el precio a la derecha
+                    //nroEspacios = (10 - precio.ToString().Length);
+                    //espacios = "";
+
+                    //for (int i = 0; i < nroEspacios; i++)
+                    //{
+                    //    espacios += " ";
+                    //}
+                    //elementos += espacios + precio.ToString();
+
+                    ////colocar el subtotal a la dercha
+                    //nroEspacios = (11 - subtotal.ToString().Length);
+                    //espacios = "";
+
+                    //for (int i = 0; i < nroEspacios; i++)
+                    //{
+                    //    espacios += " ";
+                    //}
+                    //elementos += espacios + subtotal.ToString();
+                    //line.AppendLine(elementos);
 
                 }
             }

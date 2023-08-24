@@ -23,5 +23,7 @@ namespace PointOfSale.Models
         public int? IdClienteMovimiento { get; set; }
         public ClienteMovimiento? ClienteMovimiento { get; set; }
 
+        public bool ImprimirTicket { get; set; }
+
     }
 }

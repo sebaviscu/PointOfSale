@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PointOfSale.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,6 @@ namespace PointOfSale.Business.Contracts
 {
     public interface ITicketService
     {
+        bool ImprimirTicket(Sale sale);
     }
 }

@@ -21,14 +21,21 @@ namespace PointOfSale.Controllers
         private readonly IMapper _mapper;
         private readonly IConverter _converter;
         private readonly IClienteService _clienteService;
-        public SalesController(ITypeDocumentSaleService typeDocumentSaleService,
-            ISaleService saleService, IMapper mapper, IConverter converter, IClienteService clienteService)
+        private readonly ITicketService _ticketService;
+        public SalesController(
+            ITypeDocumentSaleService typeDocumentSaleService,
+            ISaleService saleService,
+            IMapper mapper,
+            IConverter converter,
+            IClienteService clienteService,
+            ITicketService ticketService)
         {
             _typeDocumentSaleService = typeDocumentSaleService;
             _saleService = saleService;
             _mapper = mapper;
             _converter = converter;
             _clienteService = clienteService;
+            _ticketService = ticketService;
         }
         public IActionResult NewSale()
         {
@@ -73,6 +80,7 @@ namespace PointOfSale.Controllers
         public async Task<IActionResult> RegisterSale([FromBody] VMSale model)
         {
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado, Roles.Empleado });
+            var imprimirTicket = model.ImprimirTicket;
 
             GenericResponse<VMSale> gResponse = new GenericResponse<VMSale>();
             try
@@ -105,6 +113,9 @@ namespace PointOfSale.Controllers
 
                 model = _mapper.Map<VMSale>(sale_created);
 
+                if (imprimirTicket)
+                    _ticketService.ImprimirTicket(sale_created);
+
                 gResponse.State = true;
                 gResponse.Object = model;
             }
@@ -121,14 +132,14 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> History(string saleNumber, string startDate, string endDate)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador});
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
 
             List<VMSale> vmHistorySale = _mapper.Map<List<VMSale>>(await _saleService.SaleHistory(saleNumber, startDate, endDate));
 
             if (vmHistorySale.Any(_ => _.IdClienteMovimiento != null))
             {
                 var movslist = vmHistorySale.Where(_ => _.IdClienteMovimiento != null).ToList();
-                var idMov = movslist. Select(_ => _.IdClienteMovimiento.Value).ToList();
+                var idMov = movslist.Select(_ => _.IdClienteMovimiento.Value).ToList();
                 var movs = await _clienteService.GetClienteByMovimientos(idMov, user.IdTienda);
 
                 foreach (var m in movslist)

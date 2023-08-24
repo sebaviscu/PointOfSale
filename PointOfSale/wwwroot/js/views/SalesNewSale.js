@@ -150,7 +150,8 @@ $(document).on("click", "button.finalizeSale", function () {
         clientId: $("#cboCliente" + currentTabId).val() != '' ? $("#cboCliente" + currentTabId).val() : null,
         total: $("#txtTotal" + currentTabId).val(),
         detailSales: vmDetailSale,
-        tipoMovimiento: $("#cboCliente" + currentTabId).val() != '' ? 2 : null
+        tipoMovimiento: $("#cboCliente" + currentTabId).val() != '' ? 2 : null,
+        imprimirTicket: document.querySelector('#cboImprimirTicket' + currentTabId).checked
     }
 
     $("#btnFinalizeSale" + currentTabId).closest("div.card-body").LoadingOverlay("show")
@@ -222,6 +223,7 @@ function newTab() {
     clone.querySelector("#txtTotal").id = "txtTotal" + tabID;
     clone.querySelector("#btnFinalizeSale").id = "btnFinalizeSale" + tabID;
     clone.querySelector("#cboCliente").id = "cboCliente" + tabID;
+    clone.querySelector("#cboImprimirTicket").id = "cboImprimirTicket" + tabID;
 
     $('#tab' + tabID).append(clone);
 
