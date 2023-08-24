@@ -243,8 +243,8 @@ function SetTopSeler(typeValues, idCategory) {
             const tableData = d.map(value => {
                 return (
                     `<tr>
-                       <td><h3 style="color: darkgray;">${value.product}</h3></td>
-                       <td style="text-align: right;"><h4>${value.quantity}</h4></td>
+                       <td><h3 style="color: darkgray;">${value.product}&nbsp;</h3></td>
+                       <td style="text-align: right;"><h4>&nbsp;${value.quantity}</h4></td>
                     </tr>`
                 );
             }).join('');

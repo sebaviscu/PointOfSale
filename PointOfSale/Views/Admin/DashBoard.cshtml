@@ -184,14 +184,15 @@
             </div>
             <!-- Card Body -->
             <div class="card-body">
-                <div>
-                    <label for="cboCategory">Categoria</label>
+                <div class="input-group input-group-sm mb-3 col-md-12">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="cboCategory">Categoria</label>
+                    </div>
                     <select class="form-control form-control-sm" id="cboCategory">
                     </select>
                 </div>
                 <div class="row justify-content-md-center">
-                    <div class="chart-pie" @*style="height: 350px !important ;"*@>
-                        <br />
+                    <div class="chart-pie">
                         <table border="0">
                             <tbody id="tableTopSeller">
                             </tbody>

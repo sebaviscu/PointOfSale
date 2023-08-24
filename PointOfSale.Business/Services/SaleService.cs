@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AFIP.Facturacion.Model.Factura;
+using AFIP.Facturacion.Services;
+using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
@@ -20,6 +22,7 @@ namespace PointOfSale.Business.Services
         private readonly ITypeDocumentSaleService _rTypeNumber;
         private readonly IProductService _rProduct;
         private readonly ITurnoService _turnoService;
+        private readonly IAFIPFacturacionService _afipFacturacionService;
 
         public SaleService(
             IGenericRepository<Product> repositoryProduct,
@@ -27,7 +30,8 @@ namespace PointOfSale.Business.Services
             IGenericRepository<Cliente> repositoryCliente,
             ITypeDocumentSaleService rTypeNumber,
             IProductService rProduct,
-            ITurnoService turnoService)
+            ITurnoService turnoService,
+            IAFIPFacturacionService afipFacturacionService)
         {
             _repositoryProduct = repositoryProduct;
             _repositorySale = repositorySale;
@@ -35,6 +39,7 @@ namespace PointOfSale.Business.Services
             _rTypeNumber = rTypeNumber;
             _rProduct = rProduct;
             _turnoService = turnoService;
+            _afipFacturacionService = afipFacturacionService;
         }
 
         public async Task<List<Product>> GetProducts(string search)
@@ -76,7 +81,9 @@ namespace PointOfSale.Business.Services
         {
             try
             {
-                return await _repositorySale.Register(entity);
+                var sale = await _repositorySale.Register(entity);
+                //var factura = await _afipFacturacionService.FacturarAsync(new FacturaAFIP());
+                return sale;
             }
             catch
             {
