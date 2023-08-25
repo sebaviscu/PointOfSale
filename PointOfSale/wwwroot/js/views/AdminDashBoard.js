@@ -360,14 +360,14 @@ $("#btnSaveGasto").on("click", function () {
     const model = structuredClone(BASIC_MODEL_GASTO);
     model["idGastos"] = parseInt($("#txtIdGastos").val());
     model["idTipoGasto"] = $("#cboTipoDeGastoEnGasto").val();
-    model["importe"] = $("#txtImporte").val();
+    model["importe"] = $("#txtImporteGasto").val();
     model["comentario"] = $("#txtComentario").val();
     model["idUsuario"] = $("#cboUsuario").val() != 0 ? $("#cboUsuario").val() : null;
-    model["tipoFactura"] = $("#cboTipoFactura").val();
-    model["nroFactura"] = $("#txtNroFactura").val();
-    model["iva"] = $("#txtIva").val() != '' ? $("#txtIva").val() : 0;
-    model["ivaImporte"] = $("#txtImporteIva").val() != '' ? $("#txtImporteIva").val() : 0;
-    model["importeSinIva"] = $("#txtImporteSinIva").val() != '' ? $("#txtImporteSinIva").val() : 0;
+    model["tipoFactura"] = $("#cboTipoFacturaGasto").val();
+    model["nroFactura"] = $("#txtNroFacturaGasto").val();
+    model["iva"] = $("#txtIvaGasto").val() != '' ? $("#txtIvaGasto").val() : 0;
+    model["ivaImporte"] = $("#txtImporteIvaGasto").val() != '' ? $("#txtImporteIvaGasto").val() : 0;
+    model["importeSinIva"] = $("#txtImporteSinIvaGasto").val() != '' ? $("#txtImporteSinIvaGasto").val() : 0;
 
     if (model.idGastos == 0) {
         fetch("/Gastos/CreateGastos", {
@@ -439,12 +439,12 @@ $("#btnSavePagoProveedor").on("click", function () {
 
     const model = structuredClone(BASIC_MODEL_PAGO_PROVEEDOR);
     model["idProveedor"] = parseInt($("#cboProveedor").val());
-    model["tipoFactura"] = $("#cboTipoFactura").val();
-    model["nroFactura"] = $("#txtNroFactura").val();
-    model["iva"] = $("#txtIva").val() != '' ? $("#txtIva").val() : 0;
-    model["ivaImporte"] = $("#txtImporteIva").val() != '' ? $("#txtImporteIva").val() : 0;
+    model["tipoFactura"] = $("#cboTipoFacturaProv").val();
+    model["nroFactura"] = $("#txtNroFacturaProv").val();
+    model["iva"] = $("#txtIvaProv").val() != '' ? $("#txtIvaProv").val() : 0;
+    model["ivaImporte"] = $("#txtImporteIvaProv").val() != '' ? $("#txtImporteIvaProv").val() : 0;
     model["importe"] = $("#txtImporteProveedor").val();
-    model["importeSinIva"] = $("#txtImporteSinIva").val() != '' ? $("#txtImporteSinIva").val() : 0;
+    model["importeSinIva"] = $("#txtImporteSinIvaProv").val() != '' ? $("#txtImporteSinIvaProv").val() : 0;
     model["comentario"] = $("#txtComentario").val();
 
 
@@ -465,3 +465,28 @@ $("#btnSavePagoProveedor").on("click", function () {
         }
     })
 })
+
+function calcularImportesGasto() {
+    var importe = $("#txtImporteGasto").val();
+    var iva = $("#txtIvaGasto").val();
+
+    if (importe !== '' && iva !== '') {
+
+        var importeSinIva = parseFloat(importe) * (1 - (parseFloat(iva) / 100));
+        $("#txtImporteSinIvaGasto").val(importeSinIva);
+        $("#txtImporteIvaGasto").val(importe - importeSinIva);
+
+    }
+}
+
+function calcularImportesProv() {
+    var importe = $("#txtImporteProveedor").val();
+    var iva = $("#txtIvaProv").val();
+
+    if (importe !== '' && iva !== '') {
+
+        var importeSinIva = parseFloat(importe) * (1 - (parseFloat(iva) / 100));
+        $("#txtImporteSinIvaProv").val(importeSinIva);
+        $("#txtImporteIvaProv").val(importe - importeSinIva);
+    }
+}

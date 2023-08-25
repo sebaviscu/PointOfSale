@@ -172,7 +172,16 @@ namespace PointOfSale.Controllers
             return StatusCode(StatusCodes.Status200OK, vmHistorySale);
         }
 
-        public IActionResult ShowPDFSale(string saleNumber)
+        public async Task<IActionResult> PrintTicket(int idSale)
+        {
+            var sale = await _saleService.GetSale(idSale);
+            var tienda = await _tiendaService.Get(sale.IdTienda);
+            var ticket = _ticketService.ImprimirTicket(sale, tienda);
+
+            return StatusCode(StatusCodes.Status200OK);
+        }
+
+        public async Task<IActionResult> ShowPDFSaleAsync(string saleNumber)
         {
             string urlTemplateView = $"{this.Request.Scheme}://{this.Request.Host}/Template/PDFSale?saleNumber={saleNumber}";
 

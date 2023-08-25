@@ -324,3 +324,17 @@ $('#cboTipoDeGastoEnGasto').change(function () {
         $("#txtGasto").val('');
     }
 })
+
+
+function calcularImportes() {
+    var importe = $("#txtImporte").val();
+    var iva = $("#txtIva").val();
+
+    if (importe !== '' && iva !== '') {
+
+        var importeSinIva = parseFloat(importe) * (1 - (parseFloat(iva) / 100));
+        $("#txtImporteSinIva").val(importeSinIva);
+        $("#txtImporteIva").val(importe - importeSinIva);
+
+    }
+}

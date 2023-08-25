@@ -289,8 +289,8 @@ function saveOneProduct() {
     model["quantity"] = $("#txtQuantity").val();
     model["price"] = $("#txtPrice").val();
     model["priceWeb"] = $("#txtPriceWeb").val();
-    model["profit"] = $("#txtProfit").val();
-    model["costo"] = $("#txtCosto").val();
+    model["porcentajeProfit"] = $("#txtProfit").val();
+    model["costPrice"] = $("#txtCosto").val();
     model["tipoVenta"] = $("#cboTipoVenta").val();
     model["isActive"] = $("#cboState").val();
     model["idProveedor"] = $("#cboProveedor").val();
@@ -415,3 +415,15 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
             }
         });
 })
+
+
+function calcularPrecio() {
+    var costo = $("#txtCosto").val();
+    var profit = $("#txtProfit").val();
+
+    if (costo !== '' && profit !== '') {
+
+        var precio = parseFloat(costo) * (1 + (parseFloat(profit) / 100));
+        $("#txtPrice").val(precio);
+    }
+}

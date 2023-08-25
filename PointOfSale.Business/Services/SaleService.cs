@@ -42,6 +42,8 @@ namespace PointOfSale.Business.Services
             _afipFacturacionService = afipFacturacionService;
         }
 
+
+
         public async Task<List<Product>> GetProducts(string search)
         {
             var list = new List<Product>();
@@ -110,7 +112,7 @@ namespace PointOfSale.Business.Services
                 .Include(tdv => tdv.TypeDocumentSaleNavigation)
                 .Include(u => u.IdUsersNavigation)
                 .Include(dv => dv.DetailSales)
-                .OrderByDescending(_=>_.IdSale)
+                .OrderByDescending(_ => _.IdSale)
                 .ToList();
             }
             else
@@ -292,5 +294,11 @@ namespace PointOfSale.Business.Services
             return day.AddHours(horas).AddMinutes(minutos);
         }
 
+        public async Task<Sale> GetSale(int idSale)
+        {
+            var query  = await _repositorySale.Query(v => v.IdSale == idSale);
+
+            return query.Include(dv => dv.DetailSales).FirstOrDefault();
+        }
     }
 }

@@ -31,7 +31,7 @@ namespace PointOfSale.Business.Services
             Ticket1.TextoIzquierda("");
             Ticket1.TextoIzquierda("FACTURA ");
             Ticket1.TextoIzquierda("No Fac: 0120102");
-            Ticket1.TextoIzquierda("Fecha:" + sale.RegistrationDate.Value.ToShortDateString() + " Hora:" + sale.RegistrationDate.Value.ToShortTimeString());
+            Ticket1.TextoIzquierda("Fecha:" + sale.RegistrationDate.Value.ToShortDateString() + " " + sale.RegistrationDate.Value.ToShortTimeString());
             Ticket1.LineasGuion();
             Ticket1.TextoIzquierda("");
 

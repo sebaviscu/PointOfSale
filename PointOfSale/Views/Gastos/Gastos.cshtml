@@ -146,23 +146,27 @@
                                 </div>
                             </div>
                             <div class="form-row">
-                                <div class="form-group col-sm-5">
+                                <div class="form-group col-sm-3">
                                     <label for="txtIva">IVA</label>
-                                    <input type="number" class="form-control form-control-sm" id="txtIva" name="IVA">
+                                    <input  type="number" step="any" class="form-control form-control-sm" id="txtIva" name="IVA">
                                 </div>
-                                <div class="form-group col-sm-7">
+                                <div class="form-group col-sm-6">
                                     <label for="txtImporte">Importe</label>
-                                    <input type="number" class="form-control form-control-sm pagoValid" id="txtImporte" name="Importe">
+                                    <input  type="number" step="any" class="form-control form-control-sm pagoValid" id="txtImporte" name="Importe">
+                                </div>
+                                <div class="form-group col-sm-3">
+                                    <br />
+                                    <button type="button" class="btn btn-secondary" onclick="calcularImportes()">Calular</button>
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-sm-6">
                                     <label for="txtImporteIva">Importe IVA</label>
-                                    <input type="number" class="form-control form-control-sm" id="txtImporteIva" name="Importe IVA">
+                                    <input type="number" step="any" class="form-control form-control-sm" id="txtImporteIva" name="Importe IVA">
                                 </div>
                                 <div class="form-group col-sm-6">
                                     <label for="txtImporteSinIva">Importe sin IVA</label>
-                                    <input type="number" class="form-control form-control-sm" id="txtImporteSinIva" name="Importe sin IVA">
+                                    <input  type="number" step="any" class="form-control form-control-sm" id="txtImporteSinIva" name="Importe sin IVA">
                                 </div>
                             </div>
                             <div class="form-row">

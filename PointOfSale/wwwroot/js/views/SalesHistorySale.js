@@ -91,13 +91,13 @@ $("#btnSearch").click(function () {
 $("#tbsale tbody").on("click", ".btn-info", function () {
 
     let d = $(this).data("sale")
-    console.log(d)
     $("#txtRegistrationDate").val(d.registrationDate)
     $("#txtSaleNumber").val(d.saleNumber)
     $("#txtRegisterUser").val(d.users)
     $("#txtDocumentType").val(d.typeDocumentSale)
     $("#txtClientName").val(d.clientName)
     $("#txtTotal").val(d.total)
+    idSale = d.idSale;
 
     $("#tbProducts tbody").html("")
 
@@ -113,7 +113,19 @@ $("#tbsale tbody").on("click", ".btn-info", function () {
         )
     })
 
-    $("#linkPrint").attr("href", `/Sales/ShowPDFSale?saleNumber=${d.saleNumber}`);
+    $("#linkPrint").attr("href", `/Sales/ShowPDFSale?idSale=${d.saleNumber}`);
+
 
     $("#modalData").modal("show");
+})
+
+let idSale;
+
+$("#printTicket").click(function () {
+
+    fetch(`/Sales/PrintTicket?idSale=${idSale}`)
+        .then(response => {
+            $("#modalData").modal("hide");
+            swal("Exitoso!", "Ticket impreso!", "success");
+        })
 })

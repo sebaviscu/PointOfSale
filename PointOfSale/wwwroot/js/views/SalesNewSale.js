@@ -528,3 +528,19 @@ function lastTab() {
     var tabFirst = $('#tab-list button:last');
     tabFirst.tab('show');
 }
+
+var areYouReallySure = false;
+function areYouSure() {
+    if (allowPrompt) {
+        if (!areYouReallySure && true) {
+            areYouReallySure = true;
+            var confMessage = "";
+            return confMessage;
+        }
+    } else {
+        allowPrompt = true;
+    }
+}
+
+var allowPrompt = true;
+window.onbeforeunload = areYouSure;

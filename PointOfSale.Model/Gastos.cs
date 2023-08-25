@@ -13,7 +13,7 @@ namespace PointOfSale.Model
         public TipoDeGasto? TipoDeGasto { get; set; }
         public decimal Importe {get; set; }
         public decimal? ImporteSinIva { get; set; }
-        public int? Iva { get; set; }
+        public decimal? Iva { get; set; }
         public decimal? IvaImporte { get; set; }
         public string? NroFactura { get; set; }
         public string? TipoFactura { get; set; }
