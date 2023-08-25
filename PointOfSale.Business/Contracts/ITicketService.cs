@@ -1,4 +1,6 @@
-﻿using PointOfSale.Model;
+﻿using AFIP.Facturacion.Model;
+using PointOfSale.Model;
+using PointOfSale.Model.Factura;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +11,7 @@ namespace PointOfSale.Business.Contracts
 {
     public interface ITicketService
     {
-        bool ImprimirTicket(Sale sale);
+        string ImprimirTicket(Sale sale, Tienda tienda);
+        void ImprimirTiket(string line);
     }
 }

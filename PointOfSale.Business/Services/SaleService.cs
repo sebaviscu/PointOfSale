@@ -107,7 +107,7 @@ namespace PointOfSale.Business.Services
                     v.RegistrationDate.Value.Date >= start_date.Date &&
                     v.RegistrationDate.Value.Date <= end_date.Date
                 )
-                .Include(tdv => tdv.IdTypeDocumentSaleNavigation)
+                .Include(tdv => tdv.TypeDocumentSaleNavigation)
                 .Include(u => u.IdUsersNavigation)
                 .Include(dv => dv.DetailSales)
                 .OrderByDescending(_=>_.IdSale)
@@ -116,7 +116,7 @@ namespace PointOfSale.Business.Services
             else
             {
                 return query.Where(v => v.SaleNumber.EndsWith(SaleNumber))
-                .Include(tdv => tdv.IdTypeDocumentSaleNavigation)
+                .Include(tdv => tdv.TypeDocumentSaleNavigation)
                 .Include(u => u.IdUsersNavigation)
                 .Include(dv => dv.DetailSales)
                 .OrderByDescending(_ => _.IdSale)
@@ -129,7 +129,7 @@ namespace PointOfSale.Business.Services
             IQueryable<Sale> query = await _repositorySale.Query(v => v.SaleNumber == SaleNumber);
 
             return query
-               .Include(tdv => tdv.IdTypeDocumentSaleNavigation)
+               .Include(tdv => tdv.TypeDocumentSaleNavigation)
                .Include(u => u.IdUsersNavigation)
                .Include(dv => dv.DetailSales)
                .First();

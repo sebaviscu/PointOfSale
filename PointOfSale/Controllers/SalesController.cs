@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using AFIP.Facturacion.Model;
+using AFIP.Facturacion.Services;
+using AutoMapper;
 using DinkToPdf;
 using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Authorization;
@@ -6,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Services;
 using PointOfSale.Model;
+using PointOfSale.Model.Factura;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
 using System.Security.Claims;
@@ -22,13 +25,18 @@ namespace PointOfSale.Controllers
         private readonly IConverter _converter;
         private readonly IClienteService _clienteService;
         private readonly ITicketService _ticketService;
+        private readonly ITiendaService _tiendaService;
+        private readonly IAFIPFacturacionService _aFIPFacturacionService;
+
         public SalesController(
             ITypeDocumentSaleService typeDocumentSaleService,
             ISaleService saleService,
             IMapper mapper,
             IConverter converter,
             IClienteService clienteService,
-            ITicketService ticketService)
+            ITicketService ticketService,
+            ITiendaService tiendaService,
+            IAFIPFacturacionService aFIPFacturacionService)
         {
             _typeDocumentSaleService = typeDocumentSaleService;
             _saleService = saleService;
@@ -36,6 +44,8 @@ namespace PointOfSale.Controllers
             _converter = converter;
             _clienteService = clienteService;
             _ticketService = ticketService;
+            _tiendaService = tiendaService;
+            _aFIPFacturacionService = aFIPFacturacionService;
         }
         public IActionResult NewSale()
         {
@@ -88,7 +98,6 @@ namespace PointOfSale.Controllers
                 ClaimsPrincipal claimuser = HttpContext.User;
 
                 string idUsuario = claimuser.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).Select(c => c.Value).SingleOrDefault();
-
                 string idTurno = claimuser.Claims.Where(c => c.Type == "Turno").Select(c => c.Value).SingleOrDefault();
 
                 model.IdUsers = int.Parse(idUsuario);
@@ -113,8 +122,19 @@ namespace PointOfSale.Controllers
 
                 model = _mapper.Map<VMSale>(sale_created);
 
+                var tipoVenta = await _typeDocumentSaleService.Get(sale_created.IdTypeDocumentSale.Value);
+
+                if (tipoVenta.Invoice)
+                {
+                    //var factura = new FacturaAFIP();
+                    //var facturacionResponse = await _aFIPFacturacionService.FacturarAsync(factura);
+                }
+
                 if (imprimirTicket)
-                    _ticketService.ImprimirTicket(sale_created);
+                {
+                    var tienda = await _tiendaService.Get(model.IdTienda);
+                    var ticket = _ticketService.ImprimirTicket(sale_created, tienda);
+                }
 
                 gResponse.State = true;
                 gResponse.Object = model;

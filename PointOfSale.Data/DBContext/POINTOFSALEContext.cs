@@ -465,7 +465,7 @@ namespace PointOfSale.Data.DBContext
                     .HasColumnName("total");
 
 
-                entity.HasOne(d => d.IdTypeDocumentSaleNavigation)
+                entity.HasOne(d => d.TypeDocumentSaleNavigation)
                     .WithMany(p => p.Sales)
                     .HasForeignKey(d => d.IdTypeDocumentSale)
                     .HasConstraintName("FK__Sale__idTypeDocu__2B3F6F97");

@@ -101,9 +101,9 @@ namespace PointOfSale.Business.Services
             IQueryable<Sale> query = await _repositorySale.Query();
 
             Dictionary<string, decimal> resultado = query
-                .Include(v => v.IdTypeDocumentSaleNavigation)
+                .Include(v => v.TypeDocumentSaleNavigation)
                 .Where(vd => vd.RegistrationDate.Value.Date >= start.Date && vd.IdClienteMovimiento == null && vd.IdTienda == idTienda)
-                .GroupBy(v => v.IdTypeDocumentSaleNavigation.Description).OrderByDescending(g => g.Sum(_ => _.Total))
+                .GroupBy(v => v.TypeDocumentSaleNavigation.Description).OrderByDescending(g => g.Sum(_ => _.Total))
                 .Select(dv => new { descripcion = dv.Key, total = dv.Sum(_ => _.Total.Value) })
                 .ToDictionary(keySelector: r => r.descripcion, elementSelector: r => r.total);
 
@@ -236,12 +236,12 @@ namespace PointOfSale.Business.Services
             IQueryable<Sale> query = await _repositorySale.Query();
 
             Dictionary<string, decimal> resultado = query
-                .Include(v => v.IdTypeDocumentSaleNavigation)
+                .Include(v => v.TypeDocumentSaleNavigation)
                 .Where(vd => vd.RegistrationDate.Value.Date >= start.Date
                         && vd.IdClienteMovimiento == null
                         && vd.IdTurno == turno
                         && vd.IdTienda == idTienda)
-                .GroupBy(v => v.IdTypeDocumentSaleNavigation.Description).OrderByDescending(g => g.Sum(_ => _.Total))
+                .GroupBy(v => v.TypeDocumentSaleNavigation.Description).OrderByDescending(g => g.Sum(_ => _.Total))
                 .Select(dv => new { descripcion = dv.Key, total = dv.Sum(_ => _.Total.Value) })
                 .ToDictionary(keySelector: r => r.descripcion, elementSelector: r => r.total);
 

@@ -19,6 +19,11 @@ namespace PointOfSale.Business.Services
             _repository = repository;
         }
 
+        public async Task<TypeDocumentSale> Get(int idTipoVenta)
+        {
+            return await _repository.First(_=>_.IdTypeDocumentSale == idTipoVenta);
+        }
+
         public async Task<List<TypeDocumentSale>> List()
         {
             IQueryable<TypeDocumentSale> query = await _repository.Query();

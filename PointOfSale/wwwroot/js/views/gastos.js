@@ -1,5 +1,6 @@
 ﻿let tableData;
 let rowSelected;
+var tipoGastosList = [];
 
 const BASIC_MODEL = {
     idGastos: 0,
@@ -25,6 +26,7 @@ $(document).ready(function () {
         }).then(responseJson => {
 
             if (responseJson.data.length > 0) {
+                tipoGastosList = responseJson.data;
                 responseJson.data.forEach((item) => {
                     $("#cboTipoDeGastoEnGasto").append(
                         $("<option>").val(item.idTipoGastos).text(item.descripcion)
@@ -149,6 +151,11 @@ const openModal = (model = BASIC_MODEL) => {
     $("#cboTipoDeGastoEnGasto").val(model.idTipoGasto);
     $("#txtImporte").val(model.importe);
     $("#cboUsuario").val(model.idUsuario);
+    $("#cboTipoFactura").val(model.tipoFactura);
+    $("#txtNroFactura").val(model.nroFactura);
+    $("#txtIva").val(model.ivaImporte);
+    $("#txtImporteIva").val(model.ivaImporte);
+    $("#txtImporteSinIva").val(model.importeSinIva);
 
     if (model.idUsuario == null) {
         $("#txtComentario").val(model.comentario);
@@ -188,6 +195,11 @@ $("#btnSave").on("click", function () {
     model["importe"] = $("#txtImporte").val();
     model["comentario"] = $("#txtComentario").val();
     model["idUsuario"] = $("#cboUsuario").val() != 0 ? $("#cboUsuario").val() : null;
+    model["tipoFactura"] = $("#cboTipoFactura").val();
+    model["nroFactura"] = $("#txtNroFactura").val();
+    model["iva"] = $("#txtIva").val() != '' ? $("#txtIva").val() : 0;
+    model["ivaImporte"] = $("#txtImporteIva").val() != '' ? $("#txtImporteIva").val() : 0;
+    model["importeSinIva"] = $("#txtImporteSinIva").val() != '' ? $("#txtImporteSinIva").val() : 0;
 
     $("#modalData").find("div.modal-content").LoadingOverlay("show")
 
@@ -299,4 +311,16 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                     })
             }
         });
+})
+
+$('#cboTipoDeGastoEnGasto').change(function () {
+    var idTipoGasro = $(this).val();
+    var tipoGasto = tipoGastosList.find(_ => _.idTipoGastos == idTipoGasro);
+
+    if (tipoGasto != null) {
+        $("#txtGasto").val(tipoGasto.gastoParticular);
+    }
+    else {
+        $("#txtGasto").val('');
+    }
 })

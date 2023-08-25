@@ -19,7 +19,7 @@ namespace PointOfSale.Model
         public decimal? Total { get; set; }
         public DateTime? RegistrationDate { get; set; }
 
-        public virtual TypeDocumentSale? IdTypeDocumentSaleNavigation { get; set; }
+        public virtual TypeDocumentSale? TypeDocumentSaleNavigation { get; set; }
         public virtual User? IdUsersNavigation { get; set; }
         public virtual ICollection<DetailSale> DetailSales { get; set; }
         public int IdTurno { get; set; }

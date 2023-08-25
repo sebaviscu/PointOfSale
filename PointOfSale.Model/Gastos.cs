@@ -12,6 +12,11 @@ namespace PointOfSale.Model
         public int IdTipoGasto { get; set; }
         public TipoDeGasto? TipoDeGasto { get; set; }
         public decimal Importe {get; set; }
+        public decimal? ImporteSinIva { get; set; }
+        public int? Iva { get; set; }
+        public decimal? IvaImporte { get; set; }
+        public string? NroFactura { get; set; }
+        public string? TipoFactura { get; set; }
         public int? IdUsuario { get; set; }
         public User? User { get; set; }
         public string? Comentario { get; set; }

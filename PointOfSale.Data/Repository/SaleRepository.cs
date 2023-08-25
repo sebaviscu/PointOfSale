@@ -75,7 +75,7 @@ namespace PointOfSale.Data.Repository
                 .Include(v => v.IdSaleNavigation)
                 .ThenInclude(u => u.IdUsersNavigation)
                 .Include(v => v.IdSaleNavigation)
-                .ThenInclude(tdv => tdv.IdTypeDocumentSaleNavigation)
+                .ThenInclude(tdv => tdv.TypeDocumentSaleNavigation)
                 .Where(dv => dv.IdSaleNavigation.RegistrationDate.Value.Date >= StarDate.Date && dv.IdSaleNavigation.RegistrationDate.Value.Date <= EndDate.Date)
                 .ToListAsync();
 

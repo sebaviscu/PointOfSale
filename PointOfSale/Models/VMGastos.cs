@@ -18,5 +18,10 @@ namespace PointOfSale.Models
         public string? FechaString { get; set; }
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }
+        public decimal? ImporteSinIva { get; set; }
+        public int? Iva { get; set; }
+        public decimal? IvaImporte { get; set; }
+        public string? NroFactura { get; set; }
+        public string? TipoFactura { get; set; }
     }
 }

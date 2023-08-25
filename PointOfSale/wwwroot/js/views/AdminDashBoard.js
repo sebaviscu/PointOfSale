@@ -1,5 +1,6 @@
 ﻿var typeValuesGlobal = 0;
 var proveedoresList = [];
+var tipoGastosList = [];
 
 const BASIC_MODEL_GASTO = {
     idGastos: 0,
@@ -30,6 +31,7 @@ $(document).ready(function () {
         }).then(responseJson => {
 
             if (responseJson.data.length > 0) {
+                tipoGastosList = responseJson.data;
                 responseJson.data.forEach((item) => {
                     $("#cboTipoDeGastoEnGasto").append(
                         $("<option>").val(item.idTipoGastos).text(item.descripcion)
@@ -361,7 +363,11 @@ $("#btnSaveGasto").on("click", function () {
     model["importe"] = $("#txtImporte").val();
     model["comentario"] = $("#txtComentario").val();
     model["idUsuario"] = $("#cboUsuario").val() != 0 ? $("#cboUsuario").val() : null;
-
+    model["tipoFactura"] = $("#cboTipoFactura").val();
+    model["nroFactura"] = $("#txtNroFactura").val();
+    model["iva"] = $("#txtIva").val() != '' ? $("#txtIva").val() : 0;
+    model["ivaImporte"] = $("#txtImporteIva").val() != '' ? $("#txtImporteIva").val() : 0;
+    model["importeSinIva"] = $("#txtImporteSinIva").val() != '' ? $("#txtImporteSinIva").val() : 0;
 
     if (model.idGastos == 0) {
         fetch("/Gastos/CreateGastos", {
@@ -383,6 +389,18 @@ $("#btnSaveGasto").on("click", function () {
     }
 })
 
+$('#cboTipoDeGastoEnGasto').change(function () {
+    var idTipoGasro = $(this).val();
+    var tipoGasto = tipoGastosList.find(_ => _.idTipoGastos == idTipoGasro);
+
+    if (tipoGasto != null) {
+        $("#txtGasto").val(tipoGasto.gastoParticular);
+    }
+    else {
+        $("#txtGasto").val('');
+    }
+})
+
 $('#cboProveedor').change(function () {
     var idProv = $(this).val();
     var proveedor = proveedoresList.find(_ => _.idProveedor == idProv);
@@ -396,6 +414,7 @@ $('#cboProveedor').change(function () {
         $("#txtDireccionPago").val('');
     }
 })
+
 
 $("#btnNuevoPagoProveedor").on("click", function () {
     $("#modalPagoProveedor").modal("show")
