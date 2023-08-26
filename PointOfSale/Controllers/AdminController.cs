@@ -217,17 +217,19 @@ namespace PointOfSale.Controllers
                 };
                 var totGastosParticualres = gastosParticualresList.Sum(_ => _.Total);
 
-                var movimientosProv = await _dashboardService.GetMovimientosProveedoresByTienda(typeValues, user.IdTienda);
-                var gastosProvTotales = movimientosProv.Sum(_ => _.Importe);
 
-                //foreach (var item in await _dashboardService.GetMovimientosProveedoresByTienda(typeValues, user.IdTienda))
-                //{
-                //    gastosParticualresList.Add(new VMVentasPorTipoDeVenta()
-                //    {
-                //        Descripcion = item.Key,
-                //        Total = item.Value
-                //    });
-                //};
+                var gastosProveedores = new List<VMVentasPorTipoDeVenta>();
+                var movimientosProv = await _dashboardService.GetMovimientosProveedoresByTienda(typeValues, user.IdTienda);
+                var gastosProvTotales = movimientosProv.Sum(_ => _.Value);
+
+                foreach (var item in movimientosProv)
+                {
+                    gastosProveedores.Add(new VMVentasPorTipoDeVenta()
+                    {
+                        Descripcion = item.Key,
+                        Total = item.Value
+                    });
+                };
 
                 var gananciaBruta = listSales.Sum(_ => _.Total);
                 var gastosTotales = gastosProvTotales + totGastosParticualres;
@@ -238,10 +240,12 @@ namespace PointOfSale.Controllers
                 vmDashboard.TotalSales = "$ " + listSales.Sum(_ => _.Total);
                 vmDashboard.TotalSalesComparacion = "$ " + listSalesComparacion.Sum(_ => _.Total);
                 vmDashboard.VentasPorTipoVenta = VentasPorTipoVenta;
-                vmDashboard.Gastos = "$ " + gastosTotales.ToString();
+                vmDashboard.GastosTotales = "$ " + gastosTotales.ToString();
                 vmDashboard.CantidadClientes = resultados.CantidadClientes;
                 vmDashboard.Ganancia = "$ " + (gananciaBruta - gastosTotales).ToString();
                 vmDashboard.GastosPorTipo = gastosParticualresList;
+                vmDashboard.GastosTexto = $"${gastosProvTotales.ToString()} + ${totGastosParticualres.ToString()}";
+                vmDashboard.GastosPorTipoProveedor = gastosProveedores;
 
                 gResponse.State = true;
                 gResponse.Object = vmDashboard;
@@ -601,7 +605,7 @@ namespace PointOfSale.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProveedor()
+        public async Task<IActionResult> GetProveedores()
         {
             var listProveedor = _mapper.Map<List<VMProveedor>>(await _proveedorService.List());
             return StatusCode(StatusCodes.Status200OK, new { data = listProveedor });
@@ -658,6 +662,15 @@ namespace PointOfSale.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetMovimientoProveedor(int idProveedor)
+        {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+
+            var listUsers = _mapper.Map<List<VMProveedorMovimiento>>(await _proveedorService.ListMovimientosProveedor(idProveedor, user.IdTienda));
+            return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetProveedor(int idProveedor)
         {
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
 

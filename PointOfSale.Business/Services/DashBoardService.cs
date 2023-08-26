@@ -83,14 +83,23 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task<List<ProveedorMovimiento>> GetMovimientosProveedoresByTienda(TypeValuesDashboard typeValues, int idTienda)
+        public async Task<Dictionary<string, decimal>> GetMovimientosProveedoresByTienda(TypeValuesDashboard typeValues, int idTienda)
         {
             DateTime dateCompare, start;
             FechasParaQuery(typeValues, out dateCompare, out start);
 
             IQueryable<ProveedorMovimiento> query = await _proveedorMovimiento.Query(_ => _.RegistrationDate.Date >= start.Date && _.idTienda == idTienda);
+            
+            IQueryable<ProveedorMovimiento> query2 = await _proveedorMovimiento.Query();
 
-            return query.ToList();
+            Dictionary<string, decimal> resultado = query2
+                        .Include(v => v.Proveedor)
+                        .Where(_ => _.RegistrationDate.Date >= start.Date && _.idTienda == idTienda)
+                        .GroupBy(v => v.Proveedor.Nombre).OrderByDescending(g => g.Sum(_ => _.Importe))
+                        .Select(dv => new { descripcion = dv.Key, total = dv.Sum(_ => _.Importe) })
+                        .ToDictionary(keySelector: r => r.descripcion, elementSelector: r => r.total);
+
+            return resultado;
         }
 
         public async Task<Dictionary<string, decimal>> GetSalesByTypoVenta(TypeValuesDashboard typeValues, int idTienda)

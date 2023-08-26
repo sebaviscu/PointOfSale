@@ -30,7 +30,7 @@ $(document).ready(function () {
     tableData = $("#tbData").DataTable({
         responsive: true,
         "ajax": {
-            "url": "/Admin/GetProveedor",
+            "url": "/Admin/GetProveedores",
             "type": "GET",
             "datatype": "json"
         },
@@ -354,4 +354,36 @@ function calcularImportes() {
         $("#txtImporteSinIva").val(importeSinIva);
         $("#txtImporteIva").val(importe - importeSinIva);
     }
+}
+
+function cargarTablaDinamica() {
+    var idProveedor = $("#txtNombre").val();
+    var url = "/Admin/GetMovimientoProveedor?idProveedor=3";
+
+    fetch(`/Admin/GetMovimientoProveedor?idProveedor=3`, {
+        method: "GET"
+    }).then(response => {
+        $(".showSweetAlert").LoadingOverlay("hide")
+        return response.ok ? response.json() : Promise.reject(response);
+    }).then(responseJson => {
+
+        if (responseJson.data !== []) {
+
+            var pivot = new WebDataRocks({
+                container: "#wdr-component",
+                toolbar: true,
+                report: {
+                    dataSource: {
+                        data: responseJson.data
+                    }
+                }
+            });
+
+        }
+    })
+        .catch((error) => {
+            $(".showSweetAlert").LoadingOverlay("hide")
+        })
+
+
 }

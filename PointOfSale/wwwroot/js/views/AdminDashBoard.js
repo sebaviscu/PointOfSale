@@ -54,7 +54,7 @@ $(document).ready(function () {
             }
         })
 
-    fetch("/Admin/GetProveedor")
+    fetch("/Admin/GetProveedores")
         .then(response => {
             return response.ok ? response.json() : Promise.reject(response);
         }).then(responseJson => {
@@ -111,15 +111,16 @@ function changeChart(typeValues) {
                 let d = responseJson.object;
 
                 $("#txtTotalSale").text(d.totalSales);
-                $("#txtTotalGastos").text(d.gastos)
+                $("#txtTotalGastos").text(d.gastosTotales)
                 $("#txtCantidadClientes").text(d.cantidadClientes)
                 $("#txtGanancia").text(d.ganancia)
-
+                $("#gastoTexto").text(d.gastosTexto)
 
                 SetGraficoVentas(d);
                 SetTopSeler(typeValuesGlobal, $('#cboCategory').val());
                 SetGraficoGastos(d.gastosPorTipo);
                 SetTipoVentas(d.ventasPorTipoVenta);
+                SetGraficoGastosProveedor(d.gastosPorTipoProveedor);
                 removeLoading();
             }
         });
@@ -258,6 +259,36 @@ function SetTopSeler(typeValues, idCategory) {
         .catch((error) => {
             $("div.container-fluid").LoadingOverlay("hide")
         });
+}
+
+function SetGraficoGastosProveedor(gastosPorTipo) {
+
+    var options = {
+        series: gastosPorTipo.map((item) => { return item.total }),
+        chart: {
+            type: 'pie',
+        },
+        labels: gastosPorTipo.map((item) => { return item.descripcion }),
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: '100%'
+                }
+            }
+        }],
+        theme: {
+            palette: 'palette8' // upto palette10
+        }
+    };
+
+    var chartNew = new ApexCharts(document.querySelector("#charGastosProveedor"), options);
+    chartNew.render();
+
+    chartNew.updateOptions({
+        series: gastosPorTipo.map((item) => { return item.total }),
+        labels: gastosPorTipo.map((item) => { return item.descripcion })
+    })
 }
 
 function SetGraficoGastos(gastosPorTipo) {

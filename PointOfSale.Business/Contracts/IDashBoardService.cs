@@ -15,7 +15,7 @@ namespace PointOfSale.Business.Contracts
         Task<Dictionary<string, decimal>> GetSalesByTypoVenta(TypeValuesDashboard typeValues, int idTienda);
         Task<Dictionary<string, string?>> ProductsTopByCategory(TypeValuesDashboard typeValues, string category, int idTienda);
         Task<Dictionary<string, decimal>> GetSalesByTypoVentaByTurno(TypeValuesDashboard typeValues, int turno, int idTienda);
-        Task<List<ProveedorMovimiento>> GetMovimientosProveedoresByTienda(TypeValuesDashboard typeValues, int idTienda);
+        Task<Dictionary<string, decimal>> GetMovimientosProveedoresByTienda(TypeValuesDashboard typeValues, int idTienda);
         Task<Dictionary<string, decimal>> GetGastos(TypeValuesDashboard typeValues, int idTienda);
     }
 }

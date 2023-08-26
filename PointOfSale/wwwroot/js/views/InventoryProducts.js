@@ -44,7 +44,7 @@ $(document).ready(function () {
             }
         })
 
-    fetch("/Admin/GetProveedor")
+    fetch("/Admin/GetProveedores")
         .then(response => {
             return response.ok ? response.json() : Promise.reject(response);
         }).then(responseJson => {
