@@ -132,5 +132,10 @@ namespace PointOfSale.Business.Services
                 throw;
             }
         }
+        public async Task<List<Gastos>> ListGastosForTablaDinamica(int idTienda)
+        {
+            IQueryable<Gastos> query = await _repository.Query(u => u.IdTienda == idTienda);
+            return query.Include(_ => _.TipoDeGasto).Include(_=>_.User).ToList();
+        }
     }
 }

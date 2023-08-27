@@ -234,6 +234,19 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<VMClienteMovimiento, ClienteMovimiento>();
 
 
+            CreateMap<ProveedorMovimiento, VMMovimientoProveedoresTablaDinamica>()
+                .ForMember(user => user.Importe, opt => opt.MapFrom(userEdit => userEdit.Importe))
+                .ForMember(user => user.Iva, opt => opt.MapFrom(userEdit => userEdit.Iva != null ? userEdit.Iva : 0))
+                .ForMember(user => user.Importe_Sin_Iva, opt => opt.MapFrom(userEdit => userEdit.ImporteSinIva != null ? userEdit.ImporteSinIva : 0))
+                .ForMember(user => user.Iva_Importe, opt => opt.MapFrom(userEdit => userEdit.IvaImporte != null ? userEdit.IvaImporte : 0))
+                .ForMember(user => user.Tipo_Factura, opt => opt.MapFrom(userEdit => userEdit.TipoFactura == string.Empty ? "-" : ((Model.Enum.TipoFactura)Convert.ToInt32(userEdit.TipoFactura)).ToString()))
+                .ForMember(user => user.Fecha, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate))
+                .ForMember(user => user.Nombre_Proveedor, opt => opt.MapFrom(userEdit => userEdit.Proveedor.Nombre))
+                .ForMember(user => user.Cuil, opt => opt.MapFrom(userEdit => userEdit.Proveedor.Cuil))
+                .ForMember(user => user.Direccion, opt => opt.MapFrom(userEdit => userEdit.Proveedor.Direccion))
+                .ForMember(user => user.Telefono, opt => opt.MapFrom(userEdit => userEdit.Proveedor.Telefono))
+                .ForMember(user => user.Nro_Factura, opt => opt.MapFrom(userEdit => userEdit.NroFactura == string.Empty ? "-" : userEdit.NroFactura));
+
             CreateMap<Proveedor, VMProveedor>();
 
             CreateMap<VMProveedor, Proveedor>();
@@ -264,6 +277,18 @@ namespace PointOfSale.Utilities.Automapper
                 .ForMember(user => user.GastoParticular, opt => opt.MapFrom(userEdit => userEdit.TipoDeGasto != null ? userEdit.TipoDeGasto.GastoParticular.ToString() : string.Empty))
                 .ForMember(user => user.ImporteString, opt => opt.MapFrom(userEdit => "$" + userEdit.Importe))
                 .ForMember(user => user.FechaString, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.ToString("dd/MM/yyyy HH:mm")));
+
+            CreateMap<Gastos, VMGastosTablaDinamica>()
+                .ForMember(user => user.Importe_Sin_Iva, opt => opt.MapFrom(userEdit => userEdit.ImporteSinIva != null ? userEdit.ImporteSinIva : 0))
+                .ForMember(user => user.Iva_Importe, opt => opt.MapFrom(userEdit => userEdit.IvaImporte != null ? userEdit.IvaImporte : 0))
+                .ForMember(user => user.Iva, opt => opt.MapFrom(userEdit => userEdit.Iva != null ? userEdit.Iva : 0))
+                .ForMember(user => user.Comentario, opt => opt.MapFrom(userEdit => userEdit.Comentario != string.Empty ? userEdit.Comentario : userEdit.IdUsuario != null ? userEdit.User.Name : string.Empty))
+                .ForMember(user => user.Gasto, opt => opt.MapFrom(userEdit => userEdit.TipoDeGasto != null ? userEdit.TipoDeGasto.GastoParticular.ToString() : string.Empty))
+                .ForMember(user => user.Fecha, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.ToString("dd/MM/yyyy HH:mm")))
+                .ForMember(user => user.Tipo_Gasto, opt => opt.MapFrom(userEdit => userEdit.TipoDeGasto.GastoParticular == TipoDeGastoEnum.Sueldos ? (userEdit.User != null ? userEdit.User.Name : string.Empty) : userEdit.TipoDeGasto.Descripcion.ToString()))
+                .ForMember(user => user.Tipo_Factura, opt => opt.MapFrom(userEdit => string.IsNullOrEmpty(userEdit.TipoFactura) ? "-" : ((Model.Enum.TipoFactura)Convert.ToInt32(userEdit.TipoFactura)).ToString()))
+                .ForMember(user => user.Nro_Factura, opt => opt.MapFrom(userEdit => userEdit.NroFactura == string.Empty ? "-" : userEdit.NroFactura));
+
 
 
             CreateMap<VMGastos, Gastos>();

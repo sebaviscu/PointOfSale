@@ -50,6 +50,18 @@
                 </div>
             </div>
         </div>
+        <div class="card card-default">
+            <div class="card-header card-header-border-bottom">
+                <div class="row col-md 3">
+                    <h4>Tabla Dinamica</h4>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div id="wdr-component"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -148,11 +160,11 @@
                             <div class="form-row">
                                 <div class="form-group col-sm-3">
                                     <label for="txtIva">IVA</label>
-                                    <input  type="number" step="any" class="form-control form-control-sm" id="txtIva" name="IVA">
+                                    <input type="number" step="any" class="form-control form-control-sm" id="txtIva" name="IVA">
                                 </div>
                                 <div class="form-group col-sm-6">
                                     <label for="txtImporte">Importe</label>
-                                    <input  type="number" step="any" class="form-control form-control-sm pagoValid" id="txtImporte" name="Importe">
+                                    <input type="number" step="any" class="form-control form-control-sm pagoValid" id="txtImporte" name="Importe">
                                 </div>
                                 <div class="form-group col-sm-3">
                                     <br />
@@ -166,7 +178,7 @@
                                 </div>
                                 <div class="form-group col-sm-6">
                                     <label for="txtImporteSinIva">Importe sin IVA</label>
-                                    <input  type="number" step="any" class="form-control form-control-sm" id="txtImporteSinIva" name="Importe sin IVA">
+                                    <input type="number" step="any" class="form-control form-control-sm" id="txtImporteSinIva" name="Importe sin IVA">
                                 </div>
                             </div>
                             <div class="form-row">
@@ -218,6 +230,10 @@
     <script src="~/plugins/data-tables/jszip.min.js"></script>
     <script src="~/plugins/data-tables/buttons.html5.min.js"></script>
     <script src="~/plugins/data-tables/buttons.print.min.js"></script>
+
+    <link href="https://cdn.webdatarocks.com/latest/webdatarocks.min.css" rel="stylesheet" />
+    <script src="https://cdn.webdatarocks.com/latest/webdatarocks.toolbar.min.js"></script>
+    <script src="https://cdn.webdatarocks.com/latest/webdatarocks.js"></script>
 
     <script src="~/js/views/gastos.js"></script>
 }

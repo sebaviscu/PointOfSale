@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PointOfSale.Business.Contracts;
+using PointOfSale.Business.Services;
 using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
@@ -183,6 +184,16 @@ namespace PointOfSale.Controllers
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetGastosTablaDinamica()
+        {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+
+            var listUsers = _mapper.Map<List<VMGastosTablaDinamica>>(await _GastosService.ListGastosForTablaDinamica(user.IdTienda));
+            return StatusCode(StatusCodes.Status200OK, new { data = listUsers.OrderByDescending(_ => _.RegistrationUser).ThenByDescending(_ => _.Gasto).ThenByDescending(_ => _.Tipo_Gasto) });
         }
     }
 }

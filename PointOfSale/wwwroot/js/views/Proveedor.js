@@ -1,6 +1,9 @@
 ﻿let tableData;
 let rowSelected;
 let tableDataMovimientos;
+const monthNames = ["Ene", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
+];
 
 const BASIC_MODEL = {
     idProveedor: 0,
@@ -26,6 +29,7 @@ const BASIC_MODEL_PAGO = {
 
 $(document).ready(function () {
 
+    showLoading();
 
     tableData = $("#tbData").DataTable({
         responsive: true,
@@ -73,6 +77,9 @@ $(document).ready(function () {
             }, 'pageLength'
         ]
     });
+
+    cargarTablaDinamica();
+    removeLoading();
 })
 
 const openModal = (model = BASIC_MODEL) => {
@@ -111,9 +118,9 @@ const openModal = (model = BASIC_MODEL) => {
                 "searchable": false
             },
             { "data": "importeString" },
+            { "data": "registrationDateString" },
             { "data": "tipoFacturaString" },
             { "data": "nroFactura" },
-            { "data": "registrationDateString" },
             { "data": "registrationUser" }
         ],
         order: [[0, "desc"]],
@@ -357,17 +364,17 @@ function calcularImportes() {
 }
 
 function cargarTablaDinamica() {
-    var idProveedor = $("#txtNombre").val();
-    var url = "/Admin/GetMovimientoProveedor?idProveedor=3";
-
-    fetch(`/Admin/GetMovimientoProveedor?idProveedor=3`, {
+    fetch(`/Admin/GetProveedorTablaDinamica`, {
         method: "GET"
     }).then(response => {
-        $(".showSweetAlert").LoadingOverlay("hide")
         return response.ok ? response.json() : Promise.reject(response);
     }).then(responseJson => {
 
         if (responseJson.data !== []) {
+
+            var today = new Date();
+            var month = "fecha.Month." + monthNames[today.getMonth()];
+            var year = "fecha.Year." + today.getFullYear();
 
             var pivot = new WebDataRocks({
                 container: "#wdr-component",
@@ -375,15 +382,91 @@ function cargarTablaDinamica() {
                 report: {
                     dataSource: {
                         data: responseJson.data
+                    },
+                    formats: [
+                        {
+                            name: "currency",
+                            currencySymbol: "$"
+                        }
+                    ],
+                    "slice": {
+                        reportFilters: [
+                            {
+                                uniqueName: "fecha.Day"
+                            },
+                            {
+                                uniqueName: "fecha.Month",
+                                "filter": {
+                                    "members": [
+                                        month
+                                    ]
+                                }
+                            },
+                            {
+                                uniqueName: "fecha.Year",
+                                "filter": {
+                                    "members": [
+                                        year
+                                    ]
+                                }
+                            }
+                        ],
+                        "rows": [
+                            {
+                                "uniqueName": "nombre_Proveedor",
+                                sort: "desc"
+                            },
+                            {
+                                "uniqueName": "tipo_Factura",
+                                sort: "desc"
+                            },
+                            {
+                                "uniqueName": "nro_Factura",
+                                sort: "desc"
+                            }
+                        ],
+                        columns: [
+                            {
+                                uniqueName: "[Measures]"
+                            }
+                        ],
+                        measures: [
+                            {
+                                uniqueName: "importe",
+                                caption: "Importe",
+                                aggregation: "sum",
+                                active: true,
+                                format: "currency"
+                            },
+                            {
+                                uniqueName: "importe_Sin_Iva",
+                                caption: "Importe sin IVA",
+                                aggregation: "sum",
+                                active: true,
+                                format: "currency"
+                            },
+                            {
+                                uniqueName: "iva",
+                                caption: "IVA",
+                                aggregation: "sum",
+                                active: true,
+                                format: "currency"
+                            },
+                            {
+                                uniqueName: "iva_Importe",
+                                caption: "Importe IVA",
+                                aggregation: "sum",
+                                active: true,
+                                format: "currency"
+                            }
+                        ]
                     }
+                },
+                global: {
+                    localization: "https://cdn.webdatarocks.com/loc/es.json"
                 }
             });
 
         }
     })
-        .catch((error) => {
-            $(".showSweetAlert").LoadingOverlay("hide")
-        })
-
-
 }

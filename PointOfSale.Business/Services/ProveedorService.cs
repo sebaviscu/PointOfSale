@@ -121,5 +121,12 @@ namespace PointOfSale.Business.Services
 
             return query.OrderByDescending(_ => _.RegistrationUser).ToList();
         }
+
+        public async Task<List<ProveedorMovimiento>> ListMovimientosProveedorForTablaDinamica(int idTienda)
+        {
+            IQueryable<ProveedorMovimiento> query = await _proveedorMovimiento.Query(u =>u.idTienda == idTienda);
+
+            return query.Include(_=>_.Proveedor).OrderByDescending(_ => _.RegistrationUser).ToList();
+        }
     }
 }

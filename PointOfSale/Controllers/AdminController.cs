@@ -670,11 +670,11 @@ namespace PointOfSale.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProveedor(int idProveedor)
+        public async Task<IActionResult> GetProveedorTablaDinamica()
         {
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
 
-            var listUsers = _mapper.Map<List<VMProveedorMovimiento>>(await _proveedorService.ListMovimientosProveedor(idProveedor, user.IdTienda));
+            var listUsers = _mapper.Map<List<VMMovimientoProveedoresTablaDinamica>>(await _proveedorService.ListMovimientosProveedorForTablaDinamica(user.IdTienda));
             return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
         }
 

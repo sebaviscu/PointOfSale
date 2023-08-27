@@ -1,6 +1,9 @@
 ﻿let tableData;
 let rowSelected;
 var tipoGastosList = [];
+const monthNames = ["Ene", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
+];
 
 const BASIC_MODEL = {
     idGastos: 0,
@@ -19,6 +22,7 @@ const BASIC_MODEL_TIPO_DE_GASTOS = {
 }
 
 $(document).ready(function () {
+    showLoading();
 
     fetch("/Gastos/GetTipoDeGasto")
         .then(response => {
@@ -89,6 +93,9 @@ $(document).ready(function () {
             }, 'pageLength'
         ]
     });
+
+    cargarTablaDinamica();
+    removeLoading();
 })
 
 const openModalTipoDeGasto = (model = BASIC_MODEL_TIPO_DE_GASTOS) => {
@@ -337,4 +344,115 @@ function calcularImportes() {
         $("#txtImporteIva").val(importe - importeSinIva);
 
     }
+}
+
+
+function cargarTablaDinamica() {
+    fetch(`/Gastos/GetGastosTablaDinamica`, {
+        method: "GET"
+    }).then(response => {
+        return response.ok ? response.json() : Promise.reject(response);
+    }).then(responseJson => {
+
+        if (responseJson.data !== []) {
+
+            var today = new Date();
+            var month = "fecha.Month." + monthNames[today.getMonth()];
+            var year = "fecha.Year." + today.getFullYear();
+
+            var pivot = new WebDataRocks({
+                container: "#wdr-component",
+                toolbar: true,
+                report: {
+                    dataSource: {
+                        data: responseJson.data
+                    },
+                    formats: [
+                        {
+                            name: "currency",
+                            currencySymbol: "$"
+                        }
+                    ],
+                    "slice": {
+                        reportFilters: [
+                            {
+                                uniqueName: "fecha.Day"
+                            },
+                            {
+                                uniqueName: "fecha.Month",
+                                "filter": {
+                                    "members": [
+                                        month
+                                    ]
+                                }
+                            },
+                            {
+                                uniqueName: "fecha.Year",
+                                "filter": {
+                                    "members": [
+                                        year
+                                    ]
+                                }
+                            }
+                        ],
+                        "rows": [
+                            {
+                                "uniqueName": "gasto",
+                                sort: "desc"
+                            },
+                            {
+                                "uniqueName": "tipo_Gasto",
+                                sort: "desc"
+                            },
+                            {
+                                "uniqueName": "tipo_Factura",
+                                sort: "desc"
+                            },
+                            {
+                                "uniqueName": "nro_Factura",
+                                sort: "desc"
+                            }
+                        ],
+                        columns: [
+                            {
+                                uniqueName: "[Measures]"
+                            }
+                        ],
+                        measures: [
+                            {
+                                uniqueName: "importe",
+                                caption: "Importe",
+                                aggregation: "sum",
+                                format: "currency"
+                            },
+                            {
+                                uniqueName: "importe_Sin_Iva",
+                                caption: "Importe sin IVA",
+                                aggregation: "sum",
+                                format: "currency"
+                            },
+                            {
+                                uniqueName: "iva",
+                                caption: "IVA",
+                                aggregation: "sum",
+                                format: "currency"
+                            },
+                            {
+                                uniqueName: "iva_Importe",
+                                caption: "Importe IVA",
+                                aggregation: "sum",
+                                format: "currency"
+                            }
+                        ]
+                    }
+                },
+                global: {
+                    localization: "https://cdn.webdatarocks.com/loc/es.json"
+                }
+            });
+
+        }
+    })
+
+
 }
