@@ -65,8 +65,8 @@ namespace PointOfSale.Controllers
 			try
 			{
 				var ss = _mapper.Map<Tienda>(model);
+                model.ModificationUser = user.UserName;
 				Tienda edited_Tienda = await _TiendaService.Edit(_mapper.Map<Tienda>(model));
-				edited_Tienda.ModificationUser = user.UserName;
 
 				model = _mapper.Map<VMTienda>(edited_Tienda);
 
