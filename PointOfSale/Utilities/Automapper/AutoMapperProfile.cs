@@ -207,7 +207,8 @@ namespace PointOfSale.Utilities.Automapper
                 opt => opt.MapFrom(source => source.InverseIdMenuParentNavigation));
             #endregion Menu
 
-            CreateMap<Tienda, VMTienda>();
+            CreateMap<Tienda, VMTienda>()
+                .ForMember(destiny =>destiny.PhotoBase64, opt => opt.MapFrom(source => Convert.ToBase64String(source.Logo)));
 
             CreateMap<VMTienda, Tienda>();
 

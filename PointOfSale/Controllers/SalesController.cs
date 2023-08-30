@@ -133,7 +133,7 @@ namespace PointOfSale.Controllers
                 if (imprimirTicket)
                 {
                     var tienda = await _tiendaService.Get(model.IdTienda);
-                    var ticket = _ticketService.ImprimirTicket(sale_created, tienda);
+                    _ticketService.ImprimirTicket(sale_created, tienda);
                 }
 
                 gResponse.State = true;
@@ -176,7 +176,7 @@ namespace PointOfSale.Controllers
         {
             var sale = await _saleService.GetSale(idSale);
             var tienda = await _tiendaService.Get(sale.IdTienda);
-            var ticket = _ticketService.ImprimirTicket(sale, tienda);
+            _ticketService.ImprimirTicket(sale, tienda);
 
             return StatusCode(StatusCodes.Status200OK);
         }

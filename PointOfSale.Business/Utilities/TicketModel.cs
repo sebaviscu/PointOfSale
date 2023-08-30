@@ -186,7 +186,7 @@ namespace PointOfSale.Business.Utilities
 
             elementos = string.Empty;
 
-            nroEspacios = (7 - cant.ToString().Length);
+            nroEspacios = (5 - cant.ToString().Length);
             espacios = "";
             for (int i = 0; i < nroEspacios; i++)
             {

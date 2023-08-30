@@ -33,19 +33,33 @@ namespace PointOfSale.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> CreateTienda([FromBody] VMTienda model)
+		public async Task<IActionResult> CreateTienda([FromForm] IFormFile photo, [FromForm] string model)
 		{
 			ValidarAutorizacion(new Roles[] { Roles.Administrador });
 
 			GenericResponse<VMTienda> gResponse = new GenericResponse<VMTienda>();
 			try
 			{
-				Tienda Tienda_created = await _TiendaService.Add(_mapper.Map<Tienda>(model));
+                VMTienda vmTienda = JsonConvert.DeserializeObject<VMTienda>(model);
 
-				model = _mapper.Map<VMTienda>(Tienda_created);
+				if (photo != null)
+				{
+					using (var ms = new MemoryStream())
+					{
+						photo.CopyTo(ms);
+						var fileBytes = ms.ToArray();
+						vmTienda.Logo = fileBytes;
+					}
+				}
+				else
+					vmTienda.Logo = null;
+
+				Tienda Tienda_created = await _TiendaService.Add(_mapper.Map<Tienda>(vmTienda));
+
+                vmTienda = _mapper.Map<VMTienda>(Tienda_created);
 
 				gResponse.State = true;
-				gResponse.Object = model;
+				gResponse.Object = vmTienda;
 			}
 			catch (Exception ex)
 			{
@@ -57,21 +71,34 @@ namespace PointOfSale.Controllers
 		}
 
 		[HttpPut]
-		public async Task<IActionResult> UpdateTienda([FromBody] VMTienda model)
+		public async Task<IActionResult> UpdateTienda([FromBody] VMTienda vmTienda)
 		{
 			var user = ValidarAutorizacion(new Roles[] { Roles.Administrador});
 
 			GenericResponse<VMTienda> gResponse = new GenericResponse<VMTienda>();
 			try
 			{
-				var ss = _mapper.Map<Tienda>(model);
-                model.ModificationUser = user.UserName;
-				Tienda edited_Tienda = await _TiendaService.Edit(_mapper.Map<Tienda>(model));
+				//VMTienda vmTienda = JsonConvert.DeserializeObject<VMTienda>(model);
 
-				model = _mapper.Map<VMTienda>(edited_Tienda);
+				//if (photo != null)
+				//{
+				//	using (var ms = new MemoryStream())
+				//	{
+				//		photo.CopyTo(ms);
+				//		var fileBytes = ms.ToArray();
+				//		vmTienda.Logo = fileBytes;
+				//	}
+				//}
+				//else
+				//	vmTienda.Logo = null;
+
+				vmTienda.ModificationUser = user.UserName;
+				Tienda edited_Tienda = await _TiendaService.Edit(_mapper.Map<Tienda>(vmTienda));
+
+                vmTienda = _mapper.Map<VMTienda>(edited_Tienda);
 
 				gResponse.State = true;
-				gResponse.Object = model;
+				gResponse.Object = vmTienda;
 			}
 			catch (Exception ex)
 			{

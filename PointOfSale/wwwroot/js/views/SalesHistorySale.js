@@ -106,7 +106,7 @@ $("#tbsale tbody").on("click", ".btn-info", function () {
             $("<tr>").append(
                 $("<td>").text(item.descriptionProduct),
                 $("<td>").text(item.quantity),
-                $("<td>").text(item.price+" ").append(item.promocion != null ?
+                $("<td>").text(item.price + " ").append(item.promocion != null ?
                     $("<i>").addClass("mdi mdi-percent").attr("data-toggle", "tooltip").attr("title", item.promocion) : ""),
                 $("<td>").text(item.total)
             )
@@ -129,3 +129,12 @@ $("#printTicket").click(function () {
             swal("Exitoso!", "Ticket impreso!", "success");
         })
 })
+
+function setToday() {
+    var date = new Date();
+    var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+    $('#txtStartDate, #txtEndDate').datepicker('setDate', today);
+
+    $("#btnSearch").click();
+}

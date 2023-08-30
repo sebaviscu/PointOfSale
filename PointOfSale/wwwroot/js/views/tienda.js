@@ -5,12 +5,36 @@ const BASIC_MODEL = {
     idTienda: 0,
     nombre: "",
     modificationDate: null,
-    modificationUser: null
+    modificationUser: null,
+    nombre: "",
+    email: "",
+    telefono: "",
+    direccion: "",
+    //nombreImpresora: "",
+    //logo: "",
+    //montoEnvioGratis: 0,
+    //aumentoWeb: 0,
+    //whatsapp: "",
+    //lunes: "",
+    //martes: "",
+    //miercoles: "",
+    //jueves: "",
+    //viernes: "",
+    //sabado: "",
+    //domingo: "",
+    //feriado: "",
+    //facebook: "",
+    //instagram: "",
+    //twitter: "",
+    //tiktok: "",
+    //youtube: ""
 }
 
 
 $(document).ready(function () {
-
+    $("#general").show();
+    $("#facturacion").hide();
+    $("#carroCompras").hide();
 
     tableData = $("#tbData").DataTable({
         responsive: true,
@@ -54,6 +78,28 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtId").val(model.idTienda);
     $("#txtNombre").val(model.nombre);
 
+    $("#txtEmail").val(model.email);
+    $("#txtTelefono").val(model.telefono);
+    $("#txtDireccion").val(model.direccion);
+    $("#txtImpresora").val(model.nombreImpresora);
+    $("#txtEnvioGratis").val(model.montoEnvioGratis);
+    $("#txtAumento").val(model.aumentoWeb);
+    $("#txtWhatsApp").val(model.whatsapp);
+    $("#txtLunes").val(model.lunes);
+    $("#txtMartes").val(model.martes);
+    $("#txtMiercoles").val(model.miercoles);
+    $("#txtJueves").val(model.jueves);
+    $("#txtViernes").val(model.viernes);
+    $("#txtSabado").val(model.sabado);
+    $("#txtDomingo").val(model.domingo);
+    $("#txtFeriados").val(model.feriado);
+    $("#txtFacebook").val(model.facebook);
+    $("#txtInstagram").val(model.instagram);
+    $("#txtTikTok").val(model.tiktok);
+    $("#txtTwitter").val(model.twitter);
+    $("#txtYouTube").val(model.youtube);
+    $("#imgTienda").attr("src", `data:image/png;base64,${model.photoBase64}`);
+
     if (model.modificationUser === null)
         document.getElementById("divModif").style.display = 'none';
     else {
@@ -86,16 +132,42 @@ $("#btnSave").on("click", function () {
     const model = structuredClone(BASIC_MODEL);
     model["idTienda"] = parseInt($("#txtId").val());
     model["nombre"] = $("#txtNombre").val();
+    model["telefono"] = $("#txtTelefono").val();
+    model["email"] = $("#txtEmail").val();
+    model["direccion"] = $("#txtDireccion").val();
+    model["nombreImpresora"] = $("#txtImpresora").val();
+    model["montoEnvioGratis"] = $("#txtEnvioGratis").val();
+    model["aumentoWeb"] = $("#txtAumento").val();
+    model["whatsapp"] = $("#txtWhatsApp").val();
+    model["lunes"] = $("#txtLunes").val();
+    model["martes"] = $("#txtMartes").val();
+    model["miercoles"] = $("#txtMiercoles").val();
+    model["jueves"] = $("#txtJueves").val();
+    model["viernes"] = $("#txtViernes").val();
+    model["sabado"] = $("#txtSabado").val();
+    model["domingo"] = $("#txtDomingo").val();
+    model["feriado"] = $("#txtFeriados").val();
+    model["facebook"] = $("#txtFacebook").val();
+    model["instagram"] = $("#txtInstagram").val();
+    model["tiktok"] = $("#txtTikTok").val();
+    model["twitter"] = $("#txtTwitter").val();
+    model["youtube"] = $("#txtYouTube").val();
 
+    const inputPhoto = document.getElementById('txtLogo');
+    model["photo"] = inputPhoto.files[0];
 
     $("#modalData").find("div.modal-content").LoadingOverlay("show")
 
+
+    const formData = new FormData();
+    //formData.append('photo', inputPhoto.files[0]);
+    formData.append('model', JSON.stringify(model));
 
     if (model.idTienda == 0) {
         fetch("/Tienda/CreateTienda", {
             method: "POST",
             headers: { 'Content-Type': 'application/json;charset=utf-8' },
-            body: JSON.stringify(model)
+            body: formData
         }).then(response => {
             $("#modalData").find("div.modal-content").LoadingOverlay("hide")
             return response.ok ? response.json() : Promise.reject(response);
@@ -203,4 +275,22 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                     })
             }
         });
+})
+
+$("#clickGeneral").on("click", function () {
+    $("#general").show();
+    $("#facturacion").hide();
+    $("#carroCompras").hide();
+})
+
+$("#clickFacturacion").on("click", function () {
+    $("#general").hide();
+    $("#facturacion").show();
+    $("#carroCompras").hide();
+})
+
+$("#clickWeb").on("click", function () {
+    $("#general").hide();
+    $("#facturacion").hide();
+    $("#carroCompras").show();
 })

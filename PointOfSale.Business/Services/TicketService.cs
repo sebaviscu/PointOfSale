@@ -13,15 +13,14 @@ namespace PointOfSale.Business.Services
 {
     public class TicketService : ITicketService
     {
-        public TicketService()
-        {
-            Impresora = "Microsoft XPS Document Writer";
-        }
-
-        public string Impresora { get; set; }
 
         public string ImprimirTicket(Sale sale, Tienda tienda)
         {
+            if (string.IsNullOrEmpty(tienda.NombreImpresora))
+            {
+                return string.Empty;
+            }
+
             var Ticket1 = new TicketModel();
             Ticket1.TextoIzquierda("");
 
@@ -54,13 +53,13 @@ namespace PointOfSale.Business.Services
             Ticket1.TextoAgradecimiento("Gracias por su compra!");
             Ticket1.TextoIzquierda(" ");
 
-            ImprimirTiket(Ticket1.Lineas.ToString());
+            ImprimirTiket(tienda.NombreImpresora, Ticket1.Lineas.ToString());
             return Ticket1.Lineas.ToString();
         }
 
-        public void ImprimirTiket(string line)
+        public void ImprimirTiket(string impresora, string line)
         {
-            PrinterModel.SendStringToPrinter(Impresora, line);
+            PrinterModel.SendStringToPrinter(impresora, line);
         }
     }
 }
