@@ -2,6 +2,7 @@
 let rowSelected;
 let edicionMasiva = false;
 var aProductos = [];
+var tienda;
 
 const BASIC_MODEL = {
     idProduct: 0,
@@ -58,6 +59,16 @@ $(document).ready(function () {
                     )
                 });
 
+            }
+        })
+
+    fetch("/Tienda/GetOneTienda")
+        .then(response => {
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+            if (responseJson.data != null) {
+                tienda = responseJson.data;
+                $("#txtAumento").val(tienda.aumentoWeb);
             }
         })
 
@@ -425,5 +436,17 @@ function calcularPrecio() {
 
         var precio = parseFloat(costo) * (1 + (parseFloat(profit) / 100));
         $("#txtPrice").val(precio);
+    }
+}
+
+
+function calcularPrecioWeb() {
+    var aumento = $("#txtAumento").val();
+    var precio = $("#txtPrice").val();
+
+    if (aumento !== '' && precio !== '') {
+
+        var precio = parseFloat(precio) * (1 + (parseFloat(aumento) / 100));
+        $("#txtPriceWeb").val(precio);
     }
 }

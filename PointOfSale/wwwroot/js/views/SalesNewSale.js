@@ -224,6 +224,8 @@ function newTab() {
     clone.querySelector("#btnFinalizeSale").id = "btnFinalizeSale" + tabID;
     clone.querySelector("#cboCliente").id = "cboCliente" + tabID;
     clone.querySelector("#cboImprimirTicket").id = "cboImprimirTicket" + tabID;
+    clone.querySelector("#txtPeso").id = "txtPeso" + tabID;
+    clone.querySelector("#btnAgregarProducto").id = "btnAgregarProducto" + tabID;
 
     $('#tab' + tabID).append(clone);
 
@@ -328,6 +330,7 @@ function addFunctions(idTab) {
             setNewProduct(1, quantity_product_found, data, currentTab, idTab);
             return;
         }
+
         swal({
             title: data.text,
             text: data.brand,
@@ -353,10 +356,48 @@ function addFunctions(idTab) {
 
             $('#cboSearchProduct' + idTab).val("").trigger('change');
             $('#cboSearchProduct' + idTab).select2('open');
+
             swal.close();
         });
     })
 
+    $("#btnAgregarProducto" + idTab).on("click", function () {
+        //var peso = parseFloat($("#txtPeso" + idTab).val());
+
+        //if (peso === false || peso === "" || isNaN(peso)) return false;
+
+        //var data = $("#cboSearchProduct" + idTab).select2('data')[0];
+
+        //if (data.id === '') {
+        //    return false;
+        //}
+
+        //var quantity_product_found = 0;
+        //var currentTab = AllTabsForSale.find(item => item.idTab == idTab);
+
+        //if (currentTab.products.length !== 0) {
+
+        //    let product_found = currentTab.products.filter(prod => prod.idproduct == data.id && prod.promocion == null)
+        //    if (product_found.length == 1) {
+
+        //        quantity_product_found = product_found[0].quantity;
+        //        currentTab.products.splice(product_found.row, 1);
+        //    }
+        //}
+        //if (data.tipoVenta == 2) {
+        //    setNewProduct(1, quantity_product_found, data, currentTab, idTab);
+        //    return;
+        //}
+
+        //setNewProduct(peso, quantity_product_found, data, currentTab, idTab);
+    })
+
+}
+
+function focus(event) {
+    if (event.keyCode == 13) { //13 es igual a la tecla Enter
+        document.getElementById("myTextField").focus();
+    }
 }
 
 function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
@@ -543,4 +584,4 @@ function areYouSure() {
 }
 
 var allowPrompt = true;
-window.onbeforeunload = areYouSure;
+//window.onbeforeunload = areYouSure;

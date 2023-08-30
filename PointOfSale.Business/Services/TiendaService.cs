@@ -113,7 +113,7 @@ namespace PointOfSale.Business.Services
                 Tienda Tienda_found = await _repository.Get(c => c.IdTienda == tiendaId);
 
                 if (Tienda_found == null)
-                    throw new TaskCanceledException("Tienda no se pudo cambiar.");
+                    throw new TaskCanceledException("Tienda no se pudo encontrar.");
 
                 return Tienda_found;
             }

@@ -32,7 +32,16 @@ namespace PointOfSale.Controllers
 			return StatusCode(StatusCodes.Status200OK, new { data = vmTiendaList });
 		}
 
-		[HttpPost]
+        [HttpGet]
+        public async Task<IActionResult> GetOneTienda()
+        {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+
+            var tienda = _mapper.Map<VMTienda>(await _TiendaService.Get(user.IdTienda));
+            return StatusCode(StatusCodes.Status200OK, new { data = tienda });
+        }
+
+        [HttpPost]
 		public async Task<IActionResult> CreateTienda([FromForm] IFormFile photo, [FromForm] string model)
 		{
 			ValidarAutorizacion(new Roles[] { Roles.Administrador });

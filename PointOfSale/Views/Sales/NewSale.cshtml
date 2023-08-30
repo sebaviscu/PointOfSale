@@ -15,10 +15,6 @@
     </style>
 }
 
-@*<div>
-    <button id="btn-add-tab" type="button" class="btn btn-primary pull-right">Nueva Venta</button>
-</div>*@
-
 <ul class="nav nav-tabs d-lg-flex" id="tab-list" role="tablist">
     <button id="btn-add-tab" type="button" class="btn btn-primary pull-right rounded-circle me-2"><i class="mdi mdi-plus"></i></button>
 
@@ -40,10 +36,16 @@
                             </div>
                             <div class="card-body">
                                 <div class="form-row">
-                                    <div class="form-group col-sm-12">
+                                    <div class="form-group col-sm-6">
                                         <select class="form-control form-control-sm" id="cboSearchProduct">
                                             <option value=""></option>
                                         </select>
+                                    </div>
+                                    <div class="form-group col-sm-2">
+                                        <input type="number" step="any" class="form-control form-control-sm" id="txtPeso" name="Peso">
+                                    </div>
+                                    <div class="form-group col-sm-2">
+                                    <button class="btn btn-info btn-sm w-100" id="btnAgregarProducto">Agregar</button>
                                     </div>
                                 </div>
                                 <br />
