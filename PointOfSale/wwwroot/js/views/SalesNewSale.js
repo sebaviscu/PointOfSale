@@ -36,6 +36,8 @@ $(document).ready(function () {
         }).then(responseJson => {
             promociones = responseJson.data;
         })
+
+
 })
 
 function formatResults(data) {
@@ -358,6 +360,7 @@ function addFunctions(idTab) {
             $('#cboSearchProduct' + idTab).select2('open');
 
             swal.close();
+
         });
     })
 
