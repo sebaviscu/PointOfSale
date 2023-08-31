@@ -24,14 +24,13 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<Cliente>> List(int idTienda)
         {
-            //IQueryable<Cliente> query = await _repository.Query(_ => _.IdTienda == idTienda);
-            IQueryable<Cliente> query = await _repository.Query();
+            IQueryable<Cliente> query = await _repository.Query(_ => _.IdTienda == idTienda);
             return query.Include(_=>_.ClienteMovimientos).OrderBy(_ => _.Nombre).ToList();
         }
 
         public async Task<Cliente> Add(Cliente entity)
         {
-            Cliente Cliente_exists = await _repository.Get(u => u.Nombre == entity.Nombre);
+            Cliente Cliente_exists = await _repository.Get(u => u.Nombre == entity.Nombre && u.IdTienda == entity.IdTienda);
 
             if (Cliente_exists != null)
                 throw new TaskCanceledException("El Cliente ya existe");

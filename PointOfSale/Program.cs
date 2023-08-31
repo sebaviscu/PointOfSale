@@ -77,8 +77,8 @@ public class Program
         });
 
 
-        var context = new CustomAssemblyLoadContext();
-        context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "Utilities/LibraryPDF/libwkhtmltox.dll"));
+        //var context = new CustomAssemblyLoadContext();
+        //context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "Utilities/LibraryPDF/libwkhtmltox.dll"));
         builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
 
 
