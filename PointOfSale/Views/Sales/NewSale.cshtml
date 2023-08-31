@@ -41,11 +41,13 @@
                                             <option value=""></option>
                                         </select>
                                     </div>
-                                    <div class="form-group col-sm-2">
-                                        <input type="number" step="any" class="form-control form-control-sm" id="txtPeso" name="Peso">
-                                    </div>
-                                    <div class="form-group col-sm-2">
-                                    <button class="btn btn-info btn-sm w-100" id="btnAgregarProducto">Agregar</button>
+                                    <div hidden>
+                                        <div class="form-group col-sm-2">
+                                            <input type="number" step="any" class="form-control form-control-sm" id="txtPeso" name="Peso">
+                                        </div>
+                                        <div class="form-group col-sm-2">
+                                            <button class="btn btn-info btn-sm w-100" id="btnAgregarProducto">Agregar</button>
+                                        </div>
                                     </div>
                                 </div>
                                 <br />
@@ -136,7 +138,7 @@
                             <div class="card-body">
                                 <div class="form-check">
                                     <label class="form-label">
-                                        <input type="checkbox" id="cboImprimirTicket" checked>
+                                        <input type="checkbox" id="cboImprimirTicket"> @*checked*@
                                         Imprimir Ticket
                                     </label>
                                 </div>

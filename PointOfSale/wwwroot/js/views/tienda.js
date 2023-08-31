@@ -50,6 +50,8 @@ $(document).ready(function () {
                 "searchable": false
             },
             { "data": "nombre" },
+            { "data": "telefono" },
+            { "data": "direccion" },
             {
                 "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
                     '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-trash-can"></i></button>',
