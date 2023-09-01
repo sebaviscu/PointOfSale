@@ -169,7 +169,7 @@ $("#btnSave").on("click", function () {
         fetch("/Tienda/CreateTienda", {
             method: "POST",
             headers: { 'Content-Type': 'application/json;charset=utf-8' },
-            body: formData
+            body: JSON.stringify(model)
         }).then(response => {
             $("#modalData").find("div.modal-content").LoadingOverlay("hide")
             return response.ok ? response.json() : Promise.reject(response);
