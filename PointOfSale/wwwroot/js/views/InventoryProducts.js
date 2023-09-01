@@ -99,9 +99,9 @@ $(document).ready(function () {
                 },
                 "className": "text-center"
             },
-            { "data": "nameProveedor" },
             { "data": "description" },
             { "data": "nameCategory" },
+            { "data": "nameProveedor" },
             { "data": "price" },
             {
                 "data": "isActive", render: function (data) {
