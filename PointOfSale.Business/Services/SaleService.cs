@@ -181,7 +181,7 @@ namespace PointOfSale.Business.Services
             var cantproductos = productos.Count;
             try
             {
-                for (int i = 0; i < 10; i++) /*1200*/
+                for (int i = 0; i < 200; i++) /*1200*/
                 {
                     var dia = RandomDayMes();
 
@@ -190,14 +190,14 @@ namespace PointOfSale.Business.Services
                     await CrearVentaGenerada(idTienda, idUser, tiposVentas, productos, turno, random, cantTipoVentas, cantproductos, sale);
                 }
 
-                for (int i = 0; i < 50; i++) // ayer y hoy
-                {
-                    var dia = RandomDayDias();
+                //for (int i = 0; i < 50; i++) // ayer y hoy
+                //{
+                //    var dia = RandomDayDias();
 
-                    var sale = new Sale();
-                    sale.RegistrationDate = dia;
-                    await CrearVentaGenerada(idTienda, idUser, tiposVentas, productos, turno, random, cantTipoVentas, cantproductos, sale);
-                }
+                //    var sale = new Sale();
+                //    sale.RegistrationDate = dia;
+                //    await CrearVentaGenerada(idTienda, idUser, tiposVentas, productos, turno, random, cantTipoVentas, cantproductos, sale);
+                //}
 
                 return 1;
             }

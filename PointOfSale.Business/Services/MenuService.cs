@@ -1,11 +1,14 @@
-﻿using PointOfSale.Business.Contracts;
+﻿using Microsoft.EntityFrameworkCore;
+using PointOfSale.Business.Contracts;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace PointOfSale.Business.Services
 {
@@ -56,7 +59,13 @@ namespace PointOfSale.Business.Services
                                                                         select mchild).ToList()
                                    }).ToList();
 
-            listMenu.AddRange(tbMenu.Where(_ => _.IdMenuParent == null));
+
+            var user = tbUser.FirstOrDefault();
+            IQueryable<RolMenu> menuUsers = await _repositoryRolMenu.Query(_=>_.IdRol == user.IdRol);
+            var idMenuUsers = menuUsers.Select(_=>_.IdMenu).ToList();
+
+            listMenu.AddRange(tbMenu.Where(_ => _.IdMenuParent == null && idMenuUsers.Contains(_.IdMenu)));
+
 
             return listMenu.OrderBy(_ => _.Orden).ToList();
         }

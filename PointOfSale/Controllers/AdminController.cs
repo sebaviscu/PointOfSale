@@ -337,10 +337,13 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromForm] IFormFile photo, [FromForm] string model)
         {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+
             GenericResponse<VMUser> gResponse = new GenericResponse<VMUser>();
             try
             {
                 VMUser vmUser = JsonConvert.DeserializeObject<VMUser>(model);
+                vmUser.IdTienda = user.IdTienda;
 
                 if (photo != null)
                 {
@@ -751,7 +754,7 @@ namespace PointOfSale.Controllers
                     p.PromocionString += " [" + string.Join(", ", catList.Select(_ => _.Description)) + "]";
                 }
 
-                if (p.Dias != null)
+                if (p.Dias != null && p.Dias.Any())
                 {
                     var diasList = p.Dias.Select(_ => (Model.Enum.DiasSemana)_).ToList();
                     p.PromocionString += " [" + string.Join(", ", diasList.Select(_ => _.ToString())) + "]";
