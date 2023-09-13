@@ -13,7 +13,7 @@
     <div class="row col-md-11 d-flex flex-row-reverse bd-highlight">
         <button class="btn btn-success btn-sm ms-3" id="btnNuevoGasto"><i class="mdi mdi-cash-multiple mdi-24px"></i>&nbsp;Nuevo Gasto</button>
 
-        <button class="btn btn-info btn-sm" id="btnNuevoPagoProveedor"><i class="mdi mdi-account-minus mdi-24px"></i>&nbsp;Pago Proveedor</button>
+        @*<button class="btn btn-info btn-sm" id="btnNuevoPagoProveedor"><i class="mdi mdi-account-minus mdi-24px"></i>&nbsp;Pago Proveedor</button>*@
     </div>
 </div>
 
@@ -207,24 +207,30 @@
     </div>
 </div>
 
-
-<!-- Grid Modal Gasto -->
+<!-- Grid Modal Gastos -->
 <div class="modal fade" id="modalNuevoGasto" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalGridTitle">Nuevo Gasto</h5>
+                <h5 class="modal-title" id="exampleModalGridTitle">Ingresar Nuevo Pago </h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <form>
-                    <input type="hidden" value="0" id="txtIdGastos">
                     <div class="row">
                         <div class="col-sm-12">
-
                             <div class="form-row">
+                                <div class="form-group col-sm-4">
+                                    <label for="txtNombrePago">Tipo</label>
+                                    <select class="form-control form-control-sm input-validate" id="cboTipoDePago" style="background-color: beige">
+                                        <option value="1">Gasto</option>
+                                        <option value="2">Pago de Proveedor</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row pago-gasto">
                                 <div class="form-group col-sm-6">
                                     <label for="cboTipoDeGastoEnGasto">Tipo de Gasto</label>
                                     <select class="form-control form-control-sm input-validate" id="cboTipoDeGastoEnGasto">
@@ -236,89 +242,7 @@
                                     <input type="text" class="form-control form-control-sm" id="txtGasto" name="Gastos" disabled>
                                 </div>
                             </div>
-                            <div class="form-row">
-                                <div class="form-group col-sm-2">
-                                    <label for="cboTipoFactura">Tipo</label>
-                                    <select class="form-control form-control-sm" id="cboTipoFacturaGasto" name="Tipo Factura">
-                                        <option value=""></option>
-                                        <option value="0">A</option>
-                                        <option value="1">B</option>
-                                        <option value="2">C</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-sm-10">
-                                    <label for="txtNroFacturaGasto">Nro Factura</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtNroFacturaGasto" name="Factura">
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-sm-3">
-                                    <label for="txtIvaGasto">IVA</label>
-                                    <input type="number" step="any" class="form-control form-control-sm" id="txtIvaGasto" name="IVA">
-                                </div>
-                                <div class="form-group col-sm-6">
-                                    <label for="txtImporteGasto">Importe</label>
-                                    <input type="number" step="any" class="form-control form-control-sm pagoValid" id="txtImporteGasto" name="Importe" style="background-color: beige">
-                                </div>
-                                <div class="form-group col-sm-3">
-                                    <br />
-                                    <a class="btn btn-secondary" onclick="calcularImportesGasto()">Calular</a>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-sm-6">
-                                    <label for="txtImporteIvaGasto">Importe IVA</label>
-                                    <input type="number" step="any" class="form-control form-control-sm" id="txtImporteIvaGasto" name="Importe IVA">
-                                </div>
-                                <div class="form-group col-sm-6">
-                                    <label for="txtImporteSinIvaGasto">Importe sin IVA</label>
-                                    <input type="number" step="any" class="form-control form-control-sm" id="txtImporteSinIvaGasto" name="Importe sin IVA">
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-sm-6">
-                                    <label for="txtComentario">Descripción</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario">
-                                </div>
-                                <div class="form-group col-sm-6">
-                                    <label for="cboUsuario">Usuario</label>
-                                    <select class="form-control form-control-sm" id="cboUsuario">
-                                        <option value=""></option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </form>
-
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" id="btnSaveGasto">Guardar Cambios</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<!-- Grid Modal Pago Proveedor -->
-<div class="modal fade" id="modalPagoProveedor" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalGridTitle">Ingresar Pago Proveedor</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <input type="hidden" value="0" id="txtIdProveedor">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="form-row">
+                            <div class="form-row pago-proveedor" style="display: none;">
                                 <div class="form-group col-sm-4">
                                     <label for="txtNombrePago">Nombre</label>
                                     <select class="form-control form-control-sm input-validate" id="cboProveedor" style="background-color: beige">
@@ -336,8 +260,8 @@
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-sm-2">
-                                    <label for="cboTipoFacturaProv">Tipo</label>
-                                    <select class="form-control form-control-sm" id="cboTipoFacturaProv" name="Tipo Factura">
+                                    <label for="cboTipoFactura">Tipo</label>
+                                    <select class="form-control form-control-sm" id="cboTipoFactura" name="Tipo Factura">
                                         <option value=""></option>
                                         <option value="0">A</option>
                                         <option value="1">B</option>
@@ -345,32 +269,38 @@
                                     </select>
                                 </div>
                                 <div class="form-group col-sm-10">
-                                    <label for="txtNroFacturaProv">Nro Factura</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtNroFacturaProv" name="Factura">
+                                    <label for="txtNroFactura">Nro Factura</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtNroFactura" name="Factura">
                                 </div>
                             </div>
                             <div class="form-row">
-                                <div class="form-group col-sm-3">
-                                    <label for="txtIvaProv">IVA</label>
-                                    <input type="number" step="any" class="form-control form-control-sm" id="txtIvaProv" name="IVA">
-                                </div>
-                                <div class="form-group col-sm-6">
-                                    <label for="txtImporteProveedor">Importe</label>
-                                    <input type="number" step="any" class="form-control form-control-sm input-validate-proveedor" style="background-color: beige" id="txtImporteProveedor" name="Importe">
+                                <div class="form-group col-sm-2">
+                                    <label for="txtIva">IVA</label>
+                                    <input type="number" step="any" class="form-control form-control-sm" id="txtIva" name="IVA">
                                 </div>
                                 <div class="form-group col-sm-3">
+                                    <label for="txtImporte">Importe</label>
+                                    <input type="number" step="any" class="form-control form-control-sm input-validate-proveedor" style="background-color: beige" id="txtImporte" name="Importe">
+                                </div>
+                                <div class="form-group col-sm-2">
                                     <br />
                                     <a class="btn btn-secondary" onclick="calcularImportesProv()">Calular</a>
                                 </div>
+                                <div class="form-group col-sm-5 pago-gasto">
+                                    <label for="cboUsuario">Usuario</label>
+                                    <select class="form-control form-control-sm" id="cboUsuario">
+                                        <option value=""></option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-sm-6">
-                                    <label for="txtImporteIvaProv">Importe IVA</label>
-                                    <input type="number" step="any" class="form-control form-control-sm" id="txtImporteIvaProv" name="Importe IVA">
+                                    <label for="txtImporteIva">Importe IVA</label>
+                                    <input type="number" step="any" class="form-control form-control-sm" id="txtImporteIva" name="Importe IVA">
                                 </div>
                                 <div class="form-group col-sm-6">
-                                    <label for="txtImporteSinIvaProv">Importe sin IVA</label>
-                                    <input type="number" step="any" class="form-control form-control-sm" id="txtImporteSinIvaProv" name="Importe sin IVA">
+                                    <label for="txtImporteSinIva">Importe sin IVA</label>
+                                    <input type="number" step="any" class="form-control form-control-sm" id="txtImporteSinIva" name="Importe sin IVA">
                                 </div>
                             </div>
                             <div class="form-row">

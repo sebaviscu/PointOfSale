@@ -1,6 +1,7 @@
 ﻿var typeValuesGlobal = 0;
 var proveedoresList = [];
 var tipoGastosList = [];
+var tipoDeGasto = "1";
 
 const BASIC_MODEL_GASTO = {
     idGastos: 0,
@@ -372,54 +373,6 @@ function SetTipoVentas(tipoVentas) {
     })
 }
 
-$("#btnNuevoGasto").on("click", function () {
-
-    $("#modalNuevoGasto").modal("show")
-})
-
-$("#btnSaveGasto").on("click", function () {
-    const inputs = $("input.input-validate-gasto").serializeArray();
-    const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
-
-    if (inputs_without_value.length > 0) {
-        const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
-        toastr.warning(msg, "");
-        $(`input[name="${inputs_without_value[0].name}"]`).focus();
-        return;
-    }
-
-    const model = structuredClone(BASIC_MODEL_GASTO);
-    model["idGastos"] = parseInt($("#txtIdGastos").val());
-    model["idTipoGasto"] = $("#cboTipoDeGastoEnGasto").val();
-    model["importe"] = $("#txtImporteGasto").val();
-    model["comentario"] = $("#txtComentario").val();
-    model["idUsuario"] = $("#cboUsuario").val() != 0 ? $("#cboUsuario").val() : null;
-    model["tipoFactura"] = $("#cboTipoFacturaGasto").val();
-    model["nroFactura"] = $("#txtNroFacturaGasto").val();
-    model["iva"] = $("#txtIvaGasto").val() != '' ? $("#txtIvaGasto").val() : 0;
-    model["ivaImporte"] = $("#txtImporteIvaGasto").val() != '' ? $("#txtImporteIvaGasto").val() : 0;
-    model["importeSinIva"] = $("#txtImporteSinIvaGasto").val() != '' ? $("#txtImporteSinIvaGasto").val() : 0;
-
-    if (model.idGastos == 0) {
-        fetch("/Gastos/CreateGastos", {
-            method: "POST",
-            headers: { 'Content-Type': 'application/json;charset=utf-8' },
-            body: JSON.stringify(model)
-        }).then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
-        }).then(responseJson => {
-
-            if (responseJson.state) {
-
-                $("#modalNuevoGasto").modal("hide");
-                swal("Exitoso!", "El gasto fué guardado con éxito", "success");
-            } else {
-                swal("Lo sentimos", responseJson.message, "error");
-            }
-        })
-    }
-})
-
 $('#cboTipoDeGastoEnGasto').change(function () {
     var idTipoGasro = $(this).val();
     var tipoGasto = tipoGastosList.find(_ => _.idTipoGastos == idTipoGasro);
@@ -429,6 +382,19 @@ $('#cboTipoDeGastoEnGasto').change(function () {
     }
     else {
         $("#txtGasto").val('');
+    }
+})
+
+$('#cboTipoDePago').change(function () {
+    tipoDeGasto = $(this).val();
+
+    if (tipoDeGasto === "1") { // gasto
+        $(".pago-gasto").show();
+        $(".pago-proveedor").hide();
+    }
+    else { // proveedor
+        $(".pago-gasto").hide();
+        $(".pago-proveedor").show();
     }
 })
 
@@ -447,39 +413,70 @@ $('#cboProveedor').change(function () {
 })
 
 
-$("#btnNuevoPagoProveedor").on("click", function () {
-    $("#modalPagoProveedor").modal("show")
+$("#btnNuevoGasto").on("click", function () {
+    $("#modalNuevoGasto").modal("show")
 })
 
 $("#btnSavePagoProveedor").on("click", function () {
-    const inputs = $(".input-validate-proveedor").serializeArray();
-    const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
+    let url;
+    let model;
 
-    if (inputs_without_value.length > 0) {
-        const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
-        toastr.warning(msg, "");
-        $(`input[name="${inputs_without_value[0].name}"]`).focus();
-        return;
+    if (tipoDeGasto === "1") { // gasto
+        url = "/Gastos/CreateGastos";
+
+        const inputs = $("input.input-validate-gasto").serializeArray();
+        const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
+
+        if (inputs_without_value.length > 0) {
+            const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
+            toastr.warning(msg, "");
+            $(`input[name="${inputs_without_value[0].name}"]`).focus();
+            return;
+        }
+
+        model = structuredClone(BASIC_MODEL_GASTO);
+        model["idGastos"] = 0;
+        model["idTipoGasto"] = $("#cboTipoDeGastoEnGasto").val();
+        model["importe"] = $("#txtImporte").val();
+        model["comentario"] = $("#txtComentario").val();
+        model["idUsuario"] = $("#cboUsuario").val() != 0 ? $("#cboUsuario").val() : null;
+        model["tipoFactura"] = $("#cboTipoFactura").val();
+        model["nroFactura"] = $("#txtNroFactura").val();
+        model["iva"] = $("#txtIva").val() != '' ? $("#txtIva").val() : 0;
+        model["ivaImporte"] = $("#txtImporteIva").val() != '' ? $("#txtImporteIva").val() : 0;
+        model["importeSinIva"] = $("#txtImporteSinIva").val() != '' ? $("#txtImporteSinIva").val() : 0;
+    }
+    else { // proveedor
+        url = "/Admin/RegistrarPagoProveedor";
+        const inputs = $(".input-validate-proveedor").serializeArray();
+        const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
+
+        if (inputs_without_value.length > 0) {
+            const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
+            toastr.warning(msg, "");
+            $(`input[name="${inputs_without_value[0].name}"]`).focus();
+            return;
+        }
+
+        if ($("#cboProveedor").val() == '') {
+            const msg = `Debe completar el campo del Proveedor`;
+            toastr.warning(msg, "");
+            return;
+        }
+
+        model = structuredClone(BASIC_MODEL_PAGO_PROVEEDOR);
+        model["idProveedor"] = parseInt($("#cboProveedor").val());
+        model["tipoFactura"] = $("#cboTipoFactura").val();
+        model["nroFactura"] = $("#txtNroFactura").val();
+        model["iva"] = $("#txtIva").val() != '' ? $("#txtIva").val() : 0;
+        model["ivaImporte"] = $("#txtImporteIva").val() != '' ? $("#txtImporteIva").val() : 0;
+        model["importe"] = $("#txtImporte").val();
+        model["importeSinIva"] = $("#txtImporteSinIva").val() != '' ? $("#txtImporteSinIva").val() : 0;
+        model["comentario"] = $("#txtComentario").val();
     }
 
-    if ($("#cboProveedor").val() == '') {
-        const msg = `Debe completar el campo del Proveedor`;
-        toastr.warning(msg, "");
-        return;
-    }
 
-    const model = structuredClone(BASIC_MODEL_PAGO_PROVEEDOR);
-    model["idProveedor"] = parseInt($("#cboProveedor").val());
-    model["tipoFactura"] = $("#cboTipoFacturaProv").val();
-    model["nroFactura"] = $("#txtNroFacturaProv").val();
-    model["iva"] = $("#txtIvaProv").val() != '' ? $("#txtIvaProv").val() : 0;
-    model["ivaImporte"] = $("#txtImporteIvaProv").val() != '' ? $("#txtImporteIvaProv").val() : 0;
-    model["importe"] = $("#txtImporteProveedor").val();
-    model["importeSinIva"] = $("#txtImporteSinIvaProv").val() != '' ? $("#txtImporteSinIvaProv").val() : 0;
-    model["comentario"] = $("#txtComentario").val();
-
-
-    fetch("/Admin/RegistrarPagoProveedor", {
+    fetch(url, {
         method: "POST",
         headers: { 'Content-Type': 'application/json;charset=utf-8' },
         body: JSON.stringify(model)
@@ -488,8 +485,8 @@ $("#btnSavePagoProveedor").on("click", function () {
     }).then(responseJson => {
 
         if (responseJson.state) {
-            $("#modalPagoProveedor").modal("hide");
-            swal("Exitoso!", "Pago a Proveedor creado con éxito", "success");
+            $("#modalNuevoGasto").modal("hide");
+            swal("Exitoso!", "Se registró con éxito", "success");
 
         } else {
             swal("Lo sentimos", responseJson.message, "error");
@@ -511,13 +508,13 @@ function calcularImportesGasto() {
 }
 
 function calcularImportesProv() {
-    var importe = $("#txtImporteProveedor").val();
-    var iva = $("#txtIvaProv").val();
+    var importe = $("#txtImporte").val();
+    var iva = $("#txtIva").val();
 
     if (importe !== '' && iva !== '') {
 
         var importeSinIva = parseFloat(importe) * (1 - (parseFloat(iva) / 100));
-        $("#txtImporteSinIvaProv").val(importeSinIva);
-        $("#txtImporteIvaProv").val(importe - importeSinIva);
+        $("#txtImporteSinIva").val(importeSinIva);
+        $("#txtImporteIva").val(importe - importeSinIva);
     }
 }

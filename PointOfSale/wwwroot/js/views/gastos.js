@@ -160,13 +160,10 @@ const openModal = (model = BASIC_MODEL) => {
     $("#cboUsuario").val(model.idUsuario);
     $("#cboTipoFactura").val(model.tipoFactura);
     $("#txtNroFactura").val(model.nroFactura);
-    $("#txtIva").val(model.ivaImporte);
+    $("#txtIva").val(model.iva);
     $("#txtImporteIva").val(model.ivaImporte);
     $("#txtImporteSinIva").val(model.importeSinIva);
-
-    if (model.idUsuario == null) {
-        $("#txtComentario").val(model.comentario);
-    }
+    $("#txtComentario").val(model.comentario);
 
     if (model.modificationDate === null)
         document.getElementById("divModif").style.display = 'none';
