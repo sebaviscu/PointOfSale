@@ -8,6 +8,18 @@
 
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
+    <None Include="wwwroot\css\fonts\flaticon\.DS_Store" />
+    <None Include="wwwroot\css\fonts\flaticon\font\.DS_Store" />
+    <None Include="wwwroot\css\fonts\flaticon\font\Flaticon.svg" />
+    <None Include="wwwroot\css\fonts\flaticon\font\Flaticon.woff2" />
+    <None Include="wwwroot\css\fonts\flaticon\font\_flaticon.scss" />
+    <None Include="wwwroot\css\fonts\flaticon\license\license.pdf" />
+    <None Include="wwwroot\css\fonts\icomoon\icomoon.svg" />
+    <None Include="wwwroot\css\fonts\ionicons\css\_ionicons.scss" />
+    <None Include="wwwroot\css\fonts\ionicons\fonts\.DS_Store" />
+    <None Include="wwwroot\css\fonts\ionicons\fonts\ionicons.svg" />
+    <None Include="wwwroot\css\fonts\ionicons\fonts\ionicons.woff2" />
+    <None Include="wwwroot\css\fonts\open-iconic\open-iconic.svg" />
   </ItemGroup>
 
   <ItemGroup>
