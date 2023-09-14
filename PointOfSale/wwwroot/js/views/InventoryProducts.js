@@ -19,7 +19,8 @@ const BASIC_MODEL = {
     porcentajeProfit: "",
     costPrice: "",
     tipoVenta: "",
-    idProveedor: ""
+    idProveedor: "",
+    comentario:""
 }
 
 const BASIC_MASSIVE_EDIT = {
@@ -203,6 +204,7 @@ const openModal = (model = BASIC_MODEL) => {
     $("#cboState").val(model.isActive);
     $("#txtPhoto").val("");
     $("#cboProveedor").val(model.idProveedor == 0 ? $("#cboProveedor option:first").val() : model.idProveedor);
+    $("#txtComentario").val(model.comentario);
 
     $("#imgProduct").attr("src", `data:image/png;base64,${model.photoBase64}`);
 
@@ -305,6 +307,7 @@ function saveOneProduct() {
     model["tipoVenta"] = $("#cboTipoVenta").val();
     model["isActive"] = $("#cboState").val();
     model["idProveedor"] = $("#cboProveedor").val();
+    model["comentario"] = $("#txtComentario").val();
 
     const inputPhoto = document.getElementById('txtPhoto');
 

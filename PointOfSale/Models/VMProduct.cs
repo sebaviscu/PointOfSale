@@ -23,5 +23,7 @@ namespace PointOfSale.Models
         public TipoVenta TipoVenta { get; set; }
         public string NameProveedor { get; set; }
         public int? IdProveedor { get; set; }
+        public string? Comentario { get; set; }
+
     }
 }

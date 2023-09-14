@@ -21,6 +21,7 @@ namespace PointOfSale.Model
         public decimal? PriceWeb { get; set; }
         public int? PorcentajeProfit { get; set; }
         public decimal? CostPrice { get; set; }
+        public string? Comentario { get; set; }
         public TipoVenta TipoVenta { get; set; }
 
         public virtual Category? IdCategoryNavigation { get; set; }

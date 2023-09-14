@@ -274,7 +274,7 @@ namespace PointOfSale.Controllers
                 ProductListWeek.Add(new VMProductsWeek()
                 {
                     Product = $"{++i}. {item.Key} ",
-                    Quantity = $" {item.Value} {(prod.TipoVenta == Model.Enum.TipoVenta.Unidad ? "U." : prod.TipoVenta)}"
+                    Quantity = $" {item.Value} {(prod.TipoVenta == Model.Enum.TipoVenta.U ? "U." : prod.TipoVenta)}"
                 });
             }
 

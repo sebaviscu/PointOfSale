@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace PointOfSale.Model
         public enum TipoVenta
         {
             Kg = 1,
-            Unidad = 2
+            U = 2
         }
 
         public enum TipoMovimientoCliente

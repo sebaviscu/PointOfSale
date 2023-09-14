@@ -81,6 +81,7 @@ namespace PointOfSale.Business.Services
                 product_edit.ModificationUser = entity.ModificationUser;
                 product_edit.IdProveedor = entity.IdProveedor;
                 product_edit.TipoVenta = entity.TipoVenta;
+                product_edit.Comentario = entity.Comentario;
 
                 bool response = await _repository.Edit(product_edit);
                 if (!response)
