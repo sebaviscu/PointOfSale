@@ -5,6 +5,9 @@
 
 var productos = [];
 
+
+
+
 (function ($) {
 
     $("#text-area-products").hide();
@@ -28,6 +31,10 @@ var productos = [];
 
     $(".btnClose").on("click", function () {
         $("#modalData").modal("hide")
+    })
+
+    $("#btnFinalizar").on("click", function () {
+        finalizarVenta();
     })
 
     "use strict";
@@ -270,7 +277,7 @@ function setValue(event, mult) {
     textArea.textContent = '';
 
     productos.forEach((a) => {
-        textArea.innerText += `· ${a.descripcion}: $${Number.parseFloat(a.precio).toFixed(2)} x ${a.peso} = $ ${Number.parseFloat(a.subTotal).toFixed(2) } \n`;
+        textArea.innerText += `· ${a.descripcion}: $${Number.parseFloat(a.precio).toFixed(2)} x ${a.peso} = $ ${Number.parseFloat(a.subTotal).toFixed(2)} \n`;
         total += a.subTotal;
     });
 
@@ -317,15 +324,15 @@ function resumenVenta() {
         var tableData = productos.map(value => {
             return (
                 `<tr>
-                       <td class="table-products" style="border-right-color: #ffffff00;"><span class="text-muted">$ ${Number.parseFloat(value.precio).toFixed(2) } x ${value.peso} ${value.tipoVenta}</span>. - ${value.descripcion}</td>
-                       <td class="table-products" style="font-size: 12px; text-align: right;"><strong>$ ${Number.parseFloat(value.subTotal).toFixed(2) }</strong></td>
+                       <td class="table-products" style="border-right-color: #ffffff00;"><span class="text-muted">$ ${Number.parseFloat(value.precio).toFixed(2)} x ${value.peso} ${value.tipoVenta}</span>. - ${value.descripcion}</td>
+                       <td class="table-products" style="font-size: 12px; text-align: right;"><strong>$ ${Number.parseFloat(value.subTotal).toFixed(2)}</strong></td>
                     </tr>`
             );
         }).join('');
 
         tableData = tableData.concat(`<tr>
                        <td class="table-products" style="font-size: 14px; border-right-color: #ffffff00;"><strong>TOTAL</strong></td>
-                       <td class="table-products" style="font-size: 14px; text-align: right;"><strong>$ ${ Number.parseFloat(sum).toFixed(2) }</strong></td>
+                       <td class="table-products" style="font-size: 14px; text-align: right;"><strong>$ ${Number.parseFloat(sum).toFixed(2)}</strong></td>
                     </tr>`);
 
         const tableBody = document.querySelector("#tableProductos");
@@ -333,4 +340,55 @@ function resumenVenta() {
 
         $("#modalData").modal("show")
     }
+
+}
+
+
+function finalizarVenta() {
+    if (productos.length > 0) {
+
+        const model = structuredClone(BASIC_MODEL);
+        model["nombre"] = $("#txtNombre").val();
+        model["telefono"] = $("#txtTelefono").val();
+        model["direccion"] = $("#txtDireccion").val();
+        model["metodoPago"] = $("#txtFormaPago").val();
+        model["comentario"] = $("#txtComentario").val();
+
+
+        var inputPhone = document.getElementById("txtPhone");
+        var phone = inputPhone.attributes.phoneNumber.value;
+
+        let sum = 0;
+        productos.forEach(value => {
+            sum += value.subTotal;
+        });
+
+        var text = productos.map(value => {
+            return (
+                ` - ${value.descripcion}: ${value.peso} ${value.tipoVenta}\n`
+            );
+        }).join('');
+
+        text = text.concat(`\n
+                · Nombre: ${model.nombre} \n` +
+                `· Telefono: ${model.telefono} \n` +
+                `· Direccion: ${model.direccion} \n` +
+                `· Metodo de pago: ${model.metodoPago} \n` +
+                `· Comentario: ${model.comentario} \n\n` +
+                `· TOTAL: ${Number.parseFloat(sum).toFixed(2)}`);
+        d
+
+        $("#modalData").modal("hide")
+
+        window.open('https://wa.me/' + phone + '?text=' + text, '_blank');
+    }
+}
+
+const BASIC_MODEL = {
+    nombre: '',
+    telefono: '',
+    direccion: '',
+    metodoPago: '',
+    comentario: '',
+    total:''
 }
