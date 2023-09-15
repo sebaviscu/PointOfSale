@@ -151,5 +151,14 @@ namespace PointOfSale.Business.Services
                 throw;
             }
         }
+
+
+        public async Task<List<Product>> GetRandomProducts()
+        {
+            var prods = await List();
+
+            return prods.Take(8).ToList();
+
+        }
     }
 }

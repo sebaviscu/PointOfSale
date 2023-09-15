@@ -66,6 +66,7 @@ public class Program
         builder.Services.AddScoped<IGastosService, GastosService>();
         builder.Services.AddScoped<IGastosService, GastosService>();
         builder.Services.AddScoped<ITicketService, TicketService>();
+        builder.Services.AddScoped<IShopService, ShopService>();
 
         builder.Services.AddAFIPConfiguration(x =>
         {

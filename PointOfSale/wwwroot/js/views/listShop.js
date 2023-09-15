@@ -270,7 +270,7 @@ function setValue(event, mult) {
     textArea.textContent = '';
 
     productos.forEach((a) => {
-        textArea.innerText += `· ${a.descripcion}: $${a.precio} x ${a.peso} = $ ${a.subTotal} \n`;
+        textArea.innerText += `· ${a.descripcion}: $${Number.parseFloat(a.precio).toFixed(2)} x ${a.peso} = $ ${Number.parseFloat(a.subTotal).toFixed(2) } \n`;
         total += a.subTotal;
     });
 
@@ -309,26 +309,27 @@ function clean() {
 
 function resumenVenta() {
     if (productos.length > 0) {
-
-        const tableData = productos.map(value => {
-            return (
-                `<tr>
-                       <td><h4 style="color: darkgray;">${value.descripcion}:&nbsp;</h3></td>
-                       <td style="text-align: right;"><h5>&nbsp;$ ${value.precio} x ${value.peso} ${value.tipoVenta}</h4></td>
-                       <td style="text-align: right;"><h5>&nbsp; = $ ${value.subTotal}</h4></td>
-                    </tr>`
-            );
-        }).join('');
-
-        const tableBody = document.querySelector("#tableProductos");
-        tableBody.innerHTML = tableData;
-
         let sum = 0;
         productos.forEach(value => {
             sum += value.subTotal;
         });
 
-        document.getElementById("txtTotal").textContent = 'Total: $ ' + sum;
+        var tableData = productos.map(value => {
+            return (
+                `<tr>
+                       <td class="table-products" style="border-right-color: #ffffff00;"><span class="text-muted">$ ${Number.parseFloat(value.precio).toFixed(2) } x ${value.peso} ${value.tipoVenta}</span>. - ${value.descripcion}</td>
+                       <td class="table-products" style="font-size: 12px; text-align: right;"><strong>$ ${Number.parseFloat(value.subTotal).toFixed(2) }</strong></td>
+                    </tr>`
+            );
+        }).join('');
+
+        tableData = tableData.concat(`<tr>
+                       <td class="table-products" style="font-size: 14px; border-right-color: #ffffff00;"><strong>TOTAL</strong></td>
+                       <td class="table-products" style="font-size: 14px; text-align: right;"><strong>$ ${ Number.parseFloat(sum).toFixed(2) }</strong></td>
+                    </tr>`);
+
+        const tableBody = document.querySelector("#tableProductos");
+        tableBody.innerHTML = tableData;
 
         $("#modalData").modal("show")
     }

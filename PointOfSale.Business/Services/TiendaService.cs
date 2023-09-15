@@ -123,5 +123,21 @@ namespace PointOfSale.Business.Services
             }
         }
 
+        public async Task<Tienda> GetTiendaPrincipal()
+        {
+            try
+            {
+                Tienda Tienda_found = await _repository.First();
+
+                if (Tienda_found == null)
+                    throw new TaskCanceledException("Tienda no se pudo encontrar.");
+
+                return Tienda_found;
+            }
+            catch
+            {
+                throw;
+            }
+        }
     }
 }

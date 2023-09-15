@@ -11515,7 +11515,7 @@ h1, h2, h3, h4, h5,
 
 .navbar-brand {
     font-weight: 800;
-    font-size: 20px;
+    font-size: 30px;
     text-transform: uppercase;
 }
 
@@ -14065,7 +14065,7 @@ textarea.form-control {
     padding: 18px 30px;
     position: fixed;
     bottom: 40px;
-    right: 40px;
+    right: 20px;
     transition: all 300ms ease 0ms;
     box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
     z-index: 99;
@@ -14086,7 +14086,7 @@ textarea.form-control {
     padding: 18px 30px;
     position: fixed;
     bottom: 100px;
-    right: 40px;
+    right: 20px;
     transition: all 300ms ease 0ms;
     box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
     z-index: 99;
@@ -14100,8 +14100,13 @@ textarea.form-control {
     color: #6b6b6b;
     position: fixed;
     bottom: 90px;
-    right: 350px;
+    right: 340px;
     box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
     z-index: 99;
-    background-color: #acafb3;
+    background-color: #d0d3d9;
+}
+
+.table-products {
+    padding: 8px;
+    font-size: 13px;
 }
