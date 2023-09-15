@@ -1,5 +1,5 @@
 ﻿@using PointOfSale.Models;
-@model List<VMProduct>;
+@model VMShop;
 @{
     ViewData["Title"] = "Lista";
     Layout = "";
@@ -38,13 +38,46 @@
 
 </head>
 <body class="goto-here">
+
+    <div class="py-1 bg-primary">
+        <div class="container">
+            <div class="row no-gutters d-flex align-items-start align-items-center px-md-0">
+                <div class="col-lg-12 d-block">
+                    <div class="row d-flex">
+                        <div class="col-md pr-4 d-flex topper" style="text-align: center;align-items: center;">
+                            <div class="icon mr-2 d-flex justify-content-center align-items-center"></div>
+                            <span class="text"><i class="icon-phone2"></i>&nbsp; @Model.Tienda.Telefono</span>
+                        </div>
+                        <div class="col-md pr-4 d-flex topper" style="text-align: center;align-items: center;">
+                            <div class="icon mr-2 d-flex justify-content-center align-items-center"></div>
+                            <span class="text"><i class="icon-paper-plane"></i>&nbsp; @Model.Tienda.Direccion</span>
+                        </div>
+                        <div class="col-md pr-4 d-flex topper" style="text-align: center;align-items: center;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="@Model.Horarios">
+                            <div class="icon mr-2 d-flex justify-content-center align-items-center"></div>
+                            <span class="text"><i class="mdi mdi-calendar-today mdi-18px"></i>&nbsp; @Model.HorariosToday</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <text name="textarea" id="text-area-products" disabled></text>
     <p><button class="btn btn-primary" id="btnCompras">Total: $0</button></p>
     <p><button class="btn" id="btnTrash"><i class="mdi mdi-trash-can mdi-18px"></i></button></p>
 
     <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+
+        @{
+            if (Model.IsLogin)
+            {
+                <div class="justify-content-start align-items-start">
+                    <a href="/Sales/NewSale" class="btn btn-info">Punto de Venta</a>
+                </div>
+            }
+        }
         <div class="container justify-content-center align-items-center">
-            <a href="/Shop/Index" class="navbar-brand">OLIVA  Mercado Natural</a>
+            <a href="/Shop/Index" class="navbar-brand">@Model.Tienda.Nombre</a>
         </div>
     </nav>
     <hr />
@@ -52,7 +85,7 @@
         <div class="container">
             <div class="row">
 
-                @foreach (var prod in Model.OrderBy(_ => _.Description))
+                @foreach (var prod in Model.Products.OrderBy(_ => _.Description))
                 {
                     <div class="col-md-6 col-lg-2 ftco-animate">
                         <div class="product">
@@ -105,9 +138,24 @@
                 <div class="col-md">
                     <div class="ftco-footer-widget mb-4">
                         <ul class="ftco-footer-social list-unstyled float-md-left float-lft mt-5">
-                            <li class="ftco-animate"><a href="#"><span class="icon-twitter"></span></a></li>
-                            <li class="ftco-animate"><a href="#"><span class="icon-facebook"></span></a></li>
-                            <li class="ftco-animate"><a href="#"><span class="icon-instagram"></span></a></li>
+                            @{
+                                if (!string.IsNullOrWhiteSpace(@Model.Tienda.Twitter))
+                                {
+                                    <li class="ftco-animate"><a href="https://twitter.com/@Model.Tienda.Twitter" target=”_blank”><span class="icon-twitter"></span></a></li>
+                                }
+                            }
+                            @{
+                                if (!string.IsNullOrWhiteSpace(@Model.Tienda.Facebook))
+                                {
+                                    <li class="ftco-animate"><a href="https://www.facebook.com/@Model.Tienda.Facebook" target=”_blank”><span class="icon-facebook"></span></a></li>
+                                }
+                            }
+                            @{
+                                if (!string.IsNullOrWhiteSpace(@Model.Tienda.Instagram))
+                                {
+                                    <li class="ftco-animate"><a href="https://www.instagram.com/@Model.Tienda.Instagram" target=”_blank”><span class="icon-instagram"></span></a></li>
+                                }
+                            }
                         </ul>
                     </div>
                 </div>
