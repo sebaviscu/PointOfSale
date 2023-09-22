@@ -1,13 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PointOfSale.Business.Contracts;
-using PointOfSale.Business.Services;
 using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
-using System.Globalization;
 using System.Security.Claims;
-using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Controllers
 {
@@ -18,14 +15,16 @@ namespace PointOfSale.Controllers
         private readonly IShopService _shopService;
         private readonly ITiendaService _tiendaService;
         private readonly ISaleService _saleService;
+        private readonly ICategoryService _categoryService;
 
-        public ShopController(IProductService productService, IMapper mapper, IShopService shopService, ITiendaService tiendaService, ISaleService saleService)
+        public ShopController(IProductService productService, IMapper mapper, IShopService shopService, ITiendaService tiendaService, ISaleService saleService, ICategoryService categoryService)
         {
             _productService = productService;
             _mapper = mapper;
             _shopService = shopService;
             _tiendaService = tiendaService;
             _saleService = saleService;
+            _categoryService = categoryService;
         }
 
         public async Task<IActionResult> Index()
@@ -40,15 +39,15 @@ namespace PointOfSale.Controllers
             return View("Index", shop);
         }
 
-        public async Task<IActionResult> Lista()
+        public async Task<IActionResult> Lista(int idCategoria)
         {
             ClaimsPrincipal claimuser = HttpContext.User;
             var tienda = _mapper.Map<VMTienda>(await _tiendaService.GetTiendaPrincipal());
 
             var shop = new VMShop(tienda);
             shop.IsLogin = claimuser.Identity.IsAuthenticated;
-            shop.Products = _mapper.Map<List<VMProduct>>(await _productService.List());
-
+            shop.Products = _mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategory(idCategoria));
+            shop.Categorias = _mapper.Map<List<VMCategory>>(await _categoryService.ListActive());
             return View("Lista", shop);
         }
 
@@ -66,7 +65,7 @@ namespace PointOfSale.Controllers
 
 
         [HttpPut]
-        public async Task<IActionResult> UpdateVentaWeb(int idVentaWeb, int estado)
+        public async Task<IActionResult> UpdateVentaWeb([FromBody] VMVentaWeb model)
         {
             ClaimsPrincipal claimuser = HttpContext.User;
             var userName = claimuser.Claims
@@ -76,12 +75,11 @@ namespace PointOfSale.Controllers
             GenericResponse<VMVentaWeb> gResponse = new GenericResponse<VMVentaWeb>();
             try
             {
-                var model = new VMVentaWeb();
-                model.IdVentaWeb= idVentaWeb;
-                //model.Estado = estado;
                 model.ModificationUser = userName;
 
                 VentaWeb edited_Gastos = await _shopService.Edit(_mapper.Map<VentaWeb>(model));
+
+                model = _mapper.Map<VMVentaWeb>(edited_Gastos);
 
                 gResponse.State = true;
                 gResponse.Object = model;

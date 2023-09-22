@@ -29,9 +29,29 @@ namespace PointOfSale.Business.Services
             IQueryable<Product> query = await _repository.Query();
             return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).OrderBy(_ => _.Description).ToList();
         }
+        public async Task<List<Product>> ListActive()
+        {
+            IQueryable<Product> query = await _repository.Query(_ => _.IsActive.HasValue ? _.IsActive.Value : false);
+            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).OrderBy(_ => _.Description).ToList();
+        }
+        public async Task<List<Product>> ListActiveByCategory(int idCategoria)
+        {
+            IQueryable<Product> query;
+            if (idCategoria == 0)
+            {
+                query = await _repository.Query(_ => _.IsActive.HasValue ? _.IsActive.Value : false);
+            }
+            else
+            {
+                query = await _repository.Query(_ => _.IdCategory == idCategoria && _.IsActive.HasValue ? _.IsActive.Value : false);
+            }
+
+            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).OrderBy(_ => _.Description).ToList();
+        }
+
         public async Task<Product> Add(Product entity)
         {
-            Product product_exists = await _repository.Get(p =>p.BarCode != string.Empty && p.BarCode == entity.BarCode);
+            Product product_exists = await _repository.Get(p => p.BarCode != string.Empty && p.BarCode == entity.BarCode);
 
             if (product_exists != null)
                 throw new TaskCanceledException("The barcode already exists");

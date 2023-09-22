@@ -41,6 +41,7 @@ namespace PointOfSale.Models
         public List<VMProduct> Products { get; set; }
 
         public VMTienda Tienda { get; set; }
+        public List<VMCategory> Categorias { get; set; }
 
         public bool IsLogin { get; set; }
 

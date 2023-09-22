@@ -51,6 +51,10 @@ var productos = [];
         finalizarVenta();
     })
 
+    $(".btnCategoria").on("click", function () {
+        selectCategoria(event.currentTarget);
+    })
+
     "use strict";
 
     var isMobile = {
@@ -185,6 +189,10 @@ var productos = [];
 })(jQuery);
 
 
+function selectCategoria(event) {
+
+    var idCat = $(event).attr('cat-id');
+}
 
 function setValue(event, mult) {
 
@@ -209,13 +217,13 @@ function setValue(event, mult) {
 
     inputProd.value = value
 
-    let productFind = productos.find(item => item.idProducto === idProd);
+    let productFind = productos.find(item => item.idProduct === idProd);
     if (productFind) {
         productFind.quantity = value;
         productFind.total = value * productFind.price;
 
         if (value === 0) {
-            productos = productos.filter(item => item.idProducto != idProd);
+            productos = productos.filter(item => item.idProduct != idProd);
         }
     }
     else {
@@ -380,10 +388,9 @@ function finalizarVenta() {
             if (responseJson.state) {
 
                 swal("Registrado!", `MUCHAS GRACIAS!!`, "success");
-
+                clean();
             }
         }).catch((error) => {
-            $("#btnFinalizeSale" + currentTabId).closest("div.card-body").LoadingOverlay("hide")
         })
     }
 }

@@ -41,6 +41,11 @@ namespace PointOfSale.Business.Services
             return query.OrderBy(_ => _.Description).ToList();
         }
 
+        public async Task<List<Category>> ListActive()
+        {
+            IQueryable<Category> query = await _repository.Query(_ => _.IsActive.HasValue ? _.IsActive.Value : false);
+            return query.OrderBy(_ => _.Description).ToList();
+        }
         public async Task<Category> Add(Category entity)
         {
             try

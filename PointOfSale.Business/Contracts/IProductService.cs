@@ -16,5 +16,7 @@ namespace PointOfSale.Business.Contracts
         Task<bool> EditMassive(string usuario, EditeMassiveProducts data);
         Task<Product> Get(int idProducto);
         Task<List<Product>> GetRandomProducts();
+        Task<List<Product>> ListActive();
+        Task<List<Product>> ListActiveByCategory(int idCategoria);
     }
 }

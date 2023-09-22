@@ -16,5 +16,6 @@ namespace PointOfSale.Business.Contracts
         Task<List<Category>> GetCategoriesSearch(string search);
         Task<Category> Get(int idProducto);
         Task<List<Category>> GetMultiple(int[] idCategorys);
+        Task<List<Category>> ListActive();
     }
 }

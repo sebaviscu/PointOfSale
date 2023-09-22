@@ -81,6 +81,13 @@
         </div>
     </nav>
     <hr />
+    <div class="col-md-12" style="text-align: center;">
+        @foreach (var cat in Model.Categorias)
+        {
+            <a class="btn btnCategoria" href="/Shop/Lista?idCategoria=@cat.IdCategory" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2);">@cat.Description</a>
+        }
+    </div>
+
     <section class="ftco-section">
         <div class="container">
             <div class="row">

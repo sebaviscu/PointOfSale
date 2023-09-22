@@ -34,7 +34,8 @@ namespace PointOfSale.Business.Services
         {
             try
             {
-                VentaWeb VentaWeb_found = await _repository.Get(c => c.IdVentaWeb == entity.IdVentaWeb);
+                IQueryable<VentaWeb> query = await _repository.Query(c => c.IdVentaWeb == entity.IdVentaWeb);
+                var VentaWeb_found = query.Include(_ => _.DetailSales).First();
 
                 VentaWeb_found.Estado = entity.Estado;
                 VentaWeb_found.ModificationDate = DateTime.Now;

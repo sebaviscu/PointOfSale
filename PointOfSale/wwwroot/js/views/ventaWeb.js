@@ -116,13 +116,15 @@ $("#btnSave").on("click", function () {
 
     const model = structuredClone(BASIC_MODEL);
     model["idVentaWeb"] = parseInt($("#txtId").val());
-    model["estado"] = $("#cboState").val();
+    model["estado"] = parseInt($("#cboState").val());
 
 
     $("#modalData").find("div.modal-content").LoadingOverlay("show")
 
-    fetch(`/Shop/UpdateVentaWeb?idVentaWeb=${model.idVentaWeb}?estado=${model.estado}`, {
-        method: "PUT"
+    fetch("/Shop/UpdateVentaWeb", {
+        method: "PUT",
+        headers: { 'Content-Type': 'application/json;charset=utf-8' },
+        body: JSON.stringify(model)
     }).then(response => {
         $("#modalData").find("div.modal-content").LoadingOverlay("hide")
         return response.ok ? response.json() : Promise.reject(response);
@@ -132,7 +134,7 @@ $("#btnSave").on("click", function () {
             tableData.row(rowSelected).data(responseJson.object).draw(false);
             rowSelected = null;
             $("#modalData").modal("hide");
-            swal("Exitoso!", "La Venta Web fué modificada", "success");
+            swal("Exitoso!", "La tienda fué modificada", "success");
 
         } else {
             swal("Lo sentimos", responseJson.message, "error");
@@ -140,6 +142,26 @@ $("#btnSave").on("click", function () {
     }).catch((error) => {
         $("#modalData").find("div.modal-content").LoadingOverlay("hide")
     })
+
+    //fetch(`/Shop/UpdateVentaWeb?idVentaWeb=${model.idVentaWeb}?estado=${model.estado}`, {
+    //    method: "PUT"
+    //}).then(response => {
+    //    $("#modalData").find("div.modal-content").LoadingOverlay("hide")
+    //    return response.ok ? response.json() : Promise.reject(response);
+    //}).then(responseJson => {
+    //    if (responseJson.state) {
+
+    //        tableData.row(rowSelected).data(responseJson.object).draw(false);
+    //        rowSelected = null;
+    //        $("#modalData").modal("hide");
+    //        swal("Exitoso!", "La Venta Web fué modificada", "success");
+
+    //    } else {
+    //        swal("Lo sentimos", responseJson.message, "error");
+    //    }
+    //}).catch((error) => {
+    //    $("#modalData").find("div.modal-content").LoadingOverlay("hide")
+    //})
 
 
 })

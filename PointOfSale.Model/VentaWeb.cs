@@ -20,14 +20,14 @@ namespace PointOfSale.Model
         public string? Comentario { get; set; }
         public int? IdFormaDePago { get; set; }
         public decimal? Total { get; set; }
-        public int IdTienda { get; set; }
+        public int? IdTienda { get; set; }
         public EstadoVentaWeb Estado { get; set; }
         public DateTime? RegistrationDate { get; set; }
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }
 
         public virtual TypeDocumentSale? FormaDePago { get; set; }
-        public virtual ICollection<DetailSale> DetailSales { get; set; }
+        public virtual ICollection<DetailSale>? DetailSales { get; set; }
 
     }
 }
