@@ -1,4 +1,3 @@
-using AFIP.Facturacion.DependencyInjection;
 using DinkToPdf;
 using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -68,14 +67,14 @@ public class Program
         builder.Services.AddScoped<ITicketService, TicketService>();
         builder.Services.AddScoped<IShopService, ShopService>();
 
-        builder.Services.AddAFIPConfiguration(x =>
-        {
-            x.CertificatePassword = "";
-            x.Cuit = 0;
-            x.IsProdEnvironment = false;
-            x.Verbose = true;
-            x.x509CertificateFilePath = "";
-        });
+        //builder.Services.AddAFIPConfiguration(x =>
+        //{
+        //    x.CertificatePassword = "";
+        //    x.Cuit = 0;
+        //    x.IsProdEnvironment = false;
+        //    x.Verbose = true;
+        //    x.x509CertificateFilePath = "";
+        //});
 
 
         //var context = new CustomAssemblyLoadContext();
@@ -86,10 +85,10 @@ public class Program
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
-        if (!app.Environment.IsDevelopment())
-        {
-            app.UseExceptionHandler("/Home/Error");
-        }
+        //if (!app.Environment.IsDevelopment())
+        //{
+        //    app.UseExceptionHandler("/Home/Error");
+        //}
         app.UseStaticFiles();
 
         app.UseRouting();
