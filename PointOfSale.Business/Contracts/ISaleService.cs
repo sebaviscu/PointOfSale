@@ -21,6 +21,7 @@ namespace PointOfSale.Business.Contracts
         Task<Sale> Edit(Sale entity);
         Task<int> GenerarVentas(int idTienda, int idUser);
         Task<Sale> GetSale(int idSale);
+        Task<VentaWeb> RegisterWeb(VentaWeb entity);
 
     }
 }

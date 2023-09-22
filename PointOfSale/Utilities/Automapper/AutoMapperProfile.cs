@@ -208,7 +208,7 @@ namespace PointOfSale.Utilities.Automapper
             #endregion Menu
 
             CreateMap<Tienda, VMTienda>()
-                .ForMember(destiny =>destiny.PhotoBase64, opt => opt.MapFrom(source => Convert.ToBase64String(source.Logo)));
+                .ForMember(destiny => destiny.PhotoBase64, opt => opt.MapFrom(source => Convert.ToBase64String(source.Logo)));
 
             CreateMap<VMTienda, Tienda>();
 
@@ -290,13 +290,17 @@ namespace PointOfSale.Utilities.Automapper
                 .ForMember(user => user.Tipo_Factura, opt => opt.MapFrom(userEdit => string.IsNullOrEmpty(userEdit.TipoFactura) ? "-" : ((Model.Enum.TipoFactura)Convert.ToInt32(userEdit.TipoFactura)).ToString()))
                 .ForMember(user => user.Nro_Factura, opt => opt.MapFrom(userEdit => userEdit.NroFactura == string.Empty ? "-" : userEdit.NroFactura));
 
-
-
             CreateMap<VMGastos, Gastos>();
 
             CreateMap<TipoDeGasto, VMTipoDeGasto>();
-
             CreateMap<VMTipoDeGasto, TipoDeGasto>();
+
+            CreateMap<VMVentaWeb, VentaWeb>();
+            CreateMap<VentaWeb, VMVentaWeb>()
+                .ForMember(user => user.Fecha, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.Value.ToString("dd/MM/yyyy HH:mm")))
+                .ForMember(user => user.TotalString, opt => opt.MapFrom(userEdit => "$" + userEdit.Total));
+
+;
         }
     }
 }

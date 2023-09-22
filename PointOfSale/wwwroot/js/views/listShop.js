@@ -5,10 +5,24 @@
 
 var productos = [];
 
-
-
-
 (function ($) {
+
+
+    fetch("/Admin/GetTipoVentaWeb")
+        .then(response => {
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+            $("#cboFormaPago").append(
+                $("<option>").val('').text('')
+            )
+            if (responseJson.data.length > 0) {
+                responseJson.data.forEach((item) => {
+                    $("#cboFormaPago").append(
+                        $("<option>").val(item.idTypeDocumentSale).text(item.description)
+                    )
+                });
+            }
+        })
 
     $("#text-area-products").hide();
     $("#btnTrash").hide();
@@ -61,16 +75,6 @@ var productos = [];
     };
 
 
-    //$(window).stellar({
-    //    responsive: true,
-    //    parallaxBackgrounds: true,
-    //    parallaxElements: true,
-    //    horizontalScrolling: false,
-    //    hideDistantElements: false,
-    //    scrollProperty: 'scroll'
-    //});
-
-
     var fullHeight = function () {
 
         $('.js-fullheight').css('height', $(window).height());
@@ -90,49 +94,6 @@ var productos = [];
         }, 1);
     };
     loader();
-
-    // Scrollax
-    //$.Scrollax();
-
-    // scroll
-    //var scrollWindow = function () {
-    //    $(window).scroll(function () {
-    //        var $w = $(this),
-    //            st = $w.scrollTop(),
-    //            navbar = $('.ftco_navbar'),
-    //            sd = $('.js-scroll-wrap');
-
-    //        if (st > 150) {
-    //            if (!navbar.hasClass('scrolled')) {
-    //                navbar.addClass('scrolled');
-    //            }
-    //        }
-    //        if (st < 150) {
-    //            if (navbar.hasClass('scrolled')) {
-    //                navbar.removeClass('scrolled sleep');
-    //            }
-    //        }
-    //        if (st > 350) {
-    //            if (!navbar.hasClass('awake')) {
-    //                navbar.addClass('awake');
-    //            }
-
-    //            if (sd.length > 0) {
-    //                sd.addClass('sleep');
-    //            }
-    //        }
-    //        if (st < 350) {
-    //            if (navbar.hasClass('awake')) {
-    //                navbar.removeClass('awake');
-    //                navbar.addClass('sleep');
-    //            }
-    //            if (sd.length > 0) {
-    //                sd.removeClass('sleep');
-    //            }
-    //        }
-    //    });
-    //};
-    //scrollWindow();
 
     var contentWayPoint = function () {
         var i = 0;
@@ -221,9 +182,6 @@ var productos = [];
     };
     goHere();
 
-
-
-
 })(jQuery);
 
 
@@ -253,8 +211,8 @@ function setValue(event, mult) {
 
     let productFind = productos.find(item => item.idProducto === idProd);
     if (productFind) {
-        productFind.peso = value;
-        productFind.subTotal = value * productFind.precio;
+        productFind.quantity = value;
+        productFind.total = value * productFind.price;
 
         if (value === 0) {
             productos = productos.filter(item => item.idProducto != idProd);
@@ -262,11 +220,11 @@ function setValue(event, mult) {
     }
     else {
         var prod = {
-            idProducto: idProd,
-            peso: value,
-            precio: parseFloat(priceProd.attributes.precio.value),
-            descripcion: descProd.attributes.descProd.value,
-            subTotal: value * parseFloat(priceProd.attributes.precio.value),
+            idProduct: idProd,
+            quantity: value,
+            price: parseFloat(priceProd.attributes.precio.value),
+            DescriptionProduct: descProd.attributes.descProd.value,
+            total: value * parseFloat(priceProd.attributes.precio.value),
             tipoVenta: inputProd.attributes.typeinput.value
         }
 
@@ -277,8 +235,8 @@ function setValue(event, mult) {
     textArea.textContent = '';
 
     productos.forEach((a) => {
-        textArea.innerText += `· ${a.descripcion}: $${Number.parseFloat(a.precio).toFixed(2)} x ${a.peso} = $ ${Number.parseFloat(a.subTotal).toFixed(2)} \n`;
-        total += a.subTotal;
+        textArea.innerText += `· ${a.DescriptionProduct}: $${Number.parseFloat(a.price).toFixed(2)} x ${a.quantity} = $ ${Number.parseFloat(a.total).toFixed(2)} \n`;
+        total += a.total;
     });
 
 
@@ -318,14 +276,14 @@ function resumenVenta() {
     if (productos.length > 0) {
         let sum = 0;
         productos.forEach(value => {
-            sum += value.subTotal;
+            sum += value.total;
         });
 
         var tableData = productos.map(value => {
             return (
                 `<tr>
-                       <td class="table-products" style="border-right-color: #ffffff00;"><span class="text-muted">$ ${Number.parseFloat(value.precio).toFixed(2)} x ${value.peso} ${value.tipoVenta}</span>. - ${value.descripcion}</td>
-                       <td class="table-products" style="font-size: 12px; text-align: right;"><strong>$ ${Number.parseFloat(value.subTotal).toFixed(2)}</strong></td>
+                       <td class="table-products" style="border-right-color: #ffffff00;"><span class="text-muted">$ ${Number.parseFloat(value.price).toFixed(2)} x ${value.quantity} ${value.tipoVenta}</span>. - ${value.DescriptionProduct}</td>
+                       <td class="table-products" style="font-size: 12px; text-align: right;"><strong>$ ${Number.parseFloat(value.total).toFixed(2)}</strong></td>
                     </tr>`
             );
         }).join('');
@@ -345,42 +303,88 @@ function resumenVenta() {
 
 
 function finalizarVenta() {
+    const inputs = $("input.input-validate").serializeArray();
+    const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
+
+    if (inputs_without_value.length > 0) {
+        const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
+        toastr.warning(msg, "");
+        $(`input[name="${inputs_without_value[0].name}"]`).focus();
+        return;
+    }
+
+
+    if (document.getElementById("cboFormaPago").value == '') {
+        const msg = `Debe completaro el campo Forma de Pago`;
+        toastr.warning(msg, "");
+        return;
+    }
+
     if (productos.length > 0) {
 
         const model = structuredClone(BASIC_MODEL);
         model["nombre"] = $("#txtNombre").val();
         model["telefono"] = $("#txtTelefono").val();
         model["direccion"] = $("#txtDireccion").val();
-        model["metodoPago"] = $("#txtFormaPago").val();
+        model["metodoPago"] = $("#cboFormaPago").val();
         model["comentario"] = $("#txtComentario").val();
-
 
         var inputPhone = document.getElementById("txtPhone");
         var phone = inputPhone.attributes.phoneNumber.value;
 
         let sum = 0;
         productos.forEach(value => {
-            sum += value.subTotal;
+            sum += value.total;
         });
 
         var text = productos.map(value => {
             return (
-                ` - ${value.descripcion}: ${value.peso} ${value.tipoVenta}\n`
+                ` - ${value.DescriptionProduct}: ${value.quantity} ${value.tipoVenta}\n`
             );
         }).join('');
 
         text = text.concat(`\n
                 · Nombre: ${model.nombre} \n` +
-                `· Telefono: ${model.telefono} \n` +
-                `· Direccion: ${model.direccion} \n` +
-                `· Metodo de pago: ${model.metodoPago} \n` +
-                `· Comentario: ${model.comentario} \n\n` +
-                `· TOTAL: ${Number.parseFloat(sum).toFixed(2)}`);
-        d
+            `· Telefono: ${model.telefono} \n` +
+            `· Direccion: ${model.direccion} \n` +
+            `· Metodo de pago: ${model.metodoPago} \n` +
+            `· Comentario: ${model.comentario} \n\n` +
+            `· TOTAL: ${Number.parseFloat(sum).toFixed(2)}`);
+
 
         $("#modalData").modal("hide")
 
-        window.open('https://wa.me/' + phone + '?text=' + text, '_blank');
+        //window.open('https://wa.me/' + phone + '?text=' + text, '_blank');
+
+
+        const sale = {
+            idFormaDePago: model.metodoPago,
+            total: sum,
+            detailSales: productos,
+            nombre: model.nombre,
+            direccion: model.direccion,
+            telefono: model.telefono,
+            comentario: model.comentario,
+            estado: 0
+        }
+
+
+        fetch("/Shop/RegisterSale", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json;charset=utf-8' },
+            body: JSON.stringify(sale)
+        }).then(response => {
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+
+            if (responseJson.state) {
+
+                swal("Registrado!", `MUCHAS GRACIAS!!`, "success");
+
+            }
+        }).catch((error) => {
+            $("#btnFinalizeSale" + currentTabId).closest("div.card-body").LoadingOverlay("hide")
+        })
     }
 }
 
@@ -390,5 +394,5 @@ const BASIC_MODEL = {
     direccion: '',
     metodoPago: '',
     comentario: '',
-    total:''
+    total: ''
 }

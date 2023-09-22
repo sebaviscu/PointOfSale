@@ -58,5 +58,12 @@ namespace PointOfSale.Model
             B = 1,
             C = 2,
         }
+
+        public enum EstadoVentaWeb
+        {
+            Nueva,
+            Finalizada,
+            Cerrada
+        }
     }
 }

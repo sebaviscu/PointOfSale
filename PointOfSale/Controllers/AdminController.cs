@@ -442,6 +442,14 @@ namespace PointOfSale.Controllers
             return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetTipoVentaWeb()
+        {
+            List<VMTypeDocumentSale> listUsers = _mapper.Map<List<VMTypeDocumentSale>>(await _typeDocumentSaleService.ListWeb());
+            return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> CreateTipoVenta([FromBody] VMTypeDocumentSale vmUser)
         {

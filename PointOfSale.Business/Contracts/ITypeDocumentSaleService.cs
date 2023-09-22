@@ -15,5 +15,6 @@ namespace PointOfSale.Business.Contracts
         Task<bool> Delete(int idUser);
         Task<List<TypeDocumentSale>> GetActive();
         Task<TypeDocumentSale> Get(int idTipoVenta);
+        Task<List<TypeDocumentSale>> ListWeb();
     }
 }

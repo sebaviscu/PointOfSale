@@ -21,7 +21,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<TypeDocumentSale> Get(int idTipoVenta)
         {
-            return await _repository.First(_=>_.IdTypeDocumentSale == idTipoVenta);
+            return await _repository.First(_ => _.IdTypeDocumentSale == idTipoVenta);
         }
 
         public async Task<List<TypeDocumentSale>> List()
@@ -73,6 +73,7 @@ namespace PointOfSale.Business.Services
                 TypeDocumentSale_edit.Description = entity.Description;
                 TypeDocumentSale_edit.IsActive = entity.IsActive;
                 TypeDocumentSale_edit.Invoice = entity.Invoice;
+                TypeDocumentSale_edit.Web = entity.Web;
 
                 bool response = await _repository.Edit(TypeDocumentSale_edit);
                 if (!response)
@@ -103,6 +104,11 @@ namespace PointOfSale.Business.Services
             {
                 throw;
             }
+        }
+        public async Task<List<TypeDocumentSale>> ListWeb()
+        {
+            IQueryable<TypeDocumentSale> query = await _repository.Query(_ => _.Web);
+            return query.OrderBy(_ => _.Description).ToList();
         }
 
     }

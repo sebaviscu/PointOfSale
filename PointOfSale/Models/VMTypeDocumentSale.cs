@@ -6,6 +6,7 @@
         public string? Description { get; set; }
         public bool IsActive { get; set; }
         public bool Invoice { get; set; }
+        public bool Web { get; set; }
 
     }
 }

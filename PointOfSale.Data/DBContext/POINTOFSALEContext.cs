@@ -36,6 +36,7 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<Promocion> Promocion { get; set; } = null!;
         public virtual DbSet<Gastos> Gastos { get; set; } = null!;
         public virtual DbSet<TipoDeGasto> TipoDeGasto { get; set; } = null!;
+        public virtual DbSet<VentaWeb> VentaWeb { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -43,6 +44,29 @@ namespace PointOfSale.Data.DBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<VentaWeb>(entity =>
+            {
+                entity.HasKey(e => e.IdVentaWeb);
+
+                entity.ToTable("VentaWeb");
+
+                entity.Property(e => e.IdVentaWeb).HasColumnName("idVentaWeb");
+
+                entity.Property(e => e.RegistrationDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("registrationDate")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Total)
+                    .HasColumnType("decimal(10, 2)")
+                    .HasColumnName("total");
+
+                entity.HasOne(d => d.FormaDePago)
+                    .WithMany(p => p.VentasWeb)
+                    .HasForeignKey(d => d.IdFormaDePago);
+            });
+
             modelBuilder.Entity<TipoDeGasto>(entity =>
             {
                 entity.HasKey(e => e.IdTipoGastos);
@@ -253,6 +277,10 @@ namespace PointOfSale.Data.DBContext
                     .WithMany(p => p.DetailSales)
                     .HasForeignKey(d => d.IdSale)
                     .HasConstraintName("FK__DetailSal__idSal__300424B4");
+
+                entity.HasOne(d => d.VentaWeb)
+                    .WithMany(p => p.DetailSales)
+                    .HasForeignKey(d => d.IdVentaWeb);
             });
 
             modelBuilder.Entity<Menu>(entity =>

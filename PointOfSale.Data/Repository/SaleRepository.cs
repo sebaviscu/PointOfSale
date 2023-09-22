@@ -69,6 +69,41 @@ namespace PointOfSale.Data.Repository
             return SaleGenerated;
         }
 
+
+        public async Task<VentaWeb> RegisterWeb(VentaWeb entity)
+        {
+            var SaleGenerated = new VentaWeb();
+            using (var transaction = _dbcontext.Database.BeginTransaction())
+            {
+                try
+                {
+                    entity.RegistrationDate = DateTime.Now;
+                    foreach (DetailSale dv in entity.DetailSales)
+                    {
+                        Product product_found = _dbcontext.Products.Where(p => p.IdProduct == dv.IdProduct).First();
+
+                        product_found.Quantity = product_found.Quantity - dv.Quantity;
+                        _dbcontext.Products.Update(product_found);
+                    }
+                    await _dbcontext.SaveChangesAsync();
+
+                    await _dbcontext.VentaWeb.AddAsync(entity);
+                    await _dbcontext.SaveChangesAsync();
+
+                    SaleGenerated = entity;
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+
+            return SaleGenerated;
+        }
+
         public async Task<List<DetailSale>> Report(DateTime StarDate, DateTime EndDate)
         {
             List<DetailSale> listSummary = await _dbcontext.DetailSales

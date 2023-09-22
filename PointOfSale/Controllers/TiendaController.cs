@@ -28,8 +28,17 @@ namespace PointOfSale.Controllers
 		[HttpGet]
 		public async Task<IActionResult> GetTienda()
 		{
-			List<VMTienda> vmTiendaList = _mapper.Map<List<VMTienda>>(await _TiendaService.List());
+			try
+			{
+List<VMTienda> vmTiendaList = _mapper.Map<List<VMTienda>>(await _TiendaService.List());
 			return StatusCode(StatusCodes.Status200OK, new { data = vmTiendaList });
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+			return default;
 		}
 
         [HttpGet]

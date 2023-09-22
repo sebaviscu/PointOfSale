@@ -30,6 +30,7 @@ namespace PointOfSale.Model
         public string? Tiktok { get; set; }
         public string? Twitter { get; set; }
         public string? Youtube { get; set; }
+        public bool? Principal { get; set; }
         public IEnumerable<Turno>? Turnos { get; set; }
         public IEnumerable<User>? Usuarios { get; set; }
         public DateTime? ModificationDate { get; set; }

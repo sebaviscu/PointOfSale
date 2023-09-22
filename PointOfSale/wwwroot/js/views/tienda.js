@@ -10,24 +10,25 @@ const BASIC_MODEL = {
     email: "",
     telefono: "",
     direccion: "",
-    //nombreImpresora: "",
-    //logo: "",
-    //montoEnvioGratis: 0,
-    //aumentoWeb: 0,
-    //whatsapp: "",
-    //lunes: "",
-    //martes: "",
-    //miercoles: "",
-    //jueves: "",
-    //viernes: "",
-    //sabado: "",
-    //domingo: "",
-    //feriado: "",
-    //facebook: "",
-    //instagram: "",
-    //twitter: "",
-    //tiktok: "",
-    //youtube: ""
+    nombreImpresora: "",
+    logo: "",
+    montoEnvioGratis: 0,
+    aumentoWeb: 0,
+    whatsapp: "",
+    lunes: "",
+    martes: "",
+    miercoles: "",
+    jueves: "",
+    viernes: "",
+    sabado: "",
+    domingo: "",
+    feriado: "",
+    facebook: "",
+    instagram: "",
+    twitter: "",
+    tiktok: "",
+    youtube: "",
+    principal: 0
 }
 
 
@@ -52,6 +53,14 @@ $(document).ready(function () {
             { "data": "nombre" },
             { "data": "telefono" },
             { "data": "direccion" },
+            {
+                "data": "principal", render: function (data) {
+                    if (data == 1)
+                        return '<input type="checkbox" checked disabled>';
+                    else
+                        return '<input type="checkbox" disabled>';
+                }
+            },
             {
                 "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
                     '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-trash-can"></i></button>',
@@ -101,6 +110,7 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtTwitter").val(model.twitter);
     $("#txtYouTube").val(model.youtube);
     $("#imgTienda").attr("src", `data:image/png;base64,${model.photoBase64}`);
+    document.getElementById("cboPrincipal").checked = model.principal;
 
     if (model.modificationUser === null)
         document.getElementById("divModif").style.display = 'none';
@@ -154,6 +164,7 @@ $("#btnSave").on("click", function () {
     model["tiktok"] = $("#txtTikTok").val();
     model["twitter"] = $("#txtTwitter").val();
     model["youtube"] = $("#txtYouTube").val();
+    model["principal"] = document.querySelector('#cboPrincipal').checked;
 
     const inputPhoto = document.getElementById('txtLogo');
     model["photo"] = inputPhoto.files[0];

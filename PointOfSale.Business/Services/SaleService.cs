@@ -300,5 +300,20 @@ namespace PointOfSale.Business.Services
 
             return query.Include(dv => dv.DetailSales).FirstOrDefault();
         }
+
+
+        public async Task<VentaWeb> RegisterWeb(VentaWeb entity)
+        {
+            try
+            {
+                var sale = await _repositorySale.RegisterWeb(entity);
+                //var factura = await _afipFacturacionService.FacturarAsync(new FacturaAFIP());
+                return sale;
+            }
+            catch
+            {
+                throw;
+            }
+        }
     }
 }

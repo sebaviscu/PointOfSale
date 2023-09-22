@@ -9,44 +9,59 @@ using System.Threading.Tasks;
 
 namespace PointOfSale.Business.Services
 {
-	public class TiendaService : ITiendaService
-	{
-		private readonly IGenericRepository<Tienda> _repository;
-		public TiendaService(IGenericRepository<Tienda> repository)
-		{
-			_repository = repository;
-		}
+    public class TiendaService : ITiendaService
+    {
+        private readonly IGenericRepository<Tienda> _repository;
+        public TiendaService(IGenericRepository<Tienda> repository)
+        {
+            _repository = repository;
+        }
 
-		public async Task<List<Tienda>> List()
-		{
+        public async Task<List<Tienda>> List()
+        {
 
-			IQueryable<Tienda> query = await _repository.Query();
-			return query.OrderBy(_ => _.Nombre).ToList();
-		}
+            IQueryable<Tienda> query = await _repository.Query();
+            return query.OrderBy(_ => _.Nombre).ToList();
+        }
 
-		public async Task<Tienda> Add(Tienda entity)
-		{
-			try
-			{
-				Tienda Tienda_created = await _repository.Add(entity);
-				if (Tienda_created.IdTienda == 0)
-					throw new TaskCanceledException("Tienda no se pudo crear.");
+        public async Task<Tienda> Add(Tienda entity)
+        {
+            try
+            {
+                var list = await List();
 
-				return Tienda_created;
-			}
-			catch
-			{
-				throw;
-			}
-		}
+                if (list.Count() == 0)
+                {
+                    entity.Principal = true;
+                }
+                else if (list.Count() > 0 && entity.Principal == true)
+                {
+                    foreach (var l in list)
+                    {
+                        l.Principal= false;
+                        await _repository.Edit(l);
+                    }
+                }
 
-		public async Task<Tienda> Edit(Tienda entity)
-		{
-			try
-			{
-				Tienda Tienda_found = await _repository.Get(c => c.IdTienda == entity.IdTienda);
+                Tienda Tienda_created = await _repository.Add(entity);
+                if (Tienda_created.IdTienda == 0)
+                    throw new TaskCanceledException("Tienda no se pudo crear.");
 
-				Tienda_found.Nombre = entity.Nombre;
+                return Tienda_created;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task<Tienda> Edit(Tienda entity)
+        {
+            try
+            {
+                Tienda Tienda_found = await _repository.Get(c => c.IdTienda == entity.IdTienda);
+
+                Tienda_found.Nombre = entity.Nombre;
                 Tienda_found.AumentoWeb = entity.AumentoWeb;
                 Tienda_found.Direccion = entity.Direccion;
                 Tienda_found.Telefono = entity.Telefono;
@@ -67,43 +82,59 @@ namespace PointOfSale.Business.Services
                 Tienda_found.Sabado = entity.Sabado;
                 Tienda_found.Domingo = entity.Domingo;
                 Tienda_found.Feriado = entity.Feriado;
-				Tienda_found.MontoEnvioGratis = entity.MontoEnvioGratis;
+                Tienda_found.MontoEnvioGratis = entity.MontoEnvioGratis;
+                Tienda_found.Principal = entity.Principal;
 
                 Tienda_found.ModificationDate = DateTime.Now;
-				Tienda_found.ModificationUser = entity.ModificationUser;
+                Tienda_found.ModificationUser = entity.ModificationUser;
 
-				bool response = await _repository.Edit(Tienda_found);
+                var list = await List();
 
-				if (!response)
-					throw new TaskCanceledException("Tienda no se pudo cambiar.");
+                if (list.Count() == 1)
+                {
+                    Tienda_found.Principal = true;
+                }
+                else if (list.Count() > 1 && entity.Principal == true)
+                {
+                    foreach (var l in list)
+                    {
+                        l.Principal = false;
+                        await _repository.Edit(l);
+                    }
+                }
 
-				return Tienda_found;
-			}
-			catch
-			{
-				throw;
-			}
-		}
+                bool response = await _repository.Edit(Tienda_found);
 
-		public async Task<bool> Delete(int idTienda)
-		{
-			try
-			{
-				Tienda Tienda_found = await _repository.Get(c => c.IdTienda == idTienda);
+                if (!response)
+                    throw new TaskCanceledException("Tienda no se pudo cambiar.");
 
-				if (Tienda_found == null)
-					throw new TaskCanceledException("The Tienda no existe");
+                return Tienda_found;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> Delete(int idTienda)
+        {
+            try
+            {
+                Tienda Tienda_found = await _repository.Get(c => c.IdTienda == idTienda);
+
+                if (Tienda_found == null)
+                    throw new TaskCanceledException("The Tienda no existe");
 
 
-				bool response = await _repository.Delete(Tienda_found);
+                bool response = await _repository.Delete(Tienda_found);
 
-				return response;
-			}
-			catch (Exception ex)
-			{
-				throw;
-			}
-		}
+                return response;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
 
 
         public async Task<Tienda> Get(int tiendaId)
@@ -127,7 +158,7 @@ namespace PointOfSale.Business.Services
         {
             try
             {
-                Tienda Tienda_found = await _repository.First();
+                Tienda Tienda_found = await _repository.First(_ => _.Principal == true);
 
                 if (Tienda_found == null)
                     throw new TaskCanceledException("Tienda no se pudo encontrar.");
