@@ -1,16 +1,8 @@
-﻿using AFIP.Facturacion.Model.Factura;
-using AFIP.Facturacion.Services;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services
 {
@@ -22,7 +14,6 @@ namespace PointOfSale.Business.Services
         private readonly ITypeDocumentSaleService _rTypeNumber;
         private readonly IProductService _rProduct;
         private readonly ITurnoService _turnoService;
-        private readonly IAFIPFacturacionService _afipFacturacionService;
 
         public SaleService(
             IGenericRepository<Product> repositoryProduct,
@@ -30,8 +21,7 @@ namespace PointOfSale.Business.Services
             IGenericRepository<Cliente> repositoryCliente,
             ITypeDocumentSaleService rTypeNumber,
             IProductService rProduct,
-            ITurnoService turnoService,
-            IAFIPFacturacionService afipFacturacionService)
+            ITurnoService turnoService)
         {
             _repositoryProduct = repositoryProduct;
             _repositorySale = repositorySale;
@@ -39,7 +29,6 @@ namespace PointOfSale.Business.Services
             _rTypeNumber = rTypeNumber;
             _rProduct = rProduct;
             _turnoService = turnoService;
-            _afipFacturacionService = afipFacturacionService;
         }
 
 

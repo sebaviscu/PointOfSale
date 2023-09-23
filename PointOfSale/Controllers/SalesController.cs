@@ -1,14 +1,10 @@
-﻿using AFIP.Facturacion.Model;
-using AFIP.Facturacion.Services;
-using AutoMapper;
+﻿using AutoMapper;
 using DinkToPdf;
 using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PointOfSale.Business.Contracts;
-using PointOfSale.Business.Services;
 using PointOfSale.Model;
-using PointOfSale.Model.Factura;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
 using System.Security.Claims;
@@ -26,7 +22,6 @@ namespace PointOfSale.Controllers
         private readonly IClienteService _clienteService;
         private readonly ITicketService _ticketService;
         private readonly ITiendaService _tiendaService;
-        private readonly IAFIPFacturacionService _aFIPFacturacionService;
 
         public SalesController(
             ITypeDocumentSaleService typeDocumentSaleService,
@@ -35,8 +30,7 @@ namespace PointOfSale.Controllers
             IConverter converter,
             IClienteService clienteService,
             ITicketService ticketService,
-            ITiendaService tiendaService,
-            IAFIPFacturacionService aFIPFacturacionService)
+            ITiendaService tiendaService)
         {
             _typeDocumentSaleService = typeDocumentSaleService;
             _saleService = saleService;
@@ -45,7 +39,6 @@ namespace PointOfSale.Controllers
             _clienteService = clienteService;
             _ticketService = ticketService;
             _tiendaService = tiendaService;
-            _aFIPFacturacionService = aFIPFacturacionService;
         }
         public IActionResult NewSale()
         {

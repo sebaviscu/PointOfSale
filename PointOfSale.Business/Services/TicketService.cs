@@ -1,13 +1,6 @@
-﻿using AFIP.Facturacion.Model;
-using PointOfSale.Business.Contracts;
+﻿using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
-using PointOfSale.Model.Factura;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PointOfSale.Business.Services
 {
