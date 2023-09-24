@@ -7,7 +7,6 @@ var productos = [];
 
 (function ($) {
 
-
     fetch("/Admin/GetTipoVentaWeb")
         .then(response => {
             return response.ok ? response.json() : Promise.reject(response);
@@ -27,13 +26,13 @@ var productos = [];
     $("#text-area-products").hide();
     $("#btnTrash").hide();
 
-    $(".less-button").on("click", function () {
-        setValue(event.currentTarget, -1);
-    })
+    //$(".less-button").on("click", function () {
+    //    setValue(event.currentTarget, -1);
+    //})
 
-    $(".pluss-button").on("click", function () {
-        setValue(event.currentTarget, 1);
-    })
+    //$(".pluss-button").on("click", function () {
+    //    setValue(event.currentTarget, 1);
+    //})
 
     $("#btnTrash").on("click", function () {
         clean();
@@ -191,74 +190,95 @@ var productos = [];
 
 function selectCategoria(event) {
 
-    var idCat = $(event).attr('cat-id');
-}
+    var idCat = parseInt($(event).attr('cat-id'));
 
-function setValue(event, mult) {
+    $.ajax({
+        url: window.location.origin + '/Shop/GetProductsByCategory?idCategoria=' + idCat,
+        type: "get",
+        success: function (result) {
+            $("#dvCategoryResults").html(result);
+            var elementosInput = document.querySelectorAll('.input-producto');
 
-    var idProd = $(event).attr('idProduct');
-    var inputProd = document.getElementById("prod-" + idProd)
-    var priceProd = document.getElementById("price-" + idProd)
-    var descProd = document.getElementById("desc-" + idProd)
+            elementosInput.forEach(function (elemento) {
+                let idProd = elemento.id.replace("prod-", "");
+                let productFind = productos.find(item => item.idProduct === idProd);
 
-    var value = parseFloat(inputProd.value);
+                if (productFind) {
 
-    if (mult === -1 && value === 0) {
-        return;
-    }
-
-    if (inputProd.attributes.typeinput.value === "U") {
-        value = value + (1 * mult);
-    }
-    else {
-        value = value + (0.5 * mult);
-    }
-    opacityButtonArea(value, mult, idProd);
-
-    inputProd.value = value
-
-    let productFind = productos.find(item => item.idProduct === idProd);
-    if (productFind) {
-        productFind.quantity = value;
-        productFind.total = value * productFind.price;
-
-        if (value === 0) {
-            productos = productos.filter(item => item.idProduct != idProd);
+                    elemento.value = productFind.quantity;
+                    let elementArea = document.querySelector('#bottom-area-' + idProd);
+                    elementArea.style.opacity = 1;
+                }
+            });
         }
-    }
-    else {
-        var prod = {
-            idProduct: idProd,
-            quantity: value,
-            price: parseFloat(priceProd.attributes.precio.value),
-            DescriptionProduct: descProd.attributes.descProd.value,
-            total: value * parseFloat(priceProd.attributes.precio.value),
-            tipoVenta: inputProd.attributes.typeinput.value
-        }
-
-        productos.push(prod);
-    }
-    let total = 0;
-    var textArea = document.getElementById("text-area-products");
-    textArea.textContent = '';
-
-    productos.forEach((a) => {
-        textArea.innerText += `· ${a.DescriptionProduct}: $${Number.parseFloat(a.price).toFixed(2)} x ${a.quantity} = $ ${Number.parseFloat(a.total).toFixed(2)} \n`;
-        total += a.total;
     });
-
-
-    if (productos.length > 0) {
-        $("#text-area-products").show();
-        $("#btnTrash").show();
-    }
-    else {
-        $("#text-area-products").hide();
-        $("#btnTrash").hide();
-    }
-
-    document.getElementById("btnCompras").innerText = `Total: $ ${total}`;
 }
+
+//function setValue(event, mult) {
+
+//    var idProd = $(event).attr('idProduct');
+//    var inputProd = document.getElementById("prod-" + idProd)
+//    var priceProd = document.getElementById("price-" + idProd)
+//    var descProd = document.getElementById("desc-" + idProd)
+
+//    var value = parseFloat(inputProd.value);
+
+//    if (mult === -1 && value === 0) {
+//        return;
+//    }
+
+//    if (inputProd.attributes.typeinput.value === "U") {
+//        value = value + (1 * mult);
+//    }
+//    else {
+//        value = value + (0.5 * mult);
+//    }
+//    opacityButtonArea(value, mult, idProd);
+
+//    inputProd.value = value
+
+//    let productFind = productos.find(item => item.idProduct === idProd);
+//    if (productFind) {
+//        productFind.quantity = value;
+//        productFind.total = value * productFind.price;
+
+//        if (value === 0) {
+//            productos = productos.filter(item => item.idProduct != idProd);
+//        }
+//    }
+//    else {
+//        var prod = {
+//            idProduct: idProd,
+//            quantity: value,
+//            price: parseFloat(priceProd.attributes.precio.value),
+//            DescriptionProduct: descProd.attributes.descProd.value,
+//            total: value * parseFloat(priceProd.attributes.precio.value),
+//            tipoVenta: inputProd.attributes.typeinput.value
+//        }
+
+//        productos.push(prod);
+//    }
+//    let total = 0;
+//    var textArea = document.getElementById("text-area-products");
+//    textArea.textContent = '';
+
+//    productos.forEach((a) => {
+//        textArea.innerText += `· ${a.DescriptionProduct}: $${Number.parseFloat(a.price).toFixed(2)} x ${a.quantity} = $ ${Number.parseFloat(a.total).toFixed(2)} \n`;
+//        total += a.total;
+//    });
+
+
+//    if (productos.length > 0) {
+//        $("#text-area-products").show();
+//        $("#btnTrash").show();
+//    }
+//    else {
+//        $("#text-area-products").hide();
+//        $("#btnTrash").hide();
+//    }
+
+//    document.getElementById("btnCompras").innerText = `Total: $ ${total}`;
+//}
 
 function opacityButtonArea(value, mult, idProd) {
 
@@ -278,6 +298,15 @@ function clean() {
     $("#text-area-products").hide();
     $("#btnTrash").hide();
     productos = [];
+
+    var elementosInput = document.querySelectorAll('.input-producto');
+
+    elementosInput.forEach(function (elemento) {
+        elemento.value = 0;
+        let idProd = elemento.id.replace("prod-", "");
+        let elementArea = document.querySelector('#bottom-area-' + idProd);
+        elementArea.style.removeProperty('opacity');
+    });
 }
 
 function resumenVenta() {
@@ -362,7 +391,7 @@ function finalizarVenta() {
 
         $("#modalData").modal("hide")
 
-        //window.open('https://wa.me/' + phone + '?text=' + text, '_blank');
+        window.open('https://wa.me/' + phone + '?text=' + text, '_blank');
 
 
         const sale = {

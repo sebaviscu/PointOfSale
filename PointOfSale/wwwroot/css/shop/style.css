@@ -545,7 +545,7 @@ pre {
     margin-right: auto;
     margin-left: auto;
 }
-
+/*
 @media (min-width: 576px) {
     .container {
         max-width: 540px;
@@ -568,7 +568,7 @@ pre {
     .container {
         max-width: 1140px;
     }
-}
+}*/
 
 .container-fluid {
     width: 100%;

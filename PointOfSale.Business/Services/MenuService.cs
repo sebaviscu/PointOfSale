@@ -62,10 +62,9 @@ namespace PointOfSale.Business.Services
 
             var user = tbUser.FirstOrDefault();
             IQueryable<RolMenu> menuUsers = await _repositoryRolMenu.Query(_=>_.IdRol == user.IdRol);
+
             var idMenuUsers = menuUsers.Select(_=>_.IdMenu).ToList();
-
             listMenu.AddRange(tbMenu.Where(_ => _.IdMenuParent == null && idMenuUsers.Contains(_.IdMenu)));
-
 
             return listMenu.OrderBy(_ => _.Orden).ToList();
         }

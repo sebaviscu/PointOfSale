@@ -175,7 +175,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<Product>> GetRandomProducts()
         {
-            var prods = await List();
+            var prods = await ListActive();
 
             return prods.Take(8).ToList();
 

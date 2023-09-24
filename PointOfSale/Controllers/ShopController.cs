@@ -39,16 +39,24 @@ namespace PointOfSale.Controllers
             return View("Index", shop);
         }
 
-        public async Task<IActionResult> Lista(int idCategoria)
+        public async Task<IActionResult> Lista()
         {
             ClaimsPrincipal claimuser = HttpContext.User;
             var tienda = _mapper.Map<VMTienda>(await _tiendaService.GetTiendaPrincipal());
 
             var shop = new VMShop(tienda);
             shop.IsLogin = claimuser.Identity.IsAuthenticated;
-            shop.Products = _mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategory(idCategoria));
-            shop.Categorias = _mapper.Map<List<VMCategory>>(await _categoryService.ListActive());
+            shop.Products = _mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategory(0));
+            var list = _mapper.Map<List<VMCategory>>(await _categoryService.ListActive());
+            shop.Categorias.AddRange(list);
             return View("Lista", shop);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetProductsByCategory(int idCategoria)
+        {
+            var products = _mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategory(idCategoria));
+            return PartialView("PVProducts", products);
         }
 
         public async Task<IActionResult> VentaWeb()
