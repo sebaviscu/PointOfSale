@@ -89,7 +89,7 @@ namespace PointOfSale.Business.Services
                 product_edit.Brand = entity.Brand;
                 product_edit.Description = entity.Description;
                 product_edit.IdCategory = entity.IdCategory;
-                product_edit.Quantity = entity.Quantity;
+                product_edit.Quantity = entity.Quantity < product_edit.Quantity ? product_edit.Quantity : entity.Quantity; // que no sea menor al que ya tiene
                 product_edit.Price = entity.Price;
                 product_edit.CostPrice = entity.CostPrice;
                 product_edit.PriceWeb = entity.PriceWeb;
@@ -102,6 +102,7 @@ namespace PointOfSale.Business.Services
                 product_edit.IdProveedor = entity.IdProveedor;
                 product_edit.TipoVenta = entity.TipoVenta;
                 product_edit.Comentario = entity.Comentario;
+                product_edit.Minimo = entity.Minimo;
 
                 bool response = await _repository.Edit(product_edit);
                 if (!response)
@@ -137,12 +138,13 @@ namespace PointOfSale.Business.Services
                     product_edit.CostPrice = data.Costo != "" ? Convert.ToDecimal(data.Costo) : product_edit.CostPrice;
                     product_edit.PorcentajeProfit = data.Profit != "" ? Convert.ToInt32(data.Profit) : product_edit.PorcentajeProfit;
                     product_edit.IsActive = data.IsActive;
+                    product_edit.Comentario = data.Comentario;
                     product_edit.ModificationUser = user;
                     product_edit.ModificationDate = DateTime.Now;
 
                     bool response = await _repository.Edit(product_edit);
                     if (!response)
-                        throw new TaskCanceledException("The product could not be modified");
+                        throw new TaskCanceledException($"No se ha podido actualizar el producto con Id: {p}");
                 }
                 return true;
             }

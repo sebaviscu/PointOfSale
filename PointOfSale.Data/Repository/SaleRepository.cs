@@ -37,18 +37,7 @@ namespace PointOfSale.Data.Repository
                     }
                     await _dbcontext.SaveChangesAsync();
 
-                    CorrelativeNumber correlative = _dbcontext.CorrelativeNumbers.Where(n => n.Management == "Sale").First();
-
-                    correlative.LastNumber = correlative.LastNumber + 1;
-                    correlative.DateUpdate = DateTime.Now;
-
-                    _dbcontext.CorrelativeNumbers.Update(correlative);
-                    await _dbcontext.SaveChangesAsync();
-
-
-                    string ceros = string.Concat(Enumerable.Repeat("0", correlative.QuantityDigits.Value));
-                    string saleNumber = ceros + correlative.LastNumber.ToString();
-                    saleNumber = saleNumber.Substring(saleNumber.Length - correlative.QuantityDigits.Value, correlative.QuantityDigits.Value);
+                    string saleNumber = await GetLastSerialNumberSale();
 
                     entity.SaleNumber = saleNumber;
 
@@ -69,6 +58,22 @@ namespace PointOfSale.Data.Repository
             return SaleGenerated;
         }
 
+        public async Task<string> GetLastSerialNumberSale()
+        {
+            CorrelativeNumber correlative = _dbcontext.CorrelativeNumbers.Where(n => n.Management == "Sale").First();
+
+            correlative.LastNumber = correlative.LastNumber + 1;
+            correlative.DateUpdate = DateTime.Now;
+
+            _dbcontext.CorrelativeNumbers.Update(correlative);
+            await _dbcontext.SaveChangesAsync();
+
+
+            string ceros = string.Concat(Enumerable.Repeat("0", correlative.QuantityDigits.Value));
+            string saleNumber = ceros + correlative.LastNumber.ToString();
+            saleNumber = saleNumber.Substring(saleNumber.Length - correlative.QuantityDigits.Value, correlative.QuantityDigits.Value);
+            return saleNumber;
+        }
 
         public async Task<VentaWeb> RegisterWeb(VentaWeb entity)
         {

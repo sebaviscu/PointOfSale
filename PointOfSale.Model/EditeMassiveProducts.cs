@@ -14,5 +14,6 @@ namespace PointOfSale.Model
         public string? Profit { get; set; }
         public string? Costo { get; set; }
         public bool? IsActive { get; set; }
+        public string? Comentario { get; set; }
     }
 }

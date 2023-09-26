@@ -12,6 +12,7 @@ namespace PointOfSale.Business.Contracts
         Task<List<VentaWeb>> List();
 
         Task<VentaWeb> Edit(VentaWeb entity);
+        Task<VentaWeb> Get(int idVentaWeb);
 
     }
 }

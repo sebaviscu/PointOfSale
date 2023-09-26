@@ -17,10 +17,11 @@ namespace PointOfSale.Business.Services
             _productService = productService;
             _repository = repository;
         }
+
         public async Task<List<VentaWeb>> List()
         {
             IQueryable<VentaWeb> query = await _repository.Query();
-            return query.Include(_=>_.DetailSales).ToList();
+            return query.Include(_=>_.DetailSales).Include(_=>_.FormaDePago).ToList();
         }
 
 
@@ -40,12 +41,20 @@ namespace PointOfSale.Business.Services
                 if (!response)
                     throw new TaskCanceledException("Venta Web no se pudo cambiar.");
 
+                var s = new Sale();
+
                 return VentaWeb_found;
             }
             catch
             {
                 throw;
             }
+        }
+
+        public async Task<VentaWeb> Get(int idVentaWeb)
+        {
+            IQueryable<VentaWeb> query = await _repository.Query(_=>_.IdVentaWeb == idVentaWeb);
+            return query.Include(_ => _.DetailSales).Include(_ => _.FormaDePago).First();
         }
     }
 }

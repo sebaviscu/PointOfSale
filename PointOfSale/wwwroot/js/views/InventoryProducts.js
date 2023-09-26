@@ -20,7 +20,8 @@ const BASIC_MODEL = {
     costPrice: "",
     tipoVenta: "",
     idProveedor: "",
-    comentario:""
+    comentario: "",
+    minimo: 0
 }
 
 const BASIC_MASSIVE_EDIT = {
@@ -105,7 +106,8 @@ $(document).ready(function () {
             { "data": "nameProveedor" },
             { "data": "price" },
             {
-                "data": "isActive", render: function (data) {
+                "data": "isActive",
+                "className": "text-center", render: function (data) {
                     if (data == 1)
                         return '<span class="badge badge-info">Activo</span>';
                     else
@@ -117,7 +119,8 @@ $(document).ready(function () {
                     '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-trash-can"></i></button>',
                 "orderable": false,
                 "searchable": false,
-                "width": "100px"
+                "width": "130px",
+                "className": "text-center"
             }
         ],
         order: [[0, "desc"]],
@@ -196,6 +199,7 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtDescription").val(model.description);
     $("#cboCategory").val(model.idCategory == 0 ? $("#cboCategory option:first").val() : model.idCategory);
     $("#txtQuantity").val(model.quantity);
+    $("#txtMinimo").val(model.minimo);
     $("#txtPrice").val(model.price);
     $("#txtPriceWeb").val(model.priceWeb);
     $("#txtProfit").val(model.porcentajeProfit);
@@ -248,6 +252,7 @@ function saveMassiveProducts() {
     model["priceWeb"] = $("#txtPriceWeb").val();
     model["profit"] = $("#txtProfit").val();
     model["costo"] = $("#txtCosto").val();
+    model["comentario"] = $("#txtComentario").val();
     model["isActive"] = $("#cboState").val() == '1' ? true : false;
 
     fetch("/Inventory/EditMassiveProducts", {
@@ -300,6 +305,7 @@ function saveOneProduct() {
     model["description"] = $("#txtDescription").val();
     model["idCategory"] = $("#cboCategory").val();
     model["quantity"] = $("#txtQuantity").val();
+    model["minimo"] = $("#txtMinimo").val();
     model["price"] = $("#txtPrice").val();
     model["priceWeb"] = $("#txtPriceWeb").val();
     model["porcentajeProfit"] = $("#txtProfit").val();

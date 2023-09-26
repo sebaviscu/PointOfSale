@@ -22,7 +22,7 @@ namespace PointOfSale.Controllers
         private readonly IClienteService _clienteService;
         private readonly ITicketService _ticketService;
         private readonly ITiendaService _tiendaService;
-
+        private readonly IShopService _shopService;
         public SalesController(
             ITypeDocumentSaleService typeDocumentSaleService,
             ISaleService saleService,
@@ -30,7 +30,8 @@ namespace PointOfSale.Controllers
             IConverter converter,
             IClienteService clienteService,
             ITicketService ticketService,
-            ITiendaService tiendaService)
+            ITiendaService tiendaService,
+            IShopService shopService)
         {
             _typeDocumentSaleService = typeDocumentSaleService;
             _saleService = saleService;
@@ -39,6 +40,7 @@ namespace PointOfSale.Controllers
             _clienteService = clienteService;
             _ticketService = ticketService;
             _tiendaService = tiendaService;
+            _shopService = shopService;
         }
         public IActionResult NewSale()
         {
@@ -126,7 +128,7 @@ namespace PointOfSale.Controllers
                 if (imprimirTicket)
                 {
                     var tienda = await _tiendaService.Get(model.IdTienda);
-                    _ticketService.ImprimirTicket(sale_created, tienda);
+                    _ticketService.TicketSale(sale_created, tienda);
                 }
 
                 gResponse.State = true;
@@ -169,7 +171,16 @@ namespace PointOfSale.Controllers
         {
             var sale = await _saleService.GetSale(idSale);
             var tienda = await _tiendaService.Get(sale.IdTienda);
-            _ticketService.ImprimirTicket(sale, tienda);
+            _ticketService.TicketSale(sale, tienda);
+
+            return StatusCode(StatusCodes.Status200OK);
+        }
+
+        public async Task<IActionResult> PrintTicketVentaWeb(int idVentaWeb)
+        {
+            var ventaWeb = await _shopService.Get(idVentaWeb);
+            var tienda = await _tiendaService.Get(ventaWeb.IdTienda.Value);
+            _ticketService.TicketVentaWeb(ventaWeb, tienda);
 
             return StatusCode(StatusCodes.Status200OK);
         }

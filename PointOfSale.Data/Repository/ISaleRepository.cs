@@ -11,6 +11,7 @@ namespace PointOfSale.Data.Repository
     {
         Task<Sale> Register(Sale entity);
         Task<VentaWeb> RegisterWeb(VentaWeb entity);
+        Task<string> GetLastSerialNumberSale();
         Task<List<DetailSale>> Report(DateTime StartDate, DateTime EndDate);
 
     }

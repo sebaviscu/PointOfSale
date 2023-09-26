@@ -60,15 +60,20 @@
                 <form>
                     <input type="hidden" value="0" id="txtId">
                     <div class="row">
-                        <div class="col-sm-6">
-                            <div class="form-row">
-                                <h3>Productos</h3>
-                                <table border="1" style="border-color: darkgray;" class="col-md-12">
-                                    <tbody id="tableProductos">
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                         <div class="col-sm-6">
+                                    <table id="tbProducts" class="table table-sm table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Producto</th>
+                                                <th>Cantidad</th>
+                                                <th>Precio</th>
+                                                <th>Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
                         <div class="col-sm-6">
                             <div class="form-row">
                                 <div class="form-group col-sm-6">
@@ -135,6 +140,7 @@
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                <button class="btn btn-info" type="button" id="printTicket">Ticket</button>
                 <button type="button" class="btn btn-primary" id="btnSave">Guardar Cambios</button>
             </div>
         </div>

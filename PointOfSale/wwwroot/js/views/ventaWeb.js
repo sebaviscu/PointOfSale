@@ -72,6 +72,18 @@ $(document).ready(function () {
     });
 })
 
+
+$("#printTicket").click(function () {
+    let idVentaWeb = parseInt($("#txtId").val());
+
+    fetch(`/Sales/PrintTicketVentaWeb?idVentaWeb=${idVentaWeb}`)
+        .then(response => {
+            $("#modalData").modal("hide");
+            swal("Exitoso!", "Ticket impreso!", "success");
+        })
+
+})
+
 const openModal = (model = BASIC_MODEL) => {
     $("#txtId").val(model.idVentaWeb);
     $("#txtFecha").val(model.fecha);
@@ -83,6 +95,8 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtComentario").val(model.comentario);
     $("#cboState").val(model.estado);
 
+    document.querySelector('#cboState').disabled = model.estado > 0;
+
     if (model.modificationUser === null)
         document.getElementById("divModif").style.display = 'none';
     else {
@@ -93,20 +107,18 @@ const openModal = (model = BASIC_MODEL) => {
         $("#txtModificadoUsuario").val(model.modificationUser);
     }
 
+    $("#tbProducts tbody").html("")
 
-    var tableData = model.detailSales.map(value => {
-        return (
-            `<tr>
-                       <td class="table-products" style="border-right-color: #ffffff00;"><span class="text-muted">$ ${Number.parseFloat(value.price).toFixed(2)} x ${value.quantity} ${value.tipoVenta}</span>. - ${value.descriptionProduct}</td>
-                       <td class="table-products" style="font-size: 12px; text-align: right;"><strong>$ ${Number.parseFloat(value.total).toFixed(2)}</strong></td>
-                    </tr>`
-        );
-    }).join('');
-
-    const tableBody = document.querySelector("#tableProductos");
-    tableBody.innerHTML = tableData;
-
-
+    model.detailSales.forEach((item) => {
+        $("#tbProducts tbody").append(
+            $("<tr>").append(
+                $("<td>").text(item.descriptionProduct),
+                $("<td>").text(`${item.quantity} / ${item.tipoVenta}`),
+                $("<td>").text(`$ ${Number.parseFloat(item.price).toFixed(2)}`),
+                $("<td>").text(`$ ${Number.parseFloat(item.total).toFixed(2)}`)
+            )
+        )
+    })
 
     $("#modalData").modal("show")
 

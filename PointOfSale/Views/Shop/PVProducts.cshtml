@@ -41,8 +41,11 @@
                     <h3><a href="javascript:void(0)" descProd="@prod.Description" id="desc-@prod.IdProduct">@prod.Description</a></h3>
                     <div class="d-flex">
                         <div class="pricing">
+                            @{
+                                var precio = prod.PriceWeb != null ? prod.PriceWeb.ToString() : prod.Price;
+                            }
                             @*<p class="price"><span class="mr-2 price-dc">$@prod.Price</span><span class="price-sale">$@prod.PriceWeb</span></p>*@
-                            <p class="price"><span class="price-sale" id="price-@prod.IdProduct" precio="@prod.PriceWeb">$@prod.PriceWeb</span><small> / @prod.TipoVenta</small></p>
+                            <p class="price"><span class="price-sale" id="price-@prod.IdProduct" precio="@precio">$@precio</span><small> / @prod.TipoVenta</small></p>
                             <small>@prod.Comentario</small>
                         </div>
                     </div>

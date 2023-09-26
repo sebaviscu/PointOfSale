@@ -31,8 +31,6 @@ namespace PointOfSale.Business.Services
             _turnoService = turnoService;
         }
 
-
-
         public async Task<List<Product>> GetProducts(string search)
         {
             var list = new List<Product>();
@@ -285,19 +283,40 @@ namespace PointOfSale.Business.Services
 
         public async Task<Sale> GetSale(int idSale)
         {
-            var query  = await _repositorySale.Query(v => v.IdSale == idSale);
+            var query = await _repositorySale.Query(v => v.IdSale == idSale);
 
             return query.Include(dv => dv.DetailSales).FirstOrDefault();
         }
-
 
         public async Task<VentaWeb> RegisterWeb(VentaWeb entity)
         {
             try
             {
                 var sale = await _repositorySale.RegisterWeb(entity);
-                //var factura = await _afipFacturacionService.FacturarAsync(new FacturaAFIP());
                 return sale;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task<Sale> FinalizarVentaWeb(VentaWeb entity)
+        {
+            try
+            {
+                var s = new Sale();
+                s.Total = entity.Total;
+                s.RegistrationDate = entity.RegistrationDate;
+                s.IdTienda = entity.IdTienda.Value;
+                s.IdUsers = Convert.ToInt32(entity.ModificationUser);
+                s.SaleNumber = await _repositorySale.GetLastSerialNumberSale();
+                s.IdTypeDocumentSale = entity.FormaDePago.IdTypeDocumentSale;
+                //s.IdTurno =
+
+                await _repositorySale.Add(s);
+
+                return s;
             }
             catch
             {

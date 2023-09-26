@@ -52,7 +52,7 @@ namespace PointOfSale.Business.Utilities
             DOCINFOA di = new DOCINFOA();
             bool bSuccess = false; // Assume failure unless you specifically succeed.
 
-            di.pDocName = "My C#.NET RAW Document";
+            di.pDocName = "Ticket " + DateTime.Now.ToString();
             di.pDataType = "RAW";
             // di.pOutputFile = @"C:\Users\Roland\Documents\Visual Studio 2015\Projects\pjtVentas\Ventas";
 

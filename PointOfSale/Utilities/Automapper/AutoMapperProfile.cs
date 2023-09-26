@@ -298,9 +298,10 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<VMVentaWeb, VentaWeb>();
             CreateMap<VentaWeb, VMVentaWeb>()
                 .ForMember(user => user.Fecha, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.Value.ToString("dd/MM/yyyy HH:mm")))
-                .ForMember(user => user.TotalString, opt => opt.MapFrom(userEdit => "$" + userEdit.Total));
+                .ForMember(user => user.TotalString, opt => opt.MapFrom(userEdit => "$" + userEdit.Total))
+                .ForMember(user => user.FormaDePago, opt => opt.MapFrom(userEdit => userEdit.FormaDePago != null ? userEdit.FormaDePago.Description : string.Empty));
 
-;
+            ;
         }
     }
 }

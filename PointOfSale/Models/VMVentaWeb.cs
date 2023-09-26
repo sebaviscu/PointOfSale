@@ -18,6 +18,7 @@ namespace PointOfSale.Models
         public int? IdTienda { get; set; }
         public virtual ICollection<DetailSale>? DetailSales { get; set; }
         public string? Fecha { get; set; }
+        public string FormaDePago { get; set; }
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }
     }
