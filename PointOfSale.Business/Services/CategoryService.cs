@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
@@ -14,9 +15,11 @@ namespace PointOfSale.Business.Services
     public class CategoryService : ICategoryService
     {
         private readonly IGenericRepository<Category> _repository;
-        public CategoryService(IGenericRepository<Category> repository)
+        private readonly IAuditoriaService _auditoriaService;
+        public CategoryService(IGenericRepository<Category> repository, IAuditoriaService auditoriaService)
         {
             _repository = repository;
+            _auditoriaService = auditoriaService;
         }
 
         public async Task<Category> Get(int idCategory)
@@ -67,6 +70,8 @@ namespace PointOfSale.Business.Services
             try
             {
                 Category category_found = await _repository.Get(c => c.IdCategory == entity.IdCategory);
+
+                _auditoriaService.SaveAuditoria(category_found, entity);
 
                 category_found.Description = entity.Description;
                 category_found.IsActive = entity.IsActive;

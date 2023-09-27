@@ -33,8 +33,8 @@ namespace PointOfSale.Controllers
         public async Task<IActionResult> GetTurnos()
         {
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
-            List<VMTurno> vmTiendaList = _mapper.Map<List<VMTurno>>(await _turnoService.List(user.IdTienda));
-            return StatusCode(StatusCodes.Status200OK, new { data = vmTiendaList });
+            List<VMTurno> VMTurnoList = _mapper.Map<List<VMTurno>>(await _turnoService.List(user.IdTienda));
+            return StatusCode(StatusCodes.Status200OK, new { data = VMTurnoList });
         }
 
         [HttpGet]
@@ -44,6 +44,28 @@ namespace PointOfSale.Controllers
             var tiendaId = Convert.ToInt32(((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value);
 
             var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurnoActualConVentas(tiendaId));
+
+            var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
+            foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurno(TypeValuesDashboard.Dia, vmTurnp.IdTurno, tiendaId))
+            {
+                VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
+                {
+                    Descripcion = item.Key,
+                    Total = item.Value
+                });
+            }
+            vmTurnp.VentasPorTipoVenta = VentasPorTipoVenta;
+
+            return StatusCode(StatusCodes.Status200OK, new { data = vmTurnp });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetTurno(int idturno)
+        {
+            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var tiendaId = Convert.ToInt32(((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value);
+
+            var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurno(idturno));
 
             var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
             foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurno(TypeValuesDashboard.Dia, vmTurnp.IdTurno, tiendaId))
@@ -78,6 +100,54 @@ namespace PointOfSale.Controllers
 
                 gResponse.State = true;
                 gResponse.Object = _mapper.Map<VMTurno>(nuevoTurno);
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetOneTurno(int idTurno)
+        {
+            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var tiendaId = Convert.ToInt32(((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value);
+
+            var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurno(idTurno));
+
+            var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
+            foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurno(TypeValuesDashboard.Dia, vmTurnp.IdTurno, tiendaId))
+            {
+                VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
+                {
+                    Descripcion = item.Key,
+                    Total = item.Value
+                });
+            }
+            vmTurnp.VentasPorTipoVenta = VentasPorTipoVenta;
+
+            return StatusCode(StatusCodes.Status200OK, new { data = vmTurnp });
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] VMTurno VMTurno)
+        {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+
+            GenericResponse<VMTurno> gResponse = new GenericResponse<VMTurno>();
+            try
+            {
+                VMTurno.ModificationUser = user.UserName;
+                Turno edited_Tienda = await _turnoService.Edit(_mapper.Map<Turno>(VMTurno));
+
+                VMTurno = _mapper.Map<VMTurno>(edited_Tienda);
+
+                gResponse.State = true;
+                gResponse.Object = VMTurno;
             }
             catch (Exception ex)
             {

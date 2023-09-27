@@ -19,6 +19,7 @@ namespace PointOfSale.Business.Contracts
         Task<Turno> GetTurnoActualConVentas(int idtienda);
 
         Task<Turno> AbrirTurno(int idTienda, string usuario);
+        Task<Turno> GetTurno(int idTurno);
 
 
     }

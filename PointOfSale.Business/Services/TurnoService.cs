@@ -147,6 +147,12 @@ namespace PointOfSale.Business.Services
             return turno;
         }
 
+        public async Task<Turno> GetTurno(int idTurno)
+        {
+            var query = await _repository.Query();
+            return query.SingleOrDefault(_ => _.IdTurno == idTurno);
+        }
+
         public async Task<Turno> AbrirTurno(int idTienda, string usuario)
         {
             var turno = await Add(new Turno(idTienda, usuario));

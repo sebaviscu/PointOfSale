@@ -80,8 +80,8 @@ namespace PointOfSale.Controllers
 			try
 			{
 
+                model.ModificationUser = user.UserName;
 				Category edited_category = await _categoryService.Edit(_mapper.Map<Category>(model));
-				edited_category.ModificationUser = user.UserName;
 
 				model = _mapper.Map<VMCategory>(edited_category);
 

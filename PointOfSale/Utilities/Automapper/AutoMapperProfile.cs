@@ -68,6 +68,7 @@ namespace PointOfSale.Utilities.Automapper
                 destiny.IsActive,
                 opt => opt.MapFrom(source => source.IsActive == 1 ? true : false)
             );
+
             #endregion
 
             #region Product

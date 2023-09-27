@@ -78,7 +78,7 @@ const openModal = (model = BASIC_MODEL) => {
 
 }
 
-$("#btnNewUser").on("click", function () {
+$("#btnNew").on("click", function () {
     openModal()
 })
 

@@ -79,7 +79,8 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtCuil").val(model.cuil);
     $("#txtDireccion").val(model.direccion);
     $("#txtTelefono").val(model.telefono);
-    $("#txtTotal").val(model.total);
+    document.getElementById('txtTotal').innerHTML = "Total: " + model.total;
+
 
     if (model.modificationUser === null)
         document.getElementById("divModif").style.display = 'none';
@@ -111,13 +112,14 @@ const openModal = (model = BASIC_MODEL) => {
             },
             { "data": "totalString" },
             { "data": "registrationDateString" },
-            { "data": "registrationUser" },
-            {
-                "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-eye"></i></button>',
-                "orderable": false,
-                "searchable": false,
-                "width": "40px"
-            }
+            { "data": "registrationUser" }
+            //,
+            //{
+            //    "defaultContent": '<button class="btn btn-primary btn-open-sale btn-sm me-2"><i class="mdi mdi-eye"></i></button>',
+            //    "orderable": false,
+            //    "searchable": false,
+            //    "width": "40px"
+            //}
         ],
         order: [[0, "desc"]],
         dom: "Bfrtip",
@@ -224,6 +226,17 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
     openModal(data);
 })
 
+//$("#tbMovimientos tbody").on("click", ".btn-open-sale", function () {
+
+//    if ($(this).closest('tr').hasClass('child')) {
+//        rowSelected = $(this).closest('tr').prev();
+//    } else {
+//        rowSelected = $(this).closest('tr');
+//    }
+
+//    const data = tableData.row(rowSelected).data();
+
+//})
 
 
 $("#tbData tbody").on("click", ".btn-delete", function () {
