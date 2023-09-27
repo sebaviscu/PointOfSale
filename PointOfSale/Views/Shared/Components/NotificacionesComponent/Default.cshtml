@@ -1,0 +1,29 @@
+﻿@{
+    Layout = null;
+}
+
+<li class="dropdown user-menu show">
+    <button href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
+        <i class="mdi mdi-asterisk mdi-24px"></i>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-right">
+        <li class="dropdown-header">
+            <div class="d-inline-block">
+                <small class="pt-1">@ViewData["emailUser"]</small>
+            </div>
+        </li>
+        <li class="dropdown-header">
+            <div class="d-inline-block">
+                <small class="pt-1">@ViewData["emailUser"]</small>
+            </div>
+        </li>
+        <li class="dropdown-header">
+            <div class="d-inline-block">
+                <small class="pt-1">@ViewData["emailUser"]</small>
+            </div>
+        </li>
+        <li class="dropdown-footer">
+            <a asp-controller="Home" asp-action="LogOut"> <i class="mdi mdi-delete"></i> Limpiar </a>
+        </li>
+    </ul>
+</li>

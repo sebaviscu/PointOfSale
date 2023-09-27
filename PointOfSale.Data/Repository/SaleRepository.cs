@@ -32,8 +32,15 @@ namespace PointOfSale.Data.Repository
                     {
                         Product product_found = _dbcontext.Products.Where(p => p.IdProduct == dv.IdProduct).First();
 
-                        product_found.Quantity = product_found.Quantity - dv.Quantity;
-                        _dbcontext.Products.Update(product_found);
+                        if (product_found.Minimo != null && product_found.Minimo > 0)
+                        {
+                            product_found.Quantity = product_found.Quantity - dv.Quantity;
+                            if (product_found.Quantity <= product_found.Minimo)
+                            {
+                                // TODO notificacion de sotck minimo
+                            }
+                            _dbcontext.Products.Update(product_found);
+                        }
                     }
                     await _dbcontext.SaveChangesAsync();
 
