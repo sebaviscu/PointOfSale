@@ -3,6 +3,7 @@ using System.Globalization;
 using PointOfSale.Model;
 using AutoMapper;
 using static PointOfSale.Model.Enum;
+using Newtonsoft.Json.Linq;
 
 namespace PointOfSale.Utilities.Automapper
 {
@@ -198,6 +199,10 @@ namespace PointOfSale.Utilities.Automapper
                 .ForMember(destiny =>
                     destiny.Total,
                     opt => opt.MapFrom(source => Convert.ToString(source.Total.Value, new CultureInfo("es-PE")))
+                )
+                .ForMember(destiny =>
+                destiny.TipoVenta,
+                    opt => opt.MapFrom(source => System.Enum.GetName(typeof(TipoVenta), source.TipoVenta))
                 );
             #endregion
 

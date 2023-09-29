@@ -34,6 +34,7 @@ namespace PointOfSale.Business.Services
             IQueryable<Product> query = await _repository.Query(_ => _.IsActive.HasValue ? _.IsActive.Value : false);
             return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).OrderBy(_ => _.Description).ToList();
         }
+
         public async Task<List<Product>> ListActiveByCategory(int idCategoria)
         {
             IQueryable<Product> query;
@@ -45,6 +46,12 @@ namespace PointOfSale.Business.Services
             {
                 query = await _repository.Query(_ => _.IdCategory == idCategoria && _.IsActive.HasValue ? _.IsActive.Value : false);
             }
+
+            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).OrderBy(_ => _.Description).ToList();
+        }
+        public async Task<List<Product>> ListActiveByDescription(string text)
+        {
+            var query = await _repository.Query(_ => _.Description.Contains(text) && _.IsActive.HasValue ? _.IsActive.Value : false);
 
             return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).OrderBy(_ => _.Description).ToList();
         }

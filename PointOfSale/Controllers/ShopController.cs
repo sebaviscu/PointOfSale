@@ -5,6 +5,7 @@ using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
 using System.Security.Claims;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Controllers
 {
@@ -59,6 +60,12 @@ namespace PointOfSale.Controllers
             return PartialView("PVProducts", products);
         }
 
+        [HttpGet]
+        public async Task<ActionResult> GetProductsByDescription(string text)
+        {
+            var products = _mapper.Map<List<VMProduct>>(await _productService.ListActiveByDescription(text));
+            return PartialView("PVProducts", products);
+        }
         public async Task<IActionResult> VentaWeb()
         {
             return View();

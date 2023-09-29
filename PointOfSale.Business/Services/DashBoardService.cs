@@ -237,7 +237,7 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task<Dictionary<string, decimal>> GetSalesByTypoVentaByTurno(TypeValuesDashboard typeValues, int turno, int idTienda)
+        public async Task<Dictionary<string, decimal>> GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard typeValues, int turno, int idTienda)
         {
             DateTime dateCompare, start;
             FechasParaQuery(typeValues, out dateCompare, out start);
@@ -248,6 +248,25 @@ namespace PointOfSale.Business.Services
                 .Include(v => v.TypeDocumentSaleNavigation)
                 .Where(vd => vd.RegistrationDate.Value.Date >= start.Date
                         && vd.IdClienteMovimiento == null
+                        && vd.IdTurno == turno
+                        && vd.IdTienda == idTienda)
+                .GroupBy(v => v.TypeDocumentSaleNavigation.Description).OrderByDescending(g => g.Sum(_ => _.Total))
+                .Select(dv => new { descripcion = dv.Key, total = dv.Sum(_ => _.Total.Value) })
+                .ToDictionary(keySelector: r => r.descripcion, elementSelector: r => r.total);
+
+            return resultado;
+        }
+
+
+        public async Task<Dictionary<string, decimal>> GetSalesByTypoVentaByTurno(TypeValuesDashboard typeValues, int turno, int idTienda)
+        {
+            DateTime dateCompare, start;
+
+            IQueryable<Sale> query = await _repositorySale.Query();
+
+            Dictionary<string, decimal> resultado = query
+                .Include(v => v.TypeDocumentSaleNavigation)
+                .Where(vd => vd.IdClienteMovimiento == null
                         && vd.IdTurno == turno
                         && vd.IdTienda == idTienda)
                 .GroupBy(v => v.TypeDocumentSaleNavigation.Description).OrderByDescending(g => g.Sum(_ => _.Total))

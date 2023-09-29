@@ -26,14 +26,6 @@ var productos = [];
     $("#text-area-products").hide();
     $("#btnTrash").hide();
 
-    //$(".less-button").on("click", function () {
-    //    setValue(event.currentTarget, -1);
-    //})
-
-    //$(".pluss-button").on("click", function () {
-    //    setValue(event.currentTarget, 1);
-    //})
-
     $("#btnTrash").on("click", function () {
         clean();
     })
@@ -42,7 +34,7 @@ var productos = [];
         resumenVenta();
     })
 
-    $(".btnClose").on("click", function () {
+    $("#btnClose").on("click", function () {
         $("#modalData").modal("hide")
     })
 
@@ -53,6 +45,14 @@ var productos = [];
     $(".btnCategoria").on("click", function () {
         selectCategoria(event.currentTarget);
     })
+
+    $("#input-search").on("keydown", function search(e) {
+        var text = document.getElementById("input-search").value;
+
+        if (e.keyCode == 13 && text !== '') {
+            SearchProductByText(text);
+        }
+    });
 
     "use strict";
 
@@ -187,6 +187,67 @@ var productos = [];
 
 })(jQuery);
 
+function searchToggle(obj, evt) {
+    var container = $(obj).closest('.search-wrapper');
+    var text = document.getElementById("input-search").value;
+
+    if (!container.hasClass('active')) {
+        container.addClass('active');
+        evt.preventDefault();
+    }
+    else if (container.hasClass('active') && $(obj).closest('.input-holder').length == 0) {
+        container.removeClass('active');
+        container.find('.search-input').val('');
+        if (text !== '') {
+            $.ajax({
+                url: window.location.origin + '/Shop/GetProductsByCategory?idCategoria=0',
+                type: "get",
+                success: function (result) {
+                    $("#dvCategoryResults").html(result);
+                    var elementosInput = document.querySelectorAll('.input-producto');
+
+                    elementosInput.forEach(function (elemento) {
+                        let idProd = elemento.id.replace("prod-", "");
+                        let productFind = productos.find(item => item.idProduct === idProd);
+
+                        if (productFind) {
+
+                            elemento.value = productFind.quantity;
+                            let elementArea = document.querySelector('#bottom-area-' + idProd);
+                            elementArea.style.opacity = 1;
+                        }
+                    });
+                }
+            });
+        }
+    }
+    else if (container.hasClass('active') && text !== '') {
+        SearchProductByText(text);
+    }
+}
+
+function SearchProductByText(text) {
+    $.ajax({
+        url: window.location.origin + '/Shop/GetProductsByDescription?text=' + text,
+        type: "get",
+        success: function (result) {
+            $("#dvCategoryResults").html(result);
+            var elementosInput = document.querySelectorAll('.input-producto');
+
+            elementosInput.forEach(function (elemento) {
+                let idProd = elemento.id.replace("prod-", "");
+                let productFind = productos.find(item => item.idProduct === idProd);
+
+                if (productFind) {
+
+                    elemento.value = productFind.quantity;
+                    let elementArea = document.querySelector('#bottom-area-' + idProd);
+                    elementArea.style.opacity = 1;
+                }
+            });
+        }
+    });
+}
 
 function selectCategoria(event) {
 
@@ -213,72 +274,6 @@ function selectCategoria(event) {
         }
     });
 }
-
-//function setValue(event, mult) {
-
-//    var idProd = $(event).attr('idProduct');
-//    var inputProd = document.getElementById("prod-" + idProd)
-//    var priceProd = document.getElementById("price-" + idProd)
-//    var descProd = document.getElementById("desc-" + idProd)
-
-//    var value = parseFloat(inputProd.value);
-
-//    if (mult === -1 && value === 0) {
-//        return;
-//    }
-
-//    if (inputProd.attributes.typeinput.value === "U") {
-//        value = value + (1 * mult);
-//    }
-//    else {
-//        value = value + (0.5 * mult);
-//    }
-//    opacityButtonArea(value, mult, idProd);
-
-//    inputProd.value = value
-
-//    let productFind = productos.find(item => item.idProduct === idProd);
-//    if (productFind) {
-//        productFind.quantity = value;
-//        productFind.total = value * productFind.price;
-
-//        if (value === 0) {
-//            productos = productos.filter(item => item.idProduct != idProd);
-//        }
-//    }
-//    else {
-//        var prod = {
-//            idProduct: idProd,
-//            quantity: value,
-//            price: parseFloat(priceProd.attributes.precio.value),
-//            DescriptionProduct: descProd.attributes.descProd.value,
-//            total: value * parseFloat(priceProd.attributes.precio.value),
-//            tipoVenta: inputProd.attributes.typeinput.value
-//        }
-
-//        productos.push(prod);
-//    }
-//    let total = 0;
-//    var textArea = document.getElementById("text-area-products");
-//    textArea.textContent = '';
-
-//    productos.forEach((a) => {
-//        textArea.innerText += `· ${a.DescriptionProduct}: $${Number.parseFloat(a.price).toFixed(2)} x ${a.quantity} = $ ${Number.parseFloat(a.total).toFixed(2)} \n`;
-//        total += a.total;
-//    });
-
-
-//    if (productos.length > 0) {
-//        $("#text-area-products").show();
-//        $("#btnTrash").show();
-//    }
-//    else {
-//        $("#text-area-products").hide();
-//        $("#btnTrash").hide();
-//    }
-
-//    document.getElementById("btnCompras").innerText = `Total: $ ${total}`;
-//}
 
 function opacityButtonArea(value, mult, idProd) {
 
@@ -372,6 +367,7 @@ function finalizarVenta() {
         let sum = 0;
         productos.forEach(value => {
             sum += value.total;
+            delete value.tipoVenta;
         });
 
         var text = productos.map(value => {
@@ -391,7 +387,8 @@ function finalizarVenta() {
 
         $("#modalData").modal("hide")
 
-        window.open('https://wa.me/' + phone + '?text=' + text, '_blank');
+        // Whatsapp
+        //window.open('https://wa.me/' + phone + '?text=' + text, '_blank'); 
 
 
         const sale = {

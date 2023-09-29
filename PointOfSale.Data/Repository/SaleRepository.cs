@@ -41,6 +41,8 @@ namespace PointOfSale.Data.Repository
                             }
                             _dbcontext.Products.Update(product_found);
                         }
+
+                        dv.TipoVenta = product_found.TipoVenta;
                     }
                     await _dbcontext.SaveChangesAsync();
 
@@ -96,6 +98,8 @@ namespace PointOfSale.Data.Repository
 
                         product_found.Quantity = product_found.Quantity - dv.Quantity;
                         _dbcontext.Products.Update(product_found);
+
+                        dv.TipoVenta = product_found.TipoVenta;
                     }
                     await _dbcontext.SaveChangesAsync();
 

@@ -113,7 +113,7 @@ const openModal = (model = BASIC_MODEL) => {
         $("#tbProducts tbody").append(
             $("<tr>").append(
                 $("<td>").text(item.descriptionProduct),
-                $("<td>").text(`${item.quantity} / ${item.tipoVenta}`),
+                $("<td>").text(`${item.quantity} / ${item.tipoVentaString}`),
                 $("<td>").text(`$ ${Number.parseFloat(item.price).toFixed(2)}`),
                 $("<td>").text(`$ ${Number.parseFloat(item.total).toFixed(2)}`)
             )
@@ -154,28 +154,6 @@ $("#btnSave").on("click", function () {
     }).catch((error) => {
         $("#modalData").find("div.modal-content").LoadingOverlay("hide")
     })
-
-    //fetch(`/Shop/UpdateVentaWeb?idVentaWeb=${model.idVentaWeb}?estado=${model.estado}`, {
-    //    method: "PUT"
-    //}).then(response => {
-    //    $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-    //    return response.ok ? response.json() : Promise.reject(response);
-    //}).then(responseJson => {
-    //    if (responseJson.state) {
-
-    //        tableData.row(rowSelected).data(responseJson.object).draw(false);
-    //        rowSelected = null;
-    //        $("#modalData").modal("hide");
-    //        swal("Exitoso!", "La Venta Web fué modificada", "success");
-
-    //    } else {
-    //        swal("Lo sentimos", responseJson.message, "error");
-    //    }
-    //}).catch((error) => {
-    //    $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-    //})
-
-
 })
 
 $("#tbData tbody").on("click", ".btn-edit", function () {

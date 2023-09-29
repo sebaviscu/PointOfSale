@@ -12,5 +12,7 @@
         public int Quantity { get; set; }
         public string? Price { get; set; }
         public string? Total { get; set; }
+
+        public string? TipoVenta { get; set;}
     }
 }
