@@ -23,9 +23,6 @@ var productos = [];
             }
         })
 
-    $("#text-area-products").hide();
-    $("#btnTrash").hide();
-
     $("#btnTrash").on("click", function () {
         clean();
     })
@@ -34,7 +31,7 @@ var productos = [];
         resumenVenta();
     })
 
-    $("#btnClose").on("click", function () {
+    $(".btnClose").on("click", function () {
         $("#modalData").modal("hide")
     })
 
@@ -46,13 +43,32 @@ var productos = [];
         selectCategoria(event.currentTarget);
     })
 
-    $("#input-search").on("keydown", function search(e) {
-        var text = document.getElementById("input-search").value;
+    //$("#input-search").on("keydown", function search(e) {
+    //    var text = document.getElementById("input-search").value;
 
-        if (e.keyCode == 13 && text !== '') {
-            SearchProductByText(text);
-        }
+    //    if (e.keyCode == 13 && text !== '') {
+    //        SearchProductByText(text);
+    //    }
+    //});
+
+    var inputElement = document.getElementById('input-search');
+
+    inputElement.addEventListener('input', function () {
+        var letraIngresada = inputElement.value.toLowerCase();
+
+        var productElements = document.querySelectorAll('.product-list');
+
+        productElements.forEach(function (productElement) {
+            var descripcionProducto = productElement.getAttribute('description-prd').toLowerCase();
+
+            if (descripcionProducto.includes(letraIngresada)) {
+                productElement.style.display = 'block';
+            } else {
+                productElement.style.display = 'none';
+            }
+        });
     });
+
 
     "use strict";
 
@@ -199,26 +215,28 @@ function searchToggle(obj, evt) {
         container.removeClass('active');
         container.find('.search-input').val('');
         if (text !== '') {
-            $.ajax({
-                url: window.location.origin + '/Shop/GetProductsByCategory?idCategoria=0',
-                type: "get",
-                success: function (result) {
-                    $("#dvCategoryResults").html(result);
-                    var elementosInput = document.querySelectorAll('.input-producto');
+            $('.product-list').css('display', '');
 
-                    elementosInput.forEach(function (elemento) {
-                        let idProd = elemento.id.replace("prod-", "");
-                        let productFind = productos.find(item => item.idProduct === idProd);
+            //$.ajax({
+            //    url: window.location.origin + '/Shop/GetProductsByCategory?idCategoria=0',
+            //    type: "get",
+            //    success: function (result) {
+            //        $("#dvCategoryResults").html(result);
+            //        var elementosInput = document.querySelectorAll('.input-producto');
 
-                        if (productFind) {
+            //        elementosInput.forEach(function (elemento) {
+            //            let idProd = elemento.id.replace("prod-", "");
+            //            let productFind = productos.find(item => item.idProduct === idProd);
 
-                            elemento.value = productFind.quantity;
-                            let elementArea = document.querySelector('#bottom-area-' + idProd);
-                            elementArea.style.opacity = 1;
-                        }
-                    });
-                }
-            });
+            //            if (productFind) {
+
+            //                elemento.value = productFind.quantity;
+            //                let elementArea = document.querySelector('#bottom-area-' + idProd);
+            //                elementArea.style.opacity = 1;
+            //            }
+            //        });
+            //    }
+            //});
         }
     }
     else if (container.hasClass('active') && text !== '') {
@@ -250,29 +268,34 @@ function SearchProductByText(text) {
 }
 
 function selectCategoria(event) {
+    $('.product-list').css('display', '');
 
     var idCat = parseInt($(event).attr('cat-id'));
 
-    $.ajax({
-        url: window.location.origin + '/Shop/GetProductsByCategory?idCategoria=' + idCat,
-        type: "get",
-        success: function (result) {
-            $("#dvCategoryResults").html(result);
-            var elementosInput = document.querySelectorAll('.input-producto');
+    if (idCat != 0) {
+        $(`.product-list:not([category-prod="${idCat}"])`).css('display', 'none');
+    }
 
-            elementosInput.forEach(function (elemento) {
-                let idProd = elemento.id.replace("prod-", "");
-                let productFind = productos.find(item => item.idProduct === idProd);
+    //$.ajax({
+    //    url: window.location.origin + '/Shop/GetProductsByCategory?idCategoria=' + idCat,
+    //    type: "get",
+    //    success: function (result) {
+    //        $("#dvCategoryResults").html(result);
+    //        var elementosInput = document.querySelectorAll('.input-producto');
 
-                if (productFind) {
+    //        elementosInput.forEach(function (elemento) {
+    //            let idProd = elemento.id.replace("prod-", "");
+    //            let productFind = productos.find(item => item.idProduct === idProd);
 
-                    elemento.value = productFind.quantity;
-                    let elementArea = document.querySelector('#bottom-area-' + idProd);
-                    elementArea.style.opacity = 1;
-                }
-            });
-        }
-    });
+    //            if (productFind) {
+
+    //                elemento.value = productFind.quantity;
+    //                let elementArea = document.querySelector('#bottom-area-' + idProd);
+    //                elementArea.style.opacity = 1;
+    //            }
+    //        });
+    //    }
+    //});
 }
 
 function opacityButtonArea(value, mult, idProd) {
@@ -335,12 +358,13 @@ function resumenVenta() {
 
 
 function finalizarVenta() {
+
     const inputs = $("input.input-validate").serializeArray();
     const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
 
     if (inputs_without_value.length > 0) {
         const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
-        toastr.warning(msg, "");
+        toastr.warning(msg);
         $(`input[name="${inputs_without_value[0].name}"]`).focus();
         return;
     }
@@ -354,6 +378,9 @@ function finalizarVenta() {
 
     if (productos.length > 0) {
 
+        var terminal = document.getElementById("cboFormaPago");
+        var selectedText = terminal.options[terminal.selectedIndex].text;
+
         const model = structuredClone(BASIC_MODEL);
         model["nombre"] = $("#txtNombre").val();
         model["telefono"] = $("#txtTelefono").val();
@@ -364,60 +391,67 @@ function finalizarVenta() {
         var inputPhone = document.getElementById("txtPhone");
         var phone = inputPhone.attributes.phoneNumber.value;
 
+
+        var textWA = `*NUEVO PEDIDO* \n\n \n\n`;
+
+        textWA += productos.map(value => {
+            return (
+                ` - _${value.DescriptionProduct}_: ${value.quantity} ${value.tipoVenta} \n\n`
+            );
+        }).join('');
+
         let sum = 0;
         productos.forEach(value => {
             sum += value.total;
             delete value.tipoVenta;
         });
 
-        var text = productos.map(value => {
-            return (
-                ` - ${value.DescriptionProduct}: ${value.quantity} ${value.tipoVenta}\n`
-            );
-        }).join('');
+        textWA = textWA.concat(`
 
-        text = text.concat(`\n
-                · Nombre: ${model.nombre} \n` +
-            `· Telefono: ${model.telefono} \n` +
-            `· Direccion: ${model.direccion} \n` +
-            `· Metodo de pago: ${model.metodoPago} \n` +
-            `· Comentario: ${model.comentario} \n\n` +
-            `· TOTAL: ${Number.parseFloat(sum).toFixed(2)}`);
+· *Nombre*: ${model.nombre}
+· *Telefono*: ${model.telefono} 
+· *Direccion*: ${model.direccion} 
+· *Metodo de pago*: ${selectedText}
+· *Comentario*: ${model.comentario} 
+· *TOTAL*: ${Number.parseFloat(sum).toFixed(2)}`);
 
 
         $("#modalData").modal("hide")
 
-        // Whatsapp
-        //window.open('https://wa.me/' + phone + '?text=' + text, '_blank'); 
+        swal({
+            title: "MUCHAS GRACIAS!",
+            text: `Se abrirá un chat de Whatsapp con nosotros, para que nos envies el pedido.`,
+            type: "success"
+        }, function (value) {
 
+            // Whatsapp
+            //window.open('https://wa.me/' + phone + '?text=' + textWA, '_blank');
 
-        const sale = {
-            idFormaDePago: model.metodoPago,
-            total: sum,
-            detailSales: productos,
-            nombre: model.nombre,
-            direccion: model.direccion,
-            telefono: model.telefono,
-            comentario: model.comentario,
-            estado: 0
-        }
-
-
-        fetch("/Shop/RegisterSale", {
-            method: "POST",
-            headers: { 'Content-Type': 'application/json;charset=utf-8' },
-            body: JSON.stringify(sale)
-        }).then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
-        }).then(responseJson => {
-
-            if (responseJson.state) {
-
-                swal("Registrado!", `MUCHAS GRACIAS!!`, "success");
-                clean();
+            const sale = {
+                idFormaDePago: model.metodoPago,
+                total: sum,
+                detailSales: productos,
+                nombre: model.nombre,
+                direccion: model.direccion,
+                telefono: model.telefono,
+                comentario: model.comentario,
+                estado: 0
             }
-        }).catch((error) => {
-        })
+
+            fetch("/Shop/RegisterSale", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                body: JSON.stringify(sale)
+            }).then(response => {
+                return response.ok ? response.json() : Promise.reject(response);
+            }).then(responseJson => {
+
+                if (responseJson.state) {
+                }
+            })
+
+            clean();
+        });
     }
 }
 

@@ -300,7 +300,7 @@ $(document).ready(function () {
     }
 
     /*======== PROGRESS BAR ========*/
-    NProgress.done();
+    //NProgress.done();
 
     /*======== MULTIPLE SELECT ========*/
     var jsExampleBasicMultiple = $(".js-example-basic-multiple");

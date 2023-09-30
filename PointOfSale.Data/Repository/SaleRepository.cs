@@ -31,16 +31,7 @@ namespace PointOfSale.Data.Repository
                     foreach (DetailSale dv in entity.DetailSales)
                     {
                         Product product_found = _dbcontext.Products.Where(p => p.IdProduct == dv.IdProduct).First();
-
-                        if (product_found.Minimo != null && product_found.Minimo > 0)
-                        {
-                            product_found.Quantity = product_found.Quantity - dv.Quantity;
-                            if (product_found.Quantity <= product_found.Minimo)
-                            {
-                                // TODO notificacion de sotck minimo
-                            }
-                            _dbcontext.Products.Update(product_found);
-                        }
+                        ControlStock(dv, product_found);
 
                         dv.TipoVenta = product_found.TipoVenta;
                     }
@@ -67,6 +58,19 @@ namespace PointOfSale.Data.Repository
             return SaleGenerated;
         }
 
+        private void ControlStock(DetailSale dv, Product product_found)
+        {
+            if (product_found.Minimo != null && product_found.Minimo > 0)
+            {
+                product_found.Quantity = product_found.Quantity - dv.Quantity;
+                if (product_found.Quantity <= product_found.Minimo)
+                {
+                    // TODO notificacion de sotck minimo
+                }
+                _dbcontext.Products.Update(product_found);
+            }
+        }
+
         public async Task<string> GetLastSerialNumberSale()
         {
             CorrelativeNumber correlative = _dbcontext.CorrelativeNumbers.Where(n => n.Management == "Sale").First();
@@ -84,7 +88,7 @@ namespace PointOfSale.Data.Repository
             return saleNumber;
         }
 
-        public async Task<VentaWeb> RegisterWeb(VentaWeb entity)
+        public async Task<VentaWeb> RegisterWeb(VentaWeb entity, Turno turno)
         {
             var SaleGenerated = new VentaWeb();
             using (var transaction = _dbcontext.Database.BeginTransaction())
@@ -94,15 +98,29 @@ namespace PointOfSale.Data.Repository
                     entity.RegistrationDate = DateTime.Now;
                     foreach (DetailSale dv in entity.DetailSales)
                     {
-                        Product product_found = _dbcontext.Products.Where(p => p.IdProduct == dv.IdProduct).First();
+                        Product product_found = _dbcontext.Products.Include(_ => _.Proveedor)
+                                                                   .Include(_=>_.IdCategoryNavigation)
+                                                                   .Where(p => p.IdProduct == dv.IdProduct).First();
 
-                        product_found.Quantity = product_found.Quantity - dv.Quantity;
-                        _dbcontext.Products.Update(product_found);
+                        ControlStock(dv, product_found);
+
 
                         dv.TipoVenta = product_found.TipoVenta;
+                        dv.BrandProduct = product_found.Proveedor.Nombre;
+                        dv.CategoryProducty = product_found.IdCategoryNavigation.Description;
                     }
-                    await _dbcontext.SaveChangesAsync();
 
+                    // TODO tengo que guardar el idSale en DetailSale
+                    var s = new Sale();
+                    s.Total = entity.Total;
+                    s.RegistrationDate = entity.RegistrationDate;
+                    s.IdTienda = entity.IdTienda.Value;
+                    s.IdUsers = Convert.ToInt32(entity.ModificationUser);
+                    s.SaleNumber = await GetLastSerialNumberSale();
+                    s.IdTypeDocumentSale = entity.FormaDePago.IdTypeDocumentSale;
+                    s.IdTurno = turno.IdTurno;
+
+                    var f = await _dbcontext.Sales.AddAsync(s);
                     await _dbcontext.VentaWeb.AddAsync(entity);
                     await _dbcontext.SaveChangesAsync();
 

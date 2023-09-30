@@ -205,13 +205,6 @@ namespace PointOfSale.Business.Services
                             .Where(dv =>
                                     dv.IdSaleNavigation.RegistrationDate.Value.Date >= start.Date
                                     && dv.IdSaleNavigation.IdTienda == idTienda);
-
-                    var s = query
-                            .Include(v => v.IdSaleNavigation)
-                            .Include(v => v.Producto)
-                            .Where(dv =>
-                                    dv.IdSaleNavigation.RegistrationDate.Value.Date >= start.Date
-                                    && dv.IdSaleNavigation.IdTienda == idTienda).ToList();
                 }
                 else
                 {

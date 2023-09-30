@@ -10,7 +10,7 @@ namespace PointOfSale.Data.Repository
     public interface ISaleRepository : IGenericRepository<Sale>
     {
         Task<Sale> Register(Sale entity);
-        Task<VentaWeb> RegisterWeb(VentaWeb entity);
+        Task<VentaWeb> RegisterWeb(VentaWeb entity, Turno turno);
         Task<string> GetLastSerialNumberSale();
         Task<List<DetailSale>> Report(DateTime StartDate, DateTime EndDate);
 

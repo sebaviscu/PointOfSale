@@ -33,7 +33,7 @@
 
     @foreach (var prod in Model.OrderBy(_ => _.Description))
     {
-        <div class="col-md-6 col-lg-2 ftco-animate">
+        <div class="col-md-6 col-lg-2 ftco-animate product-list" category-prod="@prod.IdCategory" description-prd="@prod.Description">
             <div class="product">
                 <a href="javascript:void(0)" class="img-prod" style="text-align: center;">
                     <img class="img-fluid" src="data:image/png;base64,@prod.PhotoBase64" alt="Colorlib Template" style="min-height: 160px; max-height: 160px; width:auto;">

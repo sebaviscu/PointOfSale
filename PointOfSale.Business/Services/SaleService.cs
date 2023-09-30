@@ -292,7 +292,9 @@ namespace PointOfSale.Business.Services
         {
             try
             {
-                var sale = await _repositorySale.RegisterWeb(entity);
+                var turno = await _turnoService.GetTurnoActual(entity.IdTienda.Value);
+
+                var sale = await _repositorySale.RegisterWeb(entity, turno);
                 return sale;
             }
             catch
