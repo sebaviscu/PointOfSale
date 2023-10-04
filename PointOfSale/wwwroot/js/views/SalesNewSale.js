@@ -198,16 +198,16 @@ $(document).on("click", "button.finalizarSaleParcial", function () {
     var currentTabId = $(this).attr("tabId");
     var currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
 
-    //if (currentTab.products.length < 1) {
-    //    toastr.warning("", "Debe ingresar productos");
-    //    return;
-    //}
+    if (currentTab.products.length < 1) {
+        toastr.warning("", "Debe ingresar productos");
+        return;
+    }
 
-    //if (document.getElementById("cboTypeDocumentSale" + currentTabId).value == '') {
-    //    const msg = `Debe completaro el campo Tipo de Venta`;
-    //    toastr.warning(msg, "");
-    //    return;
-    //}
+    if (document.getElementById("cboTypeDocumentSale" + currentTabId).value == '') {
+        const msg = `Debe completaro el campo Tipo de Venta`;
+        toastr.warning(msg, "");
+        return;
+    }
 
     let total = $("#txtTotal" + currentTabId).val();
     let formaDePago = $("#cboTypeDocumentSale" + currentTabId).val();
