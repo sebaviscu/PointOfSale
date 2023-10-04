@@ -71,7 +71,7 @@ namespace PointOfSale.Business.Services
             {
                 Category category_found = await _repository.Get(c => c.IdCategory == entity.IdCategory);
 
-                _auditoriaService.SaveAuditoria(category_found, entity);
+                //_auditoriaService.SaveAuditoria(category_found, entity);
 
                 category_found.Description = entity.Description;
                 category_found.IsActive = entity.IsActive;
