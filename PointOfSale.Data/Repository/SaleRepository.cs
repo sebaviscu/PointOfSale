@@ -37,9 +37,10 @@ namespace PointOfSale.Data.Repository
                     }
                     await _dbcontext.SaveChangesAsync();
 
-                    string saleNumber = await GetLastSerialNumberSale();
-
-                    entity.SaleNumber = saleNumber;
+                    if (string.IsNullOrEmpty(entity.SaleNumber)) // cuando es multiple formas de pago
+                    {
+                        entity.SaleNumber = await GetLastSerialNumberSale();
+                    }
 
                     await _dbcontext.Sales.AddAsync(entity);
                     await _dbcontext.SaveChangesAsync();
@@ -88,7 +89,7 @@ namespace PointOfSale.Data.Repository
             return saleNumber;
         }
 
-        public async Task<VentaWeb> RegisterWeb(VentaWeb entity, Turno turno)
+        public async Task<VentaWeb> RegisterWeb(VentaWeb entity)
         {
             var SaleGenerated = new VentaWeb();
             using (var transaction = _dbcontext.Database.BeginTransaction())
@@ -99,28 +100,14 @@ namespace PointOfSale.Data.Repository
                     foreach (DetailSale dv in entity.DetailSales)
                     {
                         Product product_found = _dbcontext.Products.Include(_ => _.Proveedor)
-                                                                   .Include(_=>_.IdCategoryNavigation)
+                                                                   .Include(_ => _.IdCategoryNavigation)
                                                                    .Where(p => p.IdProduct == dv.IdProduct).First();
-
-                        ControlStock(dv, product_found);
-
 
                         dv.TipoVenta = product_found.TipoVenta;
                         dv.BrandProduct = product_found.Proveedor.Nombre;
                         dv.CategoryProducty = product_found.IdCategoryNavigation.Description;
                     }
 
-                    // TODO tengo que guardar el idSale en DetailSale
-                    var s = new Sale();
-                    s.Total = entity.Total;
-                    s.RegistrationDate = entity.RegistrationDate;
-                    s.IdTienda = entity.IdTienda.Value;
-                    s.IdUsers = Convert.ToInt32(entity.ModificationUser);
-                    s.SaleNumber = await GetLastSerialNumberSale();
-                    s.IdTypeDocumentSale = entity.FormaDePago.IdTypeDocumentSale;
-                    s.IdTurno = turno.IdTurno;
-
-                    var f = await _dbcontext.Sales.AddAsync(s);
                     await _dbcontext.VentaWeb.AddAsync(entity);
                     await _dbcontext.SaveChangesAsync();
 
@@ -136,6 +123,29 @@ namespace PointOfSale.Data.Repository
             }
 
             return SaleGenerated;
+        }
+
+        public async Task<Sale> CreatSaleFromVentaWeb(VentaWeb entity, Turno turno)
+        {
+            var sale = new Sale();
+            sale.Total = entity.Total;
+            sale.RegistrationDate = entity.RegistrationDate;
+            sale.IdTienda = entity.IdTienda.Value;
+            sale.SaleNumber = await GetLastSerialNumberSale();
+            sale.IdTypeDocumentSale = entity.IdFormaDePago;
+            sale.IdTurno = turno.IdTurno;
+            sale.DetailSales = entity.DetailSales;
+
+            foreach (DetailSale dv in entity.DetailSales)
+            {
+                Product product_found = _dbcontext.Products.Where(p => p.IdProduct == dv.IdProduct).First();
+
+                ControlStock(dv, product_found);
+            }
+
+            await _dbcontext.Sales.AddAsync(sale);
+
+            return sale;
         }
 
         public async Task<List<DetailSale>> Report(DateTime StarDate, DateTime EndDate)

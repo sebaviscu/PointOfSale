@@ -13,6 +13,7 @@ namespace PointOfSale.Business.Contracts
 
         Task<VentaWeb> Edit(VentaWeb entity);
         Task<VentaWeb> Get(int idVentaWeb);
+        Task<VentaWeb> RegisterWeb(VentaWeb entity);
 
     }
 }

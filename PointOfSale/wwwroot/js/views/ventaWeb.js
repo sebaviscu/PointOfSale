@@ -146,7 +146,7 @@ $("#btnSave").on("click", function () {
             tableData.row(rowSelected).data(responseJson.object).draw(false);
             rowSelected = null;
             $("#modalData").modal("hide");
-            swal("Exitoso!", "La tienda fué modificada", "success");
+            swal("Exitoso!", "La Venta Web fué modificada", "success");
 
         } else {
             swal("Lo sentimos", responseJson.message, "error");

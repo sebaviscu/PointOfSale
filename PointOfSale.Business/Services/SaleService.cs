@@ -288,42 +288,6 @@ namespace PointOfSale.Business.Services
             return query.Include(dv => dv.DetailSales).FirstOrDefault();
         }
 
-        public async Task<VentaWeb> RegisterWeb(VentaWeb entity)
-        {
-            try
-            {
-                var turno = await _turnoService.GetTurnoActual(entity.IdTienda.Value);
-
-                var sale = await _repositorySale.RegisterWeb(entity, turno);
-                return sale;
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        public async Task<Sale> FinalizarVentaWeb(VentaWeb entity)
-        {
-            try
-            {
-                var s = new Sale();
-                s.Total = entity.Total;
-                s.RegistrationDate = entity.RegistrationDate;
-                s.IdTienda = entity.IdTienda.Value;
-                s.IdUsers = Convert.ToInt32(entity.ModificationUser);
-                s.SaleNumber = await _repositorySale.GetLastSerialNumberSale();
-                s.IdTypeDocumentSale = entity.FormaDePago.IdTypeDocumentSale;
-                //s.IdTurno =
-
-                await _repositorySale.Add(s);
-
-                return s;
-            }
-            catch
-            {
-                throw;
-            }
-        }
+       
     }
 }

@@ -3,6 +3,7 @@ var originalTab = document.getElementById('nuevaVenta');
 let AllTabsForSale = [];
 var buttonCerrarTab = '<button class="close" type="button" title="Cerrar tab">×</button>';
 var tabID = 0;
+var formaDePagoID = 0;
 var promociones = [];
 
 const ProducstTab = {
@@ -18,11 +19,16 @@ $(document).ready(function () {
         }).then(responseJson => {
             $("#cboTypeDocumentSale").append(
                 $("<option>").val('').text('')
+            );
+            $("#cboTypeDocumentSaleParcial").append(
+                $("<option>").val('').text('')
             )
-            //borrar los options de cboTipoDocumentoVenta
             if (responseJson.length > 0) {
                 responseJson.forEach((item) => {
                     $("#cboTypeDocumentSale").append(
+                        $("<option>").val(item.idTypeDocumentSale).text(item.description)
+                    );
+                    $("#cboTypeDocumentSaleParcial").append(
                         $("<option>").val(item.idTypeDocumentSale).text(item.description)
                     )
                 });
@@ -187,6 +193,178 @@ $(document).on("click", "button.finalizeSale", function () {
 
 })
 
+
+$(document).on("click", "button.finalizarSaleParcial", function () {
+    var currentTabId = $(this).attr("tabId");
+    var currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
+
+    //if (currentTab.products.length < 1) {
+    //    toastr.warning("", "Debe ingresar productos");
+    //    return;
+    //}
+
+    //if (document.getElementById("cboTypeDocumentSale" + currentTabId).value == '') {
+    //    const msg = `Debe completaro el campo Tipo de Venta`;
+    //    toastr.warning(msg, "");
+    //    return;
+    //}
+
+    let total = $("#txtTotal" + currentTabId).val();
+    let formaDePago = $("#cboTypeDocumentSale" + currentTabId).val();
+
+    $("#txtTotalView").val(total);
+    $("#txtTotalParcial").val(total);
+    $("#cboTypeDocumentSaleParcial").val(formaDePago);
+    $("#txtSumaSubtotales").val(0);
+    $("#btnCalcSubTotales").attr("idFormaDePago", 0);
+
+
+    $("#txtTotalParcial").on("change", function () {
+        calcularSuma();
+    });
+
+    $("#modalDividirPago").removeAttr("idTab");
+    $("#modalDividirPago").attr("idTab", currentTabId);
+
+    $("#modalDividirPago").modal("show")
+})
+
+
+$(document).on("click", "button.btnAddFormaDePago", function () {
+    formaDePagoID++;
+
+    $('#formaDePagoPanel').append($('<div class="form-row" id="formaPago' + formaDePagoID + '"></div>'));
+
+    let originalFormaPago = document.getElementById('formaDePagoPanel');
+    let cloneFP = originalFormaPago.cloneNode(true);
+    cloneFP.id = "nuevaFormaDePago" + formaDePagoID;
+    cloneFP.querySelector("#txtTotalParcial").id = "txtTotalParcial" + formaDePagoID;
+    cloneFP.querySelector("#cboTypeDocumentSaleParcial").id = "cboTypeDocumentSaleParcial" + formaDePagoID;
+    cloneFP.querySelector("#btnAddNuevaFormaDePago").id = "btnAddNuevaFormaDePago" + formaDePagoID;
+    cloneFP.querySelector("#btnCalcSubTotales").id = "btnCalcSubTotales" + formaDePagoID;
+
+    $('#rowDividirPago').append(cloneFP);
+    $("#btnCalcSubTotales" + formaDePagoID).attr("idformadepago", formaDePagoID);
+    $("#txtTotalParcial" + formaDePagoID).val(0);
+
+    $("#txtTotalParcial" + formaDePagoID).on("change", function (e) {
+        let result = calcularSuma();
+
+        if (result < 0) {
+            e.currentTarget.classList.add("invalid")
+        } else {
+            e.currentTarget.classList.remove("invalid")
+        }
+    });
+
+})
+
+
+$(document).on("click", "a.calcSubTotales", function (e) {
+    var idFormaDePago = e.currentTarget.attributes.idformadepago.value;
+    let subTotal = getSumaSubTotales();
+
+    let valorParcial = $("#txtTotalParcial" + idFormaDePago).val();
+    $("#txtTotalParcial" + idFormaDePago).val(parseFloat(subTotal) + parseFloat(valorParcial));
+    calcularSuma();
+})
+
+function calcularSuma() {
+    let subTotal = getSumaSubTotales();
+    $("#txtSumaSubtotales").val(subTotal);
+    return subTotal;
+}
+
+function getSumaSubTotales() {
+    const inputElements = document.querySelectorAll('.inputSubtotal');
+    let subTotal = 0;
+
+    inputElements.forEach(function (input) {
+        const value = parseFloat(input.value);
+
+        if (!isNaN(value) && value > 0) {
+            subTotal += value;
+        }
+    });
+
+    var totFijo = $("#txtTotalView").val();
+
+    return totFijo - subTotal;
+}
+
+
+$("#btnFinalizarVentaParcial").on("click", function () {
+
+    if ($(".cboFormaDePago").filter(function () { return $(this).val() === ""; }).length !== 0) {
+        const msg = `Debe completaro el campo Tipo de Venta`;
+        toastr.warning(msg, "");
+        return;
+    }
+
+    let suma = getSumaSubTotales();
+    if (suma > 0) {
+        const msg = `La suma de los sub totales no es igual al total.`;
+        toastr.warning(msg, "");
+        return;
+    }
+    else {
+        var currentTabId = $("#modalDividirPago").attr("idtab");
+        var currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
+
+        const vmDetailSale = currentTab.products;
+
+        var formasDePago = [];
+
+        $(".cboFormaDePago").each(function (index) {
+            if (index > 0) {
+                let subTotal = {
+                    total: $("#txtTotalParcial" + index).val(),
+                    formaDePago: $("#cboTypeDocumentSaleParcial" + index).val()
+                };
+                formasDePago.push(subTotal);
+            }
+        });
+
+        const sale = {
+            idTypeDocumentSale: $("#cboTypeDocumentSaleParcial").val(),
+            clientId: $("#cboCliente" + currentTabId).val() != '' ? $("#cboCliente" + currentTabId).val() : null,
+            total: $("#txtTotalParcial").val(),
+            detailSales: vmDetailSale,
+            tipoMovimiento: $("#cboCliente" + currentTabId).val() != '' ? 2 : null,
+            imprimirTicket: document.querySelector('#cboImprimirTicket' + currentTabId).checked,
+            multiplesFormaDePago: formasDePago
+        }
+
+        fetch("/Sales/RegisterSale", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json;charset=utf-8' },
+            body: JSON.stringify(sale)
+        }).then(response => {
+
+            $("#btnFinalizeSale" + currentTabId).closest("div.card-body").LoadingOverlay("hide")
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+
+            if (responseJson.state) {
+
+                $("#cboTypeDocumentSale").val($("#cboTypeDocumentSale option:first").val());
+
+                AllTabsForSale = AllTabsForSale.filter(p => p.idTab != currentTabId)
+                document.getElementById('cerrarTab' + currentTabId).click()
+                $("#modalDividirPago").modal("hide") // TODO borrar todo
+
+                swal("Registrado!", `Número de venta : ${responseJson.object.saleNumber}`, "success");
+
+            } else {
+                swal("Lo sentimos", "La venta no fué registrada", "error");
+            }
+        }).catch((error) => {
+            $("#btnFinalizeSale" + currentTabId).closest("div.card-body").LoadingOverlay("hide")
+        })
+
+    }
+});
+
 document.onkeyup = function (e) {
     if (e.altKey && e.which == 78) {
         newTab();
@@ -224,6 +402,7 @@ function newTab() {
     clone.querySelector("#cboTypeDocumentSale").id = "cboTypeDocumentSale" + tabID;
     clone.querySelector("#txtTotal").id = "txtTotal" + tabID;
     clone.querySelector("#btnFinalizeSale").id = "btnFinalizeSale" + tabID;
+    clone.querySelector("#btnFinalizeSaleParcial").id = "btnFinalizeSaleParcial" + tabID;
     clone.querySelector("#cboCliente").id = "cboCliente" + tabID;
     clone.querySelector("#cboImprimirTicket").id = "cboImprimirTicket" + tabID;
     clone.querySelector("#txtPeso").id = "txtPeso" + tabID;
@@ -232,6 +411,7 @@ function newTab() {
     $('#tab' + tabID).append(clone);
 
     $("#btnFinalizeSale" + tabID).attr("tabId", tabID);
+    $("#btnFinalizeSaleParcial" + tabID).attr("tabId", tabID);
 
     var newTab = {
         idTab: tabID,

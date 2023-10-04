@@ -307,7 +307,9 @@ namespace PointOfSale.Utilities.Automapper
                 .ForMember(user => user.TotalString, opt => opt.MapFrom(userEdit => "$" + userEdit.Total))
                 .ForMember(user => user.FormaDePago, opt => opt.MapFrom(userEdit => userEdit.FormaDePago != null ? userEdit.FormaDePago.Description : string.Empty));
 
-            ;
+
+            CreateMap<Notifications, VMNotifications>();
+            CreateMap<VMNotifications, Notifications>();
         }
     }
 }

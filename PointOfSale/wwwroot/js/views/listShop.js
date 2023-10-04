@@ -391,29 +391,26 @@ function finalizarVenta() {
         var inputPhone = document.getElementById("txtPhone");
         var phone = inputPhone.attributes.phoneNumber.value;
 
-
-        var textWA = `*NUEVO PEDIDO* \n\n \n\n`;
-
-        textWA += productos.map(value => {
-            return (
-                ` - _${value.DescriptionProduct}_: ${value.quantity} ${value.tipoVenta} \n\n`
-            );
-        }).join('');
-
         let sum = 0;
         productos.forEach(value => {
             sum += value.total;
-            delete value.tipoVenta;
         });
 
-        textWA = textWA.concat(`
+        var textWA = `*NUEVO PEDIDO*%0A`;
 
-· *Nombre*: ${model.nombre}
-· *Telefono*: ${model.telefono} 
-· *Direccion*: ${model.direccion} 
-· *Metodo de pago*: ${selectedText}
-· *Comentario*: ${model.comentario} 
-· *TOTAL*: ${Number.parseFloat(sum).toFixed(2)}`);
+        textWA = textWA.concat(`
+%0A· *Nombre*: ${model.nombre}
+%0A· *Telefono*: ${model.telefono} 
+%0A· *Direccion*: ${model.direccion} 
+%0A· *Metodo de pago*: ${selectedText}
+%0A· *Comentarios*: ${model.comentario} 
+%0A· *TOTAL*: $${Number.parseFloat(sum).toFixed(2)}%0A`);
+
+        textWA += productos.map(value => {
+            return (
+                `%0A - _${value.DescriptionProduct}_: ${value.quantity} ${value.tipoVenta}`
+            );
+        }).join('');
 
 
         $("#modalData").modal("hide")
@@ -425,7 +422,12 @@ function finalizarVenta() {
         }, function (value) {
 
             // Whatsapp
-            //window.open('https://wa.me/' + phone + '?text=' + textWA, '_blank');
+            window.open('https://wa.me/' + phone + '?text=' + textWA, '_blank');
+
+            productos.forEach(value => {
+                sum += value.total;
+                delete value.tipoVenta;
+            });
 
             const sale = {
                 idFormaDePago: model.metodoPago,

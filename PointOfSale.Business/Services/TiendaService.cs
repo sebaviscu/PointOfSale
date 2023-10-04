@@ -19,7 +19,6 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<Tienda>> List()
         {
-
             IQueryable<Tienda> query = await _repository.Query();
             return query.OrderBy(_ => _.Nombre).ToList();
         }

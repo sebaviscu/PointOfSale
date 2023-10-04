@@ -10,12 +10,16 @@ namespace PointOfSale.Business.Services
         private readonly IGenericRepository<VentaWeb> _repository;
         private readonly ITiendaService _tiendaService;
         private readonly IProductService _productService;
+        private readonly ITurnoService _turnoService;
+        private readonly ISaleRepository _saleRepository;
 
-        public ShopService(ITiendaService tiendaService, IProductService productService, IGenericRepository<VentaWeb> repository)
+        public ShopService(ITiendaService tiendaService, IProductService productService, IGenericRepository<VentaWeb> repository, ITurnoService turnoService, ISaleRepository saleRepository)
         {
             _tiendaService = tiendaService;
             _productService = productService;
             _repository = repository;
+            _turnoService = turnoService;
+            _saleRepository = saleRepository;
         }
 
         public async Task<List<VentaWeb>> List()
@@ -36,6 +40,12 @@ namespace PointOfSale.Business.Services
                 VentaWeb_found.ModificationDate = DateTime.Now;
                 VentaWeb_found.ModificationUser = entity.ModificationUser;
 
+                if(entity.Estado == Model.Enum.EstadoVentaWeb.Finalizada)
+                {
+                    var turno = await _turnoService.GetTurnoActual(VentaWeb_found.IdTienda.Value);
+                    await _saleRepository.CreatSaleFromVentaWeb(VentaWeb_found, turno);
+                }
+
                 bool response = await _repository.Edit(VentaWeb_found);
 
                 if (!response)
@@ -55,6 +65,19 @@ namespace PointOfSale.Business.Services
         {
             IQueryable<VentaWeb> query = await _repository.Query(_=>_.IdVentaWeb == idVentaWeb);
             return query.Include(_ => _.DetailSales).Include(_ => _.FormaDePago).First();
+        }
+
+        public async Task<VentaWeb> RegisterWeb(VentaWeb entity)
+        {
+            try
+            {
+                var sale = await _saleRepository.RegisterWeb(entity);
+                return sale;
+            }
+            catch
+            {
+                throw;
+            }
         }
     }
 }

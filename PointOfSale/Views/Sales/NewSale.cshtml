@@ -19,7 +19,7 @@
     <button id="btn-add-tab" type="button" class="btn btn-primary pull-right rounded-circle me-2"><i class="mdi mdi-plus"></i></button>
 
     <li class="nav-item" role="presentation" hidden>
-        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Home <a class="close" type="button" title="Remove this page">×</a> </button>
+        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Home <span class="close" type="button" title="Remove this page">×</span> </button>
     </li>
 </ul>
 
@@ -86,7 +86,7 @@
                             <div class="card-body">
                                 <div class="input-group input-group-sm mb-3">
                                     <div class="input-group-prepend">
-                                        <label class="input-group-text" for="cboTypeDocumentSale">Tipo</label>
+                                        <label class="input-group-text" for="cboTypeDocumentSale">Forma de Pago</label>
                                     </div>
                                     <select class="form-control" id="cboTypeDocumentSale">
                                     </select>
@@ -136,14 +136,23 @@
                     <div class="col-sm-12">
                         <div class="card shadow">
                             <div class="card-body">
-                                <div class="form-check">
+                                <div class="">
                                     <label class="form-label">
                                         <input type="checkbox" id="cboImprimirTicket"> @*checked*@
                                         Imprimir Ticket
                                     </label>
                                 </div>
-                                <div class="form-group mb-0">
-                                    <button class="btn btn-success btn-sm w-100 finalizeSale" id="btnFinalizeSale">Finalizar venta</button>
+                                <div class="form-row mt-1">
+                                    <div class="form-group">
+                                        <div class="form-group mb-0">
+                                            <button class="btn btn-success w-100 finalizeSale" id="btnFinalizeSale">Finalizar venta</button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group ms-auto bd-highlight">
+                                        <div class="form-group mb-0">
+                                            <button class="btn btn-outline-info w-100 finalizarSaleParcial" id="btnFinalizeSaleParcial">Dividir</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -152,6 +161,68 @@
             </div>
         </div>
 
+    </div>
+</div>
+
+<!-- Modal Dividir pago-->
+<div class="modal fade" id="modalDividirPago" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalGridTitle">Dividir Pago</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row" id="rowDividirPago">
+                        <div class="col-md-12 row">
+                            <div class="form-group col-sm-5">
+                                <label for="txtTotalView">TOTAL</label>
+                                <input type="number" min="0" class="form-control text-end" aria-label="Small" aria-describedby="inputGroupTotal" id="txtTotalView" disabled>
+                            </div>
+                            <div class="form-group col-sm-5">
+                                <label for="txtSumaSubtotales">Suma Sub Totales</label>
+                                <input type="number" min="0" class="form-control text-end" aria-label="Small" aria-describedby="inputGroupTotal" id="txtSumaSubtotales" disabled>
+                            </div>
+                        </div>
+                        <div class="col-sm-12" id="formaDePagoPanel">
+                            <div class="card-body ">
+                                <div class="card shadow row">
+                                    <div class="form-row" style="padding:0px 12px 4px 12px;">
+                                        <div class="form-group col-sm-5" style="padding-top:10px">
+                                            <label for="cboTypeDocumentSaleParcial">Forma de Pago</label>
+                                            <select class="form-control cboFormaDePago" id="cboTypeDocumentSaleParcial">
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-sm-5" style="padding-top:10px">
+                                            <label for="txtTotalParcial">Sub Total</label>
+                                            <div class="input-group mb-3">
+                                                <input type="number" min="0" class="form-control text-end inputSubtotal" aria-label="Small" aria-describedby="inputGroupTotal" id="txtTotalParcial">
+                                                <div class="input-group-prepend">
+                                                    <a class="input-group-text btn calcSubTotales" id="btnCalcSubTotales">Calc.</a>
+                                                </div>
+                                            </div>
+                                        
+                                        </div>
+                                        <div class="form-group col-sm-2" style="align-self: center; text-align: end;">
+                                            <button id="btnAddNuevaFormaDePago" type="button" class="btn pull-right rounded-circle me-2 btnAddFormaDePago" style="background: green;"><i class="mdi mdi-plus text-white"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="btnFinalizarVentaParcial">Finalizar venta</button>
+            </div>
+        </div>
     </div>
 </div>
 

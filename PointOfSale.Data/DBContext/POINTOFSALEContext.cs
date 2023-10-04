@@ -38,6 +38,7 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<TipoDeGasto> TipoDeGasto { get; set; } = null!;
         public virtual DbSet<VentaWeb> VentaWeb { get; set; } = null!;
         public virtual DbSet<AuditoriaModificaciones> AuditoriaModificaciones { get; set; } = null!;
+        public virtual DbSet<Notifications> Notificaciones { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -45,6 +46,13 @@ namespace PointOfSale.Data.DBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<Notifications>(entity =>
+            {
+                entity.HasKey(e => e.IdNotifications);
+
+                entity.ToTable("Notifications");
+            });
 
             modelBuilder.Entity<AuditoriaModificaciones>(entity =>
             {

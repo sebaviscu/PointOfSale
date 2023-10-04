@@ -115,21 +115,44 @@ namespace PointOfSale.Controllers
                     sale_created = await _saleService.Edit(sale_created);
                 }
 
-                model = _mapper.Map<VMSale>(sale_created);
+                if (model.MultiplesFormaDePago != null && model.MultiplesFormaDePago.Any())
+                {
+                    foreach (var f in model.MultiplesFormaDePago)
+                    {
+                        var s = new Sale();
+                        s.Total = f.Total;
+                        s.RegistrationDate = sale_created.RegistrationDate;
+                        s.IdTienda = sale_created.IdTienda;
+                        s.SaleNumber = sale_created.SaleNumber;
+                        s.IdTypeDocumentSale = f.FormaDePago;
+                        s.IdTurno = sale_created.IdTurno;
+
+                        await _saleService.Register(s);
+
+                        var tipoVentaMult = await _typeDocumentSaleService.Get(f.FormaDePago);
+
+                        if (tipoVentaMult.Invoice)
+                        {
+                            //var factura = new FacturaAFIP();
+                            //var facturacionResponse = await _aFIPFacturacionService.FacturarAsync(factura);
+                        }
+                    }
+
+                }
+                if (imprimirTicket)
+                {
+                    var tienda = await _tiendaService.Get(model.IdTienda);
+                    _ticketService.TicketSale(sale_created, tienda);
+                }
 
                 var tipoVenta = await _typeDocumentSaleService.Get(sale_created.IdTypeDocumentSale.Value);
-
                 if (tipoVenta.Invoice)
                 {
                     //var factura = new FacturaAFIP();
                     //var facturacionResponse = await _aFIPFacturacionService.FacturarAsync(factura);
                 }
 
-                if (imprimirTicket)
-                {
-                    var tienda = await _tiendaService.Get(model.IdTienda);
-                    _ticketService.TicketSale(sale_created, tienda);
-                }
+                model = _mapper.Map<VMSale>(sale_created);
 
                 gResponse.State = true;
                 gResponse.Object = model;
@@ -142,7 +165,6 @@ namespace PointOfSale.Controllers
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
-
 
         [HttpGet]
         public async Task<IActionResult> History(string saleNumber, string startDate, string endDate)

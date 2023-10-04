@@ -124,7 +124,7 @@ namespace PointOfSale.Controllers
                 model.IdUsers = int.Parse(idUsuario);
                 model.IdTienda = idTienda;
 
-                var sale_created = await _saleService.RegisterWeb(_mapper.Map<VentaWeb>(model));
+                var sale_created = await _shopService.RegisterWeb(_mapper.Map<VentaWeb>(model));
 
                 model = _mapper.Map<VMVentaWeb>(sale_created);
 

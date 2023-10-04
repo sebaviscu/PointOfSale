@@ -25,5 +25,6 @@ namespace PointOfSale.Models
 
         public bool ImprimirTicket { get; set; }
 
+        public List<VMMultiplesFormaPago>? MultiplesFormaDePago { get; set; }
     }
 }
