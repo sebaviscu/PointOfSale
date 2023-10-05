@@ -159,10 +159,8 @@ $(document).on("click", "button.finalizeSale", function () {
         total: $("#txtTotal" + currentTabId).val(),
         detailSales: vmDetailSale,
         tipoMovimiento: $("#cboCliente" + currentTabId).val() != '' ? 2 : null,
-        imprimirTicket: document.querySelector('#cboImprimirTicket' + currentTabId).checked
+        imprimirTicket: document.querySelector('#cboImprimirTicket').checked
     }
-
-    $("#btnFinalizeSale" + currentTabId).closest("div.card-body").LoadingOverlay("show")
 
     fetch("/Sales/RegisterSale", {
         method: "POST",
@@ -170,7 +168,6 @@ $(document).on("click", "button.finalizeSale", function () {
         body: JSON.stringify(sale)
     }).then(response => {
 
-        $("#btnFinalizeSale" + currentTabId).closest("div.card-body").LoadingOverlay("hide")
         return response.ok ? response.json() : Promise.reject(response);
     }).then(responseJson => {
 
@@ -186,15 +183,24 @@ $(document).on("click", "button.finalizeSale", function () {
         } else {
             swal("Lo sentimos", "La venta no fué registrada", "error");
         }
-    }).catch((error) => {
-        $("#btnFinalizeSale" + currentTabId).closest("div.card-body").LoadingOverlay("hide")
     })
 
 
 })
 
+function cleanSaleParcial() {
+    for (var i = 1; i < formaDePagoID + 1; i++) {
+        const element = document.getElementById("nuevaFormaDePago" + i);
+        if (element != null)
+            element.remove();
+    }
+
+    formaDePagoID = 0;
+}
 
 $(document).on("click", "button.finalizarSaleParcial", function () {
+    cleanSaleParcial();
+
     var currentTabId = $(this).attr("tabId");
     var currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
 
@@ -203,11 +209,11 @@ $(document).on("click", "button.finalizarSaleParcial", function () {
         return;
     }
 
-    if (document.getElementById("cboTypeDocumentSale" + currentTabId).value == '') {
-        const msg = `Debe completaro el campo Tipo de Venta`;
-        toastr.warning(msg, "");
-        return;
-    }
+    //if (document.getElementById("cboTypeDocumentSale" + currentTabId).value == '') {
+    //    const msg = `Debe completaro el campo Tipo de Venta`;
+    //    toastr.warning(msg, "");
+    //    return;
+    //}
 
     let total = $("#txtTotal" + currentTabId).val();
     let formaDePago = $("#cboTypeDocumentSale" + currentTabId).val();
@@ -220,6 +226,14 @@ $(document).on("click", "button.finalizarSaleParcial", function () {
 
 
     $("#txtTotalParcial").on("change", function () {
+        calcularSuma();
+    });
+
+    $("#btnCalcSubTotales").on("click", function () {
+        let subTotal = getSumaSubTotales();
+
+        let valorParcial = $("#txtTotalParcial").val();
+        $("#txtTotalParcial").val(parseFloat(subTotal) + parseFloat(valorParcial));
         calcularSuma();
     });
 
@@ -294,9 +308,10 @@ function getSumaSubTotales() {
 
 
 $("#btnFinalizarVentaParcial").on("click", function () {
+        $("#btnFinalizeSaleParcial").closest("div.card-body").LoadingOverlay("show")
 
     if ($(".cboFormaDePago").filter(function () { return $(this).val() === ""; }).length !== 0) {
-        const msg = `Debe completaro el campo Tipo de Venta`;
+        const msg = `Debe completaro el campo Forma de Pago`;
         toastr.warning(msg, "");
         return;
     }
@@ -331,7 +346,7 @@ $("#btnFinalizarVentaParcial").on("click", function () {
             total: $("#txtTotalParcial").val(),
             detailSales: vmDetailSale,
             tipoMovimiento: $("#cboCliente" + currentTabId).val() != '' ? 2 : null,
-            imprimirTicket: document.querySelector('#cboImprimirTicket' + currentTabId).checked,
+            imprimirTicket: document.querySelector('#cboImprimirTicket').checked,
             multiplesFormaDePago: formasDePago
         }
 
@@ -341,7 +356,6 @@ $("#btnFinalizarVentaParcial").on("click", function () {
             body: JSON.stringify(sale)
         }).then(response => {
 
-            $("#btnFinalizeSale" + currentTabId).closest("div.card-body").LoadingOverlay("hide")
             return response.ok ? response.json() : Promise.reject(response);
         }).then(responseJson => {
 
@@ -351,15 +365,14 @@ $("#btnFinalizarVentaParcial").on("click", function () {
 
                 AllTabsForSale = AllTabsForSale.filter(p => p.idTab != currentTabId)
                 document.getElementById('cerrarTab' + currentTabId).click()
-                $("#modalDividirPago").modal("hide") // TODO borrar todo
+                $("#modalDividirPago").modal("hide")
+                cleanSaleParcial();
 
                 swal("Registrado!", `Número de venta : ${responseJson.object.saleNumber}`, "success");
 
             } else {
                 swal("Lo sentimos", "La venta no fué registrada", "error");
             }
-        }).catch((error) => {
-            $("#btnFinalizeSale" + currentTabId).closest("div.card-body").LoadingOverlay("hide")
         })
 
     }
@@ -401,16 +414,16 @@ function newTab() {
     clone.querySelector("#tbProduct").id = "tbProduct" + tabID;
     clone.querySelector("#cboTypeDocumentSale").id = "cboTypeDocumentSale" + tabID;
     clone.querySelector("#txtTotal").id = "txtTotal" + tabID;
-    clone.querySelector("#btnFinalizeSale").id = "btnFinalizeSale" + tabID;
+    //clone.querySelector("#btnFinalizeSale").id = "btnFinalizeSale" + tabID;
     clone.querySelector("#btnFinalizeSaleParcial").id = "btnFinalizeSaleParcial" + tabID;
     clone.querySelector("#cboCliente").id = "cboCliente" + tabID;
-    clone.querySelector("#cboImprimirTicket").id = "cboImprimirTicket" + tabID;
+    //clone.querySelector("#cboImprimirTicket").id = "cboImprimirTicket" + tabID;
     clone.querySelector("#txtPeso").id = "txtPeso" + tabID;
     clone.querySelector("#btnAgregarProducto").id = "btnAgregarProducto" + tabID;
 
     $('#tab' + tabID).append(clone);
 
-    $("#btnFinalizeSale" + tabID).attr("tabId", tabID);
+    //$("#btnFinalizeSale" + tabID).attr("tabId", tabID);
     $("#btnFinalizeSaleParcial" + tabID).attr("tabId", tabID);
 
     var newTab = {
