@@ -12,14 +12,16 @@ namespace PointOfSale.Business.Services
         private readonly IProductService _productService;
         private readonly ITurnoService _turnoService;
         private readonly ISaleRepository _saleRepository;
+        private readonly INotificationService _notificationService;
 
-        public ShopService(ITiendaService tiendaService, IProductService productService, IGenericRepository<VentaWeb> repository, ITurnoService turnoService, ISaleRepository saleRepository)
+        public ShopService(ITiendaService tiendaService, IProductService productService, IGenericRepository<VentaWeb> repository, ITurnoService turnoService, ISaleRepository saleRepository, INotificationService notificationService)
         {
             _tiendaService = tiendaService;
             _productService = productService;
             _repository = repository;
             _turnoService = turnoService;
             _saleRepository = saleRepository;
+            _notificationService = notificationService;
         }
 
         public async Task<List<VentaWeb>> List()
@@ -71,7 +73,10 @@ namespace PointOfSale.Business.Services
         {
             try
             {
+                var tienda = await _tiendaService.GetTiendaPrincipal();
+                entity.IdTienda = tienda.IdTienda;
                 var sale = await _saleRepository.RegisterWeb(entity);
+                _ = _notificationService.Save(new Notifications(sale));
                 return sale;
             }
             catch

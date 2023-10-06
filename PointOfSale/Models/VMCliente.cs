@@ -13,9 +13,11 @@ namespace PointOfSale.Models
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }
         public string? Total { get; set; }
+        public decimal? TotalDecimal { get; set; }
+
         public IEnumerable<ClienteMovimiento>? ClienteMovimientos { get; set; }
 
-        public string Color { get; set; }
+        public string Color => TotalDecimal >= 0 ? "text-success" : "text-danger";
         public int IdTienda { get; set; }
 
     }

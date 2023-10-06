@@ -63,7 +63,7 @@ namespace PointOfSale.Business.Services
             IQueryable<Cliente> query = await _repositoryCliente.Query(p =>
            string.Concat(p.Cuil, p.Nombre).Contains(search));
 
-            return query.ToList();
+            return query.Include(_=>_.ClienteMovimientos).ToList();
         }
 
         public async Task<Sale> Register(Sale entity)
@@ -71,7 +71,6 @@ namespace PointOfSale.Business.Services
             try
             {
                 var sale = await _repositorySale.Register(entity);
-                //var factura = await _afipFacturacionService.FacturarAsync(new FacturaAFIP());
                 return sale;
             }
             catch

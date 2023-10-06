@@ -16,6 +16,7 @@ namespace PointOfSale.Data.Repository
     public class SaleRepository : GenericRepository<Sale>, ISaleRepository
     {
         private readonly POINTOFSALEContext _dbcontext;
+
         public SaleRepository(POINTOFSALEContext context) : base(context)
         {
             _dbcontext = context;
@@ -59,17 +60,21 @@ namespace PointOfSale.Data.Repository
             return SaleGenerated;
         }
 
-        private void ControlStock(DetailSale dv, Product product_found)
+        private bool ControlStock(DetailSale dv, Product p)
         {
-            if (product_found.Minimo != null && product_found.Minimo > 0)
+            var alertaStock = false;
+            if (p.Minimo != null && p.Minimo > 0)
             {
-                product_found.Quantity = product_found.Quantity - dv.Quantity;
-                if (product_found.Quantity <= product_found.Minimo)
+                p.Quantity = p.Quantity - dv.Quantity;
+                if (p.Quantity <= p.Minimo)
                 {
-                    // TODO notificacion de sotck minimo
+                    var notif = new Notifications(p);
+                    _dbcontext.Notificaciones.Add(notif);
                 }
-                _dbcontext.Products.Update(product_found);
+                _dbcontext.Products.Update(p);
             }
+
+            return alertaStock;
         }
 
         public async Task<string> GetLastSerialNumberSale()

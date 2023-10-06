@@ -67,6 +67,7 @@ public class Program
         builder.Services.AddScoped<ITicketService, TicketService>();
         builder.Services.AddScoped<IShopService, ShopService>();
         builder.Services.AddScoped<IAuditoriaService, AuditoriaService>();
+        builder.Services.AddScoped<INotificationService, NotificationService>();
 
         //builder.Services.AddAFIPConfiguration(x =>
         //{

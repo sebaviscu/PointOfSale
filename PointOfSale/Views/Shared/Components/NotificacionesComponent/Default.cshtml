@@ -1,20 +1,31 @@
-﻿@{
+﻿@using PointOfSale.Models;
+@model List<VMNotifications>;
+@{
     Layout = null;
 }
 
-<li class="dropdown user-menu show">
-    <button href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
-        <i class="mdi mdi-asterisk mdi-24px"></i>
-    </button>
-    <ul class="dropdown-menu dropdown-menu-right">
-        <li class="dropdown-header">
-            <div class="d-inline-block">
-                <small class="pt-1">@ViewData["emailUser"]</small>
-                <span></span>
-            </div>
-        </li>
-        <li class="dropdown-footer">
-            <a asp-controller="Home" asp-action="LogOut"> <i class="mdi mdi-delete"></i> Limpiar </a>
-        </li>
+@if (Model.Any())
+{
+    <ul class="dropdown user-menu show">
+        <button href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
+            <i class="mdi mdi-asterisk mdi-24px"></i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-right">
+            @foreach (var n in Model)
+            {
+                <li class="dropdown-header">
+                    <div class="d-inline-block">
+                        <a href="/Notification/NotificationForId?id=@n.IdNotifications" >
+                            <small class="pt-1">@n.Descripcion</small>
+                            <small class="pt-1">@n.RegistrationDate</small>
+                        </a>
+                        <span></span>
+                    </div>
+                </li>
+            }
+            <li class="">
+                <a asp-controller="Home" asp-action="LogOut"> <i class="mdi mdi-delete"></i> Limpiar </a>
+            </li>
+        </ul>
     </ul>
-</li>
+}

@@ -9,14 +9,6 @@ namespace PointOfSale.Models
         {
             Tienda = tienda;
 
-            Categorias = new List<VMCategory>()
-            {
-                new VMCategory()
-                {
-                    IdCategory=0,
-                    Description = "Todo"
-                }
-            };
             Horarios = $"· Lunes: {tienda.Lunes} \n· Martes: {tienda.Martes} \n· Miercoles: {tienda.Miercoles} \n· Jueves: {tienda.Jueves}\n· Viernes: {tienda.Viernes}\n· Sabado: {tienda.Sabado}\n· Domingo: {tienda.Domingo}\n· Feriados: {tienda.Feriado}";
 
             int day = (int)DateTime.Now.DayOfWeek;
@@ -56,5 +48,7 @@ namespace PointOfSale.Models
         public string Horarios { get; set; }
 
         public string HorariosToday { get; set; }
+
+        public List<VMTypeDocumentSale> FormasDePago { get; set; }
     }
 }

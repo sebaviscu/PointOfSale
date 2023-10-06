@@ -92,6 +92,8 @@
             </div>
             <span class="close" onclick="searchToggle(this, event);"></span>
         </div>
+        <a class="btn btnCategoria" cat-id="0" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">Todo</a>
+
         @foreach (var cat in Model.Categorias)
         {
             <a class="btn btnCategoria" cat-id="@cat.IdCategory" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">@cat.Description</a>
@@ -192,6 +194,11 @@
                                         <label for="txtNombre">Medio de pago <b">*</b></label>
 
                                         <select class="form-control" id="cboFormaPago">
+                                            <option value=""></option>
+                                            @foreach (var i in Model.FormasDePago)
+                                            {
+                                                <option value="@i.IdTypeDocumentSale">@i.Description</option>
+                                            }
                                         </select>
                                     </div>
                                 </div>

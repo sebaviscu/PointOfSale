@@ -7,22 +7,6 @@ var productos = [];
 
 (function ($) {
 
-    fetch("/Admin/GetTipoVentaWeb")
-        .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
-        }).then(responseJson => {
-            $("#cboFormaPago").append(
-                $("<option>").val('').text('')
-            )
-            if (responseJson.data.length > 0) {
-                responseJson.data.forEach((item) => {
-                    $("#cboFormaPago").append(
-                        $("<option>").val(item.idTypeDocumentSale).text(item.description)
-                    )
-                });
-            }
-        })
-
     $("#btnTrash").on("click", function () {
         clean();
     })
@@ -402,7 +386,7 @@ function finalizarVenta() {
 %0A· *Nombre*: ${model.nombre}
 %0A· *Telefono*: ${model.telefono} 
 %0A· *Direccion*: ${model.direccion} 
-%0A· *Metodo de pago*: ${selectedText}
+%0A· *Forma de pago*: ${selectedText}
 %0A· *Comentarios*: ${model.comentario} 
 %0A· *TOTAL*: $${Number.parseFloat(sum).toFixed(2)}%0A`);
 
@@ -425,7 +409,6 @@ function finalizarVenta() {
             window.open('https://wa.me/' + phone + '?text=' + textWA, '_blank');
 
             productos.forEach(value => {
-                sum += value.total;
                 delete value.tipoVenta;
             });
 

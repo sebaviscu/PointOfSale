@@ -27,6 +27,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<Notifications> Save(Notifications notifications)
         {
+            notifications.RegistrationDate = DateTime.Now;
             var not = await _repository.Add(notifications);
             if (not.IdNotifications == 0)
                 throw new TaskCanceledException("La Notificacion no se pudo crear.");

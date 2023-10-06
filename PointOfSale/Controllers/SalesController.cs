@@ -72,12 +72,6 @@ namespace PointOfSale.Controllers
         public async Task<IActionResult> GetClientes(string search)
         {
             List<VMCliente> vmListClients = _mapper.Map<List<VMCliente>>(await _saleService.GetClients(search));
-            foreach (var c in vmListClients)
-            {
-                c.Total = "$100";
-                c.Color = "text-success";
-                //c.Color = c.ClienteMovimientos.Sum(x => x.Total) > 0 ? "text-success" : "text-danger";
-            }
             return StatusCode(StatusCodes.Status200OK, vmListClients);
         }
 
@@ -100,6 +94,12 @@ namespace PointOfSale.Controllers
                 model.IdTienda = user.IdTienda;
 
                 Sale sale_created = await _saleService.Register(_mapper.Map<Sale>(model));
+
+                if (imprimirTicket)
+                {
+                    var tienda = await _tiendaService.Get(model.IdTienda);
+                    _ticketService.TicketSale(sale_created, tienda);
+                }
 
                 if (model.ClientId.HasValue)
                 {
@@ -137,12 +137,6 @@ namespace PointOfSale.Controllers
                             //var facturacionResponse = await _aFIPFacturacionService.FacturarAsync(factura);
                         }
                     }
-
-                }
-                if (imprimirTicket)
-                {
-                    var tienda = await _tiendaService.Get(model.IdTienda);
-                    _ticketService.TicketSale(sale_created, tienda);
                 }
 
                 var tipoVenta = await _typeDocumentSaleService.Get(sale_created.IdTypeDocumentSale.Value);

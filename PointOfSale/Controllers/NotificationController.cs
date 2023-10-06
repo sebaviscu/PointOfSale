@@ -19,6 +19,15 @@ namespace PointOfSale.Controllers
             _mapper = mapper;
         }
 
+        public IActionResult Notification()
+        {
+            return View();
+        }
+        public IActionResult NotificationForId(int id)
+        {
+            return View();
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetNotificaciones()
         {
