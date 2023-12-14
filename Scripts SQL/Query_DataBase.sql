@@ -1,0 +1,336 @@
+
+create database POINTOFSALE
+
+go
+
+use POINTOFSALE
+
+create table Tienda(
+idTienda int primary key identity(1,1),
+nombre varchar(150) null,
+Email varchar(200) null,
+Telefono varchar(50) null,
+Direccion varchar(100) null,
+NombreImpresora varchar(50) null,
+Logo varbinary(max),
+MontoEnvioGratis decimal(10,2) null,
+AumentoWeb decimal(10,2) null,
+Whatsapp varchar(50) null,
+Lunes varchar(100) null,
+Martes varchar(100) null,
+Miercoles varchar(100) null,
+Jueves varchar(100) null,
+Viernes varchar(100) null,
+Sabado varchar(100) null,
+Domingo varchar(100) null,
+Feriado varchar(100) null,
+Facebook varchar(50) null,
+Instagram varchar(50) null,
+Tiktok varchar(50) null,
+Twitter varchar(50) null,
+Youtube varchar(80) null,
+principal bit null,
+[modificationDate] [datetime] null,
+[modificationUser] varchar(50) null,
+)
+
+go
+
+create table Turno(
+	[idTurno] int primary key identity(1,1),
+	[fechaInicio] datetime not null,
+	[fechaFin] datetime null,
+	[descripcion] varchar(150) null,
+	[idTienda] int references Tienda(idTienda) not null,
+	[registrationDate] datetime not null,
+	[registrationUser] varchar(50) not null,
+	[modificationUser] varchar(50) null
+)
+
+go
+
+create table Menu(
+[idMenu] int primary key identity(1,1),
+[description] varchar(30),
+[idMenuParent] int references Menu(idMenu),
+[icon] varchar(30),
+[controller] varchar(30),
+[pageAction] varchar(30),
+[isActive] bit,
+[orden] int null,
+[registrationDate] datetime default getdate()
+)
+
+go
+
+
+create table Rol(
+[idRol] int primary key identity(1,1),
+[description] varchar(30),
+[isActive] bit,
+[registrationDate] datetime default getdate()
+)
+ go
+ 
+ create table RolMenu(
+ [idRolMenu] int primary key identity(1,1),
+ [idRol] int references Rol(idRol),
+ [idMenu] int references Menu(idMenu),
+ [isActive] bit,
+ [registrationDate] datetime default getdate()
+ )
+
+ go
+
+
+create table Users(
+[idUsers] int primary key identity(1,1),
+[name] varchar(50),
+[email] varchar(50),
+[phone] varchar(50),
+[idRol] int references Rol(idRol),
+[password] varchar(100),
+[photo] varbinary(max),
+[isActive] bit,
+[registrationDate] datetime default getdate(),
+[modificationDate] [datetime] null,
+[modificationUser] varchar(50) null,
+idTienda int references Tienda(idTienda) null
+)
+
+go
+
+create table Category(
+[idCategory] int primary key identity(1,1),
+[description] varchar(50),
+[isActive] bit,
+[registrationDate] datetime default getdate(),
+[modificationDate] [datetime] null,
+[modificationUser] varchar(50) null
+)
+go
+
+create table Proveedor(
+	[idProveedor] int primary key identity(1,1),
+	[nombre] varchar(150) not null,
+	[cuil] varchar(50) null,
+	[telefono] varchar(50) null,
+	[direccion] varchar(200) null,
+	[registrationDate] datetime not null,
+	[modificationDate] datetime null,
+	[modificationUser] varchar(50) null
+)
+
+go
+
+create table Product(
+[idProduct] int primary key identity(1,1),
+[barCode] varchar(50),
+[brand] varchar(50),
+[description] varchar(100),
+[idCategory] int references Category(idCategory),
+[quantity] decimal(10,2),
+[minimo] decimal(10,2),
+[price] decimal(10,2),
+[photo] varbinary(max),
+[isActive] bit,
+priceWeb decimal(10,2) null,
+porcentajeProfit int null,
+costPrice decimal(10,2) null,
+tipoVenta int not null,
+[idProveedor] int references Proveedor(idProveedor) not null,
+[comentario] varchar(300)  null,
+[registrationDate] datetime default getdate(),
+[modificationDate] [datetime] null,
+[modificationUser] varchar(50) null
+)
+
+go
+
+create table CorrelativeNumber(
+[idCorrelativeNumber] int primary key identity(1,1),
+[lastNumber] int,
+[quantityDigits] int,
+[management] varchar(100),
+[dateUpdate] datetime
+)
+
+go
+
+
+create table TypeDocumentSale(
+[idTypeDocumentSale] int primary key identity(1,1),
+[description] varchar(50),
+[isActive] bit,
+invoice bit not null,
+web bit not null,
+[registrationDate] datetime default getdate()
+)
+
+go
+
+create table VentaWeb(
+idVentaWeb int primary key identity(1,1),
+Nombre varchar(100) null,
+Telefono varchar(50) null,
+Direccion varchar(100) null,
+Comentario varchar(200) null,
+[idFormaDePago] int references TypeDocumentSale(idTypeDocumentSale),
+[Total] decimal(10,2) not null,
+IdTienda int not null,
+estado int not null,
+[registrationDate] datetime not null,
+[modificationDate] datetime null,
+[modificationUser] varchar(50) null,
+)
+
+go
+
+create table Sale(
+[idSale] int primary key identity(1,1),
+[saleNumber] varchar(6),
+[idTypeDocumentSale] int references TypeDocumentSale(idTypeDocumentSale),
+[idUsers] int references Users(idUsers),
+[customerDocument] varchar(10),
+[clientName] varchar(20),
+[total] decimal(10,2),
+idTurno int references Turno(idTurno) not null,
+IdTienda int not null,
+idClienteMovimiento int null,
+[registrationDate] datetime default getdate()
+)
+
+go
+
+
+create table DetailSale(
+[idDetailSale] int primary key identity(1,1),
+[idSale] int references Sale(idSale),
+[idProduct] int,
+[brandProduct] varchar(100),
+[descriptionProduct] varchar(100),
+[categoryProducty] varchar(100),
+[quantity] decimal(10,2),
+promocion varchar(300) null,
+[price] decimal(10,2),
+[total] decimal(10,2),
+tipoVenta int null,
+[idVentaWeb] int null references VentaWeb(idVentaWeb)
+)
+
+go
+
+
+create table Cliente(
+	[idCliente] int primary key identity(1,1),
+	[nombre] varchar(150) not null,
+	[cuil] varchar(50) null,
+	[telefono] varchar(50) null,
+	[direccion] varchar(200) null,
+	IdTienda int references Tienda(idTienda) not null,
+	[registrationDate] datetime not null,
+	[modificationDate] datetime null,
+	[modificationUser] varchar(50) null
+)
+
+go
+
+create table ClienteMovimiento(
+	[idClienteMovimiento] int primary key identity(1,1),
+	[idCliente] int references Cliente(idCliente) not null,
+	[idSale] int references Sale(idSale) null,
+	[total] decimal(10,2) not null,
+	IdTienda int references Tienda(idTienda) not null,
+	TipoMovimiento int not null,
+	[registrationDate] datetime not null,
+	[registrationUser] varchar(50) not null
+)
+
+
+
+go
+
+create table Promocion(
+	[idPromocion] int primary key identity(1,1),
+	[nombre] varchar(100) null,
+	[idProducto] varchar(100) null,
+	[operador] int null,
+	[cantidadProducto] int null,
+	[idCategory] varchar(100) null,
+	[dias] varchar(100) null,
+	[precio] decimal(10,2) null,
+	[porcentaje] decimal(10,2) null,
+	IdTienda int references Tienda(idTienda) not null,
+	[isActive] bit,
+	[registrationDate] datetime not null,
+	[modificationDate] datetime null,
+	[modificationUser] varchar(50) null,
+)
+
+go
+
+create table ProveedorMovimiento(
+	[idProveedorMovimiento] int primary key identity(1,1),
+	[idProveedor] int references Proveedor(idProveedor) not null,
+	[importe] decimal(10,2) not null,
+	[importeSinIva] decimal(10,2) null,
+	[Iva] decimal(10,2) null,
+	[Ivaimporte] decimal(10,2) null,
+	[nroFactura] varchar(50) null,
+	[tipoFactura] varchar(50) null,
+	[comentario] varchar(300)  null,
+	idTienda int not null,
+	[registrationDate] datetime not null,
+	[registrationUser] varchar(50) not null
+)
+
+go
+
+
+create table TipoGastos(
+	[idTipoGastos] int primary key identity(1,1),
+	[gastoParticular] int not null,
+	[descripcion] varchar(150) not null
+)
+
+create table Gastos(
+	[idGastos] int primary key identity(1,1),
+	[idTipoGasto] int references TipoGastos(idTipoGastos) not null,
+	[importe] decimal(10,2) not null,
+	[importeSinIva] decimal(10,2) null,
+	[Iva] decimal(10,2),
+	[Ivaimporte] decimal(10,2) null,
+	[nroFactura] varchar(50) null,
+	[tipoFactura] varchar(50) null,
+	[idUsuario] int references Users(idUsers) null,
+	[comentario] varchar(300) null,
+	[idTienda] int not null,
+	[registrationDate] datetime not null,
+	[registrationUser] varchar(50) not null,
+	[modificationDate] [datetime] null,
+	[modificationUser] varchar(50) null
+)
+
+go
+
+create table AuditoriaModificaciones(
+idAuditoriaModificaciones int primary key identity(1,1),
+entidad varchar(50) not null,
+idEntidad int not null,
+descripcion varchar(150) not null,
+entidadAntes varchar(max) not null,
+entidadDespues varchar(max) not null,
+[modificationDate] [datetime] null,
+[modificationUser] varchar(50) null,
+)
+
+go
+
+create table Notifications(
+idNotifications int primary key identity(1,1),
+descripcion varchar(100) not null,
+[isActive] bit not null,
+registrationDate [datetime] not null,
+[modificationDate] [datetime] null,
+[modificationUser] varchar(50) null
+)
