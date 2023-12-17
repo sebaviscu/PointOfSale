@@ -23,12 +23,10 @@ function cerrarTurno() {
             }
 
             $("#modalDataTurno").modal("show")
-
         })
         .catch((error) => {
             $("div.container-fluid").LoadingOverlay("hide")
         });
-
 }
 
 

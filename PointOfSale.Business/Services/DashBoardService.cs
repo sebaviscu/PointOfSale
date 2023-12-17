@@ -36,7 +36,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<GraficoVentasConComparacion> GetSales(TypeValuesDashboard typeValues, int idTienda)
         {
-            var start = DateTime.Now;
+            var start = DateTime.Now.AddDays(-1);
             var resultados = new GraficoVentasConComparacion();
             var dateCompare = DateTime.Now;
 
@@ -53,7 +53,8 @@ namespace PointOfSale.Business.Services
                         break;
 
                     case TypeValuesDashboard.Semana:
-                        start = start.AddDays((-(int)DateTime.Now.Date.DayOfWeek) + 1);
+                        var numberWeek = (int)DateTime.Now.Date.DayOfWeek == 0 ? 7 : (int)DateTime.Now.Date.DayOfWeek;
+                        start = start.AddDays(-numberWeek + 1);
                         dateCompare = start.AddDays(-7);
                         var resp2 = await GetSalesActuales(start, idTienda);
                         resultados.VentasActuales = resp2.Ventas;
@@ -89,7 +90,7 @@ namespace PointOfSale.Business.Services
             FechasParaQuery(typeValues, out dateCompare, out start);
 
             IQueryable<ProveedorMovimiento> query = await _proveedorMovimiento.Query(_ => _.RegistrationDate.Date >= start.Date && _.idTienda == idTienda);
-            
+
             IQueryable<ProveedorMovimiento> query2 = await _proveedorMovimiento.Query();
 
             Dictionary<string, decimal> resultado = query2
@@ -297,7 +298,8 @@ namespace PointOfSale.Business.Services
                     break;
 
                 case TypeValuesDashboard.Semana:
-                    start = start.AddDays((-(int)DateTime.Now.Date.DayOfWeek) + 1);
+                    var numberWeek = (int)DateTime.Now.Date.DayOfWeek == 0 ? 7 : (int)DateTime.Now.Date.DayOfWeek;
+                    start = start.AddDays(-numberWeek + 1);
                     dateCompare = start.AddDays(-7);
 
                     break;

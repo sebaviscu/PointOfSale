@@ -25,6 +25,7 @@ namespace PointOfSale.Models
         public int? IdProveedor { get; set; }
         public string? Comentario { get; set; }
         public decimal? Minimo { get; set; }
+        public string? ModificationDateString { get; set; }
 
     }
 }

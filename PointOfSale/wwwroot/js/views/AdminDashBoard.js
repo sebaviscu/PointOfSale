@@ -424,13 +424,17 @@ $("#btnSavePagoProveedor").on("click", function () {
     if (tipoDeGasto === "1") { // gasto
         url = "/Gastos/CreateGastos";
 
-        const inputs = $("input.input-validate-gasto").serializeArray();
-        const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
+        let validacion = true;
+        $(".input-validate-gasto").each(function () {
+            validacion = ($(this).val().trim() === "") ? false : validacion;
+        });
 
-        if (inputs_without_value.length > 0) {
-            const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
-            toastr.warning(msg, "");
-            $(`input[name="${inputs_without_value[0].name}"]`).focus();
+        if ($("#txtImporte").val().trim() == "") {
+            validacion = false;
+        }
+
+        if (!validacion) {
+            toastr.warning(`Debe completar todos los campos obligatorios`, "");
             return;
         }
 

@@ -176,14 +176,14 @@ namespace PointOfSale.Business.Services
                     await CrearVentaGenerada(idTienda, idUser, tiposVentas, productos, turno, random, cantTipoVentas, cantproductos, sale);
                 }
 
-                //for (int i = 0; i < 50; i++) // ayer y hoy
-                //{
-                //    var dia = RandomDayDias();
+                for (int i = 0; i < 50; i++) // ayer y hoy
+                {
+                    var dia = RandomDayDias();
 
-                //    var sale = new Sale();
-                //    sale.RegistrationDate = dia;
-                //    await CrearVentaGenerada(idTienda, idUser, tiposVentas, productos, turno, random, cantTipoVentas, cantproductos, sale);
-                //}
+                    var sale = new Sale();
+                    sale.RegistrationDate = dia;
+                    await CrearVentaGenerada(idTienda, idUser, tiposVentas, productos, turno, random, cantTipoVentas, cantproductos, sale);
+                }
 
                 return 1;
             }

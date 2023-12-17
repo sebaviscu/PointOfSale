@@ -92,7 +92,8 @@ namespace PointOfSale.Utilities.Automapper
             ).ForMember(destiny =>
                 destiny.PhotoBase64,
                 opt => opt.MapFrom(source => Convert.ToBase64String(source.Photo))
-            );
+            )
+            .ForMember(user => user.ModificationDateString, opt => opt.MapFrom(userEdit => userEdit.ModificationDate.HasValue ? userEdit.ModificationDate.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty));;
 
             CreateMap<VMProduct, Product>()
             .ForMember(destiny =>

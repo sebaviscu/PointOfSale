@@ -105,6 +105,7 @@ $(document).ready(function () {
             { "data": "nameCategory" },
             { "data": "nameProveedor" },
             { "data": "price" },
+            { "data": "modificationDateString" },
             {
                 "data": "isActive",
                 "className": "text-center", render: function (data) {
@@ -157,7 +158,7 @@ function editAll() {
 
     document.querySelectorAll('#tbData tr').forEach((row, i) => {
         if (row.querySelector('input[type=checkbox]') != null && row.querySelector('input[type=checkbox]').checked && row.id !== '') {
-            aProductos.push([row.id, row.childNodes[4].textContent, row.childNodes[5].textContent]);
+            aProductos.push([row.id, row.childNodes[2].textContent, row.childNodes[5].textContent]);
         }
     })
 
