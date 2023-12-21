@@ -4,30 +4,58 @@
     Layout = null;
 }
 
+@section StylesPOS{
+
+    <link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
+    <link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
+    <link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
+}
+
 @if (Model.Any())
 {
-    <ul class="dropdown user-menu show">
+    <ul id="listaNotificaciones" class="dropdown user-menu show">
         <button href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
             <i class="mdi mdi-asterisk mdi-24px"></i>
         </button>
-        <ul class="dropdown-menu dropdown-menu-right">
+        <ul class="dropdown-menu dropdown-menu-right" style="width: fit-content;">
             @foreach (var n in Model)
             {
-                <li class="dropdown-header">
+                <li class="dropdown-header" style="padding: 5px;width: max-content;margin: 0;">
                     <div class="d-inline-block">
-                        <a href="/Notification/NotificationForId?id=@n.IdNotifications">
-                            <small class="pt-1">@n.Descripcion</small>
+                        <a class="notificacion" id="@n.IdNotifications" href="#">
+                            @n.Descripcion
                             <small class="pt-1">@n.RegistrationDate</small>
                         </a>
                         <span></span>
                     </div>
                 </li>
             }
-            <li class="">
-                <a href="/Notification/LimpiarTodoNotificacion">
-                    <i class="mdi mdi-delete"></i>Limpiar 
+            <li style="padding: 5px;width: max-content;margin: 0;">
+                <a id="limpiarNotificaciones" href="#">
+                    <i class="mdi mdi-delete"></i>Limpiar todo
                 </a >
             </li>
         </ul>
     </ul>
 }
+
+
+@section Scripts{
+    <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
+    <script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
+    <script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
+
+
+    <script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
+    <script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
+    <script src="~/plugins/data-tables/jszip.min.js"></script>
+    <script src="~/plugins/data-tables/buttons.html5.min.js"></script>
+    <script src="~/plugins/data-tables/buttons.print.min.js"></script>
+
+    <link href="https://cdn.webdatarocks.com/latest/webdatarocks.min.css" rel="stylesheet" />
+    <script src="https://cdn.webdatarocks.com/latest/webdatarocks.toolbar.min.js"></script>
+    <script src="https://cdn.webdatarocks.com/latest/webdatarocks.js"></script>
+
+    <script src="~/js/views/default.js"></script>
+}
+

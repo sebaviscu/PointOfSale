@@ -1,5 +1,33 @@
 ﻿
+$(document).ready(function () {
+    $("#limpiarNotificaciones").on("click", function () {
 
+
+        fetch("/Notification/LimpiarTodoNotificacion", {
+            method: "PUT",
+            headers: { 'Content-Type': 'application/json;charset=utf-8' }
+        }).then(response => {
+            $(".dropdown-menu .dropdown-header").remove();
+            $("#listaNotificaciones").remove();
+        }).catch((error) => {
+        })
+    })
+
+
+    $(".notificacion").on("click", function () {
+
+        fetch(`/Notification/UpdateNotificacion?idNotificacion=${$(this)[0].id}`, {
+            method: "PUT",
+            headers: { 'Content-Type': 'application/json;charset=utf-8' }
+        }).then(response => {
+
+            window.location.href = "/Shop/VentaWeb";
+
+        }).catch((error) => {
+            $("#modalDataTurno").find("div.modal-content").LoadingOverlay("hide")
+        })
+    })
+});
 
 function cerrarTurno() {
     fetch(`/Turno/GetTurnoActual`, {

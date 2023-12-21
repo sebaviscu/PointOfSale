@@ -84,7 +84,6 @@ namespace PointOfSale.Controllers
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
             }
-
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
