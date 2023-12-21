@@ -73,7 +73,7 @@ $("#btnSearch").click(function () {
                             $("<td>").text(sale.registrationDate),
                             $("<td>").text(sale.saleNumber),
                             $("<td>").text(sale.typeDocumentSale),
-                            $("<td>").text(sale.clientName),
+                            $("<td>").text(sale.cantidadProductos),
                             $("<td>").text(sale.total),
                             $("<td>").append(
                                 $("<button>").addClass("btn btn-info btn-sm").append(

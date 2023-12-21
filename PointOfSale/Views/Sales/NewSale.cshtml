@@ -12,11 +12,16 @@
             width: 100% !important;
         }
 
+        .fontDetalles {
+            font-size: 18px;
+        }
     </style>
 }
 
 <ul class="nav nav-tabs d-lg-flex" id="tab-list" role="tablist">
-    <button id="btn-add-tab" type="button" class="btn btn-primary pull-right rounded-circle me-2"><i class="mdi mdi-plus"></i></button>
+    <a id="btn-add-tab" href="#" class="text-primary me-2">
+        <i class="mdi mdi-36px mdi-plus-circle"></i>
+    </a>
 
     <li class="nav-item" role="presentation" hidden>
         <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Home <span class="close" type="button" title="Remove this page">×</span> </button>
@@ -68,6 +73,7 @@
                                         </table>
                                     </div>
                                 </div>
+                                <label id="lblCantidadProductos" class="fontDetalles"></label>
                             </div>
                         </div>
                     </div>
@@ -84,18 +90,41 @@
                                 <h4>Detalles</h4>
                             </div>
                             <div class="card-body">
-                                <div class="input-group input-group-sm mb-3">
-                                    <div class="input-group-prepend">
-                                        <label class="input-group-text" for="cboTypeDocumentSale">Forma de Pago</label>
+                                <div class="d-flex bd-highlight">
+                                    <div class="me-auto bd-highlight">
+                                        <label class="fontDetalles" for="txtSubTotal">Subtotal: </label>
                                     </div>
-                                    <select class="form-control" id="cboTypeDocumentSale">
-                                    </select>
+                                    <div class="bd-highlight">
+                                        <label class="fontDetalles" id="txtSubTotal" style="font-weight: bold;">$0 </label>
+                                    </div>
                                 </div>
-                                <div class="input-group input-group-sm mb-3">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">Total</span>
+                                <div class="d-flex bd-highlight">
+                                    <div class="me-auto bd-highlight">
+                                        <label class="fontDetalles" for="txtPromociones">Promociones: </label>
                                     </div>
-                                    <input type="text" class="form-control text-end" aria-label="Small" aria-describedby="inputGroupTotal" id="txtTotal" disabled>
+                                    <div class="bd-highlight">
+                                        <label class="fontDetalles" id="txtPromociones" style="font-weight: bold;">$0 </label>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex bd-highlight">
+                                    <div class="me-auto bd-highlight row" style="margin-left: 0px;">
+                                        <label class="fontDetalles" for="cboDescRec">Desc. / Rec. </label>
+                                        <select class="fontDetalles form-control ms-3" id="cboDescRec" style="max-width: 50%;">
+                                            <option value="0"></option>
+                                            <option value="-10">Descuento -10 %</option>
+                                            <option value="10">Recargo 10 %</option>
+                                        </select>
+                                    </div>
+                                    <div class="bd-highlight">
+                                        <label class="fontDetalles" id="txtDescRec" style="font-weight: bold;color: gray;">$0 </label>
+                                    </div>
+                                </div>
+                                <div class="input-group input-group-sm mt-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" style="font-size: 30px;">Total &nbsp; $</span>
+                                    </div>
+                                    <input type="text" class="form-control text-end" id="txtTotal" style="font-size: 40px;" disabled>
                                 </div>
                             </div>
                         </div>
@@ -137,11 +166,6 @@
                         <div class="card shadow">
                             <div class="card-body">
                                 <div class="">
-@*                                    <div class="form-group">
-                                        <div class="form-group mb-0">
-                                            <button class="btn btn-success w-100 finalizeSale" id="btnFinalizeSale">Finalizar venta</button>
-                                        </div>
-                                    </div>*@
                                     <div class="">
                                         <div class="">
                                             <button class="btn btn-success w-100 finalizarSaleParcial" id="btnFinalizeSaleParcial">Finalizar venta</button>
@@ -162,24 +186,25 @@
 <div class="modal fade" id="modalDividirPago" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalGridTitle">Finalizar</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+            <div class="modal-header d-flex justify-content-between">
+                <div class="p-2 bd-highlight">
+                    <h5 class="modal-title">Finalizar</h5>
+                </div>
+                <div class="p-2 bd-highlight">
+                    <label id="txtSumaSubtotales" class="text-danger" style="display: none;"></label>
+                    <input type="number" min="0" id="txtTotalView" hidden>
+                </div>
+                <div class="p-2 bd-highlight">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
             </div>
+
             <div class="modal-body">
                 <form>
                     <div class="row" id="rowDividirPago">
                         <div class="col-md-12 d-flex justify-content-center">
-                            <div class="form-group col-sm-5">
-                                <label for="txtTotalView">TOTAL</label>
-                                <input type="number" min="0" class="form-control text-end" aria-label="Small" aria-describedby="inputGroupTotal" id="txtTotalView" disabled>
-                            </div>
-                            <div class="form-group col-sm-5">
-                                <label for="txtSumaSubtotales">Dif. Sub Totales</label>
-                                <input type="number" min="0" class="form-control text-end" aria-label="Small" aria-describedby="inputGroupTotal" id="txtSumaSubtotales" disabled>
-                            </div>
                         </div>
                         <div class="col-sm-12" id="formaDePagoPanel">
                             <div class="card-body ">
@@ -201,7 +226,9 @@
 
                                         </div>
                                         <div class="form-group col-sm-2" style="align-self: center; text-align: end;">
-                                            <button id="btnAddNuevaFormaDePago" type="button" class="btn pull-right rounded-circle me-2 btnAddFormaDePago" style="background: green;"><i class="mdi mdi-plus text-white"></i></button>
+                                            <button id="btnAddNuevaFormaDePago" class="pull-right me-2 btnAddFormaDePago text-success">
+                                                <i class="mdi mdi-36px mdi-plus-circle"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>

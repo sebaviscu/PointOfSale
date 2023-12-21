@@ -48,5 +48,22 @@ namespace PointOfSale.Business.Services
 
             return Notifications_found;
         }
+        public async Task<bool> LimpiarTodo(string modificationUser)
+        {
+            var NotificationsAll = await _repository.Query(c => c.IsActive);
+            foreach (var Notifications_found in NotificationsAll)
+            {
+                Notifications_found.ModificationDate = DateTime.Now;
+                Notifications_found.ModificationUser = modificationUser;
+                Notifications_found.IsActive = false;
+
+                var resp = await _repository.Edit(Notifications_found);
+                if (!resp)
+                    throw new TaskCanceledException("La Notificacion " + Notifications_found.IdNotifications + " no se pudo modificar.");
+                return false;
+            }
+
+            return true;
+        }
     }
 }

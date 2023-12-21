@@ -104,7 +104,7 @@ $(document).ready(function () {
             { "data": "description" },
             { "data": "nameCategory" },
             { "data": "nameProveedor" },
-            { "data": "price" },
+            { "data": "priceString" },
             { "data": "modificationDateString" },
             {
                 "data": "isActive",
@@ -163,7 +163,12 @@ function editAll() {
     })
 
     $(".hideAllEdit").hide();
-    $("#listProd").show();
+    $(".edicion-masiva").show();
+
+    $("#txtPrice").val('');
+    $("#txtPriceWeb").val('');
+    $("#txtProfit").val('');
+    $("#txtCosto").val('');
 
     document.getElementById("modalGridTitle").innerHTML = "Edicion Masiva";
 
@@ -177,7 +182,7 @@ function editAll() {
 
     for (i = 0; i <= aProductos.length - 1; i++) {
         var li = document.createElement('li');
-        li.innerHTML = aProductos[i][1] + ": $" + aProductos[i][2];
+        li.innerHTML = aProductos[i][1] + ": " + aProductos[i][2];
         li.setAttribute('style', 'display: block;');
         //li.classList.add("list-group-item");
         ul.appendChild(li);
@@ -191,7 +196,7 @@ function editAll() {
 
 const openModal = (model = BASIC_MODEL) => {
     $(".hideAllEdit").show();
-    $("#listProd").hide();
+    $(".edicion-masiva").hide();
 
     document.getElementById("modalGridTitle").innerHTML = "Detalle de productos"
 
@@ -201,7 +206,7 @@ const openModal = (model = BASIC_MODEL) => {
     $("#cboCategory").val(model.idCategory == 0 ? $("#cboCategory option:first").val() : model.idCategory);
     $("#txtQuantity").val(model.quantity);
     $("#txtMinimo").val(model.minimo);
-    $("#txtPrice").val(model.price);
+    $("#txtPrice").val(parseInt(model.price));
     $("#txtPriceWeb").val(model.priceWeb);
     $("#txtProfit").val(model.porcentajeProfit);
     $("#txtCosto").val(model.costPrice);
@@ -247,6 +252,20 @@ $("#btnSave").on("click", function () {
 
 function saveMassiveProducts() {
 
+    if ($("#txtPrice").val() == '' && $("#txtPorPorcentaje").val() == '') {
+        const msg = `Debe completaro el campo Precio o Por %`;
+        toastr.warning(msg, "");
+        $(`input[name="${inputs_without_value[0].name}"]`).focus();
+        return;
+    }
+
+    if ($("#txtPrice").val() != '' && $("#txtPorPorcentaje").val() != '') {
+        const msg = `Puede completar solo uno de los campos Precio o Por %`;
+        toastr.warning(msg, "");
+        $(`input[name="${inputs_without_value[0].name}"]`).focus();
+        return;
+    }
+
     const model = structuredClone(BASIC_MASSIVE_EDIT);
     model["idProductos"] = aProductos.map(d => d[0]);
     model["precio"] = $("#txtPrice").val();
@@ -255,6 +274,7 @@ function saveMassiveProducts() {
     model["costo"] = $("#txtCosto").val();
     model["comentario"] = $("#txtComentario").val();
     model["isActive"] = $("#cboState").val() == '1' ? true : false;
+    model["porPorcentaje"] = $("#txtPorPorcentaje").val();
 
     fetch("/Inventory/EditMassiveProducts", {
         method: "PUT",

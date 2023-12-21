@@ -139,9 +139,22 @@ namespace PointOfSale.Business.Services
                     if (product_edit == null)
                         throw new TaskCanceledException($"El producto con Id {p} no existe");
 
+                    var precio = product_edit.Price;
+                    var precioWeb = product_edit.PriceWeb;
 
-                    product_edit.Price = data.Precio != "" ? Convert.ToDecimal(data.Precio) : product_edit.Price;
-                    product_edit.PriceWeb = data.PriceWeb != "" ? Convert.ToDecimal(data.PriceWeb) : product_edit.PriceWeb;
+                    if (data.Precio != "")
+                    {
+                        precio = Convert.ToDecimal(data.Precio);
+                        precioWeb = Convert.ToDecimal(data.PriceWeb);
+                    }
+                    else if (data.PorPorcentaje != "")
+                    {
+                        precio = Convert.ToDecimal(precio * ((Convert.ToDecimal(data.PorPorcentaje) / 100) + 1));
+                        precioWeb = Convert.ToDecimal(precioWeb * ((Convert.ToDecimal(data.PorPorcentaje) / 100) + 1));
+                    }
+
+                    product_edit.Price = precio;
+                    product_edit.PriceWeb = precioWeb;
                     product_edit.CostPrice = data.Costo != "" ? Convert.ToDecimal(data.Costo) : product_edit.CostPrice;
                     product_edit.PorcentajeProfit = data.Profit != "" ? Convert.ToInt32(data.Profit) : product_edit.PorcentajeProfit;
                     product_edit.IsActive = data.IsActive;

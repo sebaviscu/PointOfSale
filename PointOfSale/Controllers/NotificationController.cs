@@ -88,5 +88,26 @@ namespace PointOfSale.Controllers
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
+        [HttpPut]
+        public async Task<IActionResult> LimpiarTodoNotificacion()
+        {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+
+            GenericResponse<VMNotifications> gResponse = new GenericResponse<VMNotifications>();
+            try
+            {
+                var result = await _notificationService.LimpiarTodo(user.UserName);
+
+
+                gResponse.State = result;
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
     }
 }

@@ -57,6 +57,8 @@ namespace PointOfSale.Model
             A = 0,
             B = 1,
             C = 2,
+            X = 3,
+            Presu = 4
         }
 
         public enum EstadoVentaWeb

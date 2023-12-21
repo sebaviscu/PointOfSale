@@ -1,4 +1,6 @@
-﻿namespace PointOfSale.Models
+﻿using static PointOfSale.Model.Enum;
+
+namespace PointOfSale.Models
 {
     public class VMTypeDocumentSale
     {
@@ -7,6 +9,6 @@
         public bool IsActive { get; set; }
         public bool Invoice { get; set; }
         public bool Web { get; set; }
-
+        public TipoFactura TipoFactura { get; set; }
     }
 }

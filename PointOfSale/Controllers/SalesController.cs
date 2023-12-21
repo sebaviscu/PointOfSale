@@ -79,7 +79,6 @@ namespace PointOfSale.Controllers
         public async Task<IActionResult> RegisterSale([FromBody] VMSale model)
         {
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado, Roles.Empleado });
-            var imprimirTicket = model.ImprimirTicket;
 
             GenericResponse<VMSale> gResponse = new GenericResponse<VMSale>();
             try
@@ -95,9 +94,9 @@ namespace PointOfSale.Controllers
 
                 Sale sale_created = await _saleService.Register(_mapper.Map<Sale>(model));
 
-                if (imprimirTicket)
+                if (model.ImprimirTicket)
                 {
-                    var tienda = await _tiendaService.Get(model.IdTienda);
+                    var tienda = await _tiendaService.Get(user.IdTienda);
                     _ticketService.TicketSale(sale_created, tienda);
                 }
 
@@ -115,10 +114,18 @@ namespace PointOfSale.Controllers
                     sale_created = await _saleService.Edit(sale_created);
                 }
 
-                if (model.MultiplesFormaDePago != null && model.MultiplesFormaDePago.Any())
+                if (model.MultiplesFormaDePago != null && model.MultiplesFormaDePago.Count > 1)
                 {
+                    int count = 0;
+
                     foreach (var f in model.MultiplesFormaDePago)
                     {
+                        if (count == 0)
+                        {
+                            count++;
+                            continue;
+                        }
+
                         var s = new Sale();
                         s.Total = f.Total;
                         s.RegistrationDate = sale_created.RegistrationDate;

@@ -17,32 +17,25 @@ $(document).ready(function () {
         .then(response => {
             return response.ok ? response.json() : Promise.reject(response);
         }).then(responseJson => {
-            $("#cboTypeDocumentSale").append(
-                $("<option>").val('').text('')
-            );
             $("#cboTypeDocumentSaleParcial").append(
                 $("<option>").val('').text('')
             )
             if (responseJson.length > 0) {
                 responseJson.forEach((item) => {
-                    $("#cboTypeDocumentSale").append(
-                        $("<option>").val(item.idTypeDocumentSale).text(item.description)
-                    );
                     $("#cboTypeDocumentSaleParcial").append(
                         $("<option>").val(item.idTypeDocumentSale).text(item.description)
                     )
                 });
             }
             newTab();
-        })
+        });
 
     fetch("/Admin/GetPromocionesActivas")
         .then(response => {
             return response.ok ? response.json() : Promise.reject(response);
         }).then(responseJson => {
             promociones = responseJson.data;
-        })
-
+        });
 
 })
 
@@ -59,7 +52,7 @@ function formatResults(data) {
                 </td>
                 <td>
                     <p style="font-weight: bolder;margin:2px">${data.text}</p>
-                    <p>$ ${data.price}</p>
+                    <p>$ ${parseInt(data.price)}</p>
                 </td>
             </tr>
          </table>`
@@ -113,16 +106,17 @@ function showProducts_Prices(idTab, currentTab) {
                 ),
                 $("<td>").text(item.descriptionproduct),
                 $("<td>").text(item.quantity),
-                $("<td>").text("$ " + item.price),
-                $("<td>").text("$ " + item.total),
+                $("<td>").text("$ " + parseInt(item.price)),
+                $("<td>").text("$ " + parseInt(item.total)),
                 $("<td>").append(item.promocion != null ?
                     $("<i>").addClass("mdi mdi-percent").attr("data-toggle", "tooltip").attr("title", item.promocion) : "")
             )
         )
         row++;
     })
-
-    $('#txtTotal' + idTab).val(total.toFixed(2))
+    $("#txtTotal" + idTab).attr("totalReal", parseInt(total));
+    $('#txtTotal' + idTab).val(parseInt(total))
+    $("#lblCantidadProductos" + idTab).html("Cantidad de Articulos: <strong> " + currentTab.products.length + "</strong>");
 }
 
 $(document).on("click", "button.btn-delete", function () {
@@ -136,57 +130,57 @@ $(document).on("click", "button.btn-delete", function () {
     showProducts_Prices(currentTabId, currentTab);
 })
 
-$(document).on("click", "button.finalizeSale", function () {
-    var currentTabId = $(this).attr("tabId");
-    var currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
+//$(document).on("click", "button.finalizeSale", function () { // DEPRECADO
+//    var currentTabId = $(this).attr("tabId");
+//    var currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
 
-    if (currentTab.products.length < 1) {
-        toastr.warning("", "Debe ingresar productos");
-        return;
-    }
+//    if (currentTab.products.length < 1) {
+//        toastr.warning("", "Debe ingresar productos");
+//        return;
+//    }
 
-    if (document.getElementById("cboTypeDocumentSale" + currentTabId).value == '') {
-        const msg = `Debe completaro el campo Tipo de Venta`;
-        toastr.warning(msg, "");
-        return;
-    }
+//    if (document.getElementById("cboTypeDocumentSale" + currentTabId).value == '') {
+//        const msg = `Debe completaro el campo Tipo de Venta`;
+//        toastr.warning(msg, "");
+//        return;
+//    }
 
-    const vmDetailSale = currentTab.products;
+//    const vmDetailSale = currentTab.products;
 
-    const sale = {
-        idTypeDocumentSale: $("#cboTypeDocumentSale" + currentTabId).val(),
-        clientId: $("#cboCliente" + currentTabId).val() != '' ? $("#cboCliente" + currentTabId).val() : null,
-        total: $("#txtTotal" + currentTabId).val(),
-        detailSales: vmDetailSale,
-        tipoMovimiento: $("#cboCliente" + currentTabId).val() != '' ? 2 : null,
-        imprimirTicket: document.querySelector('#cboImprimirTicket').checked
-    }
+//    const sale = {
+//        idTypeDocumentSale: $("#cboTypeDocumentSale" + currentTabId).val(),
+//        clientId: $("#cboCliente" + currentTabId).val() != '' ? $("#cboCliente" + currentTabId).val() : null,
+//        total: $("#txtTotal" + currentTabId).val(),
+//        detailSales: vmDetailSale,
+//        tipoMovimiento: $("#cboCliente" + currentTabId).val() != '' ? 2 : null,
+//        imprimirTicket: document.querySelector('#cboImprimirTicket').checked
+//    }
 
-    fetch("/Sales/RegisterSale", {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json;charset=utf-8' },
-        body: JSON.stringify(sale)
-    }).then(response => {
+//    fetch("/Sales/RegisterSale", {
+//        method: "POST",
+//        headers: { 'Content-Type': 'application/json;charset=utf-8' },
+//        body: JSON.stringify(sale)
+//    }).then(response => {
 
-        return response.ok ? response.json() : Promise.reject(response);
-    }).then(responseJson => {
+//        return response.ok ? response.json() : Promise.reject(response);
+//    }).then(responseJson => {
 
-        if (responseJson.state) {
+//        if (responseJson.state) {
 
-            $("#cboTypeDocumentSale").val($("#cboTypeDocumentSale option:first").val());
+//            $("#cboTypeDocumentSale").val($("#cboTypeDocumentSale option:first").val());
 
-            AllTabsForSale = AllTabsForSale.filter(p => p.idTab != currentTabId)
-            document.getElementById('cerrarTab' + currentTabId).click()
+//            AllTabsForSale = AllTabsForSale.filter(p => p.idTab != currentTabId)
+//            document.getElementById('cerrarTab' + currentTabId).click()
 
-            swal("Registrado!", `Número de venta : ${responseJson.object.saleNumber}`, "success");
+//            swal("Registrado!", `Número de venta : ${responseJson.object.saleNumber}`, "success");
 
-        } else {
-            swal("Lo sentimos", "La venta no fué registrada", "error");
-        }
-    })
+//        } else {
+//            swal("Lo sentimos", "La venta no fué registrada", "error");
+//        }
+//    })
 
 
-})
+//})
 
 function cleanSaleParcial() {
     for (var i = 1; i < formaDePagoID + 1; i++) {
@@ -209,21 +203,12 @@ $(document).on("click", "button.finalizarSaleParcial", function () {
         return;
     }
 
-    //if (document.getElementById("cboTypeDocumentSale" + currentTabId).value == '') {
-    //    const msg = `Debe completaro el campo Tipo de Venta`;
-    //    toastr.warning(msg, "");
-    //    return;
-    //}
-
     let total = $("#txtTotal" + currentTabId).val();
-    let formaDePago = $("#cboTypeDocumentSale" + currentTabId).val();
 
     $("#txtTotalView").val(total);
     $("#txtTotalParcial").val(total);
-    $("#cboTypeDocumentSaleParcial").val(formaDePago);
     $("#txtSumaSubtotales").val(0);
     $("#btnCalcSubTotales").attr("idFormaDePago", 0);
-
 
     $("#txtTotalParcial").on("change", function () {
         calcularSuma();
@@ -270,6 +255,7 @@ $(document).on("click", "button.btnAddFormaDePago", function () {
             e.currentTarget.classList.remove("invalid")
         }
     });
+    return false;
 
 })
 
@@ -285,7 +271,18 @@ $(document).on("click", "a.calcSubTotales", function (e) {
 
 function calcularSuma() {
     let subTotal = getSumaSubTotales();
-    $("#txtSumaSubtotales").val(subTotal);
+    if (subTotal !== 0) {
+        if (subTotal > 0)
+            $("#txtSumaSubtotales").html("FALTA <strong>$ " + subTotal + "</strong>");
+        else
+            $("#txtSumaSubtotales").html("SOBRA <strong>$ " + subTotal + "</strong>");
+
+        $("#txtSumaSubtotales").show();
+    }
+    else {
+        $("#txtSumaSubtotales").hide();
+    }
+
     return subTotal;
 }
 
@@ -308,7 +305,7 @@ function getSumaSubTotales() {
 
 
 $("#btnFinalizarVentaParcial").on("click", function () {
-        $("#btnFinalizeSaleParcial").closest("div.card-body").LoadingOverlay("show")
+    $("#btnFinalizarVentaParcial").closest("div.card-body").LoadingOverlay("show")
 
     if ($(".cboFormaDePago").filter(function () { return $(this).val() === ""; }).length !== 0) {
         const msg = `Debe completaro el campo Forma de Pago`;
@@ -331,13 +328,11 @@ $("#btnFinalizarVentaParcial").on("click", function () {
         var formasDePago = [];
 
         $(".cboFormaDePago").each(function (index) {
-            if (index > 0) {
-                let subTotal = {
-                    total: $("#txtTotalParcial" + index).val(),
-                    formaDePago: $("#cboTypeDocumentSaleParcial" + index).val()
-                };
-                formasDePago.push(subTotal);
-            }
+            let subTotal = {
+                total: index === 0 ? $("#txtTotalParcial").val() : $("#txtTotalParcial" + index).val(),
+                formaDePago: index === 0 ? $("#cboTypeDocumentSaleParcial").val() : $("#cboTypeDocumentSaleParcial" + index).val()
+            };
+            formasDePago.push(subTotal);
         });
 
         const sale = {
@@ -360,8 +355,6 @@ $("#btnFinalizarVentaParcial").on("click", function () {
         }).then(responseJson => {
 
             if (responseJson.state) {
-
-                $("#cboTypeDocumentSale").val($("#cboTypeDocumentSale option:first").val());
 
                 AllTabsForSale = AllTabsForSale.filter(p => p.idTab != currentTabId)
                 document.getElementById('cerrarTab' + currentTabId).click()
@@ -412,19 +405,18 @@ function newTab() {
     clone.id = "nuevaVenta" + tabID;
     clone.querySelector("#cboSearchProduct").id = "cboSearchProduct" + tabID;
     clone.querySelector("#tbProduct").id = "tbProduct" + tabID;
-    clone.querySelector("#cboTypeDocumentSale").id = "cboTypeDocumentSale" + tabID;
     clone.querySelector("#txtTotal").id = "txtTotal" + tabID;
-    //clone.querySelector("#btnFinalizeSale").id = "btnFinalizeSale" + tabID;
     clone.querySelector("#btnFinalizeSaleParcial").id = "btnFinalizeSaleParcial" + tabID;
     clone.querySelector("#cboCliente").id = "cboCliente" + tabID;
-    //clone.querySelector("#cboImprimirTicket").id = "cboImprimirTicket" + tabID;
     clone.querySelector("#txtPeso").id = "txtPeso" + tabID;
     clone.querySelector("#btnAgregarProducto").id = "btnAgregarProducto" + tabID;
+    clone.querySelector("#lblCantidadProductos").id = "lblCantidadProductos" + tabID;
+    clone.querySelector("#cboDescRec").id = "cboDescRec" + tabID;
 
     $('#tab' + tabID).append(clone);
 
-    //$("#btnFinalizeSale" + tabID).attr("tabId", tabID);
     $("#btnFinalizeSaleParcial" + tabID).attr("tabId", tabID);
+    $("#cboDescRec" + tabID).attr("tabId", tabID);
 
     var newTab = {
         idTab: tabID,
@@ -438,6 +430,18 @@ function newTab() {
 }
 
 function addFunctions(idTab) {
+    $('#cboDescRec' + idTab).change(function () {
+        var currentTabId = $(this).attr("tabId");
+        var currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
+
+        let total = $("#txtTotal" + currentTabId).attr("totalReal");
+
+        if (total != '') {
+            var descRecAplicar = $("#cboDescRec" + currentTabId).val()
+            $("#txtTotal" + currentTabId).val(parseInt(total * ((descRecAplicar / 100) + 1)))
+        }
+    })
+
     $('#cboCliente' + idTab).select2({
         ajax: {
             url: "/Sales/GetClientes",
@@ -494,7 +498,7 @@ function addFunctions(idTab) {
                             brand: item.brand,
                             category: item.nameCategory,
                             photoBase64: item.photoBase64,
-                            price: parseFloat(item.price),
+                            price: item.price,
                             tipoVenta: item.tipoVenta
                         }
                     ))
@@ -599,7 +603,7 @@ function focus(event) {
 function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
 
     let totalQuantity = parseFloat(cant) + parseFloat(quantity_product_found);
-    data.total = totalQuantity * data.price;
+    data.total = totalQuantity * parseInt(data.price);
     data.quantity = totalQuantity;
 
     data = applayPromociones(totalQuantity, data, currentTab);
@@ -611,7 +615,7 @@ function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
         categoryproducty: data.category,
         quantity: data.quantity,
         price: data.price.toString(),
-        total: (data.total).toString(),
+        total: data.total.toString(),
         promocion: data.promocion
     };
 

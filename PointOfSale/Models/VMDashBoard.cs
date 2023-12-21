@@ -4,8 +4,8 @@
     {
         public string TotalSales { get; set; }
         public string TotalSalesComparacion { get; set; }
-        public List<decimal> SalesList { get; set; }
-        public List<decimal> SalesListComparacion { get; set; }
+        public List<int> SalesList { get; set; }
+        public List<int> SalesListComparacion { get; set; }
         public List<VMVentasPorTipoDeVenta> VentasPorTipoVenta { get; set; }
         public List<VMVentasPorTipoDeVenta> GastosPorTipo { get; set; }
         public List<VMVentasPorTipoDeVenta> GastosPorTipoProveedor { get; set; }

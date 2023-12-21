@@ -36,7 +36,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<GraficoVentasConComparacion> GetSales(TypeValuesDashboard typeValues, int idTienda)
         {
-            var start = DateTime.Now.AddDays(-1);
+            var start = DateTime.Now;
             var resultados = new GraficoVentasConComparacion();
             var dateCompare = DateTime.Now;
 

@@ -12,6 +12,7 @@ namespace PointOfSale.Models
         public string? NameCategory { get; set; }
         public decimal? Quantity { get; set; }
         public string? Price { get; set; }
+        public string? PriceString { get; set; }
         public byte[]? Photo { get; set; }
         public string? PhotoBase64 { get; set; }
         public int? IsActive { get; set; }

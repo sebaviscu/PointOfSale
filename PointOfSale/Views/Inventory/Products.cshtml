@@ -75,6 +75,17 @@
                     <div class="row">
                         <div class="col-sm-9">
                             <div class="form-row hideAllEdit">
+                                <div class="form-group col-sm-8">
+                                    <label for="txtDescription">Descripcion</label>
+                                    <input type="text" class="form-control form-control-sm input-validate" id="txtDescription" name="Description">
+                                </div>
+                                <div class="form-group col-sm-4">
+                                    <label for="cboCategory">Categoria</label>
+                                    <select class="form-control form-control-sm" id="cboCategory">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row hideAllEdit">
                                 <div class="form-group col-sm-4">
                                     <label for="txBarCode">BarCode</label>
                                     <input type="text" class="form-control form-control-sm" id="txtBarCode" name="BarCode">
@@ -89,17 +100,6 @@
                                     <select class="form-control form-control-sm  input-validate" id="cboTipoVenta" style="background-color: beige">
                                         <option value="1">Kg</option>
                                         <option value="2">Unidad</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-row hideAllEdit">
-                                <div class="form-group col-sm-8">
-                                    <label for="txtDescription">Descripcion</label>
-                                    <input type="text" class="form-control form-control-sm input-validate" id="txtDescription" name="Description">
-                                </div>
-                                <div class="form-group col-sm-4">
-                                    <label for="cboCategory">Categoria</label>
-                                    <select class="form-control form-control-sm" id="cboCategory">
                                     </select>
                                 </div>
                             </div>
@@ -121,7 +121,7 @@
                                         <input type="number" step="any" class="form-control form-control-sm input-validate" min="0" id="txtPrice" name="Price">
                                     </div>
                                 </div>
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-md-2">
                                     <label for="cboState">Estado</label>
                                     <select class="form-control form-control-sm" id="cboState">
                                         <option value="1">Activo</option>
@@ -132,6 +132,10 @@
                         </div>
                         <div class="col-sm-3">
                             <div class="col-md-12">
+                                <div class="form-group edicion-masiva">
+                                    <label for="txtPorPorcentaje">Por %</label>
+                                    <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtPorPorcentaje" name="Porcentaje">
+                                </div>
                                 <div class="hideAllEdit">
                                     <div class="form-row">
                                         <div class="form-group">
@@ -153,11 +157,11 @@
                                 <div class="card-body row">
                                     <div class="col-md-12">
                                         <div class="form-row">
-                                            <div class="form-group col-sm-4">
+                                            <div class="col-sm-4">
                                                 <label for="txtAumento">Aumento %</label>
                                                 <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtAumento" name="Aumento" disabled>
                                             </div>
-                                            <div class="form-group col-sm-8">
+                                            <div class="col-sm-8">
                                                 <label for="PriceWeb">Precio Web</label>
                                                 <div class="input-group  input-group-sm mb-3">
                                                     <div class="input-group-prepend">
@@ -175,7 +179,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-row" id="listProd">
+                        <div class="form-row edicion-masiva" id="listProd">
                             <div style="margin-left: 10px;">
                                 <h5 for="listProductosEditar">
                                     Productos a Modificar:
@@ -192,11 +196,11 @@
                                 <div class="card-body row">
                                     <div class="col-md-12">
                                         <div class="form-row">
-                                            <div class="form-group col-sm-6">
+                                            <div class="col-sm-6">
                                                 <label for="txtQuantity">Actual</label>
                                                 <input type="number" min="0" class="form-control form-control-sm" id="txtQuantity" name="Quantity">
                                             </div>
-                                            <div class="form-group col-sm-6">
+                                            <div class="col-sm-6">
                                                 <label for="txtMinimo">Minimo</label>
                                                 <input type="number" class="form-control form-control-sm" min="0" id="txtMinimo" name="stock minimo">
                                             </div>
