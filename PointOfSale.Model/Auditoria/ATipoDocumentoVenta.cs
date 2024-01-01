@@ -12,7 +12,6 @@ namespace PointOfSale.Model.Auditoria
         {
             Description = typeDocumentSale.Description;
             IsActive = typeDocumentSale.IsActive;
-            Invoice = typeDocumentSale.Invoice;
             Web = typeDocumentSale.Web;
         }
         public string? Description { get; set; }

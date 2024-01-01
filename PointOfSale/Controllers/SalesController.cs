@@ -138,7 +138,7 @@ namespace PointOfSale.Controllers
 
                         var tipoVentaMult = await _typeDocumentSaleService.Get(f.FormaDePago);
 
-                        if (tipoVentaMult.Invoice)
+                        if ((int)tipoVentaMult.TipoFactura < 3)
                         {
                             //var factura = new FacturaAFIP();
                             //var facturacionResponse = await _aFIPFacturacionService.FacturarAsync(factura);
@@ -147,7 +147,7 @@ namespace PointOfSale.Controllers
                 }
 
                 var tipoVenta = await _typeDocumentSaleService.Get(sale_created.IdTypeDocumentSale.Value);
-                if (tipoVenta.Invoice)
+                if ((int)tipoVenta.TipoFactura < 3)
                 {
                     //var factura = new FacturaAFIP();
                     //var facturacionResponse = await _aFIPFacturacionService.FacturarAsync(factura);

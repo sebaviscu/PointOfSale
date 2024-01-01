@@ -162,8 +162,8 @@ create table TypeDocumentSale(
 [idTypeDocumentSale] int primary key identity(1,1),
 [description] varchar(50),
 [isActive] bit,
-invoice bit not null,
 web bit not null,
+tipoFactura int not null,
 [registrationDate] datetime default getdate()
 )
 

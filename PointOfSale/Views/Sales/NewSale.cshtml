@@ -46,11 +46,11 @@
                                             <option value=""></option>
                                         </select>
                                     </div>
-                                    <div hidden>
-                                        <div class="form-group col-sm-2">
-                                            <input type="number" step="any" class="form-control form-control-sm" id="txtPeso" name="Peso">
+                                    <div class="row col-md-6">
+                                        <div class="form-group col-sm-6">
+                                            <input type="number" step="any" min="0" class="form-control form-control-sm" id="txtPeso" name="Peso" autofocus style="border-color: darkgray;">
                                         </div>
-                                        <div class="form-group col-sm-2">
+                                        <div class="form-group col-sm-6">
                                             <button class="btn btn-info btn-sm w-100" id="btnAgregarProducto">Agregar</button>
                                         </div>
                                     </div>
@@ -110,7 +110,7 @@
                                 <div class="d-flex bd-highlight">
                                     <div class="me-auto bd-highlight row" style="margin-left: 0px;">
                                         <label class="fontDetalles" for="cboDescRec">Desc. / Rec. </label>
-                                        <select class="fontDetalles form-control ms-3" id="cboDescRec" style="max-width: 50%;">
+                                        <select class="fontDetalles form-control ms-3" id="cboDescRec" style="max-width: 55%; font-size: 14px;">
                                             <option value="0"></option>
                                             <option value="-10">Descuento -10 %</option>
                                             <option value="10">Recargo 10 %</option>
@@ -165,13 +165,9 @@
                     <div class="col-sm-12">
                         <div class="card shadow">
                             <div class="card-body">
-                                <div class="">
-                                    <div class="">
-                                        <div class="">
-                                            <button class="btn btn-success w-100 finalizarSaleParcial" id="btnFinalizeSaleParcial">Finalizar venta</button>
-                                        </div>
-                                    </div>
-                                </div>
+                                <button class="btn btn-success w-100 finalizarSaleParcial" id="btnFinalizeSaleParcial">Finalizar venta</button>
+
+                                <button class="btn btn-primary w-100 reimprimirTicket" id="btnReimprimirTicket" style="display: none;">Imprimir ticket</button>
                             </div>
                         </div>
                     </div>

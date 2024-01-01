@@ -107,12 +107,12 @@ go
 
 --________________________________ INSERT TYPEDOCUMENTSALE ________________________________
 
-insert into TypeDocumentSale([description],isActive, invoice) values
+insert into TypeDocumentSale([description],isActive, tipoFactura) values
 ('Efectivo',1,0),
-('Tarjeta de Debito',1,1),
-('Tarjeta de Credito',1,1),
-('Mercado Pago',1,1),
-('Billetera Santa Fe',1,1)
+('Tarjeta de Debito',1,0),
+('Tarjeta de Credito',1,0),
+('Mercado Pago',1,0),
+('Billetera Santa Fe',1,0)
 
 go
 --________________________________ INSERT CORRELATIVE NUMBER ________________________________

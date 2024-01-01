@@ -113,9 +113,15 @@ namespace PointOfSale.Utilities.Automapper
                 opt => opt.MapFrom(source => Convert.ToDecimal(source.Price, new CultureInfo("es-PE")))
             );
             #endregion
-
+            //System.Enum.GetName(typeof(TipoVenta), source.TipoVenta)
             #region TypeDocumentSale
-            CreateMap<TypeDocumentSale, VMTypeDocumentSale>().ReverseMap();
+            CreateMap<TypeDocumentSale, VMTypeDocumentSale>()
+                .ForMember(destiny =>
+                    destiny.TipoFacturaString,
+                    opt => opt.MapFrom(source => System.Enum.GetName(typeof(TipoFactura), source.TipoFactura))
+                );
+            CreateMap<VMTypeDocumentSale, TypeDocumentSale>();
+
             #endregion
 
             #region Sale

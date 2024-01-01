@@ -42,6 +42,7 @@ function cerrarTurno() {
 
             var dateTimeModif = new Date(resp.fechaInicio);
             $("#txtInicioTurno").val(dateTimeModif.toLocaleString());
+            $("#contMetodosPagoLayout").empty();
 
             let list = document.getElementById("contMetodosPagoLayout");
             for (i = 0; i < resp.ventasPorTipoVenta.length; ++i) {

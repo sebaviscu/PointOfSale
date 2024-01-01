@@ -72,7 +72,7 @@ namespace PointOfSale.Business.Services
 
                 TypeDocumentSale_edit.Description = entity.Description;
                 TypeDocumentSale_edit.IsActive = entity.IsActive;
-                TypeDocumentSale_edit.Invoice = entity.Invoice;
+                TypeDocumentSale_edit.TipoFactura = entity.TipoFactura;
                 TypeDocumentSale_edit.Web = entity.Web;
 
                 bool response = await _repository.Edit(TypeDocumentSale_edit);

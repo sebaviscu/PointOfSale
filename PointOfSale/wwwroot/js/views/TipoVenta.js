@@ -5,8 +5,8 @@ const BASIC_MODEL = {
     idTypeDocumentSale: 0,
     description: "",
     isActive: 1,
-    invoice: 1,
-    web: 1
+    web: 1,
+    tipoFactura: 0
 }
 
 
@@ -27,14 +27,7 @@ $(document).ready(function () {
                 "searchable": false
             },
             { "data": "description" },
-            {
-                "data": "invoice", render: function (data) {
-                    if (data == 1)
-                        return '<input type="checkbox" checked disabled>';
-                    else
-                        return '<input type="checkbox" disabled>';
-                }
-            },
+            { "data": "tipoFacturaString" },
             {
                 "data": "web", render: function (data) {
                     if (data == 1)
@@ -79,10 +72,9 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtId").val(model.idTypeDocumentSale);
     $("#txtNombre").val(model.description);
     $("#cboState").val(model.isActive ? 1 : 0);
-    $("#cboInvoice").val(model.invoice ? 1 : 0);
+    $("#cboTipoFactura").val(model.tipoFactura);
     $("#cboWeb").val(model.web ? 1 : 0);
 
-    document.querySelector('#cboInvoce').checked = model.invoice
     document.querySelector('#cboWeb').checked = model.web
 
 
@@ -108,8 +100,8 @@ $("#btnSave").on("click", function () {
     model["idTypeDocumentSale"] = parseInt($("#txtId").val());
     model["description"] = $("#txtNombre").val();
     model["isActive"] = $("#cboState").val() === '1' ? true : false;
-    model["invoice"] = document.querySelector('#cboInvoce').checked;
     model["web"] = document.querySelector('#cboWeb').checked;
+    model["tipoFactura"] = parseInt($("#cboTipoFactura").val());
 
     $("#modalData").find("div.modal-content").LoadingOverlay("show")
 

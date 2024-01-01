@@ -42,12 +42,12 @@ $("#btnSearch").click(function () {
     if ($("#cboSearchBy").val() == "date") {
 
         if ($("#txtStartDate").val().trim() == "" || $("#txtEndDate").val().trim() == "") {
-            toastr.warning("", "You must enter start and end date");
+            toastr.warning("", "Debes ingresar la fecha de inicio y finalización.");
             return;
         }
     } else {
         if ($("#txtSaleNumberSearch").val().trim() == "") {
-            toastr.warning("", "You must enter the sales number");
+            toastr.warning("", "Debes ingresar el número de venta");
             return;
         }
     }
