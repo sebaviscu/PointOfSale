@@ -115,9 +115,9 @@ function showProducts_Prices(idTab, currentTab) {
                     $("<i>").addClass("mdi mdi-percent").attr("data-toggle", "tooltip").attr("title", item.promocion) : "")
             )
         )
-        if (item.diferenciaPromocion != null) {
-            totalPromocion = totalPromocion + parseFloat(item.diferenciaPromocion) * -1;
-            subTotal = subTotal + item.diferenciaPromocion;
+        if (item.diferenciapromocion != null) {
+            totalPromocion = totalPromocion + parseFloat(item.diferenciapromocion) * -1;
+            subTotal = subTotal + item.diferenciapromocion;
         }
         row++;
     })
@@ -194,6 +194,8 @@ $(document).on("click", "button.btn-delete", function () {
 //})
 
 function cleanSaleParcial() {
+    $('#cboTypeDocumentSaleParcial').val('');
+
     for (var i = 1; i < formaDePagoID + 1; i++) {
         const element = document.getElementById("nuevaFormaDePago" + i);
         if (element != null)
@@ -349,6 +351,8 @@ $("#btnFinalizarVentaParcial").on("click", function () {
         formasDePago.push(subTotal);
     });
 
+    let descRec = $("#txtDescRec" + currentTabId).attr('totalDescRec');
+
     const sale = {
         idTypeDocumentSale: $("#cboTypeDocumentSaleParcial").val(),
         clientId: $("#cboCliente" + currentTabId).val() != '' ? $("#cboCliente" + currentTabId).val() : null,
@@ -356,7 +360,8 @@ $("#btnFinalizarVentaParcial").on("click", function () {
         detailSales: vmDetailSale,
         tipoMovimiento: $("#cboCliente" + currentTabId).val() != '' ? 2 : null,
         imprimirTicket: document.querySelector('#cboImprimirTicket').checked,
-        multiplesFormaDePago: formasDePago
+        multiplesFormaDePago: formasDePago,
+        descuentorecargo: descRec != undefined ? descRec : null
     }
 
     fetch("/Sales/RegisterSale", {
@@ -507,8 +512,9 @@ function addFunctions(idTab) {
 
         if (total != '') {
             var descRecAplicar = $("#cboDescRec" + currentTabId).val()
-            let desc = total * (descRecAplicar / 100);
-            $('#txtDescRec' + idTab).html('$ ' + parseInt(desc));
+            let desc = parseInt(total * (descRecAplicar / 100));
+            $('#txtDescRec' + idTab).html('$ ' + desc);
+            $("#txtDescRec" + idTab).attr('totalDescRec', desc );
 
             $("#txtTotal" + currentTabId).val(parseInt(parseInt(total) + desc));
         }
@@ -698,8 +704,11 @@ function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
     product.quantity = data.quantity;
     product.price = parseInt(data.price).toString();
     product.total = data.total.toString();
-    product.promocion = data.promocion;
-    product.diferenciaPromocion = data.diferenciaPromocion;
+
+    if (data.promocion != null) {
+        product.promocion = data.promocion;
+        product.diferenciapromocion = data.diferenciapromocion.toString();
+    }
 
     currentTab.products.push(product);
 
@@ -808,7 +817,7 @@ function applyForProduct(prom, totalQuantity, data, currentTab) {
                 newProd.categoryproducty = data.category;
                 newProd.quantity = diffDividido;
                 newProd.price = precio.toString();
-                newProd.total = precio * diffDividido;
+                newProd.total = (precio * diffDividido).toString();
 
                 currentTab.products.push(newProd);
 
@@ -845,7 +854,7 @@ function calcularPrecioPorcentaje(data, prom, totalQuantity) {
         precio = parseInt(data.price) * (1 - (prom.porcentaje / 100));
     }
 
-    data.diferenciaPromocion = (parseInt(data.price) * totalQuantity) - (precio * totalQuantity);
+    data.diferenciapromocion = (parseInt(data.price) * totalQuantity) - (precio * totalQuantity);
     data.total = precio * totalQuantity;
     data.price = precio;
     data.quantity = totalQuantity;
@@ -883,5 +892,5 @@ class Producto {
     price = 0;
     total = 0;
     promocion = null;
-    diferenciaPromocion = null;
+    diferenciapromocion = null;
 }

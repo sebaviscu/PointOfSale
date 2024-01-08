@@ -162,15 +162,10 @@ function editAll() {
         }
     })
 
-    $(".hideAllEdit").hide();
-    $(".edicion-masiva").show();
-
-    $("#txtPrice").val('');
-    $("#txtPriceWeb").val('');
-    $("#txtProfit").val('');
-    $("#txtCosto").val('');
-
-    document.getElementById("modalGridTitle").innerHTML = "Edicion Masiva";
+    $("#txtPriceMasivo").val('');
+    $("#txtPriceWebMasivo").val('');
+    $("#txtProfitMasivo").val('');
+    $("#txtCostoMasivo").val('');
 
     // Lista tipo de ventas
     var cont = document.getElementById('listProductosEditar');
@@ -191,12 +186,10 @@ function editAll() {
 
     edicionMasiva = true;
 
-    $("#modalData").modal("show")
+    $("#modalDataMasivo").modal("show")
 }
 
 const openModal = (model = BASIC_MODEL) => {
-    $(".hideAllEdit").show();
-    $(".edicion-masiva").hide();
 
     document.getElementById("modalGridTitle").innerHTML = "Detalle de productos"
 
@@ -458,14 +451,16 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
 })
 
 
-function calcularPrecio() {
+function calcularPrecio(id) {
+    //id = id == null ? '' : id;
+
     var costo = $("#txtCosto").val();
-    var profit = $("#txtProfit").val();
+    var profit = $("#txtProfit" + id).val();
 
     if (costo !== '' && profit !== '') {
 
         var precio = parseFloat(costo) * (1 + (parseFloat(profit) / 100));
-        $("#txtPrice").val(precio);
+        $("#txtPrice" + id).val(precio);
     }
 }
 

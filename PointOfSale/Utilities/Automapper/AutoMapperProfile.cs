@@ -144,13 +144,19 @@ namespace PointOfSale.Utilities.Automapper
                 .ForMember(destiny =>
                     destiny.CantidadProductos,
                     opt => opt.MapFrom(source => source.DetailSales != null ? source.DetailSales.Count : 0))
-                ;
+                .ForMember(destiny =>
+                    destiny.DescuentoRecargo,
+                    opt => opt.MapFrom(source => source.DescuentoRecargo != null ? "$" + source.DescuentoRecargo :  "" ));
 
             CreateMap<VMSale, Sale>()
                 .ForMember(destiny =>
                     destiny.Total,
                     opt => opt.MapFrom(source => Convert.ToDecimal(source.Total, new CultureInfo("es-PE")))
-                );
+
+                )
+                .ForMember(destiny =>
+                    destiny.DescuentoRecargo,
+                    opt => opt.MapFrom(source => source.DescuentoRecargo != null ? source.DescuentoRecargo.ToString() : ""));
             #endregion
 
             #region DetailSale

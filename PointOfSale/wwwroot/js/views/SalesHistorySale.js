@@ -97,6 +97,7 @@ $("#tbsale tbody").on("click", ".btn-info", function () {
     $("#txtDocumentType").val(d.typeDocumentSale)
     $("#txtClientName").val(d.clientName)
     $("#txtTotal").val(d.total)
+    $("#txtDescRec").val(d.descuentoRecargo)
     idSale = d.idSale;
 
     $("#tbProducts tbody").html("")

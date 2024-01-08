@@ -13953,7 +13953,7 @@ code {
 
 .form-group .form-control, .input-group .form-control {
   font-size: 0.98rem;
-  padding: .5rem 1.06rem;
+  /*padding: .5rem 1.06rem;*/
   border-color: #e5e9f2;
 }
 

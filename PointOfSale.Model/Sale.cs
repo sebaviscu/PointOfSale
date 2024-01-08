@@ -27,5 +27,6 @@ namespace PointOfSale.Model
         public int? IdClienteMovimiento { get; set; }
         public ClienteMovimiento? ClienteMovimiento { get; set; }
         public int IdTienda { get; set; }
+        public decimal? DescuentoRecargo { get; set; }
     }
 }

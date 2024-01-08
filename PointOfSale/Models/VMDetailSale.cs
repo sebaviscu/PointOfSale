@@ -11,5 +11,6 @@
         public string? Total { get; set; }
         public string? Promocion { get; set; }
         public int? row { get; set; }
+        public string? diferenciapromocion { get; set; }
     }
 }
