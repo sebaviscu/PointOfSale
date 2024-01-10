@@ -4,6 +4,7 @@ let rowSelected;
 const BASIC_MODEL = {
     idTienda: 0,
     nombre: "",
+    idListaPrecio: 1,
     modificationDate: null,
     modificationUser: null,
     nombre: "",
@@ -54,6 +55,11 @@ $(document).ready(function () {
             { "data": "telefono" },
             { "data": "direccion" },
             {
+                "data": "idListaPrecio", render: function (data) {
+                    return 'Lista ' + data;
+                }
+            },
+            {
                 "data": "principal", render: function (data) {
                     if (data == 1)
                         return '<input type="checkbox" checked disabled>';
@@ -88,6 +94,7 @@ $(document).ready(function () {
 const openModal = (model = BASIC_MODEL) => {
     $("#txtId").val(model.idTienda);
     $("#txtNombre").val(model.nombre);
+    $("#cboListaPrecios").val(model.idListaPrecio);
 
     $("#txtEmail").val(model.email);
     $("#txtTelefono").val(model.telefono);
@@ -144,6 +151,8 @@ $("#btnSave").on("click", function () {
     const model = structuredClone(BASIC_MODEL);
     model["idTienda"] = parseInt($("#txtId").val());
     model["nombre"] = $("#txtNombre").val();
+    model["idListaPrecio"] = parseInt($("#cboListaPrecios").val());
+
     model["telefono"] = $("#txtTelefono").val();
     model["email"] = $("#txtEmail").val();
     model["direccion"] = $("#txtDireccion").val();

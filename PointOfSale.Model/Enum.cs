@@ -67,5 +67,12 @@ namespace PointOfSale.Model
             Finalizada,
             Cerrada
         }
+
+        public enum ListaDePrecio
+        {
+            Lista_1 = 1,
+            Lista_2 = 2, 
+            Lista_3 = 3    
+        }
     }
 }

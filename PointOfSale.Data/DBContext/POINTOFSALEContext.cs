@@ -39,6 +39,7 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<VentaWeb> VentaWeb { get; set; } = null!;
         public virtual DbSet<AuditoriaModificaciones> AuditoriaModificaciones { get; set; } = null!;
         public virtual DbSet<Notifications> Notificaciones { get; set; } = null!;
+        public virtual DbSet<ListaPrecio> ListaPrecios { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -46,6 +47,16 @@ namespace PointOfSale.Data.DBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<ListaPrecio>(entity =>
+            {
+                entity.HasKey(e => e.IdListaPrecio);
+
+                entity.ToTable("ListaPrecios");
+
+                entity.HasOne(d => d.Producto)
+                    .WithMany(p => p.ListaPrecios)
+                    .HasForeignKey(d => d.IdProducto);
+            });
 
             modelBuilder.Entity<Notifications>(entity =>
             {

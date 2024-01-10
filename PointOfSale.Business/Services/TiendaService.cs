@@ -83,6 +83,7 @@ namespace PointOfSale.Business.Services
                 Tienda_found.Feriado = entity.Feriado;
                 Tienda_found.MontoEnvioGratis = entity.MontoEnvioGratis;
                 Tienda_found.Principal = entity.Principal;
+                Tienda_found.IdListaPrecio = entity.IdListaPrecio;
 
                 Tienda_found.ModificationDate = DateTime.Now;
                 Tienda_found.ModificationUser = entity.ModificationUser;

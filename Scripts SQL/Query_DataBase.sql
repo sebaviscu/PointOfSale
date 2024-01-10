@@ -30,6 +30,7 @@ Tiktok varchar(50) null,
 Twitter varchar(50) null,
 Youtube varchar(80) null,
 principal bit null,
+idListaPrecio int not null,
 [modificationDate] [datetime] null,
 [modificationUser] varchar(50) null,
 )
@@ -197,6 +198,7 @@ create table Sale(
 idTurno int references Turno(idTurno) not null,
 IdTienda int not null,
 idClienteMovimiento int null,
+descuentoRecargo decimal(10,2) null,
 [registrationDate] datetime default getdate()
 )
 
@@ -333,4 +335,15 @@ descripcion varchar(100) not null,
 registrationDate [datetime] not null,
 [modificationDate] [datetime] null,
 [modificationUser] varchar(50) null
+)
+
+go
+
+create table ListaPrecios(
+[idListaPrecios] int primary key identity(1,1),
+lista int not null,
+[idProducto] int references Product(idProduct) not null,
+[precio] decimal(10,2) not null,
+porcentajeProfit int null,
+[registrationDate] datetime default getdate()
 )

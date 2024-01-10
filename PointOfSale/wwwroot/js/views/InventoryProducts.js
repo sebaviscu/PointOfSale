@@ -329,6 +329,11 @@ function saveOneProduct() {
     model["idProveedor"] = $("#cboProveedor").val();
     model["comentario"] = $("#txtComentario").val();
 
+    model["precio2"] = $("#txtPrice2").val();
+    model["porcentajeProfit2"] = $("#txtProfit2").val();
+    model["precio3"] = $("#txtPrice3").val();
+    model["porcentajeProfit3"] = $("#txtProfit3").val();
+
     const inputPhoto = document.getElementById('txtPhoto');
 
     const formData = new FormData();

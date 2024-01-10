@@ -7,12 +7,14 @@ using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services
 {
     public class ProductService : IProductService
     {
         private readonly IGenericRepository<Product> _repository;
+        private readonly IGenericRepository<ListaPrecio> _repositoryListaPrecios;
         public ProductService(IGenericRepository<Product> repository)
         {
             _repository = repository;
@@ -27,12 +29,12 @@ namespace PointOfSale.Business.Services
         public async Task<List<Product>> List()
         {
             IQueryable<Product> query = await _repository.Query();
-            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).OrderBy(_ => _.Description).ToList();
+            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_=>_.ListaPrecios).OrderBy(_ => _.Description).ToList();
         }
         public async Task<List<Product>> ListActive()
         {
             IQueryable<Product> query = await _repository.Query(_ => _.IsActive.HasValue ? _.IsActive.Value : false);
-            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).OrderBy(_ => _.Description).ToList();
+            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).OrderBy(_ => _.Description).ToList();
         }
 
         public async Task<List<Product>> ListActiveByCategory(int idCategoria)
@@ -47,31 +49,39 @@ namespace PointOfSale.Business.Services
                 query = await _repository.Query(_ => _.IdCategory == idCategoria && _.IsActive.HasValue ? _.IsActive.Value : false);
             }
 
-            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).OrderBy(_ => _.Description).ToList();
+            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).OrderBy(_ => _.Description).ToList();
         }
         public async Task<List<Product>> ListActiveByDescription(string text)
         {
             var query = await _repository.Query(_ => _.Description.Contains(text) && _.IsActive.HasValue ? _.IsActive.Value : false);
 
-            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).OrderBy(_ => _.Description).ToList();
+            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).OrderBy(_ => _.Description).ToList();
         }
 
-        public async Task<Product> Add(Product entity)
+        public async Task<Product> Add(Product entity, List<ListaPrecio> listaPrecios)
         {
             Product product_exists = await _repository.Get(p => p.BarCode != string.Empty && p.BarCode == entity.BarCode);
 
             if (product_exists != null)
-                throw new TaskCanceledException("The barcode already exists");
+                throw new TaskCanceledException("El barcode ya existe");
 
             try
             {
                 Product product_created = await _repository.Add(entity);
 
                 if (product_created.IdProduct == 0)
-                    throw new TaskCanceledException("Error al crear product");
+                    throw new TaskCanceledException("Error al crear producto");
+
+                listaPrecios[0].IdProducto = product_created.IdProduct;
+                listaPrecios[1].IdProducto = product_created.IdProduct;
+                listaPrecios[2].IdProducto = product_created.IdProduct;
+
+                _ = await _repositoryListaPrecios.Add(listaPrecios[0]);
+                _ = await _repositoryListaPrecios.Add(listaPrecios[1]);
+                _ = await _repositoryListaPrecios.Add(listaPrecios[2]);
 
                 IQueryable<Product> query = await _repository.Query(p => p.IdProduct == product_created.IdProduct);
-                product_created = query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).First();
+                product_created = query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).First();
 
                 return product_created;
             }
@@ -80,17 +90,18 @@ namespace PointOfSale.Business.Services
                 throw;
             }
         }
-        public async Task<Product> Edit(Product entity)
+
+        public async Task<Product> Edit(Product entity, List<ListaPrecio> listaPrecios)
         {
             Product product_exists = await _repository.Get(p => (p.BarCode != string.Empty && p.BarCode == entity.BarCode) && p.IdProduct != entity.IdProduct);
 
             if (product_exists != null)
-                throw new TaskCanceledException("The barcode already exists");
+                throw new TaskCanceledException("El barcode ya existe");
 
             try
             {
-
-                Product product_edit = await _repository.First(u => u.IdProduct == entity.IdProduct);
+                IQueryable<Product> queryProduct1 = await _repository.Query(u => u.IdProduct == entity.IdProduct);
+                Product product_edit = queryProduct1.Include(_ => _.ListaPrecios).First();
 
                 product_edit.BarCode = entity.BarCode;
                 product_edit.Brand = entity.Brand;
@@ -113,11 +124,17 @@ namespace PointOfSale.Business.Services
 
                 bool response = await _repository.Edit(product_edit);
                 if (!response)
-                    throw new TaskCanceledException("The product could not be modified");
+                    throw new TaskCanceledException("El producto no pudo modificarse");
+
+                if (product_edit.ListaPrecios != null)
+                    EditListaPrecios(listaPrecios);
+                else
+                    AddListaPrecios(listaPrecios);
+
 
                 IQueryable<Product> queryProduct = await _repository.Query(u => u.IdProduct == entity.IdProduct);
 
-                Product product_edited = queryProduct.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).First();
+                Product product_edited = queryProduct.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).First();
 
                 return product_edited;
             }
@@ -126,6 +143,46 @@ namespace PointOfSale.Business.Services
                 throw;
             }
         }
+
+        public async void AddListaPrecios(List<ListaPrecio> listaPrecios)
+        {
+            var listPrecios = new List<ListaPrecio>()
+                {
+                    new ListaPrecio(listaPrecios[0].IdProducto, ListaDePrecio.Lista_1, listaPrecios[0].Precio,listaPrecios[0].PorcentajeProfit),
+                    new ListaPrecio(listaPrecios[1].IdProducto, ListaDePrecio.Lista_2, listaPrecios[1].Precio,listaPrecios[0].PorcentajeProfit),
+                    new ListaPrecio(listaPrecios[2].IdProducto, ListaDePrecio.Lista_3, listaPrecios[2].Precio,listaPrecios[0].PorcentajeProfit)
+                };
+
+            foreach (var i in listPrecios)
+            {
+                _ = await _repositoryListaPrecios.Add(i) ?? throw new TaskCanceledException("La lista de precios no se pudo agregar");
+            }
+        }
+
+        public async void EditListaPrecios(List<ListaPrecio> listaPrecios)
+        {
+            var queryList = await _repositoryListaPrecios.Query(p => p.IdProducto == listaPrecios[0].IdProducto);
+            var listaProductos = queryList.ToList();
+
+            try
+            {
+                foreach (var i in listaProductos)
+                {
+                    var nuevoPrecio = listaPrecios.First(_ => _.IdListaPrecio == i.IdListaPrecio);
+                    i.Precio = nuevoPrecio.Precio;
+                    i.RegistrationDate = DateTime.Now;
+
+                    bool response = await _repositoryListaPrecios.Edit(i);
+                    if (!response)
+                        throw new TaskCanceledException("La lista de precios no se pudo editar");
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
 
         public async Task<bool> EditMassive(string user, EditeMassiveProducts data)
         {
@@ -182,7 +239,7 @@ namespace PointOfSale.Business.Services
                 Product product_found = await _repository.Get(p => p.IdProduct == idProduct);
 
                 if (product_found == null)
-                    throw new TaskCanceledException("The product no existe");
+                    throw new TaskCanceledException("El producto no existe");
 
                 bool response = await _repository.Delete(product_found);
 
