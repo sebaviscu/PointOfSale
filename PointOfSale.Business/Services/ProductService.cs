@@ -127,9 +127,7 @@ namespace PointOfSale.Business.Services
                 if (!response)
                     throw new TaskCanceledException("El producto no pudo modificarse");
 
-                var listaPreciosActual = product_edit.ListaPrecios.ToList();
-
-                await EditListaPrecios(listaPreciosActual, listaPrecios);
+                await EditListaPrecios(product_edit.ListaPrecios.ToList(), listaPrecios);
 
                 IQueryable<Product> queryProduct = await _repository.Query(u => u.IdProduct == entity.IdProduct);
 

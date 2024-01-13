@@ -176,7 +176,7 @@ namespace PointOfSale.Utilities.Automapper
                 )
                 .ForMember(destiny =>
                     destiny.DescuentoRecargo,
-                    opt => opt.MapFrom(source => source.DescuentoRecargo != null ? source.DescuentoRecargo.ToString() : ""));
+                    opt => opt.MapFrom(source => !string.IsNullOrEmpty(source.DescuentoRecargo) ? Convert.ToDecimal(source.DescuentoRecargo) : 0));
             #endregion
 
             #region DetailSale

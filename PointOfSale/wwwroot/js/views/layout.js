@@ -80,6 +80,8 @@ $("#btnSaveTurno").on("click", function () {
             $("#modalDataTurno").modal("hide");
             swal("Exitoso!", "Se ha cerrado el turno y automaticamente hemos abierto otro", "success");
 
+            // CERRAR SESION
+
         } else {
             swal("Lo sentimos", responseJson.message, "error");
         }

@@ -464,8 +464,6 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
 
 
 function calcularPrecio(id) {
-    //id = id == null ? '' : id;
-
     var costo = $("#txtCosto").val();
     var profit = $("#txtProfit" + id).val();
 
