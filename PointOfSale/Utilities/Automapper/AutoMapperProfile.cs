@@ -93,7 +93,26 @@ namespace PointOfSale.Utilities.Automapper
                 destiny.PhotoBase64,
                 opt => opt.MapFrom(source => Convert.ToBase64String(source.Photo))
             )
-            .ForMember(user => user.ModificationDateString, opt => opt.MapFrom(userEdit => userEdit.ModificationDate.HasValue ? userEdit.ModificationDate.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty)); ;
+            .ForMember(user => user.ModificationDateString, opt => opt.MapFrom(userEdit => userEdit.ModificationDate.HasValue ? userEdit.ModificationDate.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty))
+            .ForMember(destiny =>
+                destiny.Price,
+                opt => opt.MapFrom(source => source.ListaPrecios.Any() && source.ListaPrecios.Count > 0 ? source.ListaPrecios[0].Precio.ToString() : "0"))
+            .ForMember(destiny =>
+                destiny.PorcentajeProfit,
+                opt => opt.MapFrom(source => source.ListaPrecios.Any() && source.ListaPrecios.Count > 0 ? source.ListaPrecios[0].PorcentajeProfit : 0))
+            .ForMember(destiny =>
+                destiny.Precio2,
+                opt => opt.MapFrom(source => source.ListaPrecios.Any() && source.ListaPrecios.Count > 1 ? source.ListaPrecios[1].Precio.ToString() : "0"))
+            .ForMember(destiny =>
+                destiny.PorcentajeProfit2,
+                opt => opt.MapFrom(source => source.ListaPrecios.Any() && source.ListaPrecios.Count > 1 ? source.ListaPrecios[1].PorcentajeProfit : 0))
+            .ForMember(destiny =>
+                destiny.Precio3,
+                opt => opt.MapFrom(source => source.ListaPrecios.Any() && source.ListaPrecios.Count > 1 ? source.ListaPrecios[2].Precio.ToString() : "0"))
+            .ForMember(destiny =>
+                destiny.PorcentajeProfit3,
+                opt => opt.MapFrom(source => source.ListaPrecios.Any() && source.ListaPrecios.Count > 1 ? source.ListaPrecios[2].PorcentajeProfit : 0))
+                ;
 
             CreateMap<VMProduct, Product>()
             .ForMember(destiny =>
@@ -111,7 +130,8 @@ namespace PointOfSale.Utilities.Automapper
             .ForMember(destiono =>
                 destiono.Price,
                 opt => opt.MapFrom(source => Convert.ToDecimal(source.Price, new CultureInfo("es-PE")))
-            );
+            )
+            ;
             #endregion
             //System.Enum.GetName(typeof(TipoVenta), source.TipoVenta)
             #region TypeDocumentSale
@@ -146,7 +166,7 @@ namespace PointOfSale.Utilities.Automapper
                     opt => opt.MapFrom(source => source.DetailSales != null ? source.DetailSales.Count : 0))
                 .ForMember(destiny =>
                     destiny.DescuentoRecargo,
-                    opt => opt.MapFrom(source => source.DescuentoRecargo != null ? "$" + source.DescuentoRecargo :  "" ));
+                    opt => opt.MapFrom(source => source.DescuentoRecargo != null ? "$" + source.DescuentoRecargo : ""));
 
             CreateMap<VMSale, Sale>()
                 .ForMember(destiny =>

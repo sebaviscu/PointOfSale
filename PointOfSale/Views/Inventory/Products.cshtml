@@ -44,7 +44,7 @@
                                 <th>Descripción</th>
                                 <th>Categoria</th>
                                 <th>Proveedor</th>
-                                <th>Precio</th>
+                                <th>Precio (1)</th>
                                 <th>Fecha Modific.</th>
                                 <th>Estado</th>
                                 <th></th>
@@ -63,7 +63,7 @@
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalGridTitle">Detalle de productos</h5>
+                <h5 class="modal-title">Detalle de productos</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -162,7 +162,7 @@
                                         <div class="input-group-prepend">
                                             <a class="input-group-text" for="txtPrice2" id="btnCalcPrecio" onclick="calcularPrecio(2)">Calc.</a>
                                         </div>
-                                        <input type="number" step="any" class="form-control form-control-sm input-validate" min="0" id="txtPrice2" name="Price">
+                                        <input type="number" step="any" class="form-control form-control-sm input-validate" min="0" id="txtPrice2" name="Price2">
                                     </div>
                                 </div>
                             </div>
@@ -178,7 +178,7 @@
                                         <div class="input-group-prepend">
                                             <a class="input-group-text" for="txtPrice3" id="btnCalcPrecio" onclick="calcularPrecio(3)">Calc.</a>
                                         </div>
-                                        <input type="number" step="any" class="form-control form-control-sm input-validate" min="0" id="txtPrice3" name="Price">
+                                        <input type="number" step="any" class="form-control form-control-sm input-validate" min="0" id="txtPrice3" name="Price3">
                                     </div>
                                 </div>
                             </div>
@@ -204,7 +204,7 @@
                                 <div class="card-body row">
                                     <div class="col-md-12">
                                         <div class="form-row">
-                                            <div class="col-sm-2">
+                                            <div class="col-sm-3">
                                                 <label for="txtAumento">Aumento %</label>
                                                 <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtAumento" name="Aumento" disabled>
                                             </div>
@@ -302,7 +302,7 @@
                                             <div class="input-group-prepend">
                                                 <a class="input-group-text" for="txtPrice2" id="btnCalcPrecio" onclick="calcularPrecio(2)">Calc.</a>
                                             </div>
-                                            <input type="number" step="any" class="form-control form-control-sm input-validate" min="0" id="txtPrice2Masivo" name="Price">
+                                            <input type="number" step="any" class="form-control form-control-sm input-validate-masivo" min="0" id="txtPrice2Masivo" name="Price2">
                                         </div>
                                     </div>
                                 </div>
@@ -318,7 +318,7 @@
                                             <div class="input-group-prepend">
                                                 <a class="input-group-text" for="txtPrice3" id="btnCalcPrecio" onclick="calcularPrecio(3)">Calc.</a>
                                             </div>
-                                            <input type="number" step="any" class="form-control form-control-sm input-validate" min="0" id="txtPrice3Masivo" name="Price">
+                                            <input type="number" step="any" class="form-control form-control-sm input-validate-masivo" min="0" id="txtPrice3Masivo" name="Price3">
                                         </div>
                                     </div>
                                 </div>

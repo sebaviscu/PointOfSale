@@ -51,10 +51,12 @@ namespace PointOfSale.Controllers
             }
             int idTienda;
             var tiendas = await _tiendaService.List();
+            int listaPrecio = 1;
 
             if (tiendas.Count == 1)
             {
-                idTienda = tiendas.First().IdTienda;
+                var tienda = tiendas.First();
+                idTienda = tienda.IdTienda;
             }
             else
             {
@@ -67,6 +69,7 @@ namespace PointOfSale.Controllers
                 idTienda = (int)(user_found.IsAdmin ? model.TiendaId.Value : user_found.IdTienda);
             }
 
+            listaPrecio = (int)tiendas.FirstOrDefault(_ => _.IdTienda == idTienda).IdListaPrecio.Value;
             await _turnoService.CheckTurnosViejos(idTienda);
             var turno = await _turnoService.GetTurno(idTienda, user_found.Name);
 
@@ -78,6 +81,7 @@ namespace PointOfSale.Controllers
                     new Claim("Email",user_found.Email),
                     new Claim("Tienda",idTienda.ToString()),
                     new Claim("Turno",turno.IdTurno.ToString()),
+                    new Claim("ListaPrecios", listaPrecio.ToString())
                 };
 
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

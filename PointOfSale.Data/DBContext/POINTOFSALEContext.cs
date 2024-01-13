@@ -49,7 +49,7 @@ namespace PointOfSale.Data.DBContext
         {
             modelBuilder.Entity<ListaPrecio>(entity =>
             {
-                entity.HasKey(e => e.IdListaPrecio);
+                entity.HasKey(e => e.IdListaPrecios);
 
                 entity.ToTable("ListaPrecios");
 

@@ -64,8 +64,20 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProducts(string search)
         {
-            List<VMProduct> vmListProducts = _mapper.Map<List<VMProduct>>(await _saleService.GetProducts(search.Trim()));
+            ClaimsPrincipal claimuser = HttpContext.User;
+            var listaPrecioInt = Convert.ToInt32(claimuser.Claims.Where(c => c.Type == "ListaPrecios").Select(c => c.Value).SingleOrDefault());
+            try
+            {
+            List<VMProduct> vmListProducts = _mapper.Map<List<VMProduct>>(await _saleService.GetProductsSearchAndIdLista(search.Trim(), (ListaDePrecio)listaPrecioInt));
             return StatusCode(StatusCodes.Status200OK, vmListProducts);
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return default;
         }
 
         [HttpGet]

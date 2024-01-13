@@ -28,6 +28,6 @@ namespace PointOfSale.Model
         public int? IdProveedor { get; set; }
         public Proveedor? Proveedor { get; set; }
         public IEnumerable<DetailSale>? DetalleVentas { get; set; }
-        public IEnumerable<ListaPrecio>? ListaPrecios { get; set; }
+        public List<ListaPrecio>? ListaPrecios { get; set; }
     }
 }

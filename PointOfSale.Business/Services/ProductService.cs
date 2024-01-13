@@ -15,9 +15,10 @@ namespace PointOfSale.Business.Services
     {
         private readonly IGenericRepository<Product> _repository;
         private readonly IGenericRepository<ListaPrecio> _repositoryListaPrecios;
-        public ProductService(IGenericRepository<Product> repository)
+        public ProductService(IGenericRepository<Product> repository, IGenericRepository<ListaPrecio> repositoryListaPrecios)
         {
             _repository = repository;
+            _repositoryListaPrecios = repositoryListaPrecios;
         }
 
         public async Task<Product> Get(int idProducto)
@@ -29,7 +30,7 @@ namespace PointOfSale.Business.Services
         public async Task<List<Product>> List()
         {
             IQueryable<Product> query = await _repository.Query();
-            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_=>_.ListaPrecios).OrderBy(_ => _.Description).ToList();
+            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).OrderBy(_ => _.Description).ToList();
         }
         public async Task<List<Product>> ListActive()
         {
@@ -126,11 +127,9 @@ namespace PointOfSale.Business.Services
                 if (!response)
                     throw new TaskCanceledException("El producto no pudo modificarse");
 
-                if (product_edit.ListaPrecios != null)
-                    EditListaPrecios(listaPrecios);
-                else
-                    AddListaPrecios(listaPrecios);
+                var listaPreciosActual = product_edit.ListaPrecios.ToList();
 
+                await EditListaPrecios(listaPreciosActual, listaPrecios);
 
                 IQueryable<Product> queryProduct = await _repository.Query(u => u.IdProduct == entity.IdProduct);
 
@@ -144,32 +143,15 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async void AddListaPrecios(List<ListaPrecio> listaPrecios)
+        public async Task EditListaPrecios(List<ListaPrecio> listaPreciosActual, List<ListaPrecio> listaPreciosNueva)
         {
-            var listPrecios = new List<ListaPrecio>()
-                {
-                    new ListaPrecio(listaPrecios[0].IdProducto, ListaDePrecio.Lista_1, listaPrecios[0].Precio,listaPrecios[0].PorcentajeProfit),
-                    new ListaPrecio(listaPrecios[1].IdProducto, ListaDePrecio.Lista_2, listaPrecios[1].Precio,listaPrecios[0].PorcentajeProfit),
-                    new ListaPrecio(listaPrecios[2].IdProducto, ListaDePrecio.Lista_3, listaPrecios[2].Precio,listaPrecios[0].PorcentajeProfit)
-                };
-
-            foreach (var i in listPrecios)
-            {
-                _ = await _repositoryListaPrecios.Add(i) ?? throw new TaskCanceledException("La lista de precios no se pudo agregar");
-            }
-        }
-
-        public async void EditListaPrecios(List<ListaPrecio> listaPrecios)
-        {
-            var queryList = await _repositoryListaPrecios.Query(p => p.IdProducto == listaPrecios[0].IdProducto);
-            var listaProductos = queryList.ToList();
-
             try
             {
-                foreach (var i in listaProductos)
+                foreach (var i in listaPreciosActual)
                 {
-                    var nuevoPrecio = listaPrecios.First(_ => _.IdListaPrecio == i.IdListaPrecio);
+                    var nuevoPrecio = listaPreciosNueva.First(_ => _.Lista == i.Lista);
                     i.Precio = nuevoPrecio.Precio;
+                    i.PorcentajeProfit = nuevoPrecio.PorcentajeProfit;
                     i.RegistrationDate = DateTime.Now;
 
                     bool response = await _repositoryListaPrecios.Edit(i);

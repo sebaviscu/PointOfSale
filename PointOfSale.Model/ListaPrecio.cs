@@ -16,14 +16,14 @@ namespace PointOfSale.Model
         public ListaPrecio(int idProd, ListaDePrecio listaDePrecio, decimal precio, int porcentajeProfit)
         {
             IdProducto = idProd;
-            ListaDePrecios = listaDePrecio;
+            Lista = listaDePrecio;
             Precio = precio;
             RegistrationDate = DateTime.Now;
             PorcentajeProfit = porcentajeProfit;
         }
 
-        public int IdListaPrecio { get; set; }
-        public ListaDePrecio ListaDePrecios { get; set; }
+        public int IdListaPrecios { get; set; }
+        public ListaDePrecio Lista { get; set; }
         public int IdProducto { get; set; }
         public Product? Producto { get; set; }
         public decimal Precio { get; set; }

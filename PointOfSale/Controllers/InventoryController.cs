@@ -121,8 +121,18 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProducts()
         {
-            List<VMProduct> vmProductList = _mapper.Map<List<VMProduct>>(await _productService.List());
-            return StatusCode(StatusCodes.Status200OK, new { data = vmProductList });
+            try
+            {
+
+                List<VMProduct> vmProductList = _mapper.Map<List<VMProduct>>(await _productService.List());
+                return StatusCode(StatusCodes.Status200OK, new { data = vmProductList });
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return default;
         }
 
         [HttpPost]

@@ -28,12 +28,12 @@ namespace PointOfSale.Models
         public decimal? Minimo { get; set; }
         public string? ModificationDateString { get; set; }
 
-        public virtual ICollection<ListaDePrecio>? ListaPrecios { get; set; }
+        //public virtual IEnumerable<ListaDePrecio>? ListaPrecios { get; set; }
 
-        public decimal? Precio2 { get; set; }
+        public string? Precio2 { get; set; }
         public int? PorcentajeProfit2 { get; set; }
 
-        public decimal? Precio3 { get; set; }
+        public string? Precio3 { get; set; }
         public int? PorcentajeProfit3 { get; set; }
 
     }

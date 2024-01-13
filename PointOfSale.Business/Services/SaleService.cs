@@ -3,6 +3,7 @@ using PointOfSale.Business.Contracts;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
 using System.Globalization;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services
 {
@@ -10,6 +11,7 @@ namespace PointOfSale.Business.Services
     {
         private readonly IGenericRepository<Product> _repositoryProduct;
         private readonly IGenericRepository<Cliente> _repositoryCliente;
+        private readonly IGenericRepository<ListaPrecio> _repositoryListaPrecio;
         private readonly ISaleRepository _repositorySale;
         private readonly ITypeDocumentSaleService _rTypeNumber;
         private readonly IProductService _rProduct;
@@ -21,7 +23,8 @@ namespace PointOfSale.Business.Services
             IGenericRepository<Cliente> repositoryCliente,
             ITypeDocumentSaleService rTypeNumber,
             IProductService rProduct,
-            ITurnoService turnoService)
+            ITurnoService turnoService,
+            IGenericRepository<ListaPrecio> repositoryListaPrecio)
         {
             _repositoryProduct = repositoryProduct;
             _repositorySale = repositorySale;
@@ -29,6 +32,7 @@ namespace PointOfSale.Business.Services
             _rTypeNumber = rTypeNumber;
             _rProduct = rProduct;
             _turnoService = turnoService;
+            _repositoryListaPrecio = repositoryListaPrecio;
         }
 
         public async Task<List<Product>> GetProducts(string search)
@@ -51,8 +55,47 @@ namespace PointOfSale.Business.Services
                            p.IsActive == true &&
                            string.Concat(p.BarCode, p.Description).Contains(search));
 
-                list = query.Include(c => c.IdCategoryNavigation).ToList();
+                list = query.Include(c => c.IdCategoryNavigation).Include(_ => _.ListaPrecios).ToList();
 
+            }
+
+            return list;
+        }
+
+        public async Task<List<Product>> GetProductsSearchAndIdLista(string search, ListaDePrecio listaPrecios)
+        {
+            var list = new List<Product>();
+            if (search.Contains(' '))
+            {
+                var split = search.Split(' ');
+                var query = "select * from Product where ";
+                for (int i = 0; i < split.Length; i++)
+                {
+                    query += $"description LIKE '%{split[i]}%' ";
+                    if (i < split.Length - 1) query += " and ";
+                }
+                var idsProds = _repositoryProduct.SqlRaw(query).Select(_=> _.IdProduct).ToList();
+
+                var queryProducts = await _repositoryListaPrecio.Query(p =>
+                           p.Lista == listaPrecios &&
+                           p.Producto.IsActive == true &&
+                           idsProds.Contains(p.IdProducto));
+
+                list = queryProducts.Include(c => c.Producto).ToList().Select(_ => _.Producto).ToList();
+            }
+            else
+            {
+                //IQueryable<Product> query = await _repositoryProduct.Query(p =>
+                //               p.IsActive == true &&
+                //               string.Concat(p.BarCode, p.Description).Contains(search));
+                //list = query.Include(c => c.IdCategoryNavigation).ToList();
+
+                IQueryable<ListaPrecio> query = await _repositoryListaPrecio.Query(p =>
+                            p.Lista == listaPrecios &&
+                            p.Producto.IsActive == true &&
+                            string.Concat(p.Producto.BarCode, p.Producto.Description).Contains(search));
+
+                list = query.Include(c => c.Producto).ToList().Select(_ => _.Producto).ToList();
             }
 
             return list;
@@ -63,7 +106,7 @@ namespace PointOfSale.Business.Services
             IQueryable<Cliente> query = await _repositoryCliente.Query(p =>
            string.Concat(p.Cuil, p.Nombre).Contains(search));
 
-            return query.Include(_=>_.ClienteMovimientos).ToList();
+            return query.Include(_ => _.ClienteMovimientos).ToList();
         }
 
         public async Task<Sale> Register(Sale entity)
@@ -287,6 +330,6 @@ namespace PointOfSale.Business.Services
             return query.Include(dv => dv.DetailSales).FirstOrDefault();
         }
 
-       
+
     }
 }

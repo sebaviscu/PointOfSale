@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Contracts
 {
@@ -21,5 +22,7 @@ namespace PointOfSale.Business.Contracts
         Task<Sale> Edit(Sale entity);
         Task<int> GenerarVentas(int idTienda, int idUser);
         Task<Sale> GetSale(int idSale);
+
+        Task<List<Product>> GetProductsSearchAndIdLista(string search, ListaDePrecio listaPrecios);
     }
 }

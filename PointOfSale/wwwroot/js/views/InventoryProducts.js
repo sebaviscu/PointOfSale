@@ -21,7 +21,11 @@ const BASIC_MODEL = {
     tipoVenta: "",
     idProveedor: "",
     comentario: "",
-    minimo: 0
+    minimo: 0,
+    precio2: "",
+    precio3: "",
+    PorcentajeProfit2: 0,
+    PorcentajeProfit3: 0
 }
 
 const BASIC_MASSIVE_EDIT = {
@@ -191,8 +195,6 @@ function editAll() {
 
 const openModal = (model = BASIC_MODEL) => {
 
-    document.getElementById("modalGridTitle").innerHTML = "Detalle de productos"
-
     $("#txtId").val(model.idProduct);
     $("#txtBarCode").val(model.barCode);
     $("#txtDescription").val(model.description);
@@ -208,6 +210,11 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtPhoto").val("");
     $("#cboProveedor").val(model.idProveedor == 0 ? $("#cboProveedor option:first").val() : model.idProveedor);
     $("#txtComentario").val(model.comentario);
+
+    $("#txtPrice2").val(parseInt(model.precio2));
+    $("#txtProfit2").val(model.porcentajeProfit2);
+    $("#txtPrice3").val(parseInt(model.precio3));
+    $("#txtProfit3").val(model.porcentajeProfit3);
 
     $("#imgProduct").attr("src", `data:image/png;base64,${model.photoBase64}`);
 
