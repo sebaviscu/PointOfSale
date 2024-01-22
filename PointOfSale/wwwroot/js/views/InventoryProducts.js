@@ -170,6 +170,10 @@ function editAll() {
     $("#txtPriceWebMasivo").val('');
     $("#txtProfitMasivo").val('');
     $("#txtCostoMasivo").val('');
+    $("#txtPrice2Masivo").val(parseInt(''));
+    $("#txtProfit2Masivo").val('');
+    $("#txtPrice3Masivo").val('');
+    $("#txtProfit3Masivo").val('');
 
     // Lista tipo de ventas
     var cont = document.getElementById('listProductosEditar');
@@ -238,28 +242,16 @@ $("#btnNewProduct").on("click", function () {
     openModal()
 })
 
-$("#btnSave").on("click", function () {
+$("#btnSaveMasivo").on("click", function () {
 
-    if (edicionMasiva) {
-        saveMassiveProducts();
-
-    } else {
-        saveOneProduct();
-
-    }
-
-})
-
-function saveMassiveProducts() {
-
-    if ($("#txtPrice").val() == '' && $("#txtPorPorcentaje").val() == '') {
+    if ($("#txtPriceMasivo").val() == '' && $("#txtPorPorcentajeMasivo").val() == '') {
         const msg = `Debe completaro el campo Precio o Por %`;
         toastr.warning(msg, "");
         $(`input[name="${inputs_without_value[0].name}"]`).focus();
         return;
     }
 
-    if ($("#txtPrice").val() != '' && $("#txtPorPorcentaje").val() != '') {
+    if ($("#txtPriceMasivo").val() != '' && $("#txtPorPorcentajeMasivo").val() != '') {
         const msg = `Puede completar solo uno de los campos Precio o Por %`;
         toastr.warning(msg, "");
         $(`input[name="${inputs_without_value[0].name}"]`).focus();
@@ -268,13 +260,18 @@ function saveMassiveProducts() {
 
     const model = structuredClone(BASIC_MASSIVE_EDIT);
     model["idProductos"] = aProductos.map(d => d[0]);
-    model["precio"] = $("#txtPrice").val();
-    model["priceWeb"] = $("#txtPriceWeb").val();
-    model["profit"] = $("#txtProfit").val();
-    model["costo"] = $("#txtCosto").val();
-    model["comentario"] = $("#txtComentario").val();
-    model["isActive"] = $("#cboState").val() == '1' ? true : false;
-    model["porPorcentaje"] = $("#txtPorPorcentaje").val();
+    model["precio"] = $("#txtPriceMasivo").val();
+    model["priceWeb"] = $("#txtPriceWebMasivo").val();
+    model["profit"] = $("#txtProfitMasivo").val();
+    model["costo"] = $("#txtCostoMasivo").val();
+    model["comentario"] = $("#txtComentarioMasivo").val();
+    model["isActive"] = $("#cboStateMasivo").val() == '1' ? true : false;
+    model["porPorcentaje"] = $("#txtPorPorcentajeMasivo").val();
+
+    model["precio2"] = $("#txtPrice2Masivo").val();
+    model["porcentajeProfit2"] = $("#txtProfit2Masivo").val();
+    model["precio3"] = $("#txtPrice3Masivo").val();
+    model["porcentajeProfit3"] = $("#txtProfit3Masivo").val();
 
     fetch("/Inventory/EditMassiveProducts", {
         method: "PUT",
@@ -295,9 +292,9 @@ function saveMassiveProducts() {
     }).catch((error) => {
         $("#modalData").find("div.modal-content").LoadingOverlay("hide")
     })
-}
+})
 
-function saveOneProduct() {
+$("#btnSave").on("click", function () {
     const inputs = $(".input-validate").serializeArray();
     const inputs_without_value = inputs.filter((item) => item.value.trim() == "" || item.value.trim() == null)
 
@@ -394,7 +391,7 @@ function saveOneProduct() {
             $("#modalData").find("div.modal-content").LoadingOverlay("hide")
         })
     }
-}
+})
 
 
 $("#tbData tbody").on("click", ".btn-edit", function () {

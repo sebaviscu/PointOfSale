@@ -32,16 +32,15 @@ insert into Menu([description],idMenuParent,controller,pageAction,isActive) valu
 ('Tiendas',1, 'Tienda', 'Tienda', 1), --9
 ('Categorias',1,'Inventory','Categories',1), --10
 ('Productos',2,'Inventory','Products',1), --11
-('Sales history',4,'Sales','SalesHistory',1), --12
-('Sales report',4,'Reports','SalesReport',1), --13
-('Formas de Pago',1,'Admin','TipoVenta',1), --14
-('Clientes',6,'Admin','Cliente',1), --15
-('Proveedor',6,'Admin','Proveedor',1), --16
-('Promociones',2,'Admin','Promociones',1), --17
-('Gastos',6,'Gastos','Gastos',1), --18
-('Turno',6,'Turno','Turno',1), --19
-('Ventas Web',7,'Shop','VentaWeb',1), --20
-('Shop',7,'Shop','Index',1) --21
+('Reporte de Ventas',4,'Sales','SalesHistory',1), --12
+('Formas de Pago',1,'Admin','TipoVenta',1), --13
+('Clientes',6,'Admin','Cliente',1), --14
+('Proveedor',6,'Admin','Proveedor',1), --15
+('Promociones',2,'Admin','Promociones',1), --16
+('Gastos',6,'Gastos','Gastos',1), --17
+('Turno',6,'Turno','Turno',1), --18
+('Ventas Web',7,'Shop','VentaWeb',1), --19
+('Shop',7,'Shop','Index',1) --20
 go
 
 UPDATE Menu SET idMenuParent = idMenu where idMenuParent is null

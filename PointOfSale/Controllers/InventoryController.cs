@@ -234,7 +234,15 @@ namespace PointOfSale.Controllers
             GenericResponse<VMProduct> gResponse = new GenericResponse<VMProduct>();
             try
             {
-                var resp = await _productService.EditMassive(user.UserName, data);
+
+                var listPrecios = new List<ListaPrecio>()
+                {
+                    new ListaPrecio(0, ListaDePrecio.Lista_1, Convert.ToDecimal(data.Precio), Convert.ToInt32(data.Profit)),
+                    new ListaPrecio(0, ListaDePrecio.Lista_2, Convert.ToDecimal(data.Precio2),Convert.ToInt32(data.PorcentajeProfit2)),
+                    new ListaPrecio(0, ListaDePrecio.Lista_3, Convert.ToDecimal(data.Precio3),Convert.ToInt32(data.PorcentajeProfit3))
+                };
+
+                var resp = await _productService.EditMassive(user.UserName, data, listPrecios);
 
                 gResponse.State = resp;
             }

@@ -348,8 +348,12 @@ function cargarTablaDinamica() {
     fetch(`/Gastos/GetGastosTablaDinamica`, {
         method: "GET"
     }).then(response => {
-        return response.ok ? response.json() : Promise.reject(response);
+        return response.ok || response.status == 500 ? response.json() : Promise.reject(response);
     }).then(responseJson => {
+        if (responseJson.error !== undefined) {
+            console.error(responseJson.error);
+            return false;
+        }
 
         if (responseJson.data !== []) {
 

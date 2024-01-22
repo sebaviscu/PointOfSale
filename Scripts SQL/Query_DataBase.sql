@@ -344,6 +344,6 @@ create table ListaPrecios(
 lista int not null,
 [idProducto] int references Product(idProduct) not null,
 [precio] decimal(10,2) not null,
-porcentajeProfit int null,
+porcentajeProfit int not null,
 [registrationDate] datetime default getdate()
 )

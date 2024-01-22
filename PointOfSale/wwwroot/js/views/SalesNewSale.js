@@ -117,7 +117,7 @@ function showProducts_Prices(idTab, currentTab) {
         )
         if (item.diferenciapromocion != null) {
             totalPromocion = totalPromocion + parseFloat(item.diferenciapromocion) * -1;
-            subTotal = subTotal + item.diferenciapromocion;
+            subTotal = subTotal + parseFloat(item.diferenciapromocion);
         }
         row++;
     })

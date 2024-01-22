@@ -149,7 +149,7 @@ namespace PointOfSale.Business.Services
                 {
                     var nuevoPrecio = listaPreciosNueva.First(_ => _.Lista == i.Lista);
                     i.Precio = nuevoPrecio.Precio;
-                    i.PorcentajeProfit = nuevoPrecio.PorcentajeProfit;
+                    i.PorcentajeProfit = nuevoPrecio.PorcentajeProfit != 0 ? nuevoPrecio.PorcentajeProfit : i.PorcentajeProfit;
                     i.RegistrationDate = DateTime.Now;
 
                     bool response = await _repositoryListaPrecios.Edit(i);
@@ -164,14 +164,15 @@ namespace PointOfSale.Business.Services
         }
 
 
-        public async Task<bool> EditMassive(string user, EditeMassiveProducts data)
+        public async Task<bool> EditMassive(string user, EditeMassiveProducts data, List<ListaPrecio> listaPrecios)
         {
             try
             {
                 foreach (var p in data.idProductos)
                 {
 
-                    Product product_edit = await _repository.Get(_ => _.IdProduct == p);
+                    IQueryable<Product> queryProduct1 = await _repository.Query(u => u.IdProduct == p);
+                    Product product_edit = queryProduct1.Include(_ => _.ListaPrecios).FirstOrDefault();
 
                     if (product_edit == null)
                         throw new TaskCanceledException($"El producto con Id {p} no existe");
@@ -202,6 +203,18 @@ namespace PointOfSale.Business.Services
                     bool response = await _repository.Edit(product_edit);
                     if (!response)
                         throw new TaskCanceledException($"No se ha podido actualizar el producto con Id: {p}");
+
+
+                    if (data.PorPorcentaje != "")
+                    {
+                        foreach (var l in listaPrecios)
+                        {
+                            var nuevoPrecio = product_edit.ListaPrecios.First(_ => _.Lista == l.Lista);
+                            l.Precio = Convert.ToDecimal(nuevoPrecio.Precio * ((Convert.ToDecimal(data.PorPorcentaje) / 100) + 1));
+                        }
+                    }
+                    await EditListaPrecios(product_edit.ListaPrecios.ToList(), listaPrecios);
+
                 }
                 return true;
             }

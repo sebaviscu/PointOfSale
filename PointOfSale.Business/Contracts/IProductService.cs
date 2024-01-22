@@ -13,7 +13,7 @@ namespace PointOfSale.Business.Contracts
         Task<Product> Add(Product entity, List<ListaPrecio> listaPrecios);
         Task<Product> Edit(Product entity, List<ListaPrecio> listaPrecios);
         Task<bool> Delete(int idProduct);
-        Task<bool> EditMassive(string usuario, EditeMassiveProducts data);
+        Task<bool> EditMassive(string usuario, EditeMassiveProducts data, List<ListaPrecio> listaPrecios);
         Task<Product> Get(int idProducto);
         Task<List<Product>> GetRandomProducts();
         Task<List<Product>> ListActive();
