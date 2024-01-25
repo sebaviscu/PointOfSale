@@ -173,7 +173,7 @@ namespace PointOfSale.Controllers
             catch (Exception ex)
             {
                 gResponse.State = false;
-                gResponse.Message = ex.Message;
+                gResponse.Message = ex.ToString();
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);

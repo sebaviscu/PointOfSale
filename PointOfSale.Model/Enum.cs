@@ -74,5 +74,11 @@ namespace PointOfSale.Model
             Lista_2 = 2, 
             Lista_3 = 3    
         }
+
+        public enum EstadoPago
+        {
+            Pagado,
+            Pendiente
+        }
     }
 }

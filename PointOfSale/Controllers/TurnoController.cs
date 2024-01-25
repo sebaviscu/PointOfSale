@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Scaffolding;
 using PointOfSale.Business.Contracts;
@@ -106,6 +108,8 @@ namespace PointOfSale.Controllers
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
             }
+
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }

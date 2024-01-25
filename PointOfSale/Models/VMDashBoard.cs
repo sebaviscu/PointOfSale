@@ -9,10 +9,13 @@
         public List<VMVentasPorTipoDeVenta> VentasPorTipoVenta { get; set; }
         public List<VMVentasPorTipoDeVenta> GastosPorTipo { get; set; }
         public List<VMVentasPorTipoDeVenta> GastosPorTipoProveedor { get; set; }
+        public List<VMVentasPorTipoDeVenta> GastosPorTipoSueldos { get; set; }
 
         public int CantidadClientes { get; set; }
         public string GastosTotales { get; set; }
         public string GastosTexto { get; set; }
+        public string GastosProvvedoresTexto { get; set; }
+        public string GastosSueldosTexto { get; set; }
 
         public string Ganancia { get; set; }
 

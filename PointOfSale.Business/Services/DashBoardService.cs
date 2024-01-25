@@ -95,7 +95,7 @@ namespace PointOfSale.Business.Services
 
             Dictionary<string, decimal> resultado = query2
                         .Include(v => v.Proveedor)
-                        .Where(_ => _.RegistrationDate.Date >= start.Date && _.idTienda == idTienda)
+                        .Where(_ => _.RegistrationDate.Date >= start.Date && _.idTienda == idTienda && _.EstadoPago.Value == EstadoPago.Pagado)
                         .GroupBy(v => v.Proveedor.Nombre).OrderByDescending(g => g.Sum(_ => _.Importe))
                         .Select(dv => new { descripcion = dv.Key, total = dv.Sum(_ => _.Importe) })
                         .ToDictionary(keySelector: r => r.descripcion, elementSelector: r => r.total);
@@ -280,7 +280,28 @@ namespace PointOfSale.Business.Services
             Dictionary<string, decimal> resultado = query
                 .Include(v => v.TipoDeGasto)
                 .Where(vd => vd.RegistrationDate.Date >= start.Date
-                        && vd.IdTienda == idTienda)
+                        && vd.IdTienda == idTienda
+                        && vd.TipoDeGasto.GastoParticular != TipoDeGastoEnum.Sueldos
+                        && vd.EstadoPago == EstadoPago.Pagado)
+                .GroupBy(v => v.TipoDeGasto.Descripcion).OrderByDescending(g => g.Sum(_ => _.Importe))
+                .Select(dv => new { descripcion = dv.Key, total = dv.Sum(_ => _.Importe) })
+                .ToDictionary(keySelector: r => r.descripcion, elementSelector: r => r.total);
+
+            return resultado;
+        }
+        public async Task<Dictionary<string, decimal>> GetGastosSueldos(TypeValuesDashboard typeValues, int idTienda)
+        {
+            DateTime dateCompare, start;
+            FechasParaQuery(typeValues, out dateCompare, out start);
+
+            IQueryable<Gastos> query = await _gastosRepository.Query();
+
+            Dictionary<string, decimal> resultado = query
+                .Include(v => v.TipoDeGasto)
+                .Where(vd => vd.RegistrationDate.Date >= start.Date
+                        && vd.IdTienda == idTienda
+                        && vd.TipoDeGasto.GastoParticular == TipoDeGastoEnum.Sueldos
+                        && vd.EstadoPago == EstadoPago.Pagado)
                 .GroupBy(v => v.TipoDeGasto.Descripcion).OrderByDescending(g => g.Sum(_ => _.Importe))
                 .Select(dv => new { descripcion = dv.Key, total = dv.Sum(_ => _.Importe) })
                 .ToDictionary(keySelector: r => r.descripcion, elementSelector: r => r.total);

@@ -1,4 +1,6 @@
-﻿namespace PointOfSale.Model
+﻿using static PointOfSale.Model.Enum;
+
+namespace PointOfSale.Model
 {
     public class ProveedorMovimiento
     {
@@ -23,5 +25,7 @@
         public Proveedor? Proveedor { get; set; }
         public DateTime RegistrationDate { get; set; }
         public string RegistrationUser { get; set; }
+        public EstadoPago? EstadoPago { get; set; }
+
     }
 }

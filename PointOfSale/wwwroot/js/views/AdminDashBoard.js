@@ -10,7 +10,8 @@ const BASIC_MODEL_GASTO = {
     comentario: null,
     idUsuario: 0,
     modificationDate: null,
-    modificationUser: ""
+    modificationUser: "",
+    estadoPago: 0,
 }
 
 const BASIC_MODEL_PAGO_PROVEEDOR = {
@@ -21,7 +22,8 @@ const BASIC_MODEL_PAGO_PROVEEDOR = {
     ivaImporte: 0,
     importe: 0,
     importeSinIva: 0,
-    comentario: null
+    comentario: null,
+    estadoPago: 0,
 }
 
 $(document).ready(function () {
@@ -115,6 +117,8 @@ function changeChart(typeValues) {
                 $("#txtTotalGastos").text(d.gastosTotales)
                 $("#txtCantidadClientes").text(d.cantidadClientes)
                 $("#txtGanancia").text(d.ganancia)
+                $("#gastosProvvedoresTexto").text(d.gastosProvvedoresTexto)
+                $("#gastosSueldosTexto").text(d.gastosSueldosTexto)
                 $("#gastoTexto").text(d.gastosTexto)
 
                 SetGraficoVentas(d);
@@ -122,6 +126,7 @@ function changeChart(typeValues) {
                 SetGraficoGastos(d.gastosPorTipo);
                 SetTipoVentas(d.ventasPorTipoVenta);
                 SetGraficoGastosProveedor(d.gastosPorTipoProveedor);
+                //SetGraficoGastosSueldos(d.gastosPorTipoSueldos);
                 removeLoading();
             }
         });
@@ -262,6 +267,49 @@ function SetTopSeler(typeValues, idCategory) {
         });
 }
 
+function SetGraficoGastosSueldos(gastosPorTipo) {
+
+    var options = {
+        series: gastosPorTipo.map((item) => { return item.total }),
+        chart: {
+            type: 'pie',
+        },
+        labels: gastosPorTipo.map((item) => { return item.descripcion }),
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: '100%'
+                }
+            }
+        }],
+        theme: {
+            palette: 'palette5' // upto palette10
+        },
+        title: {
+            text: "Sueldos",
+            align: 'left',
+            margin: 10,
+            offsetX: 0,
+            offsetY: 0,
+            floating: false,
+            style: {
+                fontSize: '14px',
+                fontWeight: 'bold',
+                fontFamily: undefined,
+                color: '#263238'
+            },
+        }
+    };
+
+    var chartNew = new ApexCharts(document.querySelector("#charGastosSueldos"), options);
+    chartNew.render();
+
+    chartNew.updateOptions({
+        series: gastosPorTipo.map((item) => { return item.total }),
+        labels: gastosPorTipo.map((item) => { return item.descripcion })
+    })
+}
 function SetGraficoGastosProveedor(gastosPorTipo) {
 
     var options = {
@@ -280,6 +328,20 @@ function SetGraficoGastosProveedor(gastosPorTipo) {
         }],
         theme: {
             palette: 'palette8' // upto palette10
+        },
+        title: {
+            text: "Proveedores",
+            align: 'left',
+            margin: 10,
+            offsetX: 0,
+            offsetY: 0,
+            floating: false,
+            style: {
+                fontSize: '14px',
+                fontWeight: 'bold',
+                fontFamily: undefined,
+                color: '#263238'
+            },
         }
     };
 
@@ -307,34 +369,24 @@ function SetGraficoGastos(gastosPorTipo) {
                     width: '100%'
                 }
             }
-        }]
-    };
-
-    var chartNew = new ApexCharts(document.querySelector("#charGastos"), options);
-    chartNew.render();
-
-    chartNew.updateOptions({
-        series: gastosPorTipo.map((item) => { return item.total }),
-        labels: gastosPorTipo.map((item) => { return item.descripcion })
-    })
-}
-
-function SetGraficoProveedores(gastosPorTipo) {
-
-    var options = {
-        series: gastosPorTipo.map((item) => { return item.total }),
-        chart: {
-            type: 'pie',
+        }],
+        theme: {
+            palette: 'palette10' // upto palette10
         },
-        labels: gastosPorTipo.map((item) => { return item.descripcion }),
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                chart: {
-                    width: '100%'
-                }
-            }
-        }]
+        title: {
+            text: "Gastos Particulares",
+            align: 'left',
+            margin: 10,
+            offsetX: 0,
+            offsetY: 0,
+            floating: false,
+            style: {
+                fontSize: '14px',
+                fontWeight: 'bold',
+                fontFamily: undefined,
+                color: '#263238'
+            },
+        }
     };
 
     var chartNew = new ApexCharts(document.querySelector("#charGastos"), options);
@@ -361,7 +413,21 @@ function SetTipoVentas(tipoVentas) {
                     width: '100%'
                 }
             }
-        }]
+        }],
+        title: {
+            text: "Ventas",
+            align: 'left',
+            margin: 10,
+            offsetX: 0,
+            offsetY: 0,
+            floating: false,
+            style: {
+                fontSize: '14px',
+                fontWeight: 'bold',
+                fontFamily: undefined,
+                color: '#263238'
+            },
+        }
     };
 
     var chartNew = new ApexCharts(document.querySelector("#charTipoVentas"), options);
@@ -449,6 +515,7 @@ $("#btnSavePagoProveedor").on("click", function () {
         model["iva"] = $("#txtIva").val() != '' ? $("#txtIva").val() : 0;
         model["ivaImporte"] = $("#txtImporteIva").val() != '' ? $("#txtImporteIva").val() : 0;
         model["importeSinIva"] = $("#txtImporteSinIva").val() != '' ? $("#txtImporteSinIva").val() : 0;
+        model["estadoPago"] = parseInt($("#cboEstado").val());
     }
     else { // proveedor
         url = "/Admin/RegistrarPagoProveedor";
@@ -477,6 +544,7 @@ $("#btnSavePagoProveedor").on("click", function () {
         model["importe"] = $("#txtImporte").val();
         model["importeSinIva"] = $("#txtImporteSinIva").val() != '' ? $("#txtImporteSinIva").val() : 0;
         model["comentario"] = $("#txtComentario").val();
+        model["estadoPago"] = parseInt($("#cboEstado").val());
     }
 
 
@@ -503,10 +571,11 @@ function calcularImportesGasto() {
     var iva = $("#txtIvaGasto").val();
 
     if (importe !== '' && iva !== '') {
+        let importeFloat = parseFloat(importe)
+        var importeSinIva = parseFloat(importeFloat) * (1 - (parseFloat(iva) / 100));
 
-        var importeSinIva = parseFloat(importe) * (1 - (parseFloat(iva) / 100));
-        $("#txtImporteSinIvaGasto").val(importeSinIva);
-        $("#txtImporteIvaGasto").val(importe - importeSinIva);
+        $("#txtImporteSinIvaGasto").val(importeSinIva.toFixed(2));
+        $("#txtImporteIvaGasto").val((importeFloat - importeSinIva).toFixed(2));
 
     }
 }
@@ -516,9 +585,10 @@ function calcularImportesProv() {
     var iva = $("#txtIva").val();
 
     if (importe !== '' && iva !== '') {
+        let importeFloat = parseFloat(importe)
+        var importeSinIva = importeFloat * (1 - (parseFloat(iva) / 100));
 
-        var importeSinIva = parseFloat(importe) * (1 - (parseFloat(iva) / 100));
-        $("#txtImporteSinIva").val(importeSinIva);
-        $("#txtImporteIva").val(importe - importeSinIva);
+        $("#txtImporteSinIva").val(importeSinIva.toFixed(2));
+        $("#txtImporteIva").val((importeFloat - importeSinIva).toFixed(2));
     }
 }

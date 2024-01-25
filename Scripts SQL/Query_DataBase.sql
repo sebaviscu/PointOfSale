@@ -282,6 +282,7 @@ create table ProveedorMovimiento(
 	[tipoFactura] varchar(50) null,
 	[comentario] varchar(300)  null,
 	idTienda int not null,
+	EstadoPago int not null,
 	[registrationDate] datetime not null,
 	[registrationUser] varchar(50) not null
 )
@@ -307,6 +308,7 @@ create table Gastos(
 	[idUsuario] int references Users(idUsers) null,
 	[comentario] varchar(300) null,
 	[idTienda] int not null,
+	EstadoPago int not null,
 	[registrationDate] datetime not null,
 	[registrationUser] varchar(50) not null,
 	[modificationDate] [datetime] null,

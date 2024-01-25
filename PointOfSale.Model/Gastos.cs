@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Model
 {
@@ -25,6 +26,7 @@ namespace PointOfSale.Model
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }
         public int IdTienda { get; set; }
+        public EstadoPago? EstadoPago { get; set; }
 
     }
 }

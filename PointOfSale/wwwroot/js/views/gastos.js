@@ -12,7 +12,8 @@ const BASIC_MODEL = {
     comentario: null,
     idUsuario: 0,
     modificationDate: null,
-    modificationUser: ""
+    modificationUser: "",
+    estadoPago: 0,
 }
 
 const BASIC_MODEL_TIPO_DE_GASTOS = {
@@ -70,6 +71,15 @@ $(document).ready(function () {
             { "data": "gastoParticular" },
             { "data": "tipoGastoString" },
             { "data": "comentario" },
+            {
+                "data": "estadoPago",
+                "className": "text-center", render: function (data) {
+                    if (data == 0)
+                        return '<span class="badge rounded-pill bg-success">Pagado</span>';
+                    else
+                        return '<span class="badge rounded-pill bg-warning text-dark">Pendiente</span>';
+                }
+            },
             { "data": "importeString" },
             {
                 "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
@@ -164,6 +174,7 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtImporteIva").val(model.ivaImporte);
     $("#txtImporteSinIva").val(model.importeSinIva);
     $("#txtComentario").val(model.comentario);
+    $("#cboEstado").val(model.estadoPago);
 
     if (model.modificationDate === null)
         document.getElementById("divModif").style.display = 'none';
@@ -204,6 +215,7 @@ $("#btnSave").on("click", function () {
     model["iva"] = $("#txtIva").val() != '' ? $("#txtIva").val() : 0;
     model["ivaImporte"] = $("#txtImporteIva").val() != '' ? $("#txtImporteIva").val() : 0;
     model["importeSinIva"] = $("#txtImporteSinIva").val() != '' ? $("#txtImporteSinIva").val() : 0;
+    model["estadoPago"] = parseInt($("#cboEstado").val());
 
     $("#modalData").find("div.modal-content").LoadingOverlay("show")
 
@@ -264,7 +276,6 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
 
     openModal(data);
 })
-
 
 
 $("#tbData tbody").on("click", ".btn-delete", function () {

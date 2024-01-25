@@ -1,6 +1,8 @@
 ﻿let tableData;
 let rowSelected;
 let tableDataMovimientos;
+let tableDataGastos;
+
 const monthNames = ["Ene", "Feb", "Mar", "Apr", "May", "Jun",
     "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
 ];
@@ -78,6 +80,7 @@ $(document).ready(function () {
         ]
     });
 
+    cargarTablaGastos();
     cargarTablaDinamica();
     removeLoading();
 })
@@ -117,10 +120,19 @@ const openModal = (model = BASIC_MODEL) => {
                 "visible": false,
                 "searchable": false
             },
-            { "data": "importeString" },
             { "data": "registrationDateString" },
+            { "data": "importeString" },
             { "data": "tipoFacturaString" },
             { "data": "nroFactura" },
+            {
+                "data": "estadoPago",
+                "className": "text-center", render: function (data) {
+                    if (data == 0)
+                        return '<span class="badge rounded-pill bg-success">Pagado</span>';
+                    else
+                        return '<span class="btn btn-pago-pagado badge rounded-pill bg-warning text-dark">Pendiente</span>';
+                }
+            },
             { "data": "registrationUser" }
         ],
         order: [[0, "desc"]],
@@ -140,6 +152,59 @@ const openModal = (model = BASIC_MODEL) => {
 
 
     $("#modalData").modal("show")
+
+    $(document).on("click", 'span.btn-pago-pagado', function (e) {
+        let row;
+
+        if ($(this).closest('tr').hasClass('child')) {
+            row = $(this).closest('tr').prev();
+        } else {
+            row = $(this).closest('tr');
+        }
+        var data = tableDataMovimientos.row(row).data();
+
+        if (data == undefined) {
+            data = tableDataGastos.row(row).data();
+        }
+
+        swal({
+            title: "¿Desea cambiar el estado a Pagado? ",
+            text: ` \n Factura: ${data.tipoFacturaString} ${data.nroFactura} \n Importe: ${data.importeString}  \n  \n `,
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Si, cambiar estado",
+            cancelButtonText: "No, cancelar",
+            closeOnConfirm: false,
+            closeOnCancel: true
+        },
+            function (respuesta) {
+
+                if (respuesta) {
+
+                    $(".showSweetAlert").LoadingOverlay("show")
+
+                    fetch(`/Admin/UpdatePagoProveedor?idMovimiento=${data.idProveedorMovimiento}`, {
+                        method: "PUT"
+                    }).then(response => {
+                        $(".showSweetAlert").LoadingOverlay("hide")
+                        return response.ok ? response.json() : Promise.reject(response);
+                    }).then(responseJson => {
+                        if (responseJson.state) {
+
+                            location.reload()
+
+                        } else {
+                            swal("Lo sentimos", responseJson.message, "error");
+                        }
+                    })
+                        .catch((error) => {
+                            $(".showSweetAlert").LoadingOverlay("hide")
+                        })
+
+                }
+            });
+    })
 }
 
 $("#btnNew").on("click", function () {
@@ -362,6 +427,62 @@ function calcularImportes() {
         $("#txtImporteIva").val(importe - importeSinIva);
     }
 }
+
+
+function cargarTablaGastos() {
+    tableDataGastos = $("#tbDataGastos").DataTable({
+        responsive: true,
+        "ajax": {
+            "url": "/Admin/GetAllMovimientoProveedor",
+            "type": "GET",
+            "datatype": "json"
+        },
+        "columns": [
+            {
+                "data": "idProveedorMovimiento",
+                "visible": false,
+                "searchable": false
+            },
+            { "data": "registrationDateString" },
+            { "data": "nombreProveedor" },
+            { "data": "tipoFacturaString" },
+            { "data": "nroFactura" },
+            { "data": "comentario" },
+            {
+                "data": "estadoPago",
+                "className": "text-center", render: function (data) {
+                    if (data == 0)
+                        return '<span class="badge rounded-pill bg-success">Pagado</span>';
+                    else
+                        return '<span class="btn btn-sm btn-pago-pagado rounded-pill bg-warning text-dark">Pendiente</span>';
+                }
+            },
+            { "data": "importeString", "className": "text-center" }
+            //,
+            //{
+            //    "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
+            //        '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-trash-can"></i></button>',
+            //    "orderable": false,
+            //    "searchable": false,
+            //    "width": "80px"
+            //}
+        ],
+        order: [[0, "desc"]],
+        dom: "Bfrtip",
+        buttons: [
+            {
+                text: 'Exportar Excel',
+                extend: 'excelHtml5',
+                title: '',
+                filename: 'Reporte Proveedors',
+                exportOptions: {
+                    columns: [1, 2]
+                }
+            }, 'pageLength'
+        ]
+    });
+}
+
 
 function cargarTablaDinamica() {
     fetch(`/Admin/GetProveedorTablaDinamica`, {

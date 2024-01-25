@@ -88,7 +88,7 @@ namespace PointOfSale.Utilities.Automapper
             )
             .ForMember(destiny =>
                 destiny.PriceString,
-                opt => opt.MapFrom(source => "$" + source.Price.Value.ToString("F0"))
+                opt => opt.MapFrom(source => "$" + source.Price.Value.ToString("F2"))
             ).ForMember(destiny =>
                 destiny.PhotoBase64,
                 opt => opt.MapFrom(source => Convert.ToBase64String(source.Photo))
@@ -156,7 +156,10 @@ namespace PointOfSale.Utilities.Automapper
                 )
                 .ForMember(destiny =>
                     destiny.Total,
-                    opt => opt.MapFrom(source => "$" + source.Total.Value.ToString("F0"))
+                    opt => opt.MapFrom(source => "$" + source.Total.Value.ToString("F2"))
+                ).ForMember(destiny =>
+                    destiny.TotalDecimal,
+                    opt => opt.MapFrom(source => source.Total)
                 ).ForMember(destiny =>
                     destiny.RegistrationDate,
                     opt => opt.MapFrom(source => source.RegistrationDate.Value.ToString("dd/MM/yyyy h:mm tt"))
@@ -183,11 +186,11 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<DetailSale, VMDetailSale>()
                 .ForMember(destiny =>
                     destiny.Price,
-                    opt => opt.MapFrom(source => "$" + source.Price.Value.ToString("F0"))
+                    opt => opt.MapFrom(source => "$" + source.Price.Value.ToString("F2"))
                 )
                 .ForMember(destiny =>
                     destiny.Total,
-                    opt => opt.MapFrom(source => "$" + source.Total.Value.ToString("F0"))
+                    opt => opt.MapFrom(source => "$" + source.Total.Value.ToString("F2"))
                 );
 
             CreateMap<VMDetailSale, DetailSale>()
@@ -223,7 +226,7 @@ namespace PointOfSale.Utilities.Automapper
                 )
                 .ForMember(destiny =>
                     destiny.TotalSale,
-                    opt => opt.MapFrom(source => source.IdSaleNavigation.Total.Value.ToString("F0"))
+                    opt => opt.MapFrom(source => source.IdSaleNavigation.Total.Value.ToString("F2"))
                 )
                 .ForMember(destiny =>
                     destiny.Product,
@@ -231,11 +234,11 @@ namespace PointOfSale.Utilities.Automapper
                 )
                 .ForMember(destiny =>
                     destiny.Price,
-                    opt => opt.MapFrom(source => source.Price.Value.ToString("F0"))
+                    opt => opt.MapFrom(source => source.Price.Value.ToString("F2"))
                 )
                 .ForMember(destiny =>
                     destiny.Total,
-                    opt => opt.MapFrom(source => source.Total.Value.ToString("F0"))
+                    opt => opt.MapFrom(source => source.Total.Value.ToString("F2"))
                 )
                 .ForMember(destiny =>
                 destiny.TipoVenta,
@@ -260,20 +263,20 @@ namespace PointOfSale.Utilities.Automapper
                 .ForMember(user => user.Fecha, opt => opt.MapFrom(userEdit => userEdit.FechaInicio.ToShortDateString()))
                 .ForMember(user => user.HoraInicio, opt => opt.MapFrom(userEdit => userEdit.FechaInicio.ToShortTimeString()))
                 .ForMember(user => user.HoraFin, opt => opt.MapFrom(userEdit => userEdit.FechaFin.HasValue ? userEdit.FechaFin.Value.ToShortTimeString() : string.Empty))
-                .ForMember(user => user.Total, opt => opt.MapFrom(userEdit => userEdit.Sales.Any() ? "$" + userEdit.Sales.Where(s => s.IdClienteMovimiento == null).Sum(_ => _.Total).Value.ToString("F0") : string.Empty));
+                .ForMember(user => user.Total, opt => opt.MapFrom(userEdit => userEdit.Sales.Any() ? "$" + userEdit.Sales.Where(s => s.IdClienteMovimiento == null).Sum(_ => _.Total).Value.ToString("F2") : string.Empty));
 
             CreateMap<VMTurno, Turno>();
 
 
             CreateMap<Cliente, VMCliente>()
                     .ForMember(user => user.TotalDecimal, opt => opt.MapFrom(userEdit => userEdit.ClienteMovimientos != null ? userEdit.ClienteMovimientos.Where(_ => _.TipoMovimiento == TipoMovimientoCliente.Ingreso).Sum(_ => _.Total) - userEdit.ClienteMovimientos.Where(_ => _.TipoMovimiento == TipoMovimientoCliente.Egreso).Sum(_ => _.Total) : 0))
-                    .ForMember(user => user.Total, opt => opt.MapFrom(userEdit => userEdit.ClienteMovimientos != null ? "$" + (userEdit.ClienteMovimientos.Where(_ => _.TipoMovimiento == TipoMovimientoCliente.Ingreso).Sum(_ => _.Total) - userEdit.ClienteMovimientos.Where(_ => _.TipoMovimiento == TipoMovimientoCliente.Egreso).Sum(_ => _.Total)).ToString("F0") : string.Empty));
+                    .ForMember(user => user.Total, opt => opt.MapFrom(userEdit => userEdit.ClienteMovimientos != null ? "$" + (userEdit.ClienteMovimientos.Where(_ => _.TipoMovimiento == TipoMovimientoCliente.Ingreso).Sum(_ => _.Total) - userEdit.ClienteMovimientos.Where(_ => _.TipoMovimiento == TipoMovimientoCliente.Egreso).Sum(_ => _.Total)).ToString("F2") : string.Empty));
 
             CreateMap<VMCliente, Cliente>();
 
 
             CreateMap<ClienteMovimiento, VMClienteMovimiento>()
-                .ForMember(user => user.TotalString, opt => opt.MapFrom(userEdit => "$" + userEdit.Total.ToString("F0")))
+                .ForMember(user => user.TotalString, opt => opt.MapFrom(userEdit => "$" + userEdit.Total.ToString("F2")))
                 .ForMember(user => user.RegistrationDateString, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.ToString("dd/MM/yyyy HH:mm")));
 
             CreateMap<VMClienteMovimiento, ClienteMovimiento>();
@@ -308,9 +311,10 @@ namespace PointOfSale.Utilities.Automapper
 
 
             CreateMap<ProveedorMovimiento, VMProveedorMovimiento>()
-                .ForMember(user => user.ImporteString, opt => opt.MapFrom(userEdit => "$" + userEdit.Importe.ToString("F0")))
+                .ForMember(user => user.ImporteString, opt => opt.MapFrom(userEdit => "$" + userEdit.Importe.ToString("F2")))
                 .ForMember(user => user.ImporteSinIvaString, opt => opt.MapFrom(userEdit => "$" + userEdit.ImporteSinIva.ToString()))
                 .ForMember(user => user.IvaImporteString, opt => opt.MapFrom(userEdit => "$" + userEdit.IvaImporte.ToString()))
+                .ForMember(user => user.NombreProveedor, opt => opt.MapFrom(userEdit => userEdit.Proveedor != null ? userEdit.Proveedor.Nombre : ""))
                 .ForMember(user => user.RegistrationDateString, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.ToString("dd/MM/yyyy HH:mm")));
 
             CreateMap<VMProveedorMovimiento, ProveedorMovimiento>();
@@ -320,7 +324,7 @@ namespace PointOfSale.Utilities.Automapper
                 .ForMember(user => user.Comentario, opt => opt.MapFrom(userEdit => userEdit.Comentario != string.Empty ? userEdit.Comentario : userEdit.IdUsuario != null ? userEdit.User.Name : string.Empty))
                 .ForMember(user => user.TipoGastoString, opt => opt.MapFrom(userEdit => userEdit.TipoDeGasto != null && userEdit.TipoDeGasto.GastoParticular != 0 ? userEdit.TipoDeGasto.Descripcion : string.Empty))
                 .ForMember(user => user.GastoParticular, opt => opt.MapFrom(userEdit => userEdit.TipoDeGasto != null ? userEdit.TipoDeGasto.GastoParticular.ToString() : string.Empty))
-                .ForMember(user => user.ImporteString, opt => opt.MapFrom(userEdit => "$" + userEdit.Importe.ToString("F0")))
+                .ForMember(user => user.ImporteString, opt => opt.MapFrom(userEdit => "$" + userEdit.Importe.ToString("F2")))
                 .ForMember(user => user.FechaString, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.ToString("dd/MM/yyyy HH:mm")));
 
             CreateMap<Gastos, VMGastosTablaDinamica>()
@@ -329,7 +333,7 @@ namespace PointOfSale.Utilities.Automapper
                 .ForMember(user => user.Iva, opt => opt.MapFrom(userEdit => userEdit.Iva != null ? userEdit.Iva : 0))
                 .ForMember(user => user.Comentario, opt => opt.MapFrom(userEdit => userEdit.Comentario != string.Empty ? userEdit.Comentario : userEdit.IdUsuario != null ? userEdit.User.Name : string.Empty))
                 .ForMember(user => user.Gasto, opt => opt.MapFrom(userEdit => userEdit.TipoDeGasto != null ? userEdit.TipoDeGasto.GastoParticular.ToString() : string.Empty))
-                .ForMember(user => user.Fecha, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.ToString("dd/MM/yyyy HH:mm")))
+                .ForMember(user => user.Fecha, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate))
                 .ForMember(user => user.Tipo_Gasto, opt => opt.MapFrom(userEdit => userEdit.TipoDeGasto.GastoParticular == TipoDeGastoEnum.Sueldos ? (userEdit.User != null ? userEdit.User.Name : string.Empty) : userEdit.TipoDeGasto.Descripcion.ToString()))
                 .ForMember(user => user.Tipo_Factura, opt => opt.MapFrom(userEdit => string.IsNullOrEmpty(userEdit.TipoFactura) ? "-" : ((Model.Enum.TipoFactura)Convert.ToInt32(userEdit.TipoFactura)).ToString()))
                 .ForMember(user => user.Nro_Factura, opt => opt.MapFrom(userEdit => userEdit.NroFactura == string.Empty ? "-" : userEdit.NroFactura));
@@ -342,7 +346,7 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<VMVentaWeb, VentaWeb>();
             CreateMap<VentaWeb, VMVentaWeb>()
                 .ForMember(user => user.Fecha, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.Value.ToString("dd/MM/yyyy HH:mm")))
-                .ForMember(user => user.TotalString, opt => opt.MapFrom(userEdit => "$" + userEdit.Total.Value.ToString("F0")))
+                .ForMember(user => user.TotalString, opt => opt.MapFrom(userEdit => "$" + userEdit.Total.Value.ToString("F2")))
                 .ForMember(user => user.FormaDePago, opt => opt.MapFrom(userEdit => userEdit.FormaDePago != null ? userEdit.FormaDePago.Description : string.Empty));
 
 

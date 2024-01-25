@@ -1,4 +1,5 @@
 ﻿using PointOfSale.Model;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Models
 {
@@ -23,5 +24,6 @@ namespace PointOfSale.Models
         public decimal? IvaImporte { get; set; }
         public string? NroFactura { get; set; }
         public string? TipoFactura { get; set; }
+        public EstadoPago? EstadoPago { get; set; }
     }
 }

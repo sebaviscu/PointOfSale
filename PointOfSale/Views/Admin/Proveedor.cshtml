@@ -10,7 +10,6 @@
     <link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
     <link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
 
-
 }
 
 <div class="row">
@@ -25,7 +24,7 @@
                 </div>
             </div>
 
-            <div class="card-body">
+            <div class="card-body" style="padding-bottom: 0px;">
                 <div class="row">
                     <div class="col-sm-12">
                         <table id="tbData" class="table table-striped" style="width:100%">
@@ -45,13 +44,43 @@
                 </div>
             </div>
 
-            <div class="card card-default">
-                <div class="card-header card-header-border-bottom">
+            <div class="card-body" style="padding-bottom: 0px;">
+                <div class="card-header card-header-border-bottom" style="padding-top: 0px;padding-left: 0px;">
+                    <div class="row col-md 3">
+                        <h4>Gastos en Proveedores</h4>
+                    </div>
+                </div>
+                <div class="card-body" style=" padding-left: 0px;padding-right: 0px;padding-top: 15px;">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table id="tbDataGastos" class="table table-striped" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Fecha</th>
+                                        <th>Proveedor</th>
+                                        <th>Tipo Factura</th>
+                                        <th>Factura</th>
+                                        <th>Comentario</th>
+                                        <th>Estado</th>
+                                        <th>Importe</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body" style="padding-top: 0px;padding-bottom: 0px;">
+                <div class="card-header card-header-border-bottom" style="padding-top: 0px;padding-left: 0px;">
                     <div class="row col-md 3">
                         <h4>Tabla Dinamica</h4>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body" style=" padding-left: 0px;padding-right: 0px;padding-top: 15px;">
                     <div class="row">
                         <div id="wdr-component"></div>
                     </div>
@@ -64,7 +93,7 @@
 
 <!-- Grid Modal -->
 <div class="modal fade" id="modalData" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-dialog" role="document" style="min-width: 1330px;">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalGridTitle">Detalle Proveedors</h5>
@@ -76,7 +105,7 @@
                 <form>
                     <input type="hidden" value="0" id="txtId">
                     <div class="row">
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-row">
                                 <div class="form-group col-sm-12">
                                     <label for="txtNombre">Nombre</label>
@@ -85,11 +114,11 @@
 
                             </div>
                             <div class="form-row">
-                                <div class="form-group col-sm-6">
+                                <div class="form-group col-sm-7">
                                     <label for="txtCuil">Cuil</label>
                                     <input type="text" class="form-control form-control-sm" id="txtCuil" name="Cuil">
                                 </div>
-                                <div class="form-group col-sm-6">
+                                <div class="form-group col-sm-5">
                                     <label for="txtTelefono">Telefono</label>
                                     <input type="text" class="form-control form-control-sm" id="txtTelefono" name="telefono">
                                 </div>
@@ -111,16 +140,17 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-8">
+                        <div class="col-sm-9">
                             <div class="col-sm-12">
                                 <table id="tbMovimientos" class="table" style="width:100%">
                                     <thead>
                                         <tr>
                                             <th></th>
-                                            <th>Importe</th>
                                             <th>Fecha</th>
+                                            <th>Importe</th>
                                             <th>Tipo</th>
                                             <th>Factura Nro.</th>
+                                            <th>Estado</th>
                                             <th>Registrado por</th>
                                         </tr>
                                     </thead>
@@ -180,6 +210,8 @@
                                         <option value="0">A</option>
                                         <option value="1">B</option>
                                         <option value="2">C</option>
+                                        <option value="3">X</option>
+                                        <option value="4">Presu.</option>
                                     </select>
                                 </div>
                                 <div class="form-group col-sm-10">

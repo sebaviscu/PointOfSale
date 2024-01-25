@@ -63,7 +63,7 @@ namespace PointOfSale.Business.Services
 
                 return Proveedor_created;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -90,7 +90,29 @@ namespace PointOfSale.Business.Services
 
                 return Proveedor_edit;
             }
-            catch (Exception ex)
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<ProveedorMovimiento> CambiarEstadoMovimiento(int idMovimiento)
+        {
+            try
+            {
+                IQueryable<ProveedorMovimiento> queryProveedor = await _proveedorMovimiento.Query(u => u.IdProveedorMovimiento == idMovimiento);
+
+                ProveedorMovimiento Proveedor_edit = queryProveedor.First();
+
+                Proveedor_edit.EstadoPago = EstadoPago.Pagado;
+
+                bool response = await _proveedorMovimiento.Edit(Proveedor_edit);
+                if (!response)
+                    throw new TaskCanceledException("No se pudo modificar el movimiento");
+
+                return Proveedor_edit;
+            }
+            catch (Exception)
             {
                 throw;
             }

@@ -148,16 +148,20 @@ namespace PointOfSale.Business.Services
                 foreach (var i in listaPreciosActual)
                 {
                     var nuevoPrecio = listaPreciosNueva.First(_ => _.Lista == i.Lista);
-                    i.Precio = nuevoPrecio.Precio;
-                    i.PorcentajeProfit = nuevoPrecio.PorcentajeProfit != 0 ? nuevoPrecio.PorcentajeProfit : i.PorcentajeProfit;
-                    i.RegistrationDate = DateTime.Now;
+                    if (nuevoPrecio.Precio != 0)
+                    {
+                        i.Precio = nuevoPrecio.Precio;
+                        i.PorcentajeProfit = nuevoPrecio.PorcentajeProfit != 0 ? nuevoPrecio.PorcentajeProfit : i.PorcentajeProfit;
+                        i.RegistrationDate = DateTime.Now;
 
-                    bool response = await _repositoryListaPrecios.Edit(i);
-                    if (!response)
-                        throw new TaskCanceledException("La lista de precios no se pudo editar");
+                        bool response = await _repositoryListaPrecios.Edit(i);
+                        if (!response)
+                            throw new TaskCanceledException("La lista de precios no se pudo editar");
+
+                    }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 throw;
             }
@@ -177,21 +181,19 @@ namespace PointOfSale.Business.Services
                     if (product_edit == null)
                         throw new TaskCanceledException($"El producto con Id {p} no existe");
 
-                    var precio = product_edit.Price;
                     var precioWeb = product_edit.PriceWeb;
 
-                    if (data.Precio != "")
+                    if (data.PriceWeb != "")
                     {
-                        precio = Convert.ToDecimal(data.Precio);
                         precioWeb = Convert.ToDecimal(data.PriceWeb);
                     }
                     else if (data.PorPorcentaje != "")
                     {
-                        precio = Convert.ToDecimal(precio * ((Convert.ToDecimal(data.PorPorcentaje) / 100) + 1));
                         precioWeb = Convert.ToDecimal(precioWeb * ((Convert.ToDecimal(data.PorPorcentaje) / 100) + 1));
                     }
 
-                    product_edit.Price = precio;
+                    var precio1 = listaPrecios.First(_ => _.Lista == ListaDePrecio.Lista_1);
+                    product_edit.Price = precio1.Precio != 0 ? precio1.Precio : product_edit.Price;
                     product_edit.PriceWeb = precioWeb;
                     product_edit.CostPrice = data.Costo != "" ? Convert.ToDecimal(data.Costo) : product_edit.CostPrice;
                     product_edit.PorcentajeProfit = data.Profit != "" ? Convert.ToInt32(data.Profit) : product_edit.PorcentajeProfit;

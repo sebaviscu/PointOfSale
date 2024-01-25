@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Services;
 using PointOfSale.Model;
+using PointOfSale.Model.Auditoria;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
 using System.Globalization;
@@ -217,6 +218,17 @@ namespace PointOfSale.Controllers
                 };
                 var totGastosParticualres = gastosParticualresList.Sum(_ => _.Total);
 
+                var gastosSueldosList = new List<VMVentasPorTipoDeVenta>();
+                foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetGastosSueldos(typeValues, user.IdTienda))
+                {
+                    gastosSueldosList.Add(new VMVentasPorTipoDeVenta()
+                    {
+                        Descripcion = item.Key,
+                        Total = item.Value
+                    });
+
+                };
+                var totGastosSueldos = gastosSueldosList.Sum(_ => _.Total);
 
                 var gastosProveedores = new List<VMVentasPorTipoDeVenta>();
                 var movimientosProv = await _dashboardService.GetMovimientosProveedoresByTienda(typeValues, user.IdTienda);
@@ -232,7 +244,7 @@ namespace PointOfSale.Controllers
                 };
 
                 var gananciaBruta = listSales.Sum(_ => _.Total);
-                var gastosTotales = gastosProvTotales + totGastosParticualres;
+                var gastosTotales = gastosProvTotales + totGastosParticualres + totGastosSueldos;
 
                 vmDashboard.EjeX = ejeX;
                 vmDashboard.SalesList = listSales.Select(_ => (int)_.Total).ToList();
@@ -243,9 +255,13 @@ namespace PointOfSale.Controllers
                 vmDashboard.GastosTotales = "$ " + gastosTotales.ToString("F0");
                 vmDashboard.CantidadClientes = resultados.CantidadClientes;
                 vmDashboard.Ganancia = "$ " + (gananciaBruta - gastosTotales).ToString("F0");
+
+                vmDashboard.GastosTexto = $"${totGastosParticualres.ToString("F0")}";
+                vmDashboard.GastosProvvedoresTexto = $"${gastosProvTotales.ToString("F0")}";
+                vmDashboard.GastosSueldosTexto = $"$ {totGastosSueldos.ToString("F0")}";
                 vmDashboard.GastosPorTipo = gastosParticualresList;
-                vmDashboard.GastosTexto = $"${gastosProvTotales.ToString("F0")} + ${totGastosParticualres.ToString("F0")}";
                 vmDashboard.GastosPorTipoProveedor = gastosProveedores;
+                vmDashboard.GastosPorTipoSueldos = gastosSueldosList;
 
                 gResponse.State = true;
                 gResponse.Object = vmDashboard;
@@ -681,6 +697,15 @@ namespace PointOfSale.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> GetAllMovimientoProveedor()
+        {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+
+            var listUsers = _mapper.Map<List<VMProveedorMovimiento>>(await _proveedorService.ListMovimientosProveedorForTablaDinamica(user.IdTienda));
+            return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
+        }
+
+        [HttpGet]
         public async Task<IActionResult> GetProveedorTablaDinamica()
         {
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
@@ -732,6 +757,27 @@ namespace PointOfSale.Controllers
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
+        [HttpPut]
+        public async Task<IActionResult> UpdatePagoProveedor(int idMovimiento)
+        {
+            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+
+            var gResponse = new GenericResponse<VMProveedor>();
+            try
+            {
+                var user_edited = await _proveedorService.CambiarEstadoMovimiento(idMovimiento);
+
+
+                gResponse.State = true;
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
 
         public IActionResult Promociones()
         {

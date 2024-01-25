@@ -1,4 +1,5 @@
 ﻿using PointOfSale.Model;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Models
 {
@@ -14,6 +15,7 @@ namespace PointOfSale.Models
         public string? Comentario { get; set; }
         public int? idTienda { get; set; }
         public int IdProveedor { get; set; }
+        public string? NombreProveedor { get; set; }
         public Proveedor? Proveedor { get; set; }
         public DateTime? RegistrationDate { get; set; }
         public string? RegistrationDateString { get; set; }
@@ -27,5 +29,7 @@ namespace PointOfSale.Models
         public string? ImporteString { get; set; }
         public string? ImporteSinIvaString { get; set; }
         public string? IvaImporteString { get; set; }
+        public EstadoPago? EstadoPago { get; set; }
+
     }
 }

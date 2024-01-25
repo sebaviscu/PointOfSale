@@ -24,8 +24,8 @@ const BASIC_MODEL = {
     minimo: 0,
     precio2: "",
     precio3: "",
-    PorcentajeProfit2: 0,
-    PorcentajeProfit3: 0
+    porcentajeProfit2: 0,
+    porcentajeProfit3: 0
 }
 
 const BASIC_MASSIVE_EDIT = {
@@ -244,34 +244,35 @@ $("#btnNewProduct").on("click", function () {
 
 $("#btnSaveMasivo").on("click", function () {
 
-    if ($("#txtPriceMasivo").val() == '' && $("#txtPorPorcentajeMasivo").val() == '') {
-        const msg = `Debe completaro el campo Precio o Por %`;
+    if ($("#txtPriceMasivo").val() == '' && $("#txtPrice2Masivo").val() == '' && $("#txtPrice3Masivo").val() == '' && $("#txtPorPorcentajeMasivo").val() == '') {
+        const msg = `Debe completar alguno de los campos de Precio o Por %`;
         toastr.warning(msg, "");
         $(`input[name="${inputs_without_value[0].name}"]`).focus();
         return;
     }
 
-    if ($("#txtPriceMasivo").val() != '' && $("#txtPorPorcentajeMasivo").val() != '') {
+    if (($("#txtPriceMasivo").val() != '' || $("#txtPrice2Masivo").val() == '' || $("#txtPrice3Masivo").val() == '') && $("#txtPorPorcentajeMasivo").val() != '') {
         const msg = `Puede completar solo uno de los campos Precio o Por %`;
         toastr.warning(msg, "");
         $(`input[name="${inputs_without_value[0].name}"]`).focus();
         return;
     }
+    showLoading();
 
     const model = structuredClone(BASIC_MASSIVE_EDIT);
     model["idProductos"] = aProductos.map(d => d[0]);
-    model["precio"] = $("#txtPriceMasivo").val();
+    model["precio"] = $("#txtPriceMasivo").val() != '' ? $("#txtPriceMasivo").val() : '0';
     model["priceWeb"] = $("#txtPriceWebMasivo").val();
-    model["profit"] = $("#txtProfitMasivo").val();
+    model["profit"] = $("#txtProfitMasivo").val() != '' ? $("#txtProfitMasivo").val() : '0';
     model["costo"] = $("#txtCostoMasivo").val();
     model["comentario"] = $("#txtComentarioMasivo").val();
     model["isActive"] = $("#cboStateMasivo").val() == '1' ? true : false;
     model["porPorcentaje"] = $("#txtPorPorcentajeMasivo").val();
 
-    model["precio2"] = $("#txtPrice2Masivo").val();
-    model["porcentajeProfit2"] = $("#txtProfit2Masivo").val();
-    model["precio3"] = $("#txtPrice3Masivo").val();
-    model["porcentajeProfit3"] = $("#txtProfit3Masivo").val();
+    model["precio2"] = $("#txtPrice2Masivo").val() != '' ? $("#txtPrice2Masivo").val() : '0';
+    model["porcentajeProfit2"] = $("#txtProfit2Masivo").val() != '' ? $("#txtProfit2Masivo").val() : 0;
+    model["precio3"] = $("#txtPrice3Masivo").val() != '' ? $("#txtPrice3Masivo").val() : '0';
+    model["porcentajeProfit3"] = $("#txtProfit3Masivo").val() != '' ? $("#txtProfit3Masivo").val() : 0;
 
     fetch("/Inventory/EditMassiveProducts", {
         method: "PUT",
@@ -281,9 +282,10 @@ $("#btnSaveMasivo").on("click", function () {
         $("#modalData").find("div.modal-content").LoadingOverlay("hide")
         return response.ok ? response.json() : Promise.reject(response);
     }).then(responseJson => {
+        removeLoading();
+
         if (responseJson.state) {
             $("#modalData").modal("hide");
-            //swal("Exitoso!", "Los productos fueron modificados", "success");
             location.reload();
 
         } else {
@@ -334,11 +336,11 @@ $("#btnSave").on("click", function () {
     model["comentario"] = $("#txtComentario").val();
 
     model["precio2"] = $("#txtPrice2").val();
-    model["porcentajeProfit2"] = $("#txtProfit2").val();
+    model["porcentajeProfit2"] = $("#txtProfit2").val() != '' ? $("#txtProfit2").val() : 0;
     model["precio3"] = $("#txtPrice3").val();
-    model["porcentajeProfit3"] = $("#txtProfit3").val();
+    model["porcentajeProfit3"] = $("#txtProfit3").val() != '' ? $("#txtProfit3").val() : 0;
 
-    const inputPhoto = document.getElementById('txtPhoto');
+    const inputPhoto = document.getElementById('txtPhoto'); 
 
     const formData = new FormData();
     formData.append('photo', inputPhoto.files[0]);

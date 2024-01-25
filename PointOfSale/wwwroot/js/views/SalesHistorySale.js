@@ -41,7 +41,7 @@ $("#btnSearch").click(function () {
 
     if ($("#cboSearchBy").val() == "date") {
 
-        if ($("#txtStartDate").val().trim() == "" || $("#txtEndDate").val().trim() == "") {
+        if ($("#txtStartDate").val().trim() == "") {
             toastr.warning("", "Debes ingresar la fecha de inicio y finalización.");
             return;
         }
@@ -54,7 +54,12 @@ $("#btnSearch").click(function () {
 
     let saleNumber = $("#txtSaleNumberSearch").val();
     let startDate = $("#txtStartDate").val();
-    let endDate = $("#txtEndDate").val();
+
+    if ($("#txtEndDate").val().trim() == "") {
+        $('#txtEndDate').datepicker('setDate', startDate);
+    }
+
+    let endDate = $("#txtEndDate").val().trim();
 
     $(".card-body").find("div.row").LoadingOverlay("show")
 
@@ -64,10 +69,19 @@ $("#btnSearch").click(function () {
             return response.ok ? response.json() : Promise.reject(response);
         }).then(responseJson => {
             $("#tbsale tbody").html("");
-
             if (responseJson.length > 0) {
 
+                let total = 0;
+
+                var uniqs = responseJson.reduce((acc, val) => {
+                    acc[val.saleNumber] = acc[val.saleNumber] === undefined ? 1 : acc[val.saleNumber] += 1;
+                    return acc;
+                }, {});
+
                 responseJson.forEach((sale) => {
+
+                    total = total + parseFloat(sale.totalDecimal);
+
                     $("#tbsale tbody").append(
                         $("<tr>").append(
                             $("<td>").text(sale.registrationDate),
@@ -78,12 +92,12 @@ $("#btnSearch").click(function () {
                             $("<td>").append(
                                 $("<button>").addClass("btn btn-info btn-sm").append(
                                     $("<i>").addClass("mdi mdi-eye")
-                                ).data("sale", sale)
-                            )
+                                ).data("sale", sale))
                         )
                     )
-
                 });
+                $("#lblCantidadVentas").html("Cantidad de Ventas: <strong> " + Object.keys(uniqs).length + ".</strong>");
+                $("#lbltotal").html("Total: <strong>$ " + total + ".</strong>");
             }
         })
 })

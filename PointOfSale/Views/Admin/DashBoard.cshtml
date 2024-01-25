@@ -7,8 +7,8 @@
 <!-- Page Heading -->
 <div class="row col-md-12">
 
-    <div >
-        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+    <div>
+        <h1 class="h3 mb-0">Dashboard</h1>
     </div>
     <div class="ms-auto bd-highlight">
         <button class="btn btn-success btn-sm ms-3" id="btnNuevoGasto"><i class="mdi mdi-cash-multiple mdi-24px"></i>&nbsp;Nuevo Gasto</button>
@@ -46,27 +46,23 @@
         <div class="card border-left-primary shadow h-100 py-2">
             <div class="card-body">
                 <div class="accordion">
-                    <div class="accordion-item">
-                        <div class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
 
-                            <div class="col me-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                    Total ventas
-                                </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="txtTotalSale"></div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-shopping-basket fa-2x text-gray-300"></i>
-                            </div>
+                    <div class="col me-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Total ventas
+                        </div>
 
+                        <div class="row" style="padding-left: 15px;">
+                            <div class="h5 mb-0 font-weight-bold" id="txtTotalSale" style="color:gray"></div>
+
+                            <div class="h5 mb-0 font-weight-bold" id="txtTotalSaleAfetr" style="color:darkgray"> &nbsp;  &nbsp; &nbsp;($ 600)</div>
                         </div>
-                        <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                                <br />
-                                <div id="charTipoVentas"></div>
-                            </div>
-                        </div>
+
                     </div>
+                    <div class="col-auto">
+                        <i class="fas fa-shopping-basket fa-2x"></i>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -77,16 +73,19 @@
         <div class="card border-left-success shadow h-100 py-2">
             <div class="card-body">
                 <div class="row g-0 align-items-center">
-                    <div class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                        <div class="col me-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Total Clientes
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="txtCantidadClientes"></div>
+                    <div class="col me-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Total Clientes
                         </div>
-                        <div class="col-auto">
-                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+
+                        <div class="row" style="padding-left: 15px;">
+                            <div class="h5 mb-0 font-weight-bold" id="txtCantidadClientes" style="color:gray"></div>
+                            <div class="h5 mb-0 font-weight-bold" id="txtTotalSaleAfetr" style="color:darkgray"> &nbsp;  &nbsp; &nbsp;(20)</div>
+
                         </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x"></i>
                     </div>
                 </div>
             </div>
@@ -96,33 +95,59 @@
     <!-- Total de Gastos -->
     <div class="col-xl-4 col-md-7 mb-4">
         <div class="card border-left-info shadow h-100 py-2">
-            <div class="card-body">
-                <div class="accordion">
-                    <div class="accordion-item">
-                        <div class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-
-                            <div class="row g-0 align-items-center">
-                                <div class="col me-2">
-                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                        Gastos
-                                    </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="txtTotalGastos"></div>
-                                    <p style="font-style: italic; font-size:12px;" class="text-muted">Proveedores + Gastos</p>
-                                    <p style="font-style: italic; font-size:12px;" class="text-muted" id="gastoTexto"></p>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                                </div>
-                            </div>
-                            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionGastos">
-                                <div class="accordion-body">
-                                    <br />
-                                    <div id="charGastos"></div>
-                                    <br />
-                                    <div id="charGastosProveedor"></div>
-                                </div>
-                            </div>
+            <div class="card-body" style="padding-bottom: 3px;">
+                <div class="row g-0 align-items-center">
+                    <div class="col me-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Gastos
                         </div>
+                        <div class="row" style="padding-left: 15px;">
+                            <div class="h5 mb-0 font-weight-bold" id="txtTotalGastos" style="color:gray; padding-right: 20px;"></div>
+
+                            <table border="0">
+                                <thead>
+                                    <tr style="text-align: center;">
+                                        <th>
+                                            <p style="font-style: italic; font-size:12px;" class="text-muted"> &nbsp; Proveedores &nbsp;</p>
+                                        </th>
+                                        <th>
+                                            <p style="font-style: italic; font-size:12px;" class="text-muted">+</p>
+                                        </th>
+                                        <th>
+                                            <p style="font-style: italic; font-size:12px;" class="text-muted">&nbsp; Sueldos &nbsp;</p>
+                                        </th>
+                                        <th>
+                                            <p style="font-style: italic; font-size:12px;" class="text-muted">+</p>
+                                        </th>
+                                        <th>
+                                            <p style="font-style: italic; font-size:12px;" class="text-muted"> &nbsp; Gastos &nbsp; </p>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="text-align: center;">
+                                        <td>
+                                            <p style="font-style: italic; font-size:12px;" class="text-muted" id="gastosProvvedoresTexto"></p>
+                                        </td>
+                                        <td>
+                                        </td>
+                                        <td>
+                                            <p style="font-style: italic; font-size:12px;" class="text-muted" id="gastosSueldosTexto"></p>
+                                        </td>
+                                        <td>
+                                        </td>
+                                        <td>
+                                            <p style="font-style: italic; font-size:12px;" class="text-muted" id="gastoTexto"></p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="h5 mb-0 font-weight-bold" id="txtTotalSaleAfetr" style="color:darkgray"> &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp;($ 600)</div>
+
+                        </div>
+
+
                     </div>
                 </div>
             </div>
@@ -136,17 +161,19 @@
         <div class="card border-left-warning shadow h-100 py-2">
             <div class="card-body">
                 <div class="row g-0 align-items-center">
-                    <div class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
 
-                        <div class="col me-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                Ganancia
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="txtGanancia"></div>
+                    <div class="col me-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Ganancia
                         </div>
-                        <div class="col-auto">
-                            <i class="fas fa-tags fa-2x text-gray-300"></i>
+
+                        <div class="row" style="padding-left: 15px;">
+                            <div class="h5 mb-0 font-weight-bold" id="txtGanancia" style="color:gray"></div>
+                            <div class="h5 mb-0 font-weight-bold" id="txtTotalSaleAfetr" style="color:darkgray"> &nbsp;  &nbsp; &nbsp;($ 600)</div>
                         </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-tags fa-2x"></i>
                     </div>
                 </div>
             </div>
@@ -157,8 +184,6 @@
 <!-- Content Row -->
 
 <div class="row">
-
-    <!-- Area Chart - Ventas de los ultimos 7 días -->
     <div class="col-xl-8 col-lg-7">
         <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
@@ -205,9 +230,36 @@
     </div>
 </div>
 
+<div class="row">
+    <div class="card-body" style="">
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div id="charTipoVentas"></div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div id="charGastosProveedor"></div>
+                    </div>
+                    @*
+                    <div class="col-md-3">
+                    <div id="charGastosSueldos"></div>
+                    </div> *@
+
+                    <div class="col-md-4">
+                        <div id="charGastos"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 <!-- Grid Modal Gastos -->
 <div class="modal fade" id="modalNuevoGasto" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalGridTitle">Ingresar Nuevo Pago </h5>
@@ -219,12 +271,21 @@
                 <form>
                     <div class="row">
                         <div class="col-sm-12">
+
                             <div class="form-row">
-                                <div class="form-group col-sm-4">
+                                <div class="form-group col-sm-5">
                                     <label for="txtNombrePago">Tipo</label>
                                     <select class="form-control form-control-sm input-validate-gasto" id="cboTipoDePago" style="background-color: beige">
                                         <option value="1">Gasto</option>
                                         <option value="2">Pago de Proveedor</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-sm-4">
+                                    <label for="cboEstado">Estado</label>
+                                    <select class="form-control form-control-sm" id="cboEstado">
+                                        <option value="0">Pagado</option>
+                                        <option value="1">Pendiente</option>
+
                                     </select>
                                 </div>
                             </div>
@@ -247,11 +308,11 @@
                                         <option value=""></option>
                                     </select>
                                 </div>
-                                <div class="form-group col-sm-3">
+                                <div class="form-group col-sm-4">
                                     <label for="txtCuilPago">Cuil</label>
                                     <input type="text" class="form-control form-control-sm" id="txtCuilPago" name="Cuil" disabled>
                                 </div>
-                                <div class="form-group col-sm-5">
+                                <div class="form-group col-sm-4">
                                     <label for="txtDireccionPago">Direccion</label>
                                     <input type="text" class="form-control form-control-sm" id="txtDireccionPago" name="Direccion" disabled>
                                 </div>
@@ -264,6 +325,8 @@
                                         <option value="0">A</option>
                                         <option value="1">B</option>
                                         <option value="2">C</option>
+                                        <option value="3">X</option>
+                                        <option value="4">Presu.</option>
                                     </select>
                                 </div>
                                 <div class="form-group col-sm-10">
@@ -276,15 +339,18 @@
                                     <label for="txtIva">IVA</label>
                                     <input type="number" step="any" class="form-control form-control-sm" id="txtIva" name="IVA">
                                 </div>
-                                <div class="form-group col-sm-3">
+                                <div class="form-group col-sm-4">
                                     <label for="txtImporte">Importe</label>
-                                    <input type="number" step="any" class="form-control form-control-sm input-validate-proveedor" style="background-color: beige" id="txtImporte" name="Importe">
+
+                                    <div class="input-group  input-group-sm mb-3">
+                                        <div class="input-group-prepend">
+                                            <a class="input-group-text" for="txtImporte" onclick="calcularImportesProv('')">Calc.</a>
+                                        </div>
+                                        <input type="number" step="any" class="form-control form-control-sm input-validate-proveedor" style="background-color: beige" id="txtImporte" name="Importe">
+                                    </div>
                                 </div>
-                                <div class="form-group col-sm-2">
-                                    <br />
-                                    <a class="btn btn-secondary" onclick="calcularImportesProv()">Calular</a>
-                                </div>
-                                <div class="form-group col-sm-5 pago-gasto">
+
+                                <div class="form-group offset-1 col-sm-5 pago-gasto">
                                     <label for="cboUsuario">Usuario</label>
                                     <select class="form-control form-control-sm" id="cboUsuario">
                                         <option value=""></option>

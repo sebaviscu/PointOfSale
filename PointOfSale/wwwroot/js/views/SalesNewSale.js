@@ -53,7 +53,7 @@ function formatResults(data) {
                 </td>
                 <td>
                     <p style="font-weight: bolder;margin:2px">${data.text}</p>
-                    <p>$ ${parseInt(data.price)}</p>
+                    <p>$ ${parseFloat(data.price).toFixed(2)}</p>
                 </td>
             </tr>
          </table>`
@@ -109,8 +109,8 @@ function showProducts_Prices(idTab, currentTab) {
                 ),
                 $("<td>").text(item.descriptionproduct),
                 $("<td>").text(item.quantity),
-                $("<td>").text("$ " + parseInt(item.price)),
-                $("<td>").text("$ " + parseInt(item.total)),
+                $("<td>").text("$ " + parseFloat(item.price).toFixed(2)),
+                $("<td>").text("$ " + parseFloat(item.total).toFixed(2)),
                 $("<td>").append(item.promocion != null ?
                     $("<i>").addClass("mdi mdi-percent").attr("data-toggle", "tooltip").attr("title", item.promocion) : "")
             )
@@ -122,11 +122,11 @@ function showProducts_Prices(idTab, currentTab) {
         row++;
     })
 
-    $('#txtTotal' + idTab).val('$ ' + parseInt(total));
-    $("#txtTotal" + idTab).attr("totalReal", parseInt(total));
-    $('#txtPromociones' + idTab).html('$ ' + parseInt(totalPromocion));
-    $('#txtSubTotal' + idTab).html('$ ' + parseInt(subTotal));
-    $("#txtSubTotal" + idTab).attr("subTotalReal", parseInt(total));
+    $('#txtTotal' + idTab).val('$ ' + parseFloat(total).toFixed(2));
+    $("#txtTotal" + idTab).attr("totalReal", parseFloat(total).toFixed(2));
+    $('#txtPromociones' + idTab).html('$ ' + parseFloat(totalPromocion).toFixed(2));
+    $('#txtSubTotal' + idTab).html('$ ' + parseFloat(subTotal).toFixed(2));
+    $("#txtSubTotal" + idTab).attr("subTotalReal", parseFloat(total).toFixed(2));
 
     $("#lblCantidadProductos" + idTab).html("Cantidad de Articulos: <strong> " + currentTab.products.length + "</strong>");
 }
@@ -181,7 +181,7 @@ $(document).on("click", "button.finalizarSaleParcial", function () {
         let subTotal = getSumaSubTotales();
 
         let valorParcial = $("#txtTotalParcial").val();
-        $("#txtTotalParcial").val(parseFloat(subTotal) + parseFloat(valorParcial));
+        $("#txtTotalParcial").val(parseFloat(subTotal).toFixed(2) + parseFloat(valorParcial).toFixed(2));
         calcularSuma();
     });
 
@@ -228,7 +228,7 @@ $(document).on("click", "a.calcSubTotales", function (e) {
     let subTotal = getSumaSubTotales();
 
     let valorParcial = $("#txtTotalParcial" + idFormaDePago).val();
-    $("#txtTotalParcial" + idFormaDePago).val(parseFloat(subTotal) + parseFloat(valorParcial));
+    $("#txtTotalParcial" + idFormaDePago).val(parseFloat(subTotal).toFixed(2) + parseFloat(valorParcial).toFixed(2));
     calcularSuma();
 })
 
@@ -254,7 +254,7 @@ function getSumaSubTotales() {
     let subTotal = 0;
 
     inputElements.forEach(function (input) {
-        const value = parseFloat(input.value);
+        const value = parseFloat(input.value).toFixed(2);
 
         if (!isNaN(value) && value > 0) {
             subTotal += value;
@@ -333,21 +333,23 @@ $("#btnFinalizarVentaParcial").on("click", function () {
             AllTabsForSale = AllTabsForSale.filter(p => p.idTab != currentTabId)
             cleanSaleParcial();
 
-            $("#btnReimprimirTicket" + tabID).attr("idSale", responseJson.object.idSale);
-
             if ($(".tab-venta").length > 2) {
 
                 // para cerrar la ultima venta de 3
                 var firstTabID = document.getElementsByClassName("tab-venta")[0].getAttribute("data-bs-target")
-                $(firstTabID).remove();
-                document.getElementsByClassName("li-tab")[0].remove()
+
+                if ($('#btnAgregarProducto' + firstTabID[firstTabID.length - 1]).is(':disabled')) { // si no esta cerrada la venta, no se cierra
+                    $(firstTabID).remove();
+                    document.getElementsByClassName("li-tab")[0].remove()
+                }
+
             }
             disableAfterVenta(currentTabId);
 
             newTab();
 
         } else {
-            swal("Lo sentimos", "La venta no fué registrada", "error");
+            swal("Lo sentimos", "La venta no fué registrada. Error: " + responseJson.message, "error");
         }
     })
 });
@@ -361,7 +363,6 @@ function disableAfterVenta(tabID) {
     $('.delete-item-' + tabID).prop('disabled', true)
     $('#btnFinalizeSaleParcial' + tabID).prop('disabled', true);
     $('#btnFinalizeSaleParcial' + tabID).hide()
-    $('#btnReimprimirTicket' + tabID).show()
 }
 
 document.onkeyup = function (e) {
@@ -409,7 +410,6 @@ function newTab() {
     clone.querySelector("#txtSubTotal").id = "txtSubTotal" + tabID;
     clone.querySelector("#txtPromociones").id = "txtPromociones" + tabID;
     clone.querySelector("#txtDescRec").id = "txtDescRec" + tabID;
-    clone.querySelector("#btnReimprimirTicket").id = "btnReimprimirTicket" + tabID;
 
     $('#tab' + tabID).append(clone);
 
@@ -452,18 +452,15 @@ function addFunctions(idTab) {
                 return false;
             }
 
-            let nuevoPrecio = parseFloat(value);
+            let nuevoPrecio = parseFloat(value).toFixed(2);
 
             if (isNaN(nuevoPrecio)) {
                 toastr.warning("", "debes ingresar un valor numérico");
                 return false
             }
 
-            //currentTab.products.splice(productRow[0], 1);
-
             productRow[0].price = nuevoPrecio;
-            productRow[0].total = nuevoPrecio * parseFloat(productRow[0].quantity);
-            //currentTab.products.push(productRow[0]);
+            productRow[0].total = (nuevoPrecio * parseFloat(productRow[0].quantity)).toFixed(2);
 
             showProducts_Prices(idTab, currentTab);
 
@@ -471,16 +468,6 @@ function addFunctions(idTab) {
 
         });
     });
-
-    $("#btnReimprimirTicket" + idTab).click(function () {
-        let idSale = $(this).attr("idSale");
-
-        fetch(`/Sales/PrintTicket?idSale=${idSale}`)
-            .then(response => {
-                $("#modalData").modal("hide");
-                swal("Exitoso!", "Ticket impreso!", "success");
-            })
-    })
 
     $('#txtPeso' + idTab).on('keypress', function (e) {
         if ($('#txtPeso' + idTab).val() != '' && e.which === 13) {
@@ -503,13 +490,13 @@ function addFunctions(idTab) {
 
         if (total != '') {
             var descRecAplicar = $("#cboDescRec" + currentTabId).val()
-            let desc = parseInt(total * (descRecAplicar / 100));
-            $('#txtDescRec' + idTab).html('$ ' + desc);
-            $("#txtDescRec" + idTab).attr('totalDescRec', desc);
+            let desc = parseFloat(total * (descRecAplicar / 100));
+            $('#txtDescRec' + idTab).html('$ ' + desc.toFixed(2));
+            $("#txtDescRec" + idTab).attr('totalDescRec', desc.toFixed(2));
 
-            $("#txtTotal" + currentTabId).val('$ ' + parseInt(parseInt(total) + desc));
+            $("#txtTotal" + currentTabId).val('$ ' + parseFloat(parseFloat(total) + desc).toFixed(2));
 
-            $("#txtTotal" + currentTabId).attr("totalReal", parseInt(parseInt(total) + desc));
+            $("#txtTotal" + currentTabId).attr("totalReal", parseFloat(parseFloat(total) + desc).toFixed(2));
 
         }
     })
@@ -696,7 +683,7 @@ function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
     product.descriptionproduct = data.text;
     product.categoryproducty = data.category;
     product.quantity = data.quantity;
-    product.price = parseInt(data.price).toString();
+    product.price = parseFloat(data.price).toFixed(2).toString();
     product.total = data.total.toString();
 
     if (data.promocion != null) {
@@ -810,8 +797,8 @@ function applyForProduct(prom, totalQuantity, data, currentTab) {
                 newProd.descriptionproduct = data.text;
                 newProd.categoryproducty = data.category;
                 newProd.quantity = diffDividido;
-                newProd.price = precio.toString();
-                newProd.total = (precio * diffDividido).toString();
+                newProd.price = precio.toFixed(2).toString();
+                newProd.total = parseFloat(precio * diffDividido).toFixed(2).toString();
 
                 currentTab.products.push(newProd);
 
@@ -845,10 +832,10 @@ function calcularPrecioPorcentaje(data, prom, totalQuantity) {
         precio = prom.precio;
     }
     else if (prom.porcentaje != null) {
-        precio = parseInt(data.price) * (1 - (prom.porcentaje / 100));
+        precio = parseFloat(data.price).toFixed(2) * (1 - (prom.porcentaje / 100));
     }
 
-    data.diferenciapromocion = (parseInt(data.price) * totalQuantity) - (precio * totalQuantity);
+    data.diferenciapromocion = (parseFloat(data.price).toFixed(2) * totalQuantity) - (precio * totalQuantity);
     data.total = precio * totalQuantity;
     data.price = precio;
     data.quantity = totalQuantity;
