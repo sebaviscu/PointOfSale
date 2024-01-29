@@ -19,5 +19,6 @@ namespace PointOfSale.Business.Contracts
         Task<List<Product>> ListActive();
         Task<List<Product>> ListActiveByCategory(int idCategoria);
         Task<List<Product>> ListActiveByDescription(string text);
+        Task<List<Product>> GetProductsByIds(List<int> listIds);
     }
 }

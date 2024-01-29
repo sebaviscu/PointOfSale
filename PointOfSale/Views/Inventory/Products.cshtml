@@ -25,7 +25,9 @@
                     <div class="ms-auto bd-highlight">
                         <button class="btn btn-success btn-sm" id="btnNewProduct">Nuevo Producto</button>
 
-                        <button class="btn btn-info btn-sm ms-4 " id="btnEditAll" onclick="editAll()">Editar Seleccion</button>
+                        <button class="btn btn-primary btn-sm ms-4 " id="btnEditAll" onclick="editAll()">Editar Seleccion</button>
+
+                        <button class="btn btn-info btn-sm ms-4 " id="btnEditAll" onclick="imprimirPrecios()">Imprimir Precio</button>
                     </div>
                 </div>
             </div>
@@ -374,17 +376,75 @@
 </div>
 
 
-@section Scripts{
-    <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
-    <script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
-    <script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
+<!-- Grid Modal Imprimir Tickets -->
+<div class="modal fade" id="modalDataImprimirPrecios" tabindex="-1" role="dialog" aria-labelledby="exampleModalGridq" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Imprimir Precios</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-7">
+                        <div class="form-row col-md-12">
+                            <div class="form-group">
+                                <label for="cboListaPrecio">Precio</label>
+                                <select class="form-control form-control-sm" id="cboListaPrecio">
+                                    <option value="1">Lista 1</option>
+                                    <option value="2">Lista 2</option>
+                                    <option value="3">Lista 3</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row col-md-12">
+                            <div class="form-group">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="switchUltimaModificacion">
+                                    <label class="form-check-label" for="switchUltimaModificacion">Fecha de modificacion</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row col-md-12">
+                            <div class="form-group">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="switchCodigoBarras">
+                                    <label class="form-check-label" for="switchCodigoBarras">Codigo de barras</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row text-center col-md-5">
+                        <div style="margin-left: 10px;">
+                            <h5 for="listProdImprimir">
+                                Productos:
+                            </h5>
+                            <br />
+                            <div id='listProdImprimir'></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="btnImprimir">Imprimir</button>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts{
+        <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
+        <script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
+        <script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
 
 
-    <script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
-    <script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
-    <script src="~/plugins/data-tables/jszip.min.js"></script>
-    <script src="~/plugins/data-tables/buttons.html5.min.js"></script>
-    <script src="~/plugins/data-tables/buttons.print.min.js"></script>
+        <script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
+        <script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
+        <script src="~/plugins/data-tables/jszip.min.js"></script>
+        <script src="~/plugins/data-tables/buttons.html5.min.js"></script>
+        <script src="~/plugins/data-tables/buttons.print.min.js"></script>
 
-    <script src="~/js/views/InventoryProducts.js"></script>
-}
+        <script src="~/js/views/InventoryProducts.js"></script>
+    }

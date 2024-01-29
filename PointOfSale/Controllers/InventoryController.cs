@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using PointOfSale.Business.Contracts;
+using PointOfSale.Business.Reportes;
 using PointOfSale.Business.Services;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
@@ -287,6 +288,17 @@ namespace PointOfSale.Controllers
         {
             List<VMCategory> vmListCategories = _mapper.Map<List<VMCategory>>(await _categoryService.GetCategoriesSearch(search.Trim()));
             return StatusCode(StatusCodes.Status200OK, vmListCategories);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> ImprimirTickets(VMImprimirPrecios model)
+        {
+            var listtaProds = await _productService.GetProductsByIds(model.IdProductos);
+
+            ListaPreciosImprimir.Imprimir(listtaProds);
+
+            return StatusCode(StatusCodes.Status200OK, null);
         }
     }
 }

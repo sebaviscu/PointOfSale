@@ -34,6 +34,13 @@ const BASIC_MASSIVE_EDIT = {
     isActive: 1
 }
 
+const BASIC_IMPRIMIR_PRECIOS = {
+    idProductos: [],
+    listaPrecio: 0,
+    fechaModificacion: false,
+    codigoBarras: false
+}
+
 $(document).ready(function () {
 
     fetch("/Inventory/GetCategories")
@@ -192,8 +199,6 @@ function editAll() {
     }
     cont.appendChild(ul);
 
-    edicionMasiva = true;
-
     $("#modalDataMasivo").modal("show")
 }
 
@@ -231,8 +236,6 @@ const openModal = (model = BASIC_MODEL) => {
         $("#txtModificado").val(dateTimeModif.toLocaleString());
         $("#txtModificadoUsuario").val(model.modificationUser);
     }
-
-    edicionMasiva = false;
 
     $("#modalData").modal("show")
 
@@ -340,7 +343,7 @@ $("#btnSave").on("click", function () {
     model["precio3"] = $("#txtPrice3").val();
     model["porcentajeProfit3"] = $("#txtProfit3").val() != '' ? $("#txtProfit3").val() : 0;
 
-    const inputPhoto = document.getElementById('txtPhoto'); 
+    const inputPhoto = document.getElementById('txtPhoto');
 
     const formData = new FormData();
     formData.append('photo', inputPhoto.files[0]);
@@ -484,3 +487,66 @@ function calcularPrecioWeb() {
         $("#txtPriceWeb").val(precio);
     }
 }
+
+
+function imprimirPrecios() {
+    if (document.querySelectorAll('input[type=checkbox]:checked').length == 0)
+        return;
+
+    aProductos = [];
+
+    document.querySelectorAll('#tbData tr').forEach((row, i) => {
+        if (row.querySelector('input[type=checkbox]') != null && row.querySelector('input[type=checkbox]').checked && row.id !== '') {
+            aProductos.push([row.id, row.childNodes[2].textContent, row.childNodes[5].textContent]);
+        }
+    })
+
+    // Lista tipo de ventas
+    var cont = document.getElementById('listProdImprimir');
+    cont.innerHTML = "";
+    var ul = document.createElement('ul');
+    ul.setAttribute('style', 'padding: 0; margin: 0;text-align: left;');
+    ul.setAttribute('id', 'theList');
+    //ul.classList.add("list-group");
+
+    for (i = 0; i <= aProductos.length - 1; i++) {
+        var li = document.createElement('li');
+        li.innerHTML = "· " + aProductos[i][1];
+        li.setAttribute('style', 'display: block;');
+        //li.classList.add("list-group-item");
+        ul.appendChild(li);
+    }
+    cont.appendChild(ul);
+
+    $("#modalDataImprimirPrecios").modal("show");
+}
+
+$("#btnImprimir").on("click", function () {
+
+    const model = structuredClone(BASIC_IMPRIMIR_PRECIOS);
+    model["idProductos"] = aProductos.map(d => d[0]);
+    model["listaPrecio"] = $("#cboListaPrecio").val();
+    model["fechaModificacion"] = document.getElementById("switchUltimaModificacion").checked
+    model["codigoBarras"] = document.getElementById("switchCodigoBarras").checked
+
+    // TODO: NAVEGADOR DE ARCHIVOS
+
+    fetch("/Inventory/ImprimirTickets", {
+        method: "GET",
+        body: JSON.stringify(model)
+    }).then(response => {
+        $("#modalData").find("div.modal-content").LoadingOverlay("hide")
+        return response.ok ? response.json() : Promise.reject(response);
+    }).then(responseJson => {
+        if (responseJson.state) {
+
+            swal("Exitoso!", "De descargó un PDF con los precios", "success");
+
+        } else {
+            swal("Lo sentimos", responseJson.message, "error");
+        }
+    }).catch((error) => {
+        $("#modalData").find("div.modal-content").LoadingOverlay("hide")
+    })
+
+})

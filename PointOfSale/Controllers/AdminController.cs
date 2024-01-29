@@ -86,7 +86,7 @@ namespace PointOfSale.Controllers
 
                     for (int i = 0; i < 7; i++)
                     {
-                        ejeXint[i] = i;
+                        ejeXint[i] = i + 1;
                         ejeX[i] = ((DiasSemana)i + 1).ToString();
                     }
 
@@ -139,7 +139,7 @@ namespace PointOfSale.Controllers
                         ejeXint = new int[(last - first) + 1];
                         ejeX = new string[(last - first) + 1];
 
-                        for (i = 0; i < (last - first) + 1; i++)
+                        for (i = 1; i < (last - first) + 1; i++)
                         {
                             ejeXint[i] = (i + first);
                             ejeX[i] = (i + first).ToString();
@@ -163,19 +163,8 @@ namespace PointOfSale.Controllers
 
                         break;
                     case TypeValuesDashboard.Semana:
-                        foreach (KeyValuePair<DateTime, decimal> item in resultados.VentasActuales)
-                        {
-                            while ((int)item.Key.Date.DayOfWeek > (int)dateCompare.AddDays(ejeXint[i]).DayOfWeek)
-                            {
-                                listSales.Add(new VMSalesWeek() { Total = 0m });
-                                i++;
-                            }
-
-                            listSales.Add(new VMSalesWeek() { Total = item.Value });
-
-                            i++;
-                        }
-                        listSalesComparacion.AddRange(GetSalesComparacion(ejeXint, dateCompare, resultados));
+                        listSales.AddRange(GetSalesComparacionWeek(ejeXint, dateCompare, resultados.VentasActuales));
+                        listSalesComparacion.AddRange(GetSalesComparacionWeek(ejeXint, dateCompare, resultados.VentasComparacion));
 
                         break;
                     case TypeValuesDashboard.Mes:
@@ -191,7 +180,7 @@ namespace PointOfSale.Controllers
 
                             i++;
                         }
-                        listSalesComparacion.AddRange(GetSalesComparacion(ejeXint, dateCompare, resultados));
+                        listSalesComparacion.AddRange(GetSalesComparacionMonth(ejeXint, dateCompare, resultados));
 
                         break;
                 }
@@ -297,7 +286,27 @@ namespace PointOfSale.Controllers
             return StatusCode(StatusCodes.Status200OK, ProductListWeek);
         }
 
-        private static List<VMSalesWeek> GetSalesComparacion(int[] ejeXint, DateTime dateCompare, GraficoVentasConComparacion resultados)
+        private static List<VMSalesWeek> GetSalesComparacionWeek(int[] ejeXint, DateTime dateCompare, Dictionary<DateTime, decimal> resultados)
+        {
+            var lis = new List<VMSalesWeek>();
+            var i = 0;
+            foreach (KeyValuePair<DateTime, decimal> item in resultados)
+            {
+                var intDayOfWeek = (int)item.Key.Date.DayOfWeek == 0 ? 7 : (int)item.Key.Date.DayOfWeek + 1;
+                while (intDayOfWeek > (i == 6 ? 8 : (int)dateCompare.AddDays(ejeXint[i]).DayOfWeek))
+                {
+                    lis.Add(new VMSalesWeek() { Total = 0m });
+                    i++;
+                }
+
+                lis.Add(new VMSalesWeek() { Total = item.Value });
+
+                i++;
+            }
+            return lis;
+        }
+
+        private static List<VMSalesWeek> GetSalesComparacionMonth(int[] ejeXint, DateTime dateCompare, GraficoVentasConComparacion resultados)
         {
             var lis = new List<VMSalesWeek>();
             for (int x = 0; x < ejeXint.Length; x++)

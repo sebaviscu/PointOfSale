@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="iTextSharp" Version="5.5.13.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\PointOfSale.Data\PointOfSale.Data.csproj" />
     <ProjectReference Include="..\PointOfSale.Model\PointOfSale.Model.csproj" />
   </ItemGroup>

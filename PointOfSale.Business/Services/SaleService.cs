@@ -330,6 +330,5 @@ namespace PointOfSale.Business.Services
             return query.Include(dv => dv.DetailSales).FirstOrDefault();
         }
 
-
     }
 }

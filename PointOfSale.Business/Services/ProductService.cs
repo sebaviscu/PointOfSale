@@ -254,5 +254,22 @@ namespace PointOfSale.Business.Services
             return prods.Take(8).ToList();
 
         }
+        
+        public async Task<List<Product>> GetProductsByIds(List<int> listIds)
+        {
+            try
+            {
+                IQueryable<Product> query = await _repository.Query(p =>
+                           listIds.Contains(p.IdProduct));
+
+                return query.Include(_=>_.ListaPrecios).OrderBy(_ => _.Description).ToList();
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+            return default;
+        }
     }
 }

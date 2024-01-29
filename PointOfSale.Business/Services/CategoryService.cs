@@ -130,5 +130,6 @@ namespace PointOfSale.Business.Services
             return default;
         }
 
+
     }
 }
