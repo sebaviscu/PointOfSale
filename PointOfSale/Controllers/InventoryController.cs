@@ -1,16 +1,14 @@
 ﻿using AutoMapper;
+using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Reportes;
-using PointOfSale.Business.Services;
-using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
-using System.Security.Claims;
-using System.Security.Cryptography.X509Certificates;
+using System.Net;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Controllers
@@ -22,12 +20,15 @@ namespace PointOfSale.Controllers
         private readonly IProductService _productService;
         private readonly ISaleService _saleService;
         private readonly IMapper _mapper;
-        public InventoryController(ICategoryService categoryService, IProductService productService, IMapper mapper, ISaleService saleService)
+        private readonly IWebHostEnvironment _env;
+
+        public InventoryController(ICategoryService categoryService, IProductService productService, IMapper mapper, ISaleService saleService, IWebHostEnvironment env)
         {
             _categoryService = categoryService;
             _productService = productService;
             _mapper = mapper;
             _saleService = saleService;
+            _env = env;
         }
 
         public IActionResult Categories()
@@ -291,14 +292,22 @@ namespace PointOfSale.Controllers
         }
 
 
-        [HttpGet]
-        public async Task<IActionResult> ImprimirTickets(VMImprimirPrecios model)
+        [HttpPost]
+        public async Task<IActionResult> ImprimirTickets([FromBody] VMImprimirPrecios model)
         {
-            var listtaProds = await _productService.GetProductsByIds(model.IdProductos);
+            try
+            {
+                var listtaProds = await _productService.GetProductsByIds(model.IdProductos, model.ListaPrecio);
 
-            ListaPreciosImprimir.Imprimir(listtaProds);
+                string rutaArchivo = Path.Combine(_env.ContentRootPath, "Etiqueta" + DateTime.Now.Ticks.ToString() + ".pdf");
+                var doc = ListaPreciosImprimir.Imprimir(listtaProds, model.CodigoBarras, model.FechaModificacion, rutaArchivo);
 
-            return StatusCode(StatusCodes.Status200OK, null);
+                return StatusCode(StatusCodes.Status200OK, new { state = true, url = rutaArchivo });
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status200OK, new { state = false, error = e.ToString() });
+            }
         }
     }
 }

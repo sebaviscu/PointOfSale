@@ -14,5 +14,7 @@ namespace PointOfSale.Business.Contracts
         Task<Promocion> Add(Promocion entity);
         Task<Promocion> Edit(Promocion entity);
         Task<bool> Delete(int idUser);
+
+        Task<Promocion> CambiarEstado(int idPromocion, string userName);
     }
 }

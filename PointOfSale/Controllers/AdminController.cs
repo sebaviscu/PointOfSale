@@ -905,5 +905,28 @@ namespace PointOfSale.Controllers
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
+
+
+        [HttpPut]
+        public async Task<IActionResult> CambiarEstadoPromocion(int idPromocion)
+        {
+            var resp = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+
+            var gResponse = new GenericResponse<VMPromocion>();
+            try
+            {
+                var user_edited = await _promocionService.CambiarEstado(idPromocion, resp.UserName);
+
+                gResponse.Object = _mapper.Map<VMPromocion>(user_edited);
+                gResponse.State = true;
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
     }
 }

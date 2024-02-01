@@ -10,6 +10,9 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using System;
+using System.IO;
+using System.Web;
 
 namespace PointOfSale.Business.Reportes
 {
@@ -20,59 +23,52 @@ namespace PointOfSale.Business.Reportes
         static Font fKgUnidad = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, Font.NORMAL, BaseColor.GRAY);
         static Font fcodyfecha = FontFactory.GetFont(FontFactory.HELVETICA, 6, Font.NORMAL, BaseColor.GRAY);
 
-        public static void Imprimir(List<Product> lisProducts)
+        public static iTextSharp.text.Document Imprimir(List<Product> lisProducts, bool codBarras, bool fechaModif, string path)
         {
-            try
+            var pdfDoc = new iTextSharp.text.Document(PageSize.A4, 10f, 10f, 10f, 10f);
+
+            PdfWriter.GetInstance(pdfDoc, new FileStream(path, FileMode.OpenOrCreate));
+            pdfDoc.Open();
+
+            int i = 0;
+            var cantVueltasPasadas = 0;
+
+            var cantTotal = lisProducts.Count();
+            var resto = cantTotal <= 4 ? cantTotal : cantTotal % 4;
+            var cantVueltas = cantTotal / 4;
+
+            PdfPTable outer = ResetRow(cantTotal);
+
+            foreach (var p in lisProducts)
             {
-                var pdfDoc = new iTextSharp.text.Document(PageSize.A4, 10f, 10f, 10f, 10f);
-                string path = $"C:\\Users\\sebastian.viscusso\\Desktop\\etiqueta" + DateTime.Now.Ticks.ToString() + ".pdf";
+                i++;
 
-                PdfWriter.GetInstance(pdfDoc, new FileStream(path, FileMode.OpenOrCreate));
-                pdfDoc.Open();
+                var tableTitulo = CreateTable(p, codBarras, fechaModif);
 
-                int i = 0;
-                var cantVueltasPasadas = 0;
+                outer.AddCell(tableTitulo);
 
-                var cantTotal = lisProducts.Count();
-                var resto = cantTotal <= 4 ? cantTotal : cantTotal % 4;
-                var cantVueltas = cantTotal / 4;
-
-                PdfPTable outer = ResetRow(cantTotal);
-
-                foreach (var p in lisProducts)
+                if (i == 4)
                 {
-                    i++;
+                    pdfDoc.Add(outer);
+                    outer = ResetRow(cantTotal);
 
-                    var tableTitulo = CreateTable(p);
+                    i = 0;
+                    cantVueltasPasadas++;
 
-                    outer.AddCell(tableTitulo);
-
-                    if (i == 4)
+                    if (cantVueltasPasadas == cantVueltas && resto > 0)
                     {
-                        pdfDoc.Add(outer);
-                        outer = ResetRow(cantTotal);
-
-                        i = 0;
-                        cantVueltasPasadas++;
-
-                        if (cantVueltasPasadas == cantVueltas && resto > 0)
-                        {
-                            outer = ResetRow(resto);
-                        }
+                        outer = ResetRow(resto);
                     }
-                    else if (cantVueltasPasadas == cantVueltas && resto == i)
-                    {
-                        pdfDoc.Add(outer);
-                    }
-
                 }
-                pdfDoc.Close();
-            }
+                else if (cantVueltasPasadas == cantVueltas && resto == i)
+                {
+                    pdfDoc.Add(outer);
+                }
 
-            catch (Exception ex)
-            {
-
             }
+            pdfDoc.Close();
+
+            return pdfDoc;
         }
 
         private static PdfPTable ResetRow(int cantTotal)
@@ -99,7 +95,7 @@ namespace PointOfSale.Business.Reportes
             return outer;
         }
 
-        private static PdfPTable CreateTable(Product p)
+        private static PdfPTable CreateTable(Product p, bool codBarras, bool fechaModif)
         {
 
             var tableTitulo = new PdfPTable(new[] { 1f, 1f, 1f, 1f, 1f, 1f })
@@ -110,7 +106,13 @@ namespace PointOfSale.Business.Reportes
                 DefaultCell = { MinimumHeight = 8f }
             };
 
-            var EtiquetaDescription = new PdfPCell(new Phrase(p.Description, fNombreProducto))
+            string descripcion = p.Description;
+            if (p.Description.Length > 17)
+            {
+                descripcion = descripcion.Substring(0, 17) + ".";
+            }
+
+            var EtiquetaDescription = new PdfPCell(new Phrase(descripcion, fNombreProducto))
             {
                 Colspan = 6,
                 HorizontalAlignment = 1,
@@ -127,8 +129,8 @@ namespace PointOfSale.Business.Reportes
                 HorizontalAlignment = 2,    //0=Izquierda, 1=Centro, 2=Derecha
                 VerticalAlignment = Element.ALIGN_MIDDLE,
                 Padding = 5,
-                BorderColorBottom = BaseColor.WHITE,
-                BorderWidthBottom = 0.1f,
+                //BorderColorBottom = BaseColor.WHITE,
+                //BorderWidthBottom = 0.1f,
                 BorderColorTop = BaseColor.WHITE,
                 BorderWidthTop = 0.1f,
                 BorderColorRight = BaseColor.WHITE,
@@ -141,46 +143,74 @@ namespace PointOfSale.Business.Reportes
                 HorizontalAlignment = 1,
                 VerticalAlignment = Element.ALIGN_MIDDLE,
                 Padding = 5,
-                BorderColorBottom = BaseColor.WHITE,
-                BorderWidthBottom = 0.1f,
+                //BorderColorBottom = BaseColor.WHITE,
+                //BorderWidthBottom = 0.1f,
                 BorderColorTop = BaseColor.WHITE,
                 BorderWidthTop = 0.1f,
                 BorderColorLeft = BaseColor.WHITE,
                 BorderWidthLeft = 0.1f
             };
 
-            var EtiquetaBarCode = new PdfPCell(new Phrase(p.BarCode, fcodyfecha))
+            if (fechaModif && codBarras)
             {
-                Colspan = 3,
-                HorizontalAlignment = 0,
-                VerticalAlignment = Element.ALIGN_MIDDLE,
-                PaddingBottom = 4,
-                BorderColorTop = BaseColor.WHITE,
-                BorderWidthTop = 0.1f,
-                BorderColorRight = BaseColor.WHITE,
-                BorderWidthRight = 0.1f
-            };
+                EtiquetaTipoVenta.BorderColorBottom = BaseColor.WHITE;
+                EtiquetaTipoVenta.BorderWidthBottom = 0.1f;
 
-            var modificationDate = p.ModificationDate.HasValue ? p.ModificationDate.Value.ToShortDateString() : string.Empty;
+                EtiquetaPrice.BorderColorBottom = BaseColor.WHITE;
+                EtiquetaPrice.BorderWidthBottom = 0.1f;
+            }
 
-            var EtiquetaModificationDate = new PdfPCell(new Phrase(modificationDate, fcodyfecha))
+                PdfPCell EtiquetaBarCode;
+            if (codBarras)
             {
-                Colspan = 3,
-                HorizontalAlignment = 2,
-                VerticalAlignment = Element.ALIGN_MIDDLE,
-                PaddingBottom = 4,
-                BorderColorTop = BaseColor.WHITE,
-                BorderWidthTop = 0.1f,
-                BorderColorLeft = BaseColor.WHITE,
-                BorderWidthLeft = 0.1f
-            };
+                EtiquetaBarCode = new PdfPCell(new Phrase(p.BarCode, fcodyfecha))
+                {
+                    Colspan = 3,
+                    HorizontalAlignment = 0,
+                    VerticalAlignment = Element.ALIGN_MIDDLE,
+                    PaddingBottom = 4,
+                    BorderColorTop = BaseColor.WHITE,
+                    BorderWidthTop = 0.1f,
+                    BorderColorRight = BaseColor.WHITE,
+                    BorderWidthRight = 0.1f
+                };
+            }
+            else
+            {
+                EtiquetaBarCode = new PdfPCell(new Phrase("", fcodyfecha));
+            }
+
+            PdfPCell EtiquetaModificationDate;
+            if (fechaModif)
+            {
+                var modificationDate = p.ModificationDate.HasValue ? p.ModificationDate.Value.ToShortDateString() : string.Empty;
+                EtiquetaModificationDate = new PdfPCell(new Phrase(modificationDate, fcodyfecha))
+                {
+                    Colspan = 3,
+                    HorizontalAlignment = 2,
+                    VerticalAlignment = Element.ALIGN_MIDDLE,
+                    PaddingBottom = 4,
+                    BorderColorTop = BaseColor.WHITE,
+                    BorderWidthTop = 0.1f,
+                    BorderColorLeft = BaseColor.WHITE,
+                    BorderWidthLeft = 0.1f
+                };
+            }
+            else
+            {
+                EtiquetaModificationDate = new PdfPCell(new Phrase("", fcodyfecha));
+            }
+
 
             tableTitulo.AddCell(EtiquetaDescription);
             tableTitulo.AddCell(EtiquetaPrice);
-
             tableTitulo.AddCell(EtiquetaTipoVenta);
-            tableTitulo.AddCell(EtiquetaBarCode);
-            tableTitulo.AddCell(EtiquetaModificationDate);
+
+            if (fechaModif || codBarras)
+            {
+                tableTitulo.AddCell(EtiquetaBarCode);
+                tableTitulo.AddCell(EtiquetaModificationDate);
+            }
 
             return tableTitulo;
         }

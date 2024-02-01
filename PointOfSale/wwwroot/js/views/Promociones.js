@@ -118,9 +118,9 @@ $(document).ready(function () {
             {
                 "data": "isActive", render: function (data) {
                     if (data == 1)
-                        return '<span class="badge badge-info">Activo</span>';
+                        return '<span class="badge badge-info btn btn-cambiar-estado">Activo</span>';
                     else
-                        return '<span class="badge badge-danger">Inactivo</span>';
+                        return '<span class="badge badge-danger btn btn-cambiar-estado">Inactivo</span>';
                 }
             },
             {
@@ -145,6 +145,60 @@ $(document).ready(function () {
             }, 'pageLength'
         ]
     });
+
+
+    $(document).on("click", 'span.btn-cambiar-estado', function (e) {
+        let row;
+
+        if ($(this).closest('tr').hasClass('child')) {
+            row = $(this).closest('tr').prev();
+        } else {
+            row = $(this).closest('tr');
+        }
+        var data = tableData.row(row).data();
+
+        if (data == undefined) {
+            data = tableData.row(row).data();
+        }
+
+        swal({
+            title: "¿Desea cambiar el estado de la promocion? ",
+            text: ` \n Nombre: ${data.nombre} \n\n ${data.promocionString}  \n  \n `,
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Si, cambiar estado",
+            cancelButtonText: "No, cancelar",
+            closeOnConfirm: false,
+            closeOnCancel: true
+        },
+            function (respuesta) {
+
+                if (respuesta) {
+
+                    $(".showSweetAlert").LoadingOverlay("show")
+
+                    fetch(`/Admin/CambiarEstadoPromocion?idPromocion=${data.idPromocion}`, {
+                        method: "PUT"
+                    }).then(response => {
+                        $(".showSweetAlert").LoadingOverlay("hide")
+                        return response.ok ? response.json() : Promise.reject(response);
+                    }).then(responseJson => {
+                        if (responseJson.state) {
+
+                            location.reload()
+
+                        } else {
+                            swal("Lo sentimos", responseJson.message, "error");
+                        }
+                    })
+                        .catch((error) => {
+                            $(".showSweetAlert").LoadingOverlay("hide")
+                        })
+
+                }
+            });
+    })
 })
 
 function formatResults(data) {

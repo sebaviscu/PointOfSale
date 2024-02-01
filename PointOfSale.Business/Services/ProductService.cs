@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using iTextSharp.text;
 using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Data.Repository;
@@ -255,14 +256,16 @@ namespace PointOfSale.Business.Services
 
         }
         
-        public async Task<List<Product>> GetProductsByIds(List<int> listIds)
+        public async Task<List<Product>> GetProductsByIds(List<int> listIds, ListaDePrecio listaPrecios)
         {
             try
             {
-                IQueryable<Product> query = await _repository.Query(p =>
-                           listIds.Contains(p.IdProduct));
+                var queryProducts = await _repositoryListaPrecios.Query(p =>
+                   p.Lista == listaPrecios &&
+                   p.Producto.IsActive == true &&
+                   listIds.Contains(p.IdProducto));
 
-                return query.Include(_=>_.ListaPrecios).OrderBy(_ => _.Description).ToList();
+                return queryProducts.Include(c => c.Producto).OrderBy(_ => _.Producto.Description).ToList().Select(_ => _.Producto).ToList();
             }
             catch (Exception e)
             {

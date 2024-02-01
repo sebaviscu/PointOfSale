@@ -99,5 +99,31 @@ namespace PointOfSale.Business.Services
                 throw;
             }
         }
+
+
+        public async Task<Promocion> CambiarEstado(int idPromocion, string userName)
+        {
+            try
+            {
+                IQueryable<Promocion> queryPromocion = await _repository.Query(u => u.IdPromocion == idPromocion);
+
+                Promocion Promocion_edit = queryPromocion.First();
+
+                Promocion_edit.IsActive = !Promocion_edit.IsActive;
+                Promocion_edit.ModificationDate = DateTime.Now;
+                Promocion_edit.ModificationUser = userName;
+
+
+                bool response = await _repository.Edit(Promocion_edit);
+                if (!response)
+                    throw new TaskCanceledException("No se pudo modificar Promocion");
+
+                return Promocion_edit;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
     }
 }

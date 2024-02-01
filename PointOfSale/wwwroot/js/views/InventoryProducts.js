@@ -38,10 +38,12 @@ const BASIC_IMPRIMIR_PRECIOS = {
     idProductos: [],
     listaPrecio: 0,
     fechaModificacion: false,
-    codigoBarras: false
+    codigoBarras: false,
+    path: ""
 }
 
 $(document).ready(function () {
+    showLoading();
 
     fetch("/Inventory/GetCategories")
         .then(response => {
@@ -149,6 +151,8 @@ $(document).ready(function () {
             }, 'pageLength'
         ]
     });
+
+    removeLoading();
 })
 
 $("#chkSelectAll").on("click", function () {
@@ -522,28 +526,29 @@ function imprimirPrecios() {
 }
 
 $("#btnImprimir").on("click", function () {
-
     const model = structuredClone(BASIC_IMPRIMIR_PRECIOS);
-    model["idProductos"] = aProductos.map(d => d[0]);
-    model["listaPrecio"] = $("#cboListaPrecio").val();
+    model["idProductos"] = aProductos.map(d => parseInt(d[0]));
+    model["listaPrecio"] = parseInt($("#cboListaPrecio").val());
     model["fechaModificacion"] = document.getElementById("switchUltimaModificacion").checked
     model["codigoBarras"] = document.getElementById("switchCodigoBarras").checked
 
-    // TODO: NAVEGADOR DE ARCHIVOS
-
+    showLoading();
     fetch("/Inventory/ImprimirTickets", {
-        method: "GET",
+        method: "POST",
+        headers: { 'Content-Type': 'application/json;charset=utf-8' },
         body: JSON.stringify(model)
     }).then(response => {
         $("#modalData").find("div.modal-content").LoadingOverlay("hide")
         return response.ok ? response.json() : Promise.reject(response);
     }).then(responseJson => {
-        if (responseJson.state) {
+        removeLoading()
 
+        if (responseJson.state) {
             swal("Exitoso!", "De descargó un PDF con los precios", "success");
 
+            $("#modalDataImprimirPrecios").modal("hide");
         } else {
-            swal("Lo sentimos", responseJson.message, "error");
+            swal("Lo sentimos", responseJson.error, "error");
         }
     }).catch((error) => {
         $("#modalData").find("div.modal-content").LoadingOverlay("hide")
