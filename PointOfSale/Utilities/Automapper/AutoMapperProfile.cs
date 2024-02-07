@@ -203,47 +203,6 @@ namespace PointOfSale.Utilities.Automapper
                     opt => opt.MapFrom(source => Convert.ToDecimal(source.Total, new CultureInfo("es-PE")))
                 );
 
-            CreateMap<DetailSale, VMSalesReport>()
-                .ForMember(destiny =>
-                    destiny.RegistrationDate,
-                    opt => opt.MapFrom(source => source.IdSaleNavigation.RegistrationDate.Value.ToString("dd/MM/yyyy h:mm tt"))
-                )
-                .ForMember(destiny =>
-                    destiny.SaleNumber,
-                    opt => opt.MapFrom(source => source.IdSaleNavigation.SaleNumber)
-                )
-                .ForMember(destiny =>
-                    destiny.DocumentType,
-                    opt => opt.MapFrom(source => source.IdSaleNavigation.TypeDocumentSaleNavigation.Description)
-                )
-                .ForMember(destiny =>
-                    destiny.DocumentClient,
-                    opt => opt.MapFrom(source => source.IdSaleNavigation.CustomerDocument)
-                )
-                .ForMember(destiny =>
-                    destiny.ClientName,
-                    opt => opt.MapFrom(source => source.IdSaleNavigation.ClientName)
-                )
-                .ForMember(destiny =>
-                    destiny.TotalSale,
-                    opt => opt.MapFrom(source => source.IdSaleNavigation.Total.Value.ToString("F2"))
-                )
-                .ForMember(destiny =>
-                    destiny.Product,
-                    opt => opt.MapFrom(source => source.DescriptionProduct)
-                )
-                .ForMember(destiny =>
-                    destiny.Price,
-                    opt => opt.MapFrom(source => source.Price.Value.ToString("F2"))
-                )
-                .ForMember(destiny =>
-                    destiny.Total,
-                    opt => opt.MapFrom(source => source.Total.Value.ToString("F2"))
-                )
-                .ForMember(destiny =>
-                destiny.TipoVenta,
-                    opt => opt.MapFrom(source => System.Enum.GetName(typeof(TipoVenta), source.TipoVenta))
-                );
             #endregion
 
             #region Menu

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,10 +17,13 @@ namespace PointOfSale.Business.Services
     {
         private readonly IGenericRepository<Product> _repository;
         private readonly IGenericRepository<ListaPrecio> _repositoryListaPrecios;
-        public ProductService(IGenericRepository<Product> repository, IGenericRepository<ListaPrecio> repositoryListaPrecios)
+        private readonly IGenericRepository<DetailSale> _repositoryDetailSale;
+
+        public ProductService(IGenericRepository<Product> repository, IGenericRepository<ListaPrecio> repositoryListaPrecios, IGenericRepository<DetailSale> repositoryDetailSale)
         {
             _repository = repository;
             _repositoryListaPrecios = repositoryListaPrecios;
+            _repositoryDetailSale = repositoryDetailSale;
         }
 
         public async Task<Product> Get(int idProducto)
@@ -255,24 +259,75 @@ namespace PointOfSale.Business.Services
             return prods.Take(8).ToList();
 
         }
-        
+
+        public async Task<List<Product>> GetProductsByIdsActive(List<int> listIds, ListaDePrecio listaPrecios)
+        {
+            var queryProducts = await _repositoryListaPrecios.Query(p =>
+               p.Lista == listaPrecios &&
+               p.Producto.IsActive == true &&
+               listIds.Contains(p.IdProducto));
+
+            return queryProducts.Include(c => c.Producto).OrderBy(_ => _.Producto.Description).ToList().Select(_ => _.Producto).ToList();
+        }
+
+
         public async Task<List<Product>> GetProductsByIds(List<int> listIds, ListaDePrecio listaPrecios)
+        {
+            var queryProducts = await _repositoryListaPrecios.Query(p =>
+               p.Lista == listaPrecios &&
+               listIds.Contains(p.IdProducto));
+
+            return queryProducts.Include(c => c.Producto).OrderBy(_ => _.Producto.Description).ToList().Select(_ => _.Producto).ToList();
+        }
+
+        public async Task<Dictionary<int, string?>> ProductsTopByCategory(string category, string starDate, string endDate, int idTienda)
         {
             try
             {
-                var queryProducts = await _repositoryListaPrecios.Query(p =>
-                   p.Lista == listaPrecios &&
-                   p.Producto.IsActive == true &&
-                   listIds.Contains(p.IdProducto));
+                starDate = starDate is null ? "" : starDate;
+                endDate = endDate is null ? "" : endDate;
 
-                return queryProducts.Include(c => c.Producto).OrderBy(_ => _.Producto.Description).ToList().Select(_ => _.Producto).ToList();
+
+                DateTime start_date = DateTime.ParseExact(starDate, "dd/MM/yyyy", new CultureInfo("es-PE"));
+                DateTime end_date = DateTime.ParseExact(endDate, "dd/MM/yyyy", new CultureInfo("es-PE"));
+
+                IQueryable<DetailSale> query = await _repositoryDetailSale.Query();
+
+                if (category == "Todo")
+                {
+                    query = query
+                            .Include(v => v.IdSaleNavigation)
+                            .Include(v => v.Producto)
+                            .Where(dv =>
+                                    dv.IdSaleNavigation.RegistrationDate.Value.Date >= start_date.Date
+                                    && dv.IdSaleNavigation.RegistrationDate.Value.Date <= end_date.Date
+                                    && dv.IdSaleNavigation.IdTienda == idTienda);
+                }
+                else
+                {
+                    query = query
+                            .Include(v => v.IdSaleNavigation)
+                            .Include(v => v.Producto)
+                            .Where(dv =>
+                                    dv.IdSaleNavigation.RegistrationDate.Value.Date >= start_date.Date
+                                    && dv.IdSaleNavigation.RegistrationDate.Value.Date <= end_date.Date
+                                    && dv.IdSaleNavigation.IdTienda == idTienda
+                                    && dv.CategoryProducty == category);
+                }
+
+                Dictionary<int, string?> resultado = query
+                .GroupBy(dv => dv.IdProduct).OrderByDescending(g => g.Sum(_ => _.Quantity))
+                .Select(dv => new { product = dv.Key, total = dv.Sum(_ => _.Quantity) })
+                .ToDictionary(keySelector: r => r.product.Value, elementSelector: r => Math.Truncate(r.total.Value).ToString());
+
+                return resultado;
             }
-            catch (Exception e)
+            catch
             {
-
                 throw;
             }
-            return default;
         }
+
+
     }
 }

@@ -152,18 +152,5 @@ namespace PointOfSale.Data.Repository
 
             return sale;
         }
-
-        public async Task<List<DetailSale>> Report(DateTime StarDate, DateTime EndDate)
-        {
-            List<DetailSale> listSummary = await _dbcontext.DetailSales
-                .Include(v => v.IdSaleNavigation)
-                .ThenInclude(u => u.IdUsersNavigation)
-                .Include(v => v.IdSaleNavigation)
-                .ThenInclude(tdv => tdv.TypeDocumentSaleNavigation)
-                .Where(dv => dv.IdSaleNavigation.RegistrationDate.Value.Date >= StarDate.Date && dv.IdSaleNavigation.RegistrationDate.Value.Date <= EndDate.Date)
-                .ToListAsync();
-
-            return listSummary;
-        }
     }
 }

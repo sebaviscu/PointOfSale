@@ -163,8 +163,8 @@ namespace PointOfSale.Controllers
 
                         break;
                     case TypeValuesDashboard.Semana:
-                        listSales.AddRange(GetSalesComparacionWeek(ejeXint, dateCompare, resultados.VentasActuales));
-                        listSalesComparacion.AddRange(GetSalesComparacionWeek(ejeXint, dateCompare, resultados.VentasComparacion));
+                        listSales.AddRange(GetSalesComparacionWeek(ejeXint, dateCompare, resultados.VentasActuales, false));
+                        listSalesComparacion.AddRange(GetSalesComparacionWeek(ejeXint, dateCompare, resultados.VentasComparacion, true));
 
                         break;
                     case TypeValuesDashboard.Mes:
@@ -286,7 +286,7 @@ namespace PointOfSale.Controllers
             return StatusCode(StatusCodes.Status200OK, ProductListWeek);
         }
 
-        private static List<VMSalesWeek> GetSalesComparacionWeek(int[] ejeXint, DateTime dateCompare, Dictionary<DateTime, decimal> resultados)
+        private static List<VMSalesWeek> GetSalesComparacionWeek(int[] ejeXint, DateTime dateCompare, Dictionary<DateTime, decimal> resultados, bool beforeWeek)
         {
             var lis = new List<VMSalesWeek>();
             var i = 0;
@@ -303,6 +303,13 @@ namespace PointOfSale.Controllers
 
                 i++;
             }
+
+            while (beforeWeek && i < 7)
+            {
+                lis.Add(new VMSalesWeek() { Total = 0m });
+                i++;
+            }
+
             return lis;
         }
 

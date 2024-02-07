@@ -166,17 +166,6 @@ namespace PointOfSale.Business.Services
                .First();
         }
 
-        public async Task<List<DetailSale>> Report(string StartDate, string EndDate)
-        {
-            DateTime start_date = DateTime.ParseExact(StartDate, "dd/MM/yyyy", new CultureInfo("es-PE"));
-            DateTime end_date = DateTime.ParseExact(EndDate, "dd/MM/yyyy", new CultureInfo("es-PE"));
-
-            List<DetailSale> lista = await _repositorySale.Report(start_date, end_date);
-
-            return lista;
-        }
-
-
         public async Task<Sale> Edit(Sale entity)
         {
             try

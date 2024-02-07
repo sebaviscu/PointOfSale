@@ -32,7 +32,7 @@ insert into Menu([description],idMenuParent,controller,pageAction,isActive) valu
 ('Tiendas',1, 'Tienda', 'Tienda', 1), --9
 ('Categorias',1,'Inventory','Categories',1), --10
 ('Productos',2,'Inventory','Products',1), --11
-('Reporte de Ventas',4,'Sales','SalesHistory',1), --12
+('Reporte Ventas',4,'Sales','SalesHistory',1), --12
 ('Formas de Pago',1,'Admin','TipoVenta',1), --13
 ('Clientes',6,'Admin','Cliente',1), --14
 ('Proveedor',6,'Admin','Proveedor',1), --15
@@ -40,7 +40,8 @@ insert into Menu([description],idMenuParent,controller,pageAction,isActive) valu
 ('Gastos',6,'Gastos','Gastos',1), --17
 ('Turno',6,'Turno','Turno',1), --18
 ('Ventas Web',7,'Shop','VentaWeb',1), --19
-('Shop',7,'Shop','Index',1) --20
+('Shop',7,'Shop','Index',1), --20
+('Reporte Productos',4,'Reports','ProductsReport',1) --21
 go
 
 UPDATE Menu SET idMenuParent = idMenu where idMenuParent is null
@@ -54,7 +55,10 @@ go
 
 --*Admin
 INSERT INTO RolMenu(idRol,idMenu,isActive) values
+(1,1,1),
+(1,2,1),
 (1,3,1),
+(1,4,1),
 (1,5,1),
 (1,6,1),
 (1,7,1),
@@ -78,9 +82,8 @@ INSERT INTO RolMenu(idRol,idMenu,isActive) values
 INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (2,3,1),
 (2,7,1),
-(2,20,1),
-(2,21,1)
-
+(2,19,1),
+(2,20,1)
 
 --*encargado
 INSERT INTO RolMenu(idRol,idMenu,isActive) values
@@ -89,8 +92,10 @@ INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (3,4,1),
 (3,10,1),
 (3,11,1),
+(3,12,1),
 (3,17,1),
 (3,7,1),
+(3,19,1),
 (3,20,1),
 (3,21,1)
 go
@@ -98,7 +103,6 @@ go
 
 INSERT INTO Category([description],isActive) values
 ('Frutas',1),
-('Verduras',1),
 ('Congelados',1),
 ('Almacen',1)
 
@@ -111,7 +115,7 @@ insert into TypeDocumentSale([description],isActive, tipoFactura) values
 ('Tarjeta de Debito',1,0),
 ('Tarjeta de Credito',1,0),
 ('Mercado Pago',1,0),
-('Billetera Santa Fe',1,0)
+('Transferencia',1,0)
 
 go
 --________________________________ INSERT CORRELATIVE NUMBER ________________________________
@@ -119,4 +123,3 @@ go
 --000001
 insert into CorrelativeNumber(lastNumber,quantityDigits,management,dateUpdate) values
 (0,6,'Sale',getdate())
-

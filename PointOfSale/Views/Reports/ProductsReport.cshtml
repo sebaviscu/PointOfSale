@@ -1,0 +1,85 @@
+﻿@{
+    ViewData["Title"] = "ProductsReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@section StylesPOS{
+    <link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
+    <link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
+    <link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
+    <link href="~/plugins/jquery-ui/jquery-ui.css" rel="stylesheet">
+
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6>Sales Report</h6>
+    </div>
+    <div class="card-body">
+        <div class="form-row align-items-end">
+
+            <div class="form-group col-sm-3">
+                <label for="cboCategory">Categoria</label>
+                <select class="form-control form-control-sm" id="cboCategory">
+                </select>
+            </div>
+
+            <div class="form-group col-sm-3">
+                <label for="txtStartDate">Start Date</label>
+                <input type="text" class="form-control" id="txtStartDate">
+            </div>
+            <div class="form-group col-sm-3">
+                <label for="txtEndDate">End Date</label>
+                <input type="text" class="form-control" id="txtEndDate">
+            </div>
+            <div class="form-group col-sm-3">
+                <button type="button" class="btn btn-primary w-100" id="btnSearch"><i class="fas fa-search"></i> Buscar</button>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center  search-date">
+            <a href="#" onclick="setToday()">Hoy</a>
+        </div>
+
+        <hr />
+        <div class="row">
+            <div class="col-sm-12">
+                <table id="tbdata" class="table table-striped" cellspacing="0" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th scope="col">Producto</th>
+                            <th scope="col">Precio</th>
+                            <th scope="col">Cantidad Vendida</th>
+                            <th scope="col">Costo</th>
+                            <th scope="col">Total (precio x cant.)</th>
+                            <th scope="col">Ganancia Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
+    <script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
+    <script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
+
+
+    <script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
+    <script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
+    <script src="~/plugins/data-tables/jszip.min.js"></script>
+    <script src="~/plugins/data-tables/buttons.html5.min.js"></script>
+    <script src="~/plugins/data-tables/buttons.print.min.js"></script>
+
+
+    <script src="~/plugins/jquery-ui/jquery-ui.js"></script>
+
+    <script src="~/js/views/ReportsProducts.js"></script>
+
+    }
+

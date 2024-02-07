@@ -42,7 +42,7 @@ $("#btnSearch").click(function () {
     if ($("#cboSearchBy").val() == "date") {
 
         if ($("#txtStartDate").val().trim() == "") {
-            toastr.warning("", "Debes ingresar la fecha de inicio y finalización.");
+            toastr.warning("", "Debes ingresar al menos la fecha de inicio.");
             return;
         }
     } else {

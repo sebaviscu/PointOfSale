@@ -297,7 +297,7 @@ namespace PointOfSale.Controllers
         {
             try
             {
-                var listtaProds = await _productService.GetProductsByIds(model.IdProductos, model.ListaPrecio);
+                var listtaProds = await _productService.GetProductsByIdsActive(model.IdProductos, model.ListaPrecio);
 
                 string rutaArchivo = Path.Combine(_env.ContentRootPath, "Etiqueta" + DateTime.Now.Ticks.ToString() + ".pdf");
                 var doc = ListaPreciosImprimir.Imprimir(listtaProds, model.CodigoBarras, model.FechaModificacion, rutaArchivo);
