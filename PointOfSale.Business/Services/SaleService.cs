@@ -74,7 +74,7 @@ namespace PointOfSale.Business.Services
                     query += $"description LIKE '%{split[i]}%' ";
                     if (i < split.Length - 1) query += " and ";
                 }
-                var idsProds = _repositoryProduct.SqlRaw(query).Select(_=> _.IdProduct).ToList();
+                var idsProds = _repositoryProduct.SqlRaw(query).Select(_ => _.IdProduct).ToList();
 
                 var queryProducts = await _repositoryListaPrecio.Query(p =>
                            p.Lista == listaPrecios &&
@@ -85,11 +85,6 @@ namespace PointOfSale.Business.Services
             }
             else
             {
-                //IQueryable<Product> query = await _repositoryProduct.Query(p =>
-                //               p.IsActive == true &&
-                //               string.Concat(p.BarCode, p.Description).Contains(search));
-                //list = query.Include(c => c.IdCategoryNavigation).ToList();
-
                 IQueryable<ListaPrecio> query = await _repositoryListaPrecio.Query(p =>
                             p.Lista == listaPrecios &&
                             p.Producto.IsActive == true &&
@@ -122,11 +117,13 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task<List<Sale>> SaleHistory(string SaleNumber, string StarDate, string EndDate)
+        public async Task<List<Sale>> SaleHistory(string SaleNumber, string StarDate, string EndDate, bool incluirPresupuestos)
         {
             IQueryable<Sale> query = await _repositorySale.Query();
             StarDate = StarDate is null ? "" : StarDate;
             EndDate = EndDate is null ? "" : EndDate;
+
+            IQueryable<Sale> result;
 
             if (StarDate != "" && EndDate != "")
             {
@@ -134,25 +131,28 @@ namespace PointOfSale.Business.Services
                 DateTime start_date = DateTime.ParseExact(StarDate, "dd/MM/yyyy", new CultureInfo("es-PE"));
                 DateTime end_date = DateTime.ParseExact(EndDate, "dd/MM/yyyy", new CultureInfo("es-PE"));
 
-                return query.Where(v =>
+                result = query.Where(v =>
                     v.RegistrationDate.Value.Date >= start_date.Date &&
                     v.RegistrationDate.Value.Date <= end_date.Date
                 )
                 .Include(tdv => tdv.TypeDocumentSaleNavigation)
                 .Include(u => u.IdUsersNavigation)
                 .Include(dv => dv.DetailSales)
-                .OrderByDescending(_ => _.IdSale)
-                .ToList();
+                .OrderByDescending(_ => _.IdSale);
             }
             else
             {
-                return query.Where(v => v.SaleNumber.EndsWith(SaleNumber))
+                result = query.Where(v => v.SaleNumber.EndsWith(SaleNumber))
                 .Include(tdv => tdv.TypeDocumentSaleNavigation)
                 .Include(u => u.IdUsersNavigation)
                 .Include(dv => dv.DetailSales)
-                .OrderByDescending(_ => _.IdSale)
-                .ToList();
+                .OrderByDescending(_ => _.IdSale);
             }
+
+            if (incluirPresupuestos)
+                result = result.Where(_ => _.TypeDocumentSaleNavigation.TipoFactura == TipoFactura.Presu);
+
+            return result.ToList();
         }
 
         public async Task<Sale> Detail(string SaleNumber)
@@ -317,6 +317,29 @@ namespace PointOfSale.Business.Services
             var query = await _repositorySale.Query(v => v.IdSale == idSale);
 
             return query.Include(dv => dv.DetailSales).FirstOrDefault();
+        }
+
+
+        public async Task<Sale> Edit(int idSale, int formaPago)
+        {
+            try
+            {
+                var sale = await _repositorySale.Get(c => c.IdSale == idSale);
+
+                sale.RegistrationDate = DateTime.Now;
+                sale.IdTypeDocumentSale = formaPago;
+
+                bool response = await _repositorySale.Edit(sale);
+
+                if (!response)
+                    throw new TaskCanceledException("Sale no se pudo cambiar.");
+
+                return sale;
+            }
+            catch
+            {
+                throw;
+            }
         }
 
     }

@@ -26,6 +26,22 @@ $(document).ready(function () {
 
     $("#txtStartDate").datepicker({ dateFormat: 'dd/mm/yy' });
     $("#txtEndDate").datepicker({ dateFormat: 'dd/mm/yy' });
+
+    fetch("/Sales/ListTypeDocumentSale")
+        .then(response => {
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+            $("#cboTypeDocumentSale").append(
+                $("<option>").val('').text('')
+            )
+            if (responseJson.length > 0) {
+                responseJson.forEach((item) => {
+                    $("#cboTypeDocumentSale").append(
+                        $("<option>").val(item.idTypeDocumentSale).text(item.description)
+                    )
+                });
+            }
+        });
 })
 
 $("#cboSearchBy").change(function () {
@@ -60,10 +76,11 @@ $("#btnSearch").click(function () {
     }
 
     let endDate = $("#txtEndDate").val().trim();
+    let presupuestos = document.getElementById("switchPresupuestos").checked
 
     $(".card-body").find("div.row").LoadingOverlay("show")
 
-    fetch(`/Sales/History?saleNumber=${saleNumber}&startDate=${startDate}&endDate=${endDate}`)
+    fetch(`/Sales/History?saleNumber=${saleNumber}&startDate=${startDate}&endDate=${endDate}&presupuestos=${presupuestos}`)
         .then(response => {
             $(".card-body").find("div.row").LoadingOverlay("hide")
             return response.ok ? response.json() : Promise.reject(response);
@@ -82,11 +99,22 @@ $("#btnSearch").click(function () {
 
                     total = total + parseFloat(sale.totalDecimal);
 
+                    var changePresu = false;
+                    if (sale.typeDocumentSale == "Presupuesto") {
+                        changePresu = true;
+                        sale.typeDocumentSale = sale.typeDocumentSale + " ";
+                    }
+
                     $("#tbsale tbody").append(
                         $("<tr>").append(
                             $("<td>").text(sale.registrationDate),
                             $("<td>").text(sale.saleNumber),
-                            $("<td>").text(sale.typeDocumentSale),
+                            $("<td>").text(sale.typeDocumentSale)
+                                .append(changePresu != "" ?
+                                    $("<button>").addClass("btn btn-success btn-sm btn-pago").append(
+                                        $("<i>").addClass("mdi mdi-cash-usd")
+                                    ).data("sale", sale) : "")
+                            ,
                             $("<td>").text(sale.cantidadProductos),
                             $("<td>").text(sale.total),
                             $("<td>").append(
@@ -100,6 +128,37 @@ $("#btnSearch").click(function () {
                 $("#lbltotal").html("Total: <strong>$ " + total + ".</strong>");
             }
         })
+})
+
+$("#tbsale tbody").on("click", ".btn-pago", function () {
+
+    if ($(this).closest('tr').hasClass('child')) {
+        rowSelected = $(this).closest('tr').prev();
+    } else {
+        rowSelected = $(this).closest('tr');
+    }
+    var d = $(this).data("sale")
+
+    $("#modalPago").modal("show");
+    $("#txtTotalParcial").val(d.total);
+
+
+    $("#btnFinalizar").click(function () {
+        let formaOPago = $("#cboTypeDocumentSale").val();
+
+        if (formaOPago == "") {
+            const msg = `Debe completar la forma de pago`;
+            toastr.warning(msg, "");
+            return false;
+        }
+
+        fetch(`/Sales/UpstatSale?idSale=${d.idSale}&formaPago=${formaOPago}`)
+            .then(response => {
+                $("#modalPago").modal("hide");
+                swal("Exitoso!", "Se ha modificado la venta!", "success");
+                $("#btnSearch").click();
+            })
+    })
 })
 
 $("#tbsale tbody").on("click", ".btn-info", function () {
@@ -129,7 +188,6 @@ $("#tbsale tbody").on("click", ".btn-info", function () {
     })
 
     $("#linkPrint").attr("href", `/Sales/ShowPDFSale?idSale=${d.saleNumber}`);
-
 
     $("#modalData").modal("show");
 })

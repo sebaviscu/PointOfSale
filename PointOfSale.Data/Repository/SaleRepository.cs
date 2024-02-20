@@ -42,6 +42,7 @@ namespace PointOfSale.Data.Repository
                     {
                         entity.SaleNumber = await GetLastSerialNumberSale();
                     }
+                    entity.RegistrationDate = DateTime.Now;
 
                     await _dbcontext.Sales.AddAsync(entity);
                     await _dbcontext.SaveChangesAsync();

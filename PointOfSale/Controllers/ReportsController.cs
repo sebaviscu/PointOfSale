@@ -55,6 +55,7 @@ namespace PointOfSale.Controllers
                 vmSR.TotalPrecioPorCantidad = "$ " + (totalPrecioPorCantidad).ToString();
                 vmSR.Costo = "$ " + product.CostPrice.ToString();
                 vmSR.TotalProfit = "$ " + (totalPrecioPorCantidad - costoTotal).ToString();
+                vmSR.Proveedor = product.Proveedor.Nombre;
 
                 listVMSalesReport.Add(vmSR);
             }

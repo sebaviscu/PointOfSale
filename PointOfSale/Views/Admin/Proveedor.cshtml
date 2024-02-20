@@ -22,6 +22,9 @@
                 <div class="row col-md-7 d-flex flex-row-reverse bd-highlight">
                     <button class="btn btn-success" id="btnNew">Nuevo Proveedor</button>
                 </div>
+                <div class="ms-auto bd-highlight">
+                    <button class="btn btn-primary btn-sm ms-3" id="btnNuevoGasto"><i class="mdi mdi-cash-multiple mdi-24px"></i>&nbsp;Nuevo Pago</button>
+                </div>
             </div>
 
             <div class="card-body" style="padding-bottom: 0px;">
@@ -34,7 +37,6 @@
                                     <th>Nombre</th>
                                     <th>Cuil</th>
                                     <th>Telefono</th>
-                                    <th>Agregar Pago</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -189,9 +191,12 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-row">
+
                                 <div class="form-group col-sm-4">
                                     <label for="txtNombrePago">Nombre</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtNombrePago" name="Nombre" disabled>
+                                    <select class="form-control form-control-sm input-validate" id="cboProveedor" style="background-color: beige">
+                                        <option value=""></option>
+                                    </select>
                                 </div>
                                 <div class="form-group col-sm-3">
                                     <label for="txtCuilPago">Cuil</label>
@@ -214,9 +219,17 @@
                                         <option value="4">Presu.</option>
                                     </select>
                                 </div>
-                                <div class="form-group col-sm-10">
+                                <div class="form-group col-sm-7">
                                     <label for="txtNroFactura">Nro Factura</label>
                                     <input type="text" class="form-control form-control-sm" id="txtNroFactura" name="Factura">
+                                </div>
+                                <div class="form-group col-sm-3">
+                                    <label for="cboEstado">Estado</label>
+                                    <select class="form-control form-control-sm" id="cboEstado">
+                                        <option value="0">Pagado</option>
+                                        <option value="1">Pendiente</option>
+
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-row">
@@ -263,6 +276,7 @@
         </div>
     </div>
 </div>
+
 
 
 

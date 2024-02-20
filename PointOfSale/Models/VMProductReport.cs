@@ -8,5 +8,6 @@
         public string? TotalPrecioPorCantidad { get; set; }
         public string? Costo { get; set; }
         public string? TotalProfit { get; set; }
+        public string? Proveedor { get; set; }
     }
 }

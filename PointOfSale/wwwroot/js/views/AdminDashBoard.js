@@ -120,6 +120,7 @@ function changeChart(typeValues) {
                 $("#gastosProvvedoresTexto").text(d.gastosProvvedoresTexto)
                 $("#gastosSueldosTexto").text(d.gastosSueldosTexto)
                 $("#gastoTexto").text(d.gastosTexto)
+                $("#idTextFilter").text(d.textoFiltroDiaSemanaMes)
 
                 SetGraficoVentas(d);
                 SetTopSeler(typeValuesGlobal, $('#cboCategory').val());
@@ -284,7 +285,7 @@ function SetGraficoGastosSueldos(gastosPorTipo) {
             }
         }],
         theme: {
-            palette: 'palette5' // upto palette10
+            palette: 'palette5'
         },
         title: {
             text: "Sueldos",
@@ -310,14 +311,14 @@ function SetGraficoGastosSueldos(gastosPorTipo) {
         labels: gastosPorTipo.map((item) => { return item.descripcion })
     })
 }
-function SetGraficoGastosProveedor(gastosPorTipo) {
+function SetGraficoGastosProveedor(gastoProveedores) {
 
     var options = {
-        series: gastosPorTipo.map((item) => { return item.total }),
+        series: gastoProveedores.map((item) => { return item.total }),
         chart: {
             type: 'pie',
         },
-        labels: gastosPorTipo.map((item) => { return item.descripcion }),
+        labels: gastoProveedores.map((item) => { return item.descripcion }),
         responsive: [{
             breakpoint: 480,
             options: {
@@ -327,7 +328,7 @@ function SetGraficoGastosProveedor(gastosPorTipo) {
             }
         }],
         theme: {
-            palette: 'palette8' // upto palette10
+            palette: 'palette2'
         },
         title: {
             text: "Proveedores",
@@ -349,8 +350,8 @@ function SetGraficoGastosProveedor(gastosPorTipo) {
     chartNew.render();
 
     chartNew.updateOptions({
-        series: gastosPorTipo.map((item) => { return item.total }),
-        labels: gastosPorTipo.map((item) => { return item.descripcion })
+        series: gastoProveedores.map((item) => { return item.total }),
+        labels: gastoProveedores.map((item) => { return item.descripcion })
     })
 }
 
@@ -371,7 +372,7 @@ function SetGraficoGastos(gastosPorTipo) {
             }
         }],
         theme: {
-            palette: 'palette10' // upto palette10
+            palette: 'palette10'
         },
         title: {
             text: "Gastos Particulares",

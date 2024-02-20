@@ -3,6 +3,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<style>
+    @@media all and (max-width: 770px) and (min-width: 150px) {
+        #rowFilterDia {
+            justify-content: center;
+        }
+    }
+</style>
 
 <!-- Page Heading -->
 <div class="row col-md-12">
@@ -16,7 +23,7 @@
 </div>
 
 <!-- Dias Semana Mes -->
-<div class="row mt-3">
+<div class="row mt-3" id="rowFilterDia">
     <div class="ms-3 h4">
         <input type="radio" name="radioButton" id="rbtnDia" onclick="changeChart(0)">
         <label for="rbtnDia">
@@ -29,10 +36,16 @@
             Semana
         </label>
     </div>
-    <div class="ms-3 h4">
+    <div class="ms-3 me-5 h4">
         <input type="radio" name="radioButton" id="rbtnMes" onclick="changeChart(2)">
         <label for="rbtnMes">
             Mes
+        </label>
+    </div>
+
+    <div class="h6" style="align-self: center;">
+        <label id="idTextFilter">
+
         </label>
     </div>
 </div>
@@ -42,7 +55,7 @@
 <div class="row">
 
     <!-- Total de ventas -->
-    <div class="col-xl-4 col-md-7 mb-4">
+    <div class="col-xl-2 col-md-7 mb-4">
         <div class="card border-left-primary shadow h-100 py-2">
             <div class="card-body">
                 <div class="accordion">
@@ -154,8 +167,6 @@
         </div>
     </div>
 
-
-
     <!-- Total de Ganancias -->
     <div class="col-xl-2 col-md-5 mb-4">
         <div class="card border-left-warning shadow h-100 py-2">
@@ -179,7 +190,10 @@
             </div>
         </div>
     </div>
+
 </div>
+
+
 
 <!-- Content Row -->
 

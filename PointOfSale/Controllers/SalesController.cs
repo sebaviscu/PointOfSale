@@ -180,11 +180,11 @@ namespace PointOfSale.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> History(string saleNumber, string startDate, string endDate)
+        public async Task<IActionResult> History(string saleNumber, string startDate, string endDate, bool presupuestos)
         {
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
 
-            List<VMSale> vmHistorySale = _mapper.Map<List<VMSale>>(await _saleService.SaleHistory(saleNumber, startDate, endDate));
+            List<VMSale> vmHistorySale = _mapper.Map<List<VMSale>>(await _saleService.SaleHistory(saleNumber, startDate, endDate, presupuestos));
 
             if (vmHistorySale.Any(_ => _.IdClienteMovimiento != null))
             {
@@ -239,6 +239,15 @@ namespace PointOfSale.Controllers
             };
             var archivoPDF = _converter.Convert(pdf);
             return File(archivoPDF, "application/pdf");
+        }
+
+        public async Task<IActionResult> UpstatSale(int idSale, int formaPago)
+        {
+            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+
+            var sale = await _saleService.Edit(idSale, formaPago);
+
+            return StatusCode(StatusCodes.Status200OK);
         }
 
     }

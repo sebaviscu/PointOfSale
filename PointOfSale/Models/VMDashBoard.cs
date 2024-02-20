@@ -23,6 +23,7 @@
         public string Actual { get; set; }
         public string Anterior { get; set; }
         public string EjeXLeyenda { get; set; }
+        public string TextoFiltroDiaSemanaMes { get; set; }
 
     }
 }

@@ -1,6 +1,6 @@
 ﻿let tableData;
 let rowSelected;
-let tableDataMovimientos;
+var tableDataMovimientos;
 let tableDataGastos;
 
 const monthNames = ["Ene", "Feb", "Mar", "Apr", "May", "Jun",
@@ -26,7 +26,8 @@ const BASIC_MODEL_PAGO = {
     ivaImporte: 0,
     importe: 0,
     importeSinIva: 0,
-    comentario: null
+    comentario: null,
+    estadoPago: 0
 }
 
 $(document).ready(function () {
@@ -49,14 +50,6 @@ $(document).ready(function () {
             { "data": "nombre" },
             { "data": "cuil" },
             { "data": "telefono" },
-            {
-                "defaultContent":
-                    '<button class="btn btn-info btn-sm btn-pago"><i class="mdi mdi-cash-usd"></i></button>',
-                "orderable": false,
-                "searchable": false,
-                "width": "100px",
-                "className": "text-center"
-            },
             {
                 "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
                     '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-trash-can"></i></button>',
@@ -82,7 +75,98 @@ $(document).ready(function () {
 
     cargarTablaGastos();
     cargarTablaDinamica();
+
+    fetch("/Admin/GetProveedores")
+        .then(response => {
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+
+            if (responseJson.data.length > 0) {
+                proveedoresList = responseJson.data;
+
+                responseJson.data.forEach((item) => {
+                    $("#cboProveedor").append(
+                        $("<option>").val(item.idProveedor).text(item.nombre)
+                    )
+                });
+            }
+        })
+
+    $(document).on("click", 'span.btn-pago-pagado', function (e) {
+        let row;
+
+        if ($(this).closest('tr').hasClass('child')) {
+            row = $(this).closest('tr').prev();
+        } else {
+            row = $(this).closest('tr');
+        }
+        var data;
+
+        if (tableDataMovimientos == undefined)
+            data = tableDataGastos.row(row).data();
+        else
+            data = tableDataMovimientos.row(row).data();
+
+
+
+        swal({
+            title: "¿Desea cambiar el estado a Pagado? ",
+            text: ` \n Factura: ${data.tipoFacturaString} ${data.nroFactura} \n Importe: ${data.importeString}  \n  \n `,
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Si, cambiar estado",
+            cancelButtonText: "No, cancelar",
+            closeOnConfirm: false,
+            closeOnCancel: true
+        },
+            function (respuesta) {
+
+                if (respuesta) {
+
+                    $(".showSweetAlert").LoadingOverlay("show")
+
+                    fetch(`/Admin/UpdatePagoProveedor?idMovimiento=${data.idProveedorMovimiento}`, {
+                        method: "PUT"
+                    }).then(response => {
+                        $(".showSweetAlert").LoadingOverlay("hide")
+                        return response.ok ? response.json() : Promise.reject(response);
+                    }).then(responseJson => {
+                        if (responseJson.state) {
+
+                            location.reload()
+
+                        } else {
+                            swal("Lo sentimos", responseJson.message, "error");
+                        }
+                    })
+                        .catch((error) => {
+                            $(".showSweetAlert").LoadingOverlay("hide")
+                        })
+
+                }
+            });
+    })
     removeLoading();
+})
+
+
+$("#btnNuevoGasto").on("click", function () {
+    $("#modalPago").modal("show")
+})
+
+$('#cboProveedor').change(function () {
+    var idProv = $(this).val();
+    var proveedor = proveedoresList.find(_ => _.idProveedor == idProv);
+
+    if (proveedor != null) {
+        $("#txtCuilPago").val(proveedor.cuil);
+        $("#txtDireccionPago").val(proveedor.direccion);
+    }
+    else {
+        $("#txtCuilPago").val('');
+        $("#txtDireccionPago").val('');
+    }
 })
 
 const openModal = (model = BASIC_MODEL) => {
@@ -152,59 +236,6 @@ const openModal = (model = BASIC_MODEL) => {
 
 
     $("#modalData").modal("show")
-
-    $(document).on("click", 'span.btn-pago-pagado', function (e) {
-        let row;
-
-        if ($(this).closest('tr').hasClass('child')) {
-            row = $(this).closest('tr').prev();
-        } else {
-            row = $(this).closest('tr');
-        }
-        var data = tableDataMovimientos.row(row).data();
-
-        if (data == undefined) {
-            data = tableDataGastos.row(row).data();
-        }
-
-        swal({
-            title: "¿Desea cambiar el estado a Pagado? ",
-            text: ` \n Factura: ${data.tipoFacturaString} ${data.nroFactura} \n Importe: ${data.importeString}  \n  \n `,
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonClass: "btn-danger",
-            confirmButtonText: "Si, cambiar estado",
-            cancelButtonText: "No, cancelar",
-            closeOnConfirm: false,
-            closeOnCancel: true
-        },
-            function (respuesta) {
-
-                if (respuesta) {
-
-                    $(".showSweetAlert").LoadingOverlay("show")
-
-                    fetch(`/Admin/UpdatePagoProveedor?idMovimiento=${data.idProveedorMovimiento}`, {
-                        method: "PUT"
-                    }).then(response => {
-                        $(".showSweetAlert").LoadingOverlay("hide")
-                        return response.ok ? response.json() : Promise.reject(response);
-                    }).then(responseJson => {
-                        if (responseJson.state) {
-
-                            location.reload()
-
-                        } else {
-                            swal("Lo sentimos", responseJson.message, "error");
-                        }
-                    })
-                        .catch((error) => {
-                            $(".showSweetAlert").LoadingOverlay("hide")
-                        })
-
-                }
-            });
-    })
 }
 
 $("#btnNew").on("click", function () {
@@ -281,20 +312,6 @@ $("#btnSave").on("click", function () {
 
 })
 
-$("#tbData tbody").on("click", ".btn-pago", function () {
-
-    if ($(this).closest('tr').hasClass('child')) {
-        rowSelected = $(this).closest('tr').prev();
-    } else {
-        rowSelected = $(this).closest('tr');
-    }
-
-    const data = tableData.row(rowSelected).data();
-
-    openModalPago(data);
-})
-
-
 $("#btnSavePago").on("click", function () {
     const inputs = $("input.input-validate.pagoValid").serializeArray();
     const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
@@ -307,7 +324,8 @@ $("#btnSavePago").on("click", function () {
     }
 
     const model = structuredClone(BASIC_MODEL_PAGO);
-    model["idProveedor"] = $("#txtIdProveedor").val();
+    //model["idProveedor"] = $("#txtIdProveedor").val();
+    model["idProveedor"] = $("#cboProveedor").val();
     model["tipoFactura"] = $("#cboTipoFactura").val();
     model["nroFactura"] = $("#txtNroFactura").val();
     model["iva"] = $("#txtIva").val() != '' ? $("#txtIva").val() : 0;
@@ -315,6 +333,7 @@ $("#btnSavePago").on("click", function () {
     model["importe"] = $("#txtImporte").val();
     model["importeSinIva"] = $("#txtImporteSinIva").val() != '' ? $("#txtImporteSinIva").val() : 0;
     model["comentario"] = $("#txtComentario").val();
+    model["estadoPago"] = parseInt($("#cboEstado").val());
 
     $("#modalPago").find("div.modal-content").LoadingOverlay("show")
 
@@ -340,15 +359,6 @@ $("#btnSavePago").on("click", function () {
 
 
 })
-
-const openModalPago = (model = BASIC_MODEL_PAGO) => {
-    $("#txtIdProveedor").val(model.idProveedor);
-    $("#txtNombrePago").val(model.nombre);
-    $("#txtCuilPago").val(model.cuil);
-    $("#txtDireccionPago").val(model.direccion);
-
-    $("#modalPago").modal("show")
-}
 
 $("#tbData tbody").on("click", ".btn-edit", function () {
 
@@ -458,14 +468,6 @@ function cargarTablaGastos() {
                 }
             },
             { "data": "importeString", "className": "text-center" }
-            //,
-            //{
-            //    "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
-            //        '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-trash-can"></i></button>',
-            //    "orderable": false,
-            //    "searchable": false,
-            //    "width": "80px"
-            //}
         ],
         order: [[0, "desc"]],
         dom: "Bfrtip",

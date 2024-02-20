@@ -70,6 +70,7 @@ namespace PointOfSale.Controllers
             var ejeXint = new int[0];
             var ejeX = new string[0];
             var dateCompare = DateTime.Now;
+            var textoFiltroDiaSemanaMes = string.Empty;
 
             switch (typeValues)
             {
@@ -78,6 +79,7 @@ namespace PointOfSale.Controllers
                     vmDashboard.Actual = "Hoy";
                     vmDashboard.Anterior = "Ayer";
                     vmDashboard.EjeXLeyenda = "Horas";
+                    textoFiltroDiaSemanaMes = DateTime.Now.Date.ToShortDateString();
                     break;
                 case TypeValuesDashboard.Semana:
                     ejeXint = new int[7];
@@ -94,6 +96,9 @@ namespace PointOfSale.Controllers
                     vmDashboard.Anterior = "Semana pasada";
                     vmDashboard.EjeXLeyenda = "Dias";
 
+                    var fechaString = DateTime.Now.AddDays(-((int)DateTime.Now.DayOfWeek) + 1);
+
+                    textoFiltroDiaSemanaMes = $"{fechaString.ToShortDateString()} - {fechaString.AddDays(6).ToShortDateString()}";
                     break;
                 case TypeValuesDashboard.Mes:
                     var cantDaysInMonth = DateTime.DaysInMonth(DateTime.Now.Date.Year, DateTime.Now.Date.Month);
@@ -109,6 +114,10 @@ namespace PointOfSale.Controllers
                     vmDashboard.Actual = "Mes actual";
                     vmDashboard.Anterior = "Mes pasado";
                     vmDashboard.EjeXLeyenda = "Dias";
+
+                    DateTimeFormatInfo dtinfo = new CultureInfo("es-ES", false).DateTimeFormat;
+                    textoFiltroDiaSemanaMes = dtinfo.GetMonthName(DateTime.Now.Month);
+
                     break;
             }
 
@@ -234,6 +243,8 @@ namespace PointOfSale.Controllers
 
                 var gananciaBruta = listSales.Sum(_ => _.Total);
                 var gastosTotales = gastosProvTotales + totGastosParticualres + totGastosSueldos;
+
+                vmDashboard.TextoFiltroDiaSemanaMes = textoFiltroDiaSemanaMes; // "19/02/2024 - 25/02/2024";
 
                 vmDashboard.EjeX = ejeX;
                 vmDashboard.SalesList = listSales.Select(_ => (int)_.Total).ToList();

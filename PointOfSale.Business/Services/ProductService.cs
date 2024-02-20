@@ -277,7 +277,7 @@ namespace PointOfSale.Business.Services
                p.Lista == listaPrecios &&
                listIds.Contains(p.IdProducto));
 
-            return queryProducts.Include(c => c.Producto).OrderBy(_ => _.Producto.Description).ToList().Select(_ => _.Producto).ToList();
+            return queryProducts.Include(c => c.Producto).Include(c => c.Producto.Proveedor).OrderBy(_ => _.Producto.Description).ToList().Select(_ => _.Producto).ToList();
         }
 
         public async Task<Dictionary<int, string?>> ProductsTopByCategory(string category, string starDate, string endDate, int idTienda)

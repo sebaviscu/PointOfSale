@@ -366,8 +366,15 @@ function disableAfterVenta(tabID) {
 }
 
 document.onkeyup = function (e) {
-    if (e.altKey && e.which == 78) {
+    if (e.altKey && e.which == 78) { // alt + N
         newTab();
+        return false;
+
+    } else if (e.which == 113) { // F2
+        let id = getTabActiveId();
+        $('#cboSearchProduct' + id).select2('close');
+        $('#btnFinalizeSaleParcial' + id).click();
+        return false;
     }
 };
 
@@ -863,6 +870,12 @@ function areYouSure() {
 
 var allowPrompt = true;
 //window.onbeforeunload = areYouSure;
+
+function getTabActiveId() {
+    var idTab = document.getElementsByClassName(" nav-link tab-venta active")[0].id;
+
+    return idTab[idTab.length - 1];
+}
 
 class Producto {
     idproduct = 0;

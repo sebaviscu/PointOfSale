@@ -54,8 +54,9 @@ $("#btnSearch").click(function () {
         },
         "columns": [
             { "data": "productName" },
-            { "data": "precio" },
+            { "data": "proveedor" },
             { "data": "cantidad" },
+            { "data": "precio" },
             { "data": "costo" },
             { "data": "totalPrecioPorCantidad" },
             { "data": "totalProfit" }

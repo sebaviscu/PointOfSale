@@ -112,7 +112,11 @@ namespace PointOfSale.Business.Services
 
             Dictionary<string, decimal> resultado = query
                 .Include(v => v.TypeDocumentSaleNavigation)
-                .Where(vd => vd.RegistrationDate.Value.Date >= start.Date && vd.IdClienteMovimiento == null && vd.IdTienda == idTienda)
+                .Where(
+                vd => vd.RegistrationDate.Value.Date >= start.Date 
+                && vd.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
+                && vd.IdClienteMovimiento == null 
+                && vd.IdTienda == idTienda)
                 .GroupBy(v => v.TypeDocumentSaleNavigation.Description).OrderByDescending(g => g.Sum(_ => _.Total))
                 .Select(dv => new { descripcion = dv.Key, total = dv.Sum(_ => _.Total.Value) })
                 .ToDictionary(keySelector: r => r.descripcion, elementSelector: r => r.total);
@@ -123,10 +127,21 @@ namespace PointOfSale.Business.Services
 
         private async Task<(Dictionary<DateTime, decimal> Ventas, int CantidadVentas)> GetSalesActuales(DateTime start, int idTienda)
         {
-            IQueryable<Sale> queryVentasActuales = await _repositorySale.Query(v =>
+            var query = await _repositorySale.Query();
+
+            var queryVentasActuales = query
+                .Include(v => v.TypeDocumentSaleNavigation)
+                .Where(v =>
                             v.RegistrationDate.Value.Date >= start.Date
+                            && v.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
                             && v.IdClienteMovimiento == null
                             && v.IdTienda == idTienda);
+
+            //IQueryable<Sale> queryVentasActuales = await _repositorySale.Query(v =>
+            //                v.RegistrationDate.Value.Date >= start.Date
+            //                && v.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
+            //                && v.IdClienteMovimiento == null
+            //                && v.IdTienda == idTienda);
 
             var cantVentas = queryVentasActuales.Count();
 
@@ -144,8 +159,13 @@ namespace PointOfSale.Business.Services
         {
             var resultados = new GraficoVentasConComparacion();
 
-            IQueryable<Sale> queryVentasActuales = await _repositorySale.Query(v =>
+            var query = await _repositorySale.Query();
+
+            var queryVentasActuales = query
+                .Include(v => v.TypeDocumentSaleNavigation)
+                .Where(v =>
                             v.RegistrationDate.Value.Date >= start.Date
+                            && v.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
                             && v.IdClienteMovimiento == null
                             && v.IdTienda == idTienda);
 
@@ -162,11 +182,17 @@ namespace PointOfSale.Business.Services
 
         private async Task<Dictionary<DateTime, decimal>> GetComparation(DateTime start, DateTime dateCompare, int idTienda)
         {
-            var queryVentasComparacion = await _repositorySale.Query(v =>
+            var query = await _repositorySale.Query();
+
+            var queryVentasComparacion = query
+                .Include(v => v.TypeDocumentSaleNavigation)
+                .Where(v =>
                             v.RegistrationDate.Value.Date < start.Date
+                            && v.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
                             && v.RegistrationDate.Value.Date >= dateCompare.Date
                             && v.IdClienteMovimiento == null
                             && v.IdTienda == idTienda);
+
             return queryVentasComparacion
                 .GroupBy(_ => _.RegistrationDate.Value.Date).OrderByDescending(g => g.Key)
                 .Select(dv => new { date = dv.Key, total = dv.Sum(v => v.Total.Value) })
@@ -178,11 +204,17 @@ namespace PointOfSale.Business.Services
         {
             var resultados = new GraficoVentasConComparacion();
 
-            var queryVentasComparacionHour = await _repositorySale.Query(v =>
+            var query = await _repositorySale.Query();
+
+            var queryVentasComparacionHour = query
+                .Include(v => v.TypeDocumentSaleNavigation)
+                .Where(v =>
                             v.RegistrationDate.Value.Date < start.Date
+                            && v.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
                             && v.RegistrationDate.Value.Date >= dateCompare.Date
                             && v.IdClienteMovimiento == null
                             && v.IdTienda == idTienda);
+
             return queryVentasComparacionHour.ToList()
                 .GroupBy(_ => _.RegistrationDate.Value.Hour).OrderByDescending(g => g.Key)
                 .Select(dv => new { date = dv.Key, total = dv.Sum(v => v.Total.Value) })
@@ -202,18 +234,22 @@ namespace PointOfSale.Business.Services
                 {
                     query = query
                             .Include(v => v.IdSaleNavigation)
+                            .Include(v => v.IdSaleNavigation.TypeDocumentSaleNavigation)
                             .Include(v => v.Producto)
                             .Where(dv =>
                                     dv.IdSaleNavigation.RegistrationDate.Value.Date >= start.Date
+                                    && dv.IdSaleNavigation.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
                                     && dv.IdSaleNavigation.IdTienda == idTienda);
                 }
                 else
                 {
                     query = query
                             .Include(v => v.IdSaleNavigation)
+                            .Include(v => v.IdSaleNavigation.TypeDocumentSaleNavigation)
                             .Include(v => v.Producto)
                             .Where(dv =>
                                     dv.IdSaleNavigation.RegistrationDate.Value.Date >= start.Date
+                                    && dv.IdSaleNavigation.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
                                     && dv.IdSaleNavigation.IdTienda == idTienda
                                     && dv.CategoryProducty == category);
                 }
@@ -241,6 +277,7 @@ namespace PointOfSale.Business.Services
             Dictionary<string, decimal> resultado = query
                 .Include(v => v.TypeDocumentSaleNavigation)
                 .Where(vd => vd.RegistrationDate.Value.Date >= start.Date
+                        && vd.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
                         && vd.IdClienteMovimiento == null
                         && vd.IdTurno == turno
                         && vd.IdTienda == idTienda)
@@ -261,6 +298,7 @@ namespace PointOfSale.Business.Services
             Dictionary<string, decimal> resultado = query
                 .Include(v => v.TypeDocumentSaleNavigation)
                 .Where(vd => vd.IdClienteMovimiento == null
+                        && vd.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
                         && vd.IdTurno == turno
                         && vd.IdTienda == idTienda)
                 .GroupBy(v => v.TypeDocumentSaleNavigation.Description).OrderByDescending(g => g.Sum(_ => _.Total))
