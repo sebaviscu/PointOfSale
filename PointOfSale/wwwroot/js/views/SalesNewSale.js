@@ -330,6 +330,9 @@ $("#btnFinalizarVentaParcial").on("click", function () {
             var nuevaVentaSpan = document.getElementById('profile-tab' + currentTabId).querySelector('span');
             nuevaVentaSpan.textContent = responseJson.object.saleNumber;
 
+            $("#btnImprimirTicket" + currentTabId).attr("idSale", responseJson.object.idSale);
+
+
             AllTabsForSale = AllTabsForSale.filter(p => p.idTab != currentTabId)
             cleanSaleParcial();
 
@@ -363,6 +366,7 @@ function disableAfterVenta(tabID) {
     $('.delete-item-' + tabID).prop('disabled', true)
     $('#btnFinalizeSaleParcial' + tabID).prop('disabled', true);
     $('#btnFinalizeSaleParcial' + tabID).hide()
+    $('#btnImprimirTicket' + tabID).prop('hidden', false);
 }
 
 document.onkeyup = function (e) {
@@ -417,6 +421,7 @@ function newTab() {
     clone.querySelector("#txtSubTotal").id = "txtSubTotal" + tabID;
     clone.querySelector("#txtPromociones").id = "txtPromociones" + tabID;
     clone.querySelector("#txtDescRec").id = "txtDescRec" + tabID;
+    clone.querySelector("#btnImprimirTicket").id = "btnImprimirTicket" + tabID;
 
     $('#tab' + tabID).append(clone);
 
@@ -437,6 +442,17 @@ function newTab() {
 }
 
 function addFunctions(idTab) {
+
+    $('#btnImprimirTicket' + idTab).on("click", function () {
+        let idSale = $("#btnImprimirTicket" + idTab).attr("idsale");
+
+        fetch(`/Sales/PrintTicket?idSale=${idSale}`)
+            .then(response => {
+                $("#modalData").modal("hide");
+                swal("Exitoso!", "Ticket impreso!", "success");
+            })
+    });
+
     $('#tbProduct' + idTab + ' tbody').on('dblclick', 'tr', function () {
         var rowIndex = $(this).index();
 
