@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using PointOfSale.Business.Contracts;
@@ -10,6 +11,7 @@ using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
 using System.Globalization;
 using System.Security.Claims;
+using static iTextSharp.text.pdf.AcroFields;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Controllers
@@ -61,7 +63,7 @@ namespace PointOfSale.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetSummary(TypeValuesDashboard typeValues)
+        public async Task<IActionResult> GetSummary(TypeValuesDashboard typeValues, string dateFilter)
         {
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
 
@@ -69,22 +71,24 @@ namespace PointOfSale.Controllers
 
             var ejeXint = new int[0];
             var ejeX = new string[0];
-            var dateCompare = DateTime.Now;
+            var dateActual = SetDate(typeValues, dateFilter);
+            DateTime dateCompare;
             var textoFiltroDiaSemanaMes = string.Empty;
 
             switch (typeValues)
             {
                 case TypeValuesDashboard.Dia:
-
+                    dateCompare = dateActual;
                     vmDashboard.Actual = "Hoy";
                     vmDashboard.Anterior = "Ayer";
                     vmDashboard.EjeXLeyenda = "Horas";
-                    textoFiltroDiaSemanaMes = DateTime.Now.Date.ToShortDateString();
+                    textoFiltroDiaSemanaMes = dateActual.Date.ToShortDateString();
                     break;
+
                 case TypeValuesDashboard.Semana:
                     ejeXint = new int[7];
                     ejeX = new string[7];
-                    dateCompare = DateTime.Now.AddDays(-(6 + (int)DateTime.Now.DayOfWeek));
+                    dateCompare = dateActual.AddDays(-(6 + (int)dateActual.DayOfWeek));
 
                     for (int i = 0; i < 7; i++)
                     {
@@ -96,15 +100,18 @@ namespace PointOfSale.Controllers
                     vmDashboard.Anterior = "Semana pasada";
                     vmDashboard.EjeXLeyenda = "Dias";
 
-                    var fechaString = DateTime.Now.AddDays(-((int)DateTime.Now.DayOfWeek) + 1);
+                    var weekInt = (int)dateActual.DayOfWeek != 0 ? (int)dateActual.DayOfWeek : 7; // si es domingo, hay problemas
+
+                    var fechaString = dateActual.AddDays(-(weekInt - 1));
 
                     textoFiltroDiaSemanaMes = $"{fechaString.ToShortDateString()} - {fechaString.AddDays(6).ToShortDateString()}";
                     break;
+
                 case TypeValuesDashboard.Mes:
-                    var cantDaysInMonth = DateTime.DaysInMonth(DateTime.Now.Date.Year, DateTime.Now.Date.Month);
+                    var cantDaysInMonth = DateTime.DaysInMonth(dateActual.Date.Year, dateActual.Date.Month);
                     ejeXint = new int[cantDaysInMonth];
                     ejeX = new string[cantDaysInMonth];
-                    dateCompare = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                    dateCompare = new DateTime(dateActual.Year, dateActual.Month, 1);
 
                     for (int i = 0; i < cantDaysInMonth; i++)
                     {
@@ -116,8 +123,11 @@ namespace PointOfSale.Controllers
                     vmDashboard.EjeXLeyenda = "Dias";
 
                     DateTimeFormatInfo dtinfo = new CultureInfo("es-ES", false).DateTimeFormat;
-                    textoFiltroDiaSemanaMes = dtinfo.GetMonthName(DateTime.Now.Month);
+                    textoFiltroDiaSemanaMes = dtinfo.GetMonthName(dateActual.Month);
 
+                    break;
+                default:
+                    dateCompare = dateActual;
                     break;
             }
 
@@ -131,7 +141,7 @@ namespace PointOfSale.Controllers
 
 
                 int i = 0;
-                var resultados = await _dashboardService.GetSales(typeValues, user.IdTienda);
+                var resultados = await _dashboardService.GetSales(typeValues, user.IdTienda, dateActual);
 
 
                 switch (typeValues)
@@ -139,16 +149,28 @@ namespace PointOfSale.Controllers
                     case TypeValuesDashboard.Dia:
                         var firstComp = resultados.VentasComparacionHour.FirstOrDefault().Key;
                         var firstVenta = resultados.VentasActualesHour.Count() > 0 ? resultados.VentasActualesHour.FirstOrDefault().Key : firstComp;
+                        if (firstComp == 0) firstComp = firstVenta;
+                        if (firstVenta == 0) firstVenta = firstComp;
+
                         var first = Math.Min(firstComp, firstVenta);
 
                         var lastComp = resultados.VentasComparacionHour.LastOrDefault().Key;
                         var lastVenta = resultados.VentasActualesHour.Count() > 0 ? resultados.VentasActualesHour.LastOrDefault().Key : lastComp;
+                        if (lastComp == 0) lastComp = lastVenta;
+                        if (lastVenta == 0) lastVenta = lastComp;
+
                         var last = Math.Max(lastComp, lastVenta);
+
+                        if(dateFilter != null)
+                        {
+                            first = 0;
+                            last = 23;
+                        }
 
                         ejeXint = new int[(last - first) + 1];
                         ejeX = new string[(last - first) + 1];
 
-                        for (i = 1; i < (last - first) + 1; i++)
+                        for (i = 0; i < (last - first) + 1; i++)
                         {
                             ejeXint[i] = (i + first);
                             ejeX[i] = (i + first).ToString();
@@ -174,7 +196,14 @@ namespace PointOfSale.Controllers
                     case TypeValuesDashboard.Semana:
                         listSales.AddRange(GetSalesComparacionWeek(ejeXint, dateCompare, resultados.VentasActuales, false));
                         listSalesComparacion.AddRange(GetSalesComparacionWeek(ejeXint, dateCompare, resultados.VentasComparacion, true));
-
+                        
+                        if(dateFilter != null)
+                        {
+                            while (listSales.Count != listSalesComparacion.Count)
+                            {
+                                listSales.Add(new VMSalesWeek() { Total = 0m });
+                            }
+                        }
                         break;
                     case TypeValuesDashboard.Mes:
                         foreach (KeyValuePair<DateTime, decimal> item in resultados.VentasActuales)
@@ -191,12 +220,20 @@ namespace PointOfSale.Controllers
                         }
                         listSalesComparacion.AddRange(GetSalesComparacionMonth(ejeXint, dateCompare, resultados));
 
+                        if(dateFilter != null)
+                        {
+                            while (listSales.Count != listSalesComparacion.Count)
+                            {
+                                listSales.Add(new VMSalesWeek() { Total = 0m });
+                            }
+                        }
+
                         break;
                 }
 
                 var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
 
-                foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetSalesByTypoVenta(typeValues, user.IdTienda))
+                foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetSalesByTypoVenta(typeValues, user.IdTienda, dateActual))
                 {
                     VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
                     {
@@ -206,7 +243,7 @@ namespace PointOfSale.Controllers
                 }
 
                 var gastosParticualresList = new List<VMVentasPorTipoDeVenta>();
-                foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetGastos(typeValues, user.IdTienda))
+                foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetGastos(typeValues, user.IdTienda, dateActual))
                 {
                     gastosParticualresList.Add(new VMVentasPorTipoDeVenta()
                     {
@@ -217,7 +254,7 @@ namespace PointOfSale.Controllers
                 var totGastosParticualres = gastosParticualresList.Sum(_ => _.Total);
 
                 var gastosSueldosList = new List<VMVentasPorTipoDeVenta>();
-                foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetGastosSueldos(typeValues, user.IdTienda))
+                foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetGastosSueldos(typeValues, user.IdTienda, dateActual))
                 {
                     gastosSueldosList.Add(new VMVentasPorTipoDeVenta()
                     {
@@ -229,7 +266,7 @@ namespace PointOfSale.Controllers
                 var totGastosSueldos = gastosSueldosList.Sum(_ => _.Total);
 
                 var gastosProveedores = new List<VMVentasPorTipoDeVenta>();
-                var movimientosProv = await _dashboardService.GetMovimientosProveedoresByTienda(typeValues, user.IdTienda);
+                var movimientosProv = await _dashboardService.GetMovimientosProveedoresByTienda(typeValues, user.IdTienda, dateActual);
                 var gastosProvTotales = movimientosProv.Sum(_ => _.Value);
 
                 foreach (var item in movimientosProv)
@@ -244,7 +281,7 @@ namespace PointOfSale.Controllers
                 var gananciaBruta = listSales.Sum(_ => _.Total);
                 var gastosTotales = gastosProvTotales + totGastosParticualres + totGastosSueldos;
 
-                vmDashboard.TextoFiltroDiaSemanaMes = textoFiltroDiaSemanaMes; // "19/02/2024 - 25/02/2024";
+                vmDashboard.TextoFiltroDiaSemanaMes = textoFiltroDiaSemanaMes;
 
                 vmDashboard.EjeX = ejeX;
                 vmDashboard.SalesList = listSales.Select(_ => (int)_.Total).ToList();
@@ -275,6 +312,45 @@ namespace PointOfSale.Controllers
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
+        public DateTime SetDate(TypeValuesDashboard typeValues, string dateFilter)
+        {
+            var dateActual = DateTime.Now;
+
+            if (dateFilter != null)
+            {
+                var dateSplit = dateFilter.Split('/');
+                dateActual = new DateTime(Convert.ToInt32(dateSplit[2]), Convert.ToInt32(dateSplit[1]), Convert.ToInt32(dateSplit[0]), 0, 0, 0);
+                switch (typeValues)
+                {
+                    case TypeValuesDashboard.Dia:
+                        dateActual = dateActual.AddHours(23).AddMinutes(59).AddSeconds(59);
+                        break;
+                    case TypeValuesDashboard.Semana:
+                        var weekNumber = (int)dateActual.DayOfWeek;
+                        if (weekNumber < 7)
+                        {
+                            var diff = 7 - weekNumber;
+                            dateActual = dateActual.AddDays(diff);
+                        }
+                        break;
+                    case TypeValuesDashboard.Mes:
+                        var monthNumber = dateActual.Day;
+                        var daysInMonth = DateTime.DaysInMonth(dateActual.Year, dateActual.Month);
+
+                        if (monthNumber < daysInMonth)
+                        {
+                            var diff = daysInMonth - monthNumber;
+                            dateActual = dateActual.AddDays(diff);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return dateActual;
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetSalesByTypoVenta(TypeValuesDashboard typeValues, string idCategoria)
         {
@@ -284,7 +360,8 @@ namespace PointOfSale.Controllers
             var ProductListWeek = new List<VMProductsWeek>();
             var prods = await _productService.List();
             int i = 0;
-            foreach (KeyValuePair<string, string?> item in await _dashboardService.ProductsTopByCategory(typeValues, idCategoria, tiendaId))
+            var dateActual = DateTime.Now;
+            foreach (KeyValuePair<string, string?> item in await _dashboardService.ProductsTopByCategory(typeValues, idCategoria, tiendaId, dateActual))
             {
                 var prod = prods.FirstOrDefault(_ => _.Description == item.Key);
                 ProductListWeek.Add(new VMProductsWeek()

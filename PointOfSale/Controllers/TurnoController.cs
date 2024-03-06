@@ -48,7 +48,8 @@ namespace PointOfSale.Controllers
             var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurnoActualConVentas(tiendaId));
 
             var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
-            foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, tiendaId))
+            var dateActual = DateTime.Now;
+            foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, tiendaId, dateActual))
             {
                 VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
                 {
@@ -70,7 +71,8 @@ namespace PointOfSale.Controllers
             var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurno(idturno));
 
             var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
-            foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, tiendaId))
+            var dateActual = DateTime.Now;
+            foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, tiendaId, dateActual))
             {
                 VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
                 {

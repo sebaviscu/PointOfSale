@@ -79,7 +79,8 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtCuil").val(model.cuil);
     $("#txtDireccion").val(model.direccion);
     $("#txtTelefono").val(model.telefono);
-    document.getElementById('txtTotal').innerHTML = "Total: " + model.total;
+    //document.getElementById('txtTotal').innerHTML = "Total: " + model.total;
+    $("#txtTotal").val(model.total);
 
 
     if (model.modificationUser === null)

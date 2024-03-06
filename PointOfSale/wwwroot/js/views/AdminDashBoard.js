@@ -91,18 +91,35 @@ $(document).ready(function () {
             }
         })
 
+    $("#txtDay").datepicker();
     changeChart(1);
+})
+
+
+$("#btnSearch").click(function () {
+
+    if ($("#txtDay").val().trim() == "") {
+        toastr.warning("", "Debes ingresar una fecha.");
+        return;
+    }
+
+    let dayDate = $("#txtDay").val();
+
+    changeChart(typeValuesGlobal, dayDate);
 })
 
 $('#cboCategory').change(function () {
     SetTopSeler(typeValuesGlobal, $(this).val());
 })
 
-function changeChart(typeValues) {
-    typeValuesGlobal = typeValues;
+function changeChart(typeValues, dateFilter) {
     showLoading();
 
-    fetch(`/Admin/GetSummary?typeValues=${typeValues}`, {
+    if (dateFilter == undefined) dateFilter = '';
+
+    typeValuesGlobal = typeValues;
+
+    fetch(`/Admin/GetSummary?typeValues=${typeValues}&dateFilter=${dateFilter}`, {
         method: "GET"
     })
         .then(response => {
@@ -482,6 +499,20 @@ $('#cboProveedor').change(function () {
 
 $("#btnNuevoGasto").on("click", function () {
     $("#modalNuevoGasto").modal("show")
+
+    $("#cboTipoDeGastoEnGasto").val('');
+    $("#txtImporte").val('');
+    $("#txtComentario").val('');
+    $("#cboUsuario").val('');
+    $("#cboTipoFactura").val('');
+    $("#txtNroFactura").val('');
+    $("#txtIva").val('');
+    $("#txtImporteIva").val('');
+    $("#txtImporteSinIva").val('');
+    $("#cboEstado").val('');
+    $("#cboProveedor").val('');
+    $("#txtCuilPago").val('');
+    $("#txtDireccionPago").val('');
 })
 
 $("#btnSavePagoProveedor").on("click", function () {

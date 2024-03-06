@@ -7371,23 +7371,23 @@ function Datepicker() {
 	this.regional = []; // Available regional settings, indexed by language code
 	this.regional[ "" ] = { // Default regional settings
 		closeText: "Done", // Display text for close link
-		prevText: "Prev", // Display text for previous month link
-		nextText: "Next", // Display text for next month link
-		currentText: "Today", // Display text for current month link
-		monthNames: [ "January", "February", "March", "April", "May", "June",
-			"July", "August", "September", "October", "November", "December" ], // Names of months for drop-down and formatting
-		monthNamesShort: [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ], // For formatting
-		dayNames: [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ], // For formatting
-		dayNamesShort: [ "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" ], // For formatting
-		dayNamesMin: [ "Su", "Mo", "Tu", "We", "Th", "Fr", "Sa" ], // Column headings for days starting at Sunday
+		prevText: "Anterior", // Display text for previous month link
+		nextText: "Siguiente", // Display text for next month link
+		currentText: "Hoy", // Display text for current month link
+		monthNames: [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+			"Julio", "Agosto", "Semptiembre", "Octubre", "Noviembre", "Diciembre" ], // Names of months for drop-down and formatting
+		monthNamesShort: [ "Ene", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic" ], // For formatting
+		dayNames: ["Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo" ], // For formatting
+		dayNamesShort: ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab" ], // For formatting
+		dayNamesMin: ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab" ], // Column headings for days starting at Sunday
 		weekHeader: "Wk", // Column header for week of the year
-		dateFormat: "mm/dd/yy", // See format options on parseDate
-		firstDay: 0, // The first day of the week, Sun = 0, Mon = 1, ...
+		dateFormat: "dd/mm/yy", // See format options on parseDate
+		firstDay: 1, // The first day of the week, Sun = 0, Mon = 1, ...
 		isRTL: false, // True if right-to-left language, false if left-to-right
 		showMonthAfterYear: false, // True if the year select precedes month, false for month then year
 		yearSuffix: "", // Additional text to append to the year in the month headers,
-		selectMonthLabel: "Select month", // Invisible label for month selector
-		selectYearLabel: "Select year" // Invisible label for year selector
+		selectMonthLabel: "Seleccione mes", // Invisible label for month selector
+		selectYearLabel: "Seleccione año" // Invisible label for year selector
 	};
 	this._defaults = { // Global defaults for all the date picker instances
 		showOn: "focus", // "focus" for popup on focus,
@@ -7403,9 +7403,9 @@ function Datepicker() {
 		hideIfNoPrevNext: false, // True to hide next/previous month links
 			// if not applicable, false to just disable them
 		navigationAsDateFormat: false, // True if date formatting applied to prev/today/next links
-		gotoCurrent: false, // True if today link goes back to current selection instead
-		changeMonth: false, // True if month can be selected directly, false if only prev/next
-		changeYear: false, // True if year can be selected directly, false if only prev/next
+		gotoCurrent: true, // True if today link goes back to current selection instead
+		changeMonth: true, // True if month can be selected directly, false if only prev/next
+		changeYear: true, // True if year can be selected directly, false if only prev/next
 		yearRange: "c-10:c+10", // Range of years to display in drop-down,
 			// either relative to today's year (-nn:+nn), relative to currently displayed year
 			// (c-nn:c+nn), absolute (nnnn:nnnn), or a combination of the above (nnnn:-n)
@@ -7437,7 +7437,7 @@ function Datepicker() {
 		altFormat: "", // The date format to use for the alternate field
 		constrainInput: true, // The input is constrained by the current date format
 		showButtonPanel: false, // True to show button panel, false to not show it
-		autoSize: false, // True to size the input for the date format, false to leave as is
+		autoSize: true, // True to size the input for the date format, false to leave as is
 		disabled: false // The initial disabled state
 	};
 	$.extend( this._defaults, this.regional[ "" ] );
