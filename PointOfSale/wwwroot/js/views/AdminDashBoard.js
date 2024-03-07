@@ -115,7 +115,7 @@ $('#cboCategory').change(function () {
 function changeChart(typeValues, dateFilter) {
     showLoading();
 
-    if (dateFilter == undefined) dateFilter = '';
+    dateFilter = $("#txtDay").val();
 
     typeValuesGlobal = typeValues;
 
@@ -141,7 +141,7 @@ function changeChart(typeValues, dateFilter) {
 
                 SetGraficoVentas(d);
                 SetTopSeler(typeValuesGlobal, $('#cboCategory').val());
-                SetGraficoGastos(d.gastosPorTipo);
+                SetGraficoGastos(typeValues, d.gastosPorTipo);
                 SetTipoVentas(d.ventasPorTipoVenta);
                 SetGraficoGastosProveedor(d.gastosPorTipoProveedor);
                 //SetGraficoGastosSueldos(d.gastosPorTipoSueldos);
@@ -250,23 +250,6 @@ function SetTopSeler(typeValues, idCategory) {
 
             let d = responseJson;
 
-            //var topSeller = document.getElementById('containerTopSeller');
-            //topSeller.innerHTML = "";
-            //var ul = document.createElement('ol');
-            //ul.setAttribute('style', 'padding: 0; margin: 0;');
-            //ul.setAttribute('id', 'theList');
-
-            //for (i = 0; i <= d.length - 1; i++) {
-            //    var li = document.createElement('li');
-            //    li.innerHTML = d[i].product + ":&nbsp " + d[i].quantity + "";
-            //    li.setAttribute('class', 'h3');    
-            //    ul.appendChild(li);
-            //}
-            //topSeller.appendChild(ul);
-
-
-            // Lista tipo de gastos
-
             const tableData = d.map(value => {
                 return (
                     `<tr>
@@ -366,13 +349,13 @@ function SetGraficoGastosProveedor(gastoProveedores) {
     var chartNew = new ApexCharts(document.querySelector("#charGastosProveedor"), options);
     chartNew.render();
 
-    chartNew.updateOptions({
-        series: gastoProveedores.map((item) => { return item.total }),
-        labels: gastoProveedores.map((item) => { return item.descripcion })
-    })
+    //chartNew.updateOptions({
+    //    series: gastoProveedores.map((item) => { return item.total }),
+    //    labels: gastoProveedores.map((item) => { return item.descripcion })
+    //})
 }
 
-function SetGraficoGastos(gastosPorTipo) {
+function SetGraficoGastos(typeValues, gastosPorTipo) {
 
     var options = {
         series: gastosPorTipo.map((item) => { return item.total }),
@@ -407,13 +390,23 @@ function SetGraficoGastos(gastosPorTipo) {
         }
     };
 
-    var chartNew = new ApexCharts(document.querySelector("#charGastos"), options);
+    var chartNew = new ApexCharts(document.querySelector("#charGastos" + typeValues), options);
     chartNew.render();
 
-    chartNew.updateOptions({
-        series: gastosPorTipo.map((item) => { return item.total }),
-        labels: gastosPorTipo.map((item) => { return item.descripcion })
-    })
+    var charGastosIds = ["#charGastos0", "#charGastos1", "#charGastos2"];
+
+    for (var i = 0; i < charGastosIds.length; i++) {
+        if (typeValues === i) {
+            $(charGastosIds[i]).show();
+        } else {
+            $(charGastosIds[i]).hide();
+        }
+    }
+
+    //chartNew.updateOptions({
+    //    series: gastosPorTipo.map((item) => { return item.total }),
+    //    labels: gastosPorTipo.map((item) => { return item.descripcion })
+    //})
 }
 
 function SetTipoVentas(tipoVentas) {
@@ -509,8 +502,6 @@ $("#btnNuevoGasto").on("click", function () {
     $("#txtIva").val('');
     $("#txtImporteIva").val('');
     $("#txtImporteSinIva").val('');
-    $("#cboEstado").val('');
-    $("#cboProveedor").val('');
     $("#txtCuilPago").val('');
     $("#txtDireccionPago").val('');
 })

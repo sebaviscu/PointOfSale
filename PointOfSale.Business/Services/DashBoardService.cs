@@ -250,9 +250,14 @@ namespace PointOfSale.Business.Services
                 }
 
                 Dictionary<string, string?> resultado = query
-                .GroupBy(dv => dv.DescriptionProduct).OrderByDescending(g => g.Sum(_ => _.Quantity))
-                .Select(dv => new { product = dv.Key, total = dv.Sum(_ => _.Quantity) }).Take(10)
-                .ToDictionary(keySelector: r => r.product, elementSelector: r => Math.Truncate(r.total.Value).ToString());
+                     .GroupBy(dv => dv.DescriptionProduct)
+                     .OrderByDescending(g => g.Sum(_ => _.Quantity))
+                     .Select(dv => new { product = dv.Key, total = dv.Sum(_ => _.Quantity) })
+                     .Take(10)
+                     .ToDictionary(
+                         keySelector: r => r.product,
+                         elementSelector: r => r.total % 1 == 0 ? Math.Truncate(r.total.Value).ToString() : Math.Round(r.total.Value, 1).ToString()
+                     );
 
                 return resultado;
             }

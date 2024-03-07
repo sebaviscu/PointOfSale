@@ -175,8 +175,8 @@ $("#btnSave").on("click", function () {
     model["youtube"] = $("#txtYouTube").val();
     model["principal"] = document.querySelector('#cboPrincipal').checked;
 
-    const inputPhoto = document.getElementById('txtLogo');
-    model["photo"] = inputPhoto.files[0];
+    //const inputPhoto = document.getElementById('txtLogo');
+    //model["photo"] = inputPhoto.files[0];
 
     $("#modalData").find("div.modal-content").LoadingOverlay("show")
 

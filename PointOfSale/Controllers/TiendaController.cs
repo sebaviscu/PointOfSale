@@ -53,7 +53,7 @@ namespace PointOfSale.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTienda([FromForm] IFormFile photo, [FromForm] string model)
+        public async Task<IActionResult> CreateTienda(/*[FromForm] IFormFile photo,*/ [FromBody] string model)
         {
             ValidarAutorizacion(new Roles[] { Roles.Administrador });
 
@@ -62,16 +62,16 @@ namespace PointOfSale.Controllers
             {
                 VMTienda vmTienda = JsonConvert.DeserializeObject<VMTienda>(model);
 
-                if (photo != null)
-                {
-                    using (var ms = new MemoryStream())
-                    {
-                        photo.CopyTo(ms);
-                        var fileBytes = ms.ToArray();
-                        vmTienda.Logo = fileBytes;
-                    }
-                }
-                else
+                //if (photo != null)
+                //{
+                //    using (var ms = new MemoryStream())
+                //    {
+                //        photo.CopyTo(ms);
+                //        var fileBytes = ms.ToArray();
+                //        vmTienda.Logo = fileBytes;
+                //    }
+                //}
+                //else
                     vmTienda.Logo = null;
 
                 Tienda Tienda_created = await _TiendaService.Add(_mapper.Map<Tienda>(vmTienda));
