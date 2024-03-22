@@ -55,13 +55,15 @@ $("#btnSearch").click(function () {
         "columns": [
             { "data": "productName" },
             { "data": "proveedor" },
-            { "data": "cantidad" },
-            { "data": "precio" },
+            { "data": "precio1" },
+            { "data": "precio2" },
+            { "data": "precio3" },
             { "data": "costo" },
-            { "data": "totalPrecioPorCantidad" },
-            { "data": "totalProfit" }
+            { "data": "tipoVenta" },
+            { "data": "stock" },
+            { "data": "cantidad" }
         ],
-        order: [[2, "desc"]],
+        order: [[8, "desc"]],
         "scrollX": true,
         dom: "Bfrtip",
         buttons: [
@@ -74,39 +76,6 @@ $("#btnSearch").click(function () {
         ]
     };
 
-
-
-    //var options = {
-    //    "processing": true,
-    //    "ajax": {
-    //        "url": `/Reports/ProductsReport?idCategoria=${idCategory}&startDate=${startDate}&endDate=${endDate}`,
-    //        "type": "GET",
-    //        "datatype": "json"
-    //    },
-    //    "columns": [
-    //        { "data": "registrationDate" },
-    //        { "data": "saleNumber" },
-    //        { "data": "documentType" },
-    //        { "data": "documentClient" },
-    //        { "data": "clientName" },
-    //        { "data": "totalSale" },
-    //        { "data": "product" },
-    //        { "data": "quantity" },
-    //        { "data": "price" },
-    //        { "data": "total" }
-    //    ],
-    //    order: [[1, "desc"]],
-    //    "scrollX": true,
-    //    dom: "Bfrtip",
-    //    buttons: [
-    //        {
-    //            text: 'Export Excel',
-    //            extend: 'excelHtml5',
-    //            title: '',
-    //            filename: 'Sales Report',
-    //        }, 'pageLength'
-    //    ]
-    //};
 
     tableData = $('#tbdata').DataTable(options);
 })

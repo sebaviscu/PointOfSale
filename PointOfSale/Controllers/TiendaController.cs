@@ -53,14 +53,14 @@ namespace PointOfSale.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTienda(/*[FromForm] IFormFile photo,*/ [FromBody] string model)
+        public async Task<IActionResult> CreateTienda(/*[FromForm] IFormFile photo,*/ [FromBody] VMTienda vmTienda)
         {
             ValidarAutorizacion(new Roles[] { Roles.Administrador });
 
             GenericResponse<VMTienda> gResponse = new GenericResponse<VMTienda>();
             try
             {
-                VMTienda vmTienda = JsonConvert.DeserializeObject<VMTienda>(model);
+                //VMTienda vmTienda = JsonConvert.DeserializeObject<VMTienda>(model);
 
                 //if (photo != null)
                 //{

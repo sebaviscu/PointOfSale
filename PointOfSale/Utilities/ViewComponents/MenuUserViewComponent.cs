@@ -9,11 +9,13 @@ namespace PointOfSale.Utilities.ViewComponents
     {
         private readonly IUserService _userService;
         private readonly ITiendaService _tiendaService;
+        private readonly ITurnoService _turnoService;
 
-        public MenuUserViewComponent(IUserService userService, ITiendaService tiendaService)
+        public MenuUserViewComponent(IUserService userService, ITiendaService tiendaService, ITurnoService turnoService)
         {
             _userService = userService;
             _tiendaService = tiendaService;
+            _turnoService = turnoService;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
@@ -27,6 +29,8 @@ namespace PointOfSale.Utilities.ViewComponents
             string emailUser = string.Empty;
             string rolUser = string.Empty;
             string tiendaName = string.Empty;
+            string listaPrecios = string.Empty;
+            string turno = string.Empty;
 
             if (claimuser.Identity.IsAuthenticated)
             {
@@ -38,19 +42,24 @@ namespace PointOfSale.Utilities.ViewComponents
 
                 User user_found = await _userService.GetByIdWithRol(IdUser);
 
-                var s = claimuser.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).SingleOrDefault();
+                //var s = claimuser.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).SingleOrDefault();
 
-				rolUser = user_found.IdRolNavigation.Description;
+                rolUser = user_found.IdRolNavigation.Description;
 
                 //if (user_found.Photo != null)
                 //    photoUser = Convert.ToBase64String(user_found.Photo);
 
                 emailUser = ((ClaimsIdentity)claimuser.Identity).FindFirst("Email").Value;
+                listaPrecios = ((ClaimsIdentity)claimuser.Identity).FindFirst("ListaPrecios").Value;
 
-                //var tiendaId = ((ClaimsIdentity)claimuser.Identity).FindFirst("Tienda").Value;
+                var turnoId = ((ClaimsIdentity)claimuser.Identity).FindFirst("Turno").Value;
+                var turnoObjet = await _turnoService.GetTurno(Convert.ToInt32(turnoId));
+                turno = turnoObjet.FechaInicio.ToString();
 
-                //var tienda = await _tiendaService.Get(Convert.ToInt32(tiendaId));
-                //tiendaName = tienda.Nombre;
+                var tiendaId = ((ClaimsIdentity)claimuser.Identity).FindFirst("Tienda").Value;
+
+                var tienda = await _tiendaService.Get(Convert.ToInt32(tiendaId));
+                tiendaName = tienda.Nombre;
             }
 
             ViewData["userName"] = userName;
@@ -58,6 +67,8 @@ namespace PointOfSale.Utilities.ViewComponents
             ViewData["emailUser"] = emailUser;
             ViewData["rolUser"] = rolUser;
             ViewData["tienda"] = tiendaName;
+            ViewData["turno"] = turno;
+            ViewData["listaPrecios"] = listaPrecios;
 
             return View();
         }

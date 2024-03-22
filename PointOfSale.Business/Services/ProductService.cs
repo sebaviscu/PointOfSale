@@ -271,13 +271,12 @@ namespace PointOfSale.Business.Services
         }
 
 
-        public async Task<List<Product>> GetProductsByIds(List<int> listIds, ListaDePrecio listaPrecios)
+        public async Task<List<Product>> GetProductsByIds(List<int> listIds)
         {
-            var queryProducts = await _repositoryListaPrecios.Query(p =>
-               p.Lista == listaPrecios &&
-               listIds.Contains(p.IdProducto));
+            var queryProducts = await _repository.Query(p =>
+               listIds.Contains(p.IdProduct));
 
-            return queryProducts.Include(c => c.Producto).Include(c => c.Producto.Proveedor).OrderBy(_ => _.Producto.Description).ToList().Select(_ => _.Producto).ToList();
+            return queryProducts.Include(c => c.Proveedor).Include(c => c.ListaPrecios).ToList();
         }
 
         public async Task<Dictionary<int, string?>> ProductsTopByCategory(string category, string starDate, string endDate, int idTienda)

@@ -83,7 +83,7 @@ $(document).ready(function () {
         }).then(responseJson => {
             if (responseJson.data != null) {
                 tienda = responseJson.data;
-                $("#txtAumento").val(tienda.aumentoWeb);
+                $("#txtAumento").val(tienda.aumentoWeb+' %');
             }
         })
 

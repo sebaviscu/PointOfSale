@@ -42,6 +42,9 @@ namespace PointOfSale.Business.Services
                     }
                 }
 
+                var idLastTienda = list.Max(_ => _.IdTienda);
+                entity.IdTienda = ++idLastTienda;
+
                 Tienda Tienda_created = await _repository.Add(entity);
                 if (Tienda_created.IdTienda == 0)
                     throw new TaskCanceledException("Tienda no se pudo crear.");
