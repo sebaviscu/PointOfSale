@@ -83,7 +83,7 @@ $(document).ready(function () {
         }).then(responseJson => {
             if (responseJson.data != null) {
                 tienda = responseJson.data;
-                $("#txtAumento").val(tienda.aumentoWeb+' %');
+                $("#txtAumento").val(tienda.aumentoWeb + ' %');
             }
         })
 
@@ -533,6 +533,7 @@ $("#btnImprimir").on("click", function () {
     model["codigoBarras"] = document.getElementById("switchCodigoBarras").checked
 
     showLoading();
+    $("#modalDataImprimirPrecios").modal("hide");
     fetch("/Inventory/ImprimirTickets", {
         method: "POST",
         headers: { 'Content-Type': 'application/json;charset=utf-8' },
@@ -541,12 +542,21 @@ $("#btnImprimir").on("click", function () {
         $("#modalData").find("div.modal-content").LoadingOverlay("hide")
         return response.ok ? response.json() : Promise.reject(response);
     }).then(responseJson => {
-        removeLoading()
 
         if (responseJson.state) {
-            swal("Exitoso!", "De descargó un PDF con los precios", "success");
 
-            $("#modalDataImprimirPrecios").modal("hide");
+            var byteCharacters = atob(responseJson.data);
+            var byteNumbers = new Array(byteCharacters.length);
+            for (var i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            var byteArray = new Uint8Array(byteNumbers);
+            var file = new Blob([byteArray], { type: 'application/pdf;base64' });
+            var fileURL = URL.createObjectURL(file);
+            window.open(fileURL);
+
+            removeLoading()
+
         } else {
             swal("Lo sentimos", responseJson.error, "error");
         }

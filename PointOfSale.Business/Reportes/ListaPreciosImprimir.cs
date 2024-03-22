@@ -23,52 +23,55 @@ namespace PointOfSale.Business.Reportes
         static Font fKgUnidad = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, Font.NORMAL, BaseColor.GRAY);
         static Font fcodyfecha = FontFactory.GetFont(FontFactory.HELVETICA, 6, Font.NORMAL, BaseColor.GRAY);
 
-        public static iTextSharp.text.Document Imprimir(List<Product> lisProducts, bool codBarras, bool fechaModif, string path)
+        public static byte[] Imprimir(List<Product> lisProducts, bool codBarras, bool fechaModif)
         {
-            var pdfDoc = new iTextSharp.text.Document(PageSize.A4, 10f, 10f, 10f, 10f);
-
-            PdfWriter.GetInstance(pdfDoc, new FileStream(path, FileMode.OpenOrCreate));
-            pdfDoc.Open();
-
-            int i = 0;
-            var cantVueltasPasadas = 0;
-
-            var cantTotal = lisProducts.Count();
-            var resto = cantTotal <= 4 ? cantTotal : cantTotal % 4;
-            var cantVueltas = cantTotal / 4;
-
-            PdfPTable outer = ResetRow(cantTotal);
-
-            foreach (var p in lisProducts)
+            using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
             {
-                i++;
+                var pdfDoc = new iTextSharp.text.Document(PageSize.A4, 10f, 10f, 10f, 10f);
+                var writer = iTextSharp.text.pdf.PdfWriter.GetInstance(pdfDoc, ms);
 
-                var tableTitulo = CreateTable(p, codBarras, fechaModif);
+                pdfDoc.Open();
 
-                outer.AddCell(tableTitulo);
+                int i = 0;
+                var cantVueltasPasadas = 0;
 
-                if (i == 4)
+                var cantTotal = lisProducts.Count();
+                var resto = cantTotal <= 4 ? cantTotal : cantTotal % 4;
+                var cantVueltas = cantTotal / 4;
+
+                PdfPTable outer = ResetRow(cantTotal);
+
+                foreach (var p in lisProducts)
                 {
-                    pdfDoc.Add(outer);
-                    outer = ResetRow(cantTotal);
+                    i++;
 
-                    i = 0;
-                    cantVueltasPasadas++;
+                    var tableTitulo = CreateTable(p, codBarras, fechaModif);
 
-                    if (cantVueltasPasadas == cantVueltas && resto > 0)
+                    outer.AddCell(tableTitulo);
+
+                    if (i == 4)
                     {
-                        outer = ResetRow(resto);
+                        pdfDoc.Add(outer);
+                        outer = ResetRow(cantTotal);
+
+                        i = 0;
+                        cantVueltasPasadas++;
+
+                        if (cantVueltasPasadas == cantVueltas && resto > 0)
+                        {
+                            outer = ResetRow(resto);
+                        }
                     }
-                }
-                else if (cantVueltasPasadas == cantVueltas && resto == i)
-                {
-                    pdfDoc.Add(outer);
-                }
+                    else if (cantVueltasPasadas == cantVueltas && resto == i)
+                    {
+                        pdfDoc.Add(outer);
+                    }
 
+                }
+                pdfDoc.Close();
+
+                return ms.ToArray();
             }
-            pdfDoc.Close();
-
-            return pdfDoc;
         }
 
         private static PdfPTable ResetRow(int cantTotal)
@@ -160,7 +163,7 @@ namespace PointOfSale.Business.Reportes
                 EtiquetaPrice.BorderWidthBottom = 0.1f;
             }
 
-                PdfPCell EtiquetaBarCode;
+            PdfPCell EtiquetaBarCode;
             if (codBarras)
             {
                 EtiquetaBarCode = new PdfPCell(new Phrase(p.BarCode, fcodyfecha))

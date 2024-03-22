@@ -118,7 +118,7 @@ function showLoading() {
     style.innerHTML = `
         .loading-frame {
             position: fixed;
-            background-color: rgba(80, 80, 80, 0.8);
+            background-color: rgba(80, 80, 80, 0.3);
             left: 0;
             top: 0;
             right: 0;

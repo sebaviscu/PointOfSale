@@ -299,10 +299,9 @@ namespace PointOfSale.Controllers
             {
                 var listtaProds = await _productService.GetProductsByIdsActive(model.IdProductos, model.ListaPrecio);
 
-                string rutaArchivo = Path.Combine(_env.ContentRootPath, "Etiqueta" + DateTime.Now.Ticks.ToString() + ".pdf");
-                var doc = ListaPreciosImprimir.Imprimir(listtaProds, model.CodigoBarras, model.FechaModificacion, rutaArchivo);
+                var doc = ListaPreciosImprimir.Imprimir(listtaProds, model.CodigoBarras, model.FechaModificacion);
 
-                return StatusCode(StatusCodes.Status200OK, new { state = true, url = rutaArchivo });
+                return StatusCode(StatusCodes.Status200OK, new { state = true, data = doc });
             }
             catch (Exception e)
             {
