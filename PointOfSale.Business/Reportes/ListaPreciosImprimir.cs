@@ -18,9 +18,9 @@ namespace PointOfSale.Business.Reportes
 {
     public class ListaPreciosImprimir
     {
-        static Font fNombreProducto = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 25, Font.BOLD, BaseColor.BLACK);
+        static Font fNombreProducto = FontFactory.GetFont(FontFactory.HELVETICA, 12, Font.BOLD, BaseColor.BLACK);
         static Font fPrecio = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 20, Font.BOLD, BaseColor.BLACK);
-        static Font fKgUnidad = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, Font.NORMAL, BaseColor.GRAY);
+        static Font fKgUnidad = FontFactory.GetFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.GRAY);
         static Font fcodyfecha = FontFactory.GetFont(FontFactory.HELVETICA, 6, Font.NORMAL, BaseColor.GRAY);
 
         public static byte[] Imprimir(List<Product> lisProducts, bool codBarras, bool fechaModif)
@@ -101,7 +101,7 @@ namespace PointOfSale.Business.Reportes
         private static PdfPTable CreateTable(Product p, bool codBarras, bool fechaModif)
         {
 
-            var tableTitulo = new PdfPTable(new[] { 1f, 1f, 1f, 1f, 1f, 1f })
+            var tableTitulo = new PdfPTable(new[] { 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f })
 
             {
                 HorizontalAlignment = 0,
@@ -117,7 +117,7 @@ namespace PointOfSale.Business.Reportes
 
             var EtiquetaDescription = new PdfPCell(new Phrase(descripcion, fNombreProducto))
             {
-                Colspan = 6,
+                Colspan = 8,
                 HorizontalAlignment = 1,
                 VerticalAlignment = Element.ALIGN_MIDDLE,
                 PaddingTop = 6,
@@ -128,7 +128,7 @@ namespace PointOfSale.Business.Reportes
 
             var EtiquetaPrice = new PdfPCell(new Phrase("$ " + p.Price.ToString(), fPrecio))
             {
-                Colspan = 4,
+                Colspan = 6,
                 HorizontalAlignment = 2,    //0=Izquierda, 1=Centro, 2=Derecha
                 VerticalAlignment = Element.ALIGN_MIDDLE,
                 Padding = 5,
@@ -137,30 +137,32 @@ namespace PointOfSale.Business.Reportes
                 BorderColorTop = BaseColor.WHITE,
                 BorderWidthTop = 0.1f,
                 BorderColorRight = BaseColor.WHITE,
-                BorderWidthRight = 0.1f
+                BorderWidthRight = 0.1f,
+                PaddingBottom = 10
             };
 
-            var EtiquetaTipoVenta = new PdfPCell(new Phrase(" / " + p.TipoVenta.ToString(), fKgUnidad))
+            var EtiquetaTipoVenta = new PdfPCell(new Phrase(" /" + p.TipoVenta.ToString(), fKgUnidad))
             {
                 Colspan = 2,
                 HorizontalAlignment = 1,
                 VerticalAlignment = Element.ALIGN_MIDDLE,
                 Padding = 5,
-                //BorderColorBottom = BaseColor.WHITE,
-                //BorderWidthBottom = 0.1f,
                 BorderColorTop = BaseColor.WHITE,
                 BorderWidthTop = 0.1f,
                 BorderColorLeft = BaseColor.WHITE,
-                BorderWidthLeft = 0.1f
+                BorderWidthLeft = 0.1f,
+                PaddingBottom = 10 
             };
 
             if (fechaModif && codBarras)
             {
                 EtiquetaTipoVenta.BorderColorBottom = BaseColor.WHITE;
                 EtiquetaTipoVenta.BorderWidthBottom = 0.1f;
+                EtiquetaTipoVenta.PaddingBottom = 3;
 
                 EtiquetaPrice.BorderColorBottom = BaseColor.WHITE;
                 EtiquetaPrice.BorderWidthBottom = 0.1f;
+                EtiquetaPrice.PaddingBottom = 3;
             }
 
             PdfPCell EtiquetaBarCode;
@@ -168,12 +170,12 @@ namespace PointOfSale.Business.Reportes
             {
                 EtiquetaBarCode = new PdfPCell(new Phrase(p.BarCode, fcodyfecha))
                 {
-                    Colspan = 3,
+                    Colspan = 4,
                     HorizontalAlignment = 0,
                     VerticalAlignment = Element.ALIGN_MIDDLE,
                     PaddingBottom = 4,
                     BorderColorTop = BaseColor.WHITE,
-                    BorderWidthTop = 0.1f,
+                    //BorderWidthTop = 0.1f,
                     BorderColorRight = BaseColor.WHITE,
                     BorderWidthRight = 0.1f
                 };
@@ -189,12 +191,12 @@ namespace PointOfSale.Business.Reportes
                 var modificationDate = p.ModificationDate.HasValue ? p.ModificationDate.Value.ToShortDateString() : string.Empty;
                 EtiquetaModificationDate = new PdfPCell(new Phrase(modificationDate, fcodyfecha))
                 {
-                    Colspan = 3,
+                    Colspan = 4,
                     HorizontalAlignment = 2,
                     VerticalAlignment = Element.ALIGN_MIDDLE,
                     PaddingBottom = 4,
                     BorderColorTop = BaseColor.WHITE,
-                    BorderWidthTop = 0.1f,
+                    //BorderWidthTop = 0.1f,
                     BorderColorLeft = BaseColor.WHITE,
                     BorderWidthLeft = 0.1f
                 };

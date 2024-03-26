@@ -47,6 +47,21 @@ namespace PointOfSale.Data.DBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Vencimiento>(entity =>
+            {
+                entity.HasKey(e => e.IdVencimiento);
+
+                entity.ToTable("Vencimientos");
+
+                entity.HasOne(d => d.Producto)
+                    .WithMany(p => p.Vencimientos)
+                    .HasForeignKey(d => d.IdProducto);
+
+                entity.HasOne(d => d.Tienda)
+                    .WithMany(p => p.Vencimientos)
+                    .HasForeignKey(d => d.IdTienda);
+            });
+
             modelBuilder.Entity<ListaPrecio>(entity =>
             {
                 entity.HasKey(e => e.IdListaPrecios);

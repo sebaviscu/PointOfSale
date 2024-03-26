@@ -35,12 +35,12 @@ namespace PointOfSale.Business.Services
         public async Task<List<Product>> List()
         {
             IQueryable<Product> query = await _repository.Query();
-            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).OrderBy(_ => _.Description).ToList();
+            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).OrderBy(_ => _.Description).ToList();
         }
         public async Task<List<Product>> ListActive()
         {
             IQueryable<Product> query = await _repository.Query(_ => _.IsActive.HasValue ? _.IsActive.Value : false);
-            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).OrderBy(_ => _.Description).ToList();
+            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).OrderBy(_ => _.Description).ToList();
         }
 
         public async Task<List<Product>> ListActiveByCategory(int idCategoria)
@@ -61,7 +61,7 @@ namespace PointOfSale.Business.Services
         {
             var query = await _repository.Query(_ => _.Description.Contains(text) && _.IsActive.HasValue ? _.IsActive.Value : false);
 
-            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).OrderBy(_ => _.Description).ToList();
+            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).OrderBy(_ => _.Description).ToList();
         }
 
         public async Task<Product> Add(Product entity, List<ListaPrecio> listaPrecios)

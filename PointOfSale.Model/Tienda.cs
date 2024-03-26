@@ -35,6 +35,7 @@ namespace PointOfSale.Model
         public bool? Principal { get; set; }
         public IEnumerable<Turno>? Turnos { get; set; }
         public IEnumerable<User>? Usuarios { get; set; }
+        public IEnumerable<Vencimiento>? Vencimientos { get; set; }
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }
     }

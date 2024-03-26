@@ -134,11 +134,10 @@ namespace PointOfSale.Controllers
 
                 throw;
             }
-            return default;
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProduct([FromForm] IFormFile photo, [FromForm] string model)
+        public async Task<IActionResult> CreateProduct([FromForm] IFormFile photo, [FromForm] string model, [FromForm] string vencimientos)
         {
             GenericResponse<VMProduct> gResponse = new GenericResponse<VMProduct>();
             try
@@ -183,7 +182,7 @@ namespace PointOfSale.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> EditProduct([FromForm] IFormFile photo, [FromForm] string model)
+        public async Task<IActionResult> EditProduct([FromForm] IFormFile photo, [FromForm] string model, [FromForm] string vencimientos)
         {
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
 
@@ -191,6 +190,10 @@ namespace PointOfSale.Controllers
             try
             {
                 VMProduct vmProduct = JsonConvert.DeserializeObject<VMProduct>(model);
+
+                //var vmProduct2 = JsonConvert.DeserializeObject<List<Vencimiento>>(vencimientos);
+
+
                 vmProduct.ModificationUser = user.UserName;
 
                 if (photo != null)

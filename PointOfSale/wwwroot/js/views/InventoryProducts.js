@@ -25,7 +25,8 @@ const BASIC_MODEL = {
     precio2: "",
     precio3: "",
     porcentajeProfit2: 0,
-    porcentajeProfit3: 0
+    porcentajeProfit3: 0,
+    Vencimientos: []
 }
 
 const BASIC_MASSIVE_EDIT = {
@@ -40,6 +41,16 @@ const BASIC_IMPRIMIR_PRECIOS = {
     fechaModificacion: false,
     codigoBarras: false,
     path: ""
+}
+
+const BASIC_VENCIMIENTOS = {
+    idVencimiento: 0,
+    lote: "",
+    fechaVencimiento: null,
+    fechaElaboracion: null,
+    notificar: 0,
+    registrationDate: false,
+    registrationUser: false
 }
 
 $(document).ready(function () {
@@ -137,7 +148,7 @@ $(document).ready(function () {
                 "className": "text-center"
             }
         ],
-        order: [[0, "desc"]],
+        order: [[3, "asc"]],
         dom: "Bfrtip",
         buttons: [
             {
@@ -151,6 +162,9 @@ $(document).ready(function () {
             }, 'pageLength'
         ]
     });
+
+    $("#txtfVencimiento").datepicker({ dateFormat: 'dd/mm/yy' });
+    $("#txtfElaborado").datepicker({ dateFormat: 'dd/mm/yy' });
 
     removeLoading();
 })
@@ -241,9 +255,89 @@ const openModal = (model = BASIC_MODEL) => {
         $("#txtModificadoUsuario").val(model.modificationUser);
     }
 
-    $("#modalData").modal("show")
 
+    $("#tbVencimientos tbody").html("");
+    if (model.vencimientos.length > 0) {
+        model.vencimientos.forEach((v) => {
+
+            addVencimientoTable(v);
+        });
+    }
+
+    $("#modalData").modal("show")
 }
+
+function addVencimientoTable(data) {
+    $("#tbVencimientos tbody").append(
+        $("<tr>").append(
+            $("<td>").text(data.fechaVencimiento),
+            $("<td>").text(data.fechaElaboracion),
+            $("<td>").text(data.lote),
+            $("<td>")
+                .append(
+                    $("<input>").attr("type", "checkbox").prop("checked", data.notificar)
+                        .data("estado-inicial", data.notificar) 
+             ),
+            $("<td>").append(
+                $("<button>").addClass("btn btn-danger btn-sm").append(
+                    $("<i>").addClass("mdi mdi-trash-can")
+                ).data("vencimiento", data))
+        )
+    )
+}
+
+function obtenerDatosTabla() {
+    var datos = [];
+    $("#tbVencimientos tbody tr").each(function () {
+        var fila = {};
+        fila.fechaVencimiento = $(this).find("td:eq(0)").text();
+        fila.fechaElaboracion = $(this).find("td:eq(1)").text();
+        fila.lote = $(this).find("td:eq(2)").text();
+        fila.notificar = $(this).find("td:eq(3) input[type=checkbox]").prop("checked");
+        fila.idVencimiento = $(this).find("button").data("vencimiento").idVencimiento;
+        //fila.cambio = false; // Inicialmente establecido como false
+
+        // Verificar si el valor del checkbox ha cambiado
+        var estadoInicial = $(this).find("td:eq(3) input[type=checkbox]").data("estado-inicial");
+        if ((estadoInicial !== undefined && fila.notificar !== estadoInicial) || fila.idVencimiento === 0) {
+            //fila.cambio = true; // Si ha cambiado, establecer cambio a true
+            datos.push(fila);
+        }
+
+        // Verificar si data.idVencimiento es igual a 0
+        //if (fila.idVencimiento === 0 || fila.cambio) {
+        //    datos.push(fila);
+        //}
+    });
+    return datos;
+}
+
+$("#btnAddVencimiento").on("click", function () {
+    const model = structuredClone(BASIC_VENCIMIENTOS);
+    model["fechaVencimiento"] = $("#txtfVencimiento").val();
+    model["fechaElaboracion"] = $("#txtfElaborado").val();
+    model["lote"] = $("#txtLote").val();
+    model["notificar"] = true;
+
+    addVencimientoTable(model);
+    return false;
+})
+
+
+$("#tbVencimientos tbody").on("click", ".btn-danger", function () {
+
+    if ($(this).closest('tr').hasClass('child')) {
+        rowSelected = $(this).closest('tr').prev();
+    } else {
+        rowSelected = $(this).closest('tr');
+    }
+    var v = $(this).data("vencimiento")
+
+    if (v.idVencimiento == 0) {
+        rowSelected.remove();
+    }
+})
+
 
 $("#btnNewProduct").on("click", function () {
     openModal()
@@ -347,11 +441,14 @@ $("#btnSave").on("click", function () {
     model["precio3"] = $("#txtPrice3").val();
     model["porcentajeProfit3"] = $("#txtProfit3").val() != '' ? $("#txtProfit3").val() : 0;
 
+    let vencimientos = obtenerDatosTabla();
+
     const inputPhoto = document.getElementById('txtPhoto');
 
     const formData = new FormData();
     formData.append('photo', inputPhoto.files[0]);
     formData.append('model', JSON.stringify(model));
+    formData.append('vencimientos', JSON.stringify(vencimientos));
 
     $("#modalData").find("div.modal-content").LoadingOverlay("show")
 

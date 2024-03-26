@@ -349,3 +349,17 @@ lista int not null,
 porcentajeProfit int not null,
 [registrationDate] datetime default getdate()
 )
+
+go
+
+create table Vencimientos(
+idVencimiento int primary key identity(1,1),
+lote varchar(100) null,
+fechaVencimiento datetime not null,
+fechaElaboracion datetime null,
+notificar bit not null,
+idProducto int references Product(idProduct) not null,
+idTienda int references Tienda(idTienda) not null,
+registrationDate datetime default getdate(),
+registrationUser varchar(50),
+)

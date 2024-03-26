@@ -1,4 +1,5 @@
-﻿using static PointOfSale.Model.Enum;
+﻿using PointOfSale.Model;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Models
 {
@@ -35,6 +36,7 @@ namespace PointOfSale.Models
 
         public string? Precio3 { get; set; }
         public int? PorcentajeProfit3 { get; set; }
+        public List<Vencimiento>? Vencimientos { get; set; }
 
     }
 }

@@ -9,7 +9,7 @@
     <link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
     <link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
     <link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
-
+    <link href="~/plugins/jquery-ui/jquery-ui.css" rel="stylesheet">
 
 }
 
@@ -76,22 +76,26 @@
                     <div class="row">
                         <div class="col-sm-9">
                             <div class="form-row">
-                                <div class="form-group col-sm-8">
+                                <div class="form-group col-sm-6">
                                     <label for="txtDescription">Descripcion</label>
                                     <input type="text" class="form-control form-control-sm input-validate" id="txtDescription" name="Description">
                                 </div>
-                                <div class="form-group col-sm-4">
+                                <div class="form-group col-sm-3">
                                     <label for="cboCategory">Categoria</label>
                                     <select class="form-control form-control-sm" id="cboCategory">
                                     </select>
                                 </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-sm-4">
+                                <div class="form-group col-sm-3">
                                     <label for="txBarCode">BarCode</label>
                                     <input type="text" class="form-control form-control-sm" id="txtBarCode" name="BarCode">
                                 </div>
-                                <div class="form-group col-sm-4">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-2">
+                                    <label for="txBarCode">Costo</label>
+                                    <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtCosto" name="Costo">
+                                </div>
+                                <div class="form-group col-sm-4 offset-md-2">
                                     <label for="cboProveedor">Proveedor</label>
                                     <select class="form-control form-control-sm input-validate" id="cboProveedor" style="background-color: beige">
                                     </select>
@@ -111,33 +115,6 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-row" style="margin-bottom: -20px;">
-                                <div class="form-group col-sm-2">
-                                    <label for="txtProfit">Ganancia %</label>
-                                    <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtProfit" name="Profit">
-                                </div>
-                                <div class="form-group col-sm-2">
-                                    <label for="txtPrice">Precio (1)</label>
-                                    <div class="input-group  input-group-sm mb-3">
-                                        <div class="input-group-prepend">
-                                            <a class="input-group-text" for="txtPrice" id="btnCalcPrecio" onclick="calcularPrecio('')">Calc.</a>
-                                        </div>
-                                        <input type="number" step="any" class="form-control form-control-sm input-validate" min="0" id="txtPrice" name="Price">
-                                    </div>
-                                </div>
-                                <div class="form-group col-sm-2">
-                                    <label for="txtCosto">Costo</label>
-                                    <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtCosto" name="Costo">
-                                </div>
-                                <div class="form-group offset-md-2 col-sm-2">
-                                    <label for="txtQuantity">Stock Actual</label>
-                                    <input type="number" min="0" class="form-control form-control-sm" id="txtQuantity" name="Quantity">
-                                </div>
-                                <div class="form-group col-sm-2">
-                                    <label for="txtMinimo">Stock Minimo</label>
-                                    <input type="number" class="form-control form-control-sm" min="0" id="txtMinimo" name="stock minimo">
-                                </div>
-                            </div>
                         </div>
                         <div class="col-sm-3">
                             <div class="col-md-12">
@@ -148,43 +125,100 @@
                                     </div>
                                 </div>
                                 <div class="form-row">
-                                    <img id="imgProduct" style="max-width:150px;" src="" class="rounded mx-auto d-block" alt="Photo Product">
+                                    <img id="imgProduct" style="max-width:80px;" src="" class="rounded mx-auto d-block" alt="Photo Product">
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-6" style="margin-bottom: 0px;">
-                            <div class="form-row" style="margin-bottom: -20px;">
-                                <div class="form-group col-sm-3">
-                                    <label for="txtProfit2">Ganancia %</label>
-                                    <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtProfit2" name="Profit">
+                        <div class="col-sm-6 row" style="margin-bottom: 0px;">
+                            <div class="col-md-6">
+                                @*                                 <div class="form-row" style="margin-top: 5px;">
+                                <div class="form-group col-sm-6">
+                                <label for="txtCosto">Costo</label>
+                                <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtCosto" name="Costo">
                                 </div>
-                                <div class="form-group col-sm-3">
-                                    <label for="txtPrice2">Precio (2)</label>
-                                    <div class="input-group  input-group-sm mb-3">
-                                        <div class="input-group-prepend">
-                                            <a class="input-group-text" for="txtPrice2" id="btnCalcPrecio" onclick="calcularPrecio(2)">Calc.</a>
-                                        </div>
-                                        <input type="number" step="any" class="form-control form-control-sm input-validate" min="0" id="txtPrice2" name="Price2">
-                                    </div>
-                                </div>
-                            </div>
+                                </div> *@
 
-                            <div class="form-row">
-                                <div class="form-group col-sm-3">
-                                    <label for="txtProfit3">Ganancia %</label>
-                                    <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtProfit3" name="Profit">
-                                </div>
-                                <div class="form-group col-sm-3">
-                                    <label for="txtPrice3">Precio (3)</label>
-                                    <div class="input-group  input-group-sm mb-3">
-                                        <div class="input-group-prepend">
-                                            <a class="input-group-text" for="txtPrice3" id="btnCalcPrecio" onclick="calcularPrecio(3)">Calc.</a>
+
+                                <div class="form-row" style="margin-bottom: -20px;">
+                                    <div class="form-group col-sm-5">
+                                        <label for="txtProfit2">Ganancia %</label>
+                                        <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtProfit" name="Profit">
+                                    </div>
+                                    <div class="form-group col-sm-7">
+                                        <label for="txtPrice">Precio (1)</label>
+                                        <div class="input-group  input-group-sm mb-3">
+                                            <div class="input-group-prepend">
+                                                <a class="input-group-text" for="txtPrice" id="btnCalcPrecio" onclick="calcularPrecio('')">Calc.</a>
+                                            </div>
+                                            <input type="number" step="any" class="form-control form-control-sm input-validate" min="0" id="txtPrice" name="Price">
                                         </div>
-                                        <input type="number" step="any" class="form-control form-control-sm input-validate" min="0" id="txtPrice3" name="Price3">
+                                    </div>
+                                </div>
+
+                                <div class="form-row" style="margin-bottom: -20px;">
+                                    <div class="form-group col-sm-5">
+                                        <label for="txtProfit2">Ganancia %</label>
+                                        <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtProfit2" name="Profit">
+                                    </div>
+                                    <div class="form-group col-sm-7">
+                                        <label for="txtPrice2">Precio (2)</label>
+                                        <div class="input-group  input-group-sm mb-3">
+                                            <div class="input-group-prepend">
+                                                <a class="input-group-text" for="txtPrice2" id="btnCalcPrecio" onclick="calcularPrecio(2)">Calc.</a>
+                                            </div>
+                                            <input type="number" step="any" class="form-control form-control-sm input-validate" min="0" id="txtPrice2" name="Price2">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-sm-5">
+                                        <label for="txtProfit3">Ganancia %</label>
+                                        <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtProfit3" name="Profit">
+                                    </div>
+                                    <div class="form-group col-sm-7">
+                                        <label for="txtPrice3">Precio (3)</label>
+                                        <div class="input-group  input-group-sm mb-3">
+                                            <div class="input-group-prepend">
+                                                <a class="input-group-text" for="txtPrice3" id="btnCalcPrecio" onclick="calcularPrecio(3)">Calc.</a>
+                                            </div>
+                                            <input type="number" step="any" class="form-control form-control-sm input-validate" min="0" id="txtPrice3" name="Price3">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="">
+                            <div class="col-md-6">
+
+                                <div class="card shadow">
+                                    <div class="card-header py-2">
+                                        <h4>Venta Web</h4>
+                                    </div>
+                                    <div class="card-body row">
+                                        <div class="col-md-12">
+                                            <div class="form-row">
+                                                <div class="col-sm-5">
+                                                    <label for="txtAumento">Aumento</label>
+                                                    <input class="form-control form-control-sm" id="txtAumento" name="Aumento" disabled>
+                                                </div>
+                                                <div class="col-sm-7">
+                                                    <label for="PriceWeb">Precio Web</label>
+                                                    <div class="input-group  input-group-sm mb-3">
+                                                        <div class="input-group-prepend">
+                                                            <a class="input-group-text" for="PriceWeb" id="btnCalcPrecioWeb" onclick="calcularPrecioWeb()">Calc.</a>
+                                                        </div>
+                                                        <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtPriceWeb" name="PriceWeb">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-sm-12">
+                                            <label for="txtAumento">Comentario</label>
+                                            <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
                                 <div class="form-row" id="divModif">
                                     <div class="form-group col-sm-6">
                                         <label for="txtModificado">Fecha Modificado</label>
@@ -196,37 +230,89 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                         <div class="form-group col-sm-6">
-                            <div class="card shadow">
-                                <div class="card-header py-2">
-                                    <h4>Venta Web</h4>
-                                </div>
-                                <div class="card-body row">
-                                    <div class="col-md-12">
-                                        <div class="form-row">
-                                            <div class="col-sm-3">
-                                                <label for="txtAumento">Aumento</label>
-                                                <input class="form-control form-control-sm" id="txtAumento" name="Aumento" disabled>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <label for="PriceWeb">Precio Web</label>
-                                                <div class="input-group  input-group-sm mb-3">
-                                                    <div class="input-group-prepend">
-                                                        <a class="input-group-text" for="PriceWeb" id="btnCalcPrecioWeb" onclick="calcularPrecioWeb()">Calc.</a>
-                                                    </div>
-                                                    <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtPriceWeb" name="PriceWeb">
-                                                </div>
-                                            </div>
-                                        </div>
+                            <div class="col-md-12">
+                                <div class="form-row">
+                                    <div class="form-group col-sm-3">
+                                        <label for="txtQuantity">Stock Actual</label>
+                                        <input type="number" min="0" class="form-control form-control-sm" id="txtQuantity" name="Quantity">
                                     </div>
-                                    <div class="form-group col-sm-12">
-                                        <label for="txtAumento">Comentario</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario">
+                                    <div class="form-group col-sm-3">
+                                        <label for="txtMinimo">Stock Minimo</label>
+                                        <input type="number" class="form-control form-control-sm" min="0" id="txtMinimo" name="stock minimo">
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="col-md-12">
+                                <div class="card shadow">
+                                    <div class="card-header py-2">
+                                        <div class="col-md-12">
+                                            <div class="row">
+                                                <h4>Vencimientos</h4>
+                                                <button class="btn accordion-button btn-success btn-sm" style="margin-left:10px" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                    +
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body row">
+                                        <div class="col-md-12">
+                                            <div class="card-body" style="padding: 0px;">
+
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <table id="tbVencimientos" class="table table-sm table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Vencimiento</th>
+                                                                        <th>Elaborado</th>
+                                                                        <th>Lote</th>
+                                                                        <th>Notif.</th>
+                                                                        <th></th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                                    <div class="form-group col-sm-12">
+
+                                                        <div class="accordion-body">
+                                                            <div class="form-row row" style="margin-bottom: -14px;">
+                                                                <div class="form-group col-sm-3">
+                                                                    <label for="fVencimiento">Vencimiento</label>
+                                                                    <input type="text" class="form-control form-control-sm" id="txtfVencimiento" name="vencimiento">
+                                                                </div>
+                                                                <div class="form-group col-sm-3">
+                                                                    <label for="fElaborado">Elaborado</label>
+                                                                    <input type="text" class="form-control form-control-sm" id="txtfElaborado" name="elaborado">
+                                                                </div>
+                                                                <div class="form-group col-sm-3">
+                                                                    <label for="lote">Lote</label>
+                                                                    <input type="text" class="form-control form-control-sm" id="txtLote" name="lote">
+                                                                </div>
+                                                                <div class="col-sm-3" style="align-self: center;">
+                                                                    <button class="btn btn-success btn-sm" id="btnAddVencimiento">Agregar</button>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </form>
@@ -438,6 +524,7 @@
         <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
         <script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
         <script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
+        <script src="~/plugins/jquery-ui/jquery-ui.js"></script>
 
 
         <script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
