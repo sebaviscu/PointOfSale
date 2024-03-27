@@ -100,8 +100,12 @@ function generarDatos() {
     }).then(responseJson => {
 
         removeLoading();
-        swal("Exitoso!", "Datos generados con éxito", "success");
+        if (responseJson.status == 200) {
+            swal("Exitoso!", "Datos cerados", "success");
 
+        } else {
+            swal("Lo sentimos", "", "error");
+        }
     })
         .catch((error) => {
             $("div.container-fluid").LoadingOverlay("hide")

@@ -52,6 +52,7 @@ update Menu set idMenuParent=null where idMenu=5
 go
 --________________________________ INSERT MENU ROLE ________________________________
 
+select * from RolMenu
 
 --*Admin
 INSERT INTO RolMenu(idRol,idMenu,isActive) values
@@ -90,14 +91,13 @@ INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (3,2,1),
 (3,3,1),
 (3,4,1),
-(3,10,1),
 (3,11,1),
 (3,12,1),
-(3,17,1),
 (3,7,1),
 (3,19,1),
 (3,20,1),
-(3,21,1)
+(3,21,1),
+(3,16,1)
 go
 --________________________________ INSERT CATEGORIES ________________________________
 

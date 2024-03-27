@@ -187,7 +187,7 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task<int> GenerarVentas(int idTienda, int idUser)
+        public async Task<bool> GenerarVentas(int idTienda, int idUser)
         {
 
             var tiposVentas = await _rTypeNumber.List();
@@ -217,10 +217,11 @@ namespace PointOfSale.Business.Services
                     await CrearVentaGenerada(idTienda, idUser, tiposVentas, productos, turno, random, cantTipoVentas, cantproductos, sale);
                 }
 
-                return 1;
+                return true;
             }
             catch
             {
+                return false;
                 throw;
             }
         }

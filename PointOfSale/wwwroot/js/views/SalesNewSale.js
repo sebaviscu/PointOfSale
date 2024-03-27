@@ -203,34 +203,34 @@ $(document).on("click", "button.btnAddFormaDePago", function () {
     cloneFP.querySelector("#txtTotalParcial").id = "txtTotalParcial" + formaDePagoID;
     cloneFP.querySelector("#cboTypeDocumentSaleParcial").id = "cboTypeDocumentSaleParcial" + formaDePagoID;
     cloneFP.querySelector("#btnAddNuevaFormaDePago").id = "btnAddNuevaFormaDePago" + formaDePagoID;
-    cloneFP.querySelector("#btnCalcSubTotales").id = "btnCalcSubTotales" + formaDePagoID;
+    //cloneFP.querySelector("#btnCalcSubTotales").id = "btnCalcSubTotales" + formaDePagoID;
 
     $('#rowDividirPago').append(cloneFP);
-    $("#btnCalcSubTotales" + formaDePagoID).attr("idformadepago", formaDePagoID);
+    //$("#btnCalcSubTotales" + formaDePagoID).attr("idformadepago", formaDePagoID);
     $("#txtTotalParcial" + formaDePagoID).val(0);
 
     $("#txtTotalParcial" + formaDePagoID).on("change", function (e) {
         let result = calcularSuma();
 
-        if (result < 0) {
-            e.currentTarget.classList.add("invalid")
-        } else {
-            e.currentTarget.classList.remove("invalid")
-        }
+        //if (result < 0) {
+        //    e.currentTarget.classList.add("invalid")
+        //} else {
+        //    e.currentTarget.classList.remove("invalid")
+        //}
     });
     return false;
 
 })
 
 
-$(document).on("click", "a.calcSubTotales", function (e) {
-    var idFormaDePago = e.currentTarget.attributes.idformadepago.value;
-    let subTotal = getSumaSubTotales();
+//$(document).on("click", "a.calcSubTotales", function (e) {
+//    var idFormaDePago = e.currentTarget.attributes.idformadepago.value;
+//    let subTotal = getSumaSubTotales();
 
-    let valorParcial = $("#txtTotalParcial" + idFormaDePago).val();
-    $("#txtTotalParcial" + idFormaDePago).val(parseFloat(subTotal).toFixed(2) + parseFloat(valorParcial).toFixed(2));
-    calcularSuma();
-})
+//    let valorParcial = $("#txtTotalParcial" + idFormaDePago).val();
+//    $("#txtTotalParcial" + idFormaDePago).val(parseFloat(subTotal).toFixed(2) + parseFloat(valorParcial).toFixed(2));
+//    calcularSuma();
+//})
 
 function calcularSuma() {
     let subTotal = getSumaSubTotales();
@@ -257,13 +257,13 @@ function getSumaSubTotales() {
         const value = parseFloat(input.value).toFixed(2);
 
         if (!isNaN(value) && value > 0) {
-            subTotal += value;
+            subTotal += parseFloat(value);
         }
     });
 
     var totFijo = $("#txtTotalView").val();
 
-    return totFijo - subTotal;
+    return parseFloat(totFijo) - parseFloat(subTotal);
 }
 
 

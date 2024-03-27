@@ -16,7 +16,7 @@ const BASIC_MODEL = {
     modificationDate: null,
     modificationUser: null,
     priceWeb: "",
-    porcentajeProfit: "",
+    porcentajeProfit: 0,
     costPrice: "",
     tipoVenta: "",
     idProveedor: "",
@@ -26,7 +26,7 @@ const BASIC_MODEL = {
     precio3: "",
     porcentajeProfit2: 0,
     porcentajeProfit3: 0,
-    Vencimientos: []
+    vencimientos: []
 }
 
 const BASIC_MASSIVE_EDIT = {
@@ -43,7 +43,7 @@ const BASIC_IMPRIMIR_PRECIOS = {
     path: ""
 }
 
-const BASIC_VENCIMIENTOS = {
+const BASIC_vencimientos = {
     idVencimiento: 0,
     lote: "",
     fechaVencimiento: null,
@@ -256,8 +256,8 @@ const openModal = (model = BASIC_MODEL) => {
     }
 
 
-    $("#tbVencimientos tbody").html("");
-    if (model.vencimientos.length > 0) {
+    $("#tbvencimientos tbody").html("");
+    if (model.vencimientos.lenght > 0) {
         model.vencimientos.forEach((v) => {
 
             addVencimientoTable(v);
@@ -268,7 +268,7 @@ const openModal = (model = BASIC_MODEL) => {
 }
 
 function addVencimientoTable(data) {
-    $("#tbVencimientos tbody").append(
+    $("#tbvencimientos tbody").append(
         $("<tr>").append(
             $("<td>").text(data.fechaVencimiento),
             $("<td>").text(data.fechaElaboracion),
@@ -288,7 +288,7 @@ function addVencimientoTable(data) {
 
 function obtenerDatosTabla() {
     var datos = [];
-    $("#tbVencimientos tbody tr").each(function () {
+    $("#tbvencimientos tbody tr").each(function () {
         var fila = {};
         fila.fechaVencimiento = $(this).find("td:eq(0)").text();
         fila.fechaElaboracion = $(this).find("td:eq(1)").text();
@@ -313,7 +313,7 @@ function obtenerDatosTabla() {
 }
 
 $("#btnAddVencimiento").on("click", function () {
-    const model = structuredClone(BASIC_VENCIMIENTOS);
+    const model = structuredClone(BASIC_vencimientos);
     model["fechaVencimiento"] = $("#txtfVencimiento").val();
     model["fechaElaboracion"] = $("#txtfElaborado").val();
     model["lote"] = $("#txtLote").val();
@@ -324,7 +324,7 @@ $("#btnAddVencimiento").on("click", function () {
 })
 
 
-$("#tbVencimientos tbody").on("click", ".btn-danger", function () {
+$("#tbvencimientos tbody").on("click", ".btn-danger", function () {
 
     if ($(this).closest('tr').hasClass('child')) {
         rowSelected = $(this).closest('tr').prev();

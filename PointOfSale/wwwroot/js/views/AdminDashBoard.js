@@ -140,12 +140,12 @@ function changeChart(typeValues, dateFilter) {
                 $("#idTextFilter").text(d.textoFiltroDiaSemanaMes)
 
                 SetGraficoVentas(d);
-                SetTopSeler(typeValuesGlobal, $('#cboCategory').val());
                 SetGraficoGastos(typeValues, d.gastosPorTipo);
                 SetTipoVentas(d.ventasPorTipoVenta);
                 SetGraficoGastosProveedor(d.gastosPorTipoProveedor);
                 //SetGraficoGastosSueldos(d.gastosPorTipoSueldos);
                 removeLoading();
+                SetTopSeler(typeValuesGlobal, $('#cboCategory').val());
             }
         });
 }
@@ -240,6 +240,9 @@ function SetGraficoVentas(d) {
 
 function SetTopSeler(typeValues, idCategory) {
 
+    const tableBody = document.querySelector("#tableTopSeller");
+    tableBody.innerHTML = ''
+
     fetch(`/Admin/GetSalesByTypoVenta?typeValues=${typeValues}&idCategoria=${idCategory}`, {
         method: "GET"
     })
@@ -259,9 +262,7 @@ function SetTopSeler(typeValues, idCategory) {
                 );
             }).join('');
 
-            const tableBody = document.querySelector("#tableTopSeller");
             tableBody.innerHTML = tableData;
-
         })
         .catch((error) => {
             $("div.container-fluid").LoadingOverlay("hide")

@@ -18,12 +18,14 @@ namespace PointOfSale.Business.Services
         private readonly IGenericRepository<Product> _repository;
         private readonly IGenericRepository<ListaPrecio> _repositoryListaPrecios;
         private readonly IGenericRepository<DetailSale> _repositoryDetailSale;
+        private readonly IGenericRepository<Vencimiento> _repositoryVencimientos;
 
-        public ProductService(IGenericRepository<Product> repository, IGenericRepository<ListaPrecio> repositoryListaPrecios, IGenericRepository<DetailSale> repositoryDetailSale)
+        public ProductService(IGenericRepository<Product> repository, IGenericRepository<ListaPrecio> repositoryListaPrecios, IGenericRepository<DetailSale> repositoryDetailSale, IGenericRepository<Vencimiento> repositoryVencimientos)
         {
             _repository = repository;
             _repositoryListaPrecios = repositoryListaPrecios;
             _repositoryDetailSale = repositoryDetailSale;
+            _repositoryVencimientos = repositoryVencimientos;
         }
 
         public async Task<Product> Get(int idProducto)
@@ -236,10 +238,21 @@ namespace PointOfSale.Business.Services
         {
             try
             {
-                Product product_found = await _repository.Get(p => p.IdProduct == idProduct);
+                IQueryable<Product> query = await _repository.Query(p => p.IdProduct == idProduct);
+                var product_found = query.Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).FirstOrDefault();
 
                 if (product_found == null)
                     throw new TaskCanceledException("El producto no existe");
+
+                if (product_found.ListaPrecios != null)
+                {
+                    _ = await _repositoryListaPrecios.Delete(product_found.ListaPrecios);
+                }
+
+                if (product_found.Vencimientos != null)
+                {
+                    _ = await _repositoryVencimientos.Delete(product_found.Vencimientos);
+                }
 
                 bool response = await _repository.Delete(product_found);
 

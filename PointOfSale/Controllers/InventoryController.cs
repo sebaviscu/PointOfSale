@@ -144,7 +144,6 @@ namespace PointOfSale.Controllers
             {
                 VMProduct vmProduct = JsonConvert.DeserializeObject<VMProduct>(model);
 
-                var prod = _mapper.Map<Product>(vmProduct);
 
                 var listPrecios = new List<ListaPrecio>()
                 {
@@ -164,6 +163,8 @@ namespace PointOfSale.Controllers
                 }
                 else
                     vmProduct.Photo = null;
+
+                var prod = _mapper.Map<Product>(vmProduct);
 
                 Product product_created = await _productService.Add(prod, listPrecios);
 

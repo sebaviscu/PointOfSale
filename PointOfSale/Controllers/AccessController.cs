@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Model;
 using PointOfSale.Models;
+using PointOfSale.Utilities.Response;
 using System.Security.Claims;
 using static PointOfSale.Model.Enum;
 
@@ -117,8 +118,11 @@ namespace PointOfSale.Controllers
 
             string idUsuario = claimuser.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).Select(c => c.Value).SingleOrDefault();
 
-            await _saleService.GenerarVentas(user.IdTienda, int.Parse(idUsuario));
-            return default;
+            var result = await _saleService.GenerarVentas(user.IdTienda, int.Parse(idUsuario));
+
+            GenericResponse<VMUser> gResponse = new GenericResponse<VMUser>();
+
+            return StatusCode(result ? StatusCodes.Status200OK : StatusCodes.Status500InternalServerError, gResponse);
         }
     }
 }

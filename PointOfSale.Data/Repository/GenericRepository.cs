@@ -73,6 +73,19 @@ namespace PointOfSale.Data.Repository
                 throw;
             }
         }
+        public async Task<bool> Delete(List<TEntity> entity)
+        {
+            try
+            {
+                _dbcontext.RemoveRange(entity);
+                await _dbcontext.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
         public async Task<IQueryable<TEntity>> Query(Expression<Func<TEntity, bool>> filter)
         {
