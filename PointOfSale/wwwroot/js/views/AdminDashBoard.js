@@ -242,12 +242,13 @@ function SetTopSeler(typeValues, idCategory) {
 
     const tableBody = document.querySelector("#tableTopSeller");
     tableBody.innerHTML = ''
+    $("#chartTopSeller").LoadingOverlay("show")
 
     fetch(`/Admin/GetSalesByTypoVenta?typeValues=${typeValues}&idCategoria=${idCategory}`, {
         method: "GET"
     })
         .then(response => {
-            $("div.container-fluid").LoadingOverlay("hide")
+            $("#chartTopSeller").LoadingOverlay("hide")
             return response.ok ? response.json() : Promise.reject(response);
         }).then(responseJson => {
 
@@ -265,7 +266,7 @@ function SetTopSeler(typeValues, idCategory) {
             tableBody.innerHTML = tableData;
         })
         .catch((error) => {
-            $("div.container-fluid").LoadingOverlay("hide")
+            $("#chartTopSeller").LoadingOverlay("hide")
         });
 }
 

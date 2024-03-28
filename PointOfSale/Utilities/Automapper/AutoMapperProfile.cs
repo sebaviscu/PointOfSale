@@ -311,6 +311,9 @@ namespace PointOfSale.Utilities.Automapper
 
             CreateMap<Notifications, VMNotifications>();
             CreateMap<VMNotifications, Notifications>();
+
+            CreateMap<Vencimiento, VMVencimiento>();
+            CreateMap<VMVencimiento, Vencimiento>();
         }
     }
 }

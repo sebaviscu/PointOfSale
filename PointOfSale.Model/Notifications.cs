@@ -25,6 +25,12 @@ namespace PointOfSale.Model
             IsActive = true;
             RegistrationDate = DateTime.Now;
         }
+        public Notifications(Vencimiento vencimiento)
+        {
+            Descripcion = $"Se ha llegado a la fecha de Vencimiento del Producto {vencimiento.Producto.Description}.";
+            IsActive = true;
+            RegistrationDate = DateTime.Now;
+        }
 
         public int IdNotifications { get; set; }
         public string? Descripcion { get; set; }

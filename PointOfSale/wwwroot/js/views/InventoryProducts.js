@@ -228,7 +228,7 @@ const openModal = (model = BASIC_MODEL) => {
     $("#cboCategory").val(model.idCategory == 0 ? $("#cboCategory option:first").val() : model.idCategory);
     $("#txtQuantity").val(model.quantity);
     $("#txtMinimo").val(model.minimo);
-    $("#txtPrice").val(parseInt(model.price));
+    $("#txtPrice").val(model.price.replace(/,/g, '.'));
     $("#txtPriceWeb").val(model.priceWeb);
     $("#txtProfit").val(model.porcentajeProfit);
     $("#txtCosto").val(model.costPrice);
@@ -238,9 +238,9 @@ const openModal = (model = BASIC_MODEL) => {
     $("#cboProveedor").val(model.idProveedor == 0 ? $("#cboProveedor option:first").val() : model.idProveedor);
     $("#txtComentario").val(model.comentario);
 
-    $("#txtPrice2").val(parseInt(model.precio2));
+    $("#txtPrice2").val(model.precio2.replace(/,/g, '.'));
     $("#txtProfit2").val(model.porcentajeProfit2);
-    $("#txtPrice3").val(parseInt(model.precio3));
+    $("#txtPrice3").val(model.precio3.replace(/,/g, '.'));
     $("#txtProfit3").val(model.porcentajeProfit3);
 
     $("#imgProduct").attr("src", `data:image/png;base64,${model.photoBase64}`);
@@ -256,22 +256,32 @@ const openModal = (model = BASIC_MODEL) => {
     }
 
 
-    $("#tbvencimientos tbody").html("");
-    if (model.vencimientos.lenght > 0) {
+    $("#tbVencimientos tbody").html("");
+    if (model.vencimientos && model.vencimientos.length > 0) {
         model.vencimientos.forEach((v) => {
 
             addVencimientoTable(v);
         });
     }
 
+    $("#txtfVencimiento").val('');
+    $("#txtfElaborado").val('');
+    $("#txtLote").val('');
+
     $("#modalData").modal("show")
 }
 
 function addVencimientoTable(data) {
-    $("#tbvencimientos tbody").append(
+    var fechaCompleta = data.fechaVencimiento;
+    var fechaVencimiento = fechaCompleta.split('T')[0].replace(/-/g, '/');;
+
+    fechaCompleta = data.fechaElaboracion;
+    var fechaElaboracion = fechaCompleta.split('T')[0].replace(/-/g, '/');;
+
+    $("#tbVencimientos tbody").append(
         $("<tr>").append(
-            $("<td>").text(data.fechaVencimiento),
-            $("<td>").text(data.fechaElaboracion),
+            $("<td>").text(fechaVencimiento),
+            $("<td>").text(fechaElaboracion),
             $("<td>").text(data.lote),
             $("<td>")
                 .append(
@@ -288,7 +298,7 @@ function addVencimientoTable(data) {
 
 function obtenerDatosTabla() {
     var datos = [];
-    $("#tbvencimientos tbody tr").each(function () {
+    $("#tbVencimientos tbody tr").each(function () {
         var fila = {};
         fila.fechaVencimiento = $(this).find("td:eq(0)").text();
         fila.fechaElaboracion = $(this).find("td:eq(1)").text();
@@ -320,11 +330,16 @@ $("#btnAddVencimiento").on("click", function () {
     model["notificar"] = true;
 
     addVencimientoTable(model);
+
+    $("#txtfVencimiento").val('');
+    $("#txtfElaborado").val('');
+    $("#txtLote").val('');
+
     return false;
 })
 
 
-$("#tbvencimientos tbody").on("click", ".btn-danger", function () {
+$("#tbVencimientos tbody").on("click", ".btn-danger", function () {
 
     if ($(this).closest('tr').hasClass('child')) {
         rowSelected = $(this).closest('tr').prev();
@@ -427,19 +442,22 @@ $("#btnSave").on("click", function () {
     model["idCategory"] = $("#cboCategory").val();
     model["quantity"] = $("#txtQuantity").val();
     model["minimo"] = $("#txtMinimo").val();
-    model["price"] = $("#txtPrice").val();
+    model["price"] = $("#txtPrice").val().replace(/\./g, ',');
     model["priceWeb"] = $("#txtPriceWeb").val();
     model["porcentajeProfit"] = $("#txtProfit").val();
-    model["costPrice"] = $("#txtCosto").val();
+    model["costPrice"] = $("#txtCosto").val().replace(/\./g, ',');
     model["tipoVenta"] = $("#cboTipoVenta").val();
     model["isActive"] = $("#cboState").val();
     model["idProveedor"] = $("#cboProveedor").val();
     model["comentario"] = $("#txtComentario").val();
 
-    model["precio2"] = $("#txtPrice2").val();
-    model["porcentajeProfit2"] = $("#txtProfit2").val() != '' ? $("#txtProfit2").val() : 0;
-    model["precio3"] = $("#txtPrice3").val();
-    model["porcentajeProfit3"] = $("#txtProfit3").val() != '' ? $("#txtProfit3").val() : 0;
+    model["priceWeb"] = $("#txtPriceWeb").val() != '' && $("#txtPriceWeb").val() != undefined ? $("#txtPriceWeb").val().replace(/\./g, ',') : $("#txtPrice").val().replace(/\./g, ',')
+
+    model["precio2"] = $("#txtPrice2").val() != '' ? $("#txtPrice2").val().replace(/\./g, ',') : $("#txtPrice").val().replace(/\./g, ',');
+    model["porcentajeProfit2"] = $("#txtProfit2").val() != '' ? $("#txtProfit2").val().replace(/\./g, ',') : $("#txtProfit").val().replace(/\./g, ',');
+
+    model["precio3"] = $("#txtPrice3").val() != '' ? $("#txtPrice3").val().replace(/\./g, ',') : $("#txtPrice").val().replace(/\./g, ',');
+    model["porcentajeProfit3"] = $("#txtProfit3").val() != '' ? $("#txtProfit3").val().replace(/\./g, ',') : $("#txtProfit").val().replace(/\./g, ',');
 
     let vencimientos = obtenerDatosTabla();
 

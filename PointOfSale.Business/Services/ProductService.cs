@@ -19,13 +19,19 @@ namespace PointOfSale.Business.Services
         private readonly IGenericRepository<ListaPrecio> _repositoryListaPrecios;
         private readonly IGenericRepository<DetailSale> _repositoryDetailSale;
         private readonly IGenericRepository<Vencimiento> _repositoryVencimientos;
+        private readonly INotificationService _notificationService;
 
-        public ProductService(IGenericRepository<Product> repository, IGenericRepository<ListaPrecio> repositoryListaPrecios, IGenericRepository<DetailSale> repositoryDetailSale, IGenericRepository<Vencimiento> repositoryVencimientos)
+        public ProductService(IGenericRepository<Product> repository, 
+            IGenericRepository<ListaPrecio> repositoryListaPrecios, 
+            IGenericRepository<DetailSale> repositoryDetailSale, 
+            IGenericRepository<Vencimiento> repositoryVencimientos, 
+            INotificationService notificationService)
         {
             _repository = repository;
             _repositoryListaPrecios = repositoryListaPrecios;
             _repositoryDetailSale = repositoryDetailSale;
             _repositoryVencimientos = repositoryVencimientos;
+            _notificationService = notificationService;
         }
 
         public async Task<Product> Get(int idProducto)
@@ -66,7 +72,8 @@ namespace PointOfSale.Business.Services
             return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).OrderBy(_ => _.Description).ToList();
         }
 
-        public async Task<Product> Add(Product entity, List<ListaPrecio> listaPrecios)
+
+        public async Task<Product> Add(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos)
         {
             Product product_exists = await _repository.Get(p => p.BarCode != string.Empty && p.BarCode == entity.BarCode);
 
@@ -88,8 +95,15 @@ namespace PointOfSale.Business.Services
                 _ = await _repositoryListaPrecios.Add(listaPrecios[1]);
                 _ = await _repositoryListaPrecios.Add(listaPrecios[2]);
 
+                foreach (var v in vencimientos)
+                {
+                    v.IdProducto = product_created.IdProduct;
+                }
+
+                await EditOrCreateVencimientos(vencimientos);
+
                 IQueryable<Product> query = await _repository.Query(p => p.IdProduct == product_created.IdProduct);
-                product_created = query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).First();
+                product_created = query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).First();
 
                 return product_created;
             }
@@ -99,7 +113,7 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task<Product> Edit(Product entity, List<ListaPrecio> listaPrecios)
+        public async Task<Product> Edit(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos)
         {
             Product product_exists = await _repository.Get(p => (p.BarCode != string.Empty && p.BarCode == entity.BarCode) && p.IdProduct != entity.IdProduct);
 
@@ -134,11 +148,17 @@ namespace PointOfSale.Business.Services
                 if (!response)
                     throw new TaskCanceledException("El producto no pudo modificarse");
 
+                foreach (var v in vencimientos.Where(_=>_.IdVencimiento == 0))
+                {
+                    v.IdProducto = product_edit.IdProduct;
+                }
+
                 await EditListaPrecios(product_edit.ListaPrecios.ToList(), listaPrecios);
+                await EditOrCreateVencimientos(vencimientos);
 
                 IQueryable<Product> queryProduct = await _repository.Query(u => u.IdProduct == entity.IdProduct);
 
-                Product product_edited = queryProduct.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).First();
+                Product product_edited = queryProduct.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).First();
 
                 return product_edited;
             }
@@ -147,6 +167,7 @@ namespace PointOfSale.Business.Services
                 throw;
             }
         }
+
 
         public async Task EditListaPrecios(List<ListaPrecio> listaPreciosActual, List<ListaPrecio> listaPreciosNueva)
         {
@@ -174,6 +195,33 @@ namespace PointOfSale.Business.Services
             }
         }
 
+        public async Task EditOrCreateVencimientos(List<Vencimiento> listaVencimientos)
+        {
+            try
+            {
+                foreach (var v in listaVencimientos)
+                {
+                    if(v.IdVencimiento == 0)
+                    {
+                        await _repositoryVencimientos.Add(v);
+                    }
+                    else
+                    {
+                        var oVen = await _repositoryVencimientos.Get(_=>_.IdVencimiento == v.IdVencimiento);
+                        oVen.FechaVencimiento = v.FechaVencimiento;
+                        oVen.FechaElaboracion = v.FechaElaboracion;
+                        oVen.Lote = v.Lote;
+                        oVen.Notificar = v.Notificar;
+                        await _repositoryVencimientos.Edit(oVen);
+
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
 
         public async Task<bool> EditMassive(string user, EditeMassiveProducts data, List<ListaPrecio> listaPrecios)
         {
@@ -337,6 +385,18 @@ namespace PointOfSale.Business.Services
             catch
             {
                 throw;
+            }
+        }
+
+        public async Task BuscarVencimientosProductos(int idTienda)
+        {
+            var queryProducts = await _repositoryVencimientos.Query(p => p.FechaVencimiento.Date == DateTime.Now.Date && p.Notificar && p.IdTienda == idTienda);
+            var vencimientos = queryProducts.Include(c => c.Producto).ToList();
+
+            foreach (var v in vencimientos)
+            {
+                var n = new Notifications(v);
+                await _notificationService.Save(n);
             }
         }
 

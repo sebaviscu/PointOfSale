@@ -8,6 +8,7 @@ using PointOfSale.Business.Reportes;
 using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
+using System.Globalization;
 using System.Net;
 using static PointOfSale.Model.Enum;
 
@@ -125,8 +126,8 @@ namespace PointOfSale.Controllers
         {
             try
             {
-
-                List<VMProduct> vmProductList = _mapper.Map<List<VMProduct>>(await _productService.List());
+                var productos = await _productService.List();
+                List<VMProduct> vmProductList = _mapper.Map<List<VMProduct>>(productos);
                 return StatusCode(StatusCodes.Status200OK, new { data = vmProductList });
             }
             catch (Exception)
@@ -139,10 +140,19 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProduct([FromForm] IFormFile photo, [FromForm] string model, [FromForm] string vencimientos)
         {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+
             GenericResponse<VMProduct> gResponse = new GenericResponse<VMProduct>();
             try
             {
-                VMProduct vmProduct = JsonConvert.DeserializeObject<VMProduct>(model);
+                var settings = new JsonSerializerSettings
+                {
+                    DateFormatString = "dd/MM/yyyy",
+                    Culture = CultureInfo.InvariantCulture
+                };
+
+                var vmProduct = JsonConvert.DeserializeObject<VMProduct>(model);
+                var vmListVencimientos = JsonConvert.DeserializeObject<List<VMVencimiento>>(vencimientos, settings);
 
 
                 var listPrecios = new List<ListaPrecio>()
@@ -166,7 +176,14 @@ namespace PointOfSale.Controllers
 
                 var prod = _mapper.Map<Product>(vmProduct);
 
-                Product product_created = await _productService.Add(prod, listPrecios);
+                foreach (var v in vmListVencimientos)
+                {
+                    v.IdTienda = user.IdTienda;
+                    v.RegistrationDate = DateTime.Now;
+                    v.RegistrationUser = user.UserName;
+                }
+
+                Product product_created = await _productService.Add(prod, listPrecios, _mapper.Map<List<Vencimiento>>(vmListVencimientos));
 
                 vmProduct = _mapper.Map<VMProduct>(product_created);
 
@@ -190,10 +207,14 @@ namespace PointOfSale.Controllers
             GenericResponse<VMProduct> gResponse = new GenericResponse<VMProduct>();
             try
             {
+                var settings = new JsonSerializerSettings
+                {
+                    DateFormatString = "dd/MM/yyyy",
+                    Culture = CultureInfo.InvariantCulture
+                };
+
                 VMProduct vmProduct = JsonConvert.DeserializeObject<VMProduct>(model);
-
-                //var vmProduct2 = JsonConvert.DeserializeObject<List<Vencimiento>>(vencimientos);
-
+                var vmListVencimientos = JsonConvert.DeserializeObject<List<VMVencimiento>>(vencimientos, settings);
 
                 vmProduct.ModificationUser = user.UserName;
 
@@ -216,7 +237,13 @@ namespace PointOfSale.Controllers
                     new ListaPrecio(vmProduct.IdProduct, ListaDePrecio.Lista_3, Convert.ToDecimal(vmProduct.Precio3),Convert.ToInt32(vmProduct.PorcentajeProfit3))
                 };
 
-                Product product_edited = await _productService.Edit(_mapper.Map<Product>(vmProduct), listPrecios);
+                foreach (var v in vmListVencimientos.Where(_=>_.IdVencimiento == 0))
+                {
+                    v.IdTienda = user.IdTienda;
+                    v.RegistrationDate = DateTime.Now;
+                    v.RegistrationUser = user.UserName;
+                }
+                Product product_edited = await _productService.Edit(_mapper.Map<Product>(vmProduct), listPrecios, _mapper.Map<List<Vencimiento>>(vmListVencimientos));
 
                 vmProduct = _mapper.Map<VMProduct>(product_edited);
 

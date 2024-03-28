@@ -161,7 +161,7 @@ namespace PointOfSale.Controllers
 
                         var last = Math.Max(lastComp, lastVenta);
 
-                        if(dateFilter != null)
+                        if (dateFilter != null)
                         {
                             first = 0;
                             last = 23;
@@ -196,8 +196,8 @@ namespace PointOfSale.Controllers
                     case TypeValuesDashboard.Semana:
                         listSales.AddRange(GetSalesComparacionWeek(ejeXint, dateCompare, resultados.VentasActuales, false));
                         listSalesComparacion.AddRange(GetSalesComparacionWeek(ejeXint, dateCompare, resultados.VentasComparacion, true));
-                        
-                        if(dateFilter != null)
+
+                        if (dateFilter != null)
                         {
                             while (listSales.Count != listSalesComparacion.Count)
                             {
@@ -220,7 +220,7 @@ namespace PointOfSale.Controllers
                         }
                         listSalesComparacion.AddRange(GetSalesComparacionMonth(ejeXint, dateCompare, resultados));
 
-                        if(dateFilter != null)
+                        if (dateFilter != null)
                         {
                             while (listSales.Count != listSalesComparacion.Count)
                             {
@@ -364,11 +364,15 @@ namespace PointOfSale.Controllers
             foreach (KeyValuePair<string, string?> item in await _dashboardService.ProductsTopByCategory(typeValues, idCategoria, tiendaId, dateActual))
             {
                 var prod = prods.FirstOrDefault(_ => _.Description == item.Key);
-                ProductListWeek.Add(new VMProductsWeek()
+                if (prod != null)
                 {
-                    Product = $"{++i}. {item.Key} ",
-                    Quantity = $" {item.Value} {(prod.TipoVenta == Model.Enum.TipoVenta.U ? "U." : prod.TipoVenta)}"
-                });
+                    ProductListWeek.Add(new VMProductsWeek()
+                    {
+                        Product = $"{++i}. {item.Key} ",
+                        Quantity = $" {item.Value} {(prod.TipoVenta == Model.Enum.TipoVenta.U ? "U." : prod.TipoVenta)}"
+                    });
+                }
+
             }
 
             return StatusCode(StatusCodes.Status200OK, ProductListWeek);

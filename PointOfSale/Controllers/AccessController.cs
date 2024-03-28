@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using PointOfSale.Business.Contracts;
+using PointOfSale.Business.Services;
 using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
@@ -16,13 +17,15 @@ namespace PointOfSale.Controllers
         private readonly ITurnoService _turnoService;
         private readonly ITiendaService _tiendaService;
         private readonly ISaleService _saleService;
+        private readonly IProductService _productService;
 
-        public AccessController(IUserService userService, ITurnoService turnoService, ITiendaService tiendaService, ISaleService saleService)
+        public AccessController(IUserService userService, ITurnoService turnoService, ITiendaService tiendaService, ISaleService saleService, IProductService productService)
         {
             _userService = userService;
             _turnoService = turnoService;
             _tiendaService = tiendaService;
             _saleService = saleService;
+            _productService = productService;
         }
 
         public IActionResult Login()
@@ -73,6 +76,9 @@ namespace PointOfSale.Controllers
             listaPrecio = (int)tiendas.FirstOrDefault(_ => _.IdTienda == idTienda).IdListaPrecio.Value;
             await _turnoService.CheckTurnosViejos(idTienda);
             var turno = await _turnoService.GetTurno(idTienda, user_found.Name);
+
+
+            await _productService.BuscarVencimientosProductos(idTienda);
 
             List<Claim> claims = new List<Claim>()
                 {

@@ -12,7 +12,6 @@ namespace PointOfSale.Utilities.ViewComponents
     {
         private readonly INotificationService _notificationService;
         private readonly IMapper _mapper;
-
         public NotificacionesComponent(INotificationService notificationService, IMapper mapper)
         {
             _notificationService = notificationService;

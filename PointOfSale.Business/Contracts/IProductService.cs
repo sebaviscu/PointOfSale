@@ -11,8 +11,8 @@ namespace PointOfSale.Business.Contracts
     public interface IProductService
     {
         Task<List<Product>> List();
-        Task<Product> Add(Product entity, List<ListaPrecio> listaPrecios);
-        Task<Product> Edit(Product entity, List<ListaPrecio> listaPrecios);
+        Task<Product> Add(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos);
+        Task<Product> Edit(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos);
         Task<bool> Delete(int idProduct);
         Task<bool> EditMassive(string usuario, EditeMassiveProducts data, List<ListaPrecio> listaPrecios);
         Task<Product> Get(int idProducto);
@@ -24,5 +24,6 @@ namespace PointOfSale.Business.Contracts
         Task<Dictionary<int, string?>> ProductsTopByCategory(string category, string start, string end, int idTienda);
 
         Task<List<Product>> GetProductsByIds(List<int> listIds);
+        Task BuscarVencimientosProductos(int idTienda);
     }
 }
