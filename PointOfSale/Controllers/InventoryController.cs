@@ -339,5 +339,15 @@ namespace PointOfSale.Controllers
                 return StatusCode(StatusCodes.Status200OK, new { state = false, error = e.ToString() });
             }
         }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetVencimientos()
+        {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado, Roles.Empleado });
+
+            List<VMVencimiento> vmVencimientos = _mapper.Map<List<VMVencimiento>>(await _productService.GetProximosVencimientos(user.IdTienda));
+            return StatusCode(StatusCodes.Status200OK, new { data = vmVencimientos });
+        }
     }
 }

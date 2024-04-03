@@ -16,47 +16,75 @@
 <div class="row">
     <div class="col-sm-12">
 
+
         <div class="card card-default">
-            <div class="col-md-12">
-                <div class="card-header card-header-border-bottom">
-                    <div>
-                        <h4>Productos</h4>
+            <div class="card-header card-header-border-bottom">
+                <div>
+                    <h4>Productos</h4>
+                </div>
+                <div class="ms-auto bd-highlight">
+                    <button class="btn btn-primary btn-sm" id="btnEditAll" onclick="editAll()">Editar Seleccion</button>
+
+                    <button class="btn btn-info btn-sm ms-4 " id="btnEditAll" onclick="imprimirPrecios()">Imprimir Precio</button>
+
+                    <button class="btn btn-success btn-sm ms-4 " id="btnNewProduct">Nuevo Producto</button>
+                </div>
+            </div>
+
+            <div class="card-body" style="padding-bottom: 0px;">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table id="tbData" class="table table-striped" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>
+                                        <input type="checkbox" id="chkSelectAll">
+                                    </th>
+                                    <th>Foto</th>
+                                    <th>Descripción</th>
+                                    <th>Categoria</th>
+                                    <th>Proveedor</th>
+                                    <th>Precio (1)</th>
+                                    <th>Fecha Modific.</th>
+                                    <th>Estado</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
                     </div>
-                    <div class="ms-auto bd-highlight">
-                        <button class="btn btn-primary btn-sm" id="btnEditAll" onclick="editAll()">Editar Seleccion</button>
+                </div>
+            </div>
 
-                        <button class="btn btn-info btn-sm ms-4 " id="btnEditAll" onclick="imprimirPrecios()">Imprimir Precio</button>
 
-                        <button class="btn btn-success btn-sm ms-4 " id="btnNewProduct">Nuevo Producto</button>
+            <div class="card-body" style="padding-bottom: 0px;">
+                <div class="card-header card-header-border-bottom" style="padding-top: 0px;padding-left: 0px;">
+                    <div class="row col-md 3">
+                        <h4>Vencimientos</h4>
+                    </div>
+                </div>
+                <div class="card-body" style=" padding-left: 0px;padding-right: 0px;padding-top: 15px;">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table id="tbDataVencimientos" class="table table-striped" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Fecha Vencimiento</th>
+                                        <th>Producto</th>
+                                        <th>Fecha Elaboracion</th>
+                                        <th>Lote</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-sm-12">
-                    <table id="tbData" class="table table-striped" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>
-                                    <input type="checkbox" id="chkSelectAll">
-                                </th>
-                                <th>Foto</th>
-                                <th>Descripción</th>
-                                <th>Categoria</th>
-                                <th>Proveedor</th>
-                                <th>Precio (1)</th>
-                                <th>Fecha Modific.</th>
-                                <th>Estado</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+
     </div>
 </div>
 

@@ -12,11 +12,13 @@ namespace PointOfSale.Model
         {
 
         }
+
         public Notifications(Product product)
         {
             Descripcion = $"{product.Description} llegó al minimo de {product.Minimo} {product.TipoVenta} en stock.";
             IsActive = true;
             RegistrationDate = DateTime.Now;
+            Accion = "/Inventory/Products";
         }
 
         public Notifications(VentaWeb sale)
@@ -24,12 +26,15 @@ namespace PointOfSale.Model
             Descripcion = $"Tienes una nueva Venta Web con {sale.DetailSales.Count()} productos.";
             IsActive = true;
             RegistrationDate = DateTime.Now;
+            Accion = "/Shop/VentaWeb";
         }
+
         public Notifications(Vencimiento vencimiento)
         {
             Descripcion = $"Se ha llegado a la fecha de Vencimiento del Producto {vencimiento.Producto.Description}.";
             IsActive = true;
             RegistrationDate = DateTime.Now;
+            Accion = "/Inventory/Products";
         }
 
         public int IdNotifications { get; set; }
@@ -38,5 +43,6 @@ namespace PointOfSale.Model
         public DateTime RegistrationDate { get; set; }
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }
+        public string? Accion { get; set; }
     }
 }

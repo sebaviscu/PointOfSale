@@ -19,13 +19,16 @@ $(document).ready(function () {
         fetch(`/Notification/UpdateNotificacion?idNotificacion=${$(this)[0].id}`, {
             method: "PUT",
             headers: { 'Content-Type': 'application/json;charset=utf-8' }
-        }).then(response => {
-
-            window.location.href = "/Shop/VentaWeb";
-
-        }).catch((error) => {
-            $("#modalDataTurno").find("div.modal-content").LoadingOverlay("hide")
         })
+            .then(response => {
+                return response.ok ? response.json() : Promise.reject(response);
+            }).then(responseJson => {
+
+                window.location.href = responseJson.object.accion;
+
+            }).catch((error) => {
+                $("#modalDataTurno").find("div.modal-content").LoadingOverlay("hide")
+            })
     })
 });
 

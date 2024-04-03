@@ -309,10 +309,15 @@ namespace PointOfSale.Utilities.Automapper
                 .ForMember(user => user.FormaDePago, opt => opt.MapFrom(userEdit => userEdit.FormaDePago != null ? userEdit.FormaDePago.Description : string.Empty));
 
 
-            CreateMap<Notifications, VMNotifications>();
+            CreateMap<Notifications, VMNotifications>()
+                .ForMember(user => user.RegistrationDateString, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.ToString("dd/MM/yyyy HH:mm")))
+                .ForMember(user => user.ModificationDateString, opt => opt.MapFrom(userEdit => userEdit.ModificationDate.HasValue ? userEdit.ModificationDate.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty));
             CreateMap<VMNotifications, Notifications>();
 
-            CreateMap<Vencimiento, VMVencimiento>();
+            CreateMap<Vencimiento, VMVencimiento>()
+                .ForMember(user => user.Producto, opt => opt.MapFrom(userEdit => userEdit.Producto != null ? userEdit.Producto.Description : string.Empty))
+                .ForMember(user => user.FechaVencimientoString, opt => opt.MapFrom(userEdit => userEdit.FechaVencimiento.ToString("dd/MM/yyyy")))
+                .ForMember(user => user.FechaElaboracionString, opt => opt.MapFrom(userEdit => userEdit.FechaElaboracion.HasValue ? userEdit.FechaElaboracion.Value.ToString("dd/MM/yyyy") : string.Empty));
             CreateMap<VMVencimiento, Vencimiento>();
         }
     }

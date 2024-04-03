@@ -388,16 +388,23 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task BuscarVencimientosProductos(int idTienda)
+        public async Task ActivarNotificacionVencimientos(int idTienda)
         {
             var queryProducts = await _repositoryVencimientos.Query(p => p.FechaVencimiento.Date == DateTime.Now.Date && p.Notificar && p.IdTienda == idTienda);
             var vencimientos = queryProducts.Include(c => c.Producto).ToList();
 
             foreach (var v in vencimientos)
             {
+                v.Notificar = false;
+                await _repositoryVencimientos.Edit(v);
                 var n = new Notifications(v);
                 await _notificationService.Save(n);
             }
+        }
+        public async Task<List<Vencimiento>> GetProximosVencimientos(int idTienda)
+        {
+            var queryProducts = await _repositoryVencimientos.Query(p => p.IdTienda == idTienda);
+            return queryProducts.Include(c => c.Producto).ToList();
         }
 
 

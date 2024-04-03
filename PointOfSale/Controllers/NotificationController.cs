@@ -23,10 +23,6 @@ namespace PointOfSale.Controllers
         {
             return View();
         }
-        public IActionResult NotificationForId(int id)
-        {
-            return View();
-        }
 
         [HttpGet]
         public async Task<IActionResult> GetNotificaciones()

@@ -24,6 +24,7 @@ namespace PointOfSale.Business.Contracts
         Task<Dictionary<int, string?>> ProductsTopByCategory(string category, string start, string end, int idTienda);
 
         Task<List<Product>> GetProductsByIds(List<int> listIds);
-        Task BuscarVencimientosProductos(int idTienda);
+        Task ActivarNotificacionVencimientos(int idTienda);
+        Task<List<Vencimiento>> GetProximosVencimientos(int idTienda);
     }
 }

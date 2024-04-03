@@ -41,7 +41,8 @@ insert into Menu([description],idMenuParent,controller,pageAction,isActive) valu
 ('Turno',6,'Turno','Turno',1), --18
 ('Ventas Web',7,'Shop','VentaWeb',1), --19
 ('Shop',7,'Shop','Index',1), --20
-('Reporte Productos',4,'Reports','ProductsReport',1) --21
+('Reporte Productos',4,'Reports','ProductsReport',1), --21
+('Notificaciones',6,'Notification','Notification',1) --22
 go
 
 UPDATE Menu SET idMenuParent = idMenu where idMenuParent is null
@@ -77,7 +78,8 @@ INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (1,18,1),
 (1,19,1),
 (1,20,1),
-(1,21,1)
+(1,21,1),
+(1,22,1)
 
 --*empleado
 INSERT INTO RolMenu(idRol,idMenu,isActive) values

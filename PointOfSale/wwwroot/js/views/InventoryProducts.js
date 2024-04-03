@@ -165,7 +165,7 @@ $(document).ready(function () {
 
     $("#txtfVencimiento").datepicker({ dateFormat: 'dd/mm/yy' });
     $("#txtfElaborado").datepicker({ dateFormat: 'dd/mm/yy' });
-
+    cargarTablaVencimientos();
     removeLoading();
 })
 
@@ -680,3 +680,42 @@ $("#btnImprimir").on("click", function () {
     })
 
 })
+
+
+function cargarTablaVencimientos() {
+    
+    $("#tbDataVencimientos").DataTable({
+        responsive: true,
+        "ajax": {
+            "url": "/Inventory/GetVencimientos",
+            "type": "GET",
+            "datatype": "json"
+        },
+        "columns": [
+            {
+                "data": "idVencimiento",
+                "visible": false,
+                "searchable": false
+            },
+            { "data": "fechaVencimientoString" },
+            { "data": "producto" },
+            { "data": "fechaElaboracionString" },
+            { "data": "lote" }
+        ],
+        order: [[0, "desc"]],
+        dom: "Bfrtip",
+        buttons: [
+            {
+                text: 'Exportar Excel',
+                extend: 'excelHtml5',
+                title: '',
+                filename: 'Reporte Proveedors',
+                exportOptions: {
+                    columns: [1, 2]
+                }
+            }, 'pageLength'
+        ]
+    });
+
+
+}

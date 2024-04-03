@@ -78,7 +78,7 @@ namespace PointOfSale.Controllers
             var turno = await _turnoService.GetTurno(idTienda, user_found.Name);
 
 
-            await _productService.BuscarVencimientosProductos(idTienda);
+            await _productService.ActivarNotificacionVencimientos(idTienda);
 
             List<Claim> claims = new List<Claim>()
                 {
