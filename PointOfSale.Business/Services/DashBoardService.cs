@@ -15,6 +15,8 @@ namespace PointOfSale.Business.Services
 {
     public class DashBoardService : IDashBoardService
     {
+        public DateTime DateTimeNowArg => TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
+
         private readonly ISaleRepository _repositorySale;
         private readonly IGenericRepository<DetailSale> _repositoryDetailSale;
         private readonly IGenericRepository<ProveedorMovimiento> _proveedorMovimiento;
@@ -37,7 +39,7 @@ namespace PointOfSale.Business.Services
         public async Task<GraficoVentasConComparacion> GetSales(TypeValuesDashboard typeValues, int idTienda, DateTime dateStart)
         {
             var resultados = new GraficoVentasConComparacion();
-            var dateCompare = DateTime.Now;
+            var dateCompare = DateTimeNowArg;
 
             try
             {
@@ -94,7 +96,7 @@ namespace PointOfSale.Business.Services
             Dictionary<string, decimal> resultado = query2
                         .Include(v => v.Proveedor)
                         .Where(_ => _.RegistrationDate.Date >= start.Date && _.RegistrationDate.Date < end.Date
-                            && _.idTienda == idTienda 
+                            && _.idTienda == idTienda
                             && _.EstadoPago.Value == EstadoPago.Pagado)
                         .GroupBy(v => v.Proveedor.Nombre).OrderByDescending(g => g.Sum(_ => _.Importe))
                         .Select(dv => new { descripcion = dv.Key, total = dv.Sum(_ => _.Importe) })
@@ -346,6 +348,8 @@ namespace PointOfSale.Business.Services
 
         private static void FechasParaQuery(TypeValuesDashboard typeValues, DateTime dateStart, out DateTime dateCompare, out DateTime start)
         {
+            DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
+
             switch (typeValues)
             {
                 case TypeValuesDashboard.Dia:
@@ -367,8 +371,8 @@ namespace PointOfSale.Business.Services
                     break;
 
                 default:
-                    dateCompare = DateTime.Now;
-                    start = DateTime.Now;
+                    dateCompare = DateTimeNowArg;
+                    start = DateTimeNowArg;
                     break;
             }
         }

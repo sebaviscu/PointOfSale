@@ -9,16 +9,25 @@ namespace PointOfSale.Model
 {
     public class ListaPrecio
     {
+        public DateTime DateTimeNowArg => TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
+
         public ListaPrecio()
         {
-                
+
         }
+
+        public ListaPrecio(ListaDePrecio listaDePrecio)
+        {
+            Lista = listaDePrecio;
+            RegistrationDate = DateTimeNowArg;
+        }
+
         public ListaPrecio(int idProd, ListaDePrecio listaDePrecio, decimal precio, int porcentajeProfit)
         {
             IdProducto = idProd;
             Lista = listaDePrecio;
             Precio = precio;
-            RegistrationDate = DateTime.Now;
+            RegistrationDate = DateTimeNowArg;
             PorcentajeProfit = porcentajeProfit;
         }
 

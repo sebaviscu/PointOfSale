@@ -15,6 +15,7 @@ namespace PointOfSale.Business.Services
 {
     public class ProductService : IProductService
     {
+        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
         private readonly IGenericRepository<Product> _repository;
         private readonly IGenericRepository<ListaPrecio> _repositoryListaPrecios;
         private readonly IGenericRepository<DetailSale> _repositoryDetailSale;
@@ -113,6 +114,28 @@ namespace PointOfSale.Business.Services
             }
         }
 
+        public async Task<Product> Add(Product entity)
+        {
+            Product product_exists = await _repository.Get(p => p.BarCode != string.Empty && p.BarCode == entity.BarCode);
+
+            if (product_exists != null)
+                throw new TaskCanceledException("El barcode ya existe");
+
+            try
+            {
+                Product product_created = await _repository.Add(entity);
+
+                if (product_created.IdProduct == 0)
+                    throw new TaskCanceledException("Error al crear producto");
+
+                return product_created;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         public async Task<Product> Edit(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos)
         {
             Product product_exists = await _repository.Get(p => (p.BarCode != string.Empty && p.BarCode == entity.BarCode) && p.IdProduct != entity.IdProduct);
@@ -137,7 +160,7 @@ namespace PointOfSale.Business.Services
                 if (entity.Photo != null && entity.Photo.Length > 0)
                     product_edit.Photo = entity.Photo;
                 product_edit.IsActive = entity.IsActive;
-                product_edit.ModificationDate = DateTime.Now;
+                product_edit.ModificationDate = DateTimeNowArg;
                 product_edit.ModificationUser = entity.ModificationUser;
                 product_edit.IdProveedor = entity.IdProveedor;
                 product_edit.TipoVenta = entity.TipoVenta;
@@ -180,7 +203,7 @@ namespace PointOfSale.Business.Services
                     {
                         i.Precio = nuevoPrecio.Precio;
                         i.PorcentajeProfit = nuevoPrecio.PorcentajeProfit != 0 ? nuevoPrecio.PorcentajeProfit : i.PorcentajeProfit;
-                        i.RegistrationDate = DateTime.Now;
+                        i.RegistrationDate = DateTimeNowArg;
 
                         bool response = await _repositoryListaPrecios.Edit(i);
                         if (!response)
@@ -255,7 +278,7 @@ namespace PointOfSale.Business.Services
                     product_edit.IsActive = data.IsActive;
                     product_edit.Comentario = data.Comentario;
                     product_edit.ModificationUser = user;
-                    product_edit.ModificationDate = DateTime.Now;
+                    product_edit.ModificationDate = DateTimeNowArg;
 
                     bool response = await _repository.Edit(product_edit);
                     if (!response)
@@ -390,7 +413,7 @@ namespace PointOfSale.Business.Services
 
         public async Task ActivarNotificacionVencimientos(int idTienda)
         {
-            var queryProducts = await _repositoryVencimientos.Query(p => p.FechaVencimiento.Date == DateTime.Now.Date && p.Notificar && p.IdTienda == idTienda);
+            var queryProducts = await _repositoryVencimientos.Query(p => p.FechaVencimiento.Date == DateTimeNowArg.Date && p.Notificar && p.IdTienda == idTienda);
             var vencimientos = queryProducts.Include(c => c.Producto).ToList();
 
             foreach (var v in vencimientos)

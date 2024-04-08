@@ -51,6 +51,7 @@ namespace PointOfSale.Model
             Sueldos = 0,
             Fijo = 1,
             Variable = 2,
+            Servicios = 3
         }
         public enum TipoFactura
         {

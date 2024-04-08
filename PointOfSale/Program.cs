@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Services;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Data.DBContext;
 using PointOfSale.Data.Repository;
 using PointOfSale.Utilities.Automapper;
@@ -36,7 +37,7 @@ public class Program
             .AddCookie(option =>
             {
                 option.LoginPath = "/Access/Login";
-                option.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                option.ExpireTimeSpan = TimeSpan.FromHours(3);
             });
 
 
@@ -69,6 +70,7 @@ public class Program
         builder.Services.AddScoped<IShopService, ShopService>();
         builder.Services.AddScoped<IAuditoriaService, AuditoriaService>();
         builder.Services.AddScoped<INotificationService, NotificationService>();
+        builder.Services.AddScoped<IImportarExcelService, ImportarExcelService>();
 
         //builder.Services.AddAFIPConfiguration(x =>
         //{

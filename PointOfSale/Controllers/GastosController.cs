@@ -41,7 +41,7 @@ namespace PointOfSale.Controllers
             GenericResponse<VMGastos> gResponse = new GenericResponse<VMGastos>();
             try
             {
-                model.RegistrationDate = DateTime.Now;
+                model.RegistrationDate = DateTimeNowArg;
                 model.RegistrationUser = user.UserName;
                 var gasto = _mapper.Map<Gastos>(model);
                 gasto.IdTienda = user.IdTienda;

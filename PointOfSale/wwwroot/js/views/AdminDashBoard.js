@@ -243,8 +243,9 @@ function SetTopSeler(typeValues, idCategory) {
     const tableBody = document.querySelector("#tableTopSeller");
     tableBody.innerHTML = ''
     $("#chartTopSeller").LoadingOverlay("show")
+    let dateFilter = $("#txtDay").val();
 
-    fetch(`/Admin/GetSalesByTypoVenta?typeValues=${typeValues}&idCategoria=${idCategory}`, {
+    fetch(`/Admin/GetSalesByTypoVenta?typeValues=${typeValues}&idCategoria=${idCategory}&dateFilter=${dateFilter}`, {
         method: "GET"
     })
         .then(response => {
@@ -405,10 +406,10 @@ function SetGraficoGastos(typeValues, gastosPorTipo) {
         }
     }
 
-    //chartNew.updateOptions({
-    //    series: gastosPorTipo.map((item) => { return item.total }),
-    //    labels: gastosPorTipo.map((item) => { return item.descripcion })
-    //})
+    chartNew.updateOptions({
+        series: gastosPorTipo.map((item) => { return item.total }),
+        labels: gastosPorTipo.map((item) => { return item.descripcion })
+    })
 }
 
 function SetTipoVentas(tipoVentas) {

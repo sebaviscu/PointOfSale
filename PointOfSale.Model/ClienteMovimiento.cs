@@ -9,13 +9,14 @@ namespace PointOfSale.Model
 {
     public partial class ClienteMovimiento
     {
+        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
         public ClienteMovimiento(int idCliente, decimal total, string registrationUser,int idTienda, int? idSale)
         {
             IdCliente = idCliente;
             IdSale = idSale;
             Total = total;
             IdTienda= idTienda;
-            RegistrationDate = DateTime.Now;
+            RegistrationDate = DateTimeNowArg;
             RegistrationUser = registrationUser;
         }
 

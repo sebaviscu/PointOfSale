@@ -5,13 +5,15 @@ namespace PointOfSale.Models
 {
     public class VMShop
     {
+        public DateTime DateTimeNowArg => TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
+
         public VMShop(VMTienda tienda)
         {
             Tienda = tienda;
 
             Horarios = $"· Lunes: {tienda.Lunes} \n· Martes: {tienda.Martes} \n· Miercoles: {tienda.Miercoles} \n· Jueves: {tienda.Jueves}\n· Viernes: {tienda.Viernes}\n· Sabado: {tienda.Sabado}\n· Domingo: {tienda.Domingo}\n· Feriados: {tienda.Feriado}";
 
-            int day = (int)DateTime.Now.DayOfWeek;
+            int day = (int)DateTimeNowArg.DayOfWeek;
             switch (day)
             {
                 case 1:

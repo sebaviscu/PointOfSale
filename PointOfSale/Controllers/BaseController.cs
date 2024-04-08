@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PointOfSale.Business.Utilities;
+using System;
 using System.Security.Claims;
 using static PointOfSale.Model.Enum;
 
@@ -7,6 +8,8 @@ namespace PointOfSale.Controllers
 {
     public class BaseController : Controller
     {
+        public DateTime DateTimeNowArg => TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
+
         public (bool Resultado, string UserName, int IdTienda, ListaDePrecio IdListaPrecios) ValidarAutorizacion(Roles[] rolesPermitidos)
         {
             var claimuser = HttpContext.User;

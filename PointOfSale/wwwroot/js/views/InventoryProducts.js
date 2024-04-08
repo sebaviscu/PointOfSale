@@ -228,7 +228,7 @@ const openModal = (model = BASIC_MODEL) => {
     $("#cboCategory").val(model.idCategory == 0 ? $("#cboCategory option:first").val() : model.idCategory);
     $("#txtQuantity").val(model.quantity);
     $("#txtMinimo").val(model.minimo);
-    $("#txtPrice").val(model.price.replace(/,/g, '.'));
+    $("#txtPrice").val(model.price != 0 ? model.price.replace(/,/g, '.') : '');
     $("#txtPriceWeb").val(model.priceWeb);
     $("#txtProfit").val(model.porcentajeProfit);
     $("#txtCosto").val(model.costPrice);
@@ -272,11 +272,21 @@ const openModal = (model = BASIC_MODEL) => {
 }
 
 function addVencimientoTable(data) {
-    var fechaCompleta = data.fechaVencimiento;
-    var fechaVencimiento = fechaCompleta.split('T')[0].replace(/-/g, '/');;
+    var fechaElaboracion = "";
+    var fechaVencimiento = "";
+    var fechaCompleta = "";
 
-    fechaCompleta = data.fechaElaboracion;
-    var fechaElaboracion = fechaCompleta.split('T')[0].replace(/-/g, '/');;
+    if (data.fechaVencimiento != null) {
+
+        fechaCompleta = data.fechaVencimiento;
+        fechaVencimiento = fechaCompleta.split('T')[0].replace(/-/g, '/');
+    }
+
+    if (data.fechaElaboracion != null) {
+
+        fechaCompleta = data.fechaElaboracion;
+        fechaElaboracion = fechaCompleta.split('T')[0].replace(/-/g, '/');
+    }
 
     $("#tbVencimientos tbody").append(
         $("<tr>").append(
@@ -286,8 +296,8 @@ function addVencimientoTable(data) {
             $("<td>")
                 .append(
                     $("<input>").attr("type", "checkbox").prop("checked", data.notificar)
-                        .data("estado-inicial", data.notificar) 
-             ),
+                        .data("estado-inicial", data.notificar)
+                ),
             $("<td>").append(
                 $("<button>").addClass("btn btn-danger btn-sm").append(
                     $("<i>").addClass("mdi mdi-trash-can")
@@ -353,6 +363,102 @@ $("#tbVencimientos tbody").on("click", ".btn-danger", function () {
     }
 })
 
+$("#bntModalImportar").on("click", function () {
+    $("#modalImpprtar").modal("show")
+})
+
+$("#btnImportar").on("click", function () {
+    swal({
+        title: "¿Está seguro?",
+        text: `Se importaran ${cantProductosImportar} Productos`,
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonClass: "btn-danger",
+        confirmButtonText: "Si, IMPORTAR",
+        cancelButtonText: "No, cancelar",
+        closeOnConfirm: false,
+        closeOnCancel: true
+    },
+        function (respuesta) {
+
+            if (respuesta) {
+                let ruta = $("#txtRutaImportar").val();
+
+                $(".showSweetAlert").LoadingOverlay("show")
+
+                fetch(`/Inventory/ImportarProductos?path=${ruta}`, {
+                    method: "GET"
+                }).then(response => {
+                    $(".showSweetAlert").LoadingOverlay("hide")
+                    return response.ok ? response.json() : Promise.reject(response);
+                }).then(responseJson => {
+                    if (responseJson.state) {
+                        swal("Exitoso!", "Se han importado " + cantProductosImportar + " filas", "success");
+
+                        location.reload();
+                    } else {
+                        swal("Lo sentimos", responseJson.message, "error");
+                    }
+                })
+                    .catch((error) => {
+                        $(".showSweetAlert").LoadingOverlay("hide")
+                    })
+
+
+            }
+        });
+
+})
+
+var cantProductosImportar = 0;
+
+$("#btnCargarImportar").on("click", function () {
+    $("#btnCargarImportar").LoadingOverlay("show")
+
+    let ruta = $("#txtRutaImportar").val();
+
+    fetch(`/Inventory/CargarProductos?path=${ruta}`, {
+        method: "GET"
+    }).then(response => {
+        $("#btnCargarImportar").LoadingOverlay("hide")
+        return response.ok ? response.json() : Promise.reject(response);
+    }).then(responseJson => {
+        if (responseJson.state) {
+            cantProductosImportar = responseJson.object.length;
+            //swal("Exitoso!", "Se cargaron " + cantProductosImportar + " filas", "success");
+            $("#lblCantidadProds").html("Cantidad de Productos: <strong> " + cantProductosImportar + ".</strong>");
+
+            let i = 0;
+            responseJson.object.forEach((product) => {
+                $("#tableImportarProductos tbody").append(
+                    $("<tr>").append(
+                        $("<td>").text(++i),
+                        $("<td>").text(product.description),
+                        $("<td>").text(product.barCode),
+                        $("<td>").text(product.tipoVenta == '1' ? 'Kg' : 'U'),
+                        $("<td>").text(product.costPrice),
+                        $("<td>").text(product.porcentajeProfit),
+                        $("<td>").text(product.price),
+                        $("<td>").text(product.porcentajeProfit2),
+                        $("<td>").text(product.precio2),
+                        $("<td>").text(product.porcentajeProfit3),
+                        $("<td>").text(product.precio3),
+                        $("<td>").text(product.priceWeb),
+                        $("<td>").text(product.nameProveedor),
+                        $("<td>").text(product.nameCategory)
+                    )
+                )
+            });
+
+        } else {
+            swal("Lo sentimos", responseJson.message, "error");
+        }
+    })
+        .catch((error) => {
+            $("#btnCargarImportar").LoadingOverlay("hide")
+        })
+
+})
 
 $("#btnNewProduct").on("click", function () {
     openModal()
@@ -683,9 +789,13 @@ $("#btnImprimir").on("click", function () {
 
 
 function cargarTablaVencimientos() {
-    
+
     $("#tbDataVencimientos").DataTable({
-        responsive: true,
+        createdRow: function (row, data, dataIndex) {
+            if (data.producto != 'Aceite de oliva') {
+                $(row).addClass('redClass');
+            }
+        },
         "ajax": {
             "url": "/Inventory/GetVencimientos",
             "type": "GET",

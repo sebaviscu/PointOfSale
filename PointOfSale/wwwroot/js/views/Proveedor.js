@@ -3,7 +3,7 @@ let rowSelected;
 var tableDataMovimientos;
 let tableDataGastos;
 
-const monthNames = ["Ene", "Feb", "Mar", "Apr", "May", "Jun",
+const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun",
     "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
 ];
 
@@ -253,6 +253,7 @@ $("#btnSave").on("click", function () {
         return;
     }
 
+
     const model = structuredClone(BASIC_MODEL);
     model["nombre"] = $("#txtNombre").val();
     model["direccion"] = $("#txtDireccion").val();
@@ -313,13 +314,19 @@ $("#btnSave").on("click", function () {
 })
 
 $("#btnSavePago").on("click", function () {
-    const inputs = $("input.input-validate.pagoValid").serializeArray();
+    const inputs = $("input.input-validate").serializeArray();
     const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
 
     if (inputs_without_value.length > 0) {
         const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
         toastr.warning(msg, "");
         $(`input[name="${inputs_without_value[0].name}"]`).focus();
+        return;
+    }
+
+    if ($("#cboProveedor").val() == '') {
+        const msg = `Debe seleccionar un proveedor`;
+        toastr.warning(msg, "");
         return;
     }
 

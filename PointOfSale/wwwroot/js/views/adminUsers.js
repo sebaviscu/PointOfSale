@@ -111,8 +111,11 @@ const openModal = (model = BASIC_MODEL) => {
     $("#cboState").val(model.isActive);
     $("#txtPassWord").val(model.password);
     $("#cboTiendas").val(tienda);
-    $("#txtPhoto").val("");
-    $("#imgUser").attr("src", `data:image/png;base64,${model.photoBase64}`);
+    //$("#txtPhoto").val("");
+    //$("#imgUser").attr("src", `data:image/png;base64,${model.photoBase64}`);
+
+    var rol = $('#cboRol').val();
+    $("#cboTiendas").prop("disabled", rol == '1');
 
     if (model.modificationUser === null)
         document.getElementById("divModif").style.display = 'none';
@@ -130,6 +133,14 @@ const openModal = (model = BASIC_MODEL) => {
 
 $("#btnNewUser").on("click", function () {
     openModal()
+})
+
+$('#cboRol').change(function () {
+    var rol = $(this).val();
+
+    $("#cboTiendas").val(rol == '1' ? '' : null);
+    $("#cboTiendas").prop("disabled", rol == '1');
+
 })
 
 $("#btnSave").on("click", function () {
@@ -165,10 +176,10 @@ $("#btnSave").on("click", function () {
     model["password"] = $("#txtPassWord").val();
     model["isActive"] = $("#cboState").val();
     model["idTienda"] = tienda;
-    const inputPhoto = document.getElementById('txtPhoto');
+    //const inputPhoto = document.getElementById('txtPhoto');
 
     const formData = new FormData();
-    formData.append('photo', inputPhoto.files[0]);
+    //formData.append('photo', inputPhoto.files[0]);
     formData.append('model', JSON.stringify(model));
 
     $("#modalData").find("div.modal-content").LoadingOverlay("show")

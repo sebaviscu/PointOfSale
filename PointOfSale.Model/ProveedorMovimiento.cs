@@ -4,11 +4,12 @@ namespace PointOfSale.Model
 {
     public class ProveedorMovimiento
     {
+        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
         public ProveedorMovimiento(int idProveedor, decimal importe, string registrationUser)
         {
             IdProveedor = idProveedor;
             Importe = importe;
-            RegistrationDate = DateTime.Now;
+            RegistrationDate = DateTimeNowArg;
             RegistrationUser = registrationUser;
         }
 

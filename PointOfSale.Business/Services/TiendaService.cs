@@ -11,6 +11,7 @@ namespace PointOfSale.Business.Services
 {
     public class TiendaService : ITiendaService
     {
+        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
         private readonly IGenericRepository<Tienda> _repository;
         public TiendaService(IGenericRepository<Tienda> repository)
         {
@@ -88,7 +89,7 @@ namespace PointOfSale.Business.Services
                 Tienda_found.Principal = entity.Principal;
                 Tienda_found.IdListaPrecio = entity.IdListaPrecio;
 
-                Tienda_found.ModificationDate = DateTime.Now;
+                Tienda_found.ModificationDate = DateTimeNowArg;
                 Tienda_found.ModificationUser = entity.ModificationUser;
 
                 var list = await List();

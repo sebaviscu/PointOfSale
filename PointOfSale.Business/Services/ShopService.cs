@@ -7,6 +7,7 @@ namespace PointOfSale.Business.Services
 {
     public class ShopService : IShopService
     {
+        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
         private readonly IGenericRepository<VentaWeb> _repository;
         private readonly ITiendaService _tiendaService;
         private readonly IProductService _productService;
@@ -39,7 +40,7 @@ namespace PointOfSale.Business.Services
                 var VentaWeb_found = query.Include(_ => _.DetailSales).First();
 
                 VentaWeb_found.Estado = entity.Estado;
-                VentaWeb_found.ModificationDate = DateTime.Now;
+                VentaWeb_found.ModificationDate = DateTimeNowArg;
                 VentaWeb_found.ModificationUser = entity.ModificationUser;
 
                 if(entity.Estado == Model.Enum.EstadoVentaWeb.Finalizada)

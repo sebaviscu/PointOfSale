@@ -13,6 +13,7 @@ namespace PointOfSale.Business.Services
 {
     public class ProveedorService : IProveedorService
     {
+        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
         private readonly IGenericRepository<Proveedor> _repository;
         private readonly IGenericRepository<ProveedorMovimiento> _proveedorMovimiento;
 
@@ -37,7 +38,7 @@ namespace PointOfSale.Business.Services
 
             try
             {
-                entity.RegistrationDate = DateTime.Now;
+                entity.RegistrationDate = DateTimeNowArg;
                 Proveedor Proveedor_created = await _repository.Add(entity);
 
                 if (Proveedor_created.IdProveedor == 0)
@@ -81,7 +82,7 @@ namespace PointOfSale.Business.Services
                 Proveedor_edit.Cuil = entity.Cuil;
                 Proveedor_edit.Telefono = entity.Telefono;
                 Proveedor_edit.Direccion = entity.Direccion;
-                Proveedor_edit.ModificationDate = DateTime.Now;
+                Proveedor_edit.ModificationDate = DateTimeNowArg;
                 Proveedor_edit.ModificationUser = entity.ModificationUser;
 
                 bool response = await _repository.Edit(Proveedor_edit);

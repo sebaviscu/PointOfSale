@@ -6,6 +6,7 @@ namespace PointOfSale.Business.Services
 {
     public class NotificationService : INotificationService
     {
+        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
         private readonly IGenericRepository<Notifications> _repository;
 
         public NotificationService(IGenericRepository<Notifications> genericRepository)
@@ -29,7 +30,7 @@ namespace PointOfSale.Business.Services
         {
             try
             {
-                notifications.RegistrationDate = DateTime.Now;
+                notifications.RegistrationDate = DateTimeNowArg;
                 var not = await _repository.Add(notifications);
                 if (not.IdNotifications == 0)
                     throw new TaskCanceledException("La Notificacion no se pudo crear.");
@@ -47,7 +48,7 @@ namespace PointOfSale.Business.Services
         public async Task<Notifications> Edit(int idNotificacion, string modificationUser)
         {
             Notifications Notifications_found = await _repository.Get(c => c.IdNotifications == idNotificacion);
-            Notifications_found.ModificationDate = DateTime.Now;
+            Notifications_found.ModificationDate = DateTimeNowArg;
             Notifications_found.ModificationUser = modificationUser;
             Notifications_found.IsActive = false;
 
@@ -62,7 +63,7 @@ namespace PointOfSale.Business.Services
             var NotificationsAll = await _repository.Query(c => c.IsActive);
             foreach (var Notifications_found in NotificationsAll)
             {
-                Notifications_found.ModificationDate = DateTime.Now;
+                Notifications_found.ModificationDate = DateTimeNowArg;
                 Notifications_found.ModificationUser = modificationUser;
                 Notifications_found.IsActive = false;
 

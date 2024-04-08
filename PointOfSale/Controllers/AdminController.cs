@@ -314,7 +314,7 @@ namespace PointOfSale.Controllers
 
         public DateTime SetDate(TypeValuesDashboard typeValues, string dateFilter)
         {
-            var dateActual = DateTime.Now;
+            var dateActual = DateTimeNowArg;
 
             if (dateFilter != null)
             {
@@ -352,7 +352,7 @@ namespace PointOfSale.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetSalesByTypoVenta(TypeValuesDashboard typeValues, string idCategoria)
+        public async Task<IActionResult> GetSalesByTypoVenta(TypeValuesDashboard typeValues, string idCategoria, string dateFilter)
         {
             ValidarAutorizacion(new Roles[] { Roles.Administrador });
             var tiendaId = Convert.ToInt32(((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value);
@@ -360,7 +360,13 @@ namespace PointOfSale.Controllers
             var ProductListWeek = new List<VMProductsWeek>();
             var prods = await _productService.List();
             int i = 0;
-            var dateActual = DateTime.Now;
+            var dateActual = DateTimeNowArg;
+            if (dateFilter != null)
+            {
+                var dateSplit = dateFilter.Split('/');
+                dateActual = new DateTime(Convert.ToInt32(dateSplit[2]), Convert.ToInt32(dateSplit[1]), Convert.ToInt32(dateSplit[0]), 0, 0, 0);
+            }
+
             foreach (KeyValuePair<string, string?> item in await _dashboardService.ProductsTopByCategory(typeValues, idCategoria, tiendaId, dateActual))
             {
                 var prod = prods.FirstOrDefault(_ => _.Description == item.Key);
@@ -777,7 +783,7 @@ namespace PointOfSale.Controllers
             try
             {
                 model.RegistrationUser = user.UserName;
-                model.RegistrationDate = DateTime.Now;
+                model.RegistrationDate = DateTimeNowArg;
                 model.idTienda = user.IdTienda;
                 var usuario_creado = await _proveedorService.Add(_mapper.Map<ProveedorMovimiento>(model));
 
@@ -931,7 +937,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPromocionesActivas()
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado, Roles.Empleado });
 
             var listPromocion = _mapper.Map<List<VMPromocion>>(await _promocionService.Activas(user.IdTienda));
             return StatusCode(StatusCodes.Status200OK, new { data = listPromocion });

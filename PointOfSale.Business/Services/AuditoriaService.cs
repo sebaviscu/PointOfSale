@@ -13,6 +13,8 @@ namespace PointOfSale.Business.Services
 {
     public class AuditoriaService : IAuditoriaService
     {
+        public DateTime DateTimeNowArg => TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
+
         private readonly IGenericRepository<AuditoriaModificaciones> _repository;
 
         public AuditoriaService(IGenericRepository<AuditoriaModificaciones> repository)
@@ -28,7 +30,7 @@ namespace PointOfSale.Business.Services
             a.Descripcion = antes.Description.ToUpper();
             a.EntidadAntes = JsonSerializer.Serialize(new ACategoria(antes));
             a.EntidadDespues = JsonSerializer.Serialize(new ACategoria(despues));
-            a.ModificationDate = DateTime.Now;
+            a.ModificationDate = DateTimeNowArg;
             a.ModificationUser = despues.ModificationUser.ToUpper();
 
             _repository.Add(a);
@@ -42,7 +44,7 @@ namespace PointOfSale.Business.Services
             a.Descripcion = antes.Name.ToUpper();
             a.EntidadAntes = JsonSerializer.Serialize(new AUser(antes));
             a.EntidadAntes = JsonSerializer.Serialize(new AUser(Despues));
-            a.ModificationDate = DateTime.Now;
+            a.ModificationDate = DateTimeNowArg;
             a.ModificationUser = Despues.ModificationUser.ToUpper();
 
             _repository.Add(a);
@@ -57,7 +59,7 @@ namespace PointOfSale.Business.Services
             a.Descripcion = antes.Nombre.ToUpper();
             a.EntidadAntes = JsonSerializer.Serialize(new AVentaWeb(antes));
             a.EntidadDespues = JsonSerializer.Serialize(new AVentaWeb(despues));
-            a.ModificationDate = DateTime.Now;
+            a.ModificationDate = DateTimeNowArg;
             a.ModificationUser = despues.ModificationUser.ToUpper();
 
             _repository.Add(a);
@@ -70,7 +72,7 @@ namespace PointOfSale.Business.Services
             a.Descripcion = antes.Description.ToUpper();
             a.EntidadAntes = JsonSerializer.Serialize(new ATipoDocumentoVenta(antes));
             a.EntidadDespues = JsonSerializer.Serialize(new ATipoDocumentoVenta(despues));
-            a.ModificationDate = DateTime.Now;
+            a.ModificationDate = DateTimeNowArg;
             a.ModificationUser = string.Empty; /*despues.ModificationUser.ToUpper();*/
 
             _repository.Add(a);

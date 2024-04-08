@@ -42,13 +42,13 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTurnoActual()
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            //ValidarAutorizacion(new Roles[] { Roles.Administrador });
             var tiendaId = Convert.ToInt32(((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value);
 
             var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurnoActualConVentas(tiendaId));
 
             var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
-            var dateActual = DateTime.Now;
+            var dateActual = DateTimeNowArg;
             foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, tiendaId, dateActual))
             {
                 VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
@@ -71,7 +71,7 @@ namespace PointOfSale.Controllers
             var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurno(idturno));
 
             var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
-            var dateActual = DateTime.Now;
+            var dateActual = DateTimeNowArg;
             foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, tiendaId, dateActual))
             {
                 VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()

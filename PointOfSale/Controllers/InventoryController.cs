@@ -2,10 +2,14 @@
 using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Differencing;
 using Newtonsoft.Json;
+using NuGet.Configuration;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Reportes;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
+using PointOfSale.Model.Auditoria;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
 using System.Globalization;
@@ -22,14 +26,16 @@ namespace PointOfSale.Controllers
         private readonly ISaleService _saleService;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _env;
+        private readonly IImportarExcelService _excelService;
 
-        public InventoryController(ICategoryService categoryService, IProductService productService, IMapper mapper, ISaleService saleService, IWebHostEnvironment env)
+        public InventoryController(ICategoryService categoryService, IProductService productService, IMapper mapper, ISaleService saleService, IWebHostEnvironment env, IImportarExcelService excelService)
         {
             _categoryService = categoryService;
             _productService = productService;
             _mapper = mapper;
             _saleService = saleService;
             _env = env;
+            _excelService = excelService;
         }
 
         public IActionResult Categories()
@@ -179,7 +185,7 @@ namespace PointOfSale.Controllers
                 foreach (var v in vmListVencimientos)
                 {
                     v.IdTienda = user.IdTienda;
-                    v.RegistrationDate = DateTime.Now;
+                    v.RegistrationDate = DateTimeNowArg;
                     v.RegistrationUser = user.UserName;
                 }
 
@@ -237,10 +243,10 @@ namespace PointOfSale.Controllers
                     new ListaPrecio(vmProduct.IdProduct, ListaDePrecio.Lista_3, Convert.ToDecimal(vmProduct.Precio3),Convert.ToInt32(vmProduct.PorcentajeProfit3))
                 };
 
-                foreach (var v in vmListVencimientos.Where(_=>_.IdVencimiento == 0))
+                foreach (var v in vmListVencimientos.Where(_ => _.IdVencimiento == 0))
                 {
                     v.IdTienda = user.IdTienda;
-                    v.RegistrationDate = DateTime.Now;
+                    v.RegistrationDate = DateTimeNowArg;
                     v.RegistrationUser = user.UserName;
                 }
                 Product product_edited = await _productService.Edit(_mapper.Map<Product>(vmProduct), listPrecios, _mapper.Map<List<Vencimiento>>(vmListVencimientos));
@@ -348,6 +354,67 @@ namespace PointOfSale.Controllers
 
             List<VMVencimiento> vmVencimientos = _mapper.Map<List<VMVencimiento>>(await _productService.GetProximosVencimientos(user.IdTienda));
             return StatusCode(StatusCodes.Status200OK, new { data = vmVencimientos });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CargarProductosAsync(string path)
+        {
+            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+
+            GenericResponse<List<VMProduct>> gResponse = new GenericResponse<List<VMProduct>>();
+            try
+            {
+                var (exito, products) = await _excelService.ImportarProductoAsync(path);
+
+                var vmProduct = _mapper.Map<List<VMProduct>>(products);
+
+                gResponse.State = exito;
+                gResponse.Object = vmProduct;
+
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ImportarProductosAsync(string path)
+        {
+            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+
+            GenericResponse<List<VMProduct>> gResponse = new GenericResponse<List<VMProduct>>();
+            try
+            {
+                var (exito, products) = await _excelService.ImportarProductoAsync(path);
+
+                foreach (var p in products)
+                {
+                    try
+                    {
+                        Product product_created = await _productService.Add(p);
+                    }
+                    catch (Exception e)
+                    {
+                        exito = false;
+                        gResponse.Message = e.Message;
+                        throw;
+                    }
+                }
+
+                gResponse.State = exito;
+
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
     }
 }

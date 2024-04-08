@@ -1,7 +1,7 @@
 ﻿let tableData;
 let rowSelected;
 var tipoGastosList = [];
-const monthNames = ["Ene", "Feb", "Mar", "Apr", "May", "Jun",
+const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun",
     "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
 ];
 
@@ -204,6 +204,12 @@ $("#btnSave").on("click", function () {
         return;
     }
 
+    if ($("#cboTipoDeGastoEnGasto").val() == null) {
+        const msg = `Debe completar el tipo de gasto`;
+        toastr.warning(msg, "");
+        return;
+    }
+
     const model = structuredClone(BASIC_MODEL);
     model["idGastos"] = parseInt($("#txtIdGastos").val());
     model["idTipoGasto"] = $("#cboTipoDeGastoEnGasto").val();
@@ -231,6 +237,7 @@ $("#btnSave").on("click", function () {
         }).then(responseJson => {
 
             if (responseJson.state) {
+                swal("Exitoso!", "Guardado con éxito", "success");
 
                 location.reload()
 
@@ -252,7 +259,7 @@ $("#btnSave").on("click", function () {
         }).then(responseJson => {
             if (responseJson.state) {
                 location.reload()
-
+                swal("Exitoso!", "Modificado con éxito", "success");
 
             } else {
                 swal("Lo sentimos", responseJson.message, "error");
