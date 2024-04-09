@@ -140,7 +140,7 @@ $(document).ready(function () {
                 title: '',
                 filename: 'Reporte Promociones',
                 exportOptions: {
-                    columns: [1, 2]
+                    columns: [1, 2,3]
                 }
             }, 'pageLength'
         ]

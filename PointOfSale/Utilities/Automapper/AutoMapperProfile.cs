@@ -88,7 +88,7 @@ namespace PointOfSale.Utilities.Automapper
             )
             .ForMember(destiny =>
                 destiny.PriceString,
-                opt => opt.MapFrom(source => "$" + source.Price.Value.ToString("F2"))
+                opt => opt.MapFrom(source => "$" + source.Price)
             ).ForMember(destiny =>
                 destiny.PhotoBase64,
                 opt => opt.MapFrom(source => Convert.ToBase64String(source.Photo))
@@ -129,7 +129,7 @@ namespace PointOfSale.Utilities.Automapper
             )
             .ForMember(destiono =>
                 destiono.Price,
-                opt => opt.MapFrom(source => Convert.ToDecimal(source.Price, new CultureInfo("es-PE")))
+                opt => opt.MapFrom(source => Convert.ToDecimal(source.Price))
             )
             ;
             #endregion
@@ -174,7 +174,7 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<VMSale, Sale>()
                 .ForMember(destiny =>
                     destiny.Total,
-                    opt => opt.MapFrom(source => Convert.ToDecimal(source.Total, new CultureInfo("es-PE")))
+                    opt => opt.MapFrom(source => Convert.ToDecimal(source.Total))
 
                 )
                 .ForMember(destiny =>
@@ -196,11 +196,11 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<VMDetailSale, DetailSale>()
                 .ForMember(destiny =>
                     destiny.Price,
-                    opt => opt.MapFrom(source => Convert.ToDecimal(source.Price, new CultureInfo("es-PE")))
+                    opt => opt.MapFrom(source => Convert.ToDecimal(source.Price))
                 )
                 .ForMember(destiny =>
                     destiny.Total,
-                    opt => opt.MapFrom(source => Convert.ToDecimal(source.Total, new CultureInfo("es-PE")))
+                    opt => opt.MapFrom(source => Convert.ToDecimal(source.Total))
                 );
 
             #endregion
@@ -315,6 +315,12 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<VMNotifications, Notifications>();
 
             CreateMap<Vencimiento, VMVencimiento>()
+                .ForMember(user => user.Estado, opt => opt.MapFrom(userEdit =>
+                userEdit.FechaVencimiento.Date < DateTime.UtcNow.Date ?
+                    EstadoVencimiento.Vencido :
+                userEdit.FechaVencimiento.Date > DateTime.UtcNow.Date && userEdit.FechaVencimiento.Date < DateTime.UtcNow.AddDays(7).Date ?
+                    EstadoVencimiento.ProximoVencimiento :
+                    EstadoVencimiento.Apto))
                 .ForMember(user => user.Producto, opt => opt.MapFrom(userEdit => userEdit.Producto != null ? userEdit.Producto.Description : string.Empty))
                 .ForMember(user => user.FechaVencimientoString, opt => opt.MapFrom(userEdit => userEdit.FechaVencimiento.ToString("dd/MM/yyyy")))
                 .ForMember(user => user.FechaElaboracionString, opt => opt.MapFrom(userEdit => userEdit.FechaElaboracion.HasValue ? userEdit.FechaElaboracion.Value.ToString("dd/MM/yyyy") : string.Empty));

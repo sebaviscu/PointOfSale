@@ -1,4 +1,5 @@
 ﻿using PointOfSale.Model;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Models
 {
@@ -21,5 +22,7 @@ namespace PointOfSale.Models
         public int IdTienda { get; set; }
         public DateTime? RegistrationDate { get; set; }
         public string? RegistrationUser { get; set; }
+
+        public EstadoVencimiento Estado {  get; set; }
     }
 }

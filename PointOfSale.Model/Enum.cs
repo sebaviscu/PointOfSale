@@ -81,5 +81,12 @@ namespace PointOfSale.Model
             Pagado,
             Pendiente
         }
+
+        public enum EstadoVencimiento
+        {
+            Apto,
+            ProximoVencimiento,
+            Vencido
+        }
     }
 }

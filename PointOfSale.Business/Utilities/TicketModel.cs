@@ -79,25 +79,7 @@ namespace PointOfSale.Business.Utilities
             line.AppendLine("  " + text);
 
         }
-        public void TextoDerecha(string par1)
-        {
-            ticket = "";
-            var m = par1.Length;
-            if (m > MAX)
-            {
-                cort = MAX - m;
-                parte1 = par1.Remove(m, cort);
-            }
-            else { parte1 = par1; }
-            m = MAX - par1.Length;
-            for (int i = 0; i < m; i++)
-            {
-                ticket += " ";
-            }
-            var text = ticket += parte1 + "\n";
-            line.AppendLine("  " + text);
 
-        }
         public void TextoCentro(string par1)
         {
             ticket = "";
@@ -117,32 +99,7 @@ namespace PointOfSale.Business.Utilities
             line.AppendLine("  " + text);
 
         }
-        public void TextoExtremos(string par1, string par2)
-        {
-            var m = par1.Length;
-            if (m > 18)
-            {
-                cort = m - 18;
-                parte1 = par1.Remove(18, cort);
-            }
-            else { parte1 = par1; }
-            ticket = parte1;
-            m = par2.Length;
-            if (m > 18)
-            {
-                cort = m - 18;
-                parte2 = par2.Remove(18, cort);
-            }
-            else { parte2 = par2; }
-            m = MAX - (parte1.Length + parte2.Length);
-            for (int i = 0; i < m; i++)
-            {
-                ticket += " ";
-            }
-            var text = ticket += parte2 + "\n";
-            line.AppendLine("  " + text);
 
-        }
         public void AgregaTotales(string par1, double total)
         {
             var m = par1.Length;
@@ -192,7 +149,9 @@ namespace PointOfSale.Business.Utilities
             {
                 espacios += " ";
             }
-            elementos += espacios + cant.ToString() + " x $" + precio.ToString();
+            var precioString = MostrarNumeroConDecimales(precio);
+            var cantString = MostrarNumeroConDecimales(cant);
+            elementos += espacios + cantString + " x $" + precioString;
 
             //colocar el subtotal a la dercha
             nroEspacios = ((MAX - subtotal.ToString().Length) - elementos.Length) - 1;
@@ -204,6 +163,21 @@ namespace PointOfSale.Business.Utilities
             }
             elementos += espacios + "$" + subtotal.ToString();
             line.AppendLine("  " + elementos);
+        }
+
+        static string MostrarNumeroConDecimales(decimal numero)
+        {
+            // Verificar si el número tiene decimales
+            if (numero % 1 == 0)
+            {
+                // Si no tiene decimales, mostrar solo la parte entera
+                return Math.Truncate(numero).ToString();
+            }
+            else
+            {
+                // Si tiene decimales, mostrar el número completo
+                return numero.ToString();
+            }
         }
     }
 }

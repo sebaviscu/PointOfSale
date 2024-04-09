@@ -1,6 +1,7 @@
 ﻿using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
+using System.Drawing.Printing;
 
 namespace PointOfSale.Business.Services
 {
@@ -9,7 +10,7 @@ namespace PointOfSale.Business.Services
 
         public string TicketSale(Sale sale, Tienda tienda)
         {
-            return CreateTicket(tienda, sale.RegistrationDate.Value, sale.Total.Value, sale.DetailSales);
+            return CreateTicket(tienda, sale.RegistrationDate.Value, sale.Total.Value, sale.DetailSales, sale.DescuentoRecargo);
         }
 
         public void ImprimirTiket(string impresora, string line)
@@ -20,10 +21,11 @@ namespace PointOfSale.Business.Services
 
         public string TicketVentaWeb(VentaWeb sale, Tienda tienda)
         {
-            return CreateTicket(tienda, sale.RegistrationDate.Value, sale.Total.Value, sale.DetailSales);
+            return CreateTicket(tienda, sale.RegistrationDate.Value, sale.Total.Value, sale.DetailSales, null);
         }
-        private string CreateTicket(Tienda tienda, DateTime registrationDate, decimal total, ICollection<DetailSale> detailSales)
+        private string CreateTicket(Tienda tienda, DateTime registrationDate, decimal total, ICollection<DetailSale> detailSales, decimal? descuentoRecargo)
         {
+
             if (string.IsNullOrEmpty(tienda.NombreImpresora))
             {
                 return string.Empty;
@@ -35,7 +37,6 @@ namespace PointOfSale.Business.Services
             Ticket1.TextoCentro(tienda.Nombre.ToUpper());
             Ticket1.LineasGuion();
 
-            Ticket1.TextoIzquierda("");
             Ticket1.TextoIzquierda("FACTURA ");
             Ticket1.TextoIzquierda("No Fac: 0120102");
             Ticket1.TextoIzquierda("Fecha:" + registrationDate.ToShortDateString() + " " + registrationDate.ToShortTimeString());
@@ -51,11 +52,23 @@ namespace PointOfSale.Business.Services
             }
 
             Ticket1.TextoIzquierda(" ");
-            Ticket1.TextoIzquierda(" ");
+
+            if (descuentoRecargo != null)
+            {
+                if (descuentoRecargo > 0)
+                {
+                    Ticket1.TextoIzquierda(" Regargo: $" + descuentoRecargo);
+                }
+                else
+                {
+                    Ticket1.TextoIzquierda(" Descuento: $" + (descuentoRecargo * -1));
+                }
+                Ticket1.TextoIzquierda(" ");
+            }
+
             Ticket1.LineasTotal();
             Ticket1.AgregaTotales("Total", double.Parse(total.ToString()));
             Ticket1.LineasTotal();
-            Ticket1.TextoIzquierda(" ");
 
             Ticket1.TextoIzquierda(" ");
             Ticket1.TextoAgradecimiento("Gracias por su compra!");

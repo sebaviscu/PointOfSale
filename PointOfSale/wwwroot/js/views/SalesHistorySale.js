@@ -205,7 +205,12 @@ $("#printTicket").click(function () {
 
 function setToday() {
     var date = new Date();
-    var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    //var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+    var split1 = date.toLocaleString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" }).split(',')[0];
+    var split2 = split1.split('/');
+
+    var today = new Date(split2[2], split2[1] - 1, split2[0]);
 
     $('#txtStartDate, #txtEndDate').datepicker('setDate', today);
 

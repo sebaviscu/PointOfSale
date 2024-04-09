@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NuGet.Protocol.Plugins;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Model;
 using PointOfSale.Models;
@@ -146,6 +147,22 @@ namespace PointOfSale.Controllers
                 gResponse.Message = ex.Message;
             }
 
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+        [HttpGet]
+        public IActionResult GetImpresoras()
+        {
+            GenericResponse<string> gResponse = new GenericResponse<string>();
+
+            var stringImpresoras = string.Empty;
+            var result = System.Drawing.Printing.PrinterSettings.InstalledPrinters;
+            foreach (var item in result)
+            {
+                stringImpresoras += item + "\n";
+            }
+            gResponse.Object = stringImpresoras;
+            gResponse.State = true;
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
     }

@@ -68,7 +68,11 @@ namespace PointOfSale.Data.Repository
             if (p.Minimo != null && p.Minimo > 0)
             {
                 p.Quantity = p.Quantity - dv.Quantity;
-                if (p.Quantity <= p.Minimo)
+                if (p.Quantity < 0)
+                {
+                    p.Quantity = 0;
+                }
+                else if (p.Quantity <= p.Minimo)
                 {
                     var notif = new Notifications(p);
                     _dbcontext.Notificaciones.Add(notif);

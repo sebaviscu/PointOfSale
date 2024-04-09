@@ -133,6 +133,10 @@ namespace PointOfSale.Controllers
             try
             {
                 var productos = await _productService.List();
+                foreach (var item in productos)
+                {
+                    item.Photo = null;
+                }
                 List<VMProduct> vmProductList = _mapper.Map<List<VMProduct>>(productos);
                 return StatusCode(StatusCodes.Status200OK, new { data = vmProductList });
             }

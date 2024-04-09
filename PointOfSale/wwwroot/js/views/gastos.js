@@ -67,9 +67,9 @@ $(document).ready(function () {
                 "visible": false,
                 "searchable": false
             },
-            { "data": "fechaString" },
-            { "data": "gastoParticular" },
             { "data": "tipoGastoString" },
+            { "data": "gastoParticular" },
+            { "data": "fechaString" },
             { "data": "comentario" },
             {
                 "data": "estadoPago",
@@ -96,9 +96,9 @@ $(document).ready(function () {
                 text: 'Exportar Excel',
                 extend: 'excelHtml5',
                 title: '',
-                filename: 'Reporte Formas de Pago',
+                filename: 'Reporte Gastos',
                 exportOptions: {
-                    columns: [1, 2]
+                    columns: [1, 2,3,4,5,6]
                 }
             }, 'pageLength'
         ]

@@ -66,7 +66,7 @@ $(document).ready(function () {
                 title: '',
                 filename: 'Reporte Clientes',
                 exportOptions: {
-                    columns: [1, 2]
+                    columns: [1, 2,3,4]
                 }
             }, 'pageLength'
         ]

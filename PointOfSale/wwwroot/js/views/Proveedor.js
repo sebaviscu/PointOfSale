@@ -67,7 +67,7 @@ $(document).ready(function () {
                 title: '',
                 filename: 'Reporte Proveedors',
                 exportOptions: {
-                    columns: [1, 2]
+                    columns: [1, 2,3]
                 }
             }, 'pageLength'
         ]
@@ -226,9 +226,9 @@ const openModal = (model = BASIC_MODEL) => {
                 text: 'Exportar Excel',
                 extend: 'excelHtml5',
                 title: '',
-                filename: 'Reporte Clientes',
+                filename: 'Reporte Pago Proveedores',
                 exportOptions: {
-                    columns: [1, 2]
+                    columns: [1, 2,3,4,5]
                 }
             }, 'pageLength'
         ]
@@ -483,9 +483,9 @@ function cargarTablaGastos() {
                 text: 'Exportar Excel',
                 extend: 'excelHtml5',
                 title: '',
-                filename: 'Reporte Proveedors',
+                filename: 'Reporte Gastos Proveedores',
                 exportOptions: {
-                    columns: [1, 2]
+                    columns: [1, 2,3,4,5,6]
                 }
             }, 'pageLength'
         ]

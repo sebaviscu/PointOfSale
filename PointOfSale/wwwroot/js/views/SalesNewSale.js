@@ -311,7 +311,7 @@ $("#btnFinalizarVentaParcial").on("click", function () {
         tipoMovimiento: $("#cboCliente" + currentTabId).val() != '' ? 2 : null,
         imprimirTicket: document.querySelector('#cboImprimirTicket').checked,
         multiplesFormaDePago: formasDePago,
-        descuentorecargo: descRec != undefined ? descRec : null
+        descuentorecargo: descRec != undefined ? descRec.replace('.', ',') : null
     }
 
     fetch("/Sales/RegisterSale", {

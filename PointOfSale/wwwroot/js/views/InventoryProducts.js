@@ -119,12 +119,12 @@ $(document).ready(function () {
                 "width": "40px",
                 "className": "text-center"
             },
-            {
-                "data": "photoBase64", render: function (data) {
-                    return `<img style="height:40px;" src="data:image/png;base64,${data}" class="rounded mx-auto d-block" />`;
-                },
-                "className": "text-center"
-            },
+            //{
+            //    "data": "photoBase64", render: function (data) {
+            //        return `<img style="height:40px;" src="data:image/png;base64,${data}" class="rounded mx-auto d-block" />`;
+            //    },
+            //    "className": "text-center"
+            //},
             { "data": "description" },
             { "data": "nameCategory" },
             { "data": "nameProveedor" },
@@ -155,9 +155,9 @@ $(document).ready(function () {
                 text: 'Exportar Excel',
                 extend: 'excelHtml5',
                 title: '',
-                filename: 'Report Products',
+                filename: 'Report Productos',
                 exportOptions: {
-                    columns: [2, 3, 4, 5, 6]
+                    columns: [2,3, 4, 5, 6,7,8]
                 }
             }, 'pageLength'
         ]
@@ -529,11 +529,11 @@ $("#btnSave").on("click", function () {
         return;
     }
 
-    if (document.getElementById("cboProveedor").value == '') {
-        const msg = `Debe completaro el campo Proveedor"`;
-        toastr.warning(msg, "");
-        return;
-    }
+    //if (document.getElementById("cboProveedor").value == '') {
+    //    const msg = `Debe completaro el campo Proveedor"`;
+    //    toastr.warning(msg, "");
+    //    return;
+    //}
 
     if (document.getElementById("cboTipoVenta").value == '') {
         const msg = `Debe completaro el campo Tipo Venta"`;
@@ -787,13 +787,16 @@ $("#btnImprimir").on("click", function () {
 
 })
 
-
 function cargarTablaVencimientos() {
 
     $("#tbDataVencimientos").DataTable({
         createdRow: function (row, data, dataIndex) {
-            if (data.producto != 'Aceite de oliva') {
-                $(row).addClass('redClass');
+            if (data.estado == 2) {
+                $(row).addClass('vencidoClass');
+            } else if (data.estado == 1) {
+                $(row).addClass('proximoClass');
+            } else{
+                $(row).addClass('aptoClass');
             }
         },
         "ajax": {
@@ -819,9 +822,9 @@ function cargarTablaVencimientos() {
                 text: 'Exportar Excel',
                 extend: 'excelHtml5',
                 title: '',
-                filename: 'Reporte Proveedors',
+                filename: 'Reporte Vencimientos',
                 exportOptions: {
-                    columns: [1, 2]
+                    columns: [1, 2,3,4]
                 }
             }, 'pageLength'
         ]

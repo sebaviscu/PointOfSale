@@ -61,7 +61,7 @@ namespace PointOfSale.Business.Services
         public async Task<bool> LimpiarTodo(string modificationUser)
         {
             var NotificationsAll = await _repository.Query(c => c.IsActive);
-            foreach (var Notifications_found in NotificationsAll)
+            foreach (var Notifications_found in NotificationsAll.ToList())
             {
                 Notifications_found.ModificationDate = DateTimeNowArg;
                 Notifications_found.ModificationUser = modificationUser;

@@ -71,7 +71,7 @@ $("#btnSearch").click(function () {
                 text: 'Exportar Excel',
                 extend: 'excelHtml5',
                 title: '',
-                filename: 'Products Report',
+                filename: 'Reporte Productos Vendidos',
             }, 'pageLength'
         ]
     };
