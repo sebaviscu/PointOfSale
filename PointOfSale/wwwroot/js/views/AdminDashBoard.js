@@ -352,10 +352,10 @@ function SetGraficoGastosProveedor(gastoProveedores) {
     var chartNew = new ApexCharts(document.querySelector("#charGastosProveedor"), options);
     chartNew.render();
 
-    //chartNew.updateOptions({
-    //    series: gastoProveedores.map((item) => { return item.total }),
-    //    labels: gastoProveedores.map((item) => { return item.descripcion })
-    //})
+    chartNew.updateOptions({
+        series: gastoProveedores.map((item) => { return item.total }),
+        labels: gastoProveedores.map((item) => { return item.descripcion })
+    })
 }
 
 function SetGraficoGastos(typeValues, gastosPorTipo) {

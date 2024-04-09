@@ -281,10 +281,12 @@ namespace PointOfSale.Utilities.Automapper
 
             CreateMap<Gastos, VMGastos>()
                 .ForMember(user => user.Comentario, opt => opt.MapFrom(userEdit => userEdit.Comentario != string.Empty ? userEdit.Comentario : userEdit.IdUsuario != null ? userEdit.User.Name : string.Empty))
-                .ForMember(user => user.TipoGastoString, opt => opt.MapFrom(userEdit => userEdit.TipoDeGasto != null && userEdit.TipoDeGasto.GastoParticular != 0 ? userEdit.TipoDeGasto.Descripcion : string.Empty))
+                .ForMember(user => user.TipoGastoString, opt => opt.MapFrom(userEdit => userEdit.TipoDeGasto != null  ? userEdit.TipoDeGasto.Descripcion : string.Empty))
                 .ForMember(user => user.GastoParticular, opt => opt.MapFrom(userEdit => userEdit.TipoDeGasto != null ? userEdit.TipoDeGasto.GastoParticular.ToString() : string.Empty))
+                .ForMember(user => user.FacturaCompleta, opt => opt.MapFrom(userEdit => userEdit.NroFactura ))
                 .ForMember(user => user.ImporteString, opt => opt.MapFrom(userEdit => "$" + userEdit.Importe.ToString("F2")))
                 .ForMember(user => user.FechaString, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.ToString("dd/MM/yyyy HH:mm")));
+
 
             CreateMap<Gastos, VMGastosTablaDinamica>()
                 .ForMember(user => user.Importe_Sin_Iva, opt => opt.MapFrom(userEdit => userEdit.ImporteSinIva != null ? userEdit.ImporteSinIva : 0))

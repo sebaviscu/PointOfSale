@@ -112,8 +112,14 @@ const openModal = (model = BASIC_MODEL) => {
                 "searchable": false
             },
             { "data": "totalString" },
+            { "data": "sale.saleNumber" },
             { "data": "registrationDateString" },
-            { "data": "registrationUser" }
+            { "data": "registrationUser" },
+            {
+                "data": "idSale",
+                "visible": false,
+                "searchable": false
+            }
             //,
             //{
             //    "defaultContent": '<button class="btn btn-primary btn-open-sale btn-sm me-2"><i class="mdi mdi-eye"></i></button>',

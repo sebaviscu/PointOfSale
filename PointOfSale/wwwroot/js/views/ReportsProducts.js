@@ -54,6 +54,7 @@ $("#btnSearch").click(function () {
         },
         "columns": [
             { "data": "productName" },
+            { "data": "categoria" },
             { "data": "proveedor" },
             { "data": "precio1" },
             { "data": "precio2" },

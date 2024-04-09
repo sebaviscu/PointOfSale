@@ -250,6 +250,14 @@ namespace PointOfSale.Business.Services
                                     && dv.IdSaleNavigation.IdTienda == idTienda
                                     && dv.CategoryProducty == category);
                 }
+                var ss = query
+                            .Include(v => v.IdSaleNavigation)
+                            .Include(v => v.IdSaleNavigation.TypeDocumentSaleNavigation)
+                            .Include(v => v.Producto)
+                            .Where(dv =>
+                                    dv.IdSaleNavigation.RegistrationDate.Value.Date >= start.Date && dv.IdSaleNavigation.RegistrationDate.Value.Date < end.Date
+                                    && dv.IdSaleNavigation.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
+                                    && dv.IdSaleNavigation.IdTienda == idTienda).ToList();
 
                 Dictionary<string, string?> resultado = query
                      .GroupBy(dv => dv.DescriptionProduct)

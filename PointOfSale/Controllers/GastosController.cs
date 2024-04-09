@@ -31,6 +31,7 @@ namespace PointOfSale.Controllers
 
             List<VMGastos> vmGastosList = _mapper.Map<List<VMGastos>>(await _GastosService.List(user.IdTienda));
             return StatusCode(StatusCodes.Status200OK, new { data = vmGastosList });
+
         }
 
         [HttpPost]

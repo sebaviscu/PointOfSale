@@ -360,7 +360,7 @@ namespace PointOfSale.Business.Services
             var queryProducts = await _repository.Query(p =>
                listIds.Contains(p.IdProduct));
 
-            return queryProducts.Include(c => c.Proveedor).Include(c => c.ListaPrecios).ToList();
+            return queryProducts.Include(c => c.Proveedor).Include(c => c.IdCategoryNavigation).Include(c => c.ListaPrecios).ToList();
         }
 
         public async Task<Dictionary<int, string?>> ProductsTopByCategory(string category, string starDate, string endDate, int idTienda)

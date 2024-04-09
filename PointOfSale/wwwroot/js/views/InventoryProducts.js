@@ -148,7 +148,7 @@ $(document).ready(function () {
                 "className": "text-center"
             }
         ],
-        order: [[3, "asc"]],
+        order: [[2, "asc"]],
         dom: "Bfrtip",
         buttons: [
             {

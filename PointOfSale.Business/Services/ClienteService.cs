@@ -113,7 +113,7 @@ namespace PointOfSale.Business.Services
         public async Task<List<ClienteMovimiento>> ListMovimientoscliente(int idCliente, int idTienda)
         {
             IQueryable<ClienteMovimiento> query = await _clienteMovimiento.Query(u => u.IdCliente == idCliente && u.IdTienda == idTienda);
-            var result = query.OrderByDescending(_ => _.RegistrationUser).ToList();
+            var result = query.Include(_ => _.Sale).OrderByDescending(_ => _.RegistrationUser).ToList();
             result.Where(_ => _.TipoMovimiento == TipoMovimientoCliente.Egreso).ToList().ForEach(_ =>
             {
                 _.Total = _.Total * -1;

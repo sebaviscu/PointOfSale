@@ -45,6 +45,7 @@ namespace PointOfSale.Controllers
                 var listaPrecio = product.ListaPrecios;
 
                 vmSR.ProductName = product.Description;
+                vmSR.Categoria = product.IdCategoryNavigation.Description;
                 vmSR.Precio1 = $"$ {listaPrecio[0].Precio.ToString()}";
                 vmSR.Precio2 = $"$ {listaPrecio[1].Precio.ToString()}";
                 vmSR.Precio3 = $"$ {listaPrecio[2].Precio.ToString()}";

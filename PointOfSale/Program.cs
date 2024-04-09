@@ -1,3 +1,4 @@
+using AFIP.Facturacion.DependencyInjection;
 using DinkToPdf;
 using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -8,7 +9,6 @@ using PointOfSale.Business.Utilities;
 using PointOfSale.Data.DBContext;
 using PointOfSale.Data.Repository;
 using PointOfSale.Utilities.Automapper;
-using PointOfSale.Utilities.Extensions;
 using System.Text.Json.Serialization;
 
 public class Program
@@ -72,15 +72,14 @@ public class Program
         builder.Services.AddScoped<INotificationService, NotificationService>();
         builder.Services.AddScoped<IImportarExcelService, ImportarExcelService>();
 
-        //builder.Services.AddAFIPConfiguration(x =>
-        //{
-        //    x.CertificatePassword = "";
-        //    x.Cuit = 0;
-        //    x.IsProdEnvironment = false;
-        //    x.Verbose = true;
-        //    x.x509CertificateFilePath = "";
-        //});
-
+        builder.Services.AddAFIPConfiguration(x =>
+        {
+            x.CertificatePassword = "CERTIFICATE_PASSWORD";
+            x.Cuit = 123;
+            x.IsProdEnvironment = false;
+            x.Verbose = true;
+            x.x509CertificateFilePath = "CERTIFICATE_PATH";
+        });
 
         //var context = new CustomAssemblyLoadContext();
         //context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "Utilities/LibraryPDF/libwkhtmltox.dll"));

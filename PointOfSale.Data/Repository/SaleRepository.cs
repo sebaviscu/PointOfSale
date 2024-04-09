@@ -32,10 +32,12 @@ namespace PointOfSale.Data.Repository
                 {
                     foreach (DetailSale dv in entity.DetailSales)
                     {
-                        Product product_found = _dbcontext.Products.Where(p => p.IdProduct == dv.IdProduct).First();
+                        Product product_found = _dbcontext.Products.Include(_ => _.IdCategoryNavigation).Where(p => p.IdProduct == dv.IdProduct).First();
                         ControlStock(dv, product_found);
 
                         dv.TipoVenta = product_found.TipoVenta;
+                        dv.CategoryProducty = product_found.IdCategoryNavigation.Description;
+
                     }
                     await _dbcontext.SaveChangesAsync();
 
@@ -110,12 +112,10 @@ namespace PointOfSale.Data.Repository
                     entity.RegistrationDate = DateTimeNowArg;
                     foreach (DetailSale dv in entity.DetailSales)
                     {
-                        Product product_found = _dbcontext.Products.Include(_ => _.Proveedor)
-                                                                   .Include(_ => _.IdCategoryNavigation)
+                        Product product_found = _dbcontext.Products.Include(_ => _.IdCategoryNavigation)
                                                                    .Where(p => p.IdProduct == dv.IdProduct).First();
 
                         dv.TipoVenta = product_found.TipoVenta;
-                        dv.BrandProduct = product_found.Proveedor.Nombre;
                         dv.CategoryProducty = product_found.IdCategoryNavigation.Description;
                     }
 

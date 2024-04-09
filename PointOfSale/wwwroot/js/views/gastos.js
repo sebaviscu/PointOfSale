@@ -69,6 +69,7 @@ $(document).ready(function () {
             },
             { "data": "tipoGastoString" },
             { "data": "gastoParticular" },
+            { "data": "nroFactura" },
             { "data": "fechaString" },
             { "data": "comentario" },
             {

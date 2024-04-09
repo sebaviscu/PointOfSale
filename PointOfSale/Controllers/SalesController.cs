@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using AFIP.Facturacion.Model.Factura;
+using AFIP.Facturacion.Services;
+using AutoMapper;
 using DinkToPdf;
 using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Authorization;
@@ -23,6 +25,8 @@ namespace PointOfSale.Controllers
         private readonly ITicketService _ticketService;
         private readonly ITiendaService _tiendaService;
         private readonly IShopService _shopService;
+        private readonly IAFIPFacturacionService _afipFacturacionService;
+
         public SalesController(
             ITypeDocumentSaleService typeDocumentSaleService,
             ISaleService saleService,
@@ -31,7 +35,8 @@ namespace PointOfSale.Controllers
             IClienteService clienteService,
             ITicketService ticketService,
             ITiendaService tiendaService,
-            IShopService shopService)
+            IShopService shopService,
+            IAFIPFacturacionService afipFacturacionService)
         {
             _typeDocumentSaleService = typeDocumentSaleService;
             _saleService = saleService;
@@ -41,6 +46,7 @@ namespace PointOfSale.Controllers
             _ticketService = ticketService;
             _tiendaService = tiendaService;
             _shopService = shopService;
+            _afipFacturacionService = afipFacturacionService;
         }
         public IActionResult NewSale()
         {
@@ -68,8 +74,8 @@ namespace PointOfSale.Controllers
             var listaPrecioInt = Convert.ToInt32(claimuser.Claims.Where(c => c.Type == "ListaPrecios").Select(c => c.Value).SingleOrDefault());
             try
             {
-            List<VMProduct> vmListProducts = _mapper.Map<List<VMProduct>>(await _saleService.GetProductsSearchAndIdLista(search.Trim(), (ListaDePrecio)listaPrecioInt));
-            return StatusCode(StatusCodes.Status200OK, vmListProducts);
+                List<VMProduct> vmListProducts = _mapper.Map<List<VMProduct>>(await _saleService.GetProductsSearchAndIdLista(search.Trim(), (ListaDePrecio)listaPrecioInt));
+                return StatusCode(StatusCodes.Status200OK, vmListProducts);
 
             }
             catch (Exception)
@@ -114,13 +120,7 @@ namespace PointOfSale.Controllers
 
                 if (model.ClientId.HasValue)
                 {
-                    var mov = await _clienteService.RegistrarMovimiento(
-                        model.ClientId.Value,
-                        decimal.Parse(model.Total.Replace('.', ',')),
-                        user.UserName,
-                        user.IdTienda,
-                        sale_created.IdSale,
-                        model.TipoMovimiento.Value);
+                    var mov = await _clienteService.RegistrarMovimiento(model.ClientId.Value, decimal.Parse(model.Total.Replace('.', ',')), user.UserName, user.IdTienda, sale_created.IdSale, model.TipoMovimiento.Value);
 
                     sale_created.IdClienteMovimiento = mov.IdClienteMovimiento;
                     sale_created = await _saleService.Edit(sale_created);
@@ -150,20 +150,20 @@ namespace PointOfSale.Controllers
 
                         var tipoVentaMult = await _typeDocumentSaleService.Get(f.FormaDePago);
 
-                        if ((int)tipoVentaMult.TipoFactura < 3)
-                        {
-                            //var factura = new FacturaAFIP();
-                            //var facturacionResponse = await _aFIPFacturacionService.FacturarAsync(factura);
-                        }
+                        //if ((int)tipoVentaMult.TipoFactura < 3)
+                        //{
+                        //    var factura = new FacturaAFIP();
+                        //    var facturacionResponse = await _afipFacturacionService.FacturarAsync(factura);
+                        //}
                     }
                 }
 
-                var tipoVenta = await _typeDocumentSaleService.Get(sale_created.IdTypeDocumentSale.Value);
-                if ((int)tipoVenta.TipoFactura < 3)
-                {
-                    //var factura = new FacturaAFIP();
-                    //var facturacionResponse = await _aFIPFacturacionService.FacturarAsync(factura);
-                }
+                //var tipoVenta = await _typeDocumentSaleService.Get(sale_created.IdTypeDocumentSale.Value);
+                //if ((int)tipoVenta.TipoFactura < 3)
+                //{
+                //    var factura = new FacturaAFIP();
+                //    var facturacionResponse = await _afipFacturacionService.FacturarAsync(factura);
+                //}
 
                 model = _mapper.Map<VMSale>(sale_created);
 

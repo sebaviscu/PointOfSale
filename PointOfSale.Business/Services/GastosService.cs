@@ -53,6 +53,8 @@ namespace PointOfSale.Business.Services
             {
                 Gastos Gastos_found = await _repository.Get(c => c.IdGastos == entity.IdGastos);
 
+                Gastos_found.NroFactura = entity.NroFactura;
+                Gastos_found.TipoFactura = entity.TipoFactura;
                 Gastos_found.TipoDeGasto = entity.TipoDeGasto;
                 Gastos_found.Comentario = entity.Comentario;
                 Gastos_found.Importe = entity.Importe;
