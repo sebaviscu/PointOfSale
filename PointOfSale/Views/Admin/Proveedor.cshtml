@@ -11,6 +11,11 @@
     <link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
 
 }
+<style>
+    .margin-min {
+        margin-bottom: 5px;
+    }
+</style>
 
 <div class="row">
     <div class="col-sm-12">
@@ -20,10 +25,10 @@
                     <h4>Proveedores</h4>
                 </div>
                 <div class="row col-md-7 d-flex flex-row-reverse bd-highlight">
-                    <button class="btn btn-success" id="btnNew">Nuevo Proveedor</button>
+                    <button class="btn btn-primary btn-sm me-5" id="btnNuevoGasto"><i class="mdi mdi-cash-multiple mdi-24px"></i>&nbsp;Nuevo Pago</button>
                 </div>
                 <div class="ms-auto bd-highlight">
-                    <button class="btn btn-primary btn-sm ms-5" id="btnNuevoGasto"><i class="mdi mdi-cash-multiple mdi-24px"></i>&nbsp;Nuevo Pago</button>
+                    <button class="btn btn-success" id="btnNew">Nuevo Proveedor</button>
                 </div>
             </div>
 
@@ -36,7 +41,10 @@
                                     <th></th>
                                     <th>Nombre</th>
                                     <th>Cuil</th>
+                                    <th>Contacto</th>
                                     <th>Telefono</th>
+                                    <th>Web</th>
+                                    <th>Comentario</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -107,42 +115,80 @@
                 <form>
                     <input type="hidden" value="0" id="txtId">
                     <div class="row">
-                        <div class="col-sm-3">
+                        <div class="col-sm-4">
                             <div class="form-row">
-                                <div class="form-group col-sm-12">
-                                    <label for="txtNombre">Nombre</label>
+                                <div class="form-group col-sm-12 margin-min">
+                                    <label for="txtNombre">Razon Social</label>
                                     <input type="text" class="form-control form-control-sm input-validate" id="txtNombre" name="Nombre">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-8 margin-min">
+                                    <label for="txtCuil">Cuil</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtCuil" name="Cuil">
+                                </div>
+                                <div class="form-group col-sm-4 margin-min">
+                                    <label for="txtIvaProveedor">IVA</label>
+                                    <select class="form-control form-control-sm" id="txtIvaProveedor">
+                                        <option value="0"></option>
+                                        <option value="10.5">10,5 %</option>
+                                        <option value="21">21 %</option>
+                                        <option value="27">27 %</option>
+                                    </select>
                                 </div>
 
                             </div>
                             <div class="form-row">
-                                <div class="form-group col-sm-7">
-                                    <label for="txtCuil">Cuil</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtCuil" name="Cuil">
+                                <div class="form-group col-sm-12 margin-min">
+                                    <label for="txtContacto">Nombre de Contacto</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtContacto" name="Nombre de contacto">
                                 </div>
-                                <div class="form-group col-sm-5">
-                                    <label for="txtTelefono">Telefono</label>
+
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-6 margin-min">
+                                    <label for="txtTelefono">Telefono 1</label>
                                     <input type="text" class="form-control form-control-sm" id="txtTelefono" name="telefono">
+                                </div>
+                                <div class="form-group col-sm-6 margin-min">
+                                    <label for="txtTelefono2">Telefono 2</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtTelefono2" name="telefono">
                                 </div>
                             </div>
                             <div class="form-row">
-                                <div class="form-group col-sm-12">
+                                <div class="form-group col-sm-12 margin-min">
                                     <label for="txtDireccion">Direccion</label>
                                     <input type="text" class="form-control form-control-sm" id="txtDireccion" name="Direccion">
                                 </div>
                             </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-6 margin-min">
+                                    <label for="txtEmail">Email</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtEmail" name="Email">
+                                </div>
+                                <div class="form-group col-sm-6 margin-min">
+                                    <label for="txtWeb">Web</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtWeb" name="Web">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-12 margin-min">
+                                    <label for="txtComentario">Comentario</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario">
+                                </div>
+                            </div>
                             <div class="form-row" id="divModif">
-                                <div class="form-group col-sm-6">
+                                <div class="form-group col-sm-6 margin-min">
                                     <label for="txtModificado">Fecha Modificado</label>
                                     <input type="text" class="form-control form-control-sm" id="txtModificado" name="fechaModificado" readonly>
                                 </div>
-                                <div class="form-group col-sm-6">
+                                <div class="form-group col-sm-6 margin-min">
                                     <label for="txtModificadoUsuario">Por:</label>
                                     <input type="text" class="form-control form-control-sm" id="txtModificadoUsuario" name="usuarioModificado" readonly>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-9">
+                        <div class="col-sm-8">
                             <div class="col-sm-12">
                                 <table id="tbMovimientos" class="table" style="width:100%">
                                     <thead>
@@ -235,11 +281,16 @@
                             <div class="form-row">
                                 <div class="form-group col-sm-3">
                                     <label for="txtIva">IVA</label>
-                                    <input type="number" class="form-control form-control-sm" id="txtIva" name="IVA">
+                                    <select class="form-control form-control-sm" id="txtIva">
+                                        <option value="0"></option>
+                                        <option value="10.5">10,5 %</option>
+                                        <option value="21">21 %</option>
+                                        <option value="27">27 %</option>
+                                    </select>
                                 </div>
                                 <div class="form-group col-sm-6">
                                     <label for="txtImporte">Importe</label>
-                                    <input type="number" class="form-control form-control-sm input-validate" id="txtImporte" name="Importe">
+                                    <input type="number" class="form-control form-control-sm input-validate-pago" id="txtImporte" name="Importe">
                                 </div>
                                 <div class="form-group col-sm-3">
                                     <br />

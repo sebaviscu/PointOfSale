@@ -117,6 +117,13 @@ create table Proveedor(
 	[cuil] varchar(50) null,
 	[telefono] varchar(50) null,
 	[direccion] varchar(200) null,
+	NombreContacto varchar(100) null,
+	Telefono2 varchar(30) null,
+	Telefono3 varchar(30) null,
+	Email varchar(100) null,
+	web varchar(200) null,
+	comentario varchar(200) null,
+	iva decimal(10,2) null,
 	[registrationDate] datetime not null,
 	[modificationDate] datetime null,
 	[modificationUser] varchar(50) null

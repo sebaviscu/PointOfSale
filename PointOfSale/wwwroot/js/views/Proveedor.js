@@ -13,6 +13,12 @@ const BASIC_MODEL = {
     cuil: null,
     telefono: null,
     direccion: null,
+    nombreContacto: null,
+    telefono2: null,
+    email: null,
+    web: null,
+    comentario: null,
+    iva: null,
     registrationDate: null,
     modificationDate: null,
     modificationUser: null
@@ -49,7 +55,10 @@ $(document).ready(function () {
             },
             { "data": "nombre" },
             { "data": "cuil" },
+            { "data": "nombreContacto" },
             { "data": "telefono" },
+            { "data": "web" },
+            { "data": "comentario" },
             {
                 "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
                     '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-trash-can"></i></button>',
@@ -162,10 +171,12 @@ $('#cboProveedor').change(function () {
     if (proveedor != null) {
         $("#txtCuilPago").val(proveedor.cuil);
         $("#txtDireccionPago").val(proveedor.direccion);
+        $("#txtIva").val(proveedor.iva != null ? proveedor.iva : '');
     }
     else {
         $("#txtCuilPago").val('');
         $("#txtDireccionPago").val('');
+        $("#txtIva").val('');
     }
 })
 
@@ -175,6 +186,13 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtCuil").val(model.cuil);
     $("#txtDireccion").val(model.direccion);
     $("#txtTelefono").val(model.telefono);
+
+    $("#txtTelefono2").val(model.telefono2);
+    $("#txtContacto").val(model.nombreContacto);
+    $("#txtWeb").val(model.web);
+    $("#txtEmail").val(model.email);
+    $("#txtIvaProveedor").val(model.iva);
+    $("#txtComentario").val(model.comentario);
 
     if (model.modificationUser === null)
         document.getElementById("divModif").style.display = 'none';
@@ -259,6 +277,12 @@ $("#btnSave").on("click", function () {
     model["direccion"] = $("#txtDireccion").val();
     model["cuil"] = $("#txtCuil").val();
     model["telefono"] = $("#txtTelefono").val();
+    model["telefono2"] = $("#txtTelefono2").val();
+    model["nombreContacto"] = $("#txtContacto").val();
+    model["web"] = $("#txtWeb").val();
+    model["email"] = $("#txtEmail").val();
+    model["iva"] = $("#txtIvaProveedor").val();
+    model["comentario"] = $("#txtComentario").val();
     model["idProveedor"] = $("#txtId").val();
 
     $("#modalData").find("div.modal-content").LoadingOverlay("show")
@@ -314,7 +338,7 @@ $("#btnSave").on("click", function () {
 })
 
 $("#btnSavePago").on("click", function () {
-    const inputs = $("input.input-validate").serializeArray();
+    const inputs = $("input.input-validate-pago").serializeArray();
     const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
 
     if (inputs_without_value.length > 0) {

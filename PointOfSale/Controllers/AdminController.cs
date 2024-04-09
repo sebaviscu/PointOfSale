@@ -748,8 +748,17 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProveedores()
         {
+            try
+            {
             var listProveedor = _mapper.Map<List<VMProveedor>>(await _proveedorService.List());
             return StatusCode(StatusCodes.Status200OK, new { data = listProveedor });
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+
         }
 
         [HttpPost]
@@ -831,11 +840,12 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateProveedor([FromBody] VMProveedor vmUser)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
 
             var gResponse = new GenericResponse<VMProveedor>();
             try
             {
+                vmUser.ModificationUser = user.UserName;
                 var user_edited = await _proveedorService.Edit(_mapper.Map<Proveedor>(vmUser));
 
                 vmUser = _mapper.Map<VMProveedor>(user_edited);

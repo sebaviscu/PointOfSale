@@ -85,6 +85,13 @@ namespace PointOfSale.Business.Services
                 Proveedor_edit.ModificationDate = DateTimeNowArg;
                 Proveedor_edit.ModificationUser = entity.ModificationUser;
 
+                Proveedor_edit.Telefono2 = entity.Telefono2;
+                Proveedor_edit.Iva = entity.Iva;
+                Proveedor_edit.Web = entity.Web;
+                Proveedor_edit.Email = entity.Email;
+                Proveedor_edit.Comentario = entity.Comentario;
+                Proveedor_edit.NombreContacto = entity.NombreContacto;
+
                 bool response = await _repository.Edit(Proveedor_edit);
                 if (!response)
                     throw new TaskCanceledException("No se pudo modificar Proveedor");

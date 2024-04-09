@@ -485,10 +485,12 @@ $('#cboProveedor').change(function () {
     if (proveedor != null) {
         $("#txtCuilPago").val(proveedor.cuil);
         $("#txtDireccionPago").val(proveedor.direccion);
+        $("#txtIva").val(proveedor.iva != null ? proveedor.iva : '');
     }
     else {
         $("#txtCuilPago").val('');
         $("#txtDireccionPago").val('');
+        $("#txtIva").val('');
     }
 })
 
