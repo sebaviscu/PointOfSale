@@ -88,5 +88,14 @@ namespace PointOfSale.Model
             ProximoVencimiento,
             Vencido
         }
+
+        public enum EstadoPedido
+        {
+            Cancelado,
+            Iniciado,
+            Enviado,
+            Recibido
+
+        }
     }
 }

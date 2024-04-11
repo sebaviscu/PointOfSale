@@ -371,3 +371,29 @@ idTienda int references Tienda(idTienda) not null,
 registrationDate datetime default getdate(),
 registrationUser varchar(50),
 )
+
+go
+
+create table Pedidos(
+[idPedido] int primary key identity(1,1),
+[importeEstimado] decimal(10,2) null,
+estado int not null,
+[comentario] varchar(200) null,
+[fechaRecibido] datetime null,
+[idProveedorMovimiento] int references ProveedorMovimiento(idProveedorMovimiento) null,
+[idProveedor] int references Proveedor(idProveedor),
+[idTienda] int references Tienda(idTienda),
+[registrationDate] datetime default getdate(),
+[registrationUser] varchar(50) not null
+)
+
+go
+
+create table PedidoProducto(
+[IdPedidoProducto] int primary key identity(1,1),
+cantidadProducto int not null,
+lote varchar(100) null,
+vencimiento datetime null,
+idProducto int references Product(idProduct) not null,
+idPedido int references Pedidos(idPedido) not null,
+)

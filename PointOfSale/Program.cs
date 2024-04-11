@@ -71,6 +71,7 @@ public class Program
         builder.Services.AddScoped<IAuditoriaService, AuditoriaService>();
         builder.Services.AddScoped<INotificationService, NotificationService>();
         builder.Services.AddScoped<IImportarExcelService, ImportarExcelService>();
+        builder.Services.AddScoped<IPedidoService, PedidoService>();
 
         builder.Services.AddAFIPConfiguration(x =>
         {

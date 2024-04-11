@@ -259,8 +259,8 @@ $("#btnSave").on("click", function () {
             return response.ok ? response.json() : Promise.reject(response);
         }).then(responseJson => {
             if (responseJson.state) {
-                location.reload()
                 swal("Exitoso!", "Modificado con éxito", "success");
+                location.reload()
 
             } else {
                 swal("Lo sentimos", responseJson.message, "error");
@@ -323,7 +323,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                     if (responseJson.state) {
 
                         tableData.row(row).remove().draw();
-                        swal("Exitoso!", "Tipo de Venta  fué eliminada", "success");
+                        swal("Exitoso!", "El gasto  fue eliminada", "success");
 
                     } else {
                         swal("Lo sentimos", responseJson.message, "error");

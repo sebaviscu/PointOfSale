@@ -25,5 +25,6 @@ namespace PointOfSale.Model
         public string? ModificationUser { get; set; }
         public ICollection<Product>? Products { get; set; }
         public ICollection<ProveedorMovimiento>? ProveedorMovimiento { get; set; }
+        public ICollection<Pedido>? Pedidos { get; set; }
     }
 }

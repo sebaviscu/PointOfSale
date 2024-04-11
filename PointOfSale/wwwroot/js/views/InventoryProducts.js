@@ -99,6 +99,7 @@ $(document).ready(function () {
         })
 
     tableData = $("#tbData").DataTable({
+        pageLength: 50,
         responsive: true,
         "ajax": {
             "url": "/Inventory/GetProducts",
@@ -187,7 +188,7 @@ function editAll() {
 
     document.querySelectorAll('#tbData tr').forEach((row, i) => {
         if (row.querySelector('input[type=checkbox]') != null && row.querySelector('input[type=checkbox]').checked && row.id !== '') {
-            aProductos.push([row.id, row.childNodes[2].textContent, row.childNodes[5].textContent]);
+            aProductos.push([row.id, row.childNodes[1].textContent, row.childNodes[4].textContent]);
         }
     })
 
@@ -799,6 +800,7 @@ function cargarTablaVencimientos() {
                 $(row).addClass('aptoClass');
             }
         },
+        pageLength: 50,
         "ajax": {
             "url": "/Inventory/GetVencimientos",
             "type": "GET",

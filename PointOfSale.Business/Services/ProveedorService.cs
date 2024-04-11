@@ -28,6 +28,11 @@ namespace PointOfSale.Business.Services
             IQueryable<Proveedor> query = await _repository.Query();
             return query.OrderBy(_ => _.Nombre).ToList();
         }
+        public async Task<List<Proveedor>> ListConProductos()
+        {
+            IQueryable<Proveedor> query = await _repository.Query();
+            return query.Include(_=>_.Products).OrderBy(_ => _.Nombre).ToList();
+        }
 
         public async Task<Proveedor> Add(Proveedor entity)
         {

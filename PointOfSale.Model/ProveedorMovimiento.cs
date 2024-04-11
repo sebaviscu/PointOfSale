@@ -27,6 +27,9 @@ namespace PointOfSale.Model
         public DateTime RegistrationDate { get; set; }
         public string RegistrationUser { get; set; }
         public EstadoPago? EstadoPago { get; set; }
+        public int? IdPedido { get; set; }
+        public Pedido? Pedido { get; set; }
+
 
     }
 }

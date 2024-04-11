@@ -281,9 +281,9 @@ namespace PointOfSale.Utilities.Automapper
 
             CreateMap<Gastos, VMGastos>()
                 .ForMember(user => user.Comentario, opt => opt.MapFrom(userEdit => userEdit.Comentario != string.Empty ? userEdit.Comentario : userEdit.IdUsuario != null ? userEdit.User.Name : string.Empty))
-                .ForMember(user => user.TipoGastoString, opt => opt.MapFrom(userEdit => userEdit.TipoDeGasto != null  ? userEdit.TipoDeGasto.Descripcion : string.Empty))
+                .ForMember(user => user.TipoGastoString, opt => opt.MapFrom(userEdit => userEdit.TipoDeGasto != null ? userEdit.TipoDeGasto.Descripcion : string.Empty))
                 .ForMember(user => user.GastoParticular, opt => opt.MapFrom(userEdit => userEdit.TipoDeGasto != null ? userEdit.TipoDeGasto.GastoParticular.ToString() : string.Empty))
-                .ForMember(user => user.FacturaCompleta, opt => opt.MapFrom(userEdit => userEdit.NroFactura ))
+                .ForMember(user => user.FacturaCompleta, opt => opt.MapFrom(userEdit => userEdit.NroFactura))
                 .ForMember(user => user.ImporteString, opt => opt.MapFrom(userEdit => "$" + userEdit.Importe.ToString("F2")))
                 .ForMember(user => user.FechaString, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.ToString("dd/MM/yyyy HH:mm")));
 
@@ -327,6 +327,14 @@ namespace PointOfSale.Utilities.Automapper
                 .ForMember(user => user.FechaVencimientoString, opt => opt.MapFrom(userEdit => userEdit.FechaVencimiento.ToString("dd/MM/yyyy")))
                 .ForMember(user => user.FechaElaboracionString, opt => opt.MapFrom(userEdit => userEdit.FechaElaboracion.HasValue ? userEdit.FechaElaboracion.Value.ToString("dd/MM/yyyy") : string.Empty));
             CreateMap<VMVencimiento, Vencimiento>();
+
+            CreateMap<VMPedido, Pedido>();
+            CreateMap<Pedido, VMPedido>()
+                                .ForMember(user => user.RegistrationDateString, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.ToString("dd/MM/yyyy HH:mm")))
+                                .ForMember(user => user.ImporteEstimadoString, opt => opt.MapFrom(userEdit => "$" + userEdit.ImporteEstimado.Value.ToString("F2")));
+
+            CreateMap<VMPedidoProducto, PedidoProducto>();
+            CreateMap<PedidoProducto, VMPedidoProducto>();
         }
     }
 }

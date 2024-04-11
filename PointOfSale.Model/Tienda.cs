@@ -36,6 +36,7 @@ namespace PointOfSale.Model
         public IEnumerable<Turno>? Turnos { get; set; }
         public IEnumerable<User>? Usuarios { get; set; }
         public IEnumerable<Vencimiento>? Vencimientos { get; set; }
+        public ICollection<Pedido>? Pedidos { get; set; }
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }
     }

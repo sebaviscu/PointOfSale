@@ -1,0 +1,199 @@
+﻿@{
+    ViewData["Title"] = "Pedidos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@section StylesPOS{
+
+    <link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
+    <link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
+    <link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
+}
+
+<style>
+    #tablaContainer > table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        #tablaContainer > table th,
+        #tablaContainer > table td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        #tablaContainer > table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        #tablaContainer > table td.editable {
+            cursor: pointer;
+        }
+
+            #tablaContainer > table td.editable:focus {
+                outline: 1px solid blue;
+            }
+</style>
+
+<div class="row">
+    <div class="col-sm-12">
+
+        <div class="card card-default">
+            <div class="card-header card-header-border-bottom">
+                <div>
+                    <h4>Pedidos</h4>
+                </div>
+                <div class="ms-auto bd-highlight">
+                    <button class="btn btn-success" id="btnNew">Nueva Pedido</button>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table id="tbData" class="table table-striped" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Proveedor</th>
+                                    <th>Fecha</th>
+                                    <th>Importe Estimado</th>
+                                    <th>Estado</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Grid Modal -->
+<div class="modal fade" id="modalData" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalGridTitle">Detalle Pedidos</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <input type="hidden" value="0" id="txtIdPedido">
+                <div class="row">
+                    <div class="col-sm-12" id="panelProductos">
+
+                        <div class="form-row">
+                            <div class="form-group col-sm-4" style="margin-bottom: 2px;">
+                                <label for="txtNombrePago">Proveedor</label>
+                                <select class="form-control form-control-sm input-validate" id="cboProveedor" style="background-color: beige">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                            <div class="form-group col-sm-3" style="margin-bottom: 2px;">
+                                <label for="txtNombrePago">Estado</label>
+                                <select class="form-control form-control-sm" id="cboEstado">
+                                    <option value="0">Cancelado</option>
+                                    <option value="1" selected>Iniciado</option>
+                                    <option value="2">Enviado</option>
+                                </select>
+                            </div>
+                            <div class="ms-auto bd-highlight" style="align-content: center;">
+                                <button class="btn btn-success" id="btnGenerar">Generar</button>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-8">
+                                <label for="txtComentario">Comentario</label>
+                                <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario">
+                            </div>
+                            <div class="form-group col-sm-4">
+                                <label for="txtImporteEstimado">Estimado</label>
+                                <div class="input-group input-group-sm">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                    <input type="text" class="form-control form-control-sm" id="txtImporteEstimado" name="Importe Estimado" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row" style="display: none;">
+
+                            <div class="form-group col-sm-4">
+                                <label for="txtFechaCreacion">Fecha</label>
+                                <input type="text" class="form-control form-control-sm" id="txtFechaCreacion" name="Fecha" disabled>
+                            </div>
+                            <div class="form-group col-sm-5">
+                                <label for="txtCreationUser">Creado Por</label>
+                                <input type="text" class="form-control form-control-sm" id="txtCreationUser" name="Creado Por" disabled>
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <label for="txtEstadoPedido">Estado</label>
+                                <input type="text" class="form-control form-control-sm" id="txtEstadoPedido" name="Estado Pedido" disabled>
+                            </div>
+                        </div>
+
+                        <div id="tablaContainer">
+                            <table id="tablaProductos">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Costo</th>
+                                        <th>Stock</th>
+                                        <th>Cantidad a Pedir</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12" id="panelGenerarMensaje" style="display:none;">
+
+                        <div class="d-flex justify-content-between">
+                            <button class="btn btn-info" id="btnVolver">Volver</button>
+                            <button class="btn btn-secondary" id="btnCopiar">Copiar al portapapeles</button>
+                        </div>
+
+                        <br />
+                        <div style="text-align: center;">
+                            <label id="labelTabla"></label>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="btnSave">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
+    <script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
+    <script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+
+    <script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
+    <script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
+    <script src="~/plugins/data-tables/jszip.min.js"></script>
+    <script src="~/plugins/data-tables/buttons.html5.min.js"></script>
+    <script src="~/plugins/data-tables/buttons.print.min.js"></script>
+
+    <script src="~/js/views/Pedido.js"></script>
+}
+

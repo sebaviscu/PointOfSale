@@ -761,6 +761,22 @@ namespace PointOfSale.Controllers
 
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetProveedoresConProductos()
+        {
+            try
+            {
+                var listProveedor = _mapper.Map<List<VMProveedor>>(await _proveedorService.ListConProductos());
+                return StatusCode(StatusCodes.Status200OK, new { data = listProveedor });
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateProveedor([FromBody] VMProveedor model)
         {

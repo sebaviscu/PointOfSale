@@ -40,6 +40,8 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<AuditoriaModificaciones> AuditoriaModificaciones { get; set; } = null!;
         public virtual DbSet<Notifications> Notificaciones { get; set; } = null!;
         public virtual DbSet<ListaPrecio> ListaPrecios { get; set; } = null!;
+        public virtual DbSet<Pedido> Pedido { get; set; } = null!;
+        public virtual DbSet<PedidoProducto> PedidoProducto { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -47,6 +49,42 @@ namespace PointOfSale.Data.DBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<PedidoProducto>(entity =>
+            {
+                entity.HasKey(e => e.IdPedidoProducto);
+
+                entity.ToTable("PedidoProducto");
+
+                entity.HasOne(d => d.Pedido)
+                    .WithMany(p => p.Productos)
+                    .HasForeignKey(d => d.IdPedido);
+
+                entity.HasOne(d => d.Product)
+                    .WithMany(p => p.PedidoProductos)
+                    .HasForeignKey(d => d.IdProducto);
+            });
+
+            modelBuilder.Entity<Pedido>(entity =>
+            {
+                entity.HasKey(e => e.IdPedido);
+
+                entity.ToTable("Pedidos");
+
+                entity.HasOne(d => d.Proveedor)
+                    .WithMany(p => p.Pedidos)
+                    .HasForeignKey(d => d.IdProveedor);
+
+                entity.HasOne(d => d.Tienda)
+                    .WithMany(p => p.Pedidos)
+                    .HasForeignKey(d => d.IdTienda);
+
+                entity.HasOne(d => d.ProveedorMovimiento)
+                    .WithOne(p => p.Pedido)
+                    .HasForeignKey<Pedido>(d => d.IdProveedorMovimiento);
+
+            });
+
             modelBuilder.Entity<Vencimiento>(entity =>
             {
                 entity.HasKey(e => e.IdVencimiento);
