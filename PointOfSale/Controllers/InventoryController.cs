@@ -187,13 +187,6 @@ namespace PointOfSale.Controllers
                     v.RegistrationUser = user.UserName;
                 }
 
-                var s = new Stock(
-                                vmProduct.Quantity.HasValue ? (int)vmProduct.Quantity : 0,
-                                vmProduct.Minimo.HasValue ? (int)vmProduct.Minimo : 0,
-                                vmProduct.IdProduct,
-                                user.IdTienda); 
-                prod.Stocks = new List<Stock>() { s };
-
                 Product product_created = await _productService.Add(prod, listPrecios, _mapper.Map<List<Vencimiento>>(vmListVencimientos));
 
                 vmProduct = _mapper.Map<VMProduct>(product_created);
@@ -254,14 +247,6 @@ namespace PointOfSale.Controllers
                     v.RegistrationDate = DateTimeNowArg;
                     v.RegistrationUser = user.UserName;
                 }
-
-                var s = new Stock(
-                                vmProduct.Quantity.HasValue ? (int)vmProduct.Quantity : 0, 
-                                vmProduct.Minimo.HasValue ? (int)vmProduct.Minimo : 0, 
-                                vmProduct.IdProduct, 
-                                user.IdTienda);
-
-                vmProduct.Stocks = new List<Stock>() { s };
 
                 Product product_edited = await _productService.Edit(_mapper.Map<Product>(vmProduct), listPrecios, _mapper.Map<List<Vencimiento>>(vmListVencimientos));
 

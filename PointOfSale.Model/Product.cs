@@ -31,6 +31,5 @@ namespace PointOfSale.Model
         public List<ListaPrecio>? ListaPrecios { get; set; }
         public List<Vencimiento>? Vencimientos { get; set; }
         public virtual ICollection<PedidoProducto>? PedidoProductos { get; set; }
-        public virtual ICollection<Stock>? Stocks { get; set; }
     }
 }

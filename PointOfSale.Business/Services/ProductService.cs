@@ -21,7 +21,6 @@ namespace PointOfSale.Business.Services
         private readonly IGenericRepository<ListaPrecio> _repositoryListaPrecios;
         private readonly IGenericRepository<DetailSale> _repositoryDetailSale;
         private readonly IGenericRepository<Vencimiento> _repositoryVencimientos;
-        private readonly IGenericRepository<Stock> _repositoryStock;
         private readonly INotificationService _notificationService;
 
         public ProductService(IGenericRepository<Product> repository,
@@ -148,7 +147,7 @@ namespace PointOfSale.Business.Services
             try
             {
                 IQueryable<Product> queryProduct1 = await _repository.Query(u => u.IdProduct == entity.IdProduct);
-                Product product_edit = queryProduct1.Include(_ => _.ListaPrecios).Include(_ => _.Stocks).First();
+                Product product_edit = queryProduct1.Include(_ => _.ListaPrecios).First();
 
                 product_edit.BarCode = entity.BarCode;
                 product_edit.Brand = entity.Brand;
@@ -168,10 +167,6 @@ namespace PointOfSale.Business.Services
                 product_edit.TipoVenta = entity.TipoVenta;
                 product_edit.Comentario = entity.Comentario;
                 product_edit.Minimo = entity.Minimo;
-
-                var stockProductVM = entity.Stocks.ToList().First();
-
-                await UpdateStock(entity, stockProductVM);
 
                 bool response = await _repository.Edit(product_edit);
                 if (!response)
@@ -450,10 +445,6 @@ namespace PointOfSale.Business.Services
                 p.Quantity += pedProd.CantidadProductoRecibida;
                 await _repository.Edit(p);
 
-                var stockProductVM = p.Stocks.ToList().First();
-
-                await UpdateStock(p, stockProductVM);
-
                 if (pedProd.Vencimiento.HasValue)
                 {
                     var v = new Vencimiento();
@@ -471,20 +462,5 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        private async Task UpdateStock(Product p, Stock stockProductVM)
-        {
-            if (p.Stocks == null)
-            {
-                await _repositoryStock.Add(stockProductVM);
-            }
-            else
-            {
-                var stockFind = p.Stocks.ToList().First();
-
-                stockFind.StockActual = stockProductVM.StockActual;
-                stockFind.StockMinimo = stockProductVM.StockMinimo;
-                await _repositoryStock.Edit(stockProductVM);
-            }
-        }
     }
 }

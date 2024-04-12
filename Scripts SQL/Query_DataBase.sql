@@ -409,11 +409,3 @@ go
 alter table [dbo].[ProveedorMovimiento] add IdPedido int references Pedidos(IdPedido) null
 
 go
-
-create table Stock(
-[IdStock] int primary key identity(1,1),
-StockActual int not null,
-StockMinimo int null,
-idProducto int references Product(idProduct) not null,
-idTienda int references Tienda(idTienda) not null,
-)
