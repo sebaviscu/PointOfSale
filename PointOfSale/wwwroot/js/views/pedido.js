@@ -8,9 +8,26 @@ const BASIC_MODEL = {
     idProveedor: 0,
     registrationDate: null,
     registrationUser: "",
-    fechaCreacion: null,
     cantidadProductos: 0,
     productos: []
+}
+
+const BASIC_MODEL_RECIBIR = {
+    idPedido: 0,
+    importeEstimado: 0,
+    estado: 1,
+    comentario: "",
+    idProveedor: 0,
+    registrationDate: null,
+    registrationUser: "",
+    productos: [],
+    tipoFactura: null,
+    nroFactura: null,
+    iva: null,
+    ivaImporte: null,
+    importeSinIva: null,
+    estadoPago: 0,
+    facturaPendiente: 0
 }
 
 $(document).ready(function () {
@@ -56,11 +73,20 @@ $(document).ready(function () {
                     if (data == 0)
                         return '<span class="badge rounded-pill bg-danger">Cancelado</span>';
                     else if (data == 1)
-                        return '<span class="badge rounded-pill bg-info text-dark">Iniciado</span>';
+                        return '<span class="badge rounded-pill bg-info">Iniciado</span>';
                     else if (data == 2)
-                        return '<span class="badge rounded-pill bg-primary text-dark">Enviado</span>';
+                        return '<span class="badge rounded-pill bg-primary">Enviado</span>';
                     else
-                        return '<span class="badge rounded-pill bg-success text-dark">Recibido</span>';
+                        return '<span class="badge rounded-pill bg-success">Recibido</span>';
+                }
+            },
+            {
+                "data": "estado",
+                "className": "text-center", render: function (data) {
+                    if (data == 2)
+                        return '<button class="btn btn-secondary btn-sm btn-recibir">Recibir</button>';
+                    else
+                        return '';
                 }
             },
             {
@@ -90,7 +116,7 @@ $(document).ready(function () {
 
     $(document).on('blur', '.editable', function () {
         var input = parseInt($(this).text());
-        if (isNaN(input) || input < 1) {
+        if (isNaN(input) || input < 0) {
             $(this).text('');
         }
     });
@@ -115,7 +141,10 @@ function calcularTotalCosto() {
         if (isNaN(cantidad) || cantidad < 1) {
             cantidad = 0;
         }
-        const costo = parseInt($(this).find('td:eq(2)').text());
+        var str = $(this).find('td:eq(2)').text();
+        var costoString = str.slice(1).trim();
+
+        const costo = parseInt(costoString);
         totalCosto += cantidad * costo;
 
     });
@@ -134,9 +163,19 @@ const openModal = (model = BASIC_MODEL) => {
         $('#cboProveedor').prop('disabled', true);
         $("#cboEstado").val(model.estado);
 
+        var deshabilitado = model.estado === 3;
+        $('#txtComentario, #btnGenerar, #cboEstado, #btnSave').prop('disabled', deshabilitado);
+
     }
     else {
         $('#cboProveedor').prop('disabled', false);
+    }
+
+    if (model.estado == 3) {
+        $('#optionRecibido').show();
+    }
+    else {
+        $('#optionRecibido').hide();
     }
 
     $("#modalData").modal("show")
@@ -242,7 +281,7 @@ function cargarTabla(productos, idProveedor, nuevo) {
         tr.innerHTML = `
                               <td hidden>${idProd}</td>
                               <td>${descr}</td>
-                              <td>${costo}</td>
+                              <td>$ ${costo}</td>
                               <td>${stock != null ? stock : 0}</td>
                               <td ${disable} inputmode="numeric" pattern="[0-9]*" min="0" >${cantidadProducto}</td>
                             `;
@@ -337,7 +376,6 @@ $("#btnSave").on("click", function () {
 
 })
 
-
 $("#tbData tbody").on("click", ".btn-delete", function () {
 
     let row;
@@ -390,3 +428,221 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
             });
     }
 })
+
+
+$("#tbData tbody").on("click", ".btn-recibir", function () {
+
+    if ($(this).closest('tr').hasClass('child')) {
+        rowSelected = $(this).closest('tr').prev();
+    } else {
+        rowSelected = $(this).closest('tr');
+    }
+
+    const data = tableData.row(rowSelected).data();
+
+
+    openModalRecibido(data);
+})
+
+const openModalRecibido = (model = BASIC_MODEL) => {
+
+    $("#txtIdPedidoRecibido").val(model.idPedido);
+    //$("#txtImporteRecibido").val(model.importeEstimado);
+    $("#txtImporteRecibido").attr("placeholder", model.importeEstimado);
+    $("#txtComentarioRecibido").val(model.comentario);
+    $('#txtProveedorRecibido').val(model.proveedor.nombre);
+    $("#txtFechaCreacion").val(model.registrationDateString);
+    $("#txtCreationUser").val(model.registrationUser);
+    $('#txtIdProveedor').val(model.proveedor.idProveedor);
+
+    $("#txtIva").val(model.proveedor.iva != null ? model.proveedor.iva : '');
+
+    var sumaCantidadProductos = 0;
+    $.each(model.productos, function (index, producto) {
+        sumaCantidadProductos += producto.cantidadProducto;
+    });
+
+    $("#txtCantidadProductos").val(sumaCantidadProductos);
+
+    cargarTablaRecibidos(model.productos, model.idProveedor);
+    $("#modalDataRecibido").modal("show")
+}
+
+
+function cargarTablaRecibidos(productos, idProveedor) {
+    const tablaBody = document.querySelector('#tablaProductosRecibidos tbody');
+    tablaBody.innerHTML = '';
+
+    var proveedor = proveedoresList.find(_ => _.idProveedor == idProveedor);
+
+    productos.forEach(producto => {
+        const tr = document.createElement('tr');
+
+        let prod = proveedor.products.find(_ => _.idProduct == producto.idProducto);
+
+        let idPedidoProducto = producto.idPedidoProducto;
+        let idProd = producto.idProducto;
+        let descr = prod.description;
+        let costo = prod.costPrice;
+        let cantidadPedida = producto.cantidadProducto;
+
+
+        tr.innerHTML = `
+                              <td hidden>${idPedidoProducto}</td>
+                              <td hidden>${idProd}</td>
+                              <td>${descr}</td>
+                              <td>$ ${costo}</td>
+                              <td>${cantidadPedida}</td>
+                              <td class="editable" contenteditable="true" inputmode="numeric" pattern="[0-9]*" min="0" ></td>
+                              <td class="editableText" contenteditable="true" inputmode="text"></td>
+                              <td class="editableText" contenteditable="true" inputmode="text"></td>
+                            `;
+        tablaBody.appendChild(tr);
+    });
+}
+
+$("#btnCerrarPedido").on("click", function () {
+
+    const inputs = $("input.input-validate").serializeArray();
+    const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
+
+    if (inputs_without_value.length > 0) {
+        const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
+        toastr.warning(msg, "");
+        $(`input[name="${inputs_without_value[0].name}"]`).focus();
+        return;
+    }
+
+    $("#modalDataRecibido").find("div.modal-content").LoadingOverlay("show")
+
+    const model = structuredClone(BASIC_MODEL_RECIBIR);
+    let idPedido = parseInt($("#txtIdPedidoRecibido").val());
+    model["idPedido"] = idPedido;
+    model["importeEstimado"] = parseFloat($("#txtImporteRecibido").val());
+    model["comentario"] = $("#txtComentarioRecibido").val();
+    model["idProveedor"] = parseInt($('#txtIdProveedor').val());
+
+    model["tipoFactura"] = $("#cboTipoFactura").val();
+    model["nroFactura"] = $("#txtNroFactura").val();
+    model["iva"] = $("#txtIva").val();
+    model["ivaImporte"] = $("#txtImporteIva").val();
+    model["importeSinIva"] = $("#txtImporteSinIva").val();
+    model["estadoPago"] = parseInt($("#cboEstadoFactura").val());
+    model["facturaPendiente"] = document.querySelector('#cbxFacturaPendiente').checked;
+
+
+    var productosConCantidad = [];
+    let fechaValida = false;
+    let cantidadesVacias = false;
+    $('#tablaProductosRecibidos tbody tr').each(function () {
+        var idPedidoProducto = parseInt($(this).find('td:eq(0)').text());
+        var idProducto = parseInt($(this).find('td:eq(1)').text());
+        var cantidadPedida = parseInt($(this).find('td:eq(4)').text());
+        var cantidadRecibida = parseInt($(this).find('td:eq(5)').text());
+        var vencimiento = $(this).find('td:eq(6)').text();
+        var lote = $(this).find('td:eq(7)').text();
+
+        cantidadesVacias = $(this).find('td:eq(5)').text() == '';
+
+        if (vencimiento != '') {
+            fechaValida = validarFecha(vencimiento);
+        } else {
+            vencimiento = null;
+        }
+
+        if (!isNaN(cantidadRecibida)) {
+            var producto = {
+                idPedidoProducto: idPedidoProducto,
+                idPedido: idPedido,
+                idProducto: idProducto,
+                cantidadProducto: cantidadPedida,
+                vencimiento: vencimiento,
+                lote: lote,
+                cantidadProductoRecibida: cantidadRecibida
+
+            };
+            productosConCantidad.push(producto);
+        }
+    });
+    model["productos"] = productosConCantidad;
+
+
+    if (cantidadesVacias) {
+        mostrarAdvertencia("Debe ingresar la cantidad recibida de todos los productos");
+        return;
+    }
+
+    if (!fechaValida) {
+        mostrarAdvertencia("Debe ingresar fechas de vencimiento válidas (dd/mm/aaaa)");
+        return;
+    }
+
+    if (model.idPedido != 0) {
+        fetch("/Pedido/CerrarPedidos", {
+            method: "PUT",
+            headers: { 'Content-Type': 'application/json;charset=utf-8' },
+            body: JSON.stringify(model)
+        }).then(response => {
+            $("#modalDataRecibido").find("div.modal-content").LoadingOverlay("hide")
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+
+            if (responseJson.state) {
+                $("#modalDataRecibido").modal("hide");
+                swal("Exitoso!", "Pedido fue recibido", "success");
+                location.reload()
+
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+        }).catch((error) => {
+            $("#modalDataRecibido").find("div.modal-content").LoadingOverlay("hide")
+        })
+    }
+
+})
+
+function mostrarAdvertencia(msg) {
+    toastr.warning(msg, "");
+    $("#modalDataRecibido").find("div.modal-content").LoadingOverlay("hide");
+}
+
+function validarFecha(fechaString) {
+    var regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+
+    if (!regex.test(fechaString)) {
+    }
+
+    var partes = fechaString.split('/');
+    var dia = parseInt(partes[0], 10);
+    var mes = parseInt(partes[1], 10);
+    var anio = parseInt(partes[2], 10);
+
+    if (isNaN(dia) || isNaN(mes) || isNaN(anio)) {
+        return false;
+    }
+
+    if (dia < 1 || dia > 31 || mes < 1 || mes > 12) {
+        return false; // 
+    }
+
+    if (anio < 1000 || anio > 9999) {
+        return false;
+    }
+
+    return true;
+}
+
+function calcularImportesIva() {
+    var importe = $("#txtImporteRecibido").val();
+    var iva = $("#txtIva").val();
+
+    if (importe !== '' && iva !== '') {
+        let importeFloat = parseFloat(importe)
+        var importeSinIva = parseFloat(importeFloat) * (1 - (parseFloat(iva) / 100));
+
+        $("#txtImporteSinIva").val(importeSinIva.toFixed(2));
+        $("#txtImporteIva").val((importeFloat - importeSinIva).toFixed(2));
+
+    }
+}

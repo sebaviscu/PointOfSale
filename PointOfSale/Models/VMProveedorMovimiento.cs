@@ -30,6 +30,9 @@ namespace PointOfSale.Models
         public string? ImporteSinIvaString { get; set; }
         public string? IvaImporteString { get; set; }
         public EstadoPago? EstadoPago { get; set; }
+        public int? IdPedido { get; set; }
+        public Pedido? Pedido { get; set; }
+        public bool FacturaPendiente { get; set; }
 
     }
 }

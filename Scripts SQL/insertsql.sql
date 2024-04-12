@@ -35,10 +35,10 @@ insert into Menu([description],idMenuParent,controller,pageAction,isActive) valu
 ('Reporte Ventas',4,'Sales','SalesHistory',1), --12
 ('Formas de Pago',1,'Admin','TipoVenta',1), --13
 ('Clientes',6,'Admin','Cliente',1), --14
-('Proveedor',6,'Admin','Proveedor',1), --15
+('Proveedores',6,'Admin','Proveedor',1), --15
 ('Promociones',2,'Admin','Promociones',1), --16
 ('Gastos',6,'Gastos','Gastos',1), --17
-('Turno',6,'Turno','Turno',1), --18
+('Turnos',6,'Turno','Turno',1), --18
 ('Ventas Web',7,'Shop','VentaWeb',1), --19
 ('Shop',7,'Shop','Index',1), --20
 ('Reporte Productos',4,'Reports','ProductsReport',1), --21

@@ -290,18 +290,20 @@ create table ProveedorMovimiento(
 	[comentario] varchar(300)  null,
 	idTienda int not null,
 	EstadoPago int not null,
+	FacturaPendiente bit not null,
 	[registrationDate] datetime not null,
 	[registrationUser] varchar(50) not null
 )
 
 go
 
-
 create table TipoGastos(
 	[idTipoGastos] int primary key identity(1,1),
 	[gastoParticular] int not null,
 	[descripcion] varchar(150) not null
 )
+
+go
 
 create table Gastos(
 	[idGastos] int primary key identity(1,1),
@@ -383,6 +385,9 @@ estado int not null,
 [idProveedorMovimiento] int references ProveedorMovimiento(idProveedorMovimiento) null,
 [idProveedor] int references Proveedor(idProveedor),
 [idTienda] int references Tienda(idTienda),
+fechaCerrado datetime  null,
+usuarioFechaCerrado varchar(100)  null,
+importeFinal decimal(10,2)  null,
 [registrationDate] datetime default getdate(),
 [registrationUser] varchar(50) not null
 )
@@ -394,6 +399,21 @@ create table PedidoProducto(
 cantidadProducto int not null,
 lote varchar(100) null,
 vencimiento datetime null,
+cantidadProductoRecibida int  null,
 idProducto int references Product(idProduct) not null,
 idPedido int references Pedidos(idPedido) not null,
+)
+
+go
+
+alter table [dbo].[ProveedorMovimiento] add IdPedido int references Pedidos(IdPedido) null
+
+go
+
+create table Stock(
+[IdStock] int primary key identity(1,1),
+StockActual int not null,
+StockMinimo int null,
+idProducto int references Product(idProduct) not null,
+idTienda int references Tienda(idTienda) not null,
 )

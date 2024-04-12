@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
+using static iTextSharp.text.pdf.events.IndexEvents;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services
@@ -20,12 +21,13 @@ namespace PointOfSale.Business.Services
         private readonly IGenericRepository<ListaPrecio> _repositoryListaPrecios;
         private readonly IGenericRepository<DetailSale> _repositoryDetailSale;
         private readonly IGenericRepository<Vencimiento> _repositoryVencimientos;
+        private readonly IGenericRepository<Stock> _repositoryStock;
         private readonly INotificationService _notificationService;
 
-        public ProductService(IGenericRepository<Product> repository, 
-            IGenericRepository<ListaPrecio> repositoryListaPrecios, 
-            IGenericRepository<DetailSale> repositoryDetailSale, 
-            IGenericRepository<Vencimiento> repositoryVencimientos, 
+        public ProductService(IGenericRepository<Product> repository,
+            IGenericRepository<ListaPrecio> repositoryListaPrecios,
+            IGenericRepository<DetailSale> repositoryDetailSale,
+            IGenericRepository<Vencimiento> repositoryVencimientos,
             INotificationService notificationService)
         {
             _repository = repository;
@@ -146,13 +148,13 @@ namespace PointOfSale.Business.Services
             try
             {
                 IQueryable<Product> queryProduct1 = await _repository.Query(u => u.IdProduct == entity.IdProduct);
-                Product product_edit = queryProduct1.Include(_ => _.ListaPrecios).First();
+                Product product_edit = queryProduct1.Include(_ => _.ListaPrecios).Include(_ => _.Stocks).First();
 
                 product_edit.BarCode = entity.BarCode;
                 product_edit.Brand = entity.Brand;
                 product_edit.Description = entity.Description;
                 product_edit.IdCategory = entity.IdCategory;
-                product_edit.Quantity = entity.Quantity < product_edit.Quantity ? product_edit.Quantity : entity.Quantity; // que no sea menor al que ya tiene
+                product_edit.Quantity = entity.Quantity < product_edit.Quantity ? product_edit.Quantity : entity.Quantity;
                 product_edit.Price = entity.Price;
                 product_edit.CostPrice = entity.CostPrice;
                 product_edit.PriceWeb = entity.PriceWeb;
@@ -167,11 +169,15 @@ namespace PointOfSale.Business.Services
                 product_edit.Comentario = entity.Comentario;
                 product_edit.Minimo = entity.Minimo;
 
+                var stockProductVM = entity.Stocks.ToList().First();
+
+                await UpdateStock(entity, stockProductVM);
+
                 bool response = await _repository.Edit(product_edit);
                 if (!response)
                     throw new TaskCanceledException("El producto no pudo modificarse");
 
-                foreach (var v in vencimientos.Where(_=>_.IdVencimiento == 0))
+                foreach (var v in vencimientos.Where(_ => _.IdVencimiento == 0))
                 {
                     v.IdProducto = product_edit.IdProduct;
                 }
@@ -224,13 +230,13 @@ namespace PointOfSale.Business.Services
             {
                 foreach (var v in listaVencimientos)
                 {
-                    if(v.IdVencimiento == 0)
+                    if (v.IdVencimiento == 0)
                     {
                         await _repositoryVencimientos.Add(v);
                     }
                     else
                     {
-                        var oVen = await _repositoryVencimientos.Get(_=>_.IdVencimiento == v.IdVencimiento);
+                        var oVen = await _repositoryVencimientos.Get(_ => _.IdVencimiento == v.IdVencimiento);
                         oVen.FechaVencimiento = v.FechaVencimiento;
                         oVen.FechaElaboracion = v.FechaElaboracion;
                         oVen.Lote = v.Lote;
@@ -424,6 +430,7 @@ namespace PointOfSale.Business.Services
                 await _notificationService.Save(n);
             }
         }
+
         public async Task<List<Vencimiento>> GetProximosVencimientos(int idTienda)
         {
             var queryProducts = await _repositoryVencimientos.Query(p => p.IdTienda == idTienda);
@@ -431,5 +438,53 @@ namespace PointOfSale.Business.Services
         }
 
 
+        public async Task ActualizarStockAndVencimientos(List<PedidoProducto> pedidoProductos, int idTienda, string registrationUser)
+        {
+            var idsProds = pedidoProductos.Select(_ => _.IdProducto).ToList();
+            var queryProducts = await _repository.Query(p => idsProds.Contains(p.IdProduct));
+            //var listaProductos = queryProducts.ToList();
+
+            foreach (var p in queryProducts)
+            {
+                var pedProd = pedidoProductos.First(_ => _.IdProducto == p.IdProduct);
+                p.Quantity += pedProd.CantidadProductoRecibida;
+                await _repository.Edit(p);
+
+                var stockProductVM = p.Stocks.ToList().First();
+
+                await UpdateStock(p, stockProductVM);
+
+                if (pedProd.Vencimiento.HasValue)
+                {
+                    var v = new Vencimiento();
+                    v.IdTienda = idTienda;
+                    v.IdProducto = p.IdProduct;
+                    v.Notificar = true;
+                    v.FechaVencimiento = pedProd.Vencimiento.Value;
+                    v.Lote = pedProd.Lote;
+                    v.RegistrationDate = DateTimeNowArg;
+                    v.RegistrationUser = registrationUser;
+
+                    await _repositoryVencimientos.Add(v);
+                }
+
+            }
+        }
+
+        private async Task UpdateStock(Product p, Stock stockProductVM)
+        {
+            if (p.Stocks == null)
+            {
+                await _repositoryStock.Add(stockProductVM);
+            }
+            else
+            {
+                var stockFind = p.Stocks.ToList().First();
+
+                stockFind.StockActual = stockProductVM.StockActual;
+                stockFind.StockMinimo = stockProductVM.StockMinimo;
+                await _repositoryStock.Edit(stockProductVM);
+            }
+        }
     }
 }

@@ -24,10 +24,10 @@ const BASIC_MODEL_PAGO_PROVEEDOR = {
     importeSinIva: 0,
     comentario: null,
     estadoPago: 0,
+    facturaPendiente: 0
 }
 
 $(document).ready(function () {
-
     fetch("/Gastos/GetTipoDeGasto")
         .then(response => {
             return response.ok ? response.json() : Promise.reject(response);
@@ -573,6 +573,7 @@ $("#btnSavePagoProveedor").on("click", function () {
         model["importeSinIva"] = $("#txtImporteSinIva").val() != '' ? $("#txtImporteSinIva").val() : 0;
         model["comentario"] = $("#txtComentario").val();
         model["estadoPago"] = parseInt($("#cboEstado").val());
+        model["facturaPendiente"] = document.querySelector('#cbxFacturaPendiente').checked;
     }
 
 

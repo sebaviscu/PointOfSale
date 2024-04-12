@@ -306,7 +306,7 @@ $("#btnFinalizarVentaParcial").on("click", function () {
     const sale = {
         idTypeDocumentSale: $("#cboTypeDocumentSaleParcial").val(),
         clientId: $("#cboCliente" + currentTabId).val() != '' ? $("#cboCliente" + currentTabId).val() : null,
-        total: $("#txtTotalParcial").val(),
+        total: $("#txtTotalParcial").val().replace('.', ','),
         detailSales: vmDetailSale,
         tipoMovimiento: $("#cboCliente" + currentTabId).val() != '' ? 2 : null,
         imprimirTicket: document.querySelector('#cboImprimirTicket').checked,

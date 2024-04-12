@@ -84,7 +84,7 @@ $(document).ready(function () {
                 title: '',
                 filename: 'Reporte Tiendas',
                 exportOptions: {
-                    columns: [1, 2,4,5]
+                    columns: [1, 2, 4, 5]
                 }
             }, 'pageLength'
         ]
@@ -135,22 +135,6 @@ const openModal = (model = BASIC_MODEL) => {
 
 $("#btnNew").on("click", function () {
     openModal()
-})
-$("#bntVerImpresoras").on("click", function () {
-
-    fetch(`/Tienda/GetImpresoras`, {
-        method: "GET"
-    }).then(response => {
-        return response.ok ? response.json() : Promise.reject(response);
-    }).then(responseJson => {
-        if (responseJson.state) {
-
-            alert(responseJson.object);
-            console.log(responseJson.object);
-        }
-    })
-        .catch((error) => {
-        })
 })
 
 $("#btnSave").on("click", function () {
@@ -332,3 +316,24 @@ $("#clickWeb").on("click", function () {
     $("#facturacion").hide();
     $("#carroCompras").show();
 })
+
+document.onkeyup = function (e) {
+    if (e.altKey && e.which == 73) { // alt + I
+        fetch(`/Tienda/GetImpresoras`, {
+            method: "GET"
+        }).then(response => {
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+            if (responseJson.state) {
+
+                alert(responseJson.object);
+                console.log(responseJson.object);
+            }
+        })
+            .catch((error) => {
+            });
+
+        return false;
+
+    }
+};

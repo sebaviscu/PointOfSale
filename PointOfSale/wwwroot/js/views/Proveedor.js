@@ -33,7 +33,8 @@ const BASIC_MODEL_PAGO = {
     importe: 0,
     importeSinIva: 0,
     comentario: null,
-    estadoPago: 0
+    estadoPago: 0,
+    facturaPendiente: 0
 }
 
 $(document).ready(function () {
@@ -365,6 +366,7 @@ $("#btnSavePago").on("click", function () {
     model["importeSinIva"] = $("#txtImporteSinIva").val() != '' ? $("#txtImporteSinIva").val() : 0;
     model["comentario"] = $("#txtComentario").val();
     model["estadoPago"] = parseInt($("#cboEstado").val());
+    model["facturaPendiente"] = document.querySelector('#cbxFacturaPendiente').checked;
 
     $("#modalPago").find("div.modal-content").LoadingOverlay("show")
 
@@ -473,6 +475,12 @@ function calcularImportes() {
 function cargarTablaGastos() {
     tableDataGastos = $("#tbDataGastos").DataTable({
         responsive: true,
+        pageLength: 25,
+        "rowCallback": function (row, data) {
+            if (data.facturaPendiente == 1) {
+                $('td:eq(2)', row).addClass('factura-pendiente');
+            }
+        },
         "ajax": {
             "url": "/Admin/GetAllMovimientoProveedor",
             "type": "GET",
@@ -486,8 +494,12 @@ function cargarTablaGastos() {
             },
             { "data": "registrationDateString" },
             { "data": "nombreProveedor" },
-            { "data": "tipoFacturaString" },
-            { "data": "nroFactura" },
+            {
+                "data": "nroFactura", render: function (data, type, row) {
+                    return "<span>" + row.tipoFacturaString + " </span>" +
+                        "<span> " + row.nroFactura + "</span>";
+                }
+            },
             { "data": "comentario" },
             {
                 "data": "estadoPago",

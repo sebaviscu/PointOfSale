@@ -384,7 +384,12 @@
                                 </div>
                                 <div class="form-group col-sm-10">
                                     <label for="txtNroFactura">Nro Factura</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtNroFactura" name="Factura">
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control form-control-sm" id="txtNroFactura" name="Factura">
+                                        <div class="input-group-text pago-proveedor" style="display: none">
+                                            <input type="checkbox" id="cbxFacturaPendiente" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Marca la Factura como Pendiente">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="form-row">
@@ -401,10 +406,10 @@
                                     <label for="txtImporte">Importe</label>
 
                                     <div class="input-group  input-group-sm mb-3">
+                                        <input type="number" step="any" class="form-control form-control-sm input-validate-proveedor" style="background-color: beige" id="txtImporte" name="Importe">
                                         <div class="input-group-prepend">
                                             <a class="input-group-text" for="txtImporte" onclick="calcularImportesProv('')">Calc.</a>
                                         </div>
-                                        <input type="number" step="any" class="form-control form-control-sm input-validate-proveedor" style="background-color: beige" id="txtImporte" name="Importe">
                                     </div>
                                 </div>
 

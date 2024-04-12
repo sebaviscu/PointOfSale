@@ -7,10 +7,10 @@ namespace PointOfSale.Models
     {
         public int IdPedido { get; set; }
         public decimal? ImporteEstimado { get; set; }
-        public virtual ICollection<PedidoProducto>? Productos { get; set; }
+        public virtual ICollection<VMPedidoProducto>? Productos { get; set; }
         public EstadoPedido? Estado { get; set; }
         public int? IdProveedorMovimiento { get; set; }
-        public ProveedorMovimiento? ProveedorMovimiento { get; set; }
+        public VMProveedorMovimiento? ProveedorMovimiento { get; set; }
         public string? Comentario { get; set; }
         public int IdProveedor { get; set; }
         public Proveedor? Proveedor { get; set; }
@@ -22,6 +22,18 @@ namespace PointOfSale.Models
 
         public int? CantidadProductos { get; set; }
         public string? ImporteEstimadoString { get; set; }
+        public DateTime? FechaCerrado { get; set; }
+        public string? UsuarioFechaCerrado { get; set; }
+
+
+        public decimal? ImporteSinIva { get; set; }
+        public decimal? Iva { get; set; }
+        public decimal? IvaImporte { get; set; }
+        public string? NroFactura { get; set; }
+        public string? TipoFactura { get; set; }
+        public EstadoPago? EstadoPago { get; set; }
+        public bool FacturaPendiente { get; set; }
+
 
     }
 }

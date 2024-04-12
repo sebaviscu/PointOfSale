@@ -18,5 +18,7 @@ namespace PointOfSale.Business.Contracts
         Task<bool> Delete(int idPedido);
 
         Task<Pedido> Recibir(Pedido entity);
+
+        Task<Pedido> CerrarPedido(Pedido entity);
     }
 }

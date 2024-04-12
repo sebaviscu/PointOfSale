@@ -20,9 +20,13 @@ namespace PointOfSale.Model
         public int IdTienda { get; set; }
         public Tienda? Tienda { get; set; }
         public virtual ICollection<PedidoProducto>? Productos { get; set; }
-        public DateTime? FechaRecibido { get; set; }
 
         public DateTime RegistrationDate { get; set; }
         public string RegistrationUser { get; set; }
+
+        public DateTime? FechaCerrado { get; set; }
+        public string? UsuarioFechaCerrado { get; set; }
+        public decimal? ImporteFinal { get; set; }
+
     }
 }

@@ -5,12 +5,15 @@ using PointOfSale.Business.Services;
 using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
+using static iTextSharp.text.pdf.events.IndexEvents;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Controllers
 {
     public class PedidoController : BaseController
     {
+        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
+
         private readonly IMapper _mapper;
         private readonly IPedidoService _pedidoService;
 
@@ -95,6 +98,51 @@ namespace PointOfSale.Controllers
             try
             {
                 gResponse.State = await _pedidoService.Delete(idPedido);
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+
+        [HttpPut]
+        public async Task<IActionResult> CerrarPedidos([FromBody] VMPedido model)
+        {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+
+            GenericResponse<VMPedido> gResponse = new GenericResponse<VMPedido>();
+            try
+            {
+                model.UsuarioFechaCerrado = user.UserName;
+                var m = new VMProveedorMovimiento();
+                m.NroFactura = model.NroFactura;
+                m.TipoFactura = model.TipoFactura;
+                m.EstadoPago = model.EstadoPago;
+                m.IdProveedor = model.IdProveedor;
+                m.Importe = model.ImporteEstimado.Value;
+                m.ImporteSinIva = model.ImporteSinIva;
+                m.Iva = model.Iva;
+                m.IvaImporte = model.IvaImporte;
+                m.RegistrationDate = DateTimeNowArg;
+                m.RegistrationUser = user.UserName;
+                m.idTienda = user.IdTienda;
+                m.IdPedido = model.IdPedido;
+                m.Comentario = model.Comentario;
+                m.FacturaPendiente = model.FacturaPendiente;
+
+                model.ProveedorMovimiento = m;
+                model.UsuarioFechaCerrado = user.UserName;
+
+                Pedido edited_Pedido = await _pedidoService.CerrarPedido(_mapper.Map<Pedido>(model));
+
+                model = _mapper.Map<VMPedido>(edited_Pedido);
+
+                gResponse.State = true;
+                gResponse.Object = model;
             }
             catch (Exception ex)
             {

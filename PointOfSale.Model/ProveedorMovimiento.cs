@@ -29,7 +29,6 @@ namespace PointOfSale.Model
         public EstadoPago? EstadoPago { get; set; }
         public int? IdPedido { get; set; }
         public Pedido? Pedido { get; set; }
-
-
+        public bool FacturaPendiente { get; set; }
     }
 }

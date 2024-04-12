@@ -15,6 +15,10 @@
     .margin-min {
         margin-bottom: 5px;
     }
+
+    .factura-pendiente {
+        background-color: yellow;
+    }
 </style>
 
 <div class="row">
@@ -69,7 +73,6 @@
                                         <th></th>
                                         <th>Fecha</th>
                                         <th>Proveedor</th>
-                                        <th>Tipo Factura</th>
                                         <th>Factura</th>
                                         <th>Comentario</th>
                                         <th>Estado</th>
@@ -267,7 +270,12 @@
                                 </div>
                                 <div class="form-group col-sm-7">
                                     <label for="txtNroFactura">Nro Factura</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtNroFactura" name="Factura">
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control form-control-sm" id="txtNroFactura" name="Factura">
+                                        <div class="input-group-text">
+                                            <input type="checkbox" id="cbxFacturaPendiente" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Marca la Factura como Pendiente">
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="form-group col-sm-3">
                                     <label for="cboEstado">Estado</label>
@@ -298,11 +306,11 @@
                                 </div>
                             </div>
                             <div class="form-row">
-                                <div class="form-group col-sm-6">
+                                <div class="form-group col-sm-4">
                                     <label for="txtImporteIva">Importe IVA</label>
                                     <input type="number" class="form-control form-control-sm" id="txtImporteIva" name="Importe IVA">
                                 </div>
-                                <div class="form-group col-sm-6">
+                                <div class="form-group col-sm-4">
                                     <label for="txtImporteSinIva">Importe sin IVA</label>
                                     <input type="number" class="form-control form-control-sm" id="txtImporteSinIva" name="Importe sin IVA">
                                 </div>

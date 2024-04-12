@@ -10,6 +10,7 @@ namespace PointOfSale.Model
     {
         public int IdPedidoProducto { get; set; }
         public int CantidadProducto { get; set; }
+        public int? CantidadProductoRecibida { get; set; }
         public string? Lote { get; set; }
         public DateTime? Vencimiento { get; set; }
         public int IdProducto { get; set; }
