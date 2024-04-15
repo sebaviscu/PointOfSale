@@ -64,6 +64,11 @@ $(document).ready(function () {
                 "visible": false,
                 "searchable": false
             },
+            {
+                "data": "orden",
+                "visible": false,
+                "searchable": false
+            },
             { "data": "proveedor.nombre" },
             { "data": "registrationDateString" },
             { "data": "importeEstimadoString" },
@@ -97,7 +102,7 @@ $(document).ready(function () {
                 "width": "80px"
             }
         ],
-        order: [[0, "desc"]],
+        order: [[1, "asc"]],
         dom: "Bfrtip",
         buttons: [
             {
@@ -250,6 +255,7 @@ $("#btnGenerar").on("click", function () {
 
 $('#cboProveedor').change(function () {
 
+    $('#txtImporteEstimado').val(0);
     var idProv = $(this).val();
     var proveedor = proveedoresList.find(_ => _.idProveedor == idProv);
 

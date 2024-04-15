@@ -31,7 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\netcore-afip-facturacion-main\AFIP.Facturacion\AFIP.Facturacion.csproj" />
+    <ProjectReference Include="..\AFIP.Facturacion\AFIP.Facturacion.csproj" />
     <ProjectReference Include="..\PointOfSale.Business\PointOfSale.Business.csproj" />
     <ProjectReference Include="..\PointOfSale.Data\PointOfSale.Data.csproj" />
     <ProjectReference Include="..\PointOfSale.Model\PointOfSale.Model.csproj" />

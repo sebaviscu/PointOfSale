@@ -17,7 +17,8 @@ namespace PointOfSale.Business.Contracts
         Task<List<ProveedorMovimiento>> ListMovimientosProveedor(int idProveedor, int idTienda);
         Task<List<ProveedorMovimiento>> ListMovimientosProveedorForTablaDinamica(int idTienda);
         Task<ProveedorMovimiento> CambiarEstadoMovimiento(int idMovimiento);
-
         Task<List<Proveedor>> ListConProductos();
+        Task<bool> DeleteProveedorMovimiento(int idProveedorMovimiento);
+        Task<ProveedorMovimiento> Edit(ProveedorMovimiento entity);
     }
 }

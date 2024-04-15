@@ -80,6 +80,20 @@
                 <div class="card-header card-header-border-bottom" style="padding-top: 0px;padding-left: 0px;">
                     <div class="row col-md 3">
                         <h4>Vencimientos</h4>
+                        <div class="row ms-5" id="rowFilterVencimientos">
+                            <div class="ms-3 h4">
+                                <input type="radio" id="rbtnTodos" name="filtroVencimientos" class="filtro-vencimientos" value="0">
+                                <label for="rbtnTodos" style="font-size: 13px;">Todos</label>
+                            </div>
+                            <div class="ms-3 h4">
+                                <input type="radio" id="rbtnProximosVencer" name="filtroVencimientos" class="filtro-vencimientos" value="1" checked />
+                                <label for="rbtnProximosVencer" style="font-size: 13px;">Proximos a Vencer</label>
+                            </div>
+                            <div class="ms-3 me-5 h4">
+                                <input type="radio" id="rbtnVencidos" name="filtroVencimientos" class="filtro-vencimientos" value="2">
+                                <label for="rbtnVencidos" style="font-size: 13px;">Vencidos</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="card-body" style=" padding-left: 0px;padding-right: 0px;padding-top: 15px;">
@@ -88,6 +102,7 @@
                             <table id="tbDataVencimientos" class="table" style="width:100%">
                                 <thead>
                                     <tr>
+                                        <th></th>
                                         <th></th>
                                         <th>Fecha Vencimiento</th>
                                         <th>Producto</th>
@@ -177,14 +192,6 @@
                         </div>
                         <div class="col-sm-6 row" style="margin-bottom: 0px;">
                             <div class="col-md-6">
-                                @*                                 <div class="form-row" style="margin-top: 5px;">
-                                <div class="form-group col-sm-6">
-                                <label for="txtCosto">Costo</label>
-                                <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtCosto" name="Costo">
-                                </div>
-                                </div> *@
-
-
                                 <div class="form-row" style="margin-bottom: -20px;">
                                     <div class="form-group col-sm-5">
                                         <label for="txtProfit2">Ganancia %</label>

@@ -706,7 +706,7 @@ function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
     product.descriptionproduct = data.text;
     product.categoryproducty = data.category;
     product.quantity = data.quantity;
-    product.price = parseFloat(data.price).toFixed(2).toString();
+    product.price = parseFloat(data.price).toFixed(2).replace('.', ',').toString();
     product.total = data.total.toString();
 
     if (data.promocion != null) {

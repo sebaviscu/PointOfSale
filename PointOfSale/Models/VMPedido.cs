@@ -9,6 +9,7 @@ namespace PointOfSale.Models
         public decimal? ImporteEstimado { get; set; }
         public virtual ICollection<VMPedidoProducto>? Productos { get; set; }
         public EstadoPedido? Estado { get; set; }
+        public int Orden => Estado == EstadoPedido.Iniciado ? 1 : Estado == EstadoPedido.Enviado ? 2 : Estado == EstadoPedido.Recibido ? 3 : 4;
         public int? IdProveedorMovimiento { get; set; }
         public VMProveedorMovimiento? ProveedorMovimiento { get; set; }
         public string? Comentario { get; set; }

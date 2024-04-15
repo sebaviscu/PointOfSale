@@ -30,5 +30,7 @@ namespace PointOfSale.Model
         public int? IdPedido { get; set; }
         public Pedido? Pedido { get; set; }
         public bool FacturaPendiente { get; set; }
+        public DateTime? ModificationDate { get; set; }
+        public string? ModificationUser { get; set; }
     }
 }

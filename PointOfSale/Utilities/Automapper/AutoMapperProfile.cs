@@ -89,7 +89,8 @@ namespace PointOfSale.Utilities.Automapper
             .ForMember(destiny =>
                 destiny.PriceString,
                 opt => opt.MapFrom(source => "$" + source.Price)
-            ).ForMember(destiny =>
+            )
+            .ForMember(destiny =>
                 destiny.PhotoBase64,
                 opt => opt.MapFrom(source => Convert.ToBase64String(source.Photo))
             )
@@ -318,7 +319,7 @@ namespace PointOfSale.Utilities.Automapper
 
             CreateMap<Vencimiento, VMVencimiento>()
                 .ForMember(user => user.Estado, opt => opt.MapFrom(userEdit =>
-                userEdit.FechaVencimiento.Date < DateTime.UtcNow.Date ?
+                userEdit.FechaVencimiento.Date <= DateTime.UtcNow.Date ?
                     EstadoVencimiento.Vencido :
                 userEdit.FechaVencimiento.Date > DateTime.UtcNow.Date && userEdit.FechaVencimiento.Date < DateTime.UtcNow.AddDays(7).Date ?
                     EstadoVencimiento.ProximoVencimiento :

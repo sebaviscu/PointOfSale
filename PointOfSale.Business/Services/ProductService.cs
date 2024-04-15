@@ -47,6 +47,7 @@ namespace PointOfSale.Business.Services
             IQueryable<Product> query = await _repository.Query();
             return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).OrderBy(_ => _.Description).ToList();
         }
+
         public async Task<List<Product>> ListActive()
         {
             IQueryable<Product> query = await _repository.Query(_ => _.IsActive.HasValue ? _.IsActive.Value : false);
@@ -459,6 +460,28 @@ namespace PointOfSale.Business.Services
                     await _repositoryVencimientos.Add(v);
                 }
 
+            }
+        }
+
+
+
+        public async Task<bool> DeleteVencimiento(int idVencimiento)
+        {
+            try
+            {
+                IQueryable<Vencimiento> query = await _repositoryVencimientos.Query(p => p.IdVencimiento == idVencimiento);
+                var vencimiento_found = query.FirstOrDefault();
+
+                if (vencimiento_found == null)
+                    throw new TaskCanceledException("El Vencimiento no existe");
+
+                bool response = await _repositoryVencimientos.Delete(vencimiento_found);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
 

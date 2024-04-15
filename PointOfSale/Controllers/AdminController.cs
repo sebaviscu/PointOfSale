@@ -897,8 +897,9 @@ namespace PointOfSale.Controllers
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
+
         [HttpPut]
-        public async Task<IActionResult> UpdatePagoProveedor(int idMovimiento)
+        public async Task<IActionResult> CambioEstadoPagoProveedor(int idMovimiento)
         {
             ValidarAutorizacion(new Roles[] { Roles.Administrador });
 
@@ -909,6 +910,50 @@ namespace PointOfSale.Controllers
 
 
                 gResponse.State = true;
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdatePagoProveedor([FromBody] VMProveedorMovimiento vmUser)
+        {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+
+            var gResponse = new GenericResponse<VMProveedorMovimiento>();
+            try
+            {
+                vmUser.ModificationUser = user.UserName;
+                var user_edited = await _proveedorService.Edit(_mapper.Map<ProveedorMovimiento>(vmUser));
+
+                vmUser = _mapper.Map<VMProveedorMovimiento>(user_edited);
+
+                gResponse.State = true;
+                gResponse.Object = vmUser;
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeletePagoProveedor(int idPagoProveedor)
+        {
+            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+
+            var gResponse = new GenericResponse<string>();
+            try
+            {
+                gResponse.State = await _proveedorService.DeleteProveedorMovimiento(idPagoProveedor);
             }
             catch (Exception ex)
             {

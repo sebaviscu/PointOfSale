@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static iTextSharp.text.pdf.events.IndexEvents;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services
@@ -66,8 +67,10 @@ namespace PointOfSale.Business.Services
                 if (Proveedor_created.IdProveedorMovimiento == 0)
                     throw new TaskCanceledException("Error al crear Pago");
 
+                IQueryable<ProveedorMovimiento> query = await _proveedorMovimiento.Query(u => u.IdProveedorMovimiento == entity.IdProveedorMovimiento);
+                var Proveedor_edit = query.Include(_ => _.Proveedor).FirstOrDefault();
 
-                return Proveedor_created;
+                return Proveedor_edit;
             }
             catch (Exception)
             {
@@ -113,9 +116,11 @@ namespace PointOfSale.Business.Services
         {
             try
             {
-                IQueryable<ProveedorMovimiento> queryProveedor = await _proveedorMovimiento.Query(u => u.IdProveedorMovimiento == idMovimiento);
+                IQueryable<ProveedorMovimiento> query = await _proveedorMovimiento.Query(u => u.IdProveedorMovimiento == idMovimiento);
+                var Proveedor_edit = query.Include(_ => _.Proveedor).FirstOrDefault();
 
-                ProveedorMovimiento Proveedor_edit = queryProveedor.First();
+                if (Proveedor_edit == null)
+                    throw new TaskCanceledException("Proveedor no existe");
 
                 Proveedor_edit.EstadoPago = EstadoPago.Pagado;
 
@@ -126,6 +131,61 @@ namespace PointOfSale.Business.Services
                 return Proveedor_edit;
             }
             catch (Exception)
+            {
+                throw;
+            }
+        }
+
+
+        public async Task<ProveedorMovimiento> Edit(ProveedorMovimiento entity)
+        {
+            try
+            {
+                IQueryable<ProveedorMovimiento> query = await _proveedorMovimiento.Query(u => u.IdProveedorMovimiento == entity.IdProveedorMovimiento);
+                var Proveedor_edit = query.Include(_ => _.Proveedor).FirstOrDefault();
+
+                if (Proveedor_edit == null)
+                    throw new TaskCanceledException("Proveedor no existe");
+
+                Proveedor_edit.ModificationDate = DateTimeNowArg;
+                Proveedor_edit.Comentario = entity.Comentario;
+                Proveedor_edit.EstadoPago = entity.EstadoPago;
+                Proveedor_edit.FacturaPendiente = entity.FacturaPendiente;
+                Proveedor_edit.Importe = entity.Importe;
+                Proveedor_edit.ImporteSinIva = entity.ImporteSinIva;
+                Proveedor_edit.Iva = entity.Iva;
+                Proveedor_edit.IvaImporte = entity.IvaImporte;
+                Proveedor_edit.NroFactura = entity.NroFactura;
+                Proveedor_edit.TipoFactura = entity.TipoFactura;
+                Proveedor_edit.IdProveedor = entity.IdProveedor;
+
+
+                bool response = await _proveedorMovimiento.Edit(Proveedor_edit);
+                if (!response)
+                    throw new TaskCanceledException("No se pudo modificar el pago del proveedor");
+
+                return Proveedor_edit;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> DeleteProveedorMovimiento(int idProveedorMovimiento)
+        {
+            try
+            {
+                ProveedorMovimiento Proveedor_found = await _proveedorMovimiento.Get(u => u.IdProveedorMovimiento == idProveedorMovimiento);
+
+                if (Proveedor_found == null)
+                    throw new TaskCanceledException("Proveedor no existe");
+
+                bool response = await _proveedorMovimiento.Delete(Proveedor_found);
+
+                return response;
+            }
+            catch (Exception ex)
             {
                 throw;
             }

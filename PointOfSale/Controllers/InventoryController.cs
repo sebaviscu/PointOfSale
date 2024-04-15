@@ -415,5 +415,25 @@ namespace PointOfSale.Controllers
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
+
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteVencimiento(int idVencimiento)
+        {
+            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+
+            GenericResponse<string> gResponse = new GenericResponse<string>();
+            try
+            {
+                gResponse.State = await _productService.DeleteVencimiento(idVencimiento);
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
     }
 }

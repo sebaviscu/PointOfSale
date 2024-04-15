@@ -29,5 +29,7 @@ namespace PointOfSale.Business.Contracts
         Task<List<Vencimiento>> GetProximosVencimientos(int idTienda);
 
         Task ActualizarStockAndVencimientos(List<PedidoProducto> pedidoProductos, int idTienda, string registrationUser);
+
+        Task<bool> DeleteVencimiento(int idVencimiento);
     }
 }

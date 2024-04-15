@@ -239,6 +239,7 @@ $("#btnSave").on("click", function () {
 
             if (responseJson.state) {
                 swal("Exitoso!", "Guardado con éxito", "success");
+                $("#modalData").modal("hide")
 
                 location.reload()
 
@@ -448,12 +449,6 @@ function cargarTablaDinamica() {
                             {
                                 uniqueName: "importe_Sin_Iva",
                                 caption: "Importe sin IVA",
-                                aggregation: "sum",
-                                format: "currency"
-                            },
-                            {
-                                uniqueName: "iva",
-                                caption: "IVA",
                                 aggregation: "sum",
                                 format: "currency"
                             },

@@ -34,7 +34,9 @@ const BASIC_MODEL_PAGO = {
     importeSinIva: 0,
     comentario: null,
     estadoPago: 0,
-    facturaPendiente: 0
+    facturaPendiente: 0,
+    modificationDate: null,
+    modificationUser: null
 }
 
 $(document).ready(function () {
@@ -77,7 +79,7 @@ $(document).ready(function () {
                 title: '',
                 filename: 'Reporte Proveedors',
                 exportOptions: {
-                    columns: [1, 2,3]
+                    columns: [1, 2, 3]
                 }
             }, 'pageLength'
         ]
@@ -136,7 +138,7 @@ $(document).ready(function () {
 
                     $(".showSweetAlert").LoadingOverlay("show")
 
-                    fetch(`/Admin/UpdatePagoProveedor?idMovimiento=${data.idProveedorMovimiento}`, {
+                    fetch(`/Admin/CambioEstadoPagoProveedor?idMovimiento=${data.idProveedorMovimiento}`, {
                         method: "PUT"
                     }).then(response => {
                         $(".showSweetAlert").LoadingOverlay("hide")
@@ -247,7 +249,7 @@ const openModal = (model = BASIC_MODEL) => {
                 title: '',
                 filename: 'Reporte Pago Proveedores',
                 exportOptions: {
-                    columns: [1, 2,3,4,5]
+                    columns: [1, 2, 3, 4, 5]
                 }
             }, 'pageLength'
         ]
@@ -356,7 +358,7 @@ $("#btnSavePago").on("click", function () {
     }
 
     const model = structuredClone(BASIC_MODEL_PAGO);
-    //model["idProveedor"] = $("#txtIdProveedor").val();
+    model["idProveedorMovimiento"] = parseInt($("#txtIdPagoProveedor").val());
     model["idProveedor"] = $("#cboProveedor").val();
     model["tipoFactura"] = $("#cboTipoFactura").val();
     model["nroFactura"] = $("#txtNroFactura").val();
@@ -364,34 +366,60 @@ $("#btnSavePago").on("click", function () {
     model["ivaImporte"] = $("#txtImporteIva").val() != '' ? $("#txtImporteIva").val() : 0;
     model["importe"] = $("#txtImporte").val();
     model["importeSinIva"] = $("#txtImporteSinIva").val() != '' ? $("#txtImporteSinIva").val() : 0;
-    model["comentario"] = $("#txtComentario").val();
+    model["comentario"] = $("#txtComentarioPago").val();
     model["estadoPago"] = parseInt($("#cboEstado").val());
     model["facturaPendiente"] = document.querySelector('#cbxFacturaPendiente').checked;
 
     $("#modalPago").find("div.modal-content").LoadingOverlay("show")
 
-    fetch("/Admin/RegistrarPagoProveedor", {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json;charset=utf-8' },
-        body: JSON.stringify(model)
-    }).then(response => {
-        $("#modalPago").find("div.modal-content").LoadingOverlay("hide")
-        return response.ok ? response.json() : Promise.reject(response);
-    }).then(responseJson => {
 
-        if (responseJson.state) {
-            $("#modalPago").modal("hide");
-            swal("Exitoso!", "Proveedor fué creada", "success");
+    if (model.idProveedorMovimiento == 0) {
+        fetch("/Admin/RegistrarPagoProveedor", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json;charset=utf-8' },
+            body: JSON.stringify(model)
+        }).then(response => {
+            $("#modalPago").find("div.modal-content").LoadingOverlay("hide")
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
 
-        } else {
-            swal("Lo sentimos", responseJson.message, "error");
-        }
-    }).catch((error) => {
-        $("#modalPago").find("div.modal-content").LoadingOverlay("hide")
+            if (responseJson.state) {
+                tableDataGastos.row.add(responseJson.object).draw(false);
+
+                $("#modalPago").modal("hide");
+                swal("Exitoso!", "Pago a proveedor fué creada", "success");
+
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+        }).catch((error) => {
+            $("#modalPago").find("div.modal-content").LoadingOverlay("hide")
+        })
+
+    } else {
+
+        fetch("/Admin/UpdatePagoProveedor", {
+            method: "PUT",
+            headers: { 'Content-Type': 'application/json;charset=utf-8' },
+            body: JSON.stringify(model)
+        }).then(response => {
+            $("#modalPago").find("div.modal-content").LoadingOverlay("hide")
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+            if (responseJson.state) {
+                tableDataGastos.row(rowSelected).data(responseJson.object).draw(false);
+                rowSelected = null;
+                $("#modalPago").modal("hide");
+                swal("Exitoso!", "Pago a proveedor fué modificada", "success");
+
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+        }).catch((error) => {
+            $("#modalPago").find("div.modal-content").LoadingOverlay("hide")
+        })
+    }
     })
-
-
-})
 
 $("#tbData tbody").on("click", ".btn-edit", function () {
 
@@ -475,7 +503,7 @@ function calcularImportes() {
 function cargarTablaGastos() {
     tableDataGastos = $("#tbDataGastos").DataTable({
         responsive: true,
-        pageLength: 25,
+        pageLength: 10,
         "rowCallback": function (row, data) {
             if (data.facturaPendiente == 1) {
                 $('td:eq(2)', row).addClass('factura-pendiente');
@@ -510,7 +538,15 @@ function cargarTablaGastos() {
                         return '<span class="btn btn-sm btn-pago-pagado rounded-pill bg-warning text-dark">Pendiente</span>';
                 }
             },
-            { "data": "importeString", "className": "text-center" }
+            { "data": "importeString", "className": "text-center" },
+            {
+                "defaultContent": '<button class="btn btn-primary btn-edit-pago btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
+                    '<button class="btn btn-danger btn-delete-pago btn-sm"><i class="mdi mdi-trash-can"></i></button>',
+                "orderable": false,
+                "searchable": false,
+                "width": "130px",
+                "className": "text-center"
+            }
         ],
         order: [[0, "desc"]],
         dom: "Bfrtip",
@@ -521,13 +557,107 @@ function cargarTablaGastos() {
                 title: '',
                 filename: 'Reporte Gastos Proveedores',
                 exportOptions: {
-                    columns: [1, 2,3,4,5,6]
+                    columns: [1, 2, 3, 4, 5, 6]
                 }
             }, 'pageLength'
         ]
     });
 }
 
+$("#tbDataGastos tbody").on("click", ".btn-edit-pago", function () {
+
+    if ($(this).closest('tr').hasClass('child')) {
+        rowSelected = $(this).closest('tr').prev();
+    } else {
+        rowSelected = $(this).closest('tr');
+    }
+
+    const data = tableDataGastos.row(rowSelected).data();
+
+    openModalPago(data);
+})
+
+
+$("#tbDataGastos tbody").on("click", ".btn-delete-pago", function () {
+
+    let row;
+
+    if ($(this).closest('tr').hasClass('child')) {
+        row = $(this).closest('tr').prev();
+    } else {
+        row = $(this).closest('tr');
+    }
+    const data = tableDataGastos.row(row).data();
+
+    swal({
+        title: "¿Está seguro?",
+        text: `Eliminar el pago`,
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonClass: "btn-danger",
+        confirmButtonText: "Si, eliminar",
+        cancelButtonText: "No, cancelar",
+        closeOnConfirm: false,
+        closeOnCancel: true
+    },
+        function (respuesta) {
+
+            if (respuesta) {
+
+                $(".showSweetAlert").LoadingOverlay("show")
+
+                fetch(`/Admin/DeletePagoProveedor?idPagoProveedor=${data.idProveedorMovimiento}`, {
+                    method: "DELETE"
+                }).then(response => {
+                    $(".showSweetAlert").LoadingOverlay("hide")
+                    return response.ok ? response.json() : Promise.reject(response);
+                }).then(responseJson => {
+                    if (responseJson.state) {
+
+                        tableDataGastos.row(row).remove().draw();
+                        swal("Exitoso!", "El pago a producto fué eliminado", "success");
+
+                    } else {
+                        swal("Lo sentimos", responseJson.message, "error");
+                    }
+                })
+                    .catch((error) => {
+                        $(".showSweetAlert").LoadingOverlay("hide")
+                    })
+            }
+        });
+})
+
+
+const openModalPago = (model = BASIC_MODEL_PAGO) => {
+
+    $("#txtIdPagoProveedor").val(model.idProveedorMovimiento);
+    $("#txtCuilPago").val(model.proveedor.cuil);
+    $("#txtDireccionPago").val(model.proveedor.direccion);
+    $("#cboTipoFactura").val(model.tipoFactura);
+    $("#txtNroFactura").val(model.nroFactura);
+    $("#txtIva").val(model.iva);
+    $("#txtImporteIva").val(model.ivaImporte);
+    $("#txtImporte").val(model.importe);
+    $("#txtImporteSinIva").val(model.importeSinIva);
+    $("#txtComentarioPago").val(model.comentario);
+    $("#cboEstado").val(model.estadoPago);
+    $("#cboProveedor").val(model.idProveedor);
+    document.getElementById("cbxFacturaPendiente").checked = model.facturaPendiente;
+
+
+    if (model.modificationUser === null)
+        document.getElementById("divModif").style.display = 'none';
+    else {
+        document.getElementById("divModif").style.display = '';
+        var dateTimeModif = new Date(model.modificationDate);
+
+        $("#txtModificado").val(dateTimeModif.toLocaleString());
+        $("#txtModificadoUsuario").val(model.modificationUser);
+    }
+
+    $("#modalPago").modal("show")
+}
 
 function cargarTablaDinamica() {
     fetch(`/Admin/GetProveedorTablaDinamica`, {
@@ -607,13 +737,6 @@ function cargarTablaDinamica() {
                             {
                                 uniqueName: "importe_Sin_Iva",
                                 caption: "Importe sin IVA",
-                                aggregation: "sum",
-                                active: true,
-                                format: "currency"
-                            },
-                            {
-                                uniqueName: "iva",
-                                caption: "IVA",
                                 aggregation: "sum",
                                 active: true,
                                 format: "currency"

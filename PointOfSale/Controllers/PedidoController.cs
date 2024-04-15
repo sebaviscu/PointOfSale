@@ -34,7 +34,7 @@ namespace PointOfSale.Controllers
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
 
             List<VMPedido> vmPedidoList = _mapper.Map<List<VMPedido>>(await _pedidoService.List(user.IdTienda));
-            return StatusCode(StatusCodes.Status200OK, new { data = vmPedidoList });
+            return StatusCode(StatusCodes.Status200OK, new { data = vmPedidoList.OrderBy(_ => _.Orden).ToList() });
         }
 
         [HttpPost]

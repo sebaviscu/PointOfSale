@@ -56,11 +56,22 @@ $("#btnSearch").click(function () {
             { "data": "productName" },
             { "data": "categoria" },
             { "data": "proveedor" },
-            { "data": "precio1" },
-            { "data": "precio2" },
-            { "data": "precio3" },
+            {
+                "data": "precio1", render: function (data, type, row) {
+                    return "<span>" + row.precio1 + " / " + row.tipoVenta + " </span>";
+                }
+            },
+            {
+                "data": "precio2", render: function (data, type, row) {
+                    return "<span>" + row.precio2 + " / " + row.tipoVenta + " </span>";
+                }
+            },
+            {
+                "data": "precio3", render: function (data, type, row) {
+                    return "<span>" + row.precio3 + " / " + row.tipoVenta + " </span>";
+                }
+            },
             { "data": "costo" },
-            { "data": "tipoVenta" },
             { "data": "stock" },
             { "data": "cantidad" }
         ],

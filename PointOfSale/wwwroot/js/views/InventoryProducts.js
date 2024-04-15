@@ -158,10 +158,28 @@ $(document).ready(function () {
                 title: '',
                 filename: 'Report Productos',
                 exportOptions: {
-                    columns: [2,3, 4, 5, 6,7,8]
+                    columns: [2, 3, 4, 5, 6, 7, 8]
                 }
             }, 'pageLength'
         ]
+    });
+
+    $('.filtro-vencimientos').change(function () {
+
+        filtrarTabla();
+        //var valorSeleccionado = $(this).val();
+
+        //// Ocultar todas las filas
+        //$('#tbDataVencimientos tbody tr').hide();
+
+        //// Mostrar las filas correspondientes al filtro seleccionado
+        //if (valorSeleccionado === '0') {
+        //    $('#tbDataVencimientos tbody tr').show();
+        //} else if (valorSeleccionado === '1') {
+        //    $('.proximoClass').show();
+        //} else if (valorSeleccionado === '2') {
+        //    $('.vencidoClass').show();
+        //}
     });
 
     $("#txtfVencimiento").datepicker({ dateFormat: 'dd/mm/yy' });
@@ -259,10 +277,15 @@ const openModal = (model = BASIC_MODEL) => {
 
     $("#tbVencimientos tbody").html("");
     if (model.vencimientos && model.vencimientos.length > 0) {
-        model.vencimientos.forEach((v) => {
 
+        model.vencimientos.sort((a, b) => b.idVencimiento - a.idVencimiento);
+
+        const top3Vencimientos = model.vencimientos.slice(0, 3);
+
+        top3Vencimientos.forEach((v) => {
             addVencimientoTable(v);
         });
+
     }
 
     $("#txtfVencimiento").val('');
@@ -299,13 +322,68 @@ function addVencimientoTable(data) {
                     $("<input>").attr("type", "checkbox").prop("checked", data.notificar)
                         .data("estado-inicial", data.notificar)
                 ),
+
             $("<td>").append(
-                $("<button>").addClass("btn btn-danger btn-sm").append(
+                $("<button>").addClass("btn btn-danger btn-sm btn-delete-vencimiento").append(
                     $("<i>").addClass("mdi mdi-trash-can")
                 ).data("vencimiento", data))
         )
     )
 }
+
+
+$("#tbVencimientos tbody").on("click", ".btn-delete-vencimiento", function (event) {
+    event.preventDefault();
+
+    var v = $(this).data("vencimiento")
+    var btn = $(this);
+
+    swal({
+        title: "¿Desea eliminar el vencimiento? ",
+        text: "",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonClass: "btn-danger",
+        confirmButtonText: "Si, eliminar vencimiento",
+        cancelButtonText: "No, cancelar",
+        closeOnConfirm: false,
+        closeOnCancel: true
+    },
+        function (respuesta) {
+
+
+            if (respuesta) {
+
+                if (v.idVencimiento == 0) {
+                    btn.closest("tr").remove();
+                }
+                else {
+                    $(".showSweetAlert").LoadingOverlay("show")
+
+                    fetch(`/Inventory/DeleteVencimiento?idVencimiento=${v.idVencimiento}`, {
+                        method: "DELETE"
+                    }).then(response => {
+                        $(".showSweetAlert").LoadingOverlay("hide")
+                        return response.ok ? response.json() : Promise.reject(response);
+                    }).then(responseJson => {
+                        if (responseJson.state) {
+
+                            btn.closest("tr").remove();
+                            swal("Eliminado", "El vencimiento ha sido eliminado", "success");
+
+                        } else {
+                            swal("Lo sentimos", responseJson.message, "error");
+                        }
+                    })
+                        .catch((error) => {
+                            $(".showSweetAlert").LoadingOverlay("hide")
+                        })
+                }
+
+            }
+        });
+
+})
 
 function obtenerDatosTabla() {
     var datos = [];
@@ -796,11 +874,11 @@ function cargarTablaVencimientos() {
                 $(row).addClass('vencidoClass');
             } else if (data.estado == 1) {
                 $(row).addClass('proximoClass');
-            } else{
+            } else {
                 $(row).addClass('aptoClass');
             }
         },
-        pageLength: 50,
+        pageLength: 25,
         "ajax": {
             "url": "/Inventory/GetVencimientos",
             "type": "GET",
@@ -812,12 +890,17 @@ function cargarTablaVencimientos() {
                 "visible": false,
                 "searchable": false
             },
+            {
+                "data": "estado",
+                "visible": false,
+                "searchable": false
+            },
             { "data": "fechaVencimientoString" },
             { "data": "producto" },
             { "data": "fechaElaboracionString" },
             { "data": "lote" }
         ],
-        order: [[0, "desc"]],
+        order: [[1, "desc"]],
         dom: "Bfrtip",
         buttons: [
             {
@@ -826,11 +909,30 @@ function cargarTablaVencimientos() {
                 title: '',
                 filename: 'Reporte Vencimientos',
                 exportOptions: {
-                    columns: [1, 2,3,4]
+                    columns: [2, 3, 4, 5]
                 }
             }, 'pageLength'
-        ]
+        ],
+        drawCallback: function (settings) {
+            filtrarTabla();
+        }
     });
 
 
+}
+
+function filtrarTabla() {
+    var valorSeleccionado = $('.filtro-vencimientos:checked').val();
+
+    // Ocultar todas las filas
+    $('#tbDataVencimientos tbody tr').hide();
+
+    // Mostrar las filas correspondientes al filtro seleccionado
+    if (valorSeleccionado === '0') {
+        $('#tbDataVencimientos tbody tr').show();
+    } else if (valorSeleccionado === '1') {
+        $('.proximoClass').show();
+    } else if (valorSeleccionado === '2') {
+        $('.vencidoClass').show();
+    }
 }
