@@ -9,6 +9,9 @@
         public string? Lote { get; set; }
         public string? Vencimiento { get; set; }
         public int? CantidadProductoRecibida { get; set; }
+        public string? Description { get; set; }
+        public string? CostPrice { get; set; }
+        public string? Quantity { get; set; }
 
     }
 }

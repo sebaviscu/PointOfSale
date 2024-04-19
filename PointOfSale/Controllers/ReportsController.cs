@@ -1,8 +1,17 @@
 ﻿using AutoMapper;
+using AutoMapper.Configuration.Annotations;
+using iTextSharp.text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Packaging;
 using PointOfSale.Business.Contracts;
+using PointOfSale.Model;
+using PointOfSale.Model.Output;
 using PointOfSale.Models;
+using PointOfSale.Utilities.Response;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Security.Claims;
 using static PointOfSale.Model.Enum;
 
@@ -14,12 +23,14 @@ namespace PointOfSale.Controllers
         private readonly ISaleService _saleService;
         private readonly IMapper _mapper;
         private readonly IProductService _productService;
+        private readonly IIvaService _ivaService;
 
-        public ReportsController(ISaleService saleService, IMapper mapper, IProductService productService)
+        public ReportsController(ISaleService saleService, IMapper mapper, IProductService productService, IIvaService ivaService)
         {
             _saleService = saleService;
             _mapper = mapper;
             _productService = productService;
+            _ivaService = ivaService;
         }
         public IActionResult ProductsReport()
         {
@@ -27,7 +38,7 @@ namespace PointOfSale.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ProductsReport(string idCategoria, string startDate, string endDate)
+        public async Task<IActionResult> GetProductsReport(string idCategoria, string startDate, string endDate)
         {
             if (idCategoria == null && startDate == null && endDate == null)
                 return View();
@@ -57,10 +68,192 @@ namespace PointOfSale.Controllers
 
                 listVMSalesReport.Add(vmSR);
             }
-
-
-            //List<VMSalesReport> vmList = _mapper.Map<List<VMSalesReport>>(await _saleService.Report(startDate, endDate));
             return StatusCode(StatusCodes.Status200OK, new { data = listVMSalesReport.OrderBy(_ => _.ProductName) });
         }
+
+        public IActionResult IvaReport()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetFechasReporteIva()
+        {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+
+            var fechas = _ivaService.GetDatesFilterList(user.IdTienda);
+
+            return StatusCode(StatusCodes.Status200OK, new { data = fechas });
+        }
+
+        public IActionResult LibroIva()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetIvaReport(TipoIvaReport idTipoIva, string date)
+        {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            GenericResponse<List<VMLibroIvaTotalOutput>> gResponse = new GenericResponse<List<VMLibroIvaTotalOutput>>();
+
+            var splitDate = date.Split('-');
+            var start_date = new DateTime(Convert.ToInt32(splitDate[1]), Convert.ToInt32(splitDate[0]), 1);
+
+            DateTime end_date = start_date.AddMonths(1).AddMinutes(-1);
+
+            var list = new List<VMLibroIvaTotalOutput>();
+            try
+            {
+                switch (idTipoIva)
+                {
+                    case TipoIvaReport.Compra:
+                        list = await HandleCompra(user.IdTienda, start_date, end_date);
+                        break;
+                    case TipoIvaReport.Venta:
+                        list = await HandleVenta(user.IdTienda, start_date, end_date);
+                        break;
+                    case TipoIvaReport.Servicios:
+                        list = await HandleServicios(user.IdTienda, start_date, end_date);
+                        break;
+                }
+
+                gResponse.State = true;
+                gResponse.Object = list;
+            }
+            catch (Exception e)
+            {
+                gResponse.State = false;
+                gResponse.Message = e.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+        private async Task<List<VMLibroIvaTotalOutput>> HandleCompra(int idTienda, DateTime start_date, DateTime end_date)
+        {
+            var lista = new VMLibroIvaTotalOutput();
+
+            var listMod = await _ivaService.GetMovProveedoresImports(idTienda, start_date, end_date);
+            
+            lista.IvaRows = _mapper.Map<List<VMIvaRowOutput>>(listMod);
+            lista.TotalFacurado = listMod.Any() ? listMod.Sum(_ => _.Importe) : 0;
+            lista.TotalIva = listMod.Any() ? listMod.Sum(_ => _.IvaImporte) : 0;
+            lista.TotalSinIva = listMod.Any() ? listMod.Sum(_ => _.ImporteSinIva) : 0;
+
+
+            var list105 = listMod.Where(_ => _.Iva == Convert.ToDecimal(10.5));
+            var listaServ105 = new VMLibroIvaTotalOutput
+            {
+                IvaRows = _mapper.Map<List<VMIvaRowOutput>>(list105),
+                TotalFacurado = list105.Any() ? listMod.Sum(_ => _.Importe) : 0,
+                TotalIva = list105.Any() ? list105.Sum(_ => _.IvaImporte) : 0,
+                TotalSinIva = list105.Any() ? list105.Sum(_ => _.ImporteSinIva) : 0
+            };
+
+            var list21 = listMod.Where(_ => _.Iva == 21);
+            var listaServ21 = new VMLibroIvaTotalOutput
+            {
+                IvaRows = _mapper.Map<List<VMIvaRowOutput>>(list21),
+                TotalFacurado = list21.Any() ? list21.Sum(_ => _.Importe) : 0,
+                TotalIva = list21.Any() ? list21.Sum(_ => _.IvaImporte) : 0,
+                TotalSinIva = list21.Any() ? list21.Sum(_ => _.ImporteSinIva) : 0
+            };
+
+
+
+            return new List<VMLibroIvaTotalOutput>() { listaServ105, listaServ21 };
+        }
+
+        private async Task<List<VMLibroIvaTotalOutput>> HandleVenta(int idTienda, DateTime start_date, DateTime end_date)
+        {
+            var listSale = await _ivaService.GetSaleImports(idTienda, start_date, end_date);
+
+            var tiposFactura = System.Enum.GetValues(typeof(TipoFactura)).Cast<TipoFactura>();
+
+            var ventasPorTipoFactura = new List<VMLibroIvaTotalOutput>();
+
+            foreach (var tipoFactura in tiposFactura.Where(_=>_ != TipoFactura.Presu))
+            {
+                var listaVenta = ConstructVentaListByTipoFactura(listSale, tipoFactura);
+                ventasPorTipoFactura.Add(listaVenta);
+            }
+
+            return ventasPorTipoFactura;
+        }
+        private VMLibroIvaTotalOutput ConstructVentaListByTipoFactura(IEnumerable<Sale> listSale, TipoFactura tipoFactura)
+        {
+            var iva = Convert.ToDecimal("1.21");
+
+            var ventasByTipoFactura = listSale.Where(_ => _.TypeDocumentSaleNavigation.TipoFactura == tipoFactura).ToList();
+            var bruto = ventasByTipoFactura.Any() ? ventasByTipoFactura.Sum(_ => _.Total).Value : 0;
+            var totalIva = Math.Round(bruto / iva, 2);
+            var totalSinIva = bruto - totalIva;
+
+            if (tipoFactura == TipoFactura.C || tipoFactura == TipoFactura.X)
+            {
+                totalIva = 0;
+                bruto = 0;
+            }
+
+            return new VMLibroIvaTotalOutput
+            {
+                IvaRows = _mapper.Map<List<VMIvaRowOutput>>(ventasByTipoFactura),
+                TotalFacurado = Math.Round(bruto, 2),
+                TotalIva = Math.Round(totalIva, 2),
+                TotalSinIva = Math.Round(totalSinIva, 2)
+            };
+        }
+
+        private async Task<List<VMLibroIvaTotalOutput>> HandleServicios(int idTienda, DateTime start_date, DateTime end_date)
+        {
+            var listGastos = await _ivaService.GetGastosImports(idTienda, start_date, end_date);
+
+            var listaMultiple = BuildListaServicios(listGastos);
+            var listaGastos = BuildListaGastos(listGastos);
+
+            listaMultiple.Add(listaGastos);
+
+            return listaMultiple;
+        }
+
+        private List<VMLibroIvaTotalOutput> BuildListaServicios(IEnumerable<Gastos> listGastos)
+        {
+            var serv = listGastos.Where(_ => _.TipoDeGasto.GastoParticular == TipoDeGastoEnum.Servicios);
+
+            var list21 = serv.Where(_ => _.Iva == 21);
+            var listaServ21 = new VMLibroIvaTotalOutput
+            {
+                IvaRows = _mapper.Map<List<VMIvaRowOutput>>(list21),
+                TotalFacurado = list21.Any() ? list21.Sum(_ => _.Importe) : 0,
+                TotalIva = list21.Any() ? list21.Sum(_ => _.IvaImporte) : 0,
+                TotalSinIva = list21.Any() ? list21.Sum(_ => _.ImporteSinIva) : 0
+            };
+
+            var list27 = serv.Where(_ => _.Iva == 27);
+            var listaServ27 = new VMLibroIvaTotalOutput
+            {
+                IvaRows = _mapper.Map<List<VMIvaRowOutput>>(list27),
+                TotalFacurado = list27.Any() ? list27.Sum(_ => _.Importe) : 0,
+                TotalIva = list27.Any() ? list27.Sum(_ => _.IvaImporte) : 0,
+                TotalSinIva = list27.Any() ? list27.Sum(_ => _.ImporteSinIva) : 0
+            };
+
+            return new List<VMLibroIvaTotalOutput>() { listaServ21, listaServ27};
+        }
+
+        private VMLibroIvaTotalOutput BuildListaGastos(IEnumerable<Gastos> listGastos)
+        {
+            var gast = listGastos.Where(_ => _.TipoDeGasto.GastoParticular == TipoDeGastoEnum.Variable || _.TipoDeGasto.GastoParticular == TipoDeGastoEnum.Fijo);
+            var listaGastos = new VMLibroIvaTotalOutput
+            {
+                IvaRows = _mapper.Map<List<VMIvaRowOutput>>(gast),
+                TotalFacurado = gast.Any() ? gast.Sum(_ => _.Importe) : 0,
+                TotalIva = gast.Any() ? gast.Sum(_ => _.IvaImporte) : 0,
+                TotalSinIva = gast.Any() ? gast.Sum(_ => _.ImporteSinIva) : 0
+            };
+            return listaGastos;
+        }
+
     }
 }

@@ -487,19 +487,6 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
 })
 
 
-function calcularImportes() {
-    var importe = $("#txtImporte").val();
-    var iva = $("#txtIva").val();
-
-    if (importe !== '' && iva !== '') {
-
-        var importeSinIva = parseFloat(importe) * (1 - (parseFloat(iva) / 100));
-        $("#txtImporteSinIva").val(importeSinIva);
-        $("#txtImporteIva").val(importe - importeSinIva);
-    }
-}
-
-
 function cargarTablaGastos() {
     tableDataGastos = $("#tbDataGastos").DataTable({
         responsive: true,
@@ -658,6 +645,28 @@ const openModalPago = (model = BASIC_MODEL_PAGO) => {
 
     $("#modalPago").modal("show")
 }
+function calcularIva() {
+    var importeText = $('#txtImporte').val();
+    var importe = parseFloat(importeText == '' ? 0 : importeText);
+    var iva = parseFloat($('#txtIva').val());
+
+    if (!isNaN(importe) && !isNaN(iva)) {
+        var importeSinIva = importe / (1 + (iva / 100));
+        var importeIva = importe - importeSinIva;
+
+        $('#txtImporteSinIva').val(importeSinIva.toFixed(2));
+        $('#txtImporteIva').val(importeIva.toFixed(2));
+    }
+}
+
+$('#txtIva').change(function () {
+    calcularIva();
+});
+
+$('#txtImporte').keyup(function () {
+    calcularIva();
+});
+
 
 function cargarTablaDinamica() {
     fetch(`/Admin/GetProveedorTablaDinamica`, {

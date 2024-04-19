@@ -95,7 +95,14 @@ namespace PointOfSale.Model
             Iniciado,
             Enviado,
             Recibido
+        }
 
+        public enum  TipoIvaReport
+        {
+            Compra,
+            Venta,
+            Servicios,
+            Gastos
         }
     }
 }

@@ -1,0 +1,428 @@
+﻿@{
+    ViewData["Title"] = "LibroIva";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@section StylesPOS{
+    <link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
+    <link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
+    <link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
+    <link href="~/plugins/jquery-ui/jquery-ui.css" rel="stylesheet">
+
+}
+
+<style>
+    .input-numeros{
+        text-align: right;
+    }
+</style>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6>Libro de IVA</h6>
+    </div>
+    <div class="card-body">
+        <div class="form-row align-items-end">
+
+            <div class="form-group col-sm-1">
+                <label for="txtFecha">Periodo</label>
+            </div>
+            <div class="form-group col-sm-2">
+                <select class="form-control" id="txtFecha">
+                </select>
+            </div>
+            <div class="form-group offset-md-1 col-sm-2">
+                <button type="button" class="btn btn-success" id="btnSearch"><i class="fas fa-search"></i> Buscar</button>
+            </div>
+        </div>
+        <hr />
+
+        <div class="row">
+            <div class="col-md-7">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6>Debito Fiscal</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3 align-items-center">
+                            <div class="offset-md-2 col-md 3 text-center">
+                                <label class="col-form-label">Neto</label>
+                            </div>
+                            <div class="col-md-1 text-center">
+                                <label class="col-form-label">IVA</label>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <label class="col-form-label">Total IVA</label>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <label class="col-form-label">Total Facturado</label>
+                            </div>
+                        </div>
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-2">
+                                <label for="txtNetoDebito" class="col-form-label">Respopnsable Inscripto (FA)</label>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtNetoADebito" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                            <div class="col-md-1">
+                                <input type="text" id="txtIvaADebito" class="form-control form-control-sm input-numeros" value="21%" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtImporteIvaADebito" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtFacturadoADebito" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                        </div>
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-2">
+                                <label for="txtNetoDebito" class="col-form-label">Consumidor Final (FB)</label>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtNetoBDebito" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                            <div class="col-md-1">
+                                <input type="text" id="txtIvaCBDebito" class="form-control form-control-sm input-numeros" value="21%" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtImporteIvaBDebito" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtFacturadoBDebito" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                        </div>
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-2">
+                                <label for="txtNetoDebito" class="col-form-label">Monotributista (FC)</label>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtNetoCDebito" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                            <div class="col-md-1">
+                                <input type="text" id="txtIvaCDebito" class="form-control form-control-sm input-numeros" value="21%" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtImporteIvaCDebito" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtFacturadoCDebito" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                        </div>
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-2">
+                                <label for="txtNetoDebito" class="col-form-label">Otros (FX)</label>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtNetoXDebito" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                            <div class="col-md-1">
+                                <input type="text" id="txtIvaXDebito" class="form-control form-control-sm input-numeros" value="21%" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtImporteIvaXDebito" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtFacturadoXDebito" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                        </div>
+
+                        <hr style="margin-top: 5px; margin-bottom: 5px;">
+
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-2">
+                                <label for="txtNetoDebito" class="col-form-label">TOTAL</label>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtNetoFinalDebito" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+
+                            <div class="offset-md-1 col-md-3">
+                                <input type="text" id="txtImporteIvaFinalDebito" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtFacturadoFinalDebito" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="offset-md-4 col-md-4 card shadow mb-4" style="padding: 0px;">
+
+                    <div class="card-header py-3">
+                        <h6>Resultado Fiscal</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-12">
+                                <div class="row" style="align-items: center;">
+                                    <div class="col-md-3 text-center">
+                                        <label class="col-form-label">Saldo</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" id="txtSaldo" class="form-control form-control-sm input-numeros" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-5">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6>Credito Fiscal</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3 align-items-center">
+                            <div class="offset-md-3 col-md 3 text-center">
+                                <label class="col-form-label">Neto</label>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <label class="col-form-label">Total IVA</label>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <label class="col-form-label">Total Facturado</label>
+                            </div>
+                        </div>
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md 3">
+                                <label for="txtNetoCredito21" class="col-form-label">Compras 10,5%</label>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtNetoCredito105" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtImporteIvaCredito105" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtFacturadoCredito105" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                        </div>
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md 3">
+                                <label for="txtNetoCredito21" class="col-form-label">Compras 21%</label>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtNetoCredito21" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtImporteIvaCredito21" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtFacturadoCredito21" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                        </div>
+
+                        <hr style="margin-top: 5px; margin-bottom: 5px;">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md 3">
+                                <label class="col-form-label">Servicios 21%</label>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtNetoCreditoServ21" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtImporteIvaCreditoServ21" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtFacturadoCreditoServ21" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                        </div>
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md 3">
+                                <label class="col-form-label">Servicios 27%</label>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtNetoCreditoServ27" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtImporteIvaCreditoServ27" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtFacturadoCreditoServ27" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                        </div>
+
+                        <hr style="margin-top: 5px; margin-bottom: 5px;">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md 3">
+                                <label class="col-form-label">Gastos 21%</label>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtNetoCreditoGastos21" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtImporteIvaCreditoGastos21" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtFacturadoCreditoGastos21" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                        </div>
+
+                        <hr style="margin-top: 5px; margin-bottom: 5px;">
+
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md 3">
+                                <label for="txtNetoDebito" class="col-form-label">TOTAL</label>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtNetoFinalCredito" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtImporteIvaFinalCredito" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtFacturadoFinalCredito" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr />
+
+        <!-- Nav pills -->
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="pill" href="#venta" id="clickGeneral">
+                    Ventas
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="pill" href="#compra" id="clickFacturacion">
+                    Compras
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="pill" href="#servicios" id="clickWeb">
+                    Servicios
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="pill" href="#gastos" id="clickWeb">
+                    Gastos
+                </a>
+            </li>
+        </ul>
+
+        <!-- Contenido de los paneles -->
+        <div class="tab-content">
+            <div class="tab-pane active" id="venta">
+                <br />
+                <div class="col-sm-12">
+                    <table id="tbdataVenta" class="table table-striped" cellspacing="0" style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">Forma de Pago</th>
+                                <th scope="col">Importa Final</th>
+                                <th scope="col">Importe sin IVA</th>
+                                <th scope="col">Importe IVA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="compra">
+                <br />
+                <div class="col-md-12">
+
+                    <table id="tbdataCompra" class="table table-striped" cellspacing="0" style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">Proveedor</th>
+                                <th scope="col">Tipo Factura</th>
+                                <th scope="col">Factura</th>
+                                <th scope="col">Importa Final</th>
+                                <th scope="col">Importe IVA</th>
+                                <th scope="col">Importe sin IVA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="servicios">
+                <br />
+                <div class="col-md-12">
+                    <table id="tbdataServicios" class="table table-striped" cellspacing="0" style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">Gasto</th>
+                                <th scope="col">Tipo Factura</th>
+                                <th scope="col">Factura</th>
+                                <th scope="col">Importa Final</th>
+                                <th scope="col">Importe sin IVA</th>
+                                <th scope="col">Importe IVA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="gastos">
+                <br />
+                <div class="col-md-12">
+                    <table id="tbdataGastos" class="table table-striped" cellspacing="0" style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">Tipo de Gasto</th>
+                                <th scope="col">Gasto</th>
+                                <th scope="col">Tipo Factura</th>
+                                <th scope="col">Factura</th>
+                                <th scope="col">Importa Final</th>
+                                <th scope="col">Importe sin IVA</th>
+                                <th scope="col">Importe IVA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+
+
+
+    </div>
+</div>
+
+@section Scripts{
+
+    <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
+    <script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
+    <script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
+
+
+    <script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
+    <script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
+    <script src="~/plugins/data-tables/jszip.min.js"></script>
+    <script src="~/plugins/data-tables/buttons.html5.min.js"></script>
+    <script src="~/plugins/data-tables/buttons.print.min.js"></script>
+
+
+    <script src="~/plugins/jquery-ui/jquery-ui.js"></script>
+
+    <script src="~/js/views/libroIva.js"></script>
+
+    }
+

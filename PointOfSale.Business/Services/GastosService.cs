@@ -58,6 +58,9 @@ namespace PointOfSale.Business.Services
                 Gastos_found.TipoDeGasto = entity.TipoDeGasto;
                 Gastos_found.Comentario = entity.Comentario;
                 Gastos_found.Importe = entity.Importe;
+                Gastos_found.Iva = entity.Iva;
+                Gastos_found.IvaImporte = entity.IvaImporte;
+                Gastos_found.ImporteSinIva = entity.ImporteSinIva;
                 Gastos_found.IdUsuario = entity.IdUsuario;
                 Gastos_found.ModificationDate = DateTimeNowArg;
                 Gastos_found.ModificationUser = entity.ModificationUser;

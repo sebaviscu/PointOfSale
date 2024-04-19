@@ -48,7 +48,7 @@ $("#btnSearch").click(function () {
     var options = {
         "processing": true,
         "ajax": {
-            "url": `/Reports/ProductsReport?idCategoria=${idCategory}&startDate=${startDate}&endDate=${endDate}`,
+            "url": `/Reports/GetProductsReport?idCategoria=${idCategory}&startDate=${startDate}&endDate=${endDate}`,
             "type": "GET",
             "datatype": "json"
         },

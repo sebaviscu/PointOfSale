@@ -4,6 +4,7 @@ using PointOfSale.Model;
 using AutoMapper;
 using static PointOfSale.Model.Enum;
 using Newtonsoft.Json.Linq;
+using PointOfSale.Model.Output;
 
 namespace PointOfSale.Utilities.Automapper
 {
@@ -336,6 +337,45 @@ namespace PointOfSale.Utilities.Automapper
 
             CreateMap<VMPedidoProducto, PedidoProducto>();
             CreateMap<PedidoProducto, VMPedidoProducto>();
+
+            CreateMap<Product, VMPedidoProducto>()
+                                .ForMember(user => user.IdProducto, opt => opt.MapFrom(userEdit => userEdit.IdProduct));
+
+            CreateMap<VMPedidoProducto, Product>()
+                                .ForMember(user => user.IdProduct, opt => opt.MapFrom(userEdit => userEdit.IdProducto));
+
+            CreateMap<Proveedor, VMPedidosProveedor>();
+            CreateMap<VMPedidosProveedor, Proveedor>();
+
+            CreateMap<ProveedorMovimiento, VMIvaRowOutput>()
+                                .ForMember(user => user.Fecha, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate))
+                                .ForMember(user => user.FechaString, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.ToString("dd/MM/yyyy HH:mm")))
+                                .ForMember(user => user.Proveedor, opt => opt.MapFrom(userEdit => userEdit.Proveedor != null ? userEdit.Proveedor.Nombre : string.Empty))
+                                .ForMember(user => user.Importe, opt => opt.MapFrom(userEdit => userEdit.Importe))
+                                .ForMember(user => user.ImporteIva, opt => opt.MapFrom(userEdit => userEdit.IvaImporte))
+                                .ForMember(user => user.ImporteSinIva, opt => opt.MapFrom(userEdit => userEdit.ImporteSinIva))
+                                .ForMember(user => user.Factura, opt => opt.MapFrom(userEdit => userEdit.NroFactura))
+                                .ForMember(user => user.TipoFactura, opt => opt.MapFrom(userEdit => string.IsNullOrEmpty(userEdit.TipoFactura) ? "-" : ((Model.Enum.TipoFactura)Convert.ToInt32(userEdit.TipoFactura)).ToString()));
+
+
+            CreateMap<Gastos, VMIvaRowOutput>()
+                                .ForMember(user => user.Fecha, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate))
+                                .ForMember(user => user.FechaString, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.ToString("dd/MM/yyyy HH:mm")))
+                                .ForMember(user => user.Importe, opt => opt.MapFrom(userEdit => userEdit.Importe))
+                                .ForMember(user => user.ImporteIva, opt => opt.MapFrom(userEdit => userEdit.IvaImporte))
+                                .ForMember(user => user.ImporteSinIva, opt => opt.MapFrom(userEdit => userEdit.ImporteSinIva))
+                                .ForMember(user => user.TipoGastos, opt => opt.MapFrom(userEdit => ((Model.Enum.TipoDeGastoEnum)Convert.ToInt32(userEdit.TipoDeGasto.GastoParticular)).ToString()))
+                                .ForMember(user => user.Gastos, opt => opt.MapFrom(userEdit => userEdit.TipoDeGasto.Descripcion))
+                                .ForMember(user => user.TipoFactura, opt => opt.MapFrom(userEdit => string.IsNullOrEmpty(userEdit.TipoFactura) ? "-" : ((Model.Enum.TipoFactura)Convert.ToInt32(userEdit.TipoFactura)).ToString()));
+
+
+            CreateMap<Sale, VMIvaRowOutput>()
+                                .ForMember(user => user.Fecha, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate))
+                                .ForMember(user => user.FechaString, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.Value.ToString("dd/MM/yyyy HH:mm")))
+                                .ForMember(user => user.MetodoPago, opt => opt.MapFrom(userEdit => userEdit.TypeDocumentSaleNavigation.Description))
+                                .ForMember(user => user.Importe, opt => opt.MapFrom(userEdit => userEdit.Total))
+                                .ForMember(user => user.ImporteIva, opt => opt.MapFrom(userEdit => Math.Round(userEdit.Total.Value / Convert.ToDecimal("1.21"), 2)))
+                                .ForMember(user => user.ImporteSinIva, opt => opt.MapFrom(userEdit => userEdit.Total - Math.Round(userEdit.Total.Value / Convert.ToDecimal("1.21"), 2)));
         }
     }
 }

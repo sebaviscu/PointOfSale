@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Crypto;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
@@ -345,4 +346,6 @@ namespace PointOfSale.Business.Services
         }
 
     }
+
 }
+

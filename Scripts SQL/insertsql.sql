@@ -43,7 +43,9 @@ insert into Menu([description],idMenuParent,controller,pageAction,isActive) valu
 ('Shop',7,'Shop','Index',1), --20
 ('Reporte Productos',4,'Reports','ProductsReport',1), --21
 ('Notificaciones',6,'Notification','Notification',1), --22
-('Pedidos',2,'Pedido','Pedido',1) --23
+('Pedidos',2,'Pedido','Pedido',1), --23
+('Reporte de IVA',4,'Reports','IvaReport',1), --24
+('Libro de IVA',4,'Reports','LibroIva',1) -- 25
 
 go
 
@@ -82,7 +84,9 @@ INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (1,20,1),
 (1,21,1),
 (1,22,1),
-(1,23,1)
+(1,23,1),
+(1,24,1),
+(1,25,1)
 
 --*empleado
 INSERT INTO RolMenu(idRol,idMenu,isActive) values

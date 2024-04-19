@@ -272,15 +272,18 @@ function cargarTabla(productos, idProveedor, nuevo) {
     proveedor.products.forEach(producto => {
         const tr = document.createElement('tr');
 
-        let prod = productos.find(_ => _.idProducto == producto.idProduct);
+        let prod = productos.find(_ => _.idProducto == producto.idProducto);
 
         let cantidadProducto = '';
 
-        let idProd = producto.idProduct;
+        let idProd = producto.idProducto;
         let descr = producto.description;
         let costo = producto.costPrice;
-        let stock = producto.quantity;
+        let stock = parseInt(producto.quantity != null ? producto.quantity : 0);
         if (prod != null) {
+            if (prod.cantidadProducto == null)
+                prod.cantidadProducto = '';
+
             cantidadProducto = prod.cantidadProducto;
         }
 
@@ -484,7 +487,7 @@ function cargarTablaRecibidos(productos, idProveedor) {
     productos.forEach(producto => {
         const tr = document.createElement('tr');
 
-        let prod = proveedor.products.find(_ => _.idProduct == producto.idProducto);
+        let prod = proveedor.products.find(_ => _.idProducto == producto.idProducto);
 
         let idPedidoProducto = producto.idPedidoProducto;
         let idProd = producto.idProducto;
@@ -639,16 +642,24 @@ function validarFecha(fechaString) {
     return true;
 }
 
-function calcularImportesIva() {
-    var importe = $("#txtImporteRecibido").val();
-    var iva = $("#txtIva").val();
+function calcularIva() {
+    var importeText = $('#txtImporteRecibido').val();
+    var importe = parseFloat(importeText == '' ? 0 : importeText);
+    var iva = parseFloat($('#txtIva').val());
 
-    if (importe !== '' && iva !== '') {
-        let importeFloat = parseFloat(importe)
-        var importeSinIva = parseFloat(importeFloat) * (1 - (parseFloat(iva) / 100));
+    if (!isNaN(importe) && !isNaN(iva)) {
+        var importeSinIva = importe / (1 + (iva / 100));
+        var importeIva = importe - importeSinIva;
 
-        $("#txtImporteSinIva").val(importeSinIva.toFixed(2));
-        $("#txtImporteIva").val((importeFloat - importeSinIva).toFixed(2));
-
+        $('#txtImporteSinIva').val(importeSinIva.toFixed(2));
+        $('#txtImporteIva').val(importeIva.toFixed(2));
     }
 }
+
+$('#txtIva').change(function () {
+    calcularIva();
+});
+
+$('#txtImporteRecibido').keyup(function () {
+    calcularIva();
+});

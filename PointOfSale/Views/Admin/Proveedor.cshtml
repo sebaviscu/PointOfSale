@@ -133,7 +133,7 @@
                                 <div class="form-group col-sm-4 margin-min">
                                     <label for="txtIvaProveedor">IVA</label>
                                     <select class="form-control form-control-sm" id="txtIvaProveedor">
-                                        <option value="0"></option>
+                                        <option value="0">0 %</option>
                                         <option value="10.5">10,5 %</option>
                                         <option value="21">21 %</option>
                                         <option value="27">27 %</option>
@@ -290,7 +290,7 @@
                                 <div class="form-group col-sm-3">
                                     <label for="txtIva">IVA</label>
                                     <select class="form-control form-control-sm" id="txtIva">
-                                        <option value="0"></option>
+                                        <option value="0">0 %</option>
                                         <option value="10.5">10,5 %</option>
                                         <option value="21">21 %</option>
                                         <option value="27">27 %</option>
@@ -300,19 +300,15 @@
                                     <label for="txtImporte">Importe</label>
                                     <input type="number" class="form-control form-control-sm input-validate-pago" id="txtImporte" name="Importe">
                                 </div>
-                                <div class="form-group col-sm-3">
-                                    <br />
-                                    <a class="btn btn-secondary btn-sm" style="text-align: center; align-content: center;" onclick="calcularImportes()">Calular</a>
-                                </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-sm-3">
                                     <label for="txtImporteIva">Importe IVA</label>
-                                    <input type="number" class="form-control form-control-sm" id="txtImporteIva" name="Importe IVA">
+                                    <input type="number" class="form-control form-control-sm" id="txtImporteIva" name="Importe IVA" disabled>
                                 </div>
                                 <div class="form-group col-sm-3">
                                     <label for="txtImporteSinIva">Importe sin IVA</label>
-                                    <input type="number" class="form-control form-control-sm" id="txtImporteSinIva" name="Importe sin IVA">
+                                    <input type="number" class="form-control form-control-sm" id="txtImporteSinIva" name="Importe sin IVA" disabled>
                                 </div>
                                 <div class="form-group col-sm-6">
                                     <label for="txtComentarioPago">Comentario</label>

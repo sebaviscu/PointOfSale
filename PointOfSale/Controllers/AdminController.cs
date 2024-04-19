@@ -231,27 +231,43 @@ namespace PointOfSale.Controllers
                         break;
                 }
 
-                var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
 
-                foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetSalesByTypoVenta(typeValues, user.IdTienda, dateActual))
-                {
-                    VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
-                    {
-                        Descripcion = item.Key,
-                        Total = item.Value
-                    });
-                }
+                var gananciaBruta = listSales.Sum(_ => _.Total);
+                //var gastosTotales = gastosProvTotales + totGastosParticualres + totGastosSueldos;
 
-                var gastosParticualresList = new List<VMVentasPorTipoDeVenta>();
-                foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetGastos(typeValues, user.IdTienda, dateActual))
-                {
-                    gastosParticualresList.Add(new VMVentasPorTipoDeVenta()
-                    {
-                        Descripcion = item.Key,
-                        Total = item.Value
-                    });
-                };
-                var totGastosParticualres = gastosParticualresList.Sum(_ => _.Total);
+                vmDashboard.TextoFiltroDiaSemanaMes = textoFiltroDiaSemanaMes;
+
+                vmDashboard.EjeX = ejeX;
+                vmDashboard.SalesList = listSales.Select(_ => (int)_.Total).ToList();
+                vmDashboard.SalesListComparacion = listSalesComparacion.Select(_ => (int)_.Total).ToList();
+                vmDashboard.TotalSales = "$ " + listSales.Sum(_ => _.Total).ToString("F0");
+                vmDashboard.TotalSalesComparacion = "$ " + listSalesComparacion.Sum(_ => _.Total).ToString("F0");
+                //vmDashboard.GastosTotales = "$ " + gastosTotales.ToString("F0");
+                vmDashboard.CantidadClientes = resultados.CantidadClientes;
+                //vmDashboard.Ganancia = "$ " + (gananciaBruta - gastosTotales).ToString("F0");
+
+                gResponse.State = true;
+                gResponse.Object = vmDashboard;
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+
+        public async Task<IActionResult> GetGastosSueldos(TypeValuesDashboard typeValues, string dateFilter)
+        {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var dateActual = SetDate(typeValues, dateFilter);
+
+            GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
+
+            try
+            {
 
                 var gastosSueldosList = new List<VMVentasPorTipoDeVenta>();
                 foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetGastosSueldos(typeValues, user.IdTienda, dateActual))
@@ -265,6 +281,103 @@ namespace PointOfSale.Controllers
                 };
                 var totGastosSueldos = gastosSueldosList.Sum(_ => _.Total);
 
+                var vmDashboard = new VMDashBoard();
+                vmDashboard.GastosSueldosTexto = $"$ {totGastosSueldos.ToString("F0")}";
+                vmDashboard.GastosPorTipoSueldos = gastosSueldosList;
+
+                gResponse.State = true;
+                gResponse.Object = vmDashboard;
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+        public async Task<IActionResult> GetSalesByTypoVentaByGrafico(TypeValuesDashboard typeValues, string dateFilter)
+        {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var dateActual = SetDate(typeValues, dateFilter);
+
+            GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
+
+            try
+            {
+                var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
+
+                foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetSalesByTypoVenta(typeValues, user.IdTienda, dateActual))
+                {
+                    VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
+                    {
+                        Descripcion = item.Key,
+                        Total = item.Value
+                    });
+                }
+
+                var vmDashboard = new VMDashBoard();
+                vmDashboard.VentasPorTipoVenta = VentasPorTipoVenta;
+
+                gResponse.State = true;
+                gResponse.Object = vmDashboard;
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+        public async Task<IActionResult> GetGastos(TypeValuesDashboard typeValues, string dateFilter)
+        {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var dateActual = SetDate(typeValues, dateFilter);
+
+            GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
+
+            try
+            {
+                var gastosParticualresList = new List<VMVentasPorTipoDeVenta>();
+                foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetGastos(typeValues, user.IdTienda, dateActual))
+                {
+                    gastosParticualresList.Add(new VMVentasPorTipoDeVenta()
+                    {
+                        Descripcion = item.Key,
+                        Total = item.Value
+                    });
+                };
+                var totGastosParticualres = gastosParticualresList.Sum(_ => _.Total);
+
+                var vmDashboard = new VMDashBoard();
+                vmDashboard.GastosPorTipo = gastosParticualresList;
+                vmDashboard.GastosTexto = $"${totGastosParticualres.ToString("F0")}";
+
+
+                gResponse.State = true;
+                gResponse.Object = vmDashboard;
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+        public async Task<IActionResult> GetMovimientosProveedoresByTienda(TypeValuesDashboard typeValues, string dateFilter)
+        {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var dateActual = SetDate(typeValues, dateFilter);
+
+            GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
+
+            try
+            {
                 var gastosProveedores = new List<VMVentasPorTipoDeVenta>();
                 var movimientosProv = await _dashboardService.GetMovimientosProveedoresByTienda(typeValues, user.IdTienda, dateActual);
                 var gastosProvTotales = movimientosProv.Sum(_ => _.Value);
@@ -278,27 +391,10 @@ namespace PointOfSale.Controllers
                     });
                 };
 
-                var gananciaBruta = listSales.Sum(_ => _.Total);
-                var gastosTotales = gastosProvTotales + totGastosParticualres + totGastosSueldos;
-
-                vmDashboard.TextoFiltroDiaSemanaMes = textoFiltroDiaSemanaMes;
-
-                vmDashboard.EjeX = ejeX;
-                vmDashboard.SalesList = listSales.Select(_ => (int)_.Total).ToList();
-                vmDashboard.SalesListComparacion = listSalesComparacion.Select(_ => (int)_.Total).ToList();
-                vmDashboard.TotalSales = "$ " + listSales.Sum(_ => _.Total).ToString("F0");
-                vmDashboard.TotalSalesComparacion = "$ " + listSalesComparacion.Sum(_ => _.Total).ToString("F0");
-                vmDashboard.VentasPorTipoVenta = VentasPorTipoVenta;
-                vmDashboard.GastosTotales = "$ " + gastosTotales.ToString("F0");
-                vmDashboard.CantidadClientes = resultados.CantidadClientes;
-                vmDashboard.Ganancia = "$ " + (gananciaBruta - gastosTotales).ToString("F0");
-
-                vmDashboard.GastosTexto = $"${totGastosParticualres.ToString("F0")}";
-                vmDashboard.GastosProvvedoresTexto = $"${gastosProvTotales.ToString("F0")}";
-                vmDashboard.GastosSueldosTexto = $"$ {totGastosSueldos.ToString("F0")}";
-                vmDashboard.GastosPorTipo = gastosParticualresList;
+                var vmDashboard = new VMDashBoard();
                 vmDashboard.GastosPorTipoProveedor = gastosProveedores;
-                vmDashboard.GastosPorTipoSueldos = gastosSueldosList;
+                vmDashboard.GastosProvvedoresTexto = $"${gastosProvTotales.ToString("F0")}";
+
 
                 gResponse.State = true;
                 gResponse.Object = vmDashboard;
@@ -750,8 +846,8 @@ namespace PointOfSale.Controllers
         {
             try
             {
-            var listProveedor = _mapper.Map<List<VMProveedor>>(await _proveedorService.List());
-            return StatusCode(StatusCodes.Status200OK, new { data = listProveedor });
+                var listProveedor = _mapper.Map<List<VMProveedor>>(await _proveedorService.List());
+                return StatusCode(StatusCodes.Status200OK, new { data = listProveedor });
             }
             catch (Exception e)
             {
@@ -766,7 +862,7 @@ namespace PointOfSale.Controllers
         {
             try
             {
-                var listProveedor = _mapper.Map<List<VMProveedor>>(await _proveedorService.ListConProductos());
+                var listProveedor = _mapper.Map<List<VMPedidosProveedor>>(await _proveedorService.ListConProductos());
                 return StatusCode(StatusCodes.Status200OK, new { data = listProveedor });
             }
             catch (Exception e)

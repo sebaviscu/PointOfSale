@@ -34,7 +34,7 @@ namespace PointOfSale.Controllers
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
 
             List<VMPedido> vmPedidoList = _mapper.Map<List<VMPedido>>(await _pedidoService.List(user.IdTienda));
-            return StatusCode(StatusCodes.Status200OK, new { data = vmPedidoList.OrderBy(_ => _.Orden).ToList() });
+            return StatusCode(StatusCodes.Status200OK, new { data = vmPedidoList.OrderBy(_ => _.Orden).ThenByDescending(_=>_.IdPedido).ToList() });
         }
 
         [HttpPost]
@@ -58,7 +58,7 @@ namespace PointOfSale.Controllers
             catch (Exception ex)
             {
                 gResponse.State = false;
-                gResponse.Message = ex.Message;
+                gResponse.Message = ex.ToString();
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
