@@ -43,7 +43,7 @@ namespace PointOfSale.Business.Services
             IQueryable<Menu> MenuChild = (from u in tbUser
                                           join rm in tbRolmenu on u.IdRol equals rm.IdRol
                                           join m in tbMenu on rm.IdMenu equals m.IdMenu
-                                          where m.IdMenu != m.IdMenuParent
+                                          where m.IdMenu != m.IdMenuParent && m.IsActive == true
                                           select m).Distinct().AsQueryable();
 
             List<Menu> listMenu = (from mpadre in MenuParent
