@@ -31,10 +31,20 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPedidos()
         {
+            try
+            {
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+                var list = await _pedidoService.List(user.IdTienda);
 
-            List<VMPedido> vmPedidoList = _mapper.Map<List<VMPedido>>(await _pedidoService.List(user.IdTienda));
+            List<VMPedido> vmPedidoList = _mapper.Map<List<VMPedido>>(list);
             return StatusCode(StatusCodes.Status200OK, new { data = vmPedidoList.OrderBy(_ => _.Orden).ThenByDescending(_=>_.IdPedido).ToList() });
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+
         }
 
         [HttpPost]
@@ -117,7 +127,6 @@ namespace PointOfSale.Controllers
             GenericResponse<VMPedido> gResponse = new GenericResponse<VMPedido>();
             try
             {
-                model.UsuarioFechaCerrado = user.UserName;
                 var m = new VMProveedorMovimiento();
                 m.NroFactura = model.NroFactura;
                 m.TipoFactura = model.TipoFactura;

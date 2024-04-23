@@ -72,6 +72,7 @@ $(document).ready(function () {
             { "data": "proveedor.nombre" },
             { "data": "registrationDateString" },
             { "data": "importeEstimadoString" },
+            { "data": "fechaCerradoString" },
             {
                 "data": "estado",
                 "className": "text-center", render: function (data) {
@@ -167,6 +168,10 @@ const openModal = (model = BASIC_MODEL) => {
         $('#cboProveedor').val(model.idProveedor);
         $('#cboProveedor').prop('disabled', true);
         $("#cboEstado").val(model.estado);
+        setTimeout(function () {
+            $('#cboEstado').prop('disabled', true);
+            $('#txtImporteEstimado').val(model.importeFinal ?? model.importeEstimado);
+        }, 500);
 
         var deshabilitado = model.estado === 3;
         $('#txtComentario, #btnGenerar, #cboEstado, #btnSave').prop('disabled', deshabilitado);
@@ -176,11 +181,29 @@ const openModal = (model = BASIC_MODEL) => {
         $('#cboProveedor').prop('disabled', false);
     }
 
+    if (model.fechaCerradoString == '')
+        document.getElementById("divFechaCerrado").style.display = 'none';
+    else {
+        document.getElementById("divFechaCerrado").style.display = '';
+
+        $("#txtCerrado").val(model.fechaCerradoString);
+        $("#txtCerradoUsuario").val(model.usuarioFechaCerrado);
+    }
+
     if (model.estado == 3) {
         $('#optionRecibido').show();
+        $("#lblCantPedir").text('Cantidad Recibida')
+        $('label[for="txtImporteEstimado"]').text('Importe');
     }
     else {
         $('#optionRecibido').hide();
+        $('label[for="txtImporteEstimado"]').text('Estimado');
+    }
+
+    if (model.estado == 2) {
+        $("#lblCantPedir").text('Cantidad Pedida')
+    } else if (model.estado) {
+        $("#lblCantPedir").text('Cantidad a Pedir')
     }
 
     $("#modalData").modal("show")
@@ -281,10 +304,15 @@ function cargarTabla(productos, idProveedor, nuevo) {
         let costo = producto.costPrice;
         let stock = parseInt(producto.quantity != null ? producto.quantity : 0);
         if (prod != null) {
+            if (prod.cantidadProductoRecibida != null) {
+                cantidadProducto = prod.cantidadProductoRecibida;
+            }
+            else {
             if (prod.cantidadProducto == null)
                 prod.cantidadProducto = '';
 
             cantidadProducto = prod.cantidadProducto;
+            }
         }
 
         tr.innerHTML = `
@@ -457,7 +485,7 @@ const openModalRecibido = (model = BASIC_MODEL) => {
 
     $("#txtIdPedidoRecibido").val(model.idPedido);
     //$("#txtImporteRecibido").val(model.importeEstimado);
-    $("#txtImporteRecibido").attr("placeholder", model.importeEstimado);
+    //$("#txtImporteRecibido").attr("placeholder", model.importeEstimado);
     $("#txtComentarioRecibido").val(model.comentario);
     $('#txtProveedorRecibido').val(model.proveedor.nombre);
     $("#txtFechaCreacion").val(model.registrationDateString);
@@ -541,7 +569,7 @@ $("#btnCerrarPedido").on("click", function () {
 
 
     var productosConCantidad = [];
-    let fechaValida = false;
+    let fechaValida = true;
     let cantidadesVacias = false;
     $('#tablaProductosRecibidos tbody tr').each(function () {
         var idPedidoProducto = parseInt($(this).find('td:eq(0)').text());
@@ -582,7 +610,7 @@ $("#btnCerrarPedido").on("click", function () {
     }
 
     if (!fechaValida) {
-        mostrarAdvertencia("Debe ingresar fechas de vencimiento válidas (dd/mm/aaaa)");
+        mostrarAdvertencia("Debe ingresar fechas de vencimiento validas (dd/mm/aaaa)");
         return;
     }
 

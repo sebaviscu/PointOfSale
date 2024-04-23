@@ -2,11 +2,17 @@
 var proveedoresList = [];
 var tipoGastosList = [];
 var tipoDeGasto = "1";
-var chartVentas; 
+var chartVentas;
 var charGastosSueldos;
 var charGastosProveedor;
 var charGastos;
 var charTipoVentas;
+
+var gastoTotal = 0;
+var proveedorTotal = 0;
+var sueldoTotal = 0;
+var saleTotal = 0;
+
 
 const BASIC_MODEL_GASTO = {
     idGastos: 0,
@@ -96,6 +102,7 @@ $(document).ready(function () {
             }
         })
 
+
     $("#txtDay").datepicker();
     changeChart(1);
 })
@@ -136,10 +143,13 @@ function changeChart(typeValues, dateFilter) {
 
                 let d = responseJson.object;
 
-                $("#txtTotalSale").text(d.totalSales);
-                $("#txtTotalGastos").text(d.gastosTotales)
+                $("#txtTotalSale").text("$ " + d.totalSales);
+                saleTotal = d.totalSales;
+                setGastosGanancia();
+
+                //$("#txtTotalGastos").text(d.gastosTotales)
                 $("#txtCantidadClientes").text(d.cantidadClientes)
-                $("#txtGanancia").text(d.ganancia)
+                //$("#txtGanancia").text(d.ganancia)
                 $("#idTextFilter").text(d.textoFiltroDiaSemanaMes)
 
                 SetGraficoVentas(d);
@@ -252,7 +262,13 @@ function SetGraficoVentas(d) {
                     name: d.anterior,
                     data: d.salesListComparacion
                 }
-            ]
+            ],
+            xaxis: {
+                categories: d.ejeX,
+                title: {
+                    text: d.ejeXLeyenda
+                }
+            },
         });
     }
 }
@@ -308,8 +324,9 @@ function SetGraficoGastosSueldos(typeValues, dateFilter) {
                 var gastosPorTipoSueldos = respuesta.gastosPorTipoSueldos;
 
                 $("#gastosSueldosTexto").LoadingOverlay("hide")
-                $("#gastosSueldosTexto").text(respuesta.gastosSueldosTexto)
-
+                $("#gastosSueldosTexto").text("$ " + respuesta.gastosSueldosTexto)
+                sueldoTotal = respuesta.gastosSueldosTexto;
+                setGastosGanancia();
                 //var options = {
                 //    series: gastosPorTipoSueldos.map((item) => { return item.total }),
                 //    chart: {
@@ -379,7 +396,9 @@ function SetGraficoGastosProveedor(typeValues, dateFilter) {
                 var gastoProveedores = respuesta.gastosPorTipoProveedor;
 
                 $("#gastosProvvedoresTexto").LoadingOverlay("hide")
-                $("#gastosProvvedoresTexto").text(respuesta.gastosProvvedoresTexto)
+                $("#gastosProvvedoresTexto").text("$ " + respuesta.gastosProvvedoresTexto)
+                proveedorTotal = respuesta.gastosProvvedoresTexto;
+                setGastosGanancia();
 
                 var options = {
                     series: gastoProveedores.map((item) => { return item.total }),
@@ -447,7 +466,10 @@ function SetGraficoGastos(typeValues, dateFilter) {
 
                 var gastosPorTipo = respuesta.gastosPorTipo;
                 $("#gastoTexto").LoadingOverlay("hide")
-                $("#gastoTexto").text(respuesta.gastosTexto)
+                $("#gastoTexto").text("$ " + respuesta.gastosTexto);
+
+                gastoTotal = respuesta.gastosTexto;
+                setGastosGanancia();
 
                 var options = {
                     series: gastosPorTipo.map((item) => { return item.total }),
@@ -570,9 +592,13 @@ $('#cboTipoDeGastoEnGasto').change(function () {
 
     if (tipoGasto != null) {
         $("#txtGasto").val(tipoGasto.gastoParticular);
+        $("#txtIva").val(tipoGasto.iva ?? '')
+        $("#cboTipoFactura").val(tipoGasto.tipoFactura ?? '')
     }
     else {
         $("#txtGasto").val('');
+        $("#txtIva").val('')
+        $("#cboTipoFactura").val('')
     }
 })
 
@@ -605,12 +631,13 @@ $('#cboProveedor').change(function () {
         $("#txtCuilPago").val(proveedor.cuil);
         $("#txtDireccionPago").val(proveedor.direccion);
         $("#txtIva").val(proveedor.iva != null ? proveedor.iva : '');
-
+        $("#cboTipoFactura").val(proveedor.tipoFactura ?? '');
     }
     else {
         $("#txtCuilPago").val('');
         $("#txtDireccionPago").val('');
         $("#txtIva").val('');
+        $("#cboTipoFactura").val('');
     }
     calcularIva();
 })
@@ -737,3 +764,13 @@ $('#txtIva').change(function () {
 $('#txtImporte').keyup(function () {
     calcularIva();
 });
+
+
+function setGastosGanancia() {
+
+    let gastos = parseFloat(parseFloat(gastoTotal) + parseFloat(proveedorTotal) + parseFloat(sueldoTotal));
+
+    $("#txtTotalGastos").text("$ " + gastos.toFixed(0))
+    $("#txtGanancia").text("$ " + (parseFloat(saleTotal) - gastos).toFixed(0));
+
+}

@@ -138,6 +138,8 @@ $("#btnSaveTipoDeGastos").on("click", function () {
     model["IdTipoGastos"] = parseInt($("#txtIdTipoGastos").val());
     model["gastoParticular"] = $("#cboTipoDeGasto").val();
     model["descripcion"] = $("#txtDescripcionTipoDeGasto").val();
+    model["tipoFactura"] = parseInt($("#cboTipoFacturaTipoGasto").val());
+    model["iva"] = $("#txtIvaTipoGasto").val() != '' ? parseInt($("#txtIvaTipoGasto").val()) : 0;
 
     $("#modalDataTipoDeGasto").find("div.modal-content").LoadingOverlay("show")
 
@@ -343,9 +345,13 @@ $('#cboTipoDeGastoEnGasto').change(function () {
 
     if (tipoGasto != null) {
         $("#txtGasto").val(tipoGasto.gastoParticular);
+        $("#txtIva").val(tipoGasto.iva ?? '')
+        $("#cboTipoFactura").val(tipoGasto.tipoFactura ?? '')
     }
     else {
         $("#txtGasto").val('');
+        $("#txtIva").val('')
+        $("#cboTipoFactura").val('')
     }
 })
 

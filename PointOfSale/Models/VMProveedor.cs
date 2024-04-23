@@ -1,4 +1,5 @@
 ﻿using PointOfSale.Model;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Models
 {
@@ -16,6 +17,7 @@ namespace PointOfSale.Models
         public string? Web { get; set; }
         public string? Comentario { get; set; }
         public decimal? Iva { get; set; }
+        public TipoFactura? TipoFactura { get; set; }
         public DateTime? RegistrationDate { get; set; }
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }

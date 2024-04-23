@@ -75,7 +75,8 @@
                                     <th></th>
                                     <th>Proveedor</th>
                                     <th>Fecha</th>
-                                    <th>Importe Estimado</th>
+                                    <th>Importe</th>
+                                    <th>Fecha Recibido</th>
                                     <th>Estado</th>
                                     <th></th>
                                     <th></th>
@@ -148,12 +149,22 @@
                                         <th>Producto</th>
                                         <th>Costo</th>
                                         <th>Stock</th>
-                                        <th>Cantidad a Pedir</th>
+                                        <th id="lblCantPedir">Cantidad a Pedir</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="form-row" id="divFechaCerrado" style="margin-top: 15px;">
+                            <div class="form-group col-sm-6">
+                                <label for="txtModificado">Fecha Cerrado</label>
+                                <input type="text" class="form-control form-control-sm" id="txtCerrado" name="fechaCerrado" readonly>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="txtModificadoUsuario">Por:</label>
+                                <input type="text" class="form-control form-control-sm" id="txtCerradoUsuario" name="CerradoUsuario" readonly>
+                            </div>
                         </div>
                     </div>
 

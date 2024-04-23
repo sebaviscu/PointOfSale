@@ -95,6 +95,7 @@ namespace PointOfSale.Business.Services
 
                 Proveedor_edit.Telefono2 = entity.Telefono2;
                 Proveedor_edit.Iva = entity.Iva;
+                Proveedor_edit.TipoFactura = entity.TipoFactura;
                 Proveedor_edit.Web = entity.Web;
                 Proveedor_edit.Email = entity.Email;
                 Proveedor_edit.Comentario = entity.Comentario;

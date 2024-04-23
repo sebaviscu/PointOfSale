@@ -126,11 +126,11 @@
                                 </div>
                             </div>
                             <div class="form-row">
-                                <div class="form-group col-sm-8 margin-min">
+                                <div class="form-group col-sm-6 margin-min">
                                     <label for="txtCuil">Cuil</label>
                                     <input type="text" class="form-control form-control-sm" id="txtCuil" name="Cuil">
                                 </div>
-                                <div class="form-group col-sm-4 margin-min">
+                                <div class="form-group col-sm-3 margin-min">
                                     <label for="txtIvaProveedor">IVA</label>
                                     <select class="form-control form-control-sm" id="txtIvaProveedor">
                                         <option value="0">0 %</option>
@@ -139,7 +139,16 @@
                                         <option value="27">27 %</option>
                                     </select>
                                 </div>
-
+                                <div class="form-group col-sm-3">
+                                    <label for="cboTipoFactura">Factura</label>
+                                    <select class="form-control form-control-sm" id="cboTipoFactura">
+                                        <option value=""></option>
+                                        <option value="0">A</option>
+                                        <option value="1">B</option>
+                                        <option value="2">C</option>
+                                        <option value="3">X</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-sm-12 margin-min">
@@ -258,14 +267,13 @@
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-sm-2">
-                                    <label for="cboTipoFactura">Tipo</label>
-                                    <select class="form-control form-control-sm" id="cboTipoFactura" name="Tipo Factura">
+                                    <label for="cboTipoFacturaPago">Tipo</label>
+                                    <select class="form-control form-control-sm" id="cboTipoFacturaPago" name="Tipo Factura">
                                         <option value=""></option>
                                         <option value="0">A</option>
                                         <option value="1">B</option>
                                         <option value="2">C</option>
                                         <option value="3">X</option>
-                                        <option value="4">Presu.</option>
                                     </select>
                                 </div>
                                 <div class="form-group col-sm-7">

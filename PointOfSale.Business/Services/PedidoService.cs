@@ -136,6 +136,7 @@ namespace PointOfSale.Business.Services
                     Pedido_found.Estado = Model.Enum.EstadoPedido.Recibido;
                     Pedido_found.Comentario = entity.Comentario;
                     Pedido_found.Productos = entity.Productos;
+                    Pedido_found.UsuarioFechaCerrado = entity.UsuarioFechaCerrado;
 
                     bool response = await _repository.Edit(Pedido_found);
 

@@ -218,11 +218,27 @@ $("#btnSave").on("click", function () {
             return response.ok ? response.json() : Promise.reject(response);
         }).then(responseJson => {
             if (responseJson.state) {
-
-                tableData.row(rowSelected).data(responseJson.object).draw(false);
-                rowSelected = null;
                 $("#modalData").modal("hide");
-                swal("Exitoso!", "La tienda fué modificada", "success");
+
+                if (responseJson.message != '') {
+                    swal({
+                        title: 'La tienda fué modificada',
+                        text: responseJson.message,
+                        showCancelButton: false,
+                        closeOnConfirm: false
+                    }, function (value) {
+
+                        document.location.href = "/";
+
+                    });
+
+                }
+                else {
+                    tableData.row(rowSelected).data(responseJson.object).draw(false);
+                    rowSelected = null;
+                    swal("Exitoso!", "La tienda fué modificada", "success");
+                }
+
 
             } else {
                 swal("Lo sentimos", responseJson.message, "error");

@@ -124,12 +124,13 @@ create table Proveedor(
 	web varchar(200) null,
 	comentario varchar(200) null,
 	iva decimal(10,2) null,
+	tipoFactura int null,
 	[registrationDate] datetime not null,
 	[modificationDate] datetime null,
 	[modificationUser] varchar(50) null
 )
 
-go
+go 
 
 create table Product(
 [idProduct] int primary key identity(1,1),
@@ -302,7 +303,9 @@ go
 create table TipoGastos(
 	[idTipoGastos] int primary key identity(1,1),
 	[gastoParticular] int not null,
-	[descripcion] varchar(150) not null
+	[descripcion] varchar(150) not null,
+	iva decimal(10,2) null,
+	tipoFactura int null
 )
 
 go
@@ -409,5 +412,3 @@ idPedido int references Pedidos(idPedido) not null,
 go
 
 alter table [dbo].[ProveedorMovimiento] add IdPedido int references Pedidos(IdPedido) null
-
-go

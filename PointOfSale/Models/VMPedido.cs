@@ -25,6 +25,8 @@ namespace PointOfSale.Models
         public string? ImporteEstimadoString { get; set; }
         public DateTime? FechaCerrado { get; set; }
         public string? UsuarioFechaCerrado { get; set; }
+        public string? FechaCerradoString { get; set; }
+        public decimal? ImporteFinal { get; set; }
 
 
         public decimal? ImporteSinIva { get; set; }

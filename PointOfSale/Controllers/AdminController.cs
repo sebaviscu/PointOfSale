@@ -240,7 +240,7 @@ namespace PointOfSale.Controllers
                 vmDashboard.EjeX = ejeX;
                 vmDashboard.SalesList = listSales.Select(_ => (int)_.Total).ToList();
                 vmDashboard.SalesListComparacion = listSalesComparacion.Select(_ => (int)_.Total).ToList();
-                vmDashboard.TotalSales = "$ " + listSales.Sum(_ => _.Total).ToString("F0");
+                vmDashboard.TotalSales = listSales.Sum(_ => _.Total).ToString("F0");
                 vmDashboard.TotalSalesComparacion = "$ " + listSalesComparacion.Sum(_ => _.Total).ToString("F0");
                 //vmDashboard.GastosTotales = "$ " + gastosTotales.ToString("F0");
                 vmDashboard.CantidadClientes = resultados.CantidadClientes;
@@ -282,7 +282,7 @@ namespace PointOfSale.Controllers
                 var totGastosSueldos = gastosSueldosList.Sum(_ => _.Total);
 
                 var vmDashboard = new VMDashBoard();
-                vmDashboard.GastosSueldosTexto = $"$ {totGastosSueldos.ToString("F0")}";
+                vmDashboard.GastosSueldosTexto = totGastosSueldos.ToString("F0");
                 vmDashboard.GastosPorTipoSueldos = gastosSueldosList;
 
                 gResponse.State = true;
@@ -354,7 +354,7 @@ namespace PointOfSale.Controllers
 
                 var vmDashboard = new VMDashBoard();
                 vmDashboard.GastosPorTipo = gastosParticualresList;
-                vmDashboard.GastosTexto = $"${totGastosParticualres.ToString("F0")}";
+                vmDashboard.GastosTexto = totGastosParticualres.ToString("F0");
 
 
                 gResponse.State = true;
@@ -393,7 +393,7 @@ namespace PointOfSale.Controllers
 
                 var vmDashboard = new VMDashBoard();
                 vmDashboard.GastosPorTipoProveedor = gastosProveedores;
-                vmDashboard.GastosProvvedoresTexto = $"${gastosProvTotales.ToString("F0")}";
+                vmDashboard.GastosProvvedoresTexto = gastosProvTotales.ToString("F0");
 
 
                 gResponse.State = true;

@@ -352,7 +352,7 @@ namespace PointOfSale.Controllers
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado, Roles.Empleado });
 
             List<VMVencimiento> vmVencimientos = _mapper.Map<List<VMVencimiento>>(await _productService.GetProximosVencimientos(user.IdTienda));
-            return StatusCode(StatusCodes.Status200OK, new { data = vmVencimientos });
+            return StatusCode(StatusCodes.Status200OK, new { data = vmVencimientos.OrderBy(_=>_.Estado).ThenBy(_=>_.FechaVencimiento) });
         }
 
         [HttpGet]

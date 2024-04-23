@@ -175,11 +175,13 @@ $('#cboProveedor').change(function () {
         $("#txtCuilPago").val(proveedor.cuil);
         $("#txtDireccionPago").val(proveedor.direccion);
         $("#txtIva").val(proveedor.iva != null ? proveedor.iva : '');
+        $("#cboTipoFacturaPago").val(proveedor.tipoFactura ?? '');
     }
     else {
         $("#txtCuilPago").val('');
         $("#txtDireccionPago").val('');
         $("#txtIva").val('');
+        $("#cboTipoFacturaPago").val('');
     }
 })
 
@@ -196,6 +198,7 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtEmail").val(model.email);
     $("#txtIvaProveedor").val(model.iva);
     $("#txtComentario").val(model.comentario);
+    $("#cboTipoFactura").val(model.tipoFactura);
 
     if (model.modificationUser === null)
         document.getElementById("divModif").style.display = 'none';
@@ -276,6 +279,7 @@ $("#btnSave").on("click", function () {
 
 
     const model = structuredClone(BASIC_MODEL);
+    model["idProveedor"] = $("#txtId").val();
     model["nombre"] = $("#txtNombre").val();
     model["direccion"] = $("#txtDireccion").val();
     model["cuil"] = $("#txtCuil").val();
@@ -286,7 +290,7 @@ $("#btnSave").on("click", function () {
     model["email"] = $("#txtEmail").val();
     model["iva"] = $("#txtIvaProveedor").val();
     model["comentario"] = $("#txtComentario").val();
-    model["idProveedor"] = $("#txtId").val();
+    model["tipoFactura"] = parseInt($("#cboTipoFactura").val());
 
     $("#modalData").find("div.modal-content").LoadingOverlay("show")
 
@@ -360,7 +364,7 @@ $("#btnSavePago").on("click", function () {
     const model = structuredClone(BASIC_MODEL_PAGO);
     model["idProveedorMovimiento"] = parseInt($("#txtIdPagoProveedor").val());
     model["idProveedor"] = $("#cboProveedor").val();
-    model["tipoFactura"] = $("#cboTipoFactura").val();
+    model["tipoFactura"] = $("#cboTipoFacturaPago").val();
     model["nroFactura"] = $("#txtNroFactura").val();
     model["iva"] = $("#txtIva").val() != '' ? $("#txtIva").val() : 0;
     model["ivaImporte"] = $("#txtImporteIva").val() != '' ? $("#txtImporteIva").val() : 0;
@@ -630,6 +634,7 @@ const openModalPago = (model = BASIC_MODEL_PAGO) => {
     $("#txtComentarioPago").val(model.comentario);
     $("#cboEstado").val(model.estadoPago);
     $("#cboProveedor").val(model.idProveedor);
+
     document.getElementById("cbxFacturaPendiente").checked = model.facturaPendiente;
 
 

@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -112,14 +114,25 @@ namespace PointOfSale.Controllers
                 //}
                 //else
                 //	vmTienda.Logo = null;
+                var tiendaOld = _mapper.Map<VMTienda>(await _TiendaService.Get(vmTienda.IdTienda));
 
                 vmTienda.ModificationUser = user.UserName;
                 Tienda edited_Tienda = await _TiendaService.Edit(_mapper.Map<Tienda>(vmTienda));
+
+                if (tiendaOld.IdListaPrecio != edited_Tienda.IdListaPrecio)
+                {
+                    await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+                    gResponse.State = true;
+                    gResponse.Message = "Como se ha cambiado la lista de precios, se debe iniciar sesion nuevamente.";
+                }
 
                 vmTienda = _mapper.Map<VMTienda>(edited_Tienda);
 
                 gResponse.State = true;
                 gResponse.Object = vmTienda;
+                gResponse.Message = string.Empty;
+
             }
             catch (Exception ex)
             {

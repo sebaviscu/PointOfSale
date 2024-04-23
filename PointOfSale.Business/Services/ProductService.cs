@@ -440,7 +440,7 @@ namespace PointOfSale.Business.Services
             var queryProducts = await _repository.Query(p => idsProds.Contains(p.IdProduct));
             //var listaProductos = queryProducts.ToList();
 
-            foreach (var p in queryProducts)
+            foreach (var p in queryProducts.ToList())
             {
                 var pedProd = pedidoProductos.First(_ => _.IdProducto == p.IdProduct);
                 p.Quantity += pedProd.CantidadProductoRecibida;

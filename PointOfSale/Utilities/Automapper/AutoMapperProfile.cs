@@ -333,7 +333,8 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<VMPedido, Pedido>();
             CreateMap<Pedido, VMPedido>()
                                 .ForMember(user => user.RegistrationDateString, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.ToString("dd/MM/yyyy HH:mm")))
-                                .ForMember(user => user.ImporteEstimadoString, opt => opt.MapFrom(userEdit => "$" + userEdit.ImporteEstimado.Value.ToString("F2")));
+                                .ForMember(user => user.FechaCerradoString, opt => opt.MapFrom(userEdit => userEdit.FechaCerrado.HasValue ? userEdit.FechaCerrado.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty))
+                                .ForMember(user => user.ImporteEstimadoString, opt => opt.MapFrom(userEdit => !userEdit.ImporteFinal.HasValue || userEdit.ImporteFinal.Value == 0 ?  "$" + userEdit.ImporteEstimado.Value.ToString("F2")+" * " : "$" + userEdit.ImporteFinal.Value.ToString("F2")));
 
             CreateMap<VMPedidoProducto, PedidoProducto>();
             CreateMap<PedidoProducto, VMPedidoProducto>();

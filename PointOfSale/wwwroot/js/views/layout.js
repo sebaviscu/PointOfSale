@@ -81,9 +81,17 @@ $("#btnSaveTurno").on("click", function () {
         if (responseJson.state) {
 
             $("#modalDataTurno").modal("hide");
-            swal("Exitoso!", "Se ha cerrado el turno y automaticamente hemos abierto otro", "success");
+            //swal("Exitoso!", "Se ha cerrado el turno y automaticamente hemos abierto otro", "success");
+            swal({
+                title: 'Se ha cerrado el turno.',
+                text: 'Se debe iniciar sesion nuevamente.',
+                showCancelButton: false,
+                closeOnConfirm: false
+            }, function (value) {
 
-            // CERRAR SESION
+                document.location.href = "/";
+
+            });
 
         } else {
             swal("Lo sentimos", responseJson.message, "error");
