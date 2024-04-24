@@ -377,6 +377,12 @@ namespace PointOfSale.Utilities.Automapper
                                 .ForMember(user => user.Importe, opt => opt.MapFrom(userEdit => userEdit.Total))
                                 .ForMember(user => user.ImporteIva, opt => opt.MapFrom(userEdit => Math.Round(userEdit.Total.Value / Convert.ToDecimal("1.21"), 2)))
                                 .ForMember(user => user.ImporteSinIva, opt => opt.MapFrom(userEdit => userEdit.Total - Math.Round(userEdit.Total.Value / Convert.ToDecimal("1.21"), 2)));
+
+
+            CreateMap<Ajustes, VMAjustes>();
+            CreateMap<VMAjustes, Ajustes>();
+
+
         }
     }
 }

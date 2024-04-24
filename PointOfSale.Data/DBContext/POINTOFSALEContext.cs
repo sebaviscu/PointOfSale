@@ -42,6 +42,7 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<ListaPrecio> ListaPrecios { get; set; } = null!;
         public virtual DbSet<Pedido> Pedido { get; set; } = null!;
         public virtual DbSet<PedidoProducto> PedidoProducto { get; set; } = null!;
+        public virtual DbSet<Ajustes> Ajustes { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -49,6 +50,14 @@ namespace PointOfSale.Data.DBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Ajustes>(entity =>
+            {
+                entity.HasKey(e => e.IdAjuste);
+
+                entity.ToTable("Ajustes");
+
+            });
+
             modelBuilder.Entity<PedidoProducto>(entity =>
             {
                 entity.HasKey(e => e.IdPedidoProducto);

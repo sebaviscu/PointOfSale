@@ -63,238 +63,79 @@
             <div class="modal-body">
                 <div class="row">
 
-                    <div class="col-md-2">
+                    <div class="col-md-12" style="min-height: 250px;">
 
-                        <!-- Nav pills -->
-                        <ul class="nav nav-pills flex-column">
-                            <li class="nav-item">
-                                <a class="nav-link active" data-bs-toggle="pill" href="#general" id="clickGeneral">General</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="pill" href="#facturacion" id="clickFacturacion">Facturacion</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="pill" href="#carroCompras" id="clickWeb">Web</a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <!-- Tab panes -->
-                    <div class="col-md-10" style="min-height: 250px;">
-                        <div class="tab-content">
-                            <div class="tab-pane container active" id="general">
-
-                                <input type="hidden" value="0" id="txtId">
-                                <div class="row">
-                                    <div class="col-sm-9">
-                                        <div class="form-group">
-                                            <label for="txtDescription">Nombre</label>
-                                            <input type="text" class="form-control form-control-sm input-validate" id="txtNombre" name="Nombre">
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-sm-3">
-                                        <div class="form-check">
-                                            <br />
-                                            <label class="form-label">
-                                                <input type="checkbox" id="cboPrincipal">
-                                                Principal
-                                            </label>
-                                        </div>
-                                    </div>
+                        <input type="hidden" value="0" id="txtId">
+                        <div class="row">
+                            <div class="col-sm-9">
+                                <div class="form-group">
+                                    <label for="txtDescription">Nombre</label>
+                                    <input type="text" class="form-control form-control-sm input-validate" id="txtNombre" name="Nombre">
                                 </div>
-                                <div class="row">
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label for="txtTelefono">Telefono</label>
-                                            <input type="text" class="form-control form-control-sm" id="txtTelefono" name="Telefono">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-8">
-                                        <div class="form-group">
-                                            <label for="txtDireccion">Direccion</label>
-                                            <input type="text" class="form-control form-control-sm" id="txtDireccion" name="Direccion">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <div class="form-group">
-                                            <label for="txtEmail">Email</label>
-                                            <input type="text" class="form-control form-control-sm" id="txtEmail" name="Email">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label for="cboListaPrecios">Lista de Precios <i style="color:red;" class="mdi mdi-alert" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Deberá iniciar sesion nuevamente para que impacte la nueva Lista de Precios"></i></label>
-
-                                            <select class="form-control" id="cboListaPrecios">
-                                                <option value="1">Lista 1</option>
-                                                <option value="2">Lista 2</option>
-                                                <option value="3">Lista 3</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label for="txtImpresora">Nombre Impresora de Ticket</label>
-                                            <input type="text" class="form-control form-control-sm" id="txtImpresora" name="Impresora Ticket">
-                                        </div>
-                                    </div>
-                                    @* <div class="col-sm-6">
-                                        <div class="form-row">
-                                            <div class="form-group">
-                                                <label for="txtPhoto">Logo</label>
-                                                <input class="form-control-file" type="file" id="txtLogo" />
-                                            </div>
-                                        </div>
-                                        <div class="form-row">
-                                            <img id="imgTienda" style="max-width:200px;" src="" class="rounded mx-auto d-block" alt="Imagen Tienda">
-                                        </div>
-                                    </div> *@
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <div class="form-check">
+                                    <br />
+                                    <label class="form-label">
+                                        <input type="checkbox" id="cboPrincipal">
+                                        Principal
+                                    </label>
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane container fade" id="facturacion">vacio</div>
-                        <div class="tab-pane container fade" id="carroCompras">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label for="txtEnvioGratis">Minimo envios gratis</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtEnvioGratis" name="EnvioGratis">
-                                    </div>
-                                </div>
-                                <div class="col-sm-5">
-                                    <div class="form-group">
-                                        <label for="txtWhatsApp">WhatsApp</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtWhatsApp" name="WhatsApp">
-                                    </div>
-                                </div>
-                                <div class="col-sm-3">
-                                    <div class="form-group">
-                                        <label for="txtAumento">% de Aumento</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtAumento" name="Aumento">
-                                    </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label for="txtTelefono">Telefono</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtTelefono" name="Telefono">
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label>Horario</label>
-                                    </div>
-                                    <div class="row g-3 align-items-center">
-                                        <div class="col-md-3">
-                                            <label for="txtLunes" class="col-form-label">Lunes</label>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <input type="text" class="form-control form-control-sm" id="txtLunes" name="Lunes">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 align-items-center">
-                                        <div class="col-md-3">
-                                            <label for="txtMartes" class="col-form-label">Martes</label>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <input type="text" class="form-control form-control-sm" id="txtMartes" name="Martes">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 align-items-center">
-                                        <div class="col-md-3">
-                                            <label for="txtMiercoles" class="col-form-label">Miercoles</label>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <input type="text" class="form-control form-control-sm" id="txtMiercoles" name="Miercoles">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 align-items-center">
-                                        <div class="col-md-3">
-                                            <label for="txtJueves" class="col-form-label">Jueves</label>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <input type="text" class="form-control form-control-sm" id="txtJueves" name="Jueves">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 align-items-center">
-                                        <div class="col-md-3">
-                                            <label for="txtViernes" class="col-form-label">Viernes</label>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <input type="text" class="form-control form-control-sm" id="txtViernes" name="Viernes">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 align-items-center">
-                                        <div class="col-md-3">
-                                            <label for="txtSabado" class="col-form-label">Sabado</label>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <input type="text" class="form-control form-control-sm" id="txtSabado" name="Sabado">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 align-items-center">
-                                        <div class="col-md-3">
-                                            <label for="txtDomingo" class="col-form-label">Domingo</label>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <input type="text" class="form-control form-control-sm" id="txtDomingo" name="Domingo">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 align-items-center">
-                                        <div class="col-md-3">
-                                            <label for="txtFeriados" class="col-form-label">Feriados</label>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <input type="text" class="form-control form-control-sm" id="txtFeriados" name="Feriados">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label>Redes Sociales</label>
-                                    </div>
-                                    <div class="row g-3 align-items-center">
-                                        <div class="col-md-3">
-                                            <label for="txtFacebook" class="col-form-label">Facebook</label>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <input type="text" class="form-control form-control-sm" id="txtFacebook" name="Facebook">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 align-items-center">
-                                        <div class="col-md-3">
-                                            <label for="txtInstagram" class="col-form-label">Instagram</label>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <input type="text" class="form-control form-control-sm" id="txtInstagram" name="Instagram">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 align-items-center">
-                                        <div class="col-md-3">
-                                            <label for="txtTikTok" class="col-form-label">TikTok</label>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <input type="text" class="form-control form-control-sm" id="txtTikTok" name="Tik Tok">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 align-items-center">
-                                        <div class="col-md-3">
-                                            <label for="txtTwitter" class="col-form-label">Twitter</label>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <input type="text" class="form-control form-control-sm" id="txtTwitter" name="Twitter">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 align-items-center">
-                                        <div class="col-md-3">
-                                            <label for="txtYouTube" class="col-form-label">YouTube</label>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <input type="text" class="form-control form-control-sm" id="txtYouTube" name="YouTube">
-                                        </div>
-                                    </div>
+                            <div class="col-sm-8">
+                                <div class="form-group">
+                                    <label for="txtDireccion">Direccion</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtDireccion" name="Direccion">
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <div class="form-group">
+                                    <label for="txtEmail">Email</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtEmail" name="Email">
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label for="cboListaPrecios">Lista de Precios <i style="color:red;" class="mdi mdi-alert" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Deberá iniciar sesion nuevamente para que impacte la nueva Lista de Precios"></i></label>
+
+                                    <select class="form-control" id="cboListaPrecios">
+                                        <option value="1">Lista 1</option>
+                                        <option value="2">Lista 2</option>
+                                        <option value="3">Lista 3</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="txtImpresora">Nombre Impresora de Ticket</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtImpresora" name="Impresora Ticket">
+                                </div>
+                            </div>
+                            @* <div class="col-sm-6">
+                            <div class="form-row">
+                            <div class="form-group">
+                            <label for="txtPhoto">Logo</label>
+                            <input class="form-control-file" type="file" id="txtLogo" />
+                            </div>
+                            </div>
+                            <div class="form-row">
+                            <img id="imgTienda" style="max-width:200px;" src="" class="rounded mx-auto d-block" alt="Imagen Tienda">
+                            </div>
+                            </div> *@
+                        </div>
+
                     </div>
                 </div>
                 <div class="form-row" id="divModif">
@@ -320,8 +161,6 @@
         </form>
 
     </div>
-</div>
-</div>
 </div>
 
 

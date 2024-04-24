@@ -73,6 +73,7 @@ public class Program
         builder.Services.AddScoped<IImportarExcelService, ImportarExcelService>();
         builder.Services.AddScoped<IPedidoService, PedidoService>();
         builder.Services.AddScoped<IIvaService, IvaService>();
+        builder.Services.AddScoped<IAjusteService, AjusteService>();
 
         builder.Services.AddAFIPConfiguration(x =>
         {

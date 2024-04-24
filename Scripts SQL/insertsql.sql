@@ -44,7 +44,7 @@ insert into Menu([description],idMenuParent,controller,pageAction,isActive) valu
 ('Reporte Productos',4,'Reports','ProductsReport',1), --21
 ('Notificaciones',6,'Notification','Notification',1), --22
 ('Pedidos',2,'Pedido','Pedido',1), --23
-('Reporte de IVA',4,'Reports','IvaReport',1), --24
+('Ajustes',1,'Admin','Ajuste',1), --24
 ('Libro de IVA',4,'Reports','LibroIva',1) -- 25
 
 go
@@ -126,9 +126,17 @@ insert into TypeDocumentSale([description],isActive, tipoFactura) values
 ('Mercado Pago',1,0),
 ('Transferencia',1,0)
 
+
+go
+--________________________________ INSERT Ajustes ________________________________
+
+insert into Ajustes(MontoEnvioGratis,AumentoWeb,Whatsapp,Lunes,Martes,Miercoles,Jueves,Viernes,Sabado,Domingo,Feriado,Facebook,Instagram,Tiktok,Twitter,Youtube) 
+values (0,20,'','','','','','','','','','','','','','')
+
 go
 --________________________________ INSERT CORRELATIVE NUMBER ________________________________
 
 --000001
 insert into CorrelativeNumber(lastNumber,quantityDigits,management,dateUpdate) values
 (0,6,'Sale',getdate())
+

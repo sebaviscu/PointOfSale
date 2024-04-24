@@ -167,19 +167,6 @@ $(document).ready(function () {
     $('.filtro-vencimientos').change(function () {
 
         filtrarTabla();
-        //var valorSeleccionado = $(this).val();
-
-        //// Ocultar todas las filas
-        //$('#tbDataVencimientos tbody tr').hide();
-
-        //// Mostrar las filas correspondientes al filtro seleccionado
-        //if (valorSeleccionado === '0') {
-        //    $('#tbDataVencimientos tbody tr').show();
-        //} else if (valorSeleccionado === '1') {
-        //    $('.proximoClass').show();
-        //} else if (valorSeleccionado === '2') {
-        //    $('.vencidoClass').show();
-        //}
     });
 
     $("#txtfVencimiento").datepicker({ dateFormat: 'dd/mm/yy' });

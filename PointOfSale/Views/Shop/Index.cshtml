@@ -32,7 +32,7 @@
 
 <html lang="es">
 <head>
-    <title>@Model.Tienda.Nombre</title>
+    <title>@Model.Ajustes.Nombre</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -46,11 +46,11 @@
                     <div class="row d-flex">
                         <div class="col-md d-flex topper" style="text-align: center;align-items: center;">
                             <div class="icon mr-2 d-flex justify-content-center align-items-center"></div>
-                            <span class="text"><i class="icon-phone2"></i>&nbsp; @Model.Tienda.Telefono</span>
+                            <span class="text"><i class="icon-phone2"></i>&nbsp; @Model.Ajustes.Whatsapp</span>
                         </div>
                         <div class="col-md d-flex topper" style="text-align: center;align-items: center;">
                             <div class="icon mr-2 d-flex justify-content-center align-items-center"></div>
-                            <span class="text"><i class="icon-paper-plane"></i>&nbsp; @Model.Tienda.Direccion</span>
+                            <span class="text"><i class="icon-paper-plane"></i>&nbsp; @Model.Ajustes.Direccion</span>
                         </div>
                         <div class="col-md d-flex topper" style="text-align: center;align-items: center;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="@Model.Horarios">
                             <div class="icon mr-2 d-flex justify-content-center align-items-center"></div>
@@ -75,7 +75,7 @@
             }
         }
         <div class="container justify-content-center align-items-center">
-            <a class="navbar-brand">@Model.Tienda.Nombre</a>
+            <a class="navbar-brand">@Model.Ajustes.Nombre</a>
         </div>
     </nav>
 
@@ -119,7 +119,7 @@
                         </div>
                         <div class="media-body">
                             <h3 class="heading">ENVIOS GRATIS</h3>
-                            <span>Ordenes superiores a $@Convert.ToInt32(Model.Tienda.MontoEnvioGratis)</span>
+                            <span>Ordenes superiores a $@Convert.ToInt32(Model.Ajustes.MontoEnvioGratis)</span>
                         </div>
                     </div>
                 </div>
@@ -254,21 +254,21 @@
                     <div class="ftco-footer-widget mb-4">
                         <ul class="ftco-footer-social list-unstyled float-md-left float-lft mt-5">
                             @{
-                                if (!string.IsNullOrWhiteSpace(@Model.Tienda.Twitter))
+                                if (!string.IsNullOrWhiteSpace(@Model.Ajustes.Twitter))
                                 {
-                                    <li class="ftco-animate"><a href="https://twitter.com/@Model.Tienda.Twitter" target=”_blank”><span class="icon-twitter"></span></a></li>
+                                    <li class="ftco-animate"><a href="https://twitter.com/@Model.Ajustes.Twitter" target=”_blank”><span class="icon-twitter"></span></a></li>
                                 }
                             }
                             @{
-                                if (!string.IsNullOrWhiteSpace(@Model.Tienda.Facebook))
+                                if (!string.IsNullOrWhiteSpace(@Model.Ajustes.Facebook))
                                 {
-                                    <li class="ftco-animate"><a href="https://www.facebook.com/@Model.Tienda.Facebook" target=”_blank”><span class="icon-facebook"></span></a></li>
+                                    <li class="ftco-animate"><a href="https://www.facebook.com/@Model.Ajustes.Facebook" target=”_blank”><span class="icon-facebook"></span></a></li>
                                 }
                             }
                             @{
-                                if (!string.IsNullOrWhiteSpace(@Model.Tienda.Instagram))
+                                if (!string.IsNullOrWhiteSpace(@Model.Ajustes.Instagram))
                                 {
-                                    <li class="ftco-animate"><a href="https://www.instagram.com/@Model.Tienda.Instagram" target=”_blank”><span class="icon-instagram"></span></a></li>
+                                    <li class="ftco-animate"><a href="https://www.instagram.com/@Model.Ajustes.Instagram" target=”_blank”><span class="icon-instagram"></span></a></li>
                                 }
                             }
                         </ul>

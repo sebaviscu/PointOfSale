@@ -65,27 +65,11 @@ namespace PointOfSale.Business.Services
                 Tienda Tienda_found = await _repository.Get(c => c.IdTienda == entity.IdTienda);
 
                 Tienda_found.Nombre = entity.Nombre;
-                Tienda_found.AumentoWeb = entity.AumentoWeb;
                 Tienda_found.Direccion = entity.Direccion;
                 Tienda_found.Telefono = entity.Telefono;
                 Tienda_found.Email = entity.Email;
                 Tienda_found.Logo = entity.Logo;
-                Tienda_found.Whatsapp = entity.Whatsapp;
                 Tienda_found.NombreImpresora = entity.NombreImpresora;
-                Tienda_found.Facebook = entity.Facebook;
-                Tienda_found.Instagram = entity.Instagram;
-                Tienda_found.Twitter = entity.Twitter;
-                Tienda_found.Tiktok = entity.Tiktok;
-                Tienda_found.Youtube = entity.Youtube;
-                Tienda_found.Lunes = entity.Lunes;
-                Tienda_found.Martes = entity.Martes;
-                Tienda_found.Miercoles = entity.Miercoles;
-                Tienda_found.Jueves = entity.Jueves;
-                Tienda_found.Viernes = entity.Viernes;
-                Tienda_found.Sabado = entity.Sabado;
-                Tienda_found.Domingo = entity.Domingo;
-                Tienda_found.Feriado = entity.Feriado;
-                Tienda_found.MontoEnvioGratis = entity.MontoEnvioGratis;
                 Tienda_found.Principal = entity.Principal;
                 Tienda_found.IdListaPrecio = entity.IdListaPrecio;
 

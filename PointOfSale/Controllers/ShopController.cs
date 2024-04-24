@@ -18,8 +18,9 @@ namespace PointOfSale.Controllers
         private readonly ITiendaService _tiendaService;
         private readonly ICategoryService _categoryService;
         private readonly ITypeDocumentSaleService _typeDocumentSaleService;
+        private readonly IAjusteService _ajusteService;
 
-        public ShopController(IProductService productService, IMapper mapper, IShopService shopService, ITiendaService tiendaService, ICategoryService categoryService, ITypeDocumentSaleService typeDocumentSaleService)
+        public ShopController(IProductService productService, IMapper mapper, IShopService shopService, ITiendaService tiendaService, ICategoryService categoryService, ITypeDocumentSaleService typeDocumentSaleService, IAjusteService ajusteService)
         {
             _productService = productService;
             _mapper = mapper;
@@ -27,14 +28,14 @@ namespace PointOfSale.Controllers
             _tiendaService = tiendaService;
             _categoryService = categoryService;
             _typeDocumentSaleService = typeDocumentSaleService;
+            _ajusteService = ajusteService;
         }
 
         public async Task<IActionResult> Index()
         {
             ClaimsPrincipal claimuser = HttpContext.User;
-
-            var tienda = _mapper.Map<VMTienda>(await _tiendaService.GetTiendaPrincipal());
-            var shop = new VMShop(tienda);
+            var ajuste = _mapper.Map<VMAjustes>( await _ajusteService.Get());
+            var shop = new VMShop(ajuste);
             shop.Products = _mapper.Map<List<VMProduct>>(await _productService.GetRandomProducts());
             shop.IsLogin = claimuser.Identity.IsAuthenticated;
 
@@ -46,7 +47,7 @@ namespace PointOfSale.Controllers
             ClaimsPrincipal claimuser = HttpContext.User;
             var tienda = _mapper.Map<VMTienda>(await _tiendaService.GetTiendaPrincipal());
 
-            var shop = new VMShop(tienda);
+            var shop = new VMShop(null);
             shop.IsLogin = claimuser.Identity.IsAuthenticated;
             shop.Products = _mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategory(0));
             shop.FormasDePago = _mapper.Map<List<VMTypeDocumentSale>>(await _typeDocumentSaleService.ListWeb());

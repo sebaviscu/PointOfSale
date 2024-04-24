@@ -7,42 +7,44 @@ namespace PointOfSale.Models
     {
         public DateTime DateTimeNowArg => TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
 
-        public VMShop(VMTienda tienda)
+        public VMShop(VMAjustes? ajustes)
         {
-            Tienda = tienda;
-
-            Horarios = $"· Lunes: {tienda.Lunes} \n· Martes: {tienda.Martes} \n· Miercoles: {tienda.Miercoles} \n· Jueves: {tienda.Jueves}\n· Viernes: {tienda.Viernes}\n· Sabado: {tienda.Sabado}\n· Domingo: {tienda.Domingo}\n· Feriados: {tienda.Feriado}";
-
-            int day = (int)DateTimeNowArg.DayOfWeek;
-            switch (day)
+            if (ajustes != null)
             {
-                case 1:
-                    HorariosToday = "Lunes: " + tienda.Lunes;
-                    break;
-                case 2:
-                    HorariosToday = "Martes: " + tienda.Martes;
-                    break;
-                case 3:
-                    HorariosToday = "Miercoles: " + tienda.Miercoles;
-                    break;
-                case 4:
-                    HorariosToday = "Jueves: " + tienda.Jueves;
-                    break;
-                case 5:
-                    HorariosToday = "Viernes: " + tienda.Viernes;
-                    break;
-                case 6:
-                    HorariosToday = "Sabado: " + tienda.Sabado;
-                    break;
-                case 0:
-                    HorariosToday = "Domingo: " + tienda.Domingo;
-                    break;
+                Ajustes = ajustes;
+                Horarios = $"· Lunes: {ajustes.Lunes} \n· Martes: {ajustes.Martes} \n· Miercoles: {ajustes.Miercoles} \n· Jueves: {ajustes.Jueves}\n· Viernes: {ajustes.Viernes}\n· Sabado: {ajustes.Sabado}\n· Domingo: {ajustes.Domingo}\n· Feriados: {ajustes.Feriado}";
+
+                int day = (int)DateTimeNowArg.DayOfWeek;
+                switch (day)
+                {
+                    case 1:
+                        HorariosToday = "Lunes: " + ajustes.Lunes;
+                        break;
+                    case 2:
+                        HorariosToday = "Martes: " + ajustes.Martes;
+                        break;
+                    case 3:
+                        HorariosToday = "Miercoles: " + ajustes.Miercoles;
+                        break;
+                    case 4:
+                        HorariosToday = "Jueves: " + ajustes.Jueves;
+                        break;
+                    case 5:
+                        HorariosToday = "Viernes: " + ajustes.Viernes;
+                        break;
+                    case 6:
+                        HorariosToday = "Sabado: " + ajustes.Sabado;
+                        break;
+                    case 0:
+                        HorariosToday = "Domingo: " + ajustes.Domingo;
+                        break;
+                }
+
             }
         }
 
         public List<VMProduct> Products { get; set; }
 
-        public VMTienda Tienda { get; set; }
         public List<VMCategory> Categorias { get; set; }
 
         public bool IsLogin { get; set; }
@@ -52,5 +54,7 @@ namespace PointOfSale.Models
         public string HorariosToday { get; set; }
 
         public List<VMTypeDocumentSale> FormasDePago { get; set; }
+
+        public VMAjustes Ajustes { get; set; }
     }
 }

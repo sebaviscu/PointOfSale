@@ -29,6 +29,7 @@ namespace PointOfSale.Controllers
         private readonly IMapper _mapper;
         private readonly IProductService _productService;
         private readonly ICategoryService _categoryService;
+        private readonly IAjusteService _ajusteService;
 
         public AdminController(
             IDashBoardService dashboardService,
@@ -38,7 +39,10 @@ namespace PointOfSale.Controllers
             IClienteService clienteService,
             IProveedorService proveedorService,
             IMapper mapper,
-            IPromocionService promocionService, IProductService productService, ICategoryService categoryService)
+            IPromocionService promocionService,
+            IProductService productService,
+            ICategoryService categoryService,
+            IAjusteService ajusteService)
         {
             _dashboardService = dashboardService;
             _userService = userService;
@@ -50,6 +54,7 @@ namespace PointOfSale.Controllers
             _promocionService = promocionService;
             _productService = productService;
             _categoryService = categoryService;
+            _ajusteService = ajusteService;
         }
 
         public IActionResult DashBoard()
@@ -1191,6 +1196,54 @@ namespace PointOfSale.Controllers
 
                 gResponse.Object = _mapper.Map<VMPromocion>(user_edited);
                 gResponse.State = true;
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Ajuste()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAjuste()
+        {
+
+            try
+            {
+                 var vmAjusteList = _mapper.Map<VMAjustes>(await _ajusteService.Get());
+                return StatusCode(StatusCodes.Status200OK, new { data = vmAjusteList });
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateAjuste([FromBody] VMAjustes model)
+        {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+
+            GenericResponse<VMAjustes> gResponse = new GenericResponse<VMAjustes>();
+            try
+            {
+
+                model.ModificationUser = user.UserName;
+                var edited_Ajuste = await _ajusteService.Edit(_mapper.Map<Ajustes>(model));
+
+                model = _mapper.Map<VMAjustes>(edited_Ajuste);
+
+                gResponse.State = true;
+                gResponse.Object = model;
             }
             catch (Exception ex)
             {

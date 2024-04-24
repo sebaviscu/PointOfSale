@@ -1,0 +1,241 @@
+﻿@{
+    ViewData["Title"] = "Ajuste";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@section StylesPOS{
+
+    <link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
+    <link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
+    <link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
+    <link href="~/plugins/jquery-ui/jquery-ui.css" rel="stylesheet">
+
+
+}
+
+<div class="row">
+    <div class="col-sm-12">
+
+        <div class="card card-default">
+            <div class="card-header card-header-border-bottom">
+                <div>
+                    <h4>Ajustes</h4>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <input type="hidden" value="0" id="txtId">
+                        <div class="col-sm-5">
+                            <div class="card shadow">
+                                <div class="card-header" style="padding-top: 30px; background-color: rgba(0, 0, 0, 0.03);border-bottom: 1px solid #e5e9f2">
+                                    <h4>Venta Web</h4>
+                                </div>
+                                <div class="card-body row" style="padding-top: 30px;">
+
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="row">
+                                                <div class="col-sm-5">
+                                                    <div class="form-group">
+                                                        <label for="txtNombreTienda">Nombre Tienda</label>
+                                                        <input type="text" class="form-control form-control-sm" id="txtNombreTienda" name="Nombre Tienda">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-7">
+                                                    <div class="form-group">
+                                                        <label for="txtDireccion">Direccion</label>
+                                                        <input type="text" class="form-control form-control-sm" id="txtDireccion" name="Direccion">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+
+                                            <div class="row">
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label for="txtEnvioGratis">Minimo envios gratis</label>
+                                                        <input type="number" class="form-control form-control-sm" id="txtEnvioGratis" name="EnvioGratis">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-5">
+                                                    <div class="form-group">
+                                                        <label for="txtWhatsApp">WhatsApp</label>
+                                                        <input type="text" class="form-control form-control-sm" id="txtWhatsApp" name="WhatsApp">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="form-group">
+                                                        <label for="txtAumento">% de Aumento</label>
+                                                        <input type="number" class="form-control form-control-sm" id="txtAumento" name="Aumento">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group" style="margin-bottom:0px;">
+                                                <label>Horario</label>
+                                            </div>
+                                            <div class="row g-3 align-items-center">
+                                                <div class="col-md-3">
+                                                    <label for="txtLunes" class="col-form-label">Lunes</label>
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <input type="text" class="form-control form-control-sm" id="txtLunes" name="Lunes">
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-items-center">
+                                                <div class="col-md-3">
+                                                    <label for="txtMartes" class="col-form-label">Martes</label>
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <input type="text" class="form-control form-control-sm" id="txtMartes" name="Martes">
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-items-center">
+                                                <div class="col-md-3">
+                                                    <label for="txtMiercoles" class="col-form-label">Miercoles</label>
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <input type="text" class="form-control form-control-sm" id="txtMiercoles" name="Miercoles">
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-items-center">
+                                                <div class="col-md-3">
+                                                    <label for="txtJueves" class="col-form-label">Jueves</label>
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <input type="text" class="form-control form-control-sm" id="txtJueves" name="Jueves">
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-items-center">
+                                                <div class="col-md-3">
+                                                    <label for="txtViernes" class="col-form-label">Viernes</label>
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <input type="text" class="form-control form-control-sm" id="txtViernes" name="Viernes">
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-items-center">
+                                                <div class="col-md-3">
+                                                    <label for="txtSabado" class="col-form-label">Sabado</label>
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <input type="text" class="form-control form-control-sm" id="txtSabado" name="Sabado">
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-items-center">
+                                                <div class="col-md-3">
+                                                    <label for="txtDomingo" class="col-form-label">Domingo</label>
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <input type="text" class="form-control form-control-sm" id="txtDomingo" name="Domingo">
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-items-center">
+                                                <div class="col-md-3">
+                                                    <label for="txtFeriados" class="col-form-label">Feriados</label>
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <input type="text" class="form-control form-control-sm" id="txtFeriados" name="Feriados">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group" style="margin-bottom:0px">
+                                                <label>Redes Sociales</label>
+                                            </div>
+                                            <div class="row g-3 align-items-center">
+                                                <div class="col-md-3">
+                                                    <label for="txtFacebook" class="col-form-label">Facebook</label>
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <input type="text" class="form-control form-control-sm" id="txtFacebook" name="Facebook">
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-items-center">
+                                                <div class="col-md-3">
+                                                    <label for="txtInstagram" class="col-form-label">Instagram</label>
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <input type="text" class="form-control form-control-sm" id="txtInstagram" name="Instagram">
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-items-center">
+                                                <div class="col-md-3">
+                                                    <label for="txtTikTok" class="col-form-label">TikTok</label>
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <input type="text" class="form-control form-control-sm" id="txtTikTok" name="Tik Tok">
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-items-center">
+                                                <div class="col-md-3">
+                                                    <label for="txtTwitter" class="col-form-label">Twitter</label>
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <input type="text" class="form-control form-control-sm" id="txtTwitter" name="Twitter">
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-items-center">
+                                                <div class="col-md-3">
+                                                    <label for="txtYouTube" class="col-form-label">YouTube</label>
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <input type="text" class="form-control form-control-sm" id="txtYouTube" name="YouTube">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-sm-4" style="margin-top: 40px;">
+                        <div class="form-row" id="divModif">
+                            <div class="form-group col-sm-6">
+                                <label for="txtModificado">Fecha Modificado</label>
+                                <input type="text" class="form-control form-control-sm" id="txtModificado" name="fechaModificado" readonly>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="txtModificadoUsuario">Por:</label>
+                                <input type="text" class="form-control form-control-sm" id="txtModificadoUsuario" name="usuarioModificado" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnSave">Guardar Cambios</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
+    <script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
+    <script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
+    <script src="~/plugins/jquery-ui/jquery-ui.js"></script>
+
+
+    <script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
+    <script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
+    <script src="~/plugins/data-tables/jszip.min.js"></script>
+    <script src="~/plugins/data-tables/buttons.html5.min.js"></script>
+    <script src="~/plugins/data-tables/buttons.print.min.js"></script>
+
+    <script src="~/js/views/ajuste.js"></script>
+}
+

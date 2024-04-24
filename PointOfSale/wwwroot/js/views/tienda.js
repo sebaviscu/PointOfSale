@@ -13,22 +13,6 @@ const BASIC_MODEL = {
     direccion: "",
     nombreImpresora: "",
     logo: "",
-    montoEnvioGratis: 0,
-    aumentoWeb: 0,
-    whatsapp: "",
-    lunes: "",
-    martes: "",
-    miercoles: "",
-    jueves: "",
-    viernes: "",
-    sabado: "",
-    domingo: "",
-    feriado: "",
-    facebook: "",
-    instagram: "",
-    twitter: "",
-    tiktok: "",
-    youtube: "",
     principal: 0
 }
 
@@ -100,22 +84,7 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtTelefono").val(model.telefono);
     $("#txtDireccion").val(model.direccion);
     $("#txtImpresora").val(model.nombreImpresora);
-    $("#txtEnvioGratis").val(model.montoEnvioGratis);
-    $("#txtAumento").val(model.aumentoWeb);
-    $("#txtWhatsApp").val(model.whatsapp);
-    $("#txtLunes").val(model.lunes);
-    $("#txtMartes").val(model.martes);
-    $("#txtMiercoles").val(model.miercoles);
-    $("#txtJueves").val(model.jueves);
-    $("#txtViernes").val(model.viernes);
-    $("#txtSabado").val(model.sabado);
-    $("#txtDomingo").val(model.domingo);
-    $("#txtFeriados").val(model.feriado);
-    $("#txtFacebook").val(model.facebook);
-    $("#txtInstagram").val(model.instagram);
-    $("#txtTikTok").val(model.tiktok);
-    $("#txtTwitter").val(model.twitter);
-    $("#txtYouTube").val(model.youtube);
+    
     $("#imgTienda").attr("src", `data:image/png;base64,${model.photoBase64}`);
     document.getElementById("cboPrincipal").checked = model.principal;
 
@@ -157,22 +126,7 @@ $("#btnSave").on("click", function () {
     model["email"] = $("#txtEmail").val();
     model["direccion"] = $("#txtDireccion").val();
     model["nombreImpresora"] = $("#txtImpresora").val();
-    model["montoEnvioGratis"] = $("#txtEnvioGratis").val();
-    model["aumentoWeb"] = $("#txtAumento").val();
-    model["whatsapp"] = $("#txtWhatsApp").val();
-    model["lunes"] = $("#txtLunes").val();
-    model["martes"] = $("#txtMartes").val();
-    model["miercoles"] = $("#txtMiercoles").val();
-    model["jueves"] = $("#txtJueves").val();
-    model["viernes"] = $("#txtViernes").val();
-    model["sabado"] = $("#txtSabado").val();
-    model["domingo"] = $("#txtDomingo").val();
-    model["feriado"] = $("#txtFeriados").val();
-    model["facebook"] = $("#txtFacebook").val();
-    model["instagram"] = $("#txtInstagram").val();
-    model["tiktok"] = $("#txtTikTok").val();
-    model["twitter"] = $("#txtTwitter").val();
-    model["youtube"] = $("#txtYouTube").val();
+    
     model["principal"] = document.querySelector('#cboPrincipal').checked;
 
     //const inputPhoto = document.getElementById('txtLogo');
