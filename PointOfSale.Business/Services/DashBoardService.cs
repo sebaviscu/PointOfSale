@@ -46,8 +46,8 @@ namespace PointOfSale.Business.Services
                 switch (typeValues)
                 {
                     case TypeValuesDashboard.Dia:
-                        dateCompare = dateStart.AddDays(-1);
-                        var resp = await GetSalesHour(dateStart, idTienda);
+                        dateCompare = new DateTime(dateStart.Year, dateStart.Month, dateStart.Day, 0, 0, 0);
+                        var resp = await GetSalesHour(dateStart, dateCompare, idTienda);
                         resultados.VentasActualesHour = resp.Ventas;
                         resultados.CantidadClientes = resp.CantidadVentas;
                         resultados.VentasComparacionHour = await GetComparationHour(dateStart, dateCompare, idTienda);
@@ -152,7 +152,7 @@ namespace PointOfSale.Business.Services
             return (resp, cantVentas);
         }
 
-        private async Task<(Dictionary<int, decimal> Ventas, int CantidadVentas)> GetSalesHour(DateTime start, int idTienda)
+        private async Task<(Dictionary<int, decimal> Ventas, int CantidadVentas)> GetSalesHour(DateTime end, DateTime start, int idTienda)
         {
             var resultados = new GraficoVentasConComparacion();
 
@@ -161,7 +161,7 @@ namespace PointOfSale.Business.Services
             var queryVentasActuales = query
                 .Include(v => v.TypeDocumentSaleNavigation)
                 .Where(v =>
-                            v.RegistrationDate.Value.Date >= start.Date
+                            v.RegistrationDate.Value.Date >= start && v.RegistrationDate.Value.Date <= end
                             && v.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
                             && v.IdClienteMovimiento == null
                             && v.IdTienda == idTienda);

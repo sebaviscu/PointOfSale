@@ -306,19 +306,36 @@
                                 </div>
                                 <div class="form-group col-sm-6">
                                     <label for="txtImporte">Importe</label>
-                                    <input type="number" class="form-control form-control-sm input-validate-pago" id="txtImporte" name="Importe">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">$</span>
+                                        </div>
+                                        <input type="number" class="form-control form-control-sm input-validate-pago" id="txtImporte" name="Importe">
+                                    </div>
                                 </div>
                             </div>
                             <div class="form-row">
-                                <div class="form-group col-sm-3">
+                                <div class="form-group col-sm-4">
                                     <label for="txtImporteIva">Importe IVA</label>
-                                    <input type="number" class="form-control form-control-sm" id="txtImporteIva" name="Importe IVA" disabled>
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">$</span>
+                                        </div>
+                                        <input type="number" class="form-control form-control-sm" id="txtImporteIva" name="Importe IVA" disabled>
+                                    </div>
                                 </div>
-                                <div class="form-group col-sm-3">
+                                <div class="form-group col-sm-5">
                                     <label for="txtImporteSinIva">Importe sin IVA</label>
-                                    <input type="number" class="form-control form-control-sm" id="txtImporteSinIva" name="Importe sin IVA" disabled>
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">$</span>
+                                        </div>
+                                        <input type="number" class="form-control form-control-sm" id="txtImporteSinIva" name="Importe sin IVA" disabled>
+                                    </div>
                                 </div>
-                                <div class="form-group col-sm-6">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-12">
                                     <label for="txtComentarioPago">Comentario</label>
                                     <input type="text" class="form-control form-control-sm" id="txtComentarioPago" name="Comentario">
                                 </div>

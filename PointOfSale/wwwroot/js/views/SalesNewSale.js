@@ -266,27 +266,11 @@ function getSumaSubTotales() {
     return parseFloat(totFijo) - parseFloat(subTotal);
 }
 
+function getVentaForRegister() {
 
-$("#btnFinalizarVentaParcial").on("click", function () {
-    $("#btnFinalizarVentaParcial").closest("div.card-body").LoadingOverlay("show")
+    var currentTabId = getTabActiveId();
 
-    if ($(".cboFormaDePago").filter(function () { return $(this).val() === ""; }).length !== 0) {
-        const msg = `Debe completaro el campo Forma de Pago`;
-        toastr.warning(msg, "");
-        return;
-    }
-
-    let suma = getSumaSubTotales();
-    if (suma > 0) {
-        const msg = `La suma de los sub totales no es igual al total.`;
-        toastr.warning(msg, "");
-        return;
-    }
-
-    $("#modalDividirPago").modal("hide")
-    showLoading();
-
-    var currentTabId = $("#modalDividirPago").attr("idtab");
+    //var currentTabId = $("#modalDividirPago").attr("idtab");
     var currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
 
     const vmDetailSale = currentTab.products;
@@ -313,6 +297,32 @@ $("#btnFinalizarVentaParcial").on("click", function () {
         multiplesFormaDePago: formasDePago,
         descuentorecargo: descRec != undefined ? descRec.replace('.', ',') : null
     }
+
+    return sale;
+}
+
+$("#btnFinalizarVentaParcial").on("click", function () {
+    $("#btnFinalizarVentaParcial").closest("div.card-body").LoadingOverlay("show")
+
+    if ($(".cboFormaDePago").filter(function () { return $(this).val() === ""; }).length !== 0) {
+        const msg = `Debe completaro el campo Forma de Pago`;
+        toastr.warning(msg, "");
+        return;
+    }
+
+    let suma = getSumaSubTotales();
+    if (suma > 0) {
+        const msg = `La suma de los sub totales no es igual al total.`;
+        toastr.warning(msg, "");
+        return;
+    }
+
+    $("#modalDividirPago").modal("hide")
+    showLoading();
+
+    var currentTabId = $("#modalDividirPago").attr("idtab");
+
+    let sale = getVentaForRegister();
 
     fetch("/Sales/RegisterSale", {
         method: "POST",
@@ -495,13 +505,11 @@ function addFunctions(idTab) {
     $('#txtPeso' + idTab).on('keypress', function (e) {
         if ($('#txtPeso' + idTab).val() != '' && e.which === 13) {
 
-            //Disable textbox to prevent multiple submit
             $(this).attr("disabled", "disabled");
 
             agregarProductoEvento(idTab);
             $('#txtPeso' + idTab).val('');
 
-            //Enable the textbox again if needed.
             $(this).removeAttr("disabled");
         }
     });
@@ -871,21 +879,37 @@ function lastTab() {
     tabFirst.tab('show');
 }
 
-var areYouReallySure = false;
-function areYouSure() {
-    if (allowPrompt) {
-        if (!areYouReallySure && true) {
-            areYouReallySure = true;
-            var confMessage = "";
-            return confMessage;
-        }
-    } else {
-        allowPrompt = true;
-    }
-}
+//$(document).on('click', 'a[href]:not([target="_blank"])', function (event) {
+//    if (AllTabsForSale[0].products.length > 0) {
+//        event.preventDefault();
+//        registerNoCierreSale();
+//    }
+//});
 
-var allowPrompt = true;
-//window.onbeforeunload = areYouSure;
+//window.addEventListener('beforeunload', function (event) {
+//    if (AllTabsForSale[0].products.length > 0) {
+//        event.preventDefault();
+//        registerNoCierreSale();
+//    }
+//});
+
+//function registerNoCierreSale() {
+
+//    //let sale = getVentaForRegister();
+//    //sale.idTypeDocumentSale = null
+//    //sale.multiplesFormaDePago = null
+
+//    swal({
+//        title: 'No es posible cerrar la pantalla con una venta abierta \n\n',
+//        icon: 'question',
+//        showCancelButton: true,
+//        confirmButtonText: 'Aceptar'
+//    }, function (value) {
+
+        
+//    });
+//}
+
 
 function getTabActiveId() {
     var idTab = document.getElementsByClassName(" nav-link tab-venta active")[0].id;

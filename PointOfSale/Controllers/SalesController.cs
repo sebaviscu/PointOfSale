@@ -179,6 +179,39 @@ namespace PointOfSale.Controllers
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
+
+        [HttpPost]
+        public async Task<IActionResult> RegisterNoCierreSale([FromBody] VMSale model)
+        {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado, Roles.Empleado });
+
+            GenericResponse<VMSale> gResponse = new GenericResponse<VMSale>();
+            try
+            {
+                ClaimsPrincipal claimuser = HttpContext.User;
+
+                string idUsuario = claimuser.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).Select(c => c.Value).SingleOrDefault();
+                string idTurno = claimuser.Claims.Where(c => c.Type == "Turno").Select(c => c.Value).SingleOrDefault();
+
+                model.IdUsers = int.Parse(idUsuario);
+                model.IdTurno = int.Parse(idTurno);
+                model.IdTienda = user.IdTienda;
+
+                
+                //model = _mapper.Map<VMSale>(sale_created);
+
+                gResponse.State = true;
+                gResponse.Object = model;
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.ToString();
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
         [HttpGet]
         public async Task<IActionResult> History(string saleNumber, string startDate, string endDate, bool presupuestos)
         {
