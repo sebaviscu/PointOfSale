@@ -16,7 +16,9 @@ namespace PointOfSale.Model
 
         public Notifications(Product product)
         {
-            Descripcion = $"{product.Description} llegó al minimo de {product.Minimo} {product.TipoVenta} en stock.";
+            var proveedor = product.Proveedor != null ? "(" + product.Proveedor.Nombre + ") " : string.Empty;
+
+            Descripcion = $"{product.Description} {proveedor}llegó al minimo de {product.Minimo} {product.TipoVenta} en stock.";
             IsActive = true;
             RegistrationDate = DateTimeNowArg;
             Accion = "/Inventory/Products";

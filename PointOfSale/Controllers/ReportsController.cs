@@ -135,7 +135,7 @@ namespace PointOfSale.Controllers
             var lista = new VMLibroIvaTotalOutput();
 
             var listMod = await _ivaService.GetMovProveedoresImports(idTienda, start_date, end_date);
-            
+
             lista.IvaRows = _mapper.Map<List<VMIvaRowOutput>>(listMod);
             lista.TotalFacurado = listMod.Any() ? listMod.Sum(_ => _.Importe) : 0;
             lista.TotalIva = listMod.Any() ? listMod.Sum(_ => _.IvaImporte) : 0;
@@ -145,6 +145,7 @@ namespace PointOfSale.Controllers
             var list105 = listMod.Where(_ => _.Iva == Convert.ToDecimal(10.5));
             var listaServ105 = new VMLibroIvaTotalOutput
             {
+                Nombre = "proveedores_10.5",
                 IvaRows = _mapper.Map<List<VMIvaRowOutput>>(list105),
                 TotalFacurado = list105.Any() ? listMod.Sum(_ => _.Importe) : 0,
                 TotalIva = list105.Any() ? list105.Sum(_ => _.IvaImporte) : 0,
@@ -154,6 +155,7 @@ namespace PointOfSale.Controllers
             var list21 = listMod.Where(_ => _.Iva == 21);
             var listaServ21 = new VMLibroIvaTotalOutput
             {
+                Nombre = "proveedores_21",
                 IvaRows = _mapper.Map<List<VMIvaRowOutput>>(list21),
                 TotalFacurado = list21.Any() ? list21.Sum(_ => _.Importe) : 0,
                 TotalIva = list21.Any() ? list21.Sum(_ => _.IvaImporte) : 0,
@@ -173,7 +175,7 @@ namespace PointOfSale.Controllers
 
             var ventasPorTipoFactura = new List<VMLibroIvaTotalOutput>();
 
-            foreach (var tipoFactura in tiposFactura.Where(_=>_ != TipoFactura.Presu))
+            foreach (var tipoFactura in tiposFactura.Where(_ => _ != TipoFactura.Presu))
             {
                 var listaVenta = ConstructVentaListByTipoFactura(listSale, tipoFactura);
                 ventasPorTipoFactura.Add(listaVenta);
@@ -198,6 +200,7 @@ namespace PointOfSale.Controllers
 
             return new VMLibroIvaTotalOutput
             {
+                Nombre = "ventas_21",
                 IvaRows = _mapper.Map<List<VMIvaRowOutput>>(ventasByTipoFactura),
                 TotalFacurado = Math.Round(bruto, 2),
                 TotalIva = Math.Round(totalIva, 2),
@@ -212,7 +215,7 @@ namespace PointOfSale.Controllers
             var listaMultiple = BuildListaServicios(listGastos);
             var listaGastos = BuildListaGastos(listGastos);
 
-            listaMultiple.Add(listaGastos);
+            listaMultiple.AddRange(listaGastos);
 
             return listaMultiple;
         }
@@ -224,6 +227,7 @@ namespace PointOfSale.Controllers
             var list21 = serv.Where(_ => _.Iva == 21);
             var listaServ21 = new VMLibroIvaTotalOutput
             {
+                Nombre = "servicios_21",
                 IvaRows = _mapper.Map<List<VMIvaRowOutput>>(list21),
                 TotalFacurado = list21.Any() ? list21.Sum(_ => _.Importe) : 0,
                 TotalIva = list21.Any() ? list21.Sum(_ => _.IvaImporte) : 0,
@@ -233,26 +237,40 @@ namespace PointOfSale.Controllers
             var list27 = serv.Where(_ => _.Iva == 27);
             var listaServ27 = new VMLibroIvaTotalOutput
             {
+                Nombre = "servicios_27",
                 IvaRows = _mapper.Map<List<VMIvaRowOutput>>(list27),
                 TotalFacurado = list27.Any() ? list27.Sum(_ => _.Importe) : 0,
                 TotalIva = list27.Any() ? list27.Sum(_ => _.IvaImporte) : 0,
                 TotalSinIva = list27.Any() ? list27.Sum(_ => _.ImporteSinIva) : 0
             };
 
-            return new List<VMLibroIvaTotalOutput>() { listaServ21, listaServ27};
+            return new List<VMLibroIvaTotalOutput>() { listaServ21, listaServ27 };
         }
 
-        private VMLibroIvaTotalOutput BuildListaGastos(IEnumerable<Gastos> listGastos)
+        private List<VMLibroIvaTotalOutput> BuildListaGastos(IEnumerable<Gastos> listGastos)
         {
             var gast = listGastos.Where(_ => _.TipoDeGasto.GastoParticular == TipoDeGastoEnum.Variable || _.TipoDeGasto.GastoParticular == TipoDeGastoEnum.Fijo);
-            var listaGastos = new VMLibroIvaTotalOutput
+
+            var gast21 = gast.Where(_ => _.Iva == 21);
+            var listaGastos21 = new VMLibroIvaTotalOutput
             {
-                IvaRows = _mapper.Map<List<VMIvaRowOutput>>(gast),
-                TotalFacurado = gast.Any() ? gast.Sum(_ => _.Importe) : 0,
-                TotalIva = gast.Any() ? gast.Sum(_ => _.IvaImporte) : 0,
-                TotalSinIva = gast.Any() ? gast.Sum(_ => _.ImporteSinIva) : 0
+                Nombre = "gastos_21",
+                IvaRows = _mapper.Map<List<VMIvaRowOutput>>(gast21),
+                TotalFacurado = gast21.Any() ? gast21.Sum(_ => _.Importe) : 0,
+                TotalIva = gast21.Any() ? gast21.Sum(_ => _.IvaImporte) : 0,
+                TotalSinIva = gast21.Any() ? gast21.Sum(_ => _.ImporteSinIva) : 0
             };
-            return listaGastos;
+
+            var gast0 = gast.Where(_ => _.Iva == 0);
+            var listaGastos0 = new VMLibroIvaTotalOutput
+            {
+                Nombre = "gastos_0",
+                IvaRows = _mapper.Map<List<VMIvaRowOutput>>(gast0),
+                TotalFacurado = gast0.Any() ? gast0.Sum(_ => _.Importe) : 0,
+                TotalIva = gast0.Any() ? gast0.Sum(_ => _.IvaImporte) : 0,
+                TotalSinIva = gast0.Any() ? gast0.Sum(_ => _.ImporteSinIva) : 0
+            };
+            return new List<VMLibroIvaTotalOutput>() { listaGastos21, listaGastos0 };
         }
 
     }

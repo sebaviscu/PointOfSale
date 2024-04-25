@@ -663,6 +663,7 @@ $("#btnSavePagoProveedor").on("click", function () {
     let url;
     let model;
 
+    showLoading();
     if (tipoDeGasto === "1") { // gasto
         url = "/Gastos/CreateGastos";
 
@@ -725,18 +726,22 @@ $("#btnSavePagoProveedor").on("click", function () {
     }
 
 
+    $("#modalNuevoGasto").modal("hide");
     fetch(url, {
         method: "POST",
         headers: { 'Content-Type': 'application/json;charset=utf-8' },
         body: JSON.stringify(model)
     }).then(response => {
+        removeLoading();
         return response.ok ? response.json() : Promise.reject(response);
     }).then(responseJson => {
 
         if (responseJson.state) {
-            $("#modalNuevoGasto").modal("hide");
             swal("Exitoso!", "Se registró con éxito", "success");
 
+            SetGraficoGastosProveedor(typeValuesGlobal, '');
+            SetGraficoGastos(typeValuesGlobal, '');
+            SetGraficoGastosSueldos(typeValuesGlobal, '');
         } else {
             swal("Lo sentimos", responseJson.message, "error");
         }

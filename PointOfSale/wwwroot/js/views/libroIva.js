@@ -39,7 +39,8 @@ $("#btnSearch").click(function () {
         toastr.warning("", "Debes seleccionar una fecha");
         return;
     }
-    showLoading();
+
+    $("#btnSearch").LoadingOverlay("show")
 
     $("#txtNetoFinalCredito").attr("importe", parseFloat(0));
     $("#txtImporteIvaFinalCredito").attr("importe", parseFloat(0));
@@ -52,7 +53,6 @@ $("#btnSearch").click(function () {
     LoadVenta(fecha);
     LoadServiciosGastos(fecha);
 
-    removeLoading();
 
 })
 
@@ -277,28 +277,50 @@ function LoadServiciosGastos(fecha) {
 
                 let data = responseJson.object;
 
-                if (data && data.length == 3) {
+                if (data && data.length == 4) {
+                    let rowsServicios = [];
 
-                    setTotalesCredito(data[0].totalSinIva, data[0].totalIva, data[0].totalFacurado);
+                    if (data[0].nombre == "servicios_21") {
+                        setTotalesCredito(data[0].totalSinIva, data[0].totalIva, data[0].totalFacurado);
 
-                    $("#txtNetoCreditoServ21").val("$ " + data[0].totalSinIva);
-                    $("#txtImporteIvaCreditoServ21").val("$ " + data[0].totalIva);
-                    $("#txtFacturadoCreditoServ21").val("$ " + data[0].totalFacurado);
+                        $("#txtNetoCreditoServ21").val("$ " + data[0].totalSinIva);
+                        $("#txtImporteIvaCreditoServ21").val("$ " + data[0].totalIva);
+                        $("#txtFacturadoCreditoServ21").val("$ " + data[0].totalFacurado);
 
-                    setTotalesCredito(data[1].totalSinIva, data[1].totalIva, data[1].totalFacurado);
+                        rowsServicios = rowsServicios.concat(data[0].ivaRows);
+                    }
 
-                    $("#txtNetoCreditoServ27").val("$ " + data[1].totalSinIva);
-                    $("#txtImporteIvaCreditoServ27").val("$ " + data[1].totalIva);
-                    $("#txtFacturadoCreditoServ27").val("$ " + data[1].totalFacurado);
+                    if (data[1].nombre == "servicios_27") {
+                        setTotalesCredito(data[1].totalSinIva, data[1].totalIva, data[1].totalFacurado);
 
-                    setTotalesCredito(data[2].totalSinIva, data[2].totalIva, data[2].totalFacurado);
+                        $("#txtNetoCreditoServ27").val("$ " + data[1].totalSinIva);
+                        $("#txtImporteIvaCreditoServ27").val("$ " + data[1].totalIva);
+                        $("#txtFacturadoCreditoServ27").val("$ " + data[1].totalFacurado);
 
-                    $("#txtNetoCreditoGastos21").val("$ " + data[2].totalSinIva);
-                    $("#txtImporteIvaCreditoGastos21").val("$ " + data[2].totalIva);
-                    $("#txtFacturadoCreditoGastos21").val("$ " + data[2].totalFacurado);
+                        rowsServicios = rowsServicios.concat(data[1].ivaRows);
+                    }
 
-                    let rowsServicios = data[0].ivaRows.concat(data[1].ivaRows);
-                    rowsServicios = rowsServicios.concat(data[2].ivaRows);
+                    if (data[2].nombre == "gastos_21") {
+                        setTotalesCredito(data[2].totalSinIva, data[2].totalIva, data[2].totalFacurado);
+
+                        $("#txtNetoCreditoGastos21").val("$ " + data[2].totalSinIva);
+                        $("#txtImporteIvaCreditoGastos21").val("$ " + data[2].totalIva);
+                        $("#txtFacturadoCreditoGastos21").val("$ " + data[2].totalFacurado);
+
+                        rowsServicios = rowsServicios.concat(data[2].ivaRows);
+                    }
+
+                    if (data[3].nombre == "gastos_0") {
+                        setTotalesCredito(data[3].totalSinIva, data[3].totalIva, data[3].totalFacurado);
+
+                        $("#txtNetoCreditoGastos0").val("$ " + data[3].totalSinIva);
+                        $("#txtImporteIvaCreditoGastos0").val("$ " + data[3].totalIva);
+                        $("#txtFacturadoCreditoGastos0").val("$ " + data[3].totalFacurado);
+
+                        rowsServicios = rowsServicios.concat(data[3].ivaRows);
+                    }
+
+                    $("#btnSearch").LoadingOverlay("hide")
 
                     if (tbdataServicios != null)
                         tbdataServicios.destroy();

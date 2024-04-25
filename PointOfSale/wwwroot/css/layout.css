@@ -1,0 +1,43 @@
+﻿.sa-icon {
+    margin-bottom: 35px !important;
+}
+
+div.sweet-alert > p.lead {
+    margin-bottom: 10px !important;
+}
+
+input.input-validate {
+    background-color: beige;
+}
+
+select.input-validate {
+    background-color: beige;
+}
+
+.invalid {
+    box-shadow: 0 0 5px 1px red;
+}
+
+@media only screen and (max-width: 600px) {
+    /* Hace que las celdas de la tabla ocupen todo el ancho de la pantalla */
+    #tablaProductosRecibidos, #tablaProductosRecibidos thead, #tablaProductosRecibidos tbody, #tablaProductosRecibidos th, #tablaProductosRecibidos td, #tablaProductosRecibidos tr {
+        display: block;
+    }
+
+        /* Oculta los encabezados de la tabla */
+        #tablaProductosRecibidos thead tr {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+        }
+
+        /* Establece el ancho de las celdas */
+        #tablaProductosRecibidos td {
+            width: 100%;
+        }
+
+        /* Establece estilos específicos para cada fila */
+        #tablaProductosRecibidos tr {
+            border: 1px solid #ccc;
+        }
+}

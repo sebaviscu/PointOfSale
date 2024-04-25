@@ -17,29 +17,10 @@
     <link id="sleek-css" rel="stylesheet" href="~/css/sleek.css" />
     <link href="~/plugins/toastr/toastr.css" rel="stylesheet">
     <link href="~/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <link id="sleek-css" rel="stylesheet" href="~/css/layout.css" />
 
     @*<link href="~/img/favicon.png" rel="shortcut icon" />*@
-    <style>
-        .sa-icon {
-            margin-bottom: 35px !important;
-        }
 
-        div.sweet-alert > p.lead {
-            margin-bottom: 10px !important;
-        }
-
-        input.input-validate {
-            background-color: beige;
-        }
-
-        select.input-validate {
-            background-color: beige;
-        }
-
-        .invalid {
-            box-shadow: 0 0 5px 1px red;
-        }
-    </style>
     @await RenderSectionAsync("StylesPOS", required: false)
 </head>
 <body class="header-fixed sidebar-fixed sidebar-dark header-light" id="body">
@@ -76,7 +57,7 @@
                 </div>
                 <button class="btn btn-outline-danger" onclick='generarDatos()' hidden>Generar Datos</button>
                 <br />
-                <button class="btn btn-outline-info" onclick='cerrarTurno()' style="margin-left:10px; margin-right:10px">Cerrar turno</button>
+                <button class="btn btn-outline-info" onclick='cerrarTurno()' style="margin-left:3px; margin-right:3px">Cerrar Turno</button>
                 <br />
                 <br />
                 <br />
@@ -94,28 +75,31 @@
             <!-- Header -->
             <header class="main-header " id="header">
                 <nav class="navbar navbar-static-top navbar-expand-lg">
-                    <!-- Sidebar toggle button -->
-                    <button id="sidebar-toggler" class="sidebar-toggle">
-                        <span class="visually-hidden">Toggle navigation</span>
-                    </button>
-                    <!-- search form -->
-                    <div class="search-form d-none d-lg-inline-block">
-                    </div>
+                    <div class="container-fluid">
 
-                        @await Component.InvokeAsync("NotificacionesComponent")
+                        <!-- Sidebar toggle button -->
+                        <button id="sidebar-toggler" class="sidebar-toggle">
+                            <span class="visually-hidden">Toggle navigation</span>
+                        </button>
+                        <!-- search form -->
+                        <div class="search-form d-none d-lg-inline-block">
+                        </div>
 
-                    <div class="navbar-right ">
-                        <ul class="nav navbar-nav">
+                        <div class="navbar-right row">
+                            @await Component.InvokeAsync("NotificacionesComponent")
 
-                            <!-- User Account -->
-                            @* <li class="dropdown user-menu">
-                            <button href="#" class="nav-link">
-                            <img src="assets/img/user/user.png" class="user-image" alt="User Image" />
-                            <span class="d-none d-lg-inline-block">Abdus Salam</span>
-                            </button>
-                            </li>*@
-                            @await Component.InvokeAsync("MenuUser")
-                        </ul>
+                            <ul class="nav navbar-nav">
+
+                                <!-- User Account -->
+                                @* <li class="dropdown user-menu">
+                                <button href="#" class="nav-link">
+                                <img src="assets/img/user/user.png" class="user-image" alt="User Image" />
+                                <span class="d-none d-lg-inline-block">Abdus Salam</span>
+                                </button>
+                                </li>*@
+                                @await Component.InvokeAsync("MenuUser")
+                            </ul>
+                        </div>
                     </div>
                 </nav>
             </header>

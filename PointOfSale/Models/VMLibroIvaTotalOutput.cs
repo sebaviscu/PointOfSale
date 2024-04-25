@@ -9,5 +9,6 @@ namespace PointOfSale.Models
         public decimal? TotalIva { get; set; }
 
         public decimal? TotalSinIva { get; set; }
+        public string? Nombre { get; set; }
     }
 }
