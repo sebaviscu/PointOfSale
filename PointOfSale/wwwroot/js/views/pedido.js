@@ -150,11 +150,35 @@ function calcularTotalCosto() {
         var str = $(this).find('td:eq(2)').text();
         var costoString = str.slice(1).trim();
 
-        const costo = parseInt(costoString);
+        const costo = parseFloat(costoString);
         totalCosto += cantidad * costo;
 
     });
     $('#txtImporteEstimado').val(totalCosto);
+}
+
+$('#tablaProductosRecibidos tbody').on('blur', '.editable', function () {
+    calcularTotalProductosRecibidos();
+});
+
+function calcularTotalProductosRecibidos() {
+    let totalCosto = 0;
+    $('#tablaProductosRecibidos tbody').find('tr').each(function () {
+        let cantCelda = $(this).find('.editable').text();
+        var cantidad = parseInt(cantCelda != '' ? cantCelda : 0);
+
+        if (isNaN(cantidad) || cantidad < 1) {
+            cantidad = 0;
+        }
+        var str = $(this).find('td:eq(3)').text();
+        var costoString = str.slice(1).trim();
+
+        const costo = parseFloat(costoString);
+        totalCosto += cantidad * costo;
+
+    });
+    $('#txtImporteRecibido').val(totalCosto);
+    calcularIva();
 }
 
 const openModal = (model = BASIC_MODEL) => {
@@ -492,7 +516,8 @@ const openModalRecibido = (model = BASIC_MODEL) => {
     $("#txtCreationUser").val(model.registrationUser);
     $('#txtIdProveedor').val(model.proveedor.idProveedor);
 
-    $("#txtIva").val(model.proveedor.iva != null ? model.proveedor.iva : '');
+    $("#txtIva").val(model.proveedor.iva ?? '');
+    $("#cboTipoFactura").val(model.proveedor.tipoFactura ?? '');
 
     var sumaCantidadProductos = 0;
     $.each(model.productos, function (index, producto) {
@@ -539,6 +564,7 @@ function cargarTablaRecibidos(productos, idProveedor) {
 }
 
 $("#btnCerrarPedido").on("click", function () {
+    calcularTotalProductosRecibidos();
 
     const inputs = $("input.input-validate").serializeArray();
     const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
