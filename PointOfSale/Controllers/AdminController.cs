@@ -199,7 +199,7 @@ namespace PointOfSale.Controllers
 
                         break;
                     case TypeValuesDashboard.Semana:
-                        listSales.AddRange(GetSalesComparacionWeek(ejeXint, dateCompare, resultados.VentasActuales, false));
+                        listSales.AddRange(GetSalesComparacionWeek(ejeXint, dateCompare.AddDays(7), resultados.VentasActuales, false));
                         listSalesComparacion.AddRange(GetSalesComparacionWeek(ejeXint, dateCompare, resultados.VentasComparacion, true));
 
                         if (dateFilter != null)
@@ -488,25 +488,20 @@ namespace PointOfSale.Controllers
         private static List<VMSalesWeek> GetSalesComparacionWeek(int[] ejeXint, DateTime dateCompare, Dictionary<DateTime, decimal> resultados, bool beforeWeek)
         {
             var lis = new List<VMSalesWeek>();
-            var i = 0;
-            foreach (KeyValuePair<DateTime, decimal> item in resultados)
+            var fechaInicioSemana = dateCompare.Date;
+            var diasSemana = beforeWeek ? 7 : (int)DateTime.Today.Subtract(fechaInicioSemana).TotalDays + 1;
+
+            for (var i = 0; i < diasSemana; i++)
             {
-                var intDayOfWeek = (int)item.Key.Date.DayOfWeek == 0 ? 7 : (int)item.Key.Date.DayOfWeek + 1;
-                while (intDayOfWeek > (i == 6 ? 8 : (int)dateCompare.AddDays(ejeXint[i]).DayOfWeek))
+                var fechaActual = fechaInicioSemana.AddDays(i);
+                if (resultados.TryGetValue(fechaActual, out decimal valor))
                 {
-                    lis.Add(new VMSalesWeek() { Total = 0m });
-                    i++;
+                    lis.Add(new VMSalesWeek { Total = valor });
                 }
-
-                lis.Add(new VMSalesWeek() { Total = item.Value });
-
-                i++;
-            }
-
-            while (beforeWeek && i < 7)
-            {
-                lis.Add(new VMSalesWeek() { Total = 0m });
-                i++;
+                else
+                {
+                    lis.Add(new VMSalesWeek { Total = 0m });
+                }
             }
 
             return lis;
