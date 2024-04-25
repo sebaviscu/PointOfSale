@@ -12,6 +12,7 @@ Email varchar(200) null,
 Telefono varchar(50) null,
 Direccion varchar(100) null,
 NombreImpresora varchar(50) null,
+ Principal bit null,
 Logo varbinary(max),
 idListaPrecio int not null,
 [modificationDate] [datetime] null,
@@ -154,7 +155,7 @@ create table TypeDocumentSale(
 [idTypeDocumentSale] int primary key identity(1,1),
 [description] varchar(50),
 [isActive] bit,
-web bit not null,
+web bit null,
 tipoFactura int not null,
 [registrationDate] datetime default getdate()
 )

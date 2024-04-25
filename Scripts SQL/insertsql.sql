@@ -1,6 +1,6 @@
 go
 
-insert into Tienda (nombre) values('Mercado Don Pepe')
+insert into Tienda (nombre, idListaPrecio) values('Mercado Don Pepe', 0)
 go
 
 insert into rol([description],isActive) values
@@ -57,7 +57,6 @@ update Menu set idMenuParent=null where idMenu=5
 go
 --________________________________ INSERT MENU ROLE ________________________________
 
-select * from RolMenu
 
 --*Admin
 INSERT INTO RolMenu(idRol,idMenu,isActive) values
@@ -119,12 +118,12 @@ go
 
 --________________________________ INSERT TYPEDOCUMENTSALE ________________________________
 
-insert into TypeDocumentSale([description],isActive, tipoFactura) values
-('Efectivo',1,0),
-('Tarjeta de Debito',1,0),
-('Tarjeta de Credito',1,0),
-('Mercado Pago',1,0),
-('Transferencia',1,0)
+insert into TypeDocumentSale([description],isActive, tipoFactura, web) values
+('Efectivo',1,0,1),
+('Tarjeta de Debito',1,0,1),
+('Tarjeta de Credito',1,0,1),
+('Mercado Pago',1,0,1),
+('Transferencia',1,0,1)
 
 
 go

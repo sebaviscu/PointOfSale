@@ -119,7 +119,7 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult?> GenerarDatos()
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado, Roles.Empleado });
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
             ClaimsPrincipal claimuser = HttpContext.User;
 
             string idUsuario = claimuser.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).Select(c => c.Value).SingleOrDefault();

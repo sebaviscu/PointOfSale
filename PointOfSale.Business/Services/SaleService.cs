@@ -199,9 +199,15 @@ namespace PointOfSale.Business.Services
             var random = new Random();
             var cantTipoVentas = tiposVentas.Count;
             var cantproductos = productos.Count;
+
+            if (cantproductos < 4)
+            { 
+                return false; 
+            }
+
             try
             {
-                for (int i = 0; i < 200; i++) /*1200*/
+                for (int i = 0; i < 400; i++) /*1200*/
                 {
                     var dia = RandomDayMes();
 
@@ -235,7 +241,7 @@ namespace PointOfSale.Business.Services
             sale.IdTurno = turno.IdTurno;
             sale.IdUsers = idUser;
 
-            var catProdVenta = random.Next(0, 6);
+            var catProdVenta = random.Next(0, 4);
 
             var listDet = new List<DetailSale>();
 
@@ -258,7 +264,7 @@ namespace PointOfSale.Business.Services
 
             if (listDet.Count() == 0)
             {
-                catProdVenta = random.Next(0, 6);
+                catProdVenta = random.Next(0, 4);
 
                 var detalle = new DetailSale();
                 var p = productos[random.Next(0, cantproductos - 1)];
