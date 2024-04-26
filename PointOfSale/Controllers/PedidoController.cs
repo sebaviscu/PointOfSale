@@ -83,6 +83,8 @@ namespace PointOfSale.Controllers
             GenericResponse<VMPedido> gResponse = new GenericResponse<VMPedido>();
             try
             {
+                model.UsuarioFechaCerrado = user.UserName;
+
                 Pedido edited_Pedido = await _pedidoService.Edit(_mapper.Map<Pedido>(model));
 
                 model = _mapper.Map<VMPedido>(edited_Pedido);

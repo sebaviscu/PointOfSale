@@ -199,16 +199,15 @@ namespace PointOfSale.Controllers
 
                         break;
                     case TypeValuesDashboard.Semana:
-                        listSales.AddRange(GetSalesComparacionWeek(ejeXint, dateCompare.AddDays(7), resultados.VentasActuales, false));
-                        listSalesComparacion.AddRange(GetSalesComparacionWeek(ejeXint, dateCompare, resultados.VentasComparacion, true));
-
+                        var fechaInicio = dateCompare.AddDays(7);
                         if (dateFilter != null)
                         {
-                            while (listSales.Count != listSalesComparacion.Count)
-                            {
-                                listSales.Add(new VMSalesWeek() { Total = 0m });
-                            }
+                            fechaInicio = dateCompare;
+                            dateCompare = dateCompare.AddDays(-7);
                         }
+                        listSales.AddRange(GetSalesComparacionWeek(fechaInicio, resultados.VentasActuales, dateFilter != null));
+                        listSalesComparacion.AddRange(GetSalesComparacionWeek(dateCompare, resultados.VentasComparacion, true));
+
                         break;
                     case TypeValuesDashboard.Mes:
                         foreach (KeyValuePair<DateTime, decimal> item in resultados.VentasActuales)
@@ -485,11 +484,11 @@ namespace PointOfSale.Controllers
             return StatusCode(StatusCodes.Status200OK, ProductListWeek);
         }
 
-        private static List<VMSalesWeek> GetSalesComparacionWeek(int[] ejeXint, DateTime dateCompare, Dictionary<DateTime, decimal> resultados, bool beforeWeek)
+        private static List<VMSalesWeek> GetSalesComparacionWeek(DateTime fechaInicio, Dictionary<DateTime, decimal> resultados, bool semanaCompleta)
         {
             var lis = new List<VMSalesWeek>();
-            var fechaInicioSemana = dateCompare.Date;
-            var diasSemana = beforeWeek ? 7 : (int)DateTime.Today.Subtract(fechaInicioSemana).TotalDays + 1;
+            var fechaInicioSemana = fechaInicio.Date;
+            var diasSemana = semanaCompleta ? 7 : (int)DateTime.Today.Subtract(fechaInicioSemana).TotalDays + 1;
 
             for (var i = 0; i < diasSemana; i++)
             {
@@ -1247,6 +1246,13 @@ namespace PointOfSale.Controllers
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAumentoWeb()
+        {
+            var ajuste = await _ajusteService.Get();
+            return StatusCode(StatusCodes.Status200OK, new { data = ajuste.AumentoWeb.HasValue ? ajuste.AumentoWeb.Value.ToString("F0") : string.Empty });
         }
     }
 }

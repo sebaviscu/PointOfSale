@@ -120,13 +120,13 @@ const openModal = (model = BASIC_MODEL) => {
                 "visible": false,
                 "searchable": false
             }
-            //,
-            //{
-            //    "defaultContent": '<button class="btn btn-primary btn-open-sale btn-sm me-2"><i class="mdi mdi-eye"></i></button>',
-            //    "orderable": false,
-            //    "searchable": false,
-            //    "width": "40px"
-            //}
+            ,
+            {
+                "defaultContent": '<button class="btn btn-primary btn-open-sale btn-sm me-2"><i class="mdi mdi-eye"></i></button>',
+                "orderable": false,
+                "searchable": false,
+                "width": "40px"
+            }
         ],
         order: [[0, "desc"]],
         dom: "Bfrtip",
@@ -233,17 +233,14 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
     openModal(data);
 })
 
-//$("#tbMovimientos tbody").on("click", ".btn-open-sale", function () {
+$('#tbMovimientos tbody').on('click', 'button.btn-open-sale', function (event) {
+    event.preventDefault();
+    var data = tableDataMovimientos.row($(this).parents('tr')).data();
+    var saleNumber = data['sale']['saleNumber'];
+    var url = '/Sales/ReportSale?saleNumber=' + encodeURIComponent(saleNumber);
 
-//    if ($(this).closest('tr').hasClass('child')) {
-//        rowSelected = $(this).closest('tr').prev();
-//    } else {
-//        rowSelected = $(this).closest('tr');
-//    }
-
-//    const data = tableData.row(rowSelected).data();
-
-//})
+    window.location.href = url;
+});
 
 
 $("#tbData tbody").on("click", ".btn-delete", function () {

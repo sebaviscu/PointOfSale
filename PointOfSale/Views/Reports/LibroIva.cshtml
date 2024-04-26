@@ -39,14 +39,14 @@
         <hr />
 
         <div class="row">
-            <div class="col-md-7">
+            <div class="col-md-6">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
                         <h6>Debito Fiscal</h6>
                     </div>
                     <div class="card-body">
                         <div class="row g-3 align-items-center">
-                            <div class="offset-md-2 col-md 3 text-center">
+                            <div class="offset-md-2 col-md-3 text-center">
                                 <label class="col-form-label">Neto</label>
                             </div>
                             <div class="col-md-1 text-center">
@@ -67,7 +67,9 @@
                                 <input type="text" id="txtNetoADebito" class="form-control form-control-sm input-numeros" disabled>
                             </div>
                             <div class="col-md-1">
-                                <input type="text" id="txtIvaADebito" class="form-control form-control-sm input-numeros" value="21%" disabled>
+                                <label class="col-form-label">21%</label>
+
+                                @* <input type="text" id="txtIvaADebito" class="form-control form-control-sm input-numeros" value="21%" disabled> *@
                             </div>
                             <div class="col-md-3">
                                 <input type="text" id="txtImporteIvaADebito" class="form-control form-control-sm input-numeros" disabled>
@@ -83,8 +85,8 @@
                             <div class="col-md-3">
                                 <input type="text" id="txtNetoBDebito" class="form-control form-control-sm input-numeros" disabled>
                             </div>
-                            <div class="col-md-1">
-                                <input type="text" id="txtIvaCBDebito" class="form-control form-control-sm input-numeros" value="21%" disabled>
+                            <div class="col-md-1" style="text-align: center;">
+                                <label class="col-form-label">21%</label>
                             </div>
                             <div class="col-md-3">
                                 <input type="text" id="txtImporteIvaBDebito" class="form-control form-control-sm input-numeros" disabled>
@@ -100,8 +102,8 @@
                             <div class="col-md-3">
                                 <input type="text" id="txtNetoCDebito" class="form-control form-control-sm input-numeros" disabled>
                             </div>
-                            <div class="col-md-1">
-                                <input type="text" id="txtIvaCDebito" class="form-control form-control-sm input-numeros" value="21%" disabled>
+                            <div class="col-md-1" style="text-align: center;">
+                                <label class="col-form-label">21%</label>
                             </div>
                             <div class="col-md-3">
                                 <input type="text" id="txtImporteIvaCDebito" class="form-control form-control-sm input-numeros" disabled>
@@ -117,8 +119,8 @@
                             <div class="col-md-3">
                                 <input type="text" id="txtNetoXDebito" class="form-control form-control-sm input-numeros" disabled>
                             </div>
-                            <div class="col-md-1">
-                                <input type="text" id="txtIvaXDebito" class="form-control form-control-sm input-numeros" value="21%" disabled>
+                            <div class="col-md-1" style="text-align: center;">
+                                <label class="col-form-label">0%</label>
                             </div>
                             <div class="col-md-3">
                                 <input type="text" id="txtImporteIvaXDebito" class="form-control form-control-sm input-numeros" disabled>
@@ -148,7 +150,7 @@
                     </div>
                 </div>
 
-                <div class="offset-md-4 col-md-4 card shadow mb-4" style="padding: 0px;">
+                <div class="offset-md-1 col-md-10 card shadow mb-4" style="padding: 0px;">
 
                     <div class="card-header py-3">
                         <h6>Resultado Fiscal</h6>
@@ -156,12 +158,33 @@
                     <div class="card-body">
                         <div class="row g-3 align-items-center">
                             <div class="col-md-12">
-                                <div class="row" style="align-items: center;">
-                                    <div class="col-md-3 text-center">
-                                        <label class="col-form-label">Saldo</label>
+                                <div class="row g-3 align-items-center">
+                                    <div class="offset-md-1 col-md-3 text-center">
+                                        <label class="col-form-label">
+                                            IVA Debito
+                                        </label>
                                     </div>
-                                    <div class="col-md-8">
-                                        <input type="text" id="txtSaldo" class="form-control form-control-sm input-numeros" disabled>
+                                    <div class="col-md-3 text-center">
+                                        <label class="col-form-label">
+                                            IVA Credito
+                                        </label>
+                                    </div>
+                                    <div class="col-md-4 text-center">
+                                        <label class="col-form-label">Total</label>
+                                    </div>
+
+                                </div>
+                                <div class="row g-3 align-items-center">
+                                    <div class="offset-md-1 col-md-3">
+                                        <input type="text" id="txtNetoFinalDebitoResultado" class="form-control form-control-sm input-numeros" disabled>
+                                    </div>
+                                    -
+                                    <div class="col-md-3">
+                                        <input type="text" id="txtNetoFinalCreditoResultado" class="form-control form-control-sm input-numeros" disabled>
+                                    </div>
+                                    =
+                                    <div class="col-md-4">
+                                        <input type="text" id="txtSaldo" class="form-control form-control-sm input-numeros" style="font-size: 20px;" disabled>
                                     </div>
                                 </div>
                             </div>
@@ -172,14 +195,14 @@
                 </div>
 
             </div>
-            <div class="col-md-5">
+            <div class="col-md-6">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
                         <h6>Credito Fiscal</h6>
                     </div>
                     <div class="card-body">
                         <div class="row g-3 align-items-center">
-                            <div class="offset-md-3 col-md 3 text-center">
+                            <div class="offset-md-3 col-md-3 text-center">
                                 <label class="col-form-label">Neto</label>
                             </div>
                             <div class="col-md-3 text-center">
@@ -190,8 +213,22 @@
                             </div>
                         </div>
                         <div class="row g-3 align-items-center">
-                            <div class="col-md 3">
-                                <label for="txtNetoCredito21" class="col-form-label">Compras 10,5%</label>
+                            <div class="col-md-3">
+                                <label class="col-form-label">Compras 0%</label>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtNetoCredito0" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtImporteIvaCredito0" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" id="txtFacturadoCredito0" class="form-control form-control-sm input-numeros" disabled>
+                            </div>
+                        </div>
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-3">
+                                <label class="col-form-label">Compras 10,5%</label>
                             </div>
                             <div class="col-md-3">
                                 <input type="text" id="txtNetoCredito105" class="form-control form-control-sm input-numeros" disabled>
@@ -204,7 +241,7 @@
                             </div>
                         </div>
                         <div class="row g-3 align-items-center">
-                            <div class="col-md 3">
+                            <div class="col-md-3">
                                 <label for="txtNetoCredito21" class="col-form-label">Compras 21%</label>
                             </div>
                             <div class="col-md-3">
@@ -220,7 +257,7 @@
 
                         <hr style="margin-top: 5px; margin-bottom: 5px;">
                         <div class="row g-3 align-items-center">
-                            <div class="col-md 3">
+                            <div class="col-md-3">
                                 <label class="col-form-label">Servicios 21%</label>
                             </div>
                             <div class="col-md-3">
@@ -234,7 +271,7 @@
                             </div>
                         </div>
                         <div class="row g-3 align-items-center">
-                            <div class="col-md 3">
+                            <div class="col-md-3">
                                 <label class="col-form-label">Servicios 27%</label>
                             </div>
                             <div class="col-md-3">
@@ -250,7 +287,7 @@
 
                         <hr style="margin-top: 5px; margin-bottom: 5px;">
                         <div class="row g-3 align-items-center">
-                            <div class="col-md 3">
+                            <div class="col-md-3">
                                 <label class="col-form-label">Gastos 0%</label>
                             </div>
                             <div class="col-md-3">
@@ -264,7 +301,7 @@
                             </div>
                         </div>
                         <div class="row g-3 align-items-center">
-                            <div class="col-md 3">
+                            <div class="col-md-3">
                                 <label class="col-form-label">Gastos 21%</label>
                             </div>
                             <div class="col-md-3">
@@ -281,7 +318,7 @@
                         <hr style="margin-top: 5px; margin-bottom: 5px;">
 
                         <div class="row g-3 align-items-center">
-                            <div class="col-md 3">
+                            <div class="col-md-3">
                                 <label for="txtNetoDebito" class="col-form-label">TOTAL</label>
                             </div>
                             <div class="col-md-3">
@@ -336,8 +373,8 @@
                             <tr>
                                 <th scope="col">Fecha</th>
                                 <th scope="col">Forma de Pago</th>
-                                <th scope="col">Importa Final</th>
-                                <th scope="col">Importe sin IVA</th>
+                                <th scope="col">Importe Facturado</th>
+                                <th scope="col">Importe Neto</th>
                                 <th scope="col">Importe IVA</th>
                             </tr>
                         </thead>
@@ -358,9 +395,9 @@
                                 <th scope="col">Proveedor</th>
                                 <th scope="col">Tipo Factura</th>
                                 <th scope="col">Factura</th>
-                                <th scope="col">Importa Final</th>
+                                <th scope="col">Importe Facturado</th>
                                 <th scope="col">Importe IVA</th>
-                                <th scope="col">Importe sin IVA</th>
+                                <th scope="col">Importe Neto</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -379,8 +416,8 @@
                                 <th scope="col">Gasto</th>
                                 <th scope="col">Tipo Factura</th>
                                 <th scope="col">Factura</th>
-                                <th scope="col">Importa Final</th>
-                                <th scope="col">Importe sin IVA</th>
+                                <th scope="col">Importe Facturado</th>
+                                <th scope="col">Importe Neto</th>
                                 <th scope="col">Importe IVA</th>
                             </tr>
                         </thead>
@@ -401,8 +438,8 @@
                                 <th scope="col">Gasto</th>
                                 <th scope="col">Tipo Factura</th>
                                 <th scope="col">Factura</th>
-                                <th scope="col">Importa Final</th>
-                                <th scope="col">Importe sin IVA</th>
+                                <th scope="col">Importe Facturado</th>
+                                <th scope="col">Importe Neto</th>
                                 <th scope="col">Importe IVA</th>
                             </tr>
                         </thead>

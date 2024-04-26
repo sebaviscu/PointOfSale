@@ -88,13 +88,12 @@ $(document).ready(function () {
             }
         })
 
-    fetch("/Tienda/GetOneTienda")
+    fetch("/Admin/GetAumentoWeb")
         .then(response => {
             return response.ok ? response.json() : Promise.reject(response);
         }).then(responseJson => {
             if (responseJson.data != null) {
-                tienda = responseJson.data;
-                $("#txtAumento").val(tienda.aumentoWeb + ' %');
+                $("#txtAumento").val(responseJson.data + ' %');
             }
         })
 
@@ -130,6 +129,16 @@ $(document).ready(function () {
             { "data": "nameCategory" },
             { "data": "nameProveedor" },
             { "data": "priceString" },
+            {
+                "data": "precio2", render: function (data) {
+                    return `$ ${data}`;
+                }
+            },
+            {
+                "data": "priceWeb", render: function (data) {
+                    return `$ ${data}`;
+                }
+            },
             { "data": "modificationDateString" },
             {
                 "data": "isActive",
@@ -249,7 +258,9 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtPrice3").val(model.precio3.replace(/,/g, '.'));
     $("#txtProfit3").val(model.porcentajeProfit3);
 
-    $("#imgProduct").attr("src", `data:image/png;base64,${model.photoBase64}`);
+    if (model.photoBase64 != null) {
+        $("#imgProduct").attr("src", `data:image/png;base64,${model.photoBase64}`);
+    }
 
     if (model.modificationUser === null)
         document.getElementById("divModif").style.display = 'none';

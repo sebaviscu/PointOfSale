@@ -214,20 +214,25 @@ const openModal = (model = BASIC_MODEL) => {
         $("#txtCerradoUsuario").val(model.usuarioFechaCerrado);
     }
 
-    if (model.estado == 3) {
-        $('#optionRecibido').show();
-        $("#lblCantPedir").text('Cantidad Recibida')
-        $('label[for="txtImporteEstimado"]').text('Importe');
-    }
-    else {
-        $('#optionRecibido').hide();
-        $('label[for="txtImporteEstimado"]').text('Estimado');
-    }
-
-    if (model.estado == 2) {
-        $("#lblCantPedir").text('Cantidad Pedida')
-    } else if (model.estado) {
-        $("#lblCantPedir").text('Cantidad a Pedir')
+    switch (model.estado) {
+        case 1:
+            setTimeout(function () {
+                $('#cboEstado').prop('disabled', false);
+            }, 500);
+            break;
+        case 2:
+            $('#optionRecibido').hide();
+            $("#lblCantPedir").text('Cantidad Pedida');
+            break;
+        case 3:
+            $('#optionRecibido').show();
+            $("#lblCantPedir").text('Cantidad Recibida');
+            $('label[for="txtImporteEstimado"]').text('Importe');
+            break;
+        default:
+            $('#optionRecibido').hide();
+            $("#lblCantPedir").text('Cantidad a Pedir');
+            break;
     }
 
     $("#modalData").modal("show")
@@ -332,10 +337,10 @@ function cargarTabla(productos, idProveedor, nuevo) {
                 cantidadProducto = prod.cantidadProductoRecibida;
             }
             else {
-            if (prod.cantidadProducto == null)
-                prod.cantidadProducto = '';
+                if (prod.cantidadProducto == null)
+                    prod.cantidadProducto = '';
 
-            cantidadProducto = prod.cantidadProducto;
+                cantidadProducto = prod.cantidadProducto;
             }
         }
 

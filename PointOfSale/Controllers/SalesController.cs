@@ -213,6 +213,14 @@ namespace PointOfSale.Controllers
         }
 
         [HttpGet]
+        public IActionResult ReportSale(int saleNumber)
+        {
+            ViewData["saleNumber"] = saleNumber;
+
+            return View("SalesHistory");
+        }
+
+        [HttpGet]
         public async Task<IActionResult> History(string saleNumber, string startDate, string endDate, bool presupuestos)
         {
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });

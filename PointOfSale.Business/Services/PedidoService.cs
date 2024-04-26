@@ -101,6 +101,12 @@ namespace PointOfSale.Business.Services
                 if (Pedido_found == null)
                     throw new TaskCanceledException("El Pedido no se puede cerrar");
 
+                if(entity.Estado == Model.Enum.EstadoPedido.Cancelado)
+                {
+                    Pedido_found.FechaCerrado = DateTimeNowArg;
+                    Pedido_found.UsuarioFechaCerrado = entity.UsuarioFechaCerrado;
+                }
+
                 Pedido_found.ImporteEstimado = entity.ImporteEstimado;
                 Pedido_found.Estado = entity.Estado;
                 Pedido_found.Comentario = entity.Comentario;

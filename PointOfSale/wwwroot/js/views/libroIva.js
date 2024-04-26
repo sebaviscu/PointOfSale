@@ -73,6 +73,8 @@ function setTotalesCredito(totalNetoCredito, totalIvaCredito, totalFacturadoCred
 
     let txtImporteCreditoFinal = parseFloat($("#txtImporteIvaFinalCredito").attr("importe"));
     let txtImporteDebitoFinal = parseFloat($("#txtImporteIvaFinalDebito").attr("importe"));
+
+    $("#txtNetoFinalCreditoResultado").val("$ " + parseFloat(txtImporteIvaFinalCreditoImporte + totalIvaCredito).toFixed(2));
     $("#txtSaldo").val("$ " + parseFloat(txtImporteDebitoFinal - txtImporteCreditoFinal).toFixed(2));
 }
 
@@ -92,6 +94,7 @@ function setTotalesDebito(totalNetoDebito, totalIvaDebito, totalFacturadoDebito)
 
     let txtImporteCreditoFinal = parseFloat($("#txtImporteIvaFinalCredito").attr("importe"));
     let txtImporteDebitoFinal = parseFloat($("#txtImporteIvaFinalDebito").attr("importe"));
+    $("#txtNetoFinalDebitoResultado").val("$ " + parseFloat(txtImporteIvaFinalDebitoImporte + totalIvaDebito).toFixed(2));
     $("#txtSaldo").val("$ " + parseFloat(txtImporteDebitoFinal - txtImporteCreditoFinal).toFixed(2));
 }
 
@@ -108,24 +111,39 @@ function LoadCompra(fecha) {
 
                 let data = responseJson.object;
 
-                if (data && data.length == 2) {
+                if (data && data.length == 3) {
+                    let rowsServicios = [];
 
-                    setTotalesCredito(data[0].totalSinIva, data[0].totalIva, data[0].totalFacurado);
+                    if (data[0].nombre == "proveedores_0") {
 
-                    $("#txtNetoCredito105").val("$ " + data[0].totalSinIva);
-                    $("#txtImporteIvaCredito105").val("$ " + data[0].totalIva);
-                    $("#txtFacturadoCredito105").val("$ " + data[0].totalFacurado);
+                        setTotalesCredito(data[0].totalSinIva, data[0].totalIva, data[0].totalFacurado);
+                        $("#txtNetoCredito0").val("$ " + data[0].totalSinIva);
+                        $("#txtImporteIvaCredito0").val("$ " + data[0].totalIva);
+                        $("#txtFacturadoCredito0").val("$ " + data[0].totalFacurado);
 
-                    setTotalesCredito(data[1].totalSinIva, data[1].totalIva, data[1].totalFacurado);
+                        rowsServicios = rowsServicios.concat(data[0].ivaRows);
+                    }
 
-                    $("#txtNetoCredito21").val("$ " + data[1].totalSinIva);
-                    $("#txtImporteIvaCredito21").val("$ " + data[1].totalIva);
-                    $("#txtFacturadoCredito21").val("$ " + data[1].totalFacurado);
+                    if (data[1].nombre == "proveedores_10.5") {
+
+                        setTotalesCredito(data[1].totalSinIva, data[1].totalIva, data[1].totalFacurado);
+                        $("#txtNetoCredito105").val("$ " + data[1].totalSinIva);
+                        $("#txtImporteIvaCredito105").val("$ " + data[1].totalIva);
+                        $("#txtFacturadoCredito105").val("$ " + data[1].totalFacurado);
+                        rowsServicios = rowsServicios.concat(data[1].ivaRows);
+                    }
+
+                    if (data[2].nombre == "proveedores_21") {
+
+                        setTotalesCredito(data[2].totalSinIva, data[2].totalIva, data[2].totalFacurado);
+                        $("#txtNetoCredito21").val("$ " + data[2].totalSinIva);
+                        $("#txtImporteIvaCredito21").val("$ " + data[2].totalIva);
+                        $("#txtFacturadoCredito21").val("$ " + data[2].totalFacurado);
+                        rowsServicios = rowsServicios.concat(data[2].ivaRows);
+                    }
 
                     if (tbdataCompra != null)
                         tbdataCompra.destroy();
-
-                    let rowsServicios = data[0].ivaRows.concat(data[1].ivaRows);
 
                     tbdataCompra = $("#tbdataCompra").DataTable({
                         responsive: true,

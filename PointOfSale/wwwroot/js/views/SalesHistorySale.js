@@ -42,6 +42,16 @@ $(document).ready(function () {
                 });
             }
         });
+
+    var saleNumberByClient = $('#txtSaleNumberByClient').text().trim();
+
+    if (saleNumberByClient != '') {
+        $('#cboSearchBy').val('number');
+        SEARCH_VIEW["searchSale"]();
+        $('#txtSaleNumberSearch').val(saleNumberByClient);
+        $("#btnSearch").click();
+    }
+
 })
 
 $("#cboSearchBy").change(function () {

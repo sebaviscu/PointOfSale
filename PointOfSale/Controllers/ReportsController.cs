@@ -132,22 +132,24 @@ namespace PointOfSale.Controllers
 
         private async Task<List<VMLibroIvaTotalOutput>> HandleCompra(int idTienda, DateTime start_date, DateTime end_date)
         {
-            var lista = new VMLibroIvaTotalOutput();
-
             var listMod = await _ivaService.GetMovProveedoresImports(idTienda, start_date, end_date);
 
-            lista.IvaRows = _mapper.Map<List<VMIvaRowOutput>>(listMod);
-            lista.TotalFacurado = listMod.Any() ? listMod.Sum(_ => _.Importe) : 0;
-            lista.TotalIva = listMod.Any() ? listMod.Sum(_ => _.IvaImporte) : 0;
-            lista.TotalSinIva = listMod.Any() ? listMod.Sum(_ => _.ImporteSinIva) : 0;
-
+            var list0 = listMod.Where(_ => _.Iva == Convert.ToDecimal(0));
+            var listaServ0 = new VMLibroIvaTotalOutput
+            {
+                Nombre = "proveedores_0",
+                IvaRows = _mapper.Map<List<VMIvaRowOutput>>(list0),
+                TotalFacurado = list0.Any() ? list0.Sum(_ => _.Importe) : 0,
+                TotalIva = list0.Any() ? list0.Sum(_ => _.IvaImporte) : 0,
+                TotalSinIva = list0.Any() ? list0.Sum(_ => _.ImporteSinIva) : 0
+            };
 
             var list105 = listMod.Where(_ => _.Iva == Convert.ToDecimal(10.5));
             var listaServ105 = new VMLibroIvaTotalOutput
             {
                 Nombre = "proveedores_10.5",
                 IvaRows = _mapper.Map<List<VMIvaRowOutput>>(list105),
-                TotalFacurado = list105.Any() ? listMod.Sum(_ => _.Importe) : 0,
+                TotalFacurado = list105.Any() ? list105.Sum(_ => _.Importe) : 0,
                 TotalIva = list105.Any() ? list105.Sum(_ => _.IvaImporte) : 0,
                 TotalSinIva = list105.Any() ? list105.Sum(_ => _.ImporteSinIva) : 0
             };
@@ -162,9 +164,7 @@ namespace PointOfSale.Controllers
                 TotalSinIva = list21.Any() ? list21.Sum(_ => _.ImporteSinIva) : 0
             };
 
-
-
-            return new List<VMLibroIvaTotalOutput>() { listaServ105, listaServ21 };
+            return new List<VMLibroIvaTotalOutput>() { listaServ0, listaServ105, listaServ21 };
         }
 
         private async Task<List<VMLibroIvaTotalOutput>> HandleVenta(int idTienda, DateTime start_date, DateTime end_date)
