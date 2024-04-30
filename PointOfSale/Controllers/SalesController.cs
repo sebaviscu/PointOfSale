@@ -221,7 +221,7 @@ namespace PointOfSale.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> History(string saleNumber, string startDate, string endDate, bool presupuestos)
+        public async Task<IActionResult> History(string saleNumber, string startDate, string endDate, string presupuestos)
         {
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
 

@@ -15,7 +15,7 @@
         <h6>Sale History</h6>
     </div>
     <div class="card-body">
-        <div class="form-row align-items-end">
+        <div class="form-row">
             <div class="form-group col-sm-2">
                 <label for="cboSearchBy">Search by</label>
                 <select class="form-control" id="cboSearchBy">
@@ -35,15 +35,35 @@
                 <label for="txtSaleNumberSearch">Numero de Venta</label>
                 <input type="text" class="form-control" id="txtSaleNumberSearch">
             </div>
-            <div class="form-group col-sm-2">
-
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" role="switch" id="switchPresupuestos">
-                    <label class="form-check-label" for="switchPresupuestos">Solo Presupuestos</label>
+            <div class="form-group col-sm-3 search-date" style="text-align: center;">
+                <label for="rowFilterDia">Presupuestos</label>
+                <div class="row mt-2" id="rowFilterDia">
+                    <div class="ms-3 h4">
+                        <input type="radio" name="radioButton" id="incluir" class="filtro-presupuesto">
+                        <label for="incluir">
+                            Incluir
+                        </label>
+                    </div>
+                    <div class="ms-3 h4">
+                        <input type="radio" name="radioButton" id="noIncluir" class="filtro-presupuesto" checked>
+                        <label for="noIncluir">
+                            No incluir
+                        </label>
+                    </div>
+                    <div class="ms-3 me-5 h4">
+                        <input type="radio" name="radioButton" id="solamente" class="filtro-presupuesto">
+                        <label for="solamente">
+                            Solamente
+                        </label>
+                    </div>
                 </div>
+                @*                 <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="switchPresupuestos">
+                <label class="form-check-label" for="switchPresupuestos">Solo Presupuestos</label>
+                </div> *@
 
             </div>
-            <div class="form-group  offset-md-1 col-sm-2">
+            <div class="form-group col-sm-1" style="align-self: center;">
                 <button class="btn btn-success w-100" type="button" id="btnSearch"><i class="fas fa-search"></i> Buscar</button>
             </div>
         </div>

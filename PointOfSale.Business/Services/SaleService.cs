@@ -3,6 +3,7 @@ using Org.BouncyCastle.Crypto;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
+using System.ComponentModel;
 using System.Globalization;
 using static PointOfSale.Model.Enum;
 
@@ -119,7 +120,7 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task<List<Sale>> SaleHistory(string SaleNumber, string StarDate, string EndDate, bool incluirPresupuestos)
+        public async Task<List<Sale>> SaleHistory(string SaleNumber, string StarDate, string EndDate, string presupuestos)
         {
             IQueryable<Sale> query = await _repositorySale.Query();
             StarDate = StarDate is null ? "" : StarDate;
@@ -141,6 +142,21 @@ namespace PointOfSale.Business.Services
                 .Include(u => u.IdUsersNavigation)
                 .Include(dv => dv.DetailSales)
                 .OrderByDescending(_ => _.IdSale);
+
+                switch (presupuestos)
+                {
+                    case "incluir":
+
+                        break;
+                    case "noIncluir":
+                        result = result.Where(_ => _.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu);
+                        break;
+                    case "solamente":
+                        result = result.Where(_ => _.TypeDocumentSaleNavigation.TipoFactura == TipoFactura.Presu);
+                        break;
+                    default:
+                        break;
+                }
             }
             else
             {
@@ -151,8 +167,7 @@ namespace PointOfSale.Business.Services
                 .OrderByDescending(_ => _.IdSale);
             }
 
-            if (incluirPresupuestos)
-                result = result.Where(_ => _.TypeDocumentSaleNavigation.TipoFactura == TipoFactura.Presu);
+
 
             return result.ToList();
         }

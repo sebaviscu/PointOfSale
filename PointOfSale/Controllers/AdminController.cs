@@ -426,7 +426,8 @@ namespace PointOfSale.Controllers
                         dateActual = dateActual.AddHours(23).AddMinutes(59).AddSeconds(59);
                         break;
                     case TypeValuesDashboard.Semana:
-                        var weekNumber = (int)dateActual.DayOfWeek;
+                        var weekNumber = (int)dateActual.DayOfWeek == 0 ? 7 : (int)dateActual.DayOfWeek;
+
                         if (weekNumber < 7)
                         {
                             var diff = 7 - weekNumber;

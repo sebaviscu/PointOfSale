@@ -86,11 +86,13 @@ $("#btnSearch").click(function () {
     }
 
     let endDate = $("#txtEndDate").val().trim();
-    let presupuestos = document.getElementById("switchPresupuestos").checked
+    //let presupuestos = document.getElementById("switchPresupuestos").checked
+    let presu = $('.filtro-presupuesto:checked').attr('id');
 
+    
     $(".card-body").find("div.row").LoadingOverlay("show")
 
-    fetch(`/Sales/History?saleNumber=${saleNumber}&startDate=${startDate}&endDate=${endDate}&presupuestos=${presupuestos}`)
+    fetch(`/Sales/History?saleNumber=${saleNumber}&startDate=${startDate}&endDate=${endDate}&presupuestos=${presu}`)
         .then(response => {
             $(".card-body").find("div.row").LoadingOverlay("hide")
             return response.ok ? response.json() : Promise.reject(response);

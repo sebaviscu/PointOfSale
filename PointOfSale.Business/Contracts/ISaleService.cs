@@ -15,7 +15,7 @@ namespace PointOfSale.Business.Contracts
         Task<List<Cliente>> GetClients(string search);
         Task<Sale> Register(Sale entity);
 
-        Task<List<Sale>> SaleHistory(string SaleNumber, string StarDate, string EndDate, bool incluirPresupuestos);
+        Task<List<Sale>> SaleHistory(string SaleNumber, string StarDate, string EndDate, string presupuestos);
         Task<Sale> Detail(string SaleNumber);
 
         Task<Sale> Edit(Sale entity);
