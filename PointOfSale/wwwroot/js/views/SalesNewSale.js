@@ -286,11 +286,12 @@ function getVentaForRegister() {
     });
 
     let descRec = $("#txtDescRec" + currentTabId).attr('totalDescRec');
+    let total = $("#txtTotalParcial").val();
 
     const sale = {
         idTypeDocumentSale: $("#cboTypeDocumentSaleParcial").val(),
         clientId: $("#cboCliente" + currentTabId).val() != '' ? $("#cboCliente" + currentTabId).val() : null,
-        total: $("#txtTotalParcial").val().replace('.', ','),
+        total: total.toString(), //total.replace('.', ','),
         detailSales: vmDetailSale,
         tipoMovimiento: $("#cboCliente" + currentTabId).val() != '' ? 2 : null,
         imprimirTicket: document.querySelector('#cboImprimirTicket').checked,
@@ -323,6 +324,7 @@ $("#btnFinalizarVentaParcial").on("click", function () {
     var currentTabId = $("#modalDividirPago").attr("idtab");
 
     let sale = getVentaForRegister();
+    console.log(JSON.stringify(sale));
 
     fetch("/Sales/RegisterSale", {
         method: "POST",
@@ -714,7 +716,7 @@ function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
     product.descriptionproduct = data.text;
     product.categoryproducty = data.category;
     product.quantity = data.quantity;
-    product.price = parseFloat(data.price).toFixed(2).replace('.', ',').toString();
+    product.price = data.price.toString(); // parseFloat(data.price).toFixed(2).replace('.', ',').toString();
     product.total = data.total.toString();
 
     if (data.promocion != null) {
