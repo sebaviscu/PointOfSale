@@ -43,8 +43,8 @@ public class Program
 
         builder.Services.AddDbContext<POINTOFSALEContext>(options =>
         {
-            options.UseSqlServer(builder.Configuration.GetConnectionString("SQL_Publich"));
-            //options.UseSqlServer(builder.Configuration.GetConnectionString("SQL"));
+            //options.UseSqlServer(builder.Configuration.GetConnectionString("SQL_Publich"));
+            options.UseSqlServer(builder.Configuration.GetConnectionString("SQL"));
         });
 
         builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
