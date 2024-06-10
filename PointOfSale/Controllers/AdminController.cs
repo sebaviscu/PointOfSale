@@ -1073,32 +1073,37 @@ namespace PointOfSale.Controllers
             var listPromocion = _mapper.Map<List<VMPromocion>>(await _promocionService.List(user.IdTienda));
             foreach (var p in listPromocion)
             {
-                var dias = string.Empty;
-                var producto = string.Empty;
-                var categoria = string.Empty;
-
-                if (p.IdProducto != null)
-                {
-                    var prod = await _productService.Get(Convert.ToInt32(p.IdProducto));
-                    p.PromocionString += " [" + string.Join(", ", prod.Description) + "]";
-                }
-
-                if (p.IdCategory != null && p.IdCategory.Any())
-                {
-                    var catList = await _categoryService.GetMultiple(p.IdCategory);
-                    p.PromocionString += " [" + string.Join(", ", catList.Select(_ => _.Description)) + "]";
-                }
-
-                if (p.Dias != null && p.Dias.Any())
-                {
-                    var diasList = p.Dias.Select(_ => (Model.Enum.DiasSemana)_).ToList();
-                    p.PromocionString += " [" + string.Join(", ", diasList.Select(_ => _.ToString())) + "]";
-                }
-                p.PromocionString += " -> ";
-                p.PromocionString += p.Precio != null ? $"Precio fijo: ${p.Precio}" : $"Precio {p.Porcentaje}%: ";
+                await SetStringPromocion(p);
 
             }
             return StatusCode(StatusCodes.Status200OK, new { data = listPromocion });
+        }
+
+        private async Task SetStringPromocion(VMPromocion p)
+        {
+            var dias = string.Empty;
+            var producto = string.Empty;
+            var categoria = string.Empty;
+
+            if (p.IdProducto != null)
+            {
+                var prod = await _productService.Get(Convert.ToInt32(p.IdProducto));
+                p.PromocionString += " [" + string.Join(", ", prod.Description) + "]";
+            }
+
+            if (p.IdCategory != null && p.IdCategory.Any())
+            {
+                var catList = await _categoryService.GetMultiple(p.IdCategory);
+                p.PromocionString += " [" + string.Join(", ", catList.Select(_ => _.Description)) + "]";
+            }
+
+            if (p.Dias != null && p.Dias.Any())
+            {
+                var diasList = p.Dias.Select(_ => (Model.Enum.DiasSemana)_).ToList();
+                p.PromocionString += " [" + string.Join(", ", diasList.Select(_ => _.ToString())) + "]";
+            }
+            p.PromocionString += " -> ";
+            p.PromocionString += p.Precio != null ? $"Precio fijo: ${p.Precio}" : $"Precio {p.Porcentaje}%: ";
         }
 
         [HttpGet]
@@ -1122,6 +1127,8 @@ namespace PointOfSale.Controllers
                 var usuario_creado = await _promocionService.Add(_mapper.Map<Promocion>(model));
 
                 model = _mapper.Map<VMPromocion>(usuario_creado);
+
+                await SetStringPromocion(model);
 
                 gResponse.State = true;
                 gResponse.Object = model;
@@ -1147,6 +1154,7 @@ namespace PointOfSale.Controllers
 
                 vmUser = _mapper.Map<VMPromocion>(user_edited);
 
+                await SetStringPromocion(vmUser);
                 gResponse.State = true;
                 gResponse.Object = vmUser;
             }
@@ -1189,7 +1197,10 @@ namespace PointOfSale.Controllers
             {
                 var user_edited = await _promocionService.CambiarEstado(idPromocion, resp.UserName);
 
-                gResponse.Object = _mapper.Map<VMPromocion>(user_edited);
+                var model = _mapper.Map<VMPromocion>(user_edited);
+                await SetStringPromocion(model);
+
+                gResponse.Object = model;
                 gResponse.State = true;
             }
             catch (Exception ex)

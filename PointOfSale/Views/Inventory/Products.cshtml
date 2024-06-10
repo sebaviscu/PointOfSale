@@ -4,7 +4,7 @@
 }
 
 
-@section StylesPOS{
+@section StylesPOS {
 
     <link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
     <link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
@@ -12,6 +12,7 @@
     <link href="~/plugins/jquery-ui/jquery-ui.css" rel="stylesheet">
 
 }
+
 
 <style>
 
@@ -26,6 +27,35 @@
     .aptoClass {
         background-color: #90ee9078;
     }
+
+    #tablaContainer td:nth-last-child(-n+5) {
+        border: 2.3px dotted lightslategray;
+    }
+
+
+    #tablaContainer > table{
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        #tablaContainer > table th,
+        #tablaContainer > table td{
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        #tablaContainer > table tr:nth-child(even){
+            background-color: #f2f2f2;
+        }
+
+        #tablaContainer > table td.editable{
+            cursor: pointer;
+        }
+
+            #tablaContainer > table td.editable:focus{
+                outline: 1px solid blue;
+            }
 </style>
 
 <div class="row">
@@ -394,106 +424,149 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form>
-                    <div class="row">
-                        <div class="col-sm-9">
-                            <div class="form-row">
-                                <div class="form-group col-sm-2">
-                                    <label for="txtProfit">Ganancia %</label>
-                                    <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtProfitMasivo" name="Profit">
-                                </div>
-                                <div class="form-group col-sm-2">
-                                    <label for="txtPriceMasivo">Precio (1)</label>
-                                    <div class="input-group  input-group-sm mb-3">
-                                        <div class="input-group-prepend">
-                                            <a class="input-group-text" for="txtPriceMasivo" id="btnCalcPrecio" onclick="calcularPrecio()">Calc.</a>
-                                        </div>
-                                        <input type="number" step="any" class="form-control form-control-sm input-validate-masivo" min="0" id="txtPriceMasivo" name="Price">
-                                    </div>
-                                </div>
-                                <div class="form-group col-sm-3">
-                                    <label for="txtCosto">Costo</label>
-                                    <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtCostoMasivo" name="Costo">
-                                </div>
-                                <div class="form-group col-md-2">
-                                    <label for="cboStateMasivo">Estado</label>
-                                    <select class="form-control form-control-sm" id="cboStateMasivo">
-                                        <option value="1">Activo</option>
-                                        <option value="0">Inactrivo</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="txtPorPorcentajeMasivo">Por %</label>
-                                    <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtPorPorcentajeMasivo" name="Porcentaje">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 row">
-                            <div class="col-md-5">
-                                <div class="form-row col-md-12">
-                                    <div class="form-group col-sm-5">
-                                        <label for="txtProfit2">Ganancia %</label>
-                                        <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtProfit2Masivo" name="Profit">
-                                    </div>
-                                    <div class="form-group col-sm-6">
-                                        <label for="txtPrice2">Precio (2)</label>
-                                        <div class="input-group  input-group-sm mb-3">
-                                            <div class="input-group-prepend">
-                                                <a class="input-group-text" for="txtPrice2" id="btnCalcPrecio" onclick="calcularPrecio(2)">Calc.</a>
-                                            </div>
-                                            <input type="number" step="any" class="form-control form-control-sm input-validate-masivo" min="0" id="txtPrice2Masivo" name="Price2">
-                                        </div>
-                                    </div>
-                                </div>
+                <!-- Tabs navs -->
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Edicion por tabla</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Edicion Masiva</button>
+                    </li>
+                </ul>
 
-                                <div class="form-row col-md-12">
-                                    <div class="form-group col-sm-5">
-                                        <label for="txtProfit3">Ganancia %</label>
-                                        <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtProfit3Masivo" name="Profit">
+                <!-- Tabs content -->
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <br />
+
+                        <div id="tablaContainer">
+                            <table id="tablaProductosEditar">
+                                <thead>
+                                    <tr>
+                                        <th hidden>Id</th>
+                                        <th class="d-flex justify-content-between align-items-center">
+                                            <span class="me-auto">Productos</span>
+                                            <button class="btn btn-secondary btn-sm" id="btn-calcular-precios-edicion">Calcular</button>
+                                        </th>
+                                        <th>Costo</th>
+                                        <th>Precio 1</th>
+                                        <th>Precio 2</th>
+                                        <th>Precio 3</th>
+                                        <th>Precio Web</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-primary" id="btnSaveMasivoTabla">Guardar Cambios</button>
+                        </div>
+
+                    </div>
+                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-9">
+                                <div class="form-row">
+                                    <div class="form-group col-sm-2">
+                                        <label for="txtProfit">Ganancia %</label>
+                                        <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtProfitMasivo" name="Profit">
                                     </div>
-                                    <div class="form-group col-sm-6">
-                                        <label for="txtPrice3">Precio (3)</label>
+                                    <div class="form-group col-sm-2">
+                                        <label for="txtPriceMasivo">Precio (1)</label>
                                         <div class="input-group  input-group-sm mb-3">
                                             <div class="input-group-prepend">
-                                                <a class="input-group-text" for="txtPrice3" id="btnCalcPrecio" onclick="calcularPrecio(3)">Calc.</a>
+                                                <a class="input-group-text" for="txtPriceMasivo" id="btnCalcPrecio" onclick="calcularPrecio()">Calc.</a>
                                             </div>
-                                            <input type="number" step="any" class="form-control form-control-sm input-validate-masivo" min="0" id="txtPrice3Masivo" name="Price3">
+                                            <input type="number" step="any" class="form-control form-control-sm input-validate-masivo" min="0" id="txtPriceMasivo" name="Price">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-sm-3">
+                                        <label for="txtCosto">Costo</label>
+                                        <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtCostoMasivo" name="Costo">
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="cboStateMasivo">Estado</label>
+                                        <select class="form-control form-control-sm" id="cboStateMasivo">
+                                            <option value="1">Activo</option>
+                                            <option value="0">Inactrivo</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="txtPorPorcentajeMasivo">Por %</label>
+                                        <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtPorPorcentajeMasivo" name="Porcentaje">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 row">
+                                <div class="col-md-5">
+                                    <div class="form-row col-md-12">
+                                        <div class="form-group col-sm-5">
+                                            <label for="txtProfit2">Ganancia %</label>
+                                            <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtProfit2Masivo" name="Profit">
+                                        </div>
+                                        <div class="form-group col-sm-6">
+                                            <label for="txtPrice2">Precio (2)</label>
+                                            <div class="input-group  input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                    <a class="input-group-text" for="txtPrice2" id="btnCalcPrecio" onclick="calcularPrecio(2)">Calc.</a>
+                                                </div>
+                                                <input type="number" step="any" class="form-control form-control-sm input-validate-masivo" min="0" id="txtPrice2Masivo" name="Price2">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-row col-md-12">
+                                        <div class="form-group col-sm-5">
+                                            <label for="txtProfit3">Ganancia %</label>
+                                            <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtProfit3Masivo" name="Profit">
+                                        </div>
+                                        <div class="form-group col-sm-6">
+                                            <label for="txtPrice3">Precio (3)</label>
+                                            <div class="input-group  input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                    <a class="input-group-text" for="txtPrice3" id="btnCalcPrecio" onclick="calcularPrecio(3)">Calc.</a>
+                                                </div>
+                                                <input type="number" step="any" class="form-control form-control-sm input-validate-masivo" min="0" id="txtPrice3Masivo" name="Price3">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="form-row text-center col-md-3" id="listProd">
-                                <div style="margin-left: 10px;">
-                                    <h5 for="listProductosEditar">
-                                        Productos a Modificar:
-                                    </h5>
-                                    <br />
-                                    <div id='listProductosEditar'></div>
-                                </div>
-                            </div>
-                            <div class="form-group col-sm-4">
-                                <div class="card shadow">
-                                    <div class="card-header py-2">
-                                        <h4>Venta Web</h4>
+                                <div class="form-row text-center col-md-3" id="listProd">
+                                    <div style="margin-left: 10px;">
+                                        <h5 for="listProductosEditar">
+                                            Productos a Modificar:
+                                        </h5>
+                                        <br />
+                                        <div id='listProductosEditar'></div>
                                     </div>
-                                    <div class="card-body row">
-                                        <div class="col-md-12">
-                                            <div class="form-row">
-                                                <div class="col-sm-4">
-                                                    <label for="txtAumentoMasivo">Aumento %</label>
-                                                    <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtAumentoMasivo" name="Aumento" disabled>
-                                                </div>
-                                                <div class="col-sm-8">
-                                                    <label for="txtPriceWebMasivoMasivo">Precio Web</label>
-                                                    <div class="input-group  input-group-sm mb-3">
-                                                        <div class="input-group-prepend">
-                                                            <a class="input-group-text" for="txtPriceWebMasivo" id="btnCalcPrecioWebMasivo" onclick="calcularPrecioWeb()">Calc.</a>
+                                </div>
+                                <div class="form-group col-sm-4">
+                                    <div class="card shadow">
+                                        <div class="card-header py-2">
+                                            <h4>Venta Web</h4>
+                                        </div>
+                                        <div class="card-body row">
+                                            <div class="col-md-12">
+                                                <div class="form-row">
+                                                    <div class="col-sm-4">
+                                                        <label for="txtAumentoMasivo">Aumento %</label>
+                                                        <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtAumentoMasivo" name="Aumento" disabled>
+                                                    </div>
+                                                    <div class="col-sm-8">
+                                                        <label for="txtPriceWebMasivoMasivo">Precio Web</label>
+                                                        <div class="input-group  input-group-sm mb-3">
+                                                            <div class="input-group-prepend">
+                                                                <a class="input-group-text" for="txtPriceWebMasivo" id="btnCalcPrecioWebMasivo" onclick="calcularPrecioWeb()">Calc.</a>
+                                                            </div>
+                                                            <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtPriceWebMasivo" name="PriceWeb">
                                                         </div>
-                                                        <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtPriceWebMasivo" name="PriceWeb">
                                                     </div>
                                                 </div>
                                             </div>
@@ -503,15 +576,16 @@
                             </div>
                         </div>
 
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-primary" id="btnSaveMasivo">Guardar Cambios</button>
+                        </div>
+
                     </div>
-                </form>
+                </div>
 
             </div>
 
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" id="btnSaveMasivo">Guardar Cambios</button>
-            </div>
         </div>
     </div>
 </div>
@@ -637,7 +711,7 @@
 
 
 
-@section Scripts{
+@section Scripts {
     <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
     <script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
     <script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
@@ -651,4 +725,4 @@
     <script src="~/plugins/data-tables/buttons.print.min.js"></script>
 
     <script src="~/js/views/InventoryProducts.js"></script>
-    }
+}

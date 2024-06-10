@@ -3,6 +3,7 @@ let rowSelected;
 let edicionMasiva = false;
 var aProductos = [];
 var tienda;
+var aumentoWeb = 0;
 
 const BASIC_MODEL = {
     idProduct: 0,
@@ -55,47 +56,6 @@ const BASIC_vencimientos = {
 
 $(document).ready(function () {
     showLoading();
-
-    fetch("/Inventory/GetCategories")
-        .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
-        }).then(responseJson => {
-            if (responseJson.data.length > 0) {
-
-                responseJson.data.forEach((item) => {
-                    $("#cboCategory").append(
-                        $("<option>").val(item.idCategory).text(item.description)
-                    )
-                });
-
-            }
-        })
-
-    fetch("/Admin/GetProveedores")
-        .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
-        }).then(responseJson => {
-            if (responseJson.data.length > 0) {
-                $("#cboProveedor").append(
-                    $("<option>").val('').text('')
-                )
-                responseJson.data.forEach((item) => {
-                    $("#cboProveedor").append(
-                        $("<option>").val(item.idProveedor).text(item.nombre)
-                    )
-                });
-
-            }
-        })
-
-    fetch("/Admin/GetAumentoWeb")
-        .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
-        }).then(responseJson => {
-            if (responseJson.data != null) {
-                $("#txtAumento").val(responseJson.data + ' %');
-            }
-        })
 
     tableData = $("#tbData").DataTable({
         pageLength: 50,
@@ -173,8 +133,48 @@ $(document).ready(function () {
         ]
     });
 
-    $('.filtro-vencimientos').change(function () {
 
+    fetch("/Inventory/GetCategories")
+        .then(response => {
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+            if (responseJson.data.length > 0) {
+
+                responseJson.data.forEach((item) => {
+                    $("#cboCategory").append(
+                        $("<option>").val(item.idCategory).text(item.description)
+                    )
+                });
+            }
+        })
+
+    fetch("/Admin/GetProveedores")
+        .then(response => {
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+            if (responseJson.data.length > 0) {
+                $("#cboProveedor").append(
+                    $("<option>").val('').text('')
+                )
+                responseJson.data.forEach((item) => {
+                    $("#cboProveedor").append(
+                        $("<option>").val(item.idProveedor).text(item.nombre)
+                    )
+                });
+            }
+        })
+
+    fetch("/Admin/GetAumentoWeb")
+        .then(response => {
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+            if (responseJson.data != null) {
+                $("#txtAumento").val(responseJson.data + ' %');
+                aumentoWeb = responseJson.data;
+            }
+        })
+
+    $('.filtro-vencimientos').change(function () {
         filtrarTabla();
     });
 
@@ -231,6 +231,14 @@ function editAll() {
         ul.appendChild(li);
     }
     cont.appendChild(ul);
+
+    let productos = tableData.ajax.json().data;
+
+    let idsProductos = aProductos.map(item => parseInt(item[0]));
+
+    let productosFiltrados = productos.filter(producto => idsProductos.includes(producto.idProduct));
+
+    cargarTabla(productosFiltrados);
 
     $("#modalDataMasivo").modal("show")
 }
@@ -799,7 +807,7 @@ function imprimirPrecios() {
 
     document.querySelectorAll('#tbData tr').forEach((row, i) => {
         if (row.querySelector('input[type=checkbox]') != null && row.querySelector('input[type=checkbox]').checked && row.id !== '') {
-            aProductos.push([row.id, row.childNodes[2].textContent, row.childNodes[5].textContent]);
+            aProductos.push([row.id, row.childNodes[1].textContent, row.childNodes[4].textContent]);
         }
     })
 
@@ -934,3 +942,129 @@ function filtrarTabla() {
         $('.vencidoClass').show();
     }
 }
+
+function cargarTabla(productosFiltrados) {
+    const tablaBody = $('#tablaProductosEditar tbody');
+    tablaBody.empty();
+
+    productosFiltrados.forEach(producto => {
+        let idProd = producto.idProduct;
+        let descr = producto.description;
+        let costo = producto.costPrice == null ? 0 : producto.costPrice;
+        let precio1 = producto.price;
+        let precio2 = producto.precio2;
+        let precio3 = producto.precio3;
+        let priceWeb = producto.priceWeb;
+
+        let $tr = $('<tr>');
+        $tr.append($('<td hidden>').text(idProd));
+        $tr.append($('<td>').text(descr));
+        $tr.append($('<td>').text(`$ ${costo}`).addClass('editable').attr({
+            'contenteditable': true,
+            'inputmode': 'numeric',
+            'pattern': '[0-9]*',
+            'min': 0
+        }));
+        $tr.append($('<td>').text(`$ ${precio1}`).addClass('editable').attr({
+            'data-profit': producto.porcentajeProfit,
+            'contenteditable': true,
+            'inputmode': 'numeric',
+            'pattern': '[0-9]*',
+            'min': 0
+        }));
+        $tr.append($('<td>').text(`$ ${precio2}`).addClass('editable').attr({
+            'data-profit': producto.porcentajeProfit2,
+            'contenteditable': true,
+            'inputmode': 'numeric',
+            'pattern': '[0-9]*',
+            'min': 0
+        }));
+        $tr.append($('<td>').text(`$ ${precio3}`).addClass('editable').attr({
+            'data-profit': producto.porcentajeProfit3,
+            'contenteditable': true,
+            'inputmode': 'numeric',
+            'pattern': '[0-9]*',
+            'min': 0
+        }));
+        $tr.append($('<td>').text(`$ ${priceWeb}`).addClass('editable').attr({
+            'data-profit': aumentoWeb,
+            'contenteditable': true,
+            'inputmode': 'numeric',
+            'pattern': '[0-9]*',
+            'min': 0
+        }));
+
+        tablaBody.append($tr);
+    });
+
+    var celdasEditables = document.querySelectorAll(".editable");
+    celdasEditables.forEach(function (celda) {
+        var celdasEditables = document.querySelectorAll(".editable");
+        celdasEditables.forEach(function (celda) {
+            var contenidoOriginal = celda.textContent.trim();
+            celda.addEventListener("click", function () {
+                if (this.textContent.trim() === contenidoOriginal) {
+                    this.textContent = '';
+                }
+                this.focus();
+            });
+
+            celda.addEventListener("input", function () {
+                var contenido = this.textContent.trim();
+                if (/^\$?\s?\d*\.?\d*$/.test(contenido)) {
+                    var cantidad = parseFloat(contenido.replace(/\$|\s/g, '').replace('.', ','));
+                    if (!isNaN(cantidad)) {
+                        this.textContent = cantidad;
+                    }
+                } else {
+                    this.textContent = '';
+                }
+            });
+
+            celda.addEventListener("blur", function () {
+                var contenido = this.textContent.trim();
+                if (contenido === '') {
+                    this.textContent = contenidoOriginal;
+                } else if (/^\d*\.?\d*$/.test(contenido)) {
+                    var cantidad = parseFloat(contenido.replace('.', ','));
+                    if (!isNaN(cantidad)) {
+                        this.textContent = `$ ${cantidad.toFixed(2).replace('.', ',')}`;
+                    }
+                }
+            });
+        });
+
+    });
+}
+
+$('#btn-calcular-precios-edicion').click(function () {
+    $('#tablaProductosEditar tbody tr').each(function () {
+        var $fila = $(this);
+        var costoText = $fila.find('td:nth-child(3)').text().replace('$ ', '').replace(',', '.');
+        var costo = parseFloat(costoText);
+        $fila.find('td:nth-child(n+4)').each(function () {
+            var profit = parseFloat($(this).attr('data-profit'));
+            if (profit != 0 && costo != 0) {
+                var nuevoPrecio = costo * (1 + profit / 100);
+                $(this).text(`$ ${nuevoPrecio.toFixed(2).replace('.', ',')}`);
+            }
+        });
+    });
+});
+
+
+$('#btnSaveMasivoTabla').click(function () {
+    var dataToSave = [];
+
+    $('#tablaProductosEditar tbody tr').each(function () {
+        var rowData = {};
+        $(this).find('td').each(function (index) {
+            var fieldName = $('#tablaProductosEditar th').eq(index).text().trim();
+            var fieldValue = $(this).text().trim();
+            rowData[fieldName] = fieldValue;
+        });
+        dataToSave.push(rowData);
+    });
+
+
+});
