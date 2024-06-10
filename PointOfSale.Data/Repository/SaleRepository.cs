@@ -149,7 +149,7 @@ namespace PointOfSale.Data.Repository
 
             foreach (DetailSale dv in entity.DetailSales)
             {
-                Product product_found = _dbcontext.Products.Include(_=>_.Proveedor).Where(p => p.IdProduct == dv.IdProduct).First();
+                Product product_found = _dbcontext.Products.Include(_ => _.Proveedor).Where(p => p.IdProduct == dv.IdProduct).First();
 
                 ControlStock(dv, product_found);
             }

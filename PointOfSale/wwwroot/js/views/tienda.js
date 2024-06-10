@@ -289,20 +289,28 @@ $("#clickWeb").on("click", function () {
 
 document.onkeyup = function (e) {
     if (e.altKey && e.which == 73) { // alt + I
-        fetch(`/Tienda/GetImpresoras`, {
-            method: "GET"
-        }).then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
-        }).then(responseJson => {
-            if (responseJson.state) {
 
-                alert(responseJson.object);
-                console.log(responseJson.object);
-            }
-        })
-            .catch((error) => {
-            });
+        try {
+            // Inicializar jsprintmanager
+            JSPM.JSPrintManager.auto_reconnect = true;
+            JSPM.JSPrintManager.start();
 
+            JSPM.JSPrintManager.WS.onStatusChanged = () => {
+                if (JSPM.JSPrintManager.websocket_status === JSPM.WSStatus.Open) {
+                    // Obtener las impresoras instaladas
+                    JSPM.JSPrintManager.getPrinters().then((printers) => {
+                        let printerList = printers.join('\n');
+                        alert(printerList);
+                        console.log(printerList);
+                    });
+                } else {
+                    alert('No se pudo conectar a la impresora');
+                }
+            };
+        } catch (error) {
+            console.error('Error:', error);
+        }
+        
         return false;
 
     }

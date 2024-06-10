@@ -357,9 +357,12 @@ $("#btnFinalizarVentaParcial").on("click", function () {
                     $(firstTabID).remove();
                     document.getElementsByClassName("li-tab")[0].remove()
                 }
-
             }
             disableAfterVenta(currentTabId);
+
+            if (sale.imprimirTicket && responseJson.object.nombreImpresora != '') {
+                printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora);
+            }
 
             newTab();
 
@@ -908,7 +911,7 @@ function lastTab() {
 //        confirmButtonText: 'Aceptar'
 //    }, function (value) {
 
-        
+
 //    });
 //}
 
@@ -917,6 +920,30 @@ function getTabActiveId() {
     var idTab = document.getElementsByClassName(" nav-link tab-venta active")[0].id;
 
     return idTab[idTab.length - 1];
+}
+
+async function printTicket(ticketContent, nombreImpresora) {
+    try {
+
+        // Inicializar jsprintmanager
+        JSPM.JSPrintManager.auto_reconnect = true;
+        JSPM.JSPrintManager.start();
+
+        JSPM.JSPrintManager.WS.onStatusChanged = () => {
+            if (JSPM.JSPrintManager.websocket_status === JSPM.WSStatus.Open) {
+                // Crear el trabajo de impresión
+                var cpj = new JSPM.ClientPrintJob();
+                var printer = new JSPM.InstalledPrinter(nombreImpresora);
+                cpj.clientPrinter = printer;
+                cpj.printerCommands = ticketContent;
+                cpj.sendToClient();
+            } else {
+                alert('No se pudo conectar a la impresora');
+            }
+        };
+    } catch (error) {
+        console.error('Error:', error);
+    }
 }
 
 class Producto {

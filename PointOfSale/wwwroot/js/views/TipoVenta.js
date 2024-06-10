@@ -36,6 +36,7 @@ $(document).ready(function () {
                         return '<input type="checkbox" disabled>';
                 }
             },
+            { "data": "comision" },
             {
                 "data": "isActive", render: function (data) {
                     if (data == 1)
@@ -74,6 +75,7 @@ const openModal = (model = BASIC_MODEL) => {
     $("#cboState").val(model.isActive ? 1 : 0);
     $("#cboTipoFactura").val(model.tipoFactura);
     $("#cboWeb").val(model.web ? 1 : 0);
+    $("#txtComision").val(model.comision);
 
     document.querySelector('#cboWeb').checked = model.web
 
@@ -102,6 +104,7 @@ $("#btnSave").on("click", function () {
     model["isActive"] = $("#cboState").val() === '1' ? true : false;
     model["web"] = document.querySelector('#cboWeb').checked;
     model["tipoFactura"] = parseInt($("#cboTipoFactura").val());
+    model["comision"] = $("#txtComision").val();
 
     $("#modalData").find("div.modal-content").LoadingOverlay("show")
 

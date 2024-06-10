@@ -162,21 +162,5 @@ namespace PointOfSale.Controllers
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
-
-        [HttpGet]
-        public IActionResult GetImpresoras()
-        {
-            GenericResponse<string> gResponse = new GenericResponse<string>();
-
-            var stringImpresoras = string.Empty;
-            var result = System.Drawing.Printing.PrinterSettings.InstalledPrinters;
-            foreach (var item in result)
-            {
-                stringImpresoras += item + "\n";
-            }
-            gResponse.Object = stringImpresoras;
-            gResponse.State = true;
-            return StatusCode(StatusCodes.Status200OK, gResponse);
-        }
     }
 }

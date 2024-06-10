@@ -118,12 +118,12 @@ go
 
 --________________________________ INSERT TYPEDOCUMENTSALE ________________________________
 
-insert into TypeDocumentSale([description],isActive, tipoFactura, web) values
-('Efectivo',1,0,1),
-('Tarjeta de Debito',1,0,1),
-('Tarjeta de Credito',1,0,1),
-('Mercado Pago',1,0,1),
-('Transferencia',1,0,1)
+insert into TypeDocumentSale([description],isActive, tipoFactura, web,comision) values
+('Efectivo',1,0,1,0),
+('Tarjeta de Debito',1,0,1,0),
+('Tarjeta de Credito',1,0,1,0),
+('Mercado Pago',1,0,1,0),
+('Transferencia',1,0,1,0)
 
 
 go

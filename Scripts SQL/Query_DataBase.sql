@@ -157,6 +157,7 @@ create table TypeDocumentSale(
 [isActive] bit,
 web bit null,
 tipoFactura int not null,
+comision decimal(10,2) not null,
 [registrationDate] datetime default getdate()
 )
 

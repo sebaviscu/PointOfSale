@@ -97,6 +97,8 @@ namespace PointOfSale.Controllers
         public async Task<IActionResult> RegisterSale([FromBody] VMSale model)
         {
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado, Roles.Empleado });
+            var nombreImpresora = string.Empty;
+            var ticket = string.Empty;
 
             GenericResponse<VMSale> gResponse = new GenericResponse<VMSale>();
             try
@@ -115,7 +117,8 @@ namespace PointOfSale.Controllers
                 if (model.ImprimirTicket)
                 {
                     var tienda = await _tiendaService.Get(user.IdTienda);
-                    _ticketService.TicketSale(sale_created, tienda);
+                    ticket = _ticketService.TicketSale(sale_created, tienda);
+                    nombreImpresora = tienda.NombreImpresora;
                 }
 
                 if (model.ClientId.HasValue)
@@ -166,6 +169,8 @@ namespace PointOfSale.Controllers
                 //}
 
                 model = _mapper.Map<VMSale>(sale_created);
+                model.NombreImpresora = nombreImpresora;
+                model.Ticket = ticket;
 
                 gResponse.State = true;
                 gResponse.Object = model;

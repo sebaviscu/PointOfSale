@@ -17,6 +17,7 @@ namespace PointOfSale.Model
         public bool Web { get; set; }
         public DateTime? RegistrationDate { get; set; }
         public TipoFactura TipoFactura { get; set; }
+        public decimal Comision { get; set; }
         public virtual ICollection<Sale> Sales { get; set; }
         public virtual ICollection<VentaWeb> VentasWeb { get; set; }
     }

@@ -10,5 +10,6 @@ namespace PointOfSale.Models
         public bool Web { get; set; }
         public TipoFactura TipoFactura { get; set; }
         public string? TipoFacturaString { get; set; }
+        public decimal Comision { get; set; }
     }
 }
