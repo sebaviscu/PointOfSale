@@ -45,9 +45,9 @@ namespace PointOfSale.Controllers
         public async Task<IActionResult> Lista()
         {
             ClaimsPrincipal claimuser = HttpContext.User;
-            var tienda = _mapper.Map<VMTienda>(await _tiendaService.GetTiendaPrincipal());
 
-            var shop = new VMShop(null);
+            var ajuste = _mapper.Map<VMAjustes>(await _ajusteService.Get());
+            var shop = new VMShop(ajuste);
             shop.IsLogin = claimuser.Identity.IsAuthenticated;
             shop.Products = _mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategory(0));
             shop.FormasDePago = _mapper.Map<List<VMTypeDocumentSale>>(await _typeDocumentSaleService.ListWeb());

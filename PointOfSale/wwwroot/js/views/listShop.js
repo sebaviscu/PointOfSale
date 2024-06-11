@@ -27,14 +27,6 @@ var productos = [];
         selectCategoria(event.currentTarget);
     })
 
-    //$("#input-search").on("keydown", function search(e) {
-    //    var text = document.getElementById("input-search").value;
-
-    //    if (e.keyCode == 13 && text !== '') {
-    //        SearchProductByText(text);
-    //    }
-    //});
-
     var inputElement = document.getElementById('input-search');
 
     inputElement.addEventListener('input', function () {
@@ -134,9 +126,6 @@ var productos = [];
     };
     contentWayPoint();
 
-
-
-
     // magnific popup
     $('.image-popup').magnificPopup({
         type: 'image',
@@ -168,8 +157,6 @@ var productos = [];
         fixedContentPos: false
     });
 
-
-
     var goHere = function () {
 
         $('.mouse-icon').on('click', function (event) {
@@ -200,27 +187,6 @@ function searchToggle(obj, evt) {
         container.find('.search-input').val('');
         if (text !== '') {
             $('.product-list').css('display', '');
-
-            //$.ajax({
-            //    url: window.location.origin + '/Shop/GetProductsByCategory?idCategoria=0',
-            //    type: "get",
-            //    success: function (result) {
-            //        $("#dvCategoryResults").html(result);
-            //        var elementosInput = document.querySelectorAll('.input-producto');
-
-            //        elementosInput.forEach(function (elemento) {
-            //            let idProd = elemento.id.replace("prod-", "");
-            //            let productFind = productos.find(item => item.idProduct === idProd);
-
-            //            if (productFind) {
-
-            //                elemento.value = productFind.quantity;
-            //                let elementArea = document.querySelector('#bottom-area-' + idProd);
-            //                elementArea.style.opacity = 1;
-            //            }
-            //        });
-            //    }
-            //});
         }
     }
     else if (container.hasClass('active') && text !== '') {
@@ -259,27 +225,6 @@ function selectCategoria(event) {
     if (idCat != 0) {
         $(`.product-list:not([category-prod="${idCat}"])`).css('display', 'none');
     }
-
-    //$.ajax({
-    //    url: window.location.origin + '/Shop/GetProductsByCategory?idCategoria=' + idCat,
-    //    type: "get",
-    //    success: function (result) {
-    //        $("#dvCategoryResults").html(result);
-    //        var elementosInput = document.querySelectorAll('.input-producto');
-
-    //        elementosInput.forEach(function (elemento) {
-    //            let idProd = elemento.id.replace("prod-", "");
-    //            let productFind = productos.find(item => item.idProduct === idProd);
-
-    //            if (productFind) {
-
-    //                elemento.value = productFind.quantity;
-    //                let elementArea = document.querySelector('#bottom-area-' + idProd);
-    //                elementArea.style.opacity = 1;
-    //            }
-    //        });
-    //    }
-    //});
 }
 
 function opacityButtonArea(value, mult, idProd) {
