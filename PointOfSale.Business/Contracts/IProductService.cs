@@ -27,9 +27,8 @@ namespace PointOfSale.Business.Contracts
         Task<List<Product>> GetProductsByIds(List<int> listIds);
         Task ActivarNotificacionVencimientos(int idTienda);
         Task<List<Vencimiento>> GetProximosVencimientos(int idTienda);
-
         Task ActualizarStockAndVencimientos(List<PedidoProducto> pedidoProductos, int idTienda, string registrationUser);
-
         Task<bool> DeleteVencimiento(int idVencimiento);
+        Task<bool> EditMassivePorTabla(string user, List<EditeMassiveProductsTable> data);
     }
 }

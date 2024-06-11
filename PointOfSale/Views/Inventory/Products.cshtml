@@ -443,21 +443,19 @@
                             <table id="tablaProductosEditar">
                                 <thead>
                                     <tr>
-                                        <th hidden>Id</th>
-                                        <th class="d-flex justify-content-between align-items-center">
-                                            <span class="me-auto">Productos</span>
-                                            <button class="btn btn-secondary btn-sm" id="btn-calcular-precios-edicion">Calcular</button>
-                                        </th>
-                                        <th>Costo</th>
-                                        <th>Precio 1</th>
-                                        <th>Precio 2</th>
-                                        <th>Precio 3</th>
-                                        <th>Precio Web</th>
+                                        <th hidden title="id">Id</th>
+                                        <th>Productos</th>
+                                        <th title="costo">Costo</th>
+                                        <th title="precio1">Precio 1</th>
+                                        <th title="precio2">Precio 2</th>
+                                        <th title="precio3">Precio 3</th>
+                                        <th title="precioWeb">Precio Web</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                 </tbody>
                             </table>
+                            <br />
                         </div>
 
                         <div class="modal-footer">
@@ -475,7 +473,7 @@
                                         <label for="txtProfit">Ganancia %</label>
                                         <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtProfitMasivo" name="Profit">
                                     </div>
-                                    <div class="form-group col-sm-2">
+                                    <div class="form-group col-sm-3">
                                         <label for="txtPriceMasivo">Precio (1)</label>
                                         <div class="input-group  input-group-sm mb-3">
                                             <div class="input-group-prepend">
@@ -484,7 +482,7 @@
                                             <input type="number" step="any" class="form-control form-control-sm input-validate-masivo" min="0" id="txtPriceMasivo" name="Price">
                                         </div>
                                     </div>
-                                    <div class="form-group col-sm-3">
+                                    <div class="form-group col-sm-2">
                                         <label for="txtCosto">Costo</label>
                                         <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtCostoMasivo" name="Costo">
                                     </div>
@@ -507,8 +505,8 @@
                             </div>
                             <div class="col-md-12 row">
                                 <div class="col-md-5">
-                                    <div class="form-row col-md-12">
-                                        <div class="form-group col-sm-5">
+                                    <div class="form-row">
+                                        <div class="form-group col-sm-4">
                                             <label for="txtProfit2">Ganancia %</label>
                                             <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtProfit2Masivo" name="Profit">
                                         </div>
@@ -522,8 +520,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-row col-md-12">
-                                        <div class="form-group col-sm-5">
+                                    <div class="form-row">
+                                        <div class="form-group col-sm-4">
                                             <label for="txtProfit3">Ganancia %</label>
                                             <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtProfit3Masivo" name="Profit">
                                         </div>
@@ -538,15 +536,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-row text-center col-md-3" id="listProd">
-                                    <div style="margin-left: 10px;">
-                                        <h5 for="listProductosEditar">
-                                            Productos a Modificar:
-                                        </h5>
-                                        <br />
-                                        <div id='listProductosEditar'></div>
-                                    </div>
-                                </div>
+ 
                                 <div class="form-group col-sm-4">
                                     <div class="card shadow">
                                         <div class="card-header py-2">
@@ -571,6 +561,16 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-row text-center col-md-3" id="listProd">
+                                    <div style="margin-left: 10px;">
+                                        <h5 for="listProductosEditar">
+                                            Productos a Modificar:
+                                        </h5>
+                                        <br />
+                                        <div id='listProductosEditar'></div>
                                     </div>
                                 </div>
                             </div>

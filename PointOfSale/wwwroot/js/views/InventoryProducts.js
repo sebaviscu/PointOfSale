@@ -959,7 +959,7 @@ function cargarTabla(productosFiltrados) {
         let $tr = $('<tr>');
         $tr.append($('<td hidden>').text(idProd));
         $tr.append($('<td>').text(descr));
-        $tr.append($('<td>').text(`$ ${costo}`).addClass('editable').attr({
+        $tr.append($('<td>').text(`$ ${costo}`).addClass('editable costo').attr({
             'contenteditable': true,
             'inputmode': 'numeric',
             'pattern': '[0-9]*',
@@ -995,6 +995,19 @@ function cargarTabla(productosFiltrados) {
         }));
 
         tablaBody.append($tr);
+    });
+
+    $('.editable.costo').on('blur', function () {
+        var $fila = $(this).closest('tr');
+        var costoText = $(this).text().replace('$ ', '').replace(',', '.');
+        var costo = parseFloat(costoText) || 0;
+        $fila.find('td:nth-child(n+4)').each(function () {
+            var profit = parseFloat($(this).attr('data-profit'));
+            if (profit != 0 && costo != 0) {
+                var nuevoPrecio = costo * (1 + profit / 100);
+                $(this).text(`$ ${nuevoPrecio.toFixed(2).replace('.', ',')}`);
+            }
+        });
     });
 
     var celdasEditables = document.querySelectorAll(".editable");
@@ -1037,34 +1050,42 @@ function cargarTabla(productosFiltrados) {
     });
 }
 
-$('#btn-calcular-precios-edicion').click(function () {
-    $('#tablaProductosEditar tbody tr').each(function () {
-        var $fila = $(this);
-        var costoText = $fila.find('td:nth-child(3)').text().replace('$ ', '').replace(',', '.');
-        var costo = parseFloat(costoText);
-        $fila.find('td:nth-child(n+4)').each(function () {
-            var profit = parseFloat($(this).attr('data-profit'));
-            if (profit != 0 && costo != 0) {
-                var nuevoPrecio = costo * (1 + profit / 100);
-                $(this).text(`$ ${nuevoPrecio.toFixed(2).replace('.', ',')}`);
-            }
-        });
-    });
-});
-
-
 $('#btnSaveMasivoTabla').click(function () {
-    var dataToSave = [];
+    var model = [];
+    showLoading();
 
     $('#tablaProductosEditar tbody tr').each(function () {
         var rowData = {};
         $(this).find('td').each(function (index) {
-            var fieldName = $('#tablaProductosEditar th').eq(index).text().trim();
-            var fieldValue = $(this).text().trim();
-            rowData[fieldName] = fieldValue;
+            var fieldName = $('#tablaProductosEditar th').eq(index).attr('title');
+
+            if (fieldName != null) {
+                var fieldValue = $(this).text().trim().replace('$ ', '').replace(',', '.');
+                rowData[fieldName.trim()] = fieldValue;
+            }
         });
-        dataToSave.push(rowData);
+        model.push(rowData);
     });
 
+    fetch("/Inventory/EditMassiveProductsForTable", {
+        method: "PUT",
+        headers: { 'Content-Type': 'application/json;charset=utf-8' },
+        body: JSON.stringify(model)
+    }).then(response => {
+        $("#modalDataMasivo").find("div.modal-content").LoadingOverlay("hide")
+        return response.ok ? response.json() : Promise.reject(response);
+    }).then(responseJson => {
+        removeLoading();
+
+        if (responseJson.state) {
+            $("#modalDataMasivo").modal("hide");
+            location.reload();
+
+        } else {
+            swal("Lo sentimos", responseJson.message, "error");
+        }
+    }).catch((error) => {
+        $("#modalDataMasivo").find("div.modal-content").LoadingOverlay("hide")
+    })
 
 });

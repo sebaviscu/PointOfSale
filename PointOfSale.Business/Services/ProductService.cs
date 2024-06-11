@@ -255,11 +255,7 @@ namespace PointOfSale.Business.Services
                 foreach (var p in data.idProductos)
                 {
 
-                    IQueryable<Product> queryProduct1 = await _repository.Query(u => u.IdProduct == p);
-                    Product product_edit = queryProduct1.Include(_ => _.ListaPrecios).FirstOrDefault();
-
-                    if (product_edit == null)
-                        throw new TaskCanceledException($"El producto con Id {p} no existe");
+                    var product_edit = await GetProductById(p);
 
                     var precioWeb = product_edit.PriceWeb;
 
@@ -306,6 +302,62 @@ namespace PointOfSale.Business.Services
             }
         }
 
+        public async Task<bool> EditMassivePorTabla(string user, List<EditeMassiveProductsTable> data)
+        {
+            try
+            {
+                foreach (var p in data)
+                {
+                    var product_edit = await GetProductById(p.Id);
+
+                    product_edit.Price = p.Precio1;
+                    product_edit.PriceWeb = p.PrecioWeb;
+                    product_edit.CostPrice = p.Costo;
+                    product_edit.ModificationUser = user;
+                    product_edit.ModificationDate = DateTimeNowArg;
+
+
+                    var listaPrecios = new List<ListaPrecio>();
+
+                    var listasDePrecio = new[]
+                    {
+                        (ListaDePrecio.Lista_1, p.Precio1),
+                        (ListaDePrecio.Lista_2, p.Precio2),
+                        (ListaDePrecio.Lista_3, p.Precio3)
+                    };
+
+                    foreach (var (lista, precio) in listasDePrecio)
+                    {
+                        var nuevoPrecio = product_edit.ListaPrecios.FirstOrDefault(_ => _.Lista == lista);
+                        if (nuevoPrecio != null)
+                        {
+                            nuevoPrecio.Precio = precio;
+                        }
+                    }
+
+
+                    bool response = await _repository.Edit(product_edit);
+                    if (!response)
+                        throw new TaskCanceledException($"No se ha podido actualizar el producto con Id: {p}");
+
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        private async Task<Product> GetProductById(int id)
+        {
+            IQueryable<Product> queryProduct = await _repository.Query(u => u.IdProduct == id);
+            var producto = queryProduct.Include(_ => _.ListaPrecios).FirstOrDefault();
+            if (producto == null)
+                throw new TaskCanceledException($"El producto con Id {id} no existe");
+
+            return producto;
+        }
 
         public async Task<bool> Delete(int idProduct)
         {
