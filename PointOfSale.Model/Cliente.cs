@@ -10,8 +10,10 @@ namespace PointOfSale.Model
     {
         public int IdCliente { get; set; }
         public string? Nombre { get; set; }
-        public string? Cuil { get; set; }
+        public string? Cuit { get; set; }
         public string? Telefono { get; set; }
+        public string? Email { get; set; }
+        public string? CondicionIVA { get; set; }
         public string? Direccion { get; set; }
         public DateTime? RegistrationDate { get; set; }
         public DateTime? ModificationDate { get; set; }

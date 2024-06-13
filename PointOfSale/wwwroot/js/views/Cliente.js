@@ -5,7 +5,9 @@ let rowSelected;
 const BASIC_MODEL = {
     idCliente: 0,
     nombre: '',
-    cuil: null,
+    cuit: null,
+    email: null,
+    condicionIVA: null,
     telefono: null,
     direccion: null,
     registrationDate: null,
@@ -46,13 +48,15 @@ $(document).ready(function () {
                 "searchable": false
             },
             { "data": "nombre" },
-            { "data": "cuil" },
+            { "data": "cuit" },
+            { "data": "email" },
+            { "data": "condicionIVA" },
             { "data": "telefono" },
             { "data": "total" },
             {
                 "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
                     '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-trash-can"></i></button>',
-                "orderable": false,
+                "orderable": false,               
                 "searchable": false,
                 "width": "100px"
             }
@@ -66,7 +70,7 @@ $(document).ready(function () {
                 title: '',
                 filename: 'Reporte Clientes',
                 exportOptions: {
-                    columns: [1, 2,3,4]
+                    columns: [1,2,3,4,5,6]
                 }
             }, 'pageLength'
         ]
@@ -76,9 +80,12 @@ $(document).ready(function () {
 const openModal = (model = BASIC_MODEL) => {
     $("#txtId").val(model.idCliente);
     $("#txtNombre").val(model.nombre);
-    $("#txtCuil").val(model.cuil);
+    $("#txtCuit").val(model.cuit);
     $("#txtDireccion").val(model.direccion);
     $("#txtTelefono").val(model.telefono);
+    $("#txtCondIVA").val(model.condicionIVA);
+    $("#txtEmail").val(model.email);
+
     //document.getElementById('txtTotal').innerHTML = "Total: " + model.total;
     $("#txtTotal").val(model.total);
 
@@ -164,7 +171,9 @@ $("#btnSave").on("click", function () {
     const model = structuredClone(BASIC_MODEL);
     model["nombre"] = $("#txtNombre").val();
     model["direccion"] = $("#txtDireccion").val();
-    model["cuil"] = $("#txtCuil").val();
+    model["cuit"] = $("#txtCuit").val();
+    model["email"] = $("#txtEmail").val();
+    model["condicionIVA"] = $("#txtCondIVA").val();
     model["telefono"] = $("#txtTelefono").val();
     model["idCliente"] = $("#txtId").val();
 
@@ -185,7 +194,7 @@ $("#btnSave").on("click", function () {
 
                 tableData.row.add(responseJson.object).draw(false);
                 $("#modalData").modal("hide");
-                swal("Exitoso!", "Cliente fué creada", "success");
+                swal("Exitoso!", "Cliente fué creado", "success");
 
             } else {
                 swal("Lo sentimos", responseJson.message, "error");
@@ -280,7 +289,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                     if (responseJson.state) {
 
                         tableData.row(row).remove().draw();
-                        swal("Exitoso!", "Cliente  fué eliminada", "success");
+                        swal("Exitoso!", "Cliente  fué eliminado", "success");
 
                     } else {
                         swal("Lo sentimos", responseJson.message, "error");
@@ -296,13 +305,13 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
 
 $(document).on("click", "button.finalizeSale", function () {
     if (document.getElementById("cboTypeDocumentSale").value == '') {
-        const msg = `Debe completaro el campo Tipo de Venta`;
+        const msg = `Debe completar el campo Tipo de Venta`;
         toastr.warning(msg, "");
         return;
     }
 
     if (document.getElementById("txtImporte").value == '') {
-        const msg = `Debe completaro el campo Importe`;
+        const msg = `Debe completar el campo Importe`;
         toastr.warning(msg, "");
         return;
     }

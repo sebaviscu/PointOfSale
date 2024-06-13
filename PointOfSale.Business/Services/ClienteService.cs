@@ -65,7 +65,7 @@ namespace PointOfSale.Business.Services
                 Cliente Cliente_edit = queryCliente.First();
 
                 Cliente_edit.Nombre = entity.Nombre;
-                Cliente_edit.Cuil = entity.Cuil;
+                Cliente_edit.Cuit = entity.Cuit;
                 Cliente_edit.Telefono = entity.Telefono;
                 Cliente_edit.Direccion = entity.Direccion;
                 Cliente_edit.ModificationDate = DateTimeNowArg;
