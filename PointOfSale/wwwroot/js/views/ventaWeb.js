@@ -12,6 +12,7 @@ const BASIC_MODEL = {
     formaDePago: null,
     estado: 0,
     detailSales: null,
+    idTienda:0,
     registrationDate: null,
     modificationDate: null,
     modificationUser: null
@@ -70,6 +71,20 @@ $(document).ready(function () {
             }, 'pageLength'
         ]
     });
+
+    fetch("/Tienda/GetTienda")
+        .then(response => {
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+            if (responseJson.data.length > 0) {
+
+                responseJson.data.forEach((item) => {
+                    $("#cboTienda").append(
+                        $("<option>").val(item.idTienda).text(item.nombre)
+                    )
+                });
+            }
+        })
 })
 
 
@@ -94,8 +109,10 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtFormaPago").val(model.formaDePago);
     $("#txtComentario").val(model.comentario);
     $("#cboState").val(model.estado);
+    $("#cboTienda").val(model.idTienda);
 
     document.querySelector('#cboState').disabled = model.estado > 0;
+    document.querySelector('#cboTienda').disabled = model.estado > 0;
 
     if (model.modificationUser === null)
         document.getElementById("divModif").style.display = 'none';
@@ -127,6 +144,7 @@ const openModal = (model = BASIC_MODEL) => {
 $("#btnSave").on("click", function () {
 
     const model = structuredClone(BASIC_MODEL);
+    model["idTienda"] = parseInt($("#cboTienda").val());
     model["idVentaWeb"] = parseInt($("#txtId").val());
     model["estado"] = parseInt($("#cboState").val());
 

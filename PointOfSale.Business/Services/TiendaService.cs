@@ -39,19 +39,6 @@ namespace PointOfSale.Business.Services
             {
                 var list = await List();
 
-                if (list.Count() == 0)
-                {
-                    entity.Principal = true;
-                }
-                else if (list.Count() > 0 && entity.Principal == true)
-                {
-                    foreach (var l in list)
-                    {
-                        l.Principal= false;
-                        await _repository.Edit(l);
-                    }
-                }
-
                 var idLastTienda = list.Max(_ => _.IdTienda);
                 entity.IdTienda = ++idLastTienda;
 
@@ -79,26 +66,11 @@ namespace PointOfSale.Business.Services
                 Tienda_found.Email = entity.Email;
                 Tienda_found.Logo = entity.Logo;
                 Tienda_found.NombreImpresora = entity.NombreImpresora;
-                Tienda_found.Principal = entity.Principal;
                 Tienda_found.IdListaPrecio = entity.IdListaPrecio;
+                Tienda_found.Cuit = entity.Cuit;
 
                 Tienda_found.ModificationDate = DateTimeNowArg;
                 Tienda_found.ModificationUser = entity.ModificationUser;
-
-                var list = await List();
-
-                if (list.Count() == 1)
-                {
-                    Tienda_found.Principal = true;
-                }
-                else if (list.Count() > 1 && entity.Principal == true)
-                {
-                    foreach (var l in list)
-                    {
-                        l.Principal = false;
-                        await _repository.Edit(l);
-                    }
-                }
 
                 bool response = await _repository.Edit(Tienda_found);
 
@@ -151,21 +123,5 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task<Tienda> GetTiendaPrincipal()
-        {
-            try
-            {
-                Tienda Tienda_found = await _repository.First(_ => _.Principal == true);
-
-                if (Tienda_found == null)
-                    throw new TaskCanceledException("Tienda no se pudo encontrar.");
-
-                return Tienda_found;
-            }
-            catch
-            {
-                throw;
-            }
-        }
     }
 }

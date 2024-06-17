@@ -15,6 +15,6 @@ namespace PointOfSale.Models
         public string? NombreImpresora { get; set; }
         public byte[]? Logo { get; set; }
         public string? PhotoBase64 { get; set; }
-        public bool? Principal { get; set; }
+        public string? Cuit { get; set; }
     }
 }

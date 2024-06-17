@@ -38,14 +38,14 @@ namespace PointOfSale.Business.Services
 
         public async Task<Product> Get(int idProducto)
         {
-            return await _repository.Get(p => p.IdProduct == idProducto);
-
+            IQueryable<Product> queryProduct = await _repository.Query(u => u.IdProduct == idProducto);
+            return queryProduct.Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).First();
         }
 
         public async Task<List<Product>> List()
         {
             IQueryable<Product> query = await _repository.Query();
-            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).OrderBy(_ => _.Description).ToList();
+            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).OrderBy(_ => _.Description).Take(3).ToList();
         }
 
         public async Task<List<Product>> ListActive()
@@ -83,6 +83,10 @@ namespace PointOfSale.Business.Services
             if (product_exists != null)
                 throw new TaskCanceledException("El barcode ya existe");
 
+            if (entity.Photo.Length == 0)
+            {
+                entity.Photo = GetDefaultImage();
+            }
             try
             {
                 Product product_created = await _repository.Add(entity);
@@ -123,6 +127,11 @@ namespace PointOfSale.Business.Services
             if (product_exists != null)
                 throw new TaskCanceledException("El barcode ya existe");
 
+            if (entity.Photo.Length == 0)
+            {
+                entity.Photo = GetDefaultImage();
+            }
+
             try
             {
                 Product product_created = await _repository.Add(entity);
@@ -159,8 +168,14 @@ namespace PointOfSale.Business.Services
                 product_edit.CostPrice = entity.CostPrice;
                 product_edit.PriceWeb = entity.PriceWeb;
                 product_edit.PorcentajeProfit = entity.PorcentajeProfit;
+
                 if (entity.Photo != null && entity.Photo.Length > 0)
                     product_edit.Photo = entity.Photo;
+                else if(entity.Photo.Length == 0l && product_edit.Photo.Length == 0)
+                {
+                    product_edit.Photo = GetDefaultImage();
+                }
+
                 product_edit.IsActive = entity.IsActive;
                 product_edit.ModificationDate = DateTimeNowArg;
                 product_edit.ModificationUser = entity.ModificationUser;
@@ -168,6 +183,7 @@ namespace PointOfSale.Business.Services
                 product_edit.TipoVenta = entity.TipoVenta;
                 product_edit.Comentario = entity.Comentario;
                 product_edit.Minimo = entity.Minimo;
+                product_edit.Iva = entity.Iva;
 
                 bool response = await _repository.Edit(product_edit);
                 if (!response)
@@ -193,6 +209,11 @@ namespace PointOfSale.Business.Services
             }
         }
 
+        public byte[] GetDefaultImage()
+        {
+            var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/product_default.jpg");
+            return System.IO.File.ReadAllBytes(imagePath);
+        }
 
         public async Task EditListaPrecios(List<ListaPrecio> listaPreciosActual, List<ListaPrecio> listaPreciosNueva)
         {

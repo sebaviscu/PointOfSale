@@ -27,7 +27,8 @@ const BASIC_MODEL = {
     precio3: "",
     porcentajeProfit2: 0,
     porcentajeProfit3: 0,
-    vencimientos: []
+    vencimientos: [],
+    iva: 0
 }
 
 const BASIC_MASSIVE_EDIT = {
@@ -164,13 +165,13 @@ $(document).ready(function () {
             }
         })
 
-    fetch("/Admin/GetAumentoWeb")
+    fetch("/Admin/GetAjustes")
         .then(response => {
             return response.ok ? response.json() : Promise.reject(response);
         }).then(responseJson => {
             if (responseJson.data != null) {
-                $("#txtAumento").val(responseJson.data + ' %');
-                aumentoWeb = responseJson.data;
+                $("#txtAumento").val(responseJson.data.aumentoWeb + ' %');
+                aumentoWeb = responseJson.data.aumentoWeb;
             }
         })
 
@@ -260,7 +261,7 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtPhoto").val("");
     $("#cboProveedor").val(model.idProveedor == 0 ? $("#cboProveedor option:first").val() : model.idProveedor);
     $("#txtComentario").val(model.comentario);
-
+    $("#txtIva").val(model.iva);
     $("#txtPrice2").val(model.precio2.replace(/,/g, '.'));
     $("#txtProfit2").val(model.porcentajeProfit2);
     $("#txtPrice3").val(model.precio3.replace(/,/g, '.'));
@@ -641,6 +642,7 @@ $("#btnSave").on("click", function () {
     model["isActive"] = $("#cboState").val();
     model["idProveedor"] = $("#cboProveedor").val();
     model["comentario"] = $("#txtComentario").val();
+    model["iva"] = $("#txtIva").val();
 
     model["priceWeb"] = $("#txtPriceWeb").val() != '' && $("#txtPriceWeb").val() != undefined ? $("#txtPriceWeb").val().replace(/\./g, ',') : $("#txtPrice").val().replace(/\./g, ',')
 
@@ -719,7 +721,14 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
 
     const data = tableData.row(rowSelected).data();
 
-    openModal(data);
+    fetch(`/Inventory/GetProduct?IdProduct=${data.idProduct}`,)
+        .then(response => {
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+            if (responseJson.data != null) {
+                openModal(responseJson.data);
+            }
+        })
 })
 
 
@@ -776,11 +785,15 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
 
 
 function calcularPrecio(id) {
-    var costo = $("#txtCosto").val();
-    var profit = $("#txtProfit" + id).val();
+
+    let iva = $("#txtIva").val();
+    let costo = $("#txtCosto").val();
+    let profit = $("#txtProfit" + id).val();
+
+    iva = iva == '' ? 0 : iva;
 
     if (costo !== '' && profit !== '') {
-
+        costo = costo * (1 + (iva / 100));
         var precio = parseFloat(costo) * (1 + (parseFloat(profit) / 100));
         $("#txtPrice" + id).val(precio);
     }
@@ -788,13 +801,16 @@ function calcularPrecio(id) {
 
 
 function calcularPrecioWeb() {
+
+    var iva = $("#txtIva").val();
     var aumento = $("#txtAumento").val();
     var precio = $("#txtPrice").val();
+    iva = iva == '' ? 0 : iva;
 
     if (aumento !== '' && precio !== '') {
-
-        var precio = parseFloat(precio) * (1 + (parseFloat(aumento) / 100));
-        $("#txtPriceWeb").val(precio);
+        precio = parseFloat(precio) * (1 + (iva / 100));
+        var precioFinal = parseFloat(precio) * (1 + (parseFloat(aumento) / 100));
+        $("#txtPriceWeb").val(precioFinal);
     }
 }
 
@@ -967,6 +983,8 @@ function cargarTabla(productosFiltrados) {
         }));
         $tr.append($('<td>').text(`$ ${precio1}`).addClass('editable').attr({
             'data-profit': producto.porcentajeProfit,
+            'data-web': 0,
+            'data-iva': producto.iva,
             'contenteditable': true,
             'inputmode': 'numeric',
             'pattern': '[0-9]*',
@@ -974,6 +992,8 @@ function cargarTabla(productosFiltrados) {
         }));
         $tr.append($('<td>').text(`$ ${precio2}`).addClass('editable').attr({
             'data-profit': producto.porcentajeProfit2,
+            'data-web': 0,
+            'data-iva': producto.iva,
             'contenteditable': true,
             'inputmode': 'numeric',
             'pattern': '[0-9]*',
@@ -981,13 +1001,17 @@ function cargarTabla(productosFiltrados) {
         }));
         $tr.append($('<td>').text(`$ ${precio3}`).addClass('editable').attr({
             'data-profit': producto.porcentajeProfit3,
+            'data-web': 0,
+            'data-iva': producto.iva,
             'contenteditable': true,
             'inputmode': 'numeric',
             'pattern': '[0-9]*',
             'min': 0
         }));
         $tr.append($('<td>').text(`$ ${priceWeb}`).addClass('editable').attr({
-            'data-profit': aumentoWeb,
+            'data-profit': producto.porcentajeProfit,
+            'data-web': aumentoWeb,
+            'data-iva': producto.iva,
             'contenteditable': true,
             'inputmode': 'numeric',
             'pattern': '[0-9]*',
@@ -998,13 +1022,20 @@ function cargarTabla(productosFiltrados) {
     });
 
     $('.editable.costo').on('blur', function () {
-        var $fila = $(this).closest('tr');
-        var costoText = $(this).text().replace('$ ', '').replace(',', '.');
-        var costo = parseFloat(costoText) || 0;
+        let $fila = $(this).closest('tr');
+        let costoText = $(this).text().replace('$ ', '').replace(',', '.');
         $fila.find('td:nth-child(n+4)').each(function () {
-            var profit = parseFloat($(this).attr('data-profit'));
+            let costo = parseFloat(costoText) || 0;
+            let profit = parseFloat($(this).attr('data-profit'));
+            let iva = parseFloat($(this).attr('data-iva'));
+            let web = parseFloat($(this).attr('data-web'));
+            iva = iva == '' ? 0 : iva;
+            web = web == '' ? 0 : web;
+
             if (profit != 0 && costo != 0) {
+                costo = costo * (1 + (iva / 100));
                 var nuevoPrecio = costo * (1 + profit / 100);
+                nuevoPrecio = nuevoPrecio * (1 + (web / 100));
                 $(this).text(`$ ${nuevoPrecio.toFixed(2).replace('.', ',')}`);
             }
         });

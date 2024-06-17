@@ -129,8 +129,9 @@ insert into TypeDocumentSale([description],isActive, tipoFactura, web,comision) 
 go
 --________________________________ INSERT Ajustes ________________________________
 
-insert into Ajustes(MontoEnvioGratis,AumentoWeb,Whatsapp,Lunes,Martes,Miercoles,Jueves,Viernes,Sabado,Domingo,Feriado,Facebook,Instagram,Tiktok,Twitter,Youtube) 
-values (0,20,'','','','','','','','','','','','','','')
+insert into Ajustes(MontoEnvioGratis,AumentoWeb,Whatsapp,Lunes,Martes,Miercoles,Jueves,Viernes,Sabado,Domingo,Feriado,Facebook,Instagram,Tiktok,
+Twitter,Youtube, direccion, telefono,nombre,codigoSeguridad) 
+values (0,20,'','','','','','','','','','','','','','','','','Mercado Don Pepe','')
 
 go
 --________________________________ INSERT CORRELATIVE NUMBER ________________________________

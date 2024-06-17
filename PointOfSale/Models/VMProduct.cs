@@ -29,6 +29,7 @@ namespace PointOfSale.Models
         public decimal? Minimo { get; set; }
         public string? ModificationDateString { get; set; }
 
+        public decimal? Iva { get; set; }
         //public virtual IEnumerable<ListaDePrecio>? ListaPrecios { get; set; }
 
         public string? Precio2 { get; set; }

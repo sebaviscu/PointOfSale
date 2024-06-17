@@ -24,6 +24,7 @@ namespace PointOfSale.Model
         public string? Comentario { get; set; }
         public TipoVenta TipoVenta { get; set; }
         public decimal? Minimo { get; set; }
+        public decimal? Iva {  get; set; }
         public virtual Category? IdCategoryNavigation { get; set; }
         public int? IdProveedor { get; set; }
         public Proveedor? Proveedor { get; set; }

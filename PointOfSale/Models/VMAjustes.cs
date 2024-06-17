@@ -5,6 +5,9 @@
         public int IdAjuste { get; set; }
         public string? Nombre { get; set; }
         public string? Direccion { get; set; }
+        public string? CodigoSeguridad { get; set; }
+        public bool? ImprimirDefault { get; set; }
+
         public decimal? MontoEnvioGratis { get; set; }
         public decimal? AumentoWeb { get; set; }
         public string? Whatsapp { get; set; }

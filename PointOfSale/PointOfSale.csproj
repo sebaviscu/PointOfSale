@@ -7,6 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\js\plugin_impresora_termica.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\js\plugin_impresora_termica.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
     <None Include="wwwroot\css\fonts\flaticon\.DS_Store" />
     <None Include="wwwroot\css\fonts\flaticon\font\.DS_Store" />
@@ -20,6 +28,7 @@
     <None Include="wwwroot\css\fonts\ionicons\fonts\ionicons.svg" />
     <None Include="wwwroot\css\fonts\ionicons\fonts\ionicons.woff2" />
     <None Include="wwwroot\css\fonts\open-iconic\open-iconic.svg" />
+    <None Include="wwwroot\js\plugin_impresora_termica.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,6 +37,7 @@
     <PackageReference Include="DinkToPdf" Version="1.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.29" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.8" />
+    <PackageReference Include="Neodynamic.SDK.WebClientPrint" Version="6.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />
   </ItemGroup>
 

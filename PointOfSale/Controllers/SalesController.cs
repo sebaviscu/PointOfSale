@@ -11,6 +11,7 @@ using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
 using System.Security.Claims;
 using static PointOfSale.Model.Enum;
+using Neodynamic.SDK.Web;
 
 namespace PointOfSale.Controllers
 {
@@ -250,11 +251,22 @@ namespace PointOfSale.Controllers
 
         public async Task<IActionResult> PrintTicket(int idSale)
         {
+            GenericResponse<VMSale> gResponse = new GenericResponse<VMSale>();
+
             var sale = await _saleService.GetSale(idSale);
             var tienda = await _tiendaService.Get(sale.IdTienda);
-            _ticketService.TicketSale(sale, tienda);
+            var ticket = _ticketService.TicketSale(sale, tienda);
 
-            return StatusCode(StatusCodes.Status200OK);
+            var model = new VMSale();
+
+
+            model.NombreImpresora = tienda.NombreImpresora;
+            model.Ticket = ticket;
+
+            gResponse.State = true;
+            gResponse.Object = model;
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         public async Task<IActionResult> PrintTicketVentaWeb(int idVentaWeb)

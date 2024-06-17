@@ -1224,7 +1224,7 @@ namespace PointOfSale.Controllers
 
             try
             {
-                 var vmAjusteList = _mapper.Map<VMAjustes>(await _ajusteService.Get());
+                var vmAjusteList = _mapper.Map<VMAjustes>(await _ajusteService.Get());
                 return StatusCode(StatusCodes.Status200OK, new { data = vmAjusteList });
             }
             catch (Exception e)
@@ -1261,10 +1261,19 @@ namespace PointOfSale.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAumentoWeb()
+        public async Task<IActionResult> GetAjustes()
         {
             var ajuste = await _ajusteService.Get();
-            return StatusCode(StatusCodes.Status200OK, new { data = ajuste.AumentoWeb.HasValue ? ajuste.AumentoWeb.Value.ToString("F0") : string.Empty });
+
+
+            return StatusCode(StatusCodes.Status200OK, new
+            {
+                data = new
+                {
+                    AumentoWeb = ajuste.AumentoWeb.HasValue ? ajuste.AumentoWeb.Value.ToString("F0") : string.Empty,
+                    CodigoSeguridad = ajuste.CodigoSeguridad != null ? ajuste.CodigoSeguridad : string.Empty
+                }
+            });
         }
     }
 }

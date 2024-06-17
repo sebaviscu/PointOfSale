@@ -54,6 +54,9 @@ namespace PointOfSale.Business.Services
                 Ajustes_found.Feriado = entity.Feriado;
                 Ajustes_found.MontoEnvioGratis = entity.MontoEnvioGratis;
 
+                Ajustes_found.CodigoSeguridad = entity.CodigoSeguridad;
+                Ajustes_found.ImprimirDefault = entity.ImprimirDefault;
+
                 bool response = await _repository.Edit(Ajustes_found);
 
                 if (!response)

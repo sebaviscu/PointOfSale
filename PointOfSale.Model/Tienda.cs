@@ -16,7 +16,7 @@ namespace PointOfSale.Model
         public string? Direccion { get; set; }
         public string? NombreImpresora { get; set; }
         public byte[]? Logo { get; set; }        
-        public bool? Principal { get; set; }
+        public string? Cuit { get; set; }
         public IEnumerable<Turno>? Turnos { get; set; }
         public IEnumerable<User>? Usuarios { get; set; }
         public IEnumerable<Vencimiento>? Vencimientos { get; set; }

@@ -127,17 +127,44 @@ namespace PointOfSale.Controllers
             try
             {
                 var productos = await _productService.List();
-                foreach (var item in productos)
-                {
-                    item.Photo = null;
-                }
-                List<VMProduct> vmProductList = _mapper.Map<List<VMProduct>>(productos);
-                return StatusCode(StatusCodes.Status200OK, new { data = vmProductList });
-            }
-            catch (Exception)
-            {
 
-                throw;
+                // Asignar Photo a null y mapear a VMProduct en una sola operación
+                var vmProductList = productos.Select(producto =>
+                {
+                    producto.Photo = null;
+                    return _mapper.Map<VMProduct>(producto);
+                }).ToList();
+
+                return Ok(new { data = vmProductList });
+            }
+            catch (Exception ex)
+            {
+                // Registrar el error (asumiendo que tienes un logger configurado)
+                //_logger.LogError(ex, "Error al obtener los productos");
+
+                // Retornar una respuesta de error
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Se produjo un error al obtener los productos." });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetProduct(int idProduct)
+        {
+            try
+            {
+                var producto = await _productService.Get(idProduct);
+
+                var prod = _mapper.Map<VMProduct>(producto);
+
+                return Ok(new { data = prod });
+            }
+            catch (Exception ex)
+            {
+                // Registrar el error (asumiendo que tienes un logger configurado)
+                //_logger.LogError(ex, "Error al obtener los productos");
+
+                // Retornar una respuesta de error
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Se produjo un error al obtener los productos." });
             }
         }
 
@@ -373,7 +400,7 @@ namespace PointOfSale.Controllers
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado, Roles.Empleado });
 
             List<VMVencimiento> vmVencimientos = _mapper.Map<List<VMVencimiento>>(await _productService.GetProximosVencimientos(user.IdTienda));
-            return StatusCode(StatusCodes.Status200OK, new { data = vmVencimientos.OrderBy(_=>_.Estado).ThenBy(_=>_.FechaVencimiento) });
+            return StatusCode(StatusCodes.Status200OK, new { data = vmVencimientos.OrderBy(_ => _.Estado).ThenBy(_ => _.FechaVencimiento) });
         }
 
         [HttpGet]

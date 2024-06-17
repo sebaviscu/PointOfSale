@@ -13,7 +13,7 @@ const BASIC_MODEL = {
     direccion: "",
     nombreImpresora: "",
     logo: "",
-    principal: 0
+    cuit: ""
 }
 
 
@@ -44,14 +44,6 @@ $(document).ready(function () {
                 }
             },
             {
-                "data": "principal", render: function (data) {
-                    if (data == 1)
-                        return '<input type="checkbox" checked disabled>';
-                    else
-                        return '<input type="checkbox" disabled>';
-                }
-            },
-            {
                 "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
                     '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-trash-can"></i></button>',
                 "orderable": false,
@@ -73,26 +65,45 @@ $(document).ready(function () {
             }, 'pageLength'
         ]
     });
+
+    $("#cboNombreTienda").append(
+        $("<option>").val('').text('')
+    )
+
+    connetor_plugin.obtenerImpresoras()
+        .then(impresoras => {
+
+            if (impresoras.length > 0) {
+                impresoras.forEach((item) => {
+                    $("#cboNombreTienda").append(
+                        $("<option>").val(item).text(item)
+                    )
+                });
+
+            }
+        });
 })
 
 const openModal = (model = BASIC_MODEL) => {
+
+
     $("#txtId").val(model.idTienda);
     $("#txtNombre").val(model.nombre);
     $("#cboListaPrecios").val(model.idListaPrecio);
+    $("#cboNombreTienda").val(model.nombreImpresora);
 
     $("#txtEmail").val(model.email);
     $("#txtTelefono").val(model.telefono);
     $("#txtDireccion").val(model.direccion);
-    $("#txtImpresora").val(model.nombreImpresora);
-    
+    $("#txtCuit").val(model.cuit);
+
     $("#imgTienda").attr("src", `data:image/png;base64,${model.photoBase64}`);
-    document.getElementById("cboPrincipal").checked = model.principal;
 
     if (model.modificationUser === null)
         document.getElementById("divModif").style.display = 'none';
     else {
         document.getElementById("divModif").style.display = '';
-        var dateTimeModif = new Date(model.modificationDate);
+        let dateTimeModif = new Date(model.modificationDate);
 
         $("#txtModificado").val(dateTimeModif.toLocaleString());
         $("#txtModificadoUsuario").val(model.modificationUser);
@@ -125,9 +136,8 @@ $("#btnSave").on("click", function () {
     model["telefono"] = $("#txtTelefono").val();
     model["email"] = $("#txtEmail").val();
     model["direccion"] = $("#txtDireccion").val();
-    model["nombreImpresora"] = $("#txtImpresora").val();
-    
-    model["principal"] = document.querySelector('#cboPrincipal').checked;
+    model["nombreImpresora"] = $("#cboNombreTienda").val();
+    model["cuit"] = $("#txtCuit").val();
 
     //const inputPhoto = document.getElementById('txtLogo');
     //model["photo"] = inputPhoto.files[0];
@@ -286,32 +296,3 @@ $("#clickWeb").on("click", function () {
     $("#facturacion").hide();
     $("#carroCompras").show();
 })
-
-document.onkeyup = function (e) {
-    if (e.altKey && e.which == 73) { // alt + I
-
-        try {
-            // Inicializar jsprintmanager
-            JSPM.JSPrintManager.auto_reconnect = true;
-            JSPM.JSPrintManager.start();
-
-            JSPM.JSPrintManager.WS.onStatusChanged = () => {
-                if (JSPM.JSPrintManager.websocket_status === JSPM.WSStatus.Open) {
-                    // Obtener las impresoras instaladas
-                    JSPM.JSPrintManager.getPrinters().then((printers) => {
-                        let printerList = printers.join('\n');
-                        alert(printerList);
-                        console.log(printerList);
-                    });
-                } else {
-                    alert('No se pudo conectar a la impresora');
-                }
-            };
-        } catch (error) {
-            console.error('Error:', error);
-        }
-        
-        return false;
-
-    }
-};
