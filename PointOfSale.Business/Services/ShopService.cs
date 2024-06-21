@@ -42,8 +42,9 @@ namespace PointOfSale.Business.Services
                 VentaWeb_found.Estado = entity.Estado;
                 VentaWeb_found.ModificationDate = DateTimeNowArg;
                 VentaWeb_found.ModificationUser = entity.ModificationUser;
+                VentaWeb_found.IdTienda = entity.IdTienda;
 
-                if(entity.Estado == Model.Enum.EstadoVentaWeb.Finalizada)
+                if (entity.Estado == Model.Enum.EstadoVentaWeb.Finalizada && VentaWeb_found.IdTienda.HasValue)
                 {
                     var turno = await _turnoService.GetTurnoActual(VentaWeb_found.IdTienda.Value);
                     await _saleRepository.CreatSaleFromVentaWeb(VentaWeb_found, turno);
@@ -74,8 +75,9 @@ namespace PointOfSale.Business.Services
         {
             try
             {
-                var tienda = await _tiendaService.List();
-                entity.IdTienda = tienda.First().IdTienda;
+                //var tienda = await _tiendaService.List();
+                //entity.IdTienda = tienda.First().IdTienda;
+                entity.IdTienda = null;
                 var sale = await _saleRepository.RegisterWeb(entity);
                 _ = _notificationService.Save(new Notifications(sale));
                 return sale;

@@ -1260,8 +1260,9 @@ namespace PointOfSale.Controllers
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
+
         [HttpGet]
-        public async Task<IActionResult> GetAjustes()
+        public async Task<IActionResult> GetAjustesProductos()
         {
             var ajuste = await _ajusteService.Get();
 
@@ -1270,10 +1271,37 @@ namespace PointOfSale.Controllers
             {
                 data = new
                 {
-                    AumentoWeb = ajuste.AumentoWeb.HasValue ? ajuste.AumentoWeb.Value.ToString("F0") : string.Empty,
-                    CodigoSeguridad = ajuste.CodigoSeguridad != null ? ajuste.CodigoSeguridad : string.Empty
+                    AumentoWeb = ajuste.AumentoWeb.HasValue ? ajuste.AumentoWeb.Value.ToString("F0") : string.Empty
                 }
             });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAjustesVentas()
+        {
+            var ajuste = await _ajusteService.Get();
+
+            return StatusCode(StatusCodes.Status200OK, new
+            {
+                data = new
+                {
+                    ImprimirDefault = ajuste.ImprimirDefault != null ? ajuste.ImprimirDefault : false
+                }
+            });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ValidateSecurityCode(string encryptedCode)
+        {
+            var ajuste = await _ajusteService.Get();
+
+            var codigo = ajuste.CodigoSeguridad != null ? ajuste.CodigoSeguridad : string.Empty;
+
+            if (encryptedCode == codigo) 
+            {
+                return Ok(new { valid = true });
+            }
+            return Unauthorized(new { valid = false });
         }
     }
 }

@@ -215,20 +215,31 @@
                                     <div class="form-row" style="padding:0px 12px 4px 12px;">
                                         <div class="form-group col-sm-5" style="padding-top:10px">
                                             <label for="cboTypeDocumentSaleParcial">Forma de Pago</label>
-                                            <select class="form-control cboFormaDePago" id="cboTypeDocumentSaleParcial" tabindex="0">
+                                            <select class="form-control form-control-sm cboFormaDePago" id="cboTypeDocumentSaleParcial" tabindex="0">
                                             </select>
                                         </div>
-                                        <div class="form-group col-sm-5" style="padding-top:10px">
+                                        <div class="form-group col-sm-2" style="padding-top:10px">
+                                            <label for="cboFactura">Factura</label>
+                                            <select class="form-control form-control-sm" id="cboFactura" tabindex="0" disabled>
+                                                <option value="-1"></option>
+                                                <option value="0">A</option>
+                                                <option value="1">B</option>
+                                                <option value="2">C</option>
+                                                <option value="3">X</option>
+                                                <option value="4">Presu</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-sm-4" style="padding-top:10px">
                                             <label for="txtTotalParcial">Sub Total</label>
                                             <div class="input-group mb-3">
-                                                <input type="number" min="0" class="form-control text-end inputSubtotal" tabindex="-1" aria-label="Small" aria-describedby="inputGroupTotal" id="txtTotalParcial">
+                                                <input type="number" min="0" class="form-control form-control-sm text-end inputSubtotal" tabindex="-1" aria-label="Small" aria-describedby="inputGroupTotal" id="txtTotalParcial">
                                                 @*                                                 <div class="input-group-prepend">
                                                 <a class="input-group-text btn calcSubTotales" id="btnCalcSubTotales">Calc.</a>
                                                 </div> *@
                                             </div>
 
                                         </div>
-                                        <div class="form-group col-sm-2" style="align-self: center; text-align: end;">
+                                        <div class="form-group col-sm-1" style="align-self: center; text-align: end;">
                                             <button id="btnAddNuevaFormaDePago" class="pull-right me-2 btnAddFormaDePago text-success" tabindex="-1">
                                                 <i class="mdi mdi-36px mdi-plus-circle"></i>
                                             </button>
@@ -261,7 +272,6 @@
 @section Scripts{
 
     <script src="~/plugins/select2/js/select2.js"></script>
-    <script src="~/js/JSPrintManager.js"></script>
 
     <script src="~/js/views/SalesNewSale.js"></script>
     }

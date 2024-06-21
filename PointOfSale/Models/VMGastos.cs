@@ -26,5 +26,6 @@ namespace PointOfSale.Models
         public string? TipoFactura { get; set; }
         public string? FacturaCompleta { get; set; }
         public EstadoPago? EstadoPago { get; set; }
+        public bool FacturaPendiente { get; set; }
     }
 }

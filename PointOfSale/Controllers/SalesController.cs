@@ -101,13 +101,13 @@ namespace PointOfSale.Controllers
             var nombreImpresora = string.Empty;
             var ticket = string.Empty;
 
-            GenericResponse<VMSale> gResponse = new GenericResponse<VMSale>();
+            var gResponse = new GenericResponse<VMSale>();
             try
             {
                 ClaimsPrincipal claimuser = HttpContext.User;
 
-                string idUsuario = claimuser.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).Select(c => c.Value).SingleOrDefault();
-                string idTurno = claimuser.Claims.Where(c => c.Type == "Turno").Select(c => c.Value).SingleOrDefault();
+                string idUsuario = claimuser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                string idTurno = claimuser.Claims.FirstOrDefault(c => c.Type == "Turno")?.Value;
 
                 model.IdUsers = int.Parse(idUsuario);
                 model.IdTurno = int.Parse(idTurno);
@@ -132,42 +132,38 @@ namespace PointOfSale.Controllers
 
                 if (model.MultiplesFormaDePago != null && model.MultiplesFormaDePago.Count > 1)
                 {
-                    int count = 0;
-
-                    foreach (var f in model.MultiplesFormaDePago)
+                    foreach (var f in model.MultiplesFormaDePago.Skip(1))
                     {
-                        if (count == 0)
+                        var s = new Sale
                         {
-                            count++;
-                            continue;
-                        }
-
-                        var s = new Sale();
-                        s.Total = f.Total;
-                        s.RegistrationDate = sale_created.RegistrationDate;
-                        s.IdTienda = sale_created.IdTienda;
-                        s.SaleNumber = sale_created.SaleNumber;
-                        s.IdTypeDocumentSale = f.FormaDePago;
-                        s.IdTurno = sale_created.IdTurno;
+                            Total = f.Total,
+                            RegistrationDate = sale_created.RegistrationDate,
+                            IdTienda = sale_created.IdTienda,
+                            SaleNumber = sale_created.SaleNumber,
+                            IdTypeDocumentSale = f.FormaDePago,
+                            IdTurno = sale_created.IdTurno
+                        };
 
                         await _saleService.Register(s);
 
                         var tipoVentaMult = await _typeDocumentSaleService.Get(f.FormaDePago);
 
-                        //if ((int)tipoVentaMult.TipoFactura < 3)
-                        //{
-                        //    var factura = new FacturaAFIP();
-                        //    var facturacionResponse = await _afipFacturacionService.FacturarAsync(factura);
-                        //}
+                        // Si es necesario facturar, se debe hacer aquí
+                        // if ((int)tipoVentaMult.TipoFactura < 3)
+                        // {
+                        //     var factura = new FacturaAFIP();
+                        //     var facturacionResponse = await _afipFacturacionService.FacturarAsync(factura);
+                        // }
                     }
                 }
 
-                //var tipoVenta = await _typeDocumentSaleService.Get(sale_created.IdTypeDocumentSale.Value);
-                //if ((int)tipoVenta.TipoFactura < 3)
-                //{
-                //    var factura = new FacturaAFIP();
-                //    var facturacionResponse = await _afipFacturacionService.FacturarAsync(factura);
-                //}
+                // Si es necesario facturar, se debe hacer aquí
+                // var tipoVenta = await _typeDocumentSaleService.Get(sale_created.IdTypeDocumentSale.Value);
+                // if ((int)tipoVenta.TipoFactura < 3)
+                // {
+                //     var factura = new FacturaAFIP();
+                //     var facturacionResponse = await _afipFacturacionService.FacturarAsync(factura);
+                // }
 
                 model = _mapper.Map<VMSale>(sale_created);
                 model.NombreImpresora = nombreImpresora;
@@ -184,7 +180,6 @@ namespace PointOfSale.Controllers
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
-
 
         [HttpPost]
         public async Task<IActionResult> RegisterNoCierreSale([FromBody] VMSale model)

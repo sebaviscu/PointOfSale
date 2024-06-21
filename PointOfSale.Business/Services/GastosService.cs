@@ -65,6 +65,7 @@ namespace PointOfSale.Business.Services
                 Gastos_found.ModificationDate = DateTimeNowArg;
                 Gastos_found.ModificationUser = entity.ModificationUser;
                 Gastos_found.EstadoPago = entity.EstadoPago;
+                Gastos_found.FacturaPendiente = entity.FacturaPendiente;
 
                 bool response = await _repository.Edit(Gastos_found);
 

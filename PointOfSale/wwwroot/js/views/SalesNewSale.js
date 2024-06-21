@@ -1,11 +1,11 @@
-﻿
-var originalTab = document.getElementById('nuevaVenta');
+﻿var originalTab = document.getElementById('nuevaVenta');
 var AllTabsForSale = [];
 var buttonCerrarTab = '<button class="close" type="button" title="Cerrar tab">×</button>';
 var tabID = 0;
 var formaDePagoID = 0;
 var promociones = [];
 var productSelected = null;
+var formasDePagosList = [];
 
 const ProducstTab = {
     idTab: 0,
@@ -19,9 +19,11 @@ $(document).ready(function () {
             return response.ok ? response.json() : Promise.reject(response);
         }).then(responseJson => {
             $("#cboTypeDocumentSaleParcial").append(
-                $("<option>").val('').text('')
+                //$("<option>").val('').text('')
             )
             if (responseJson.length > 0) {
+                formasDePagosList = responseJson;
+
                 responseJson.forEach((item) => {
                     $("#cboTypeDocumentSaleParcial").append(
                         $("<option>").val(item.idTypeDocumentSale).text(item.description)
@@ -37,7 +39,27 @@ $(document).ready(function () {
             promociones = responseJson.data;
         });
 
+    fetch("/Admin/GetAjustesVentas")
+        .then(response => {
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+            if (responseJson.data != null) {
+
+                document.getElementById('cboImprimirTicket').checked = responseJson.data.imprimirDefault;
+            }
+        })
+
     newTab();
+})
+
+$('#cboTypeDocumentSaleParcial').change(function () {
+    var idFormaDePago = $(this).val();
+    var formaDePago = formasDePagosList.find(_ => _.idTypeDocumentSale == idFormaDePago);
+
+    if (formaDePago != null) {
+        $("#cboFactura").val(formaDePago.tipoFactura);
+    }
+
 })
 
 function formatResults(data) {
@@ -203,34 +225,28 @@ $(document).on("click", "button.btnAddFormaDePago", function () {
     cloneFP.querySelector("#txtTotalParcial").id = "txtTotalParcial" + formaDePagoID;
     cloneFP.querySelector("#cboTypeDocumentSaleParcial").id = "cboTypeDocumentSaleParcial" + formaDePagoID;
     cloneFP.querySelector("#btnAddNuevaFormaDePago").id = "btnAddNuevaFormaDePago" + formaDePagoID;
-    //cloneFP.querySelector("#btnCalcSubTotales").id = "btnCalcSubTotales" + formaDePagoID;
+    cloneFP.querySelector("#cboFactura").id = "cboFactura" + formaDePagoID;
 
     $('#rowDividirPago').append(cloneFP);
-    //$("#btnCalcSubTotales" + formaDePagoID).attr("idformadepago", formaDePagoID);
     $("#txtTotalParcial" + formaDePagoID).val(0);
 
     $("#txtTotalParcial" + formaDePagoID).on("change", function (e) {
-        let result = calcularSuma();
-
-        //if (result < 0) {
-        //    e.currentTarget.classList.add("invalid")
-        //} else {
-        //    e.currentTarget.classList.remove("invalid")
-        //}
+        calcularSuma();
     });
+
+    $('#cboTypeDocumentSaleParcial' + formaDePagoID).change(function () {
+        var idFormaDePago = $(this).val();
+        var formaDePago = formasDePagosList.find(_ => _.idTypeDocumentSale == idFormaDePago);
+
+        if (formaDePago != null) {
+            $("#cboFactura" + formaDePagoID).val(formaDePago.tipoFactura);
+        }
+
+    })
+
     return false;
 
 })
-
-
-//$(document).on("click", "a.calcSubTotales", function (e) {
-//    var idFormaDePago = e.currentTarget.attributes.idformadepago.value;
-//    let subTotal = getSumaSubTotales();
-
-//    let valorParcial = $("#txtTotalParcial" + idFormaDePago).val();
-//    $("#txtTotalParcial" + idFormaDePago).val(parseFloat(subTotal).toFixed(2) + parseFloat(valorParcial).toFixed(2));
-//    calcularSuma();
-//})
 
 function calcularSuma() {
     let subTotal = getSumaSubTotales();
@@ -291,7 +307,7 @@ function getVentaForRegister() {
     const sale = {
         idTypeDocumentSale: $("#cboTypeDocumentSaleParcial").val(),
         clientId: $("#cboCliente" + currentTabId).val() != '' ? $("#cboCliente" + currentTabId).val() : null,
-        total: total.toString(), //total.replace('.', ','),
+        total: total.replace('.', ','), //total.toString(),
         detailSales: vmDetailSale,
         tipoMovimiento: $("#cboCliente" + currentTabId).val() != '' ? 2 : null,
         imprimirTicket: document.querySelector('#cboImprimirTicket').checked,
@@ -591,7 +607,7 @@ function addFunctions(idTab) {
                             text: item.description,
 
                             brand: item.brand,
-                            category: item.nameCategory,
+                            category: item.idCategory,
                             photoBase64: item.photoBase64,
                             price: item.price,
                             tipoVenta: item.tipoVenta
@@ -708,23 +724,23 @@ function agregarProductoEvento(idTab) {
 
 function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
     let totalQuantity = parseFloat(cant) + parseFloat(quantity_product_found);
-    data.total = totalQuantity * parseInt(data.price);
+    data.total = totalQuantity * parseFloat(data.price);
     data.quantity = totalQuantity;
 
-    data = applayPromociones(totalQuantity, data, currentTab);
+    data = applyPromociones(totalQuantity, data, currentTab);
 
     let product = new Producto();
     product.idproduct = data.id;
     product.brandproduct = data.brand;
     product.descriptionproduct = data.text;
-    product.categoryproducty = data.category;
+    product.categoryproduct = data.category;
     product.quantity = data.quantity;
-    product.price = data.price.toString(); // parseFloat(data.price).toFixed(2).replace('.', ',').toString();
+    product.price = data.price.toString();
     product.total = data.total.toString();
 
-    if (data.promocion != null) {
+    if (data.promocion) {
         product.promocion = data.promocion;
-        product.diferenciapromocion = data.diferenciapromocion.toString();
+        product.diferenciapromocion = data.diferenciapromocion.toFixed(2).toString();
     }
 
     currentTab.products.push(product);
@@ -732,152 +748,280 @@ function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
     showProducts_Prices(idTab, currentTab);
     $('#cboSearchProduct' + idTab).val("").trigger('change');
     $('#cboSearchProduct' + idTab).select2('open');
-    $('#txtPeso' + idTab).val('')
+    $('#txtPeso' + idTab).val('');
 }
 
-function applayPromociones(totalQuantity, data, currentTab) {
-    let promPorProducto = promociones.find(item => item.idProducto == data.id);
-
-    if (promPorProducto != null) {
-        if (promPorProducto.idProducto != null && promPorProducto.idCategory.length == 0 && promPorProducto.dias.length == 0) { // producto
-            data = applyForProduct(promPorProducto, totalQuantity, data, currentTab);
-
-        } else if (promPorProducto.idProducto != null && promPorProducto.idCategory.length != 0 && promPorProducto.dias.length == 0) { //producto categoria
-            if (containsCategoria(idCategory, data.idCategory)) {
-                data = applyForProduct(promPorProducto, totalQuantity, data, currentTab);
-            }
-
-        } else if (promPorProducto.idProducto != null && promPorProducto.idCategory.length == 0 && promPorProducto.dias.length != 0) { // producto dia
-            if (containsDias(promPorProducto.dias)) {
-                data = applyForProduct(promPorProducto, totalQuantity, data, currentTab);
-            }
-
-        } else if (promPorProducto.idProducto != null && promPorProducto.idCategory.length != 0 && promPorProducto.dias.length != 0) { // producto categoria dia
-            if (containsDias(promPorProducto.dias) && containsCategoria(idCategory, data.idCategory)) {
-                data = applyForProduct(promPorProducto, totalQuantity, data, currentTab);
-            }
-        }
-    }
-
-    let promPorCat = promociones.find(item => item.idCategory.includes(data.idCategory));
-
-    if (promPorCat != null) {
-        if (promPorCat.idProducto == null && promPorCat.idCategory.length != 0 && promPorCat.dias.length == 0) { // categoria
-            if (containsCategoria(idCategory, data.idCategory)) {
-                data = calcularPrecioPorcentaje(data, promPorCat, totalQuantity);
-                data.promocion = promPorCat.nombre;
-            }
-
-        }
-        if (promPorCat.idProducto == null && promPorCat.idCategory.length != 0 && promPorCat.dias.length != 0) { // categoria dia
-            if (containsDias(promPorCat.dias) && containsCategoria(idCategory, data.idCategory)) {
-                data = calcularPrecioPorcentaje(data, promPorCat, totalQuantity);
-                data.promocion = promPorCat.nombre;
-            }
-        }
-    }
-
+function applyPromociones(totalQuantity, data, currentTab) {
     let currentdate = new Date();
-    let today = currentdate.getDay();
+    let today = currentdate.getDay().toString();
 
-    let promPorDia = promociones.find(item => item.dias.includes(today));
+    let promPorDia = promociones.find(item => item.dias.includes(today) && !item.idProducto && item.idCategory.length === 0);
+    let promPorCat = promociones.find(item => item.idCategory.includes(data.category) && !item.idProducto && (!item.dias.length || item.dias.includes(today)));
+    let promPorProducto = promociones.find(item => parseInt(item.idProducto) === data.id);
 
-    if (promPorDia != null) {
-        if (promPorDia.idProducto == null && promPorDia.idCategory.length == 0 && promPorDia.dias.length != 0) { // dia
-            data = calcularPrecioPorcentaje(data, promPorDia, totalQuantity);
-            data.promocion = promPorDia.nombre;
-        }
+    if (promPorProducto) {
+        data = applyForProduct(promPorProducto, totalQuantity, data, currentTab);
+    } else if (promPorCat) {
+        data = calcularPrecioPorcentaje(data, promPorCat, totalQuantity);
+        data.promocion = promPorCat.nombre;
+    } else if (promPorDia) {
+        data = calcularPrecioPorcentaje(data, promPorDia, totalQuantity);
+        data.promocion = promPorDia.nombre;
     }
 
     return data;
 }
 
 function containsCategoria(cat, catProducto) {
-    if (cat.includes(catProducto))
-        true;
-    false
+    return cat.includes(catProducto);
 }
 
 function containsDias(dias) {
-
-    let currentdate = new Date();
-    let today = currentdate.getDay().toString();
-
-    if (dias.includes(today))
-        true;
-    false
+    let today = new Date().getDay().toString();
+    return dias.includes(today);
 }
 
 function applyForProduct(prom, totalQuantity, data, currentTab) {
-    let applay = false;
+    let apply = false;
 
-    switch (prom.operador) {
-        case 0:
-            if (totalQuantity < prom.cantidadProducto)
-                return data;
+    if (prom.operador === null && prom.precio !== null) {
+        data = calcularPrecioPorcentaje(data, prom, totalQuantity);
+        apply = true;
+    } else if (prom.operador !== null) {
+        switch (prom.operador) {
+            case 0:
+                if (totalQuantity < prom.cantidadProducto) return data;
 
-            let diffDividido = totalQuantity % prom.cantidadProducto;
+                let diffDividido = totalQuantity % prom.cantidadProducto;
 
-            if (diffDividido == 0) {
-                data = calcularPrecioPorcentaje(data, prom, totalQuantity);
-                applay = true;
+                if (diffDividido === 0) {
+                    data = calcularPrecioPorcentaje(data, prom, totalQuantity);
+                    apply = true;
+                } else if (diffDividido > 0) {
+                    let precio = parseFloat(data.price);
+                    if (isNaN(precio)) return data;
 
-            } else if (diffDividido > 0) {
-                var precio = parseFloat(data.price);
+                    let newProd = new Producto();
+                    newProd.idproduct = data.id;
+                    newProd.brandproduct = data.brand;
+                    newProd.descriptionproduct = data.text;
+                    newProd.categoryproduct = data.category;
+                    newProd.quantity = diffDividido;
+                    newProd.price = precio.toFixed(2).toString();
+                    newProd.total = (precio * diffDividido).toFixed(2).toString();
 
-                if (precio === false || precio === "" || isNaN(precio)) return false;
+                    currentTab.products.push(newProd);
 
-                let newProd = new Producto();
-                newProd.idproduct = data.id;
-                newProd.brandproduct = data.brand;
-                newProd.descriptionproduct = data.text;
-                newProd.categoryproducty = data.category;
-                newProd.quantity = diffDividido;
-                newProd.price = precio.toFixed(2).toString();
-                newProd.total = parseFloat(precio * diffDividido).toFixed(2).toString();
+                    let difCant = totalQuantity - diffDividido;
+                    data = calcularPrecioPorcentaje(data, prom, difCant);
+                    apply = true;
+                }
+                break;
 
-                currentTab.products.push(newProd);
-
-                let difCant = totalQuantity - diffDividido;
-                data = calcularPrecioPorcentaje(data, prom, difCant);
-
-                applay = true;
-            }
-
-            break;
-
-        case 1:
-            if (totalQuantity > prom.cantidadProducto) {
-                data = calcularPrecioPorcentaje(data, prom, totalQuantity);
-                applay = true;
-            }
-            break;
+            case 1:
+                if (totalQuantity > prom.cantidadProducto) {
+                    data = calcularPrecioPorcentaje(data, prom, totalQuantity);
+                    apply = true;
+                }
+                break;
+        }
     }
 
-
-    if (applay)
-        data.promocion = prom.nombre;
+    if (apply) data.promocion = prom.nombre;
 
     return data;
 }
 
 function calcularPrecioPorcentaje(data, prom, totalQuantity) {
-    let precio = 0;
+    let precio = prom.precio !== null ? prom.precio : parseFloat(data.price) * (1 - (prom.porcentaje / 100));
 
-    if (prom.precio != null) {
-        precio = prom.precio;
-    }
-    else if (prom.porcentaje != null) {
-        precio = parseFloat(data.price).toFixed(2) * (1 - (prom.porcentaje / 100));
-    }
-
-    data.diferenciapromocion = (parseFloat(data.price).toFixed(2) * totalQuantity) - (precio * totalQuantity);
+    data.diferenciapromocion = (parseFloat(data.price) * totalQuantity) - (precio * totalQuantity);
     data.total = precio * totalQuantity;
     data.price = precio;
     data.quantity = totalQuantity;
 
     return data;
 }
+
+
+//function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
+//    let totalQuantity = parseFloat(cant) + parseFloat(quantity_product_found);
+//    data.total = totalQuantity * parseInt(data.price);
+//    data.quantity = totalQuantity;
+
+//    data = applayPromociones(totalQuantity, data, currentTab);
+
+//    let product = new Producto();
+//    product.idproduct = data.id;
+//    product.brandproduct = data.brand;
+//    product.descriptionproduct = data.text;
+//    product.categoryproducty = data.category;
+//    product.quantity = data.quantity;
+//    product.price = data.price.toString(); // parseFloat(data.price).toFixed(2).replace('.', ',').toString();
+//    product.total = data.total.toString();
+
+//    if (data.promocion != null) {
+//        product.promocion = data.promocion;
+//        product.diferenciapromocion = data.diferenciapromocion.toString();
+//    }
+
+//    currentTab.products.push(product);
+
+//    showProducts_Prices(idTab, currentTab);
+//    $('#cboSearchProduct' + idTab).val("").trigger('change');
+//    $('#cboSearchProduct' + idTab).select2('open');
+//    $('#txtPeso' + idTab).val('')
+//}
+
+//function applayPromociones(totalQuantity, data, currentTab) {
+//    let promPorProducto = promociones.find(item => item.idProducto == data.id);
+
+//    if (promPorProducto != null) {
+//        if (promPorProducto.idProducto != null && promPorProducto.idCategory.length == 0 && promPorProducto.dias.length == 0) { // producto
+//            data = applyForProduct(promPorProducto, totalQuantity, data, currentTab);
+
+//        } else if (promPorProducto.idProducto != null && promPorProducto.idCategory.length != 0 && promPorProducto.dias.length == 0) { //producto categoria
+//            if (containsCategoria(idCategory, data.category)) {
+//                data = applyForProduct(promPorProducto, totalQuantity, data, currentTab);
+//            }
+
+//        } else if (promPorProducto.idProducto != null && promPorProducto.idCategory.length == 0 && promPorProducto.dias.length != 0) { // producto dia
+//            if (containsDias(promPorProducto.dias)) {
+//                data = applyForProduct(promPorProducto, totalQuantity, data, currentTab);
+//            }
+
+//        } else if (promPorProducto.idProducto != null && promPorProducto.idCategory.length != 0 && promPorProducto.dias.length != 0) { // producto categoria dia
+//            if (containsDias(promPorProducto.dias) && containsCategoria(idCategory, data.category)) {
+//                data = applyForProduct(promPorProducto, totalQuantity, data, currentTab);
+//            }
+//        }
+//        return data;
+//    }
+
+//    let promPorCat = promociones.find(item => item.idCategory.includes(data.category));
+
+//    if (promPorCat != null) {
+//        if (promPorCat.idProducto == null && promPorCat.idCategory.length != 0 && promPorCat.dias.length == 0) { // categoria
+//            if (promPorCat.idCategory.includes(data.category)) {
+//                data = calcularPrecioPorcentaje(data, promPorCat, totalQuantity);
+//                data.promocion = promPorCat.nombre;
+//            }
+
+//        }
+//        if (promPorCat.idProducto == null && promPorCat.idCategory.length != 0 && promPorCat.dias.length != 0) { // categoria dia
+//            if (containsDias(promPorCat.dias) && promPorCat.idCategory.includes(data.category)) {
+//                data = calcularPrecioPorcentaje(data, promPorCat, totalQuantity);
+//                data.promocion = promPorCat.nombre;
+//            }
+//        }
+//    }
+
+//    let currentdate = new Date();
+//    let today = currentdate.getDay();
+
+//    let promPorDia = promociones.find(item => item.dias.includes(today));
+
+//    if (promPorDia != null) {
+//        if (promPorDia.idProducto == null && promPorDia.idCategory.length == 0 && promPorDia.dias.length != 0) { // dia
+//            data = calcularPrecioPorcentaje(data, promPorDia, totalQuantity);
+//            data.promocion = promPorDia.nombre;
+//        }
+//    }
+
+//    return data;
+//}
+
+//function containsCategoria(cat, catProducto) {
+//    if (cat.includes(catProducto))
+//        true;
+//    false
+//}
+
+//function containsDias(dias) {
+
+//    let currentdate = new Date();
+//    let today = currentdate.getDay().toString();
+
+//    if (dias.includes(today))
+//        true;
+//    false
+//}
+
+//function applyForProduct(prom, totalQuantity, data, currentTab) {
+//    let applay = false;
+
+//    if (prom.operador == null && prom.precio != null) {
+//        data = calcularPrecioPorcentaje(data, prom, totalQuantity);
+//        applay = true;
+
+//    } else {
+//        switch (prom.operador) {
+//            case 0:
+//                if (totalQuantity < prom.cantidadProducto)
+//                    return data;
+
+//                let diffDividido = totalQuantity % prom.cantidadProducto;
+
+//                if (diffDividido == 0) {
+//                    data = calcularPrecioPorcentaje(data, prom, totalQuantity);
+//                    applay = true;
+
+//                } else if (diffDividido > 0) {
+//                    var precio = parseFloat(data.price);
+
+//                    if (precio === false || precio === "" || isNaN(precio)) return false;
+
+//                    let newProd = new Producto();
+//                    newProd.idproduct = data.id;
+//                    newProd.brandproduct = data.brand;
+//                    newProd.descriptionproduct = data.text;
+//                    newProd.categoryproducty = data.category;
+//                    newProd.quantity = diffDividido;
+//                    newProd.price = precio.toFixed(2).toString();
+//                    newProd.total = parseFloat(precio * diffDividido).toFixed(2).toString();
+
+//                    currentTab.products.push(newProd);
+
+//                    let difCant = totalQuantity - diffDividido;
+//                    data = calcularPrecioPorcentaje(data, prom, difCant);
+
+//                    applay = true;
+//                }
+
+//                break;
+
+//            case 1:
+//                if (totalQuantity > prom.cantidadProducto) {
+//                    data = calcularPrecioPorcentaje(data, prom, totalQuantity);
+//                    applay = true;
+//                }
+//                break;
+//        }
+//    }
+
+//    if (applay)
+//        data.promocion = prom.nombre;
+
+//    return data;
+//}
+
+//function calcularPrecioPorcentaje(data, prom, totalQuantity) {
+//    let precio = 0;
+
+//    if (prom.precio != null) {
+//        precio = prom.precio;
+//    }
+//    else if (prom.porcentaje != null) {
+//        precio = parseFloat(data.price).toFixed(2) * (1 - (prom.porcentaje / 100));
+//    }
+
+//    data.diferenciapromocion = (parseFloat(data.price).toFixed(2) * totalQuantity) - (precio * totalQuantity);
+//    data.total = precio * totalQuantity;
+//    data.price = precio;
+//    data.quantity = totalQuantity;
+
+//    return data;
+//}
 
 function lastTab() {
     var tabFirst = $('#tab-list button:last');
@@ -959,6 +1103,25 @@ async function printTicket(nombreImpresora, ticketContent) {
         console.error('Error:', error);
         alert('Error al inicializar la impresión');
     }
+}
+
+function validateCode(userCode) {
+
+    fetch(`/Admin/ValidateSecurityCode?encryptedCode=${userCode}`, {
+        method: 'POST'
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.valid) {
+                alert('Código válido');
+            } else {
+                alert('Código inválido');
+            }
+        })
+        .catch(error => {
+            console.error('Error en la validación:', error);
+            alert('Error en la validación');
+        });
 }
 
 class Producto {

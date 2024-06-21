@@ -27,6 +27,7 @@ namespace PointOfSale.Model
         public string? ModificationUser { get; set; }
         public int IdTienda { get; set; }
         public EstadoPago? EstadoPago { get; set; }
+        public bool FacturaPendiente { get; set; }
 
     }
 }

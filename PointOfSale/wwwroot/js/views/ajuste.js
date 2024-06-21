@@ -17,7 +17,9 @@
     instagram: "",
     twitter: "",
     tiktok: "",
-    youtube: ""
+    youtube: "",
+    codigoSeguridad: "",
+    imprimirDefault: null
 }
 
 
@@ -54,6 +56,9 @@ $(document).ready(function () {
                 $("#txtTwitter").val(model.twitter);
                 $("#txtYouTube").val(model.youtube);
 
+                $("#txtCodigoSeguridad").val(model.codigoSeguridad);
+                document.getElementById('switchImprimirDefault').checked = model.imprimirDefault;
+
                 if (model.modificationUser === null)
                     document.getElementById("divModif").style.display = 'none';
                 else {
@@ -63,11 +68,24 @@ $(document).ready(function () {
                     $("#txtModificado").val(dateTimeModif.toLocaleString());
                     $("#txtModificadoUsuario").val(model.modificationUser);
                 }
-
-
             }
         })
 
+    var $passwordInput = $('#txtCodigoSeguridad');
+    var $togglePasswordButton = $('#togglePassword');
+
+    $togglePasswordButton.on('mousedown', function () {
+        $passwordInput.attr('type', 'text');
+    });
+
+    $togglePasswordButton.on('mouseup mouseleave', function () {
+        $passwordInput.attr('type', 'password');
+    });
+
+    // Evitar que el botón reciba el foco
+    $togglePasswordButton.on('click', function (e) {
+        e.preventDefault();
+    });
 })
 
 $("#btnSave").on("click", function () {
@@ -95,6 +113,11 @@ $("#btnSave").on("click", function () {
     model["tiktok"] = $("#txtTikTok").val();
     model["twitter"] = $("#txtTwitter").val();
     model["youtube"] = $("#txtYouTube").val();
+
+    const checkboxSwitchImprimirDefault = document.getElementById('switchImprimirDefault');
+    model["imprimirDefault"] = checkboxSwitchImprimirDefault.checked;
+
+    model["codigoSeguridad"] = $("#txtCodigoSeguridad").val();
 
     fetch("/Admin/UpdateAjuste", {
         method: "PUT",

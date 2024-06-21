@@ -165,7 +165,7 @@ $(document).ready(function () {
             }
         })
 
-    fetch("/Admin/GetAjustes")
+    fetch("/Admin/GetAjustesProductos")
         .then(response => {
             return response.ok ? response.json() : Promise.reject(response);
         }).then(responseJson => {
@@ -784,28 +784,32 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
 })
 
 
-function calcularPrecio(id) {
+function calcularPrecio() {
+
+    let ids = ["", "2", "3"];
 
     let iva = $("#txtIva").val();
     let costo = $("#txtCosto").val();
-    let profit = $("#txtProfit" + id).val();
 
-    iva = iva == '' ? 0 : iva;
+    iva = iva === '' ? 0 : parseFloat(iva);
 
-    if (costo !== '' && profit !== '') {
-        costo = costo * (1 + (iva / 100));
-        var precio = parseFloat(costo) * (1 + (parseFloat(profit) / 100));
-        $("#txtPrice" + id).val(precio);
+    if (costo !== '') {
+        costo = parseFloat(costo) * (1 + (iva / 100));
+
+        ids.forEach(id => {
+            let profit = $("#txtProfit" + id).val();
+
+            if (profit !== '') {
+                let precio = costo * (1 + (parseFloat(profit) / 100));
+                $("#txtPrice" + id).val(precio.toFixed(2)); // Formateo a dos decimales
+            }
+        });
     }
-}
 
-
-function calcularPrecioWeb() {
-
-    var iva = $("#txtIva").val();
+    //var iva = $("#txtIva").val();
     var aumento = $("#txtAumento").val();
     var precio = $("#txtPrice").val();
-    iva = iva == '' ? 0 : iva;
+    //iva = iva == '' ? 0 : iva;
 
     if (aumento !== '' && precio !== '') {
         precio = parseFloat(precio) * (1 + (iva / 100));

@@ -234,13 +234,13 @@ $("#printTicket").click(function () {
 
 async function pruebaImpresion() {
 
-    //connetor_plugin.obtenerImpresoras()
-    //    .then(impresoras => {
-    //        console.log(impresoras)
-    //    });
+    connetor_plugin.obtenerImpresoras()
+        .then(impresoras => {
+            console.log(impresoras)
+        });
 
-    let nombreImpresora = "XP-58";
-    let api_key = "12345"
+    let nombreImpresora = "XP-58 (copy 1)";
+    let api_key = "123456"
 
 
     const conector = new connetor_plugin()
@@ -261,7 +261,7 @@ async function pruebaImpresion() {
     conector.fontsize("2")
     conector.textaling("center")
     conector.text("Total: $275")
-    conector.qr("https://abrazasoft.com")
+    //conector.qr("https://abrazasoft.com")
     conector.feed("5")
     //conector.cut("0")
 

@@ -275,6 +275,10 @@ function SetGraficoVentas(d) {
 
 function SetTopSeler(typeValues, idCategory) {
 
+    if (idCategory == null) {
+        idCategory = "Todo";
+    }
+
     const tableBody = document.querySelector("#tableTopSeller");
     tableBody.innerHTML = ''
     $("#chartTopSeller").LoadingOverlay("show")
@@ -693,6 +697,7 @@ $("#btnSavePagoProveedor").on("click", function () {
         model["ivaImporte"] = $("#txtImporteIva").val() != '' ? $("#txtImporteIva").val() : 0;
         model["importeSinIva"] = $("#txtImporteSinIva").val() != '' ? $("#txtImporteSinIva").val() : 0;
         model["estadoPago"] = parseInt($("#cboEstado").val());
+        model["facturaPendiente"] = document.querySelector('#cbxFacturaPendiente').checked;
     }
     else { // proveedor
         url = "/Admin/RegistrarPagoProveedor";

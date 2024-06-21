@@ -45,7 +45,8 @@ namespace PointOfSale.Business.Services
         public async Task<List<Product>> List()
         {
             IQueryable<Product> query = await _repository.Query();
-            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).OrderBy(_ => _.Description).Take(3).ToList();
+            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).OrderBy(_ => _.Description).ToList();
+            //return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).OrderBy(_ => _.Description).Take(3).ToList();
         }
 
         public async Task<List<Product>> ListActive()
@@ -171,7 +172,7 @@ namespace PointOfSale.Business.Services
 
                 if (entity.Photo != null && entity.Photo.Length > 0)
                     product_edit.Photo = entity.Photo;
-                else if(entity.Photo.Length == 0l && product_edit.Photo.Length == 0)
+                else if((entity.Photo == null || entity.Photo.Length == 0) && (product_edit.Photo == null || product_edit.Photo.Length == 0))
                 {
                     product_edit.Photo = GetDefaultImage();
                 }

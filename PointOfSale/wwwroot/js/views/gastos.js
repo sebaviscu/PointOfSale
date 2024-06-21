@@ -56,6 +56,11 @@ $(document).ready(function () {
 
     tableData = $("#tbData").DataTable({
         responsive: true,
+        "rowCallback": function (row, data) {
+            if (data.facturaPendiente == 1) {
+                $('td:eq(2)', row).addClass('factura-pendiente');
+            }
+        },
         "ajax": {
             "url": "/Gastos/GetGastos",
             "type": "GET",
@@ -178,6 +183,7 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtImporteSinIva").val(model.importeSinIva);
     $("#txtComentario").val(model.comentario);
     $("#cboEstado").val(model.estadoPago);
+    document.getElementById("cbxFacturaPendiente").checked = model.facturaPendiente;
 
     if (model.modificationDate === null)
         document.getElementById("divModif").style.display = 'none';
@@ -225,6 +231,7 @@ $("#btnSave").on("click", function () {
     model["ivaImporte"] = $("#txtImporteIva").val() != '' ? $("#txtImporteIva").val() : 0;
     model["importeSinIva"] = $("#txtImporteSinIva").val() != '' ? $("#txtImporteSinIva").val() : 0;
     model["estadoPago"] = parseInt($("#cboEstado").val());
+    model["facturaPendiente"] = document.querySelector('#cbxFacturaPendiente').checked;
 
     $("#modalData").find("div.modal-content").LoadingOverlay("show")
 

@@ -148,6 +148,11 @@ $("#btnSave").on("click", function () {
     model["idVentaWeb"] = parseInt($("#txtId").val());
     model["estado"] = parseInt($("#cboState").val());
 
+    if (model.estado == 1 && isNaN(model.idTienda)) {
+        $('#cboTienda').focus();
+        toastr.warning(`Debe seleccionar una Tienda para poder finalizar una Venta Web`, "");
+        return;
+    }
 
     $("#modalData").find("div.modal-content").LoadingOverlay("show")
 

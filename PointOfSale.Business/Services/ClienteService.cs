@@ -102,10 +102,12 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task<ClienteMovimiento> RegistrarMovimiento(int idCliente, decimal total, string registrationUser,int idTienda, int? idSale, TipoMovimientoCliente tipo)
+        public async Task<ClienteMovimiento> RegistrarMovimiento(int idCliente, decimal total, string registrationUser, int idTienda, int? idSale, TipoMovimientoCliente tipo)
         {
-            var mc = new ClienteMovimiento(idCliente, total, registrationUser, idTienda, idSale);
-            mc.TipoMovimiento = tipo;
+            var mc = new ClienteMovimiento(idCliente, total, registrationUser, idTienda, idSale)
+            {
+                TipoMovimiento = tipo
+            };
             return await _clienteMovimiento.Add(mc);
         }
 

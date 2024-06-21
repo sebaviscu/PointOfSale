@@ -25,51 +25,47 @@ namespace PointOfSale.Data.Repository
 
         public async Task<Sale> Register(Sale entity)
         {
-            Sale SaleGenerated = new Sale();
-            using (var transaction = _dbcontext.Database.BeginTransaction())
+            try
             {
-                try
+                var productIds = entity.DetailSales.Select(dv => dv.IdProduct).ToList();
+                var products = await _dbcontext.Products
+                    .Include(p => p.IdCategoryNavigation)
+                    .Include(p => p.Proveedor)
+                    .Where(p => productIds.Contains(p.IdProduct))
+                    .ToListAsync();
+
+                foreach (DetailSale dv in entity.DetailSales)
                 {
-                    foreach (DetailSale dv in entity.DetailSales)
-                    {
-                        Product product_found = _dbcontext.Products.Include(_ => _.IdCategoryNavigation).Include(_ => _.Proveedor).Where(p => p.IdProduct == dv.IdProduct).First();
-                        ControlStock(dv, product_found);
+                    var product_found = products.First(p => p.IdProduct == dv.IdProduct);
+                    ControlStock(dv, product_found);
 
-                        dv.TipoVenta = product_found.TipoVenta;
-                        dv.CategoryProducty = product_found.IdCategoryNavigation.Description;
-
-                    }
-                    await _dbcontext.SaveChangesAsync();
-
-                    if (string.IsNullOrEmpty(entity.SaleNumber)) // cuando es multiple formas de pago
-                    {
-                        entity.SaleNumber = await GetLastSerialNumberSale();
-                    }
-                    entity.RegistrationDate = DateTimeNowArg;
-
-                    await _dbcontext.Sales.AddAsync(entity);
-                    await _dbcontext.SaveChangesAsync();
-
-                    SaleGenerated = entity;
-
-                    transaction.Commit();
+                    dv.TipoVenta = product_found.TipoVenta;
+                    dv.CategoryProducty = product_found.IdCategoryNavigation.Description;
                 }
-                catch (Exception ex)
+
+                if (string.IsNullOrEmpty(entity.SaleNumber)) // cuando es multiple formas de pago
                 {
-                    transaction.Rollback();
-                    throw;
+                    entity.SaleNumber = await GetLastSerialNumberSale();
                 }
+                entity.RegistrationDate = DateTimeNowArg;
+
+                await _dbcontext.Sales.AddAsync(entity);
+                await _dbcontext.SaveChangesAsync();
+
+                return entity;
             }
-
-            return SaleGenerated;
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        private bool ControlStock(DetailSale dv, Product p)
+
+        private void ControlStock(DetailSale dv, Product p)
         {
-            var alertaStock = false;
             if (p.Minimo != null && p.Minimo > 0)
             {
-                p.Quantity = p.Quantity - dv.Quantity;
+                p.Quantity -= dv.Quantity;
                 if (p.Quantity < 0)
                 {
                     p.Quantity = 0;
@@ -81,8 +77,6 @@ namespace PointOfSale.Data.Repository
                 }
                 _dbcontext.Products.Update(p);
             }
-
-            return alertaStock;
         }
 
         public async Task<string> GetLastSerialNumberSale()
