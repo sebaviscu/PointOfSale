@@ -83,7 +83,7 @@ namespace PointOfSale.Controllers
             switch (typeValues)
             {
                 case TypeValuesDashboard.Dia:
-                    dateCompare = dateActual;
+                    dateCompare = dateActual.AddDays(-1);
                     vmDashboard.Actual = "Hoy";
                     vmDashboard.Anterior = "Ayer";
                     vmDashboard.EjeXLeyenda = "Horas";
@@ -93,7 +93,7 @@ namespace PointOfSale.Controllers
                 case TypeValuesDashboard.Semana:
                     ejeXint = new int[7];
                     ejeX = new string[7];
-                    dateCompare = dateActual.AddDays(-(6 + (int)dateActual.DayOfWeek));
+                    dateCompare = dateActual.AddDays(-7);
 
                     for (int i = 0; i < 7; i++)
                     {
@@ -105,8 +105,7 @@ namespace PointOfSale.Controllers
                     vmDashboard.Anterior = "Semana pasada";
                     vmDashboard.EjeXLeyenda = "Dias";
 
-                    var weekInt = (int)dateActual.DayOfWeek != 0 ? (int)dateActual.DayOfWeek : 7; // si es domingo, hay problemas
-
+                    var weekInt = (int)dateActual.DayOfWeek != 0 ? (int)dateActual.DayOfWeek : 7;
                     var fechaString = dateActual.AddDays(-(weekInt - 1));
 
                     textoFiltroDiaSemanaMes = $"{fechaString.ToShortDateString()} - {fechaString.AddDays(6).ToShortDateString()}";
@@ -116,7 +115,7 @@ namespace PointOfSale.Controllers
                     var cantDaysInMonth = DateTime.DaysInMonth(dateActual.Date.Year, dateActual.Date.Month);
                     ejeXint = new int[cantDaysInMonth];
                     ejeX = new string[cantDaysInMonth];
-                    dateCompare = new DateTime(dateActual.Year, dateActual.Month, 1);
+                    dateCompare = dateActual.AddMonths(-1);
 
                     for (int i = 0; i < cantDaysInMonth; i++)
                     {
@@ -136,7 +135,6 @@ namespace PointOfSale.Controllers
                     break;
             }
 
-
             GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
 
             try
@@ -144,111 +142,33 @@ namespace PointOfSale.Controllers
                 List<VMSalesWeek> listSales = new List<VMSalesWeek>();
                 List<VMSalesWeek> listSalesComparacion = new List<VMSalesWeek>();
 
-
-                int i = 0;
                 var resultados = await _dashboardService.GetSales(typeValues, user.IdTienda, dateActual);
-
 
                 switch (typeValues)
                 {
                     case TypeValuesDashboard.Dia:
-                        var firstComp = resultados.VentasComparacionHour.FirstOrDefault().Key;
-                        var firstVenta = resultados.VentasActualesHour.Count() > 0 ? resultados.VentasActualesHour.FirstOrDefault().Key : firstComp;
-                        if (firstComp == 0) firstComp = firstVenta;
-                        if (firstVenta == 0) firstVenta = firstComp;
-
-                        var first = Math.Min(firstComp, firstVenta);
-
-                        var lastComp = resultados.VentasComparacionHour.LastOrDefault().Key;
-                        var lastVenta = resultados.VentasActualesHour.Count() > 0 ? resultados.VentasActualesHour.LastOrDefault().Key : lastComp;
-                        if (lastComp == 0) lastComp = lastVenta;
-                        if (lastVenta == 0) lastVenta = lastComp;
-
-                        var last = Math.Max(lastComp, lastVenta);
-
-                        if (dateFilter != null)
-                        {
-                            first = 0;
-                            last = 23;
-                        }
-
-                        ejeXint = new int[(last - first) + 1];
-                        ejeX = new string[(last - first) + 1];
-
-                        for (i = 0; i < (last - first) + 1; i++)
-                        {
-                            ejeXint[i] = (i + first);
-                            ejeX[i] = (i + first).ToString();
-                        }
-                        i = 0;
-
-                        foreach (KeyValuePair<int, decimal> item in resultados.VentasActualesHour)
-                        {
-                            while ((int)item.Key > ejeXint[i])
-                            {
-                                listSales.Add(new VMSalesWeek() { Total = 0m });
-                                i++;
-                            }
-
-                            listSales.Add(new VMSalesWeek() { Total = item.Value });
-
-                            i++;
-                        }
-
-                        listSalesComparacion.AddRange(GetSalesComparacionHour(ejeXint, dateCompare, resultados));
-
+                        listSales = resultados.VentasActualesHour.Select(v => new VMSalesWeek { Total = v.Value }).ToList();
+                        listSalesComparacion = resultados.VentasComparacionHour.Select(v => new VMSalesWeek { Total = v.Value }).ToList();
                         break;
+
                     case TypeValuesDashboard.Semana:
-                        var fechaInicio = dateCompare.AddDays(7);
-                        if (dateFilter != null)
-                        {
-                            fechaInicio = dateCompare;
-                            dateCompare = dateCompare.AddDays(-7);
-                        }
-                        listSales.AddRange(GetSalesComparacionWeek(fechaInicio, resultados.VentasActuales, dateFilter != null));
-                        listSalesComparacion.AddRange(GetSalesComparacionWeek(dateCompare, resultados.VentasComparacion, true));
-
+                        listSales = GetSalesComparacionWeek(dateActual.AddDays(-6), resultados.VentasActuales, dateFilter != null);
+                        listSalesComparacion = GetSalesComparacionWeek(dateCompare.AddDays(-6), resultados.VentasComparacion, true);
                         break;
+
                     case TypeValuesDashboard.Mes:
-                        foreach (KeyValuePair<DateTime, decimal> item in resultados.VentasActuales)
-                        {
-                            while (item.Key.Date > dateCompare.AddDays(ejeXint[i]))
-                            {
-                                listSales.Add(new VMSalesWeek() { Total = 0m });
-                                i++;
-                            }
-
-                            listSales.Add(new VMSalesWeek() { Total = item.Value });
-
-                            i++;
-                        }
-                        listSalesComparacion.AddRange(GetSalesComparacionMonth(ejeXint, dateCompare, resultados));
-
-                        if (dateFilter != null)
-                        {
-                            while (listSales.Count != listSalesComparacion.Count)
-                            {
-                                listSales.Add(new VMSalesWeek() { Total = 0m });
-                            }
-                        }
-
+                        listSales = GetSalesComparacionMonth(dateActual, resultados.VentasActuales);
+                        listSalesComparacion = GetSalesComparacionMonth(dateCompare, resultados.VentasComparacion);
                         break;
                 }
 
-
-                var gananciaBruta = listSales.Sum(_ => _.Total);
-                //var gastosTotales = gastosProvTotales + totGastosParticualres + totGastosSueldos;
-
                 vmDashboard.TextoFiltroDiaSemanaMes = textoFiltroDiaSemanaMes;
-
                 vmDashboard.EjeX = ejeX;
                 vmDashboard.SalesList = listSales.Select(_ => (int)_.Total).ToList();
                 vmDashboard.SalesListComparacion = listSalesComparacion.Select(_ => (int)_.Total).ToList();
                 vmDashboard.TotalSales = listSales.Sum(_ => _.Total).ToString("F0");
                 vmDashboard.TotalSalesComparacion = "$ " + listSalesComparacion.Sum(_ => _.Total).ToString("F0");
-                //vmDashboard.GastosTotales = "$ " + gastosTotales.ToString("F0");
                 vmDashboard.CantidadClientes = resultados.CantidadClientes;
-                //vmDashboard.Ganancia = "$ " + (gananciaBruta - gastosTotales).ToString("F0");
 
                 gResponse.State = true;
                 gResponse.Object = vmDashboard;
@@ -414,43 +334,30 @@ namespace PointOfSale.Controllers
 
         public DateTime SetDate(TypeValuesDashboard typeValues, string dateFilter)
         {
-            var dateActual = DateTimeNowArg;
+            var dateActual = DateTime.Now;
 
-            if (dateFilter != null)
+            if (!string.IsNullOrEmpty(dateFilter))
             {
                 var dateSplit = dateFilter.Split('/');
-                dateActual = new DateTime(Convert.ToInt32(dateSplit[2]), Convert.ToInt32(dateSplit[1]), Convert.ToInt32(dateSplit[0]), 0, 0, 0);
+                dateActual = new DateTime(Convert.ToInt32(dateSplit[2]), Convert.ToInt32(dateSplit[1]), Convert.ToInt32(dateSplit[0]));
+
                 switch (typeValues)
                 {
                     case TypeValuesDashboard.Dia:
-                        dateActual = dateActual.AddHours(23).AddMinutes(59).AddSeconds(59);
+                        dateActual = dateActual.Date;
                         break;
                     case TypeValuesDashboard.Semana:
-                        var weekNumber = (int)dateActual.DayOfWeek == 0 ? 7 : (int)dateActual.DayOfWeek;
-
-                        if (weekNumber < 7)
-                        {
-                            var diff = 7 - weekNumber;
-                            dateActual = dateActual.AddDays(diff);
-                        }
+                        dateActual = dateActual.AddDays(-(int)dateActual.DayOfWeek);
                         break;
                     case TypeValuesDashboard.Mes:
-                        var monthNumber = dateActual.Day;
-                        var daysInMonth = DateTime.DaysInMonth(dateActual.Year, dateActual.Month);
-
-                        if (monthNumber < daysInMonth)
-                        {
-                            var diff = daysInMonth - monthNumber;
-                            dateActual = dateActual.AddDays(diff);
-                        }
-                        break;
-                    default:
+                        dateActual = new DateTime(dateActual.Year, dateActual.Month, 1);
                         break;
                 }
             }
 
             return dateActual;
         }
+
 
         [HttpGet]
         public async Task<IActionResult> GetSalesByTypoVenta(TypeValuesDashboard typeValues, string idCategoria, string dateFilter)
@@ -489,7 +396,17 @@ namespace PointOfSale.Controllers
         {
             var lis = new List<VMSalesWeek>();
             var fechaInicioSemana = fechaInicio.Date;
-            var diasSemana = semanaCompleta ? 7 : (int)DateTime.Today.Subtract(fechaInicioSemana).TotalDays + 1;
+            var hoy = DateTime.Today.Date;
+
+            int diasSemana;
+            if (semanaCompleta)
+            {
+                diasSemana = 7;
+            }
+            else
+            {
+                diasSemana = (int)(hoy - fechaInicioSemana).TotalDays + 1;
+            }
 
             for (var i = 0; i < diasSemana; i++)
             {
@@ -507,24 +424,29 @@ namespace PointOfSale.Controllers
             return lis;
         }
 
-        private static List<VMSalesWeek> GetSalesComparacionMonth(int[] ejeXint, DateTime dateCompare, GraficoVentasConComparacion resultados)
+
+
+        private static List<VMSalesWeek> GetSalesComparacionMonth(DateTime dateStart, Dictionary<DateTime, decimal> resultados)
         {
             var lis = new List<VMSalesWeek>();
-            for (int x = 0; x < ejeXint.Length; x++)
-            {
+            var cantDaysInMonth = DateTime.DaysInMonth(dateStart.Year, dateStart.Month);
 
-                var item = resultados.VentasComparacion.FirstOrDefault(_ => _.Key.Date.Day == dateCompare.AddDays(ejeXint[x]).Day);
-                if (item.Value == 0)
+            for (var i = 0; i < cantDaysInMonth; i++)
+            {
+                var fechaActual = new DateTime(dateStart.Year, dateStart.Month, i + 1);
+                if (resultados.TryGetValue(fechaActual, out decimal valor))
                 {
-                    lis.Add(new VMSalesWeek() { Total = 0m });
+                    lis.Add(new VMSalesWeek { Total = valor });
                 }
                 else
                 {
-                    lis.Add(new VMSalesWeek() { Total = item.Value });
+                    lis.Add(new VMSalesWeek { Total = 0m });
                 }
             }
+
             return lis;
         }
+
 
         private static List<VMSalesWeek> GetSalesComparacionHour(int[] ejeXint, DateTime dateCompare, GraficoVentasConComparacion resultados)
         {
