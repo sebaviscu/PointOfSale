@@ -9,6 +9,8 @@ namespace PointOfSale.Business.Utilities
 {
     public class PrinterModel
     {
+        public static DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
+
         // Structure and API declarions:
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
         public class DOCINFOA
@@ -52,7 +54,7 @@ namespace PointOfSale.Business.Utilities
             DOCINFOA di = new DOCINFOA();
             bool bSuccess = false; // Assume failure unless you specifically succeed.
 
-            di.pDocName = "Ticket " + DateTime.Now.ToString();
+            di.pDocName = "Ticket " + DateTimeNowArg.ToString();
             di.pDataType = "RAW";
             // di.pOutputFile = @"C:\Users\Roland\Documents\Visual Studio 2015\Projects\pjtVentas\Ventas";
 

@@ -415,9 +415,9 @@ namespace PointOfSale.Business.Services
         public async Task<List<Product>> GetRandomProducts()
         {
             var prods = await ListActive();
-
-            return prods.Take(8).ToList();
-
+            Random random = new Random();
+            var randomProds = prods.OrderBy(x => random.Next()).Take(8).ToList();
+            return randomProds;
         }
 
         public async Task<List<Product>> GetProductsByIdsActive(List<int> listIds, ListaDePrecio listaPrecios)
@@ -536,8 +536,6 @@ namespace PointOfSale.Business.Services
 
             }
         }
-
-
 
         public async Task<bool> DeleteVencimiento(int idVencimiento)
         {

@@ -205,21 +205,6 @@ function removeLoading() {
 };
 
 
-async function listaImpresoras() {
-
-    fetch('http://localhost:4567/getprinters')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(printers => console.log(printers))
-        .catch(error => console.error('Error:', error));
-
-}
-
-
 async function printTicket(nombreImpresora, ticketContent) {
 
     try {

@@ -19,6 +19,8 @@ namespace PointOfSale.Controllers
     [Authorize]
     public class AdminController : BaseController
     {
+        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
+
         private readonly IUserService _userService;
         private readonly IRolService _rolService;
         private readonly IDashBoardService _dashboardService;
@@ -334,7 +336,7 @@ namespace PointOfSale.Controllers
 
         public DateTime SetDate(TypeValuesDashboard typeValues, string dateFilter)
         {
-            var dateActual = DateTime.Now;
+            var dateActual = DateTimeNowArg;
 
             if (!string.IsNullOrEmpty(dateFilter))
             {

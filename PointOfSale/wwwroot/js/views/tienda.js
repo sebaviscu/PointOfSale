@@ -70,18 +70,21 @@ $(document).ready(function () {
         $("<option>").val('').text('')
     )
 
-    connetor_plugin.obtenerImpresoras()
-        .then(impresoras => {
-
-            if (impresoras.length > 0) {
-                impresoras.forEach((item) => {
-                    $("#cboNombreTienda").append(
-                        $("<option>").val(item).text(item)
-                    )
-                });
-
+    fetch('http://localhost:4567/getprinters')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
+            return response.json();
+        })
+        .then(r => {
+            r.printers.forEach((item) => {
+                $("#cboNombreTienda").append(
+                    $("<option>").val(item).text(item)
+                )
+            })
         });
+
 })
 
 const openModal = (model = BASIC_MODEL) => {

@@ -139,10 +139,6 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                // Registrar el error (asumiendo que tienes un logger configurado)
-                //_logger.LogError(ex, "Error al obtener los productos");
-
-                // Retornar una respuesta de error
                 return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Se produjo un error al obtener los productos." });
             }
         }
@@ -160,10 +156,6 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                // Registrar el error (asumiendo que tienes un logger configurado)
-                //_logger.LogError(ex, "Error al obtener los productos");
-
-                // Retornar una respuesta de error
                 return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Se produjo un error al obtener los productos." });
             }
         }
@@ -377,7 +369,7 @@ namespace PointOfSale.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> ImprimirTickets([FromBody] VMImprimirPrecios model)
+        public async Task<IActionResult> ImprimirListaPrecios([FromBody] VMImprimirPrecios model)
         {
             try
             {

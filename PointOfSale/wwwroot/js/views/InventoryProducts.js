@@ -859,7 +859,7 @@ $("#btnImprimir").on("click", function () {
 
     showLoading();
     $("#modalDataImprimirPrecios").modal("hide");
-    fetch("/Inventory/ImprimirTickets", {
+    fetch("/Inventory/ImprimirListaPrecios", {
         method: "POST",
         headers: { 'Content-Type': 'application/json;charset=utf-8' },
         body: JSON.stringify(model)

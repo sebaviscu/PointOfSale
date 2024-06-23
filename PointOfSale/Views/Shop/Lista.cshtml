@@ -33,7 +33,7 @@
 
 <html lang="es">
 <head>
-    <title>OLIVA - Mercado Natural</title>
+    <title>@Model.Ajustes.Nombre</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -132,14 +132,12 @@
                                 {
                                     <li class="ftco-animate"><a href="https://twitter.com/@Model.Ajustes.Twitter" target=”_blank”><span class="icon-twitter"></span></a></li>
                                 }
-                            }
-                            @{
+
                                 if (!string.IsNullOrWhiteSpace(@Model.Ajustes.Facebook))
                                 {
                                     <li class="ftco-animate"><a href="https://www.facebook.com/@Model.Ajustes.Facebook" target=”_blank”><span class="icon-facebook"></span></a></li>
                                 }
-                            }
-                            @{
+
                                 if (!string.IsNullOrWhiteSpace(@Model.Ajustes.Instagram))
                                 {
                                     <li class="ftco-animate"><a href="https://www.instagram.com/@Model.Ajustes.Instagram" target=”_blank”><span class="icon-instagram"></span></a></li>
@@ -243,7 +241,6 @@
     <script src="~/js/shop/jquery.animateNumber.min.js"></script>
     <script src="~/js/shop/bootstrap-datepicker.js"></script>
     <script src="~/js/shop/scrollax.min.js"></script>
-    @* <script src="~/js/shop/google-map.js"></script> *@
     <script src="https://maps.googleapis.com/maps/api/js?key=yourMapsAPIKey&libraries=geometry"></script>
     <script src="~/plugins/toastr/toastr.min.js"></script>
     <script src="~/plugins/sweetalert/sweetalert.js"></script>

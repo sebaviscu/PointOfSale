@@ -22,6 +22,8 @@ namespace AFIP.Facturacion
     /// </remarks>
     public class LoginCmsClient
     {
+        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
+
         public bool IsProdEnvironment { get; set; } = false;
         public string WsaaUrlHomologation { get; set; } = "https://wsaahomo.afip.gov.ar/ws/services/LoginCms";
         public string WsaaUrlProd { get; set; } = "https://wsaa.afip.gov.ar/ws/services/LoginCms";
@@ -57,7 +59,7 @@ namespace AFIP.Facturacion
 
         public async Task<WsaaTicket> GetWsaaTicket()
         {
-            if (_ticket == null || _ticket.ExpirationTime <= DateTime.Now.AddMinutes(1))
+            if (_ticket == null || _ticket.ExpirationTime <= DateTimeNowArg.AddMinutes(1))
             {
                 _ticket = await LoginCmsAsync("wsfe",
                 _configuration.Value.x509CertificateFilePath,
@@ -111,8 +113,8 @@ namespace AFIP.Facturacion
                 var xmlNodoGenerationTime = XmlLoginTicketRequest.SelectSingleNode("//generationTime");
                 var xmlNodoExpirationTime = XmlLoginTicketRequest.SelectSingleNode("//expirationTime");
                 var xmlNodoService = XmlLoginTicketRequest.SelectSingleNode("//service");
-                xmlNodoGenerationTime.InnerText = DateTime.Now.AddMinutes(-10).ToString("s");
-                xmlNodoExpirationTime.InnerText = DateTime.Now.AddMinutes(+10).ToString("s");
+                xmlNodoGenerationTime.InnerText = DateTimeNowArg.AddMinutes(-10).ToString("s");
+                xmlNodoExpirationTime.InnerText = DateTimeNowArg.AddMinutes(+10).ToString("s");
                 xmlNodoUniqueId.InnerText = Convert.ToString(GlobalUniqueID);
                 xmlNodoService.InnerText = service;
                 Service = service;
