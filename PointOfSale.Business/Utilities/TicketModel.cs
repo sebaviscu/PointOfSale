@@ -16,7 +16,7 @@ namespace PointOfSale.Business.Utilities
         string ticket = "";
         string parte1, parte2;
 
-        int MAX = 30 - 4;
+        int MAX = 34;
         int cort;
 
         public StringBuilder Lineas
@@ -40,7 +40,7 @@ namespace PointOfSale.Business.Utilities
                 ticket += " ";
             }
             var texto = ticket += parte1 + "\n";
-            line.AppendLine("  " + texto);
+            line.AppendLine(texto);
         }
 
         public void LineasGuion()
@@ -52,7 +52,7 @@ namespace PointOfSale.Business.Utilities
                 LineaGuion += "-";
             }
 
-            line.AppendLine("  " + LineaGuion);
+            line.AppendLine(LineaGuion);
         }
         public void LineasTotal()
         {
@@ -63,7 +63,7 @@ namespace PointOfSale.Business.Utilities
                 LineaGuion += "=";
             }
 
-            line.AppendLine("  " + LineaGuion);
+            line.AppendLine(LineaGuion);
         }
 
         public void TextoIzquierda(string par1)
@@ -76,7 +76,7 @@ namespace PointOfSale.Business.Utilities
             }
             else { parte1 = par1; }
             var text = ticket = parte1;
-            line.AppendLine("  " + text);
+            line.AppendLine(text);
 
         }
 
@@ -96,7 +96,7 @@ namespace PointOfSale.Business.Utilities
                 ticket += " ";
             }
             var text = ticket += parte1 + "\n";
-            line.AppendLine("  " + text);
+            line.AppendLine(text);
 
         }
 
@@ -117,7 +117,7 @@ namespace PointOfSale.Business.Utilities
                 ticket += " ";
             }
             var text = ticket += parte2;
-            line.AppendLine("  " + text);
+            line.AppendLine(text);
 
         }
 
@@ -139,7 +139,7 @@ namespace PointOfSale.Business.Utilities
 
             }
             elementos = Articulo + espacios;
-            line.AppendLine("  " + elementos);
+            line.AppendLine(elementos);
 
             elementos = string.Empty;
 
@@ -162,7 +162,7 @@ namespace PointOfSale.Business.Utilities
                 espacios += " ";
             }
             elementos += espacios + "$" + subtotal.ToString();
-            line.AppendLine("  " + elementos);
+            line.AppendLine(elementos);
         }
 
         static string MostrarNumeroConDecimales(decimal numero)

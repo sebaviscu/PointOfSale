@@ -6,6 +6,5 @@ namespace PointOfSale.Business.Contracts
     {
         string TicketSale(Sale sale, Tienda tienda);
         string TicketVentaWeb(VentaWeb sale, Tienda tienda);
-        void ImprimirTiket(string impresora, string line);
     }
 }
