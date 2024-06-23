@@ -203,3 +203,54 @@ function removeLoading() {
     document.body.removeChild(document.getElementById("divLoadingFrame"));
     document.body.removeChild(document.getElementById("styleLoadingWindow"));
 };
+
+
+async function listaImpresoras() {
+
+    fetch('http://localhost:4567/getprinters')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(printers => console.log(printers))
+        .catch(error => console.error('Error:', error));
+
+}
+
+
+async function printTicket(nombreImpresora, ticketContent) {
+
+    try {
+        const conector = {
+            text: ticketContent,
+            nombre_impresora: nombreImpresora
+        };
+
+        fetch('http://localhost:4567/imprimir', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(conector)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return false;
+                }
+                return response.json();
+            })
+            .then(data => {
+                return data.success;
+            })
+            .catch(error => {
+
+                console.error('Error:', error);
+                return false;
+            });
+
+    } catch (err) {
+        console.error('Error al listar las impresoras:', err);
+    }
+}

@@ -1066,45 +1066,6 @@ function getTabActiveId() {
     return idTab[idTab.length - 1];
 }
 
-async function printTicket(nombreImpresora, ticketContent) {
-    try {
-        // Inicializar jsprintmanager
-        JSPM.JSPrintManager.auto_reconnect = true;
-        JSPM.JSPrintManager.start();
-
-        // Definir la función para enviar el trabajo de impresión
-        const sendPrintJob = () => {
-            var cpj = new JSPM.ClientPrintJob();
-            var printer = new JSPM.InstalledPrinter(nombreImpresora);
-            cpj.clientPrinter = printer;
-            cpj.printerCommands = ticketContent;
-            cpj.sendToClient().then(() => {
-                console.log('Ticket enviado a la impresora con éxito');
-            }).catch(error => {
-                console.error('Error al enviar el ticket a la impresora:', error);
-                alert('Error al enviar el ticket a la impresora');
-            });
-        };
-
-        // Manejar los cambios de estado del WebSocket
-        JSPM.JSPrintManager.WS.onStatusChanged = () => {
-            if (JSPM.JSPrintManager.websocket_status === JSPM.WSStatus.Open) {
-                sendPrintJob();
-            } else if (JSPM.JSPrintManager.websocket_status === JSPM.WSStatus.Closed) {
-                alert('No se pudo conectar a la impresora');
-            }
-        };
-
-        // Intentar enviar el trabajo de impresión si ya está conectado
-        if (JSPM.JSPrintManager.websocket_status === JSPM.WSStatus.Open) {
-            sendPrintJob();
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Error al inicializar la impresión');
-    }
-}
-
 function validateCode(userCode) {
 
     fetch(`/Admin/ValidateSecurityCode?encryptedCode=${userCode}`, {

@@ -208,103 +208,29 @@ let idSale;
 
 $("#printTicket").click(function () {
 
-    pruebaImpresion();
+    fetch(`/Sales/PrintTicket?idSale=${idSale}`, {
+    }).then(response => {
 
-    //fetch(`/Sales/PrintTicket?idSale=${idSale}`, {
-    //}).then(response => {
+        return response.ok ? response.json() : Promise.reject(response);
+    }).then(responseJson => {
 
-    //    return response.ok ? response.json() : Promise.reject(response);
-    //}).then(responseJson => {
+        if (responseJson.state) {
+            $("#modalData").modal("hide");
 
-    //    if (responseJson.state) {
-    //        $("#modalData").modal("hide");
+            if (responseJson.object.nombreImpresora != '') {
 
-    //        if (responseJson.object.nombreImpresora != '') {
-    //            printTicket(responseJson.object.nombreImpresora, responseJson.object.ticket);
+                printTicket(responseJson.object.nombreImpresora, responseJson.object.ticket);
 
-    //            swal("Exitoso!", "Ticket impreso!", "success");
-    //        }
+                swal("Exitoso!", "Ticket impreso!", "success");
+            }
 
-    //    } else {
-    //        swal("Lo sentimos", "La venta no fué registrada. Error: " + responseJson.message, "error");
-    //    }
-    //})
+        } else {
+            swal("Lo sentimos", "La venta no fué registrada. Error: " + responseJson.message, "error");
+        }
+    })
 
 })
 
-async function pruebaImpresion() {
-
-    connetor_plugin.obtenerImpresoras()
-        .then(impresoras => {
-            console.log(impresoras)
-        });
-
-    let nombreImpresora = "XP-58 (copy 1)";
-    let api_key = "123456"
-
-
-    const conector = new connetor_plugin()
-    conector.fontsize("2")
-    conector.textaling("center")
-    conector.text("Ferreteria Angel")
-    conector.fontsize("1")
-    conector.text("Calle de las margaritas #45854")
-    conector.text("PEC7855452SCC")
-    conector.feed("3")
-    conector.textaling("left")
-    conector.text("Fecha: Miercoles 8 de ABRIL 2022 13:50")
-    conector.text("Cant.       Descripcion      Importe")
-    conector.text("------------------------------------------")
-    conector.text("1- Barrote 2x4x8                    $110")
-    conector.text("3- Esquinero Vinil                  $165")
-    conector.feed("1")
-    conector.fontsize("2")
-    conector.textaling("center")
-    conector.text("Total: $275")
-    //conector.qr("https://abrazasoft.com")
-    conector.feed("5")
-    //conector.cut("0")
-
-    const resp = await conector.imprimir(nombreImpresora, api_key);
-    if (resp === true) {
-        swal("Exitoso!", "Ticket impreso!", "success");
-
-    } else {
-        console.log("Problema al imprimir: " + resp)
-    }
-}
-
-
-async function printTicket(nombreImpresora, ticketContent) {
-
-    try {
-        qz.websocket.connect().then(() => {
-            return qz.printers.find(nombreImpresora)
-        }).then((found) => {
-            //alert(found);
-
-            var config = qz.configs.create(found);
-            var data = [{
-                type: 'pixel',
-                format: 'command',
-                flavor: 'plain',
-                data: ticketContent,
-            }];
-
-            return qz.print(config, data);
-
-        })
-        .catch((err) => {
-            console.error(err);
-        }).finally(() => {
-            return qz.websocket.disconnect()
-        });
-
-
-    } catch (err) {
-        console.error('Error al listar las impresoras:', err);
-    }
-}
 
 function setToday() {
     let date = new Date();

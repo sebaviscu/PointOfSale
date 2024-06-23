@@ -7,14 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\js\plugin_impresora_termica.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="wwwroot\js\plugin_impresora_termica.js" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
     <None Include="wwwroot\css\fonts\flaticon\.DS_Store" />
     <None Include="wwwroot\css\fonts\flaticon\font\.DS_Store" />
@@ -28,7 +20,6 @@
     <None Include="wwwroot\css\fonts\ionicons\fonts\ionicons.svg" />
     <None Include="wwwroot\css\fonts\ionicons\fonts\ionicons.woff2" />
     <None Include="wwwroot\css\fonts\open-iconic\open-iconic.svg" />
-    <None Include="wwwroot\js\plugin_impresora_termica.js" />
   </ItemGroup>
 
   <ItemGroup>
