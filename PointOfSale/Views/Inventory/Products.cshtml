@@ -409,11 +409,26 @@
 <div class="modal fade" id="modalDataMasivo" tabindex="-1" role="dialog" aria-labelledby="exampleModalGridq" aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Edicion Masiva</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+            <div class="modal-header" style="padding-right: 0px;">
+                <div class="row justify-content-between col-md-12">
+
+                    <div class="col-md-4">
+
+                        <h5 class="modal-title">Edicion Masiva</h5>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text" id="inputGroup-sizing-sm">Redondeo</span>
+                            <input type="number" class="form-control" id="rounding" step="1" min="0" value="1">
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+
+                    </div>
+                </div>
             </div>
             <div class="modal-body">
                 <!-- Tabs navs -->
@@ -447,8 +462,8 @@
                                 <tbody>
                                 </tbody>
                             </table>
-                            <br />
                         </div>
+                        <br />
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>

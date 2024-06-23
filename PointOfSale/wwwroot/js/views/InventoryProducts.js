@@ -783,7 +783,6 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
         });
 })
 
-
 function calcularPrecio() {
 
     let ids = ["", "2", "3"];
@@ -812,7 +811,7 @@ function calcularPrecio() {
     //iva = iva == '' ? 0 : iva;
 
     if (aumento !== '' && precio !== '') {
-        precio = parseFloat(precio) * (1 + (iva / 100));
+        //precio = parseFloat(precio) * (1 + (iva / 100));
         var precioFinal = parseFloat(precio) * (1 + (parseFloat(aumento) / 100));
         $("#txtPriceWeb").val(precioFinal);
     }
@@ -1025,24 +1024,12 @@ function cargarTabla(productosFiltrados) {
         tablaBody.append($tr);
     });
 
-    $('.editable.costo').on('blur', function () {
-        let $fila = $(this).closest('tr');
-        let costoText = $(this).text().replace('$ ', '').replace(',', '.');
-        $fila.find('td:nth-child(n+4)').each(function () {
-            let costo = parseFloat(costoText) || 0;
-            let profit = parseFloat($(this).attr('data-profit'));
-            let iva = parseFloat($(this).attr('data-iva'));
-            let web = parseFloat($(this).attr('data-web'));
-            iva = iva == '' ? 0 : iva;
-            web = web == '' ? 0 : web;
+    $('#rounding').change(function () {
+        recalculatePrices();
+    });
 
-            if (profit != 0 && costo != 0) {
-                costo = costo * (1 + (iva / 100));
-                var nuevoPrecio = costo * (1 + profit / 100);
-                nuevoPrecio = nuevoPrecio * (1 + (web / 100));
-                $(this).text(`$ ${nuevoPrecio.toFixed(2).replace('.', ',')}`);
-            }
-        });
+    $('.editable.costo').on('blur', function () {
+        recalculatePrices();
     });
 
     var celdasEditables = document.querySelectorAll(".editable");
@@ -1082,6 +1069,48 @@ function cargarTabla(productosFiltrados) {
             });
         });
 
+    });
+}
+
+function roundToDigits(number, digits) {
+    if (digits === 0) {
+        return number.toFixed(2).replace('.', ',');
+    }
+
+    let factor = Math.pow(10, digits);
+    return Math.round(number / factor) * factor;
+}
+
+function recalculatePrices() {
+    let roundingDigits = parseInt($("#rounding").val());
+
+    if (isNaN(roundingDigits) || roundingDigits < 0) {
+        alert('Por favor, ingrese un valor de redondeo válido.');
+        return;
+    }
+
+    $('#tablaProductosEditar tbody tr').each(function () {
+        let $fila = $(this);
+        let costoText = $fila.find('.editable.costo').text().replace('$ ', '').replace(',', '.');
+
+        $fila.find('td:nth-child(n+4)').each(function () {
+            let costo = parseFloat(costoText) || 0;
+            let profit = parseFloat($(this).attr('data-profit'));
+            let iva = parseFloat($(this).attr('data-iva'));
+            let web = parseFloat($(this).attr('data-web'));
+            iva = iva == '' ? 0 : iva;
+            web = web == '' ? 0 : web;
+
+            if (profit != 0 && costo != 0) {
+                costo = costo * (1 + (iva / 100));
+                var nuevoPrecio = costo * (1 + profit / 100);
+                nuevoPrecio = nuevoPrecio * (1 + (web / 100));
+
+                let roundedPrice = roundToDigits(nuevoPrecio, roundingDigits);
+
+                $(this).text(`$ ${roundedPrice}`);
+            }
+        });
     });
 }
 
