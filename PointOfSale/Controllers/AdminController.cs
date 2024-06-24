@@ -154,8 +154,8 @@ namespace PointOfSale.Controllers
                         break;
 
                     case TypeValuesDashboard.Semana:
-                        listSales = GetSalesComparacionWeek(dateActual.AddDays(-6), resultados.VentasActuales, dateFilter != null);
-                        listSalesComparacion = GetSalesComparacionWeek(dateCompare.AddDays(-6), resultados.VentasComparacion, true);
+                        listSales = GetSalesComparacionWeek(dateActual, resultados.VentasActuales, dateFilter != null);
+                        listSalesComparacion = GetSalesComparacionWeek(dateCompare, resultados.VentasComparacion, true);
                         break;
 
                     case TypeValuesDashboard.Mes:
@@ -349,8 +349,12 @@ namespace PointOfSale.Controllers
                         dateActual = dateActual.Date;
                         break;
                     case TypeValuesDashboard.Semana:
-                        dateActual = dateActual.AddDays(-(int)dateActual.DayOfWeek);
-                        break;
+                        int daysToSubtract = (int)dateActual.DayOfWeek - 1;
+                        if (daysToSubtract < 0)
+                        {
+                            daysToSubtract = 6;
+                        }
+                        dateActual = dateActual.AddDays(-daysToSubtract); break;
                     case TypeValuesDashboard.Mes:
                         dateActual = new DateTime(dateActual.Year, dateActual.Month, 1);
                         break;
