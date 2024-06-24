@@ -1,5 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Services;
 using PointOfSale.Model;
@@ -20,7 +24,10 @@ namespace PointOfSale.Controllers
         private readonly ITypeDocumentSaleService _typeDocumentSaleService;
         private readonly IAjusteService _ajusteService;
 
-        public ShopController(IProductService productService, IMapper mapper, IShopService shopService, ITiendaService tiendaService, ICategoryService categoryService, ITypeDocumentSaleService typeDocumentSaleService, IAjusteService ajusteService)
+        private readonly IRazorViewEngine _razorViewEngine;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly ITempDataProvider _tempDataProvider;
+        public ShopController(IProductService productService, IMapper mapper, IShopService shopService, ITiendaService tiendaService, ICategoryService categoryService, ITypeDocumentSaleService typeDocumentSaleService, IAjusteService ajusteService, IRazorViewEngine razorViewEngine, IServiceProvider serviceProvider, ITempDataProvider tempDataProvider)
         {
             _productService = productService;
             _mapper = mapper;
@@ -29,6 +36,11 @@ namespace PointOfSale.Controllers
             _categoryService = categoryService;
             _typeDocumentSaleService = typeDocumentSaleService;
             _ajusteService = ajusteService;
+
+            _razorViewEngine = razorViewEngine;
+            _serviceProvider = serviceProvider;
+            _tempDataProvider = tempDataProvider;
+
         }
 
         public async Task<IActionResult> Index()
@@ -42,25 +54,64 @@ namespace PointOfSale.Controllers
             return View("Index", shop);
         }
 
-        public async Task<IActionResult> Lista()
+        [HttpGet]
+        public async Task<IActionResult> Lista(int page = 1, int pageSize = 6)
         {
             ClaimsPrincipal claimuser = HttpContext.User;
 
             var ajuste = _mapper.Map<VMAjustes>(await _ajusteService.Get());
             var shop = new VMShop(ajuste);
             shop.IsLogin = claimuser.Identity.IsAuthenticated;
-            shop.Products = _mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategory(0));
+            shop.Products = new List<VMProduct>();//_mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategory(0, page, pageSize));
             shop.FormasDePago = _mapper.Map<List<VMTypeDocumentSale>>(await _typeDocumentSaleService.ListWeb());
             shop.Categorias = _mapper.Map<List<VMCategory>>(await _categoryService.ListActive());
             return View("Lista", shop);
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetProductsByCategory(int idCategoria)
+        public async Task<IActionResult> GetMoreProducts(int page, int pageSize, int categoryId = 0, string searchText = "")
         {
-            var products = _mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategory(idCategoria));
-            return PartialView("PVProducts", products);
+            var products = _mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategory(categoryId, page, pageSize, searchText));
+            var hasMoreProducts = products.Count == pageSize;
+
+            var html = await RenderViewAsync("PVProducts", products);
+
+            return Json(new { hasMoreProducts, html });
         }
+
+        private async Task<string> RenderViewAsync(string viewName, object model)
+        {
+            ViewData.Model = model;
+            using (var sw = new StringWriter())
+            {
+                var viewResult = _razorViewEngine.FindView(ControllerContext, viewName, false);
+
+                if (viewResult.View == null)
+                {
+                    throw new ArgumentNullException($"View {viewName} was not found.");
+                }
+
+                var viewContext = new ViewContext(
+                    ControllerContext,
+                    viewResult.View,
+                    ViewData,
+                    TempData,
+                    sw,
+                    new HtmlHelperOptions()
+                );
+
+                await viewResult.View.RenderAsync(viewContext);
+                return sw.GetStringBuilder().ToString();
+            }
+        }
+
+
+        //[HttpGet]
+        //public async Task<ActionResult> GetProductsByCategory(int idCategoria)
+        //{
+        //    var products = _mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategory(idCategoria));
+        //    return PartialView("PVProducts", products);
+        //}
 
         [HttpGet]
         public async Task<ActionResult> GetProductsByDescription(string text)

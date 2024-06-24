@@ -5,7 +5,6 @@
     Layout = "";
 }
 
-
 <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css?family=Lora:400,400i,700,700i&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700&display=swap" rel="stylesheet">
@@ -38,7 +37,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 </head>
-<body class="goto-here">
+<body class="goto-here" style="overflow-x: hidden">
 
     <div class="py-1 bg-primary">
         <div class="container">
@@ -87,13 +86,13 @@
         <div class="search-wrapper">
             <div class="input-holder">
                 <input id="input-search" type="text" class="search-input input-search" placeholder="Buscar producto..." />
-                <button class="search-icon" onclick="searchToggle(this, event);" style="border-radius: 40%;border: solid;border-color: #d3d3d370;">
+                <button class="search-icon" id="search-icon"  style="border-radius: 40%;border: solid;border-color: #d3d3d370;">
                     <span></span>
                 </button>
             </div>
-            <span class="close" onclick="searchToggle(this, event);"></span>
+            <span class="close" id="btnCloseSearchText" onclick="searchToggle(this, event);"></span>
         </div>
-        <a class="btn btnCategoria" cat-id="0" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">Todo</a>
+        <a class="btn btnCategoria active" cat-id="0" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">Todo</a>
 
         @foreach (var cat in Model.Categorias)
         {
@@ -103,18 +102,18 @@
 
     <section class="ftco-section">
         <div class="container">
-
             <div id="dvCategoryResults" style="margin-right:10px;margin-left: 10px;">
                 @{
                     Html.RenderPartial("PVProducts", Model.Products);
                 }
             </div>
+            <div id="loader" style="display: none;">Loading...</div>
         </div>
     </section>
 
     <hr>
 
-    <footer class="ftco-footer ftco-section">
+    <footer class="ftco-footer ftco-section" style="padding: 0;">
         <div class="container">
             <div class="row">
                 <div class="mouse">

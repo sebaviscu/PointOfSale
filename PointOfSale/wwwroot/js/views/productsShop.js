@@ -1,14 +1,14 @@
-﻿//var productos = [];
-
+﻿
 (function ($) {
 
-    $(".less-button").on("click", function () {
-        setValue(event.currentTarget, -1);
-    })
-
-    $(".pluss-button").on("click", function () {
+    $(".pluss-button").off("click").on("click", function () {
         setValue(event.currentTarget, 1);
-    })
+    });
+
+    $(".less-button").off("click").on("click", function () {
+        setValue(event.currentTarget, -1);
+
+    });
 
     "use strict";
 

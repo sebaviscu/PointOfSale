@@ -51,27 +51,38 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<Product>> ListActive()
         {
-            IQueryable<Product> query = await _repository.Query(_ => _.IsActive.HasValue ? _.IsActive.Value : false);
+            IQueryable<Product> query = await _repository.Query(_ => _.IsActive);
             return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).OrderBy(_ => _.Description).ToList();
         }
 
-        public async Task<List<Product>> ListActiveByCategory(int idCategoria)
+        public async Task<List<Product>> ListActiveByCategory(int categoryId, int page, int pageSize, string searchText = "")
         {
             IQueryable<Product> query;
-            if (idCategoria == 0)
+
+            if (categoryId != 0)
             {
-                query = await _repository.Query(_ => _.IsActive.HasValue ? _.IsActive.Value : false);
+                query = await _repository.Query(p => p.IsActive && p.IdCategory.Value  == categoryId);
             }
             else
             {
-                query = await _repository.Query(_ => _.IdCategory == idCategoria && _.IsActive.HasValue ? _.IsActive.Value : false);
+                query = await _repository.Query(p => p.IsActive);
             }
 
-            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).OrderBy(_ => _.Description).ToList();
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                query = query.Where(p => p.Description.Contains(searchText));
+            }
+
+            return await query
+                .OrderBy(p => p.Description)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
         }
+
         public async Task<List<Product>> ListActiveByDescription(string text)
         {
-            var query = await _repository.Query(_ => _.Description.Contains(text) && _.IsActive.HasValue ? _.IsActive.Value : false);
+            var query = await _repository.Query(_ => _.Description.Contains(text) && _.IsActive);
 
             return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).OrderBy(_ => _.Description).ToList();
         }
@@ -295,7 +306,7 @@ namespace PointOfSale.Business.Services
                     product_edit.PriceWeb = precioWeb;
                     product_edit.CostPrice = data.Costo != "" ? Convert.ToDecimal(data.Costo) : product_edit.CostPrice;
                     product_edit.PorcentajeProfit = data.Profit != "" ? Convert.ToInt32(data.Profit) : product_edit.PorcentajeProfit;
-                    product_edit.IsActive = data.IsActive;
+                    product_edit.IsActive = (bool)(data.IsActive.HasValue ? data.IsActive : product_edit.IsActive);
                     product_edit.Comentario = data.Comentario;
                     product_edit.ModificationUser = user;
                     product_edit.ModificationDate = DateTimeNowArg;

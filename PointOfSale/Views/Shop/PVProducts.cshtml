@@ -26,19 +26,12 @@
 <link rel="stylesheet" type="text/css" href="~/css/shop/style.css">
 
 <div class="col-md-12 row d-flex justify-content-center">
-    @if(!Model.Any())
-    {
-        <h4>No se han encontrado productos con esa descripcion.</h4>
-    }
-
     @foreach (var prod in Model.OrderBy(_ => _.Description))
     {
         <div class="col-md-6 col-lg-2 ftco-animate product-list" category-prod="@prod.IdCategory" description-prd="@prod.Description">
             <div class="product">
                 <a href="javascript:void(0)" class="img-prod" style="text-align: center;">
                     <img class="img-fluid" src="data:image/png;base64,@prod.PhotoBase64" alt="Imagen" style="min-height: 160px; max-height: 160px; width:auto;">
-                    @*<span class="status">30%</span>*@
-                    @*<div class="overlay"></div>*@
                 </a>
                 <div class="text pb-1 px-3 text-center" style="height: 110px;">
                     <hr />
@@ -48,7 +41,6 @@
                             @{
                                 var precio = prod.PriceWeb != null ? prod.PriceWeb.ToString() : prod.Price;
                             }
-                            @*<p class="price"><span class="mr-2 price-dc">$@prod.Price</span><span class="price-sale">$@prod.PriceWeb</span></p>*@
                             <p class="price"><span class="price-sale" id="price-@prod.IdProduct" precio="@precio">$@precio</span><small> / @prod.TipoVenta</small></p>
                             <small>@prod.Comentario</small>
                         </div>
@@ -69,6 +61,7 @@
         </div>
     }
 </div>
+
 <script src="~/js/shop/jquery.min.js"></script>
 <script src="~/js/shop/jquery-migrate-3.0.1.min.js"></script>
 <script src="~/js/shop/popper.min.js"></script>

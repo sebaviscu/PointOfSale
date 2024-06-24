@@ -14,7 +14,7 @@ namespace PointOfSale.Model
         public decimal? Quantity { get; set; }
         public decimal? Price { get; set; }
         public byte[]? Photo { get; set; }
-        public bool? IsActive { get; set; }
+        public bool IsActive { get; set; }
         public DateTime? RegistrationDate { get; set; }
 		public DateTime? ModificationDate { get; set; }
 		public string? ModificationUser { get; set; }
