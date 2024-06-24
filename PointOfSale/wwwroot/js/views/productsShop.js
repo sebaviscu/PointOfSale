@@ -1,14 +1,14 @@
 ﻿
 (function ($) {
 
-    $(".pluss-button").off("click").on("click", function () {
-        setValue(event.currentTarget, 1);
-    });
+    //$(".pluss-button").off("click").on("click", function () {
+    //    setValue(event.currentTarget, 1);
+    //});
 
-    $(".less-button").off("click").on("click", function () {
-        setValue(event.currentTarget, -1);
+    //$(".less-button").off("click").on("click", function () {
+    //    setValue(event.currentTarget, -1);
 
-    });
+    //});
 
     "use strict";
 
@@ -143,69 +143,3 @@
 
 })(jQuery);
 
-
-function setValue(event, mult) {
-
-    var idProd = $(event).attr('idProduct');
-    var inputProd = document.getElementById("prod-" + idProd)
-    var priceProd = document.getElementById("price-" + idProd)
-    var descProd = document.getElementById("desc-" + idProd)
-
-    var value = parseFloat(inputProd.value);
-
-    if (mult === -1 && value === 0) {
-        return;
-    }
-
-    if (inputProd.attributes.typeinput.value === "U") {
-        value = value + (1 * mult);
-    }
-    else {
-        value = value + (0.5 * mult);
-    }
-    opacityButtonArea(value, mult, idProd);
-
-    inputProd.value = value
-
-    let productFind = productos.find(item => item.idProduct === idProd);
-    if (productFind) {
-        productFind.quantity = value;
-        productFind.total = value * productFind.price;
-
-        if (value === 0) {
-            productos = productos.filter(item => item.idProduct != idProd);
-        }
-    }
-    else {
-        var prod = {
-            idProduct: idProd,
-            quantity: value,
-            price: parseFloat(priceProd.attributes.precio.value),
-            DescriptionProduct: descProd.attributes.descProd.value,
-            total: value * parseFloat(priceProd.attributes.precio.value),
-            tipoVenta: inputProd.attributes.typeinput.value
-        }
-
-        productos.push(prod);
-    }
-    let total = 0;
-    var textArea = document.getElementById("text-area-products");
-    textArea.textContent = '';
-
-    productos.forEach((a) => {
-        textArea.innerText += `· ${a.DescriptionProduct}: $${Number.parseFloat(a.price).toFixed(2)} x ${a.quantity} = $ ${Number.parseFloat(a.total).toFixed(2)} \n`;
-        total += a.total;
-    });
-
-
-    if (productos.length > 0) {
-        $("#text-area-products").show();
-        $("#btnTrash").show();
-    }
-    else {
-        $("#text-area-products").hide();
-        $("#btnTrash").hide();
-    }
-
-    document.getElementById("btnCompras").innerText = `Total: $ ${total}`;
-}

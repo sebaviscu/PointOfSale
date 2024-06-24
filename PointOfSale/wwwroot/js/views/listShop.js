@@ -1,5 +1,5 @@
 ﻿let page = 1;
-const pageSize = 6;
+const pageSize = 12;
 let isLoading = false;
 let hasMoreProducts = true;
 let debounceTimeout;
@@ -11,15 +11,8 @@ $(window).scroll(function () {
     }
 });
 
-function checkContentHeight() {
-    if ($(document).height() <= $(window).height() && hasMoreProducts && !isLoading) {
-        loadMoreProducts();
-    }
-}
-
 $(document).ready(function () {
 
-    // Cargar los primeros productos al inicio
     loadMoreProducts();
 
     $(".btnCategoria").on("click", function () {
@@ -87,13 +80,15 @@ function loadMoreProducts() {
                 hasMoreProducts = false;
             }
 
-            $("#dvCategoryResults").append(data.html);
-            $('#loader').hide();
+            const pageClass = `-page-${page}`;
+            let htmlWithPageClass = data.html.replace(/pluss-button/g, `pluss-button pluss${pageClass}`);
+            htmlWithPageClass = htmlWithPageClass.replace(/less-button/g, `less-button less${pageClass}`);
+            $("#dvCategoryResults").append(htmlWithPageClass);            $('#loader').hide();
             isLoading = false;
             page++;
 
-            // Comprobar nuevamente si hay suficiente contenido para habilitar el desplazamiento
-            //checkContentHeight();
+            attachButtonEvents(pageClass); 
+
         })
         .catch(error => {
             console.error('Fetch error:', error);
@@ -144,9 +139,6 @@ function SearchProductByText(text) {
             isLoading = false;
             page++;
 
-            // Comprobar nuevamente si hay suficiente contenido para habilitar el desplazamiento
-            //checkContentHeight();
-
         })
         .catch(error => {
             console.error('Fetch error:', error);
@@ -164,7 +156,15 @@ function debounce(func, wait) {
     };
 }
 
+function attachButtonEvents(pageClass) {
+    $(`.pluss${pageClass}`).on("click", function () {
+        setValue(event.currentTarget, 1);
+    });
 
+    $(`.less${pageClass}`).on("click", function () {
+        setValue(event.currentTarget, -1);
+    });
+}
 
 
 function opacityButtonArea(value, mult, idProd) {
@@ -308,17 +308,17 @@ function finalizarVenta() {
                 estado: 0
             }
 
-            //fetch("/Shop/RegisterSale", {
-            //    method: "POST",
-            //    headers: { 'Content-Type': 'application/json;charset=utf-8' },
-            //    body: JSON.stringify(sale)
-            //}).then(response => {
-            //    return response.ok ? response.json() : Promise.reject(response);
-            //}).then(responseJson => {
+            fetch("/Shop/RegisterSale", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                body: JSON.stringify(sale)
+            }).then(response => {
+                return response.ok ? response.json() : Promise.reject(response);
+            }).then(responseJson => {
 
-            //    if (responseJson.state) {
-            //    }
-            //})
+                if (responseJson.state) {
+                }
+            })
 
             clean();
         });
@@ -335,6 +335,76 @@ const BASIC_MODEL = {
 }
 
 
+function setValue(event, mult) {
+
+    var idProd = $(event).attr('idProduct');
+    var inputProd = document.getElementById("prod-" + idProd)
+    var priceProd = document.getElementById("price-" + idProd)
+    var descProd = document.getElementById("desc-" + idProd)
+
+    var value = parseFloat(inputProd.value);
+
+    if (mult === -1 && value === 0) {
+        return;
+    }
+
+    if (inputProd.attributes.typeinput.value === "U") {
+        value = value + (1 * mult);
+    }
+    else {
+        value = value + (0.5 * mult);
+    }
+    opacityButtonArea(value, mult, idProd);
+
+    inputProd.value = value
+
+    let productFind = productos.find(item => item.idProduct === idProd);
+    if (productFind) {
+        productFind.quantity = value;
+        productFind.total = value * productFind.price;
+
+        if (value === 0) {
+            productos = productos.filter(item => item.idProduct != idProd);
+        }
+    }
+    else {
+        var prod = {
+            idProduct: idProd,
+            quantity: value,
+            price: parseFloat(priceProd.attributes.precio.value),
+            DescriptionProduct: descProd.attributes.descProd.value,
+            total: value * parseFloat(priceProd.attributes.precio.value),
+            tipoVenta: inputProd.attributes.typeinput.value
+        }
+
+        productos.push(prod);
+    }
+    let total = 0;
+    var textArea = document.getElementById("text-area-products");
+    textArea.textContent = '';
+
+    let productsToDisplay = productos.slice(-5);
+    productos.forEach((a) => {
+        total += a.total;
+    });
+
+    productsToDisplay.forEach((a) => {
+        textArea.innerText += `· ${a.DescriptionProduct}: $${Number.parseFloat(a.price).toFixed(2)} x ${a.quantity} = $ ${Number.parseFloat(a.total).toFixed(2)} \n`;
+    });
+
+    $("#btnTrash").text(productos.length).append('<i class="mdi mdi-trash-can mdi-18px"></i>');
+
+    if (productos.length > 0) {
+        $("#text-area-products").show();
+        $("#btnTrash").show();
+    }
+    else {
+        $("#text-area-products").hide();
+        $("#btnTrash").hide();
+    }
+
+    document.getElementById("btnCompras").innerText = `Total: $ ${total}`;
+}
 
 function otrasFunciones() {
 
