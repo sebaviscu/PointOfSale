@@ -342,23 +342,24 @@ namespace PointOfSale.Controllers
             {
                 var dateSplit = dateFilter.Split('/');
                 dateActual = new DateTime(Convert.ToInt32(dateSplit[2]), Convert.ToInt32(dateSplit[1]), Convert.ToInt32(dateSplit[0]));
+            }
 
-                switch (typeValues)
-                {
-                    case TypeValuesDashboard.Dia:
-                        dateActual = dateActual.Date;
-                        break;
-                    case TypeValuesDashboard.Semana:
-                        int daysToSubtract = (int)dateActual.DayOfWeek - 1;
-                        if (daysToSubtract < 0)
-                        {
-                            daysToSubtract = 6;
-                        }
-                        dateActual = dateActual.AddDays(-daysToSubtract); break;
-                    case TypeValuesDashboard.Mes:
-                        dateActual = new DateTime(dateActual.Year, dateActual.Month, 1);
-                        break;
-                }
+            switch (typeValues)
+            {
+                case TypeValuesDashboard.Dia:
+                    dateActual = dateActual.Date;
+                    break;
+                case TypeValuesDashboard.Semana:
+                    int daysToSubtract = (int)dateActual.DayOfWeek - 1;
+                    if (daysToSubtract < 0)
+                    {
+                        daysToSubtract = 6;
+                    }
+                    dateActual = dateActual.AddDays(-daysToSubtract);
+                    break;
+                case TypeValuesDashboard.Mes:
+                    dateActual = new DateTime(dateActual.Year, dateActual.Month, 1);
+                    break;
             }
 
             return dateActual;
@@ -1225,7 +1226,7 @@ namespace PointOfSale.Controllers
 
             var codigo = ajuste.CodigoSeguridad != null ? ajuste.CodigoSeguridad : string.Empty;
 
-            if (encryptedCode == codigo) 
+            if (encryptedCode == codigo)
             {
                 return Ok(new { valid = true });
             }

@@ -291,23 +291,27 @@ namespace PointOfSale.Business.Services
                     var product_edit = await GetProductById(p);
 
                     var precioWeb = product_edit.PriceWeb;
+                    var precio1 = listaPrecios.First(_ => _.Lista == ListaDePrecio.Lista_1);
 
-                    if (data.PriceWeb != "")
+                    if (data.PriceWeb != "" && data.PriceWeb != "0")
                     {
                         precioWeb = Convert.ToDecimal(data.PriceWeb);
+                        product_edit.Price = precio1.Precio != 0 ? precio1.Precio : product_edit.Price;
                     }
                     else if (data.PorPorcentaje != "")
                     {
-                        precioWeb = Convert.ToDecimal(precioWeb * ((Convert.ToDecimal(data.PorPorcentaje) / 100) + 1));
+                        var precioWebReal = Convert.ToDecimal(precioWeb * ((Convert.ToDecimal(data.PorPorcentaje) / 100) + 1));
+                        precioWeb = RoundToDigits(precioWebReal, data.Redondeo);
+                        var priceReal = Convert.ToDecimal(product_edit.Price * ((Convert.ToDecimal(data.PorPorcentaje) / 100) + 1));
+                        product_edit.Price = RoundToDigits(priceReal, data.Redondeo);
                     }
 
-                    var precio1 = listaPrecios.First(_ => _.Lista == ListaDePrecio.Lista_1);
-                    product_edit.Price = precio1.Precio != 0 ? precio1.Precio : product_edit.Price;
                     product_edit.PriceWeb = precioWeb;
                     product_edit.CostPrice = data.Costo != "" ? Convert.ToDecimal(data.Costo) : product_edit.CostPrice;
                     product_edit.PorcentajeProfit = data.Profit != "" ? Convert.ToInt32(data.Profit) : product_edit.PorcentajeProfit;
                     product_edit.IsActive = (bool)(data.IsActive.HasValue ? data.IsActive : product_edit.IsActive);
                     product_edit.Comentario = data.Comentario;
+                    product_edit.Iva = data.Iva;
                     product_edit.ModificationUser = user;
                     product_edit.ModificationDate = DateTimeNowArg;
 
@@ -321,7 +325,8 @@ namespace PointOfSale.Business.Services
                         foreach (var l in listaPrecios)
                         {
                             var nuevoPrecio = product_edit.ListaPrecios.First(_ => _.Lista == l.Lista);
-                            l.Precio = Convert.ToDecimal(nuevoPrecio.Precio * ((Convert.ToDecimal(data.PorPorcentaje) / 100) + 1));
+                            var precioReal = Convert.ToDecimal(nuevoPrecio.Precio * ((Convert.ToDecimal(data.PorPorcentaje) / 100) + 1));
+                            l.Precio = RoundToDigits(precioReal, data.Redondeo);
                         }
                     }
                     await EditListaPrecios(product_edit.ListaPrecios.ToList(), listaPrecios);
@@ -568,5 +573,17 @@ namespace PointOfSale.Business.Services
             }
         }
 
+        public static decimal RoundToDigits(decimal number, int digits)
+        {
+            if (digits == 0)
+            {
+                return number;
+            }
+
+            decimal factor = (decimal)Math.Pow(10, digits);
+            decimal roundedNumber = Math.Round(number / factor) * factor;
+
+            return roundedNumber;
+        }
     }
 }

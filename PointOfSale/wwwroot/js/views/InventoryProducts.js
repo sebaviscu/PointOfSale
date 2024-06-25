@@ -34,7 +34,7 @@ const BASIC_MODEL = {
 const BASIC_MASSIVE_EDIT = {
     precio: 0,
     idProductos: [],
-    isActive: 1
+    isActive: null
 }
 
 const BASIC_IMPRIMIR_PRECIOS = {
@@ -171,6 +171,7 @@ $(document).ready(function () {
         }).then(responseJson => {
             if (responseJson.data != null) {
                 $("#txtAumento").val(responseJson.data.aumentoWeb + ' %');
+                $("#txtAumentoMasivo").val(responseJson.data.aumentoWeb + ' %');
                 aumentoWeb = responseJson.data.aumentoWeb;
             }
         })
@@ -552,49 +553,53 @@ $("#btnNewProduct").on("click", function () {
 
 $("#btnSaveMasivo").on("click", function () {
 
-    if ($("#txtPriceMasivo").val() == '' && $("#txtPrice2Masivo").val() == '' && $("#txtPrice3Masivo").val() == '' && $("#txtPorPorcentajeMasivo").val() == '') {
+    if ($("#txtPriceMasivo").val() == '' && $("#txtPrice2Masivo").val() == '' && $("#txtPrice3Masivo").val() == '' && $("#txtPorPorcentajeMasivo").val() == '' && $("#txtIvaMasivo").val() == '' && $("#cboStateMasivo").val() == '') {
         const msg = `Debe completar alguno de los campos de Precio o Por %`;
         toastr.warning(msg, "");
-        $(`input[name="${inputs_without_value[0].name}"]`).focus();
         return;
     }
 
-    if (($("#txtPriceMasivo").val() != '' || $("#txtPrice2Masivo").val() == '' || $("#txtPrice3Masivo").val() == '') && $("#txtPorPorcentajeMasivo").val() != '') {
+    if (($("#txtPriceMasivo").val() != '' || $("#txtPrice2Masivo").val() != '' || $("#txtPrice3Masivo").val() != '') && $("#txtPorPorcentajeMasivo").val() != '' && $("#txtIvaMasivo").val() == '' && $("#cboStateMasivo").val() == '') {
         const msg = `Puede completar solo uno de los campos Precio o Por %`;
         toastr.warning(msg, "");
-        $(`input[name="${inputs_without_value[0].name}"]`).focus();
         return;
     }
     showLoading();
 
     const model = structuredClone(BASIC_MASSIVE_EDIT);
     model["idProductos"] = aProductos.map(d => d[0]);
-    model["precio"] = $("#txtPriceMasivo").val() != '' ? $("#txtPriceMasivo").val() : '0';
-    model["priceWeb"] = $("#txtPriceWebMasivo").val();
-    model["profit"] = $("#txtProfitMasivo").val() != '' ? $("#txtProfitMasivo").val() : '0';
+    model["precio"] = $("#txtPriceMasivo").val() != '' ? $("#txtPriceMasivo").val().replace('.', ',') : '0';
+    model["priceWeb"] = $("#txtPriceWebMasivo").val() != '' ? $("#txtPriceWebMasivo").val().replace('.', ',') : '0';
+    model["profit"] = $("#txtProfitMasivo").val() != '' ? $("#txtProfitMasivo").val().replace('.', ',') : '0';
     model["costo"] = $("#txtCostoMasivo").val();
     model["comentario"] = $("#txtComentarioMasivo").val();
-    model["isActive"] = $("#cboStateMasivo").val() == '1' ? true : false;
+    if ($("#cboStateMasivo").val() != '-1')
+    {
+        model["isActive"] = $("#cboStateMasivo").val() == '1' ? true : false;
+    }
     model["porPorcentaje"] = $("#txtPorPorcentajeMasivo").val();
+    model["iva"] = $("#txtIvaMasivo").val();
+    model["redondeo"] = $("#rounding").val();
 
-    model["precio2"] = $("#txtPrice2Masivo").val() != '' ? $("#txtPrice2Masivo").val() : '0';
-    model["porcentajeProfit2"] = $("#txtProfit2Masivo").val() != '' ? $("#txtProfit2Masivo").val() : 0;
-    model["precio3"] = $("#txtPrice3Masivo").val() != '' ? $("#txtPrice3Masivo").val() : '0';
-    model["porcentajeProfit3"] = $("#txtProfit3Masivo").val() != '' ? $("#txtProfit3Masivo").val() : 0;
+    model["precio2"] = $("#txtPrice2Masivo").val() != '' ? $("#txtPrice2Masivo").val().replace('.', ',') : '0';
+    model["porcentajeProfit2"] = $("#txtProfit2Masivo").val() != '' ? $("#txtProfit2Masivo").val().replace('.', ',') : 0;
+    model["precio3"] = $("#txtPrice3Masivo").val() != '' ? $("#txtPrice3Masivo").val().replace('.', ',') : '0';
+    model["porcentajeProfit3"] = $("#txtProfit3Masivo").val() != '' ? $("#txtProfit3Masivo").val().replace('.', ',') : 0;
+    $("#modalDataMasivo").find("div.modal-content").LoadingOverlay("show")
 
     fetch("/Inventory/EditMassiveProducts", {
         method: "PUT",
         headers: { 'Content-Type': 'application/json;charset=utf-8' },
         body: JSON.stringify(model)
     }).then(response => {
-        $("#modalData").find("div.modal-content").LoadingOverlay("hide")
+        $("#modalDataMasivo").find("div.modal-content").LoadingOverlay("hide")
         return response.ok ? response.json() : Promise.reject(response);
     }).then(responseJson => {
         removeLoading();
 
         if (responseJson.state) {
-            $("#modalData").modal("hide");
             location.reload();
+            $("#modalDataMasivo").modal("hide");
 
         } else {
             swal("Lo sentimos", responseJson.message, "error");
@@ -800,20 +805,59 @@ function calcularPrecio() {
 
             if (profit !== '') {
                 let precio = costo * (1 + (parseFloat(profit) / 100));
-                $("#txtPrice" + id).val(precio.toFixed(2)); // Formateo a dos decimales
+                $("#txtPrice" + id).val(precio.toFixed(2));
             }
         });
     }
 
-    //var iva = $("#txtIva").val();
     var aumento = $("#txtAumento").val();
     var precio = $("#txtPrice").val();
-    //iva = iva == '' ? 0 : iva;
 
     if (aumento !== '' && precio !== '') {
-        //precio = parseFloat(precio) * (1 + (iva / 100));
         var precioFinal = parseFloat(precio) * (1 + (parseFloat(aumento) / 100));
         $("#txtPriceWeb").val(precioFinal);
+    }
+}
+
+function calcularPrecioMasivo() {
+
+    let ids = ["Masivo", "2Masivo", "3Masivo"];
+
+    let iva = $("#txtIvaMasivo").val();
+    let costo = $("#txtCostoMasivo").val();
+
+    iva = iva === '' ? 0 : parseFloat(iva);
+
+    let roundingDigits = parseInt($("#rounding").val());
+
+    if (isNaN(roundingDigits) || roundingDigits < 0) {
+        alert('Por favor, ingrese un valor de redondeo válido.');
+        return;
+    }
+
+    if (costo !== '') {
+        costo = parseFloat(costo) * (1 + (iva / 100));
+
+        ids.forEach(id => {
+            let profit = $("#txtProfit" + id).val();
+
+            if (profit !== '') {
+                let precio = costo * (1 + (parseFloat(profit) / 100));
+                let roundedPrice = roundToDigits(precio, roundingDigits);
+
+                $("#txtPrice" + id).val(roundedPrice.replace(',', '.'));
+            }
+        });
+    }
+
+    var aumento = $("#txtAumento").val();
+    var precio = $("#txtPriceMasivo").val();
+
+    if (aumento !== '' && precio !== '') {
+        var precioFinal = parseFloat(precio) * (1 + (parseFloat(aumento) / 100));
+        let roundedPrice = roundToDigits(precioFinal, roundingDigits);
+
+        $("#txtPriceWebMasivo").val(roundedPrice.replace(',', '.'));
     }
 }
 
@@ -1025,7 +1069,13 @@ function cargarTabla(productosFiltrados) {
     });
 
     $('#rounding').change(function () {
-        recalculatePrices();
+        let tab = $('#myTab .nav-link.active').attr('id');
+        if (tab == 'edit-tabla-tab') {
+            recalculatePrices();
+        }
+        else {
+            calcularPrecioMasivo();
+        }
     });
 
     $('.editable.costo').on('blur', function () {
@@ -1078,7 +1128,7 @@ function roundToDigits(number, digits) {
     }
 
     let factor = Math.pow(10, digits);
-    return Math.round(number / factor) * factor;
+    return (Math.round(number / factor) * factor).toFixed(2);
 }
 
 function recalculatePrices() {
@@ -1098,7 +1148,7 @@ function recalculatePrices() {
             let profit = parseFloat($(this).attr('data-profit'));
             let iva = parseFloat($(this).attr('data-iva'));
             let web = parseFloat($(this).attr('data-web'));
-            iva = iva == '' ? 0 : iva;
+            iva = iva == '' || isNaN(iva) ? 0 : iva;
             web = web == '' ? 0 : web;
 
             if (profit != 0 && costo != 0) {
@@ -1130,6 +1180,7 @@ $('#btnSaveMasivoTabla').click(function () {
         });
         model.push(rowData);
     });
+    $("#modalDataMasivo").find("div.modal-content").LoadingOverlay("show")
 
     fetch("/Inventory/EditMassiveProductsForTable", {
         method: "PUT",
@@ -1142,8 +1193,8 @@ $('#btnSaveMasivoTabla').click(function () {
         removeLoading();
 
         if (responseJson.state) {
-            $("#modalDataMasivo").modal("hide");
             location.reload();
+            $("#modalDataMasivo").modal("hide");
 
         } else {
             swal("Lo sentimos", responseJson.message, "error");

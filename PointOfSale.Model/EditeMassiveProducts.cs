@@ -20,5 +20,7 @@ namespace PointOfSale.Model
         public int? PorcentajeProfit2 { get; set; }
         public string? Precio3 { get; set; }
         public int? PorcentajeProfit3 { get; set; }
+        public decimal? Iva { get; set; }
+        public int Redondeo { get; set; }
     }
 }
