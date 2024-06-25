@@ -1,30 +1,6 @@
 ﻿@using PointOfSale.Models;
 @model List<VMProduct>;
 
-<link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css?family=Lora:400,400i,700,700i&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700&display=swap" rel="stylesheet">
-<link href="https://cdn.materialdesignicons.com/4.4.95/css/materialdesignicons.min.css" rel="stylesheet" />
-
-<link rel="stylesheet" href="~/css/shop/open-iconic-bootstrap.min.css">
-<link rel="stylesheet" href="~/css/shop/animate.css">
-
-<link rel="stylesheet" href="~/css/shop/owl.carousel.min.css">
-<link rel="stylesheet" href="~/css/shop/owl.theme.default.min.css">
-<link rel="stylesheet" href="~/css/shop/magnific-popup.css">
-
-<link rel="stylesheet" href="~/css/shop/aos.css">
-
-<link rel="stylesheet" href="~/css/shop/ionicons.min.css">
-
-<link rel="stylesheet" href="~/css/shop/bootstrap-datepicker.css">
-<link rel="stylesheet" href="~/css/shop/jquery.timepicker.css">
-
-
-<link rel="stylesheet" type="text/css" href="~/css/shop/flaticon.css">
-<link rel="stylesheet" type="text/css" href="~/css/shop/icomoon.css">
-<link rel="stylesheet" type="text/css" href="~/css/shop/style.css">
-
 <div class="col-md-12 row d-flex justify-content-center">
     @foreach (var prod in Model.OrderBy(_ => _.Description))
     {
@@ -62,13 +38,6 @@
     }
 </div>
 
-<script src="~/js/shop/jquery.min.js"></script>
-<script src="~/js/shop/jquery-migrate-3.0.1.min.js"></script>
-<script src="~/js/shop/popper.min.js"></script>
-<script src="~/js/shop/bootstrap.min.js"></script>
-<script src="~/js/shop/jquery.easing.1.3.js"></script>
+ <script src="~/js/shop/jquery.min.js"></script>
 <script src="~/js/shop/jquery.waypoints.min.js"></script>
-<script src="~/js/shop/jquery.stellar.min.js"></script>
-<script src="~/js/shop/jquery.magnific-popup.min.js"></script>
-<script src="~/js/shop/aos.js"></script>
 <script src="~/js/views/productsShop.js"></script>
