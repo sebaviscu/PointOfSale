@@ -10,7 +10,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Sign In - Sleek Admin Dashboard Template</title>
+    <title>Login - Administrador PoS</title>
 
     <!-- GOOGLE FONTS -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500|Poppins:400,500,600,700|Roboto:400,500" rel="stylesheet" />
@@ -42,21 +42,17 @@
                                 <div class="form-group col-md-12 mb-4">
                                     <input type="text" class="form-control input-lg" asp-for="Email" placeholder="Usuario">
                                 </div>
-
-                                <div class="form-group col-md-12 ">
+                                <div class="form-group col-md-12">
                                     <input type="password" class="form-control input-lg" asp-for="PassWord" placeholder="Password">
                                 </div>
-                                @{
-                                    if (Model != null && Model.IsAdmin)
-                                    {
-                                        <div class="input-group input-group-sm mb-3 col-md-12">
-
-                                            <div class="input-group-prepend">
-                                                <label class="input-group-text" for="cboTiendas">Tienda</label>
-                                            </div>
-                                            <select class="form-control" id="cboTiendas" asp-for="TiendaId"></select>
+                                @if (Model != null && Model.IsAdmin)
+                                {
+                                    <div class="input-group input-group-sm mb-3 col-md-12">
+                                        <div class="input-group-prepend">
+                                            <label class="input-group-text" for="cboTiendas">Tienda</label>
                                         </div>
-                                    }
+                                        <select class="form-control" id="cboTiendas" asp-for="TiendaId"></select>
+                                    </div>
                                 }
                                 <div class="col-md-12">
                                     <div class="d-flex my-2 justify-content-between">
@@ -69,10 +65,10 @@
                                         </div>
                                     </div>
                                     <button type="submit" class="btn btn-lg btn-primary w-100 mb-4">Ingresar</button>
-
                                 </div>
                             </div>
                         </form>
+
                     </div>
                 </div>
             </div>

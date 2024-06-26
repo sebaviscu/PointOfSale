@@ -40,9 +40,9 @@ namespace PointOfSale.Controllers
                 List<VMTienda> vmTiendaList = _mapper.Map<List<VMTienda>>(await _TiendaService.List());
                 return StatusCode(StatusCodes.Status200OK, new { data = vmTiendaList });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                return StatusCode(500, new { error = ex.Message });
             }
         }
 

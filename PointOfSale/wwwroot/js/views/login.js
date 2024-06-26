@@ -1,12 +1,19 @@
 ﻿$(document).ready(function () {
+
     fetch("/Tienda/GetTienda")
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
-        }).then(responseJson => {
-
+            console.log(response);
+            if (!response.ok) {
+                throw new Error('Network response was not ok.');
+            }
+            return response.json();
+        })
+        .then(responseJson => {
+            console.log(responseJson);
             if (responseJson.data.length > 1) {
                 $("#cboTiendas").append(
-                    $("<option>").val('-1').text(''))
+                    $("<option>").val('-1').text('')
+                )
             }
             if (responseJson.data.length > 0) {
                 responseJson.data.forEach((item) => {
@@ -16,4 +23,9 @@
                 });
             }
         })
+        .catch(error => {
+            console.error('Fetch error:', error);
+        });
+
+
 })
