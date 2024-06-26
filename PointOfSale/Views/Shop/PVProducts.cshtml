@@ -1,10 +1,10 @@
 ﻿@using PointOfSale.Models;
 @model List<VMProduct>;
 
-<div class="col-md-12 row d-flex justify-content-center">
+<div class="row">
     @foreach (var prod in Model.OrderBy(_ => _.Description))
     {
-        <div class="col-md-6 col-lg-2 ftco-animate product-list" category-prod="@prod.IdCategory" description-prd="@prod.Description">
+        <div class="col-md-2 ftco-animate product-list" category-prod="@prod.IdCategory" description-prd="@prod.Description">
             <div class="product">
                 <a href="javascript:void(0)" class="img-prod" style="text-align: center;">
                     <img class="img-fluid" src="data:image/png;base64,@prod.PhotoBase64" alt="Imagen" style="min-height: 160px; max-height: 160px; width:auto;">
@@ -41,3 +41,5 @@
  <script src="~/js/shop/jquery.min.js"></script>
 <script src="~/js/shop/jquery.waypoints.min.js"></script>
 <script src="~/js/views/productsShop.js"></script>
+<script src="~/js/shop/popper.min.js"></script>
+<script src="~/js/shop/bootstrap.min.js"></script>
