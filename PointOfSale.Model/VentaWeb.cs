@@ -26,8 +26,27 @@ namespace PointOfSale.Model
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }
 
+        public bool? IsEdit { get; set; }
+        public string? EditText { get; set; }
+
         public virtual TypeDocumentSale? FormaDePago { get; set; }
         public virtual ICollection<DetailSale>? DetailSales { get; set; }
 
+
+        public void SetEditVentaWeb(string user, DateTime Date)
+        {
+            var text = string.Empty;
+
+            text += $"Editado por: {user} {Date} \n";
+            text += $"Cliente: ${Nombre}\n";
+            text += $"${Direccion} {Telefono} \n";
+            text += $"${Total} {FormaDePago.Description} \n\n";
+
+            foreach (var e in DetailSales)
+            {
+                text += $"{e.DescriptionProduct}: ${e.Price} x {e.Quantity}/{e.TipoVentaString}\n";
+            }
+            EditText = text;
+        }
     }
 }

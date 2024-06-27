@@ -12,14 +12,26 @@ const BASIC_MODEL = {
     formaDePago: null,
     estado: 0,
     detailSales: null,
-    idTienda:0,
+    idTienda: 0,
     registrationDate: null,
     modificationDate: null,
-    modificationUser: null
+    modificationUser: null,
+    isEdit: null,
+    editUser: null,
+    editText: null,
+    editDate: null
 }
 
 
+//$(document).on('select2:open', () => {
+//    document.querySelector('.select2-search__field').focus();
+//});
+
 $(document).ready(function () {
+    $('[data-toggle="popover"]').popover({
+        html: true,
+        trigger: 'focus' // Se activará cuando se haga clic y desaparecerá cuando se haga clic fuera
+    });
 
 
     tableData = $("#tbData").DataTable({
@@ -66,7 +78,7 @@ $(document).ready(function () {
                 title: '',
                 filename: 'Reporte Ventas Web',
                 exportOptions: {
-                    columns: [1, 2,3,4,5,6]
+                    columns: [1, 2, 3, 4, 5, 6]
                 }
             }, 'pageLength'
         ]
@@ -85,6 +97,7 @@ $(document).ready(function () {
                 });
             }
         })
+
 })
 
 
@@ -93,13 +106,35 @@ $("#printTicket").click(function () {
 
     fetch(`/Sales/PrintTicketVentaWeb?idVentaWeb=${idVentaWeb}`)
         .then(response => {
-            $("#modalData").modal("hide");
-            swal("Exitoso!", "Ticket impreso!", "success");
+
+            if (response.state) {
+                $("#modalData").modal("hide");
+
+                if (response.object.nombreImpresora != '') {
+
+                    printTicket(response.object.nombreImpresora, responseJson.object.ticket);
+
+                    swal("Exitoso!", "Ticket impreso!", "success");
+                }
+
+            } else {
+                swal("Lo sentimos", "La venta no fué registrada. Error: " + response.message, "error");
+            }
         })
 
 })
 
 const openModal = (model = BASIC_MODEL) => {
+
+    $('#modalData').modal('show');
+
+    
+    document.querySelector('#txtNombre').disabled = true;
+    document.querySelector('#txtTelefono').disabled = true;
+    document.querySelector('#txtDireccion').disabled = true;
+    document.querySelector('#txtFormaPago').disabled = true;
+    document.querySelector('#txtComentario').disabled = true;
+
     $("#txtId").val(model.idVentaWeb);
     $("#txtFecha").val(model.fecha);
     $("#txtTotal").val(model.totalString);
@@ -110,6 +145,20 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtComentario").val(model.comentario);
     $("#cboState").val(model.estado);
     $("#cboTienda").val(model.idTienda);
+
+    if (model.isEdit) {
+
+        select2Modal();
+
+        $('#popoverEdit').attr('data-bs-content', model.editText);
+
+        bootstrap.Popover.getInstance(document.getElementById('popoverEdit'));
+        popover.setContent({
+            '.popover-body': 'Updated content'
+        });
+    }
+
+    document.querySelector('#popoverEdit').disabled = model.isEdit;
 
     document.querySelector('#cboState').disabled = model.estado > 0;
     document.querySelector('#cboTienda').disabled = model.estado > 0;
@@ -140,6 +189,18 @@ const openModal = (model = BASIC_MODEL) => {
     $("#modalData").modal("show")
 
 }
+
+$("#btnEdit").click(function () {
+
+    document.querySelector('#txtNombre').disabled = false;
+    document.querySelector('#txtTelefono').disabled = false;
+    document.querySelector('#txtDireccion').disabled = false;
+    document.querySelector('#txtFormaPago').disabled = false;
+    document.querySelector('#txtComentario').disabled = false;
+
+
+})
+
 
 $("#btnSave").on("click", function () {
 
@@ -191,3 +252,71 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
 
     openModal(data);
 })
+
+function select2Modal() {
+
+    // Initialize select2 after showing the modal
+    $('#cboSearchProduct').select2({
+        ajax: {
+            url: "/Sales/GetProducts",
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            delay: 250,
+            data: function (params) {
+                return {
+                    search: params.term
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data.map((item) => (
+                        {
+                            id: item.idProduct,
+                            text: item.description,
+                            brand: item.brand,
+                            category: item.idCategory,
+                            photoBase64: item.photoBase64,
+                            price: item.price,
+                            tipoVenta: item.tipoVenta
+                        }
+                    ))
+                };
+            }
+        },
+        placeholder: 'Buscando producto...',
+        minimumInputLength: 2,
+        templateResult: formatResults,
+        allowClear: true,
+        dropdownParent: $('#modalData')
+    });
+
+    function formatResults(data) {
+        if (data.loading)
+            return data.text;
+
+        var container = $(
+            `<table width="90%">
+                <tr>
+                    <td style="width:60px">
+                        <img style="height:60px;width:60px;margin-right:10px" src="data:image/png;base64,${data.photoBase64}"/>
+                    </td>
+                    <td>
+                        <p style="font-weight: bolder;margin:2px">${data.text}</p>
+                        <p>$ ${parseFloat(data.price).toFixed(2)}</p>
+                    </td>
+                </tr>
+             </table>`
+        );
+
+        return container;
+    }
+
+    $('#modalData').on('shown.bs.modal', function () {
+        $('#cboSearchProduct').select2('open');
+    });
+
+    $('#modalData').on('select2:open', () => {
+        document.querySelector('.select2-search__field').focus();
+    });
+
+}

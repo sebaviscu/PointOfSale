@@ -206,36 +206,28 @@ function removeLoading() {
 
 
 async function printTicket(nombreImpresora, ticketContent) {
-
     try {
         const conector = {
             text: ticketContent,
-            nombre_impresora: nombreImpresora
+            nombreImpresora: nombreImpresora
         };
 
-        fetch('http://localhost:4567/imprimir', {
+        const response = await fetch('/print/imprimir', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(conector)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    return false;
-                }
-                return response.json();
-            })
-            .then(data => {
-                return data.success;
-            })
-            .catch(error => {
+        });
 
-                console.error('Error:', error);
-                return false;
-            });
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
 
-    } catch (err) {
-        console.error('Error al listar las impresoras:', err);
+        const data = await response.json();
+        return data.success;
+    } catch (error) {
+        console.error('Error:', error);
+        return false;
     }
 }

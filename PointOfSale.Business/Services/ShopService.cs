@@ -28,11 +28,11 @@ namespace PointOfSale.Business.Services
         public async Task<List<VentaWeb>> List()
         {
             IQueryable<VentaWeb> query = await _repository.Query();
-            return query.Include(_=>_.DetailSales).Include(_=>_.FormaDePago).ToList();
+            return query.Include(_ => _.DetailSales).Include(_ => _.FormaDePago).ToList();
         }
 
 
-        public async Task<VentaWeb> Edit(VentaWeb entity)
+        public async Task<VentaWeb> Update(VentaWeb entity)
         {
             try
             {
@@ -64,10 +64,50 @@ namespace PointOfSale.Business.Services
                 throw;
             }
         }
+        public async Task<VentaWeb> Edit(VentaWeb entity)
+        {
+            try
+            {
+                IQueryable<VentaWeb> query = await _repository.Query(c => c.IdVentaWeb == entity.IdVentaWeb);
+                var VentaWeb_found = query.Include(_ => _.DetailSales).Include(_ => _.FormaDePago).First();
+
+                VentaWeb_found.ModificationDate = DateTimeNowArg;
+                VentaWeb_found.ModificationUser = entity.ModificationUser;
+
+                VentaWeb_found.IsEdit = true;
+                VentaWeb_found.SetEditVentaWeb(entity.ModificationUser, DateTimeNowArg);
+
+                VentaWeb_found.DetailSales = entity.DetailSales;
+                VentaWeb_found.Nombre = entity.Nombre;
+                VentaWeb_found.Telefono = entity.Telefono;
+                VentaWeb_found.Direccion = entity.Direccion;
+                VentaWeb_found.Comentario = entity.Comentario;
+                VentaWeb_found.FormaDePago= entity.FormaDePago;
+                VentaWeb_found.Total = entity.Total;
+
+                if (entity.Estado == Model.Enum.EstadoVentaWeb.Finalizada && VentaWeb_found.IdTienda.HasValue)
+                {
+                    var turno = await _turnoService.GetTurnoActual(VentaWeb_found.IdTienda.Value);
+                    await _saleRepository.CreatSaleFromVentaWeb(VentaWeb_found, turno);
+                }
+
+                bool response = await _repository.Edit(VentaWeb_found);
+
+                if (!response)
+                    throw new TaskCanceledException("Venta Web no se pudo cambiar.");
+
+                return VentaWeb_found;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
 
         public async Task<VentaWeb> Get(int idVentaWeb)
         {
-            IQueryable<VentaWeb> query = await _repository.Query(_=>_.IdVentaWeb == idVentaWeb);
+            IQueryable<VentaWeb> query = await _repository.Query(_ => _.IdVentaWeb == idVentaWeb);
             return query.Include(_ => _.DetailSales).Include(_ => _.FormaDePago).First();
         }
 

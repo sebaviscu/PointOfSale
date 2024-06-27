@@ -4,15 +4,16 @@
 }
 
 
-@section StylesPOS{
+@section StylesPOS {
 
     <link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
     <link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
     <link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
+    <link href="~/plugins/select2/css/select2.min.css" rel="stylesheet">
 }
 
 <div class="row">
-    <div class="col-sm-12">
+    <div class="col-md-12">
 
         <div class="card card-default">
             <div class="card-header card-header-border-bottom">
@@ -23,7 +24,7 @@
 
             <div class="card-body">
                 <div class="row">
-                    <div class="col-sm-12">
+                    <div class="col-md-12">
                         <table id="tbData" class="table" style="width:100%">
                             <thead>
                                 <tr>
@@ -47,7 +48,7 @@
 </div>
 
 <!-- Grid Modal -->
-<div class="modal fade" id="modalData" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+<div class="modal fade" id="modalData"  role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -57,91 +58,115 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form>
-                    <input type="hidden" value="0" id="txtId">
-                    <div class="row">
-                         <div class="col-sm-6">
-                                    <table id="tbProducts" class="table table-sm table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>Producto</th>
-                                                <th>Cantidad</th>
-                                                <th>Precio</th>
-                                                <th>Total</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
-                                </div>
-                        <div class="col-sm-6">
-                            <div class="form-row">
+                <input type="hidden" value="0" id="txtId">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-row" id="divSearchproducts">
+                            <div class="form-group">
+                                <select class="form-control form-control-sm" id="cboSearchProduct">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                            <div class="row offset-md-3 col-md-6">
                                 <div class="form-group col-sm-6">
-                                    <label for="txtFecha">Fecha</label>
-                                    <input type="text" class="form-control form-control-sm input-validate" id="txtFecha" name="Fecha" disabled>
+                                    <input type="number" step="any" min="0" class="form-control form-control-sm" id="txtPeso" name="Peso" autofocus style="border-color: darkgray;">
                                 </div>
                                 <div class="form-group col-sm-6">
-                                    <label for="txtTotal">Total</label>
-                                    <input type="text" class="form-control form-control-sm input-validate" id="txtTotal" name="Total" disabled>
+                                    <button class="btn btn-info btn-sm w-100" id="btnAgregarProducto">Agregar</button>
                                 </div>
                             </div>
-                            <div class="form-row">
-                                <div class="form-group col-sm-8">
-                                    <label for="txtNombre">Nombre y Apellido</label>
-                                    <input type="text" class="form-control form-control-sm input-validate" id="txtNombre" name="Nombre" disabled>
-                                </div>
-                                <div class="form-group col-sm-4">
-                                    <label for="txtNombre">Telefono</label>
-                                    <input type="text" class="form-control form-control-sm input-validate" id="txtTelefono" name="Telefono" disabled>
-                                </div>
+                        </div>
+                        <table id="tbProducts" class="table table-sm table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label for="txtTotal">Total</label>
+                                <input type="text" class="form-control form-control-sm input-validate" id="txtTotal" name="Total" disabled>
                             </div>
-                            <div class="form-row">
-                                <div class="form-group col-sm-8">
-                                    <label for="txtNombre">Direccion de entrega</label>
-                                    <input type="text" class="form-control form-control-sm input-validate" id="txtDireccion" name="Direccion" disabled>
-                                </div>
-                                <div class="form-group col-sm-4">
-                                    <label for="txtNombre">Medio de pago</label>
-                                    <input type="text" class="form-control form-control-sm input-validate" id="txtFormaPago" name="Forma de pago" disabled>
-                                </div>
+                            <div class="form-group col-md-4">
+                                <label for="txtFecha">Fecha</label>
+                                <input type="text" class="form-control form-control-sm input-validate" id="txtFecha" name="Fecha" disabled>
                             </div>
-                            <div class="form-row">
-                                <div class="form-group col-sm-12">
-                                    <label for="txtNombre">Comentario</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario" disabled>
+                            <div class="form-group offset-md-2 col-md-2 text-end row" style="align-content: end;">
+                                <div class="col-md-6">
+                                    <button class="btn btn-primary btn-sm" id="btnEdit"><i class="mdi mdi-pencil"></i></button>
                                 </div>
-                            </div>
-                            <div class="form-row" id="divModif">
-                                <div class="form-group col-sm-6">
-                                    <label for="txtModificado">Fecha Modificado</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtModificado" name="fechaModificado" readonly>
-                                </div>
-                                <div class="form-group col-sm-6">
-                                    <label for="txtModificadoUsuario">Por:</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtModificadoUsuario" name="usuarioModificado" readonly>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-sm-5">
-                                    <label for="cboState">Estado</label>
-                                    <select class="form-control form-control-sm" id="cboState">
-                                        <option value="0">Nueva</option>
-                                        <option value="1">Finalizada</option>
-                                        <option value="2">Cerrada</option>
-                                    </select>
-                                </div>
-                                <div class="col-sm-6 offset-sm-1">
-                                    <div class="form-group">
-                                        <label for="cboTienda">Tienda</label>
-                                        <select class="form-control form-control-sm" id="cboTienda" name="Tienda"></select>
+                                <div class="col-md-6">
 
-                                    </div>
+                                    <button type="button" id="popoverEdit" class="btn btn-info btn-sm" data-toggle="popover" data-bs-content="And here's some amazing content. It's very engaging. Right?">
+                                        Editado
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-8">
+                                <label for="txtNombre">Nombre y Apellido</label>
+                                <input type="text" class="form-control form-control-sm input-validate" id="txtNombre" name="Nombre" disabled>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="txtNombre">Telefono</label>
+                                <input type="text" class="form-control form-control-sm input-validate" id="txtTelefono" name="Telefono" disabled>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-8">
+                                <label for="txtNombre">Direccion de entrega</label>
+                                <input type="text" class="form-control form-control-sm input-validate" id="txtDireccion" name="Direccion" disabled>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="txtNombre">Medio de pago</label>
+                                <input type="text" class="form-control form-control-sm input-validate" id="txtFormaPago" name="Forma de pago" disabled>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="txtNombre">Comentario</label>
+                                <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario" disabled>
+                            </div>
+                        </div>
+                        <div class="form-row" id="divModif">
+                            <div class="form-group col-md-6">
+                                <label for="txtModificado">Fecha Modificado</label>
+                                <input type="text" class="form-control form-control-sm" id="txtModificado" name="fechaModificado" readonly>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="txtModificadoUsuario">Por:</label>
+                                <input type="text" class="form-control form-control-sm" id="txtModificadoUsuario" name="usuarioModificado" readonly>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-5">
+                                <label for="cboState">Estado</label>
+                                <select class="form-control form-control-sm" id="cboState">
+                                    <option value="0">Nueva</option>
+                                    <option value="1">Finalizada</option>
+                                    <option value="2">Cerrada</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 offset-sm-1">
+                                <div class="form-group">
+                                    <label for="cboTienda">Tienda</label>
+                                    <select class="form-control form-control-sm" id="cboTienda" name="Tienda"></select>
+
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                </form>
+                </div>
 
             </div>
 
@@ -155,17 +180,18 @@
 </div>
 
 
-@section Scripts{
+@section Scripts {
     <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
     <script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
     <script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
 
-
+    <script src="~/plugins/popper.min.js"></script>
     <script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
     <script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
     <script src="~/plugins/data-tables/jszip.min.js"></script>
     <script src="~/plugins/data-tables/buttons.html5.min.js"></script>
     <script src="~/plugins/data-tables/buttons.print.min.js"></script>
+    <script src="~/plugins/select2/js/select2.js"></script>
 
     <script src="~/js/views/ventaWeb.js"></script>
 }

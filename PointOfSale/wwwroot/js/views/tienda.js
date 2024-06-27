@@ -70,20 +70,37 @@ $(document).ready(function () {
         $("<option>").val('').text('')
     )
 
-    fetch('http://localhost:4567/getprinters')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
+    fetch('/print/getprinters')
+        .then(response => response.json())
         .then(r => {
             r.printers.forEach((item) => {
                 $("#cboNombreTienda").append(
                     $("<option>").val(item).text(item)
                 )
             })
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
         });
+
+    //fetch('http://localhost:4567/getprinters')
+    //    .then(response => {
+    //        if (!response.ok) {
+    //            throw new Error('Network response was not ok');
+    //        }
+    //        return response.json();
+    //    })
+    //    .then(r => {
+    //        r.printers.forEach((item) => {
+    //            $("#cboNombreTienda").append(
+    //                $("<option>").val(item).text(item)
+    //            )
+    //        })
+    //    })
+    //    .catch(error => {
+    //        console.error('Fetch error:', error);
+    //    });
+
 
 })
 

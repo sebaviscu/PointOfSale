@@ -46,6 +46,7 @@ public class Program
             options.UseSqlServer(builder.Configuration.GetConnectionString("SQL_Publich"));
             //options.UseSqlServer(builder.Configuration.GetConnectionString("SQL"));
         });
+        builder.Services.AddHttpClient();
 
         builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 

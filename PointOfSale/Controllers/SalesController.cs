@@ -268,9 +268,19 @@ namespace PointOfSale.Controllers
         {
             var ventaWeb = await _shopService.Get(idVentaWeb);
             var tienda = await _tiendaService.Get(ventaWeb.IdTienda.Value);
-            _ticketService.TicketVentaWeb(ventaWeb, tienda);
+            var ticket = _ticketService.TicketVentaWeb(ventaWeb, tienda);
 
-            return StatusCode(StatusCodes.Status200OK);
+            GenericResponse<VMSale> gResponse = new GenericResponse<VMSale>();
+
+            var model = new VMSale();
+
+            model.NombreImpresora = tienda.NombreImpresora;
+            model.Ticket = ticket;
+
+            gResponse.State = true;
+            gResponse.Object = model;
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         public async Task<IActionResult> ShowPDFSaleAsync(string saleNumber)

@@ -21,5 +21,9 @@ namespace PointOfSale.Models
         public string? FormaDePago { get; set; }
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }
+
+        public bool? IsEdit { get; set; }
+        public string? EditText { get; set; }
+
     }
 }
