@@ -37,15 +37,22 @@ namespace PointOfSale.Model
         {
             var text = string.Empty;
 
-            text += $"Editado por: {user} {Date} \n";
-            text += $"Cliente: ${Nombre}\n";
-            text += $"${Direccion} {Telefono} \n";
-            text += $"${Total} {FormaDePago.Description} \n\n";
+
+            text += $"{user} {Date} <br>";
+            text += $"Cliente: {Nombre}<br>";
+            text += $"Dir: {Direccion} | Tel: {Telefono} \n";
+            text += $"Total: ${Total} | {FormaDePago.Description} <br><br>";
 
             foreach (var e in DetailSales)
             {
-                text += $"{e.DescriptionProduct}: ${e.Price} x {e.Quantity}/{e.TipoVentaString}\n";
+                text += $"- {e.DescriptionProduct}: ${e.Price} x {e.Quantity} / {e.TipoVentaString} = ${e.Total}<br>";
             }
+
+            if (!string.IsNullOrEmpty(EditText))
+            {
+                text += "------------------------------------------------------ <br>";
+            }
+            text += EditText;
             EditText = text;
         }
     }

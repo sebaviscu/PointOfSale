@@ -1,5 +1,6 @@
 ﻿let tableData;
 let rowSelected;
+var productSelected = null;
 
 const BASIC_MODEL = {
     idVentaWeb: 0,
@@ -98,6 +99,22 @@ $(document).ready(function () {
             }
         })
 
+    fetch("/Sales/ListTypeDocumentSale")
+        .then(response => {
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(responseJson => {
+            $("#txtFormaPago").append(
+            )
+            if (responseJson.length > 0) {
+                formasDePagosList = responseJson;
+
+                responseJson.forEach((item) => {
+                    $("#txtFormaPago").append(
+                        $("<option>").val(item.idTypeDocumentSale).text(item.description)
+                    )
+                });
+            }
+        });
 })
 
 
@@ -125,10 +142,10 @@ $("#printTicket").click(function () {
 })
 
 const openModal = (model = BASIC_MODEL) => {
-
     $('#modalData').modal('show');
 
-    
+    document.getElementById("divSearchproducts").style.display = 'none';
+
     document.querySelector('#txtNombre').disabled = true;
     document.querySelector('#txtTelefono').disabled = true;
     document.querySelector('#txtDireccion').disabled = true;
@@ -137,35 +154,38 @@ const openModal = (model = BASIC_MODEL) => {
 
     $("#txtId").val(model.idVentaWeb);
     $("#txtFecha").val(model.fecha);
-    $("#txtTotal").val(model.totalString);
+    $("#txtTotal").val(model.total);
     $("#txtNombre").val(model.nombre);
     $("#txtTelefono").val(model.telefono);
     $("#txtDireccion").val(model.direccion);
-    $("#txtFormaPago").val(model.formaDePago);
+    $("#txtFormaPago").val(model.idFormaDePago);
     $("#txtComentario").val(model.comentario);
     $("#cboState").val(model.estado);
     $("#cboTienda").val(model.idTienda);
 
     if (model.isEdit) {
-
-        select2Modal();
+        document.getElementById("popoverEdit").style.display = '';
 
         $('#popoverEdit').attr('data-bs-content', model.editText);
 
-        bootstrap.Popover.getInstance(document.getElementById('popoverEdit'));
-        popover.setContent({
-            '.popover-body': 'Updated content'
+        var popover = new bootstrap.Popover(document.getElementById('popoverEdit'), {
+            html: true
         });
+        popover.setContent({
+            '.popover-body': model.editText
+        });
+    } else {
+        document.getElementById("popoverEdit").style.display = 'none';
     }
-
-    document.querySelector('#popoverEdit').disabled = model.isEdit;
 
     document.querySelector('#cboState').disabled = model.estado > 0;
     document.querySelector('#cboTienda').disabled = model.estado > 0;
+    document.querySelector('#btnEdit').disabled = model.estado > 0;
+    document.querySelector('#btnSave').disabled = model.estado > 0;
 
-    if (model.modificationUser === null)
+    if (model.modificationUser === null) {
         document.getElementById("divModif").style.display = 'none';
-    else {
+    } else {
         document.getElementById("divModif").style.display = '';
         var dateTimeModif = new Date(model.modificationDate);
 
@@ -173,34 +193,130 @@ const openModal = (model = BASIC_MODEL) => {
         $("#txtModificadoUsuario").val(model.modificationUser);
     }
 
-    $("#tbProducts tbody").html("")
+    $("#tbProducts tbody").html("");
 
     model.detailSales.forEach((item) => {
-        $("#tbProducts tbody").append(
-            $("<tr>").append(
-                $("<td>").text(item.descriptionProduct),
-                $("<td>").text(`${item.quantity} / ${item.tipoVentaString}`),
-                $("<td>").text(`$ ${Number.parseFloat(item.price).toFixed(2)}`),
-                $("<td>").text(`$ ${Number.parseFloat(item.total).toFixed(2)}`)
-            )
-        )
+        addNewProduct(item.idDetailSale, item.descriptionProduct, item.quantity, item.tipoVentaString, item.price, item.total, item.idProduct);
+    });
+
+    $('#modalData').on('shown.bs.modal', function () {
+        select2Modal();
+        //$('#cboSearchProduct').select2('open');
+    });
+
+    $('#cboSearchProduct').on('select2:select', function (e) {
+        let data = e.params.data;
+        productSelected = data;
+
+        if (data.tipoVenta == 2) {
+            var peso = $("#txtPeso").val();
+
+            if (peso != "") {
+                if (peso === false || isNaN(peso)) return false;
+            }
+
+            peso = peso == "" ? 1 : parseFloat(peso);
+
+            let precio = Number.parseFloat(productSelected.price);
+            addNewProduct(0, productSelected.text, peso, "U", precio, precio * peso, productSelected.id);
+
+            $('#txtPeso').val('');
+            const element = document.getElementById("txtPeso");
+            window.setTimeout(() => element.focus(), 0);
+            updateTotal();
+            $('#cboSearchProduct').val("").trigger('change');
+            return;
+        }
+
+        const element = document.getElementById("txtPeso");
+        window.setTimeout(() => element.focus(), 0);
+        updateTotal();
+        $('#cboSearchProduct').val("").trigger('change');
+
     })
 
-    $("#modalData").modal("show")
+    $("#btnAgregarProducto").on("click", function () {
 
+        functionAddProducto();
+    });
+
+    $('#txtPeso').on('keypress', function (e) {
+        if ($('#txtPeso').val() != '' && e.which === 13) {
+
+            $(this).attr("disabled", "disabled");
+
+            functionAddProducto();
+            $('#txtPeso').val('');
+
+            $(this).removeAttr("disabled");
+        }
+    });
+};
+
+function functionAddProducto() {
+    let peso = parseFloat($("#txtPeso").val());
+
+    if (peso === false || peso === "" || isNaN(peso)) return false;
+
+    if (productSelected === null) {
+        return false;
+    }
+    let precio = Number.parseFloat(productSelected.price);
+    addNewProduct(0, productSelected.text, peso, "Kg", precio, precio * peso, productSelected.id);
+
+    updateTotal();
+    $('#cboSearchProduct').val("").trigger('change');
+}
+
+function addNewProduct(idDetailSale, description, cantidad, tipoVenta, precio, total, idProducto) {
+    const isEditVisible = $('#divSearchproducts').is(':visible');
+
+    const newRow = $("<tr>").append(
+        $("<td>").html('<button class="btn btn-danger btn-sm delete-row">-</button>'),
+        $("<td>").text(description),
+        $("<td>").text(`${cantidad} / ${tipoVenta}`),
+        $("<td>").text(`$ ${Number.parseFloat(precio).toFixed(2)}`),
+        $("<td>").text(`$ ${Number.parseFloat(total).toFixed(2)}`).data("idDetailSale", idDetailSale).data("idProducto", idProducto)
+    );
+
+    if (!isEditVisible) {
+        newRow.find('.delete-row').hide();
+    }
+
+    $("#tbProducts tbody").append(newRow);
 }
 
 $("#btnEdit").click(function () {
+    const isHidden = document.getElementById("divSearchproducts").style.display === 'none';
+    document.getElementById("divSearchproducts").style.display = isHidden ? '' : 'none';
+    document.getElementById("cboSearchProduct").style.display = isHidden ? '' : 'none';
 
-    document.querySelector('#txtNombre').disabled = false;
-    document.querySelector('#txtTelefono').disabled = false;
-    document.querySelector('#txtDireccion').disabled = false;
-    document.querySelector('#txtFormaPago').disabled = false;
-    document.querySelector('#txtComentario').disabled = false;
+    const fields = ['#txtNombre', '#txtTelefono', '#txtDireccion', '#txtFormaPago', '#txtComentario'];
+    fields.forEach(field => {
+        document.querySelector(field).disabled = !isHidden;
+    });
 
+    $('.delete-row').each(function () {
+        this.style.display = isHidden ? '' : 'none';
+    });
+});
 
-})
+$(document).on('click', '.delete-row', function () {
+    $(this).closest('tr').remove();
+    updateTotal();
 
+});
+
+function updateTotal() {
+    let totalAmount = 0;
+
+    $("#tbProducts tbody tr").each(function () {
+        const total = parseFloat($(this).find("td").eq(4).text().replace('$', '').trim());
+        totalAmount += total;
+    });
+
+    $("#txtTotal").val(`${totalAmount.toFixed(2)}`);
+}
 
 $("#btnSave").on("click", function () {
 
@@ -209,11 +325,46 @@ $("#btnSave").on("click", function () {
     model["idVentaWeb"] = parseInt($("#txtId").val());
     model["estado"] = parseInt($("#cboState").val());
 
-    if (model.estado == 1 && isNaN(model.idTienda)) {
+    model["nombre"] = $("#txtNombre").val();
+    model["telefono"] = $("#txtTelefono").val();
+    model["direccion"] = $("#txtDireccion").val();
+    model["idFormaDePago"] = parseInt($("#txtFormaPago").val());
+    model["total"] = parseFloat($("#txtTotal").val());
+    model["comentario"] = $("#txtComentario").val();
+
+    if (isNaN(model.idTienda)) {
         $('#cboTienda').focus();
-        toastr.warning(`Debe seleccionar una Tienda para poder finalizar una Venta Web`, "");
+        toastr.warning(`Debe seleccionar una Tienda`, "");
         return;
     }
+
+    let products = [];
+
+    $("#tbProducts tbody tr").each(function () {
+        const $row = $(this);
+        const product = {
+            brandProduct: null,
+            categoryProducty: '',
+            descriptionProduct: $row.find("td").eq(1).text(),
+            idDetailSale: $row.find("td").eq(4).data("idDetailSale"),
+            idProduct: $row.find("td").eq(4).data("idProducto"),
+            idSale: null,
+            idSaleNavigation: null,
+            idVentaWeb: 0,
+            price: parseFloat($row.find("td").eq(3).text().replace('$', '').trim()),
+            producto: null,
+            promocion: null,
+            quantity: parseFloat($row.find("td").eq(2).text().split(' / ')[0]),
+            tipoVenta: $row.find("td").eq(2).text().split(' / ')[1] == "Kg" ? 1 : 2,
+            tipoVentaString: $row.find("td").eq(2).text().split(' / ')[1],
+            total: parseFloat($row.find("td").eq(4).text().replace('$', '').trim()),
+        };
+        products.push(product);
+    });
+
+    model["detailSales"] = products;
+
+
 
     $("#modalData").find("div.modal-content").LoadingOverlay("show")
 
@@ -231,6 +382,7 @@ $("#btnSave").on("click", function () {
             rowSelected = null;
             $("#modalData").modal("hide");
             swal("Exitoso!", "La Venta Web fué modificada", "success");
+            location.reload()
 
         } else {
             swal("Lo sentimos", responseJson.message, "error");
@@ -254,8 +406,6 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
 })
 
 function select2Modal() {
-
-    // Initialize select2 after showing the modal
     $('#cboSearchProduct').select2({
         ajax: {
             url: "/Sales/GetProducts",
@@ -310,13 +460,4 @@ function select2Modal() {
 
         return container;
     }
-
-    $('#modalData').on('shown.bs.modal', function () {
-        $('#cboSearchProduct').select2('open');
-    });
-
-    $('#modalData').on('select2:open', () => {
-        document.querySelector('.select2-search__field').focus();
-    });
-
 }

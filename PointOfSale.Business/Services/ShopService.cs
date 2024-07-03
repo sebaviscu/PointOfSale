@@ -8,6 +8,7 @@ namespace PointOfSale.Business.Services
     public class ShopService : IShopService
     {
         public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
+        private readonly IGenericRepository<DetailSale> _repositoryDetailsSale;
         private readonly IGenericRepository<VentaWeb> _repository;
         private readonly ITiendaService _tiendaService;
         private readonly IProductService _productService;
@@ -15,7 +16,7 @@ namespace PointOfSale.Business.Services
         private readonly ISaleRepository _saleRepository;
         private readonly INotificationService _notificationService;
 
-        public ShopService(ITiendaService tiendaService, IProductService productService, IGenericRepository<VentaWeb> repository, ITurnoService turnoService, ISaleRepository saleRepository, INotificationService notificationService)
+        public ShopService(ITiendaService tiendaService, IProductService productService, IGenericRepository<VentaWeb> repository, ITurnoService turnoService, ISaleRepository saleRepository, INotificationService notificationService, IGenericRepository<DetailSale> repositoryDetailsSale)
         {
             _tiendaService = tiendaService;
             _productService = productService;
@@ -23,6 +24,7 @@ namespace PointOfSale.Business.Services
             _turnoService = turnoService;
             _saleRepository = saleRepository;
             _notificationService = notificationService;
+            _repositoryDetailsSale = repositoryDetailsSale;
         }
 
         public async Task<List<VentaWeb>> List()
@@ -36,13 +38,36 @@ namespace PointOfSale.Business.Services
         {
             try
             {
+
                 IQueryable<VentaWeb> query = await _repository.Query(c => c.IdVentaWeb == entity.IdVentaWeb);
-                var VentaWeb_found = query.Include(_ => _.DetailSales).First();
+                var VentaWeb_found = query.Include(_ => _.DetailSales).Include(_ => _.FormaDePago).First();
+
+                if (VentaWeb_found.Estado == Model.Enum.EstadoVentaWeb.Finalizada)
+                {
+                    throw new TaskCanceledException("No es posible modificar una Venta Web finalizada.");
+                }
+
+                bool hasChanges = HasChanges(VentaWeb_found, entity);
+
+
+                VentaWeb_found.IsEdit = hasChanges;
+                if (hasChanges)
+                {
+                    VentaWeb_found.SetEditVentaWeb(entity.ModificationUser, DateTimeNowArg);
+
+                    VentaWeb_found.Comentario = entity.Comentario;
+                    VentaWeb_found.Nombre = entity.Nombre;
+                    VentaWeb_found.Direccion = entity.Direccion;
+                    VentaWeb_found.Telefono = entity.Telefono;
+                    VentaWeb_found.IdFormaDePago = entity.IdFormaDePago; 
+                    VentaWeb_found.Total = entity.Total;
+                    UpdateDetailSales(VentaWeb_found, entity.DetailSales.ToList());
+                }
 
                 VentaWeb_found.Estado = entity.Estado;
+                VentaWeb_found.IdTienda = entity.IdTienda;
                 VentaWeb_found.ModificationDate = DateTimeNowArg;
                 VentaWeb_found.ModificationUser = entity.ModificationUser;
-                VentaWeb_found.IdTienda = entity.IdTienda;
 
                 if (entity.Estado == Model.Enum.EstadoVentaWeb.Finalizada && VentaWeb_found.IdTienda.HasValue)
                 {
@@ -54,8 +79,6 @@ namespace PointOfSale.Business.Services
 
                 if (!response)
                     throw new TaskCanceledException("Venta Web no se pudo cambiar.");
-
-                var s = new Sale();
 
                 return VentaWeb_found;
             }
@@ -64,44 +87,63 @@ namespace PointOfSale.Business.Services
                 throw;
             }
         }
-        public async Task<VentaWeb> Edit(VentaWeb entity)
+        private bool HasChanges(VentaWeb original, VentaWeb updated)
+        {
+            // Verificar cambios en los campos de VentaWeb
+            bool ventaWebChanged = 
+                                   original.Comentario != updated.Comentario ||
+                                   original.Nombre != updated.Nombre ||
+                                   original.Direccion != updated.Direccion ||
+                                   original.Telefono != updated.Telefono ||
+                                   original.IdFormaDePago != updated.IdFormaDePago;
+
+            // Verificar cambios en los DetailSales
+            bool detailSalesChanged = original.DetailSales.Count != updated.DetailSales.Count ||
+                                      original.DetailSales.Any(originalDetail =>
+                                          updated.DetailSales.FirstOrDefault(d => d.IdDetailSale == originalDetail.IdDetailSale) is var updatedDetail &&
+                                          (updatedDetail == null ||
+                                          originalDetail.DescriptionProduct != updatedDetail.DescriptionProduct ||
+                                          originalDetail.Quantity != updatedDetail.Quantity ||
+                                          originalDetail.Price != updatedDetail.Price ||
+                                          originalDetail.TipoVentaString != updatedDetail.TipoVentaString ||
+                                          originalDetail.Total != updatedDetail.Total)
+                                      );
+
+            return ventaWebChanged || detailSalesChanged;
+        }
+
+
+        private void UpdateDetailSales(VentaWeb ventaWebFound, List<DetailSale> updatedDetailSales)
         {
             try
             {
-                IQueryable<VentaWeb> query = await _repository.Query(c => c.IdVentaWeb == entity.IdVentaWeb);
-                var VentaWeb_found = query.Include(_ => _.DetailSales).Include(_ => _.FormaDePago).First();
-
-                VentaWeb_found.ModificationDate = DateTimeNowArg;
-                VentaWeb_found.ModificationUser = entity.ModificationUser;
-
-                VentaWeb_found.IsEdit = true;
-                VentaWeb_found.SetEditVentaWeb(entity.ModificationUser, DateTimeNowArg);
-
-                VentaWeb_found.DetailSales = entity.DetailSales;
-                VentaWeb_found.Nombre = entity.Nombre;
-                VentaWeb_found.Telefono = entity.Telefono;
-                VentaWeb_found.Direccion = entity.Direccion;
-                VentaWeb_found.Comentario = entity.Comentario;
-                VentaWeb_found.FormaDePago= entity.FormaDePago;
-                VentaWeb_found.Total = entity.Total;
-
-                if (entity.Estado == Model.Enum.EstadoVentaWeb.Finalizada && VentaWeb_found.IdTienda.HasValue)
+                foreach (var existingDetailSale in ventaWebFound.DetailSales.ToList())
                 {
-                    var turno = await _turnoService.GetTurnoActual(VentaWeb_found.IdTienda.Value);
-                    await _saleRepository.CreatSaleFromVentaWeb(VentaWeb_found, turno);
+                    if (!updatedDetailSales.Any(ds => ds.IdDetailSale == existingDetailSale.IdDetailSale))
+                    {
+                        _repositoryDetailsSale.Delete(existingDetailSale);
+                    }
                 }
 
-                bool response = await _repository.Edit(VentaWeb_found);
+                foreach (var updatedDetailSale in updatedDetailSales)
+                {
+                    var existingDetailSale = ventaWebFound.DetailSales
+                        .FirstOrDefault(ds => ds.IdDetailSale == updatedDetailSale.IdDetailSale);
 
-                if (!response)
-                    throw new TaskCanceledException("Venta Web no se pudo cambiar.");
+                    if (existingDetailSale == null)
+                    {
+                        updatedDetailSale.IdVentaWeb = ventaWebFound.IdVentaWeb;
 
-                return VentaWeb_found;
+                        ventaWebFound.DetailSales.Add(updatedDetailSale);
+                    }
+                }
             }
-            catch
+            catch (Exception)
             {
+
                 throw;
             }
+
         }
 
 

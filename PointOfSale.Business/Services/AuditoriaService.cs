@@ -22,6 +22,20 @@ namespace PointOfSale.Business.Services
             _repository = repository;
         }
 
+        public void SaveAuditoria(string origen, string text)
+        {
+            var a = new AuditoriaModificaciones();
+            a.IdEntidad = 1;
+            a.Entidad = "Log";
+            a.Descripcion = text;
+            a.EntidadAntes = "Origen: " + origen;
+            a.EntidadDespues = "-";
+            a.ModificationDate = DateTimeNowArg;
+            a.ModificationUser = "Sistema";
+
+            _repository.Add(a);
+        }
+
         public void SaveAuditoria(Category antes, Category despues)
         {
             var a = new AuditoriaModificaciones();

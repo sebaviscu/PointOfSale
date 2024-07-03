@@ -71,13 +71,18 @@ $(document).ready(function () {
     )
 
     fetch('/print/getprinters')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(r => {
-            r.printers.forEach((item) => {
+            r.printers.forEach(item => {
                 $("#cboNombreTienda").append(
                     $("<option>").val(item).text(item)
                 )
-            })
+            });
         })
         .catch(error => {
             console.error('Fetch error:', error);

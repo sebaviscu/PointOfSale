@@ -10,111 +10,138 @@ using PointOfSale.Data.DBContext;
 using PointOfSale.Data.Repository;
 using PointOfSale.Utilities.Automapper;
 using System.Text.Json.Serialization;
+using PointOfSale.Controllers;
+using Serilog;
 
 public class Program
 {
     public static void Main(string[] args)
     {
+        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        var configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .AddJsonFile($"appsettings.{environment}.json", optional: true)
+            .Build();
 
-        var builder = WebApplication.CreateBuilder(args);
+        var loggerConfiguration = new LoggerConfiguration()
+            .ReadFrom.Configuration(configuration);
 
-        // Add services to the container.
-        builder.Services.AddControllersWithViews();
-        builder.Services.AddControllers().AddJsonOptions(x =>
-                        x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
-
-        builder.Services.AddCors(_ =>
+        if (environment == Environments.Production)
         {
-            _.AddPolicy("NuevaPolitica", app =>
-            {
-                app.AllowAnyOrigin()
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-            });
-        });
-
-        builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(option =>
-            {
-                option.LoginPath = "/Access/Login";
-                option.ExpireTimeSpan = TimeSpan.FromHours(3);
-            });
-
-
-        builder.Services.AddDbContext<POINTOFSALEContext>(options =>
-        {
-            options.UseSqlServer(builder.Configuration.GetConnectionString("SQL_Publich"));
-            //options.UseSqlServer(builder.Configuration.GetConnectionString("SQL"));
-        });
-        builder.Services.AddHttpClient();
-
-        builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
-
-        builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-        builder.Services.AddScoped<ISaleRepository, SaleRepository>();
-        builder.Services.AddScoped<IUserService, UserService>();
-        builder.Services.AddScoped<IRolService, RolService>();
-        builder.Services.AddScoped<ICategoryService, CategoryService>();
-        builder.Services.AddScoped<IProductService, ProductService>();
-        builder.Services.AddScoped<ITypeDocumentSaleService, TypeDocumentSaleService>();
-        builder.Services.AddScoped<ISaleService, SaleService>();
-        builder.Services.AddScoped<IDashBoardService, DashBoardService>();
-        builder.Services.AddScoped<IMenuService, MenuService>();
-        builder.Services.AddScoped<ITiendaService, TiendaService>();
-        builder.Services.AddScoped<ITurnoService, TurnoService>();
-        builder.Services.AddScoped<IClienteService, ClienteService>();
-        builder.Services.AddScoped<IProveedorService, ProveedorService>();
-        builder.Services.AddScoped<IPromocionService, PromocionService>();
-        builder.Services.AddScoped<IGastosService, GastosService>();
-        builder.Services.AddScoped<IGastosService, GastosService>();
-        builder.Services.AddScoped<ITicketService, TicketService>();
-        builder.Services.AddScoped<IShopService, ShopService>();
-        builder.Services.AddScoped<IAuditoriaService, AuditoriaService>();
-        builder.Services.AddScoped<INotificationService, NotificationService>();
-        builder.Services.AddScoped<IImportarExcelService, ImportarExcelService>();
-        builder.Services.AddScoped<IPedidoService, PedidoService>();
-        builder.Services.AddScoped<IIvaService, IvaService>();
-        builder.Services.AddScoped<IAjusteService, AjusteService>();
-
-        builder.Services.AddAFIPConfiguration(x =>
-        {
-            x.CertificatePassword = "CERTIFICATE_PASSWORD";
-            x.Cuit = 123;
-            x.IsProdEnvironment = false;
-            x.Verbose = true;
-            x.x509CertificateFilePath = "CERTIFICATE_PATH";
-        });
-
-        //var context = new CustomAssemblyLoadContext();
-        //context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "Utilities/LibraryPDF/libwkhtmltox.dll"));
-        builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
-
-        builder.Services.AddControllersWithViews().AddNewtonsoftJson(x =>
-        {
-            x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-        });
-
-        var app = builder.Build();
-
-        // Configure the HTTP request pipeline.
-        if (!app.Environment.IsDevelopment())
-        {
-            app.UseExceptionHandler("/Home/Error");
+            loggerConfiguration.WriteTo.Seq("http://localhost:5341");
         }
-        app.UseStaticFiles();
 
-        app.UseRouting();
-        app.UseCors("NuevaPolitica");
-        app.UseAuthentication();
+        Log.Logger = loggerConfiguration.CreateLogger();
 
-        app.UseAuthorization();
+        try
+        {
+            Log.Information("Starting up");
 
-        app.MapControllerRoute(
-            name: "default",
-            pattern: "{controller=Access}/{action=Login}/{id?}");
+            var builder = WebApplication.CreateBuilder(args);
 
-        app.Run();
+            // Add services to the container.
+            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllers().AddJsonOptions(x =>
+                            x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
+            builder.Services.AddCors(_ =>
+            {
+                _.AddPolicy("NuevaPolitica", app =>
+                {
+                    app.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+                });
+            });
 
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(option =>
+                {
+                    option.LoginPath = "/Access/Login";
+                    option.ExpireTimeSpan = TimeSpan.FromHours(3);
+                });
+
+            builder.Services.AddDbContext<POINTOFSALEContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("SQL_Publich"));
+            });
+            builder.Services.AddHttpClient();
+            builder.Services.AddHttpClient<PrintController>();
+
+            builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+
+            builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            builder.Services.AddScoped<ISaleRepository, SaleRepository>();
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IRolService, RolService>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<ITypeDocumentSaleService, TypeDocumentSaleService>();
+            builder.Services.AddScoped<ISaleService, SaleService>();
+            builder.Services.AddScoped<IDashBoardService, DashBoardService>();
+            builder.Services.AddScoped<IMenuService, MenuService>();
+            builder.Services.AddScoped<ITiendaService, TiendaService>();
+            builder.Services.AddScoped<ITurnoService, TurnoService>();
+            builder.Services.AddScoped<IClienteService, ClienteService>();
+            builder.Services.AddScoped<IProveedorService, ProveedorService>();
+            builder.Services.AddScoped<IPromocionService, PromocionService>();
+            builder.Services.AddScoped<IGastosService, GastosService>();
+            builder.Services.AddScoped<ITicketService, TicketService>();
+            builder.Services.AddScoped<IShopService, ShopService>();
+            builder.Services.AddScoped<IAuditoriaService, AuditoriaService>();
+            builder.Services.AddScoped<INotificationService, NotificationService>();
+            builder.Services.AddScoped<IImportarExcelService, ImportarExcelService>();
+            builder.Services.AddScoped<IPedidoService, PedidoService>();
+            builder.Services.AddScoped<IIvaService, IvaService>();
+            builder.Services.AddScoped<IAjusteService, AjusteService>();
+
+            builder.Services.AddAFIPConfiguration(x =>
+            {
+                x.CertificatePassword = "CERTIFICATE_PASSWORD";
+                x.Cuit = 123;
+                x.IsProdEnvironment = false;
+                x.Verbose = true;
+                x.x509CertificateFilePath = "CERTIFICATE_PATH";
+            });
+
+            builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
+
+            builder.Services.AddControllersWithViews().AddNewtonsoftJson(x =>
+            {
+                x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            });
+
+            builder.Host.UseSerilog();
+
+            var app = builder.Build();
+
+            // Configure the HTTP request pipeline.
+            if (!app.Environment.IsDevelopment())
+            {
+                app.UseExceptionHandler("/Home/Error");
+            }
+            app.UseStaticFiles();
+
+            app.UseRouting();
+            app.UseCors("NuevaPolitica");
+            app.UseAuthentication();
+
+            app.UseAuthorization();
+
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Access}/{action=Login}/{id?}");
+
+            app.Run();
+        }
+        catch (Exception ex)
+        {
+            Log.Fatal(ex, "Application start-up failed");
+        }
+        finally
+        {
+            Log.CloseAndFlush();
+        }
     }
+
 }

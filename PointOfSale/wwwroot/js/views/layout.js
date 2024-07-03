@@ -209,7 +209,7 @@ async function printTicket(nombreImpresora, ticketContent) {
     try {
         const conector = {
             text: ticketContent,
-            nombreImpresora: nombreImpresora
+            nombre_impresora: nombreImpresora
         };
 
         const response = await fetch('/print/imprimir', {

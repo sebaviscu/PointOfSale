@@ -12,5 +12,6 @@ namespace PointOfSale.Business.Contracts
         void SaveAuditoria(Category antes, Category Despues);
 
         void SaveAuditoria(User antes, User Despues);
+        void SaveAuditoria(string origen, string text);
     }
 }

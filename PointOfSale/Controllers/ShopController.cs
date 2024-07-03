@@ -105,14 +105,6 @@ namespace PointOfSale.Controllers
             }
         }
 
-
-        //[HttpGet]
-        //public async Task<ActionResult> GetProductsByCategory(int idCategoria)
-        //{
-        //    var products = _mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategory(idCategoria));
-        //    return PartialView("PVProducts", products);
-        //}
-
         [HttpGet]
         public async Task<ActionResult> GetProductsByDescription(string text)
         {
@@ -146,35 +138,6 @@ namespace PointOfSale.Controllers
                 model.ModificationUser = userName;
 
                 VentaWeb edited_VemntaWeb = await _shopService.Update(_mapper.Map<VentaWeb>(model));
-
-                model = _mapper.Map<VMVentaWeb>(edited_VemntaWeb);
-
-                gResponse.State = true;
-                gResponse.Object = model;
-            }
-            catch (Exception ex)
-            {
-                gResponse.State = false;
-                gResponse.Message = ex.Message;
-            }
-
-            return StatusCode(StatusCodes.Status200OK, gResponse);
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> EditVentaWeb([FromBody] VMVentaWeb model)
-        {
-            ClaimsPrincipal claimuser = HttpContext.User;
-            var userName = claimuser.Claims
-                    .Where(c => c.Type == ClaimTypes.Name)
-                    .Select(c => c.Value).SingleOrDefault();
-
-            GenericResponse<VMVentaWeb> gResponse = new GenericResponse<VMVentaWeb>();
-            try
-            {
-                model.ModificationUser = userName;
-
-                VentaWeb edited_VemntaWeb = await _shopService.Edit(_mapper.Map<VentaWeb>(model));
 
                 model = _mapper.Map<VMVentaWeb>(edited_VemntaWeb);
 
