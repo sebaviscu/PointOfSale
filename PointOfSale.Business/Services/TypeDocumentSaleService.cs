@@ -32,7 +32,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<TypeDocumentSale>> GetActive()
         {
-            IQueryable<TypeDocumentSale> query = await _repository.Query(u => u.IsActive == true);
+            IQueryable<TypeDocumentSale> query = await _repository.Query(u => u.IsActive && u.Web);
             return query.OrderBy(_ => _.Description).ToList();
         }
 

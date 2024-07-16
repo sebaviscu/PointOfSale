@@ -1,4 +1,7 @@
-﻿using System;
+﻿using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -80,6 +83,17 @@ namespace PointOfSale.Business.Utilities
                 dwError = Marshal.GetLastWin32Error();
             }
             return bSuccess;
+        }
+
+        public static void PrintAsPDF(string content)
+        {
+            var filename = "my_text.pdf";
+            var writer = new PdfWriter(filename);
+            var pdfDoc = new PdfDocument(writer);
+            var doc = new Document(pdfDoc);
+            var paragraph = new Paragraph(content);
+            doc.Add(paragraph);
+            doc.Close();
         }
 
         public static bool SendStringToPrinter(string szPrinterName, string szString)
