@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using PointOfSale.Business.Contracts;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
 using PointOfSale.Model.Output;
@@ -16,7 +17,6 @@ namespace PointOfSale.Business.Services
 {
     public class IvaService : IIvaService
     {
-        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
 
         private readonly IGenericRepository<Sale> _saleRepo;
         private readonly IGenericRepository<Gastos> _gastosRepo;
@@ -74,7 +74,7 @@ namespace PointOfSale.Business.Services
 
             CultureInfo cultura = CultureInfo.CreateSpecificCulture("es-ES");
 
-            DateTime fechaTemp = DateTimeNowArg;
+            DateTime fechaTemp = TimeHelper.GetArgentinaTime();
             fechaTemp = new DateTime(fechaTemp.Year, fechaTemp.Month, 1);
 
             while (fechaTemp >= fechaInicio)

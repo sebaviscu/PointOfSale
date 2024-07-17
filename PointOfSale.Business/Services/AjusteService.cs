@@ -1,4 +1,5 @@
 ﻿using PointOfSale.Business.Contracts;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
 using System;
@@ -11,7 +12,6 @@ namespace PointOfSale.Business.Services
 {
     public class AjusteService : IAjusteService
     {
-        public DateTime DateTimeNowArg => TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
         private readonly IGenericRepository<Ajustes> _repository;
 
         public AjusteService(IGenericRepository<Ajustes> repository)
@@ -32,7 +32,7 @@ namespace PointOfSale.Business.Services
             {
                 Ajustes Ajustes_found = await this.Get();
 
-                Ajustes_found.ModificationDate = DateTimeNowArg;
+                Ajustes_found.ModificationDate = TimeHelper.GetArgentinaTime();
                 Ajustes_found.ModificationUser = entity.ModificationUser;
 
                 Ajustes_found.Nombre = entity.Nombre;

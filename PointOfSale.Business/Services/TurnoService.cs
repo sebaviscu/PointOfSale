@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
 using System;
@@ -12,7 +13,6 @@ namespace PointOfSale.Business.Services
 {
     public class TurnoService : ITurnoService
     {
-        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
         private readonly IGenericRepository<Turno> _repository;
         public TurnoService(IGenericRepository<Turno> repository)
         {
@@ -75,7 +75,7 @@ namespace PointOfSale.Business.Services
                     }
                     else
                     {
-                        Turno_found.FechaFin = DateTimeNowArg;
+                        Turno_found.FechaFin = TimeHelper.GetArgentinaTime();
                         Turno_found.ModificationUser = entity.ModificationUser;
                     }
                     Turno_found.Descripcion = entity.Descripcion;
@@ -104,9 +104,9 @@ namespace PointOfSale.Business.Services
         {
             var query = await _repository.Query();
             var turno = query.Include(_ => _.Sales).Single(_ => _.FechaFin == null
-                                            && _.FechaInicio.Day == DateTimeNowArg.Day
-                                            && _.FechaInicio.Month == DateTimeNowArg.Month
-                                            && _.FechaInicio.Year == DateTimeNowArg.Year
+                                            && _.FechaInicio.Day == TimeHelper.GetArgentinaTime().Day
+                                            && _.FechaInicio.Month == TimeHelper.GetArgentinaTime().Month
+                                            && _.FechaInicio.Year == TimeHelper.GetArgentinaTime().Year
                                             && _.IdTienda == idtienda);
             return turno;
         }
@@ -115,9 +115,9 @@ namespace PointOfSale.Business.Services
         {
             var query = await _repository.Query();
             var turno = query.Single(_ => _.FechaFin == null
-                                            && _.FechaInicio.Day == DateTimeNowArg.Day
-                                            && _.FechaInicio.Month == DateTimeNowArg.Month
-                                            && _.FechaInicio.Year == DateTimeNowArg.Year
+                                            && _.FechaInicio.Day == TimeHelper.GetArgentinaTime().Day
+                                            && _.FechaInicio.Month == TimeHelper.GetArgentinaTime().Month
+                                            && _.FechaInicio.Year == TimeHelper.GetArgentinaTime().Year
                                             && _.IdTienda == idtienda);
             return turno;
         }
@@ -125,7 +125,7 @@ namespace PointOfSale.Business.Services
         public async Task CheckTurnosViejos(int idtienda)
         {
             var query = await _repository.Query();
-            var turnos = query.Where(_ => _.FechaFin == null && _.FechaInicio.Date <= DateTimeNowArg.AddDays(-1).Date && _.IdTienda == idtienda).ToList();
+            var turnos = query.Where(_ => _.FechaFin == null && _.FechaInicio.Date <= TimeHelper.GetArgentinaTime().AddDays(-1).Date && _.IdTienda == idtienda).ToList();
 
             foreach (var t in turnos)
             {
@@ -138,7 +138,7 @@ namespace PointOfSale.Business.Services
             var query = await _repository.Query();
             var turno = query.SingleOrDefault(_ => _.IdTienda == idTienda
                                             && _.FechaFin == null
-                                            && _.FechaInicio.Date == DateTimeNowArg.Date);
+                                            && _.FechaInicio.Date == TimeHelper.GetArgentinaTime().Date);
 
             if (turno == null)
             {

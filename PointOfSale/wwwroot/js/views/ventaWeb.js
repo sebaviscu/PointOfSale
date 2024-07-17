@@ -272,7 +272,7 @@ function addNewProduct(idDetailSale, description, cantidad, tipoVenta, precio, t
     const isEditVisible = $('#divSearchproducts').is(':visible');
 
     const newRow = $("<tr>").append(
-        $("<td>").html('<button class="btn btn-danger btn-sm delete-row">-</button>'),
+        $("<td>").html('<button class="btn btn-danger btn-sm delete-row" style="padding-top: 0px;padding-bottom: 0px;">-</button>'),
         $("<td>").text(description),
         $("<td>").text(`${cantidad} / ${tipoVenta}`),
         $("<td>").text(`$ ${Number.parseFloat(precio).toFixed(2)}`),

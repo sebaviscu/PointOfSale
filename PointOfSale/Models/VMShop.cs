@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
 
 namespace PointOfSale.Models
 {
     public class VMShop
     {
-        public DateTime DateTimeNowArg => TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
 
         public VMShop(VMAjustes? ajustes)
         {
@@ -14,7 +14,7 @@ namespace PointOfSale.Models
                 Ajustes = ajustes;
                 Horarios = $"· Lunes: {ajustes.Lunes} \n· Martes: {ajustes.Martes} \n· Miercoles: {ajustes.Miercoles} \n· Jueves: {ajustes.Jueves}\n· Viernes: {ajustes.Viernes}\n· Sabado: {ajustes.Sabado}\n· Domingo: {ajustes.Domingo}\n· Feriados: {ajustes.Feriado}";
 
-                int day = (int)DateTimeNowArg.DayOfWeek;
+                int day = (int)TimeHelper.GetArgentinaTime().DayOfWeek;
                 switch (day)
                 {
                     case 1:

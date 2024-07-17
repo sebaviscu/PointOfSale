@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PointOfSale.Business.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,6 @@ namespace PointOfSale.Model
 {
     public class Notifications
     {
-        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
         public Notifications()
         {
 
@@ -20,7 +20,7 @@ namespace PointOfSale.Model
 
             Descripcion = $"{product.Description} {proveedor}llegó al minimo de {product.Minimo} {product.TipoVenta} en stock.";
             IsActive = true;
-            RegistrationDate = DateTimeNowArg;
+            RegistrationDate = TimeHelper.GetArgentinaTime();
             Accion = "/Inventory/Products";
         }
 
@@ -28,7 +28,7 @@ namespace PointOfSale.Model
         {
             Descripcion = $"Tienes una nueva Venta Web con {sale.DetailSales.Count()} productos.";
             IsActive = true;
-            RegistrationDate = DateTimeNowArg;
+            RegistrationDate = TimeHelper.GetArgentinaTime();
             Accion = "/Shop/VentaWeb";
         }
 
@@ -36,7 +36,7 @@ namespace PointOfSale.Model
         {
             Descripcion = $"Se ha llegado a la fecha de Vencimiento del Producto {vencimiento.Producto.Description}.";
             IsActive = true;
-            RegistrationDate = DateTimeNowArg;
+            RegistrationDate = TimeHelper.GetArgentinaTime();
             Accion = "/Inventory/Products";
         }
 

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
 
@@ -14,8 +15,6 @@ namespace PointOfSale.Business.Services
 {
     public class CategoryService : ICategoryService
     {
-        public DateTime DateTimeNowArg => TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
-
         private readonly IGenericRepository<Category> _repository;
         private readonly IAuditoriaService _auditoriaService;
         public CategoryService(IGenericRepository<Category> repository, IAuditoriaService auditoriaService)
@@ -77,7 +76,7 @@ namespace PointOfSale.Business.Services
 
                 category_found.Description = entity.Description;
                 category_found.IsActive = entity.IsActive;
-                category_found.ModificationDate = DateTimeNowArg;
+                category_found.ModificationDate = TimeHelper.GetArgentinaTime();
                 category_found.ModificationUser = entity.ModificationUser;
 
                 bool response = await _repository.Edit(category_found);

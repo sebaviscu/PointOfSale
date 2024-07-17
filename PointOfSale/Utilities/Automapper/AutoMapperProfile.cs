@@ -150,7 +150,7 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<Sale, VMSale>()
                 .ForMember(destiny =>
                     destiny.TypeDocumentSale,
-                    opt => opt.MapFrom(source => source.TypeDocumentSaleNavigation.Description)
+                    opt => opt.MapFrom(source => source.TypeDocumentSaleNavigation != null ? source.TypeDocumentSaleNavigation.Description : string.Empty)
                 )
                 .ForMember(destiny =>
                     destiny.Users,

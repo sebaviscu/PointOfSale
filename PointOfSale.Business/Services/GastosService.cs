@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
 using System;
@@ -12,7 +13,6 @@ namespace PointOfSale.Business.Services
 {
     public class GastosService : IGastosService
     {
-        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
 
         private readonly IGenericRepository<Gastos> _repository;
         private readonly IGenericRepository<TipoDeGasto> _repositoryTipoDeGasto;
@@ -62,7 +62,7 @@ namespace PointOfSale.Business.Services
                 Gastos_found.IvaImporte = entity.IvaImporte;
                 Gastos_found.ImporteSinIva = entity.ImporteSinIva;
                 Gastos_found.IdUsuario = entity.IdUsuario;
-                Gastos_found.ModificationDate = DateTimeNowArg;
+                Gastos_found.ModificationDate = TimeHelper.GetArgentinaTime();
                 Gastos_found.ModificationUser = entity.ModificationUser;
                 Gastos_found.EstadoPago = entity.EstadoPago;
                 Gastos_found.FacturaPendiente = entity.FacturaPendiente;

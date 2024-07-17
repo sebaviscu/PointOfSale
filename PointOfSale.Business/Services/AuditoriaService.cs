@@ -1,4 +1,5 @@
 ﻿using PointOfSale.Business.Contracts;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
 using PointOfSale.Model.Auditoria;
@@ -13,8 +14,6 @@ namespace PointOfSale.Business.Services
 {
     public class AuditoriaService : IAuditoriaService
     {
-        public DateTime DateTimeNowArg => TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
-
         private readonly IGenericRepository<AuditoriaModificaciones> _repository;
 
         public AuditoriaService(IGenericRepository<AuditoriaModificaciones> repository)
@@ -30,7 +29,7 @@ namespace PointOfSale.Business.Services
             a.Descripcion = text;
             a.EntidadAntes = "Origen: " + origen;
             a.EntidadDespues = "-";
-            a.ModificationDate = DateTimeNowArg;
+            a.ModificationDate = TimeHelper.GetArgentinaTime();
             a.ModificationUser = "Sistema";
 
             _repository.Add(a);
@@ -44,7 +43,7 @@ namespace PointOfSale.Business.Services
             a.Descripcion = antes.Description.ToUpper();
             a.EntidadAntes = JsonSerializer.Serialize(new ACategoria(antes));
             a.EntidadDespues = JsonSerializer.Serialize(new ACategoria(despues));
-            a.ModificationDate = DateTimeNowArg;
+            a.ModificationDate = TimeHelper.GetArgentinaTime();
             a.ModificationUser = despues.ModificationUser.ToUpper();
 
             _repository.Add(a);
@@ -58,7 +57,7 @@ namespace PointOfSale.Business.Services
             a.Descripcion = antes.Name.ToUpper();
             a.EntidadAntes = JsonSerializer.Serialize(new AUser(antes));
             a.EntidadAntes = JsonSerializer.Serialize(new AUser(Despues));
-            a.ModificationDate = DateTimeNowArg;
+            a.ModificationDate = TimeHelper.GetArgentinaTime();
             a.ModificationUser = Despues.ModificationUser.ToUpper();
 
             _repository.Add(a);
@@ -73,7 +72,7 @@ namespace PointOfSale.Business.Services
             a.Descripcion = antes.Nombre.ToUpper();
             a.EntidadAntes = JsonSerializer.Serialize(new AVentaWeb(antes));
             a.EntidadDespues = JsonSerializer.Serialize(new AVentaWeb(despues));
-            a.ModificationDate = DateTimeNowArg;
+            a.ModificationDate = TimeHelper.GetArgentinaTime();
             a.ModificationUser = despues.ModificationUser.ToUpper();
 
             _repository.Add(a);
@@ -86,7 +85,7 @@ namespace PointOfSale.Business.Services
             a.Descripcion = antes.Description.ToUpper();
             a.EntidadAntes = JsonSerializer.Serialize(new ATipoDocumentoVenta(antes));
             a.EntidadDespues = JsonSerializer.Serialize(new ATipoDocumentoVenta(despues));
-            a.ModificationDate = DateTimeNowArg;
+            a.ModificationDate = TimeHelper.GetArgentinaTime();
             a.ModificationUser = string.Empty; /*despues.ModificationUser.ToUpper();*/
 
             _repository.Add(a);

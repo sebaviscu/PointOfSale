@@ -1,15 +1,15 @@
-﻿using static PointOfSale.Model.Enum;
+﻿using PointOfSale.Business.Utilities;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Model
 {
     public class ProveedorMovimiento
     {
-        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
         public ProveedorMovimiento(int idProveedor, decimal importe, string registrationUser)
         {
             IdProveedor = idProveedor;
             Importe = importe;
-            RegistrationDate = DateTimeNowArg;
+            RegistrationDate = TimeHelper.GetArgentinaTime();
             RegistrationUser = registrationUser;
         }
 

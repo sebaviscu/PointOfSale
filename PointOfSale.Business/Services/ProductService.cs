@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using iTextSharp.text;
 using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
 using static iTextSharp.text.pdf.events.IndexEvents;
@@ -16,7 +17,6 @@ namespace PointOfSale.Business.Services
 {
     public class ProductService : IProductService
     {
-        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
         private readonly IGenericRepository<Product> _repository;
         private readonly IGenericRepository<ListaPrecio> _repositoryListaPrecios;
         private readonly IGenericRepository<DetailSale> _repositoryDetailSale;
@@ -189,7 +189,7 @@ namespace PointOfSale.Business.Services
                 }
 
                 product_edit.IsActive = entity.IsActive;
-                product_edit.ModificationDate = DateTimeNowArg;
+                product_edit.ModificationDate = TimeHelper.GetArgentinaTime();
                 product_edit.ModificationUser = entity.ModificationUser;
                 product_edit.IdProveedor = entity.IdProveedor;
                 product_edit.TipoVenta = entity.TipoVenta;
@@ -238,7 +238,7 @@ namespace PointOfSale.Business.Services
                     {
                         i.Precio = nuevoPrecio.Precio;
                         i.PorcentajeProfit = nuevoPrecio.PorcentajeProfit != 0 ? nuevoPrecio.PorcentajeProfit : i.PorcentajeProfit;
-                        i.RegistrationDate = DateTimeNowArg;
+                        i.RegistrationDate = TimeHelper.GetArgentinaTime();
 
                         bool response = await _repositoryListaPrecios.Edit(i);
                         if (!response)
@@ -313,7 +313,7 @@ namespace PointOfSale.Business.Services
                     product_edit.Comentario = data.Comentario;
                     product_edit.Iva = data.Iva;
                     product_edit.ModificationUser = user;
-                    product_edit.ModificationDate = DateTimeNowArg;
+                    product_edit.ModificationDate = TimeHelper.GetArgentinaTime();
 
                     bool response = await _repository.Edit(product_edit);
                     if (!response)
@@ -352,7 +352,7 @@ namespace PointOfSale.Business.Services
                     product_edit.PriceWeb = p.PrecioWeb;
                     product_edit.CostPrice = p.Costo;
                     product_edit.ModificationUser = user;
-                    product_edit.ModificationDate = DateTimeNowArg;
+                    product_edit.ModificationDate = TimeHelper.GetArgentinaTime();
 
 
                     var listaPrecios = new List<ListaPrecio>();
@@ -505,7 +505,7 @@ namespace PointOfSale.Business.Services
 
         public async Task ActivarNotificacionVencimientos(int idTienda)
         {
-            var queryProducts = await _repositoryVencimientos.Query(p => p.FechaVencimiento.Date == DateTimeNowArg.Date && p.Notificar && p.IdTienda == idTienda);
+            var queryProducts = await _repositoryVencimientos.Query(p => p.FechaVencimiento.Date == TimeHelper.GetArgentinaTime().Date && p.Notificar && p.IdTienda == idTienda);
             var vencimientos = queryProducts.Include(c => c.Producto).ToList();
 
             foreach (var v in vencimientos)
@@ -544,7 +544,7 @@ namespace PointOfSale.Business.Services
                     v.Notificar = true;
                     v.FechaVencimiento = pedProd.Vencimiento.Value;
                     v.Lote = pedProd.Lote;
-                    v.RegistrationDate = DateTimeNowArg;
+                    v.RegistrationDate = TimeHelper.GetArgentinaTime();
                     v.RegistrationUser = registrationUser;
 
                     await _repositoryVencimientos.Add(v);

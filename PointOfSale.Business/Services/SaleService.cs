@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Crypto;
 using PointOfSale.Business.Contracts;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
 using System.ComponentModel;
@@ -11,7 +12,6 @@ namespace PointOfSale.Business.Services
 {
     public class SaleService : ISaleService
     {
-        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
         private readonly IGenericRepository<Product> _repositoryProduct;
         private readonly IGenericRepository<Cliente> _repositoryCliente;
         private readonly IGenericRepository<ListaPrecio> _repositoryListaPrecio;
@@ -305,8 +305,8 @@ namespace PointOfSale.Business.Services
 
         public DateTime RandomDayMes()
         {
-            var diaHoy = DateTimeNowArg;
-            var inicioMes = DateTimeNowArg.Day - 1;
+            var diaHoy = TimeHelper.GetArgentinaTime();
+            var inicioMes = TimeHelper.GetArgentinaTime().Day - 1;
             var diaInicio = diaHoy.AddDays(-inicioMes).AddMonths(-1);
 
             var gen = new Random();
@@ -322,7 +322,7 @@ namespace PointOfSale.Business.Services
         }
         public DateTime RandomDayDias()
         {
-            var diaInicio = DateTimeNowArg.AddDays(-1);
+            var diaInicio = TimeHelper.GetArgentinaTime().AddDays(-1);
 
             var gen = new Random();
             int range = (DateTime.Today - diaInicio).Days;
@@ -350,7 +350,7 @@ namespace PointOfSale.Business.Services
             {
                 var sale = await _repositorySale.Get(c => c.IdSale == idSale);
 
-                sale.RegistrationDate = DateTimeNowArg;
+                sale.RegistrationDate = TimeHelper.GetArgentinaTime();
                 sale.IdTypeDocumentSale = formaPago;
 
                 bool response = await _repositorySale.Edit(sale);

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
 using System;
@@ -13,7 +14,6 @@ namespace PointOfSale.Business.Services
 {
     public class ClienteService : IClienteService
     {
-        public DateTime DateTimeNowArg => TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
 
         private readonly IGenericRepository<Cliente> _repository;
         private readonly IGenericRepository<ClienteMovimiento> _clienteMovimiento;
@@ -39,7 +39,7 @@ namespace PointOfSale.Business.Services
 
             try
             {
-                entity.RegistrationDate = DateTimeNowArg;
+                entity.RegistrationDate = TimeHelper.GetArgentinaTime();
                 Cliente Cliente_created = await _repository.Add(entity);
 
                 if (Cliente_created.IdCliente == 0)
@@ -68,7 +68,7 @@ namespace PointOfSale.Business.Services
                 Cliente_edit.Cuil = entity.Cuil;
                 Cliente_edit.Telefono = entity.Telefono;
                 Cliente_edit.Direccion = entity.Direccion;
-                Cliente_edit.ModificationDate = DateTimeNowArg;
+                Cliente_edit.ModificationDate = TimeHelper.GetArgentinaTime();
                 Cliente_edit.ModificationUser = entity.ModificationUser;
 
                 bool response = await _repository.Edit(Cliente_edit);

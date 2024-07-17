@@ -30,7 +30,7 @@ namespace PointOfSale.Controllers
                 var client = _httpClientFactory.CreateClient();
                 var response = await client.GetAsync("http://localhost:4567/getprinters");
 
-                _auditoriaService.SaveAuditoria("PrintController", "Received response from getprinters");
+                _auditoriaService.SaveAuditoria("PrintController", $"Received response from getprinters: {response.ToString()}");
                 _logger.LogInformation("Received response from getprinters");
 
                 if (!response.IsSuccessStatusCode)

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
 using System;
@@ -12,7 +13,6 @@ namespace PointOfSale.Business.Services
 {
     public class UserService : IUserService
     {
-        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
         private readonly IGenericRepository<User> _repository;
         public UserService(IGenericRepository<User> repository)
         {
@@ -71,7 +71,7 @@ namespace PointOfSale.Business.Services
                 user_edit.IsActive = entity.IsActive;
                 user_edit.Password = entity.Password;
                 user_edit.ModificationUser = entity.ModificationUser;
-                user_edit.ModificationDate = DateTimeNowArg;
+                user_edit.ModificationDate = TimeHelper.GetArgentinaTime();
                 user_edit.IdTienda = entity.IdTienda == -1 ? null : entity.IdTienda;
 
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PointOfSale.Business.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,6 @@ namespace PointOfSale.Model
 {
     public partial class Turno
     {
-        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
         public Turno()
         {
 
@@ -16,10 +16,10 @@ namespace PointOfSale.Model
 
         public Turno(int idTienda, string usuario)
         {
-            FechaInicio = DateTimeNowArg;
+            FechaInicio = TimeHelper.GetArgentinaTime();
             IdTienda = idTienda;
             RegistrationUser = usuario;
-            RegistrationDate= DateTimeNowArg;
+            RegistrationDate= TimeHelper.GetArgentinaTime();
         }
         public int IdTurno { get; set; }
         public DateTime FechaInicio { get; set; }

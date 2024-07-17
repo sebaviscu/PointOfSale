@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Services;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
@@ -12,8 +13,6 @@ namespace PointOfSale.Controllers
 {
     public class PedidoController : BaseController
     {
-        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
-
         private readonly IMapper _mapper;
         private readonly IPedidoService _pedidoService;
 
@@ -138,7 +137,7 @@ namespace PointOfSale.Controllers
                 m.ImporteSinIva = model.ImporteSinIva;
                 m.Iva = model.Iva;
                 m.IvaImporte = model.IvaImporte;
-                m.RegistrationDate = DateTimeNowArg;
+                m.RegistrationDate = TimeHelper.GetArgentinaTime();
                 m.RegistrationUser = user.UserName;
                 m.idTienda = user.IdTienda;
                 m.IdPedido = model.IdPedido;

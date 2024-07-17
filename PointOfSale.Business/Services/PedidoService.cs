@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Data.DBContext;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
@@ -13,8 +14,6 @@ namespace PointOfSale.Business.Services
 {
     public class PedidoService : IPedidoService
     {
-        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
-
         private readonly IGenericRepository<Pedido> _repository;
         private readonly IGenericRepository<PedidoProducto> _repositoryPedidoProducto;
         private readonly IGenericRepository<ProveedorMovimiento> _proveedorMovimiento;
@@ -53,7 +52,7 @@ namespace PointOfSale.Business.Services
         {
             try
             {
-                entity.RegistrationDate = DateTimeNowArg;
+                entity.RegistrationDate = TimeHelper.GetArgentinaTime();
 
                 Pedido Pedido_created = await _repository.Add(entity);
                 if (Pedido_created.IdPedido == 0)
@@ -103,7 +102,7 @@ namespace PointOfSale.Business.Services
 
                 if(entity.Estado == Model.Enum.EstadoPedido.Cancelado)
                 {
-                    Pedido_found.FechaCerrado = DateTimeNowArg;
+                    Pedido_found.FechaCerrado = TimeHelper.GetArgentinaTime();
                     Pedido_found.UsuarioFechaCerrado = entity.UsuarioFechaCerrado;
                 }
 
@@ -138,7 +137,7 @@ namespace PointOfSale.Business.Services
                         throw new TaskCanceledException("El Pedido no se puede editar");
 
                     Pedido_found.ImporteFinal = entity.ImporteEstimado;
-                    Pedido_found.FechaCerrado = DateTimeNowArg;
+                    Pedido_found.FechaCerrado = TimeHelper.GetArgentinaTime();
                     Pedido_found.Estado = Model.Enum.EstadoPedido.Recibido;
                     Pedido_found.Comentario = entity.Comentario;
                     Pedido_found.Productos = entity.Productos;

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Services;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
 using PointOfSale.Model.Auditoria;
 using PointOfSale.Models;
@@ -19,8 +20,6 @@ namespace PointOfSale.Controllers
     [Authorize]
     public class AdminController : BaseController
     {
-        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
-
         private readonly IUserService _userService;
         private readonly IRolService _rolService;
         private readonly IDashBoardService _dashboardService;
@@ -336,7 +335,7 @@ namespace PointOfSale.Controllers
 
         public DateTime SetDate(TypeValuesDashboard typeValues, string dateFilter)
         {
-            var dateActual = DateTimeNowArg;
+            var dateActual = TimeHelper.GetArgentinaTime();
 
             if (!string.IsNullOrEmpty(dateFilter))
             {
@@ -375,7 +374,7 @@ namespace PointOfSale.Controllers
             var ProductListWeek = new List<VMProductsWeek>();
             var prods = await _productService.List();
             int i = 0;
-            var dateActual = DateTimeNowArg;
+            var dateActual = TimeHelper.GetArgentinaTime();
             if (dateFilter != null)
             {
                 var dateSplit = dateFilter.Split('/');
@@ -833,7 +832,7 @@ namespace PointOfSale.Controllers
             try
             {
                 model.RegistrationUser = user.UserName;
-                model.RegistrationDate = DateTimeNowArg;
+                model.RegistrationDate = TimeHelper.GetArgentinaTime();
                 model.idTienda = user.IdTienda;
                 var usuario_creado = await _proveedorService.Add(_mapper.Map<ProveedorMovimiento>(model));
 

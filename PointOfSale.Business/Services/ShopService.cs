@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
 
@@ -7,7 +8,6 @@ namespace PointOfSale.Business.Services
 {
     public class ShopService : IShopService
     {
-        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
         private readonly IGenericRepository<DetailSale> _repositoryDetailsSale;
         private readonly IGenericRepository<VentaWeb> _repository;
         private readonly ITiendaService _tiendaService;
@@ -53,7 +53,7 @@ namespace PointOfSale.Business.Services
                 VentaWeb_found.IsEdit = hasChanges;
                 if (hasChanges)
                 {
-                    VentaWeb_found.SetEditVentaWeb(entity.ModificationUser, DateTimeNowArg);
+                    VentaWeb_found.SetEditVentaWeb(entity.ModificationUser, TimeHelper.GetArgentinaTime());
 
                     VentaWeb_found.Comentario = entity.Comentario;
                     VentaWeb_found.Nombre = entity.Nombre;
@@ -66,7 +66,7 @@ namespace PointOfSale.Business.Services
 
                 VentaWeb_found.Estado = entity.Estado;
                 VentaWeb_found.IdTienda = entity.IdTienda;
-                VentaWeb_found.ModificationDate = DateTimeNowArg;
+                VentaWeb_found.ModificationDate = TimeHelper.GetArgentinaTime();
                 VentaWeb_found.ModificationUser = entity.ModificationUser;
 
                 if (entity.Estado == Model.Enum.EstadoVentaWeb.Finalizada && VentaWeb_found.IdTienda.HasValue)

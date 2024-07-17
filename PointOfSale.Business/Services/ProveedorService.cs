@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
 using System;
@@ -14,7 +15,6 @@ namespace PointOfSale.Business.Services
 {
     public class ProveedorService : IProveedorService
     {
-        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
         private readonly IGenericRepository<Proveedor> _repository;
         private readonly IGenericRepository<ProveedorMovimiento> _proveedorMovimiento;
 
@@ -44,7 +44,7 @@ namespace PointOfSale.Business.Services
 
             try
             {
-                entity.RegistrationDate = DateTimeNowArg;
+                entity.RegistrationDate = TimeHelper.GetArgentinaTime();
                 Proveedor Proveedor_created = await _repository.Add(entity);
 
                 if (Proveedor_created.IdProveedor == 0)
@@ -90,7 +90,7 @@ namespace PointOfSale.Business.Services
                 Proveedor_edit.Cuil = entity.Cuil;
                 Proveedor_edit.Telefono = entity.Telefono;
                 Proveedor_edit.Direccion = entity.Direccion;
-                Proveedor_edit.ModificationDate = DateTimeNowArg;
+                Proveedor_edit.ModificationDate = TimeHelper.GetArgentinaTime();
                 Proveedor_edit.ModificationUser = entity.ModificationUser;
 
                 Proveedor_edit.Telefono2 = entity.Telefono2;
@@ -148,7 +148,7 @@ namespace PointOfSale.Business.Services
                 if (Proveedor_edit == null)
                     throw new TaskCanceledException("Proveedor no existe");
 
-                Proveedor_edit.ModificationDate = DateTimeNowArg;
+                Proveedor_edit.ModificationDate = TimeHelper.GetArgentinaTime();
                 Proveedor_edit.Comentario = entity.Comentario;
                 Proveedor_edit.EstadoPago = entity.EstadoPago;
                 Proveedor_edit.FacturaPendiente = entity.FacturaPendiente;

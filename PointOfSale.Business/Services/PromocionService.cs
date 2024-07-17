@@ -1,4 +1,5 @@
 ﻿using PointOfSale.Business.Contracts;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
 using System;
@@ -11,7 +12,6 @@ namespace PointOfSale.Business.Services
 {
     public class PromocionService : IPromocionService
     {
-        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
         private readonly IGenericRepository<Promocion> _repository;
 
         public PromocionService(IGenericRepository<Promocion> repository)
@@ -35,7 +35,7 @@ namespace PointOfSale.Business.Services
         {
             try
             {
-                entity.RegistrationDate = DateTimeNowArg;
+                entity.RegistrationDate = TimeHelper.GetArgentinaTime();
                 Promocion Promocion_created = await _repository.Add(entity);
 
                 if (Promocion_created.IdPromocion == 0)
@@ -64,7 +64,7 @@ namespace PointOfSale.Business.Services
                 Promocion_edit.Dias = entity.Dias;
                 Promocion_edit.IdCategory = entity.IdCategory;
                 Promocion_edit.IsActive = entity.IsActive;
-                Promocion_edit.ModificationDate = DateTimeNowArg;
+                Promocion_edit.ModificationDate = TimeHelper.GetArgentinaTime();
                 Promocion_edit.ModificationUser = entity.ModificationUser;
                 Promocion_edit.Operador = entity.Operador;
                 Promocion_edit.Precio = entity.Precio;
@@ -111,7 +111,7 @@ namespace PointOfSale.Business.Services
                 Promocion Promocion_edit = queryPromocion.First();
 
                 Promocion_edit.IsActive = !Promocion_edit.IsActive;
-                Promocion_edit.ModificationDate = DateTimeNowArg;
+                Promocion_edit.ModificationDate = TimeHelper.GetArgentinaTime();
                 Promocion_edit.ModificationUser = userName;
 
 

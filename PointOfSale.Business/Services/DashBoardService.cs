@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
 using System;
@@ -15,8 +16,6 @@ namespace PointOfSale.Business.Services
 {
     public class DashBoardService : IDashBoardService
     {
-        public DateTime DateTimeNowArg => TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
-
         private readonly ISaleRepository _repositorySale;
         private readonly IGenericRepository<DetailSale> _repositoryDetailSale;
         private readonly IGenericRepository<ProveedorMovimiento> _proveedorMovimiento;
@@ -39,7 +38,7 @@ namespace PointOfSale.Business.Services
         public async Task<GraficoVentasConComparacion> GetSales(TypeValuesDashboard typeValues, int idTienda, DateTime dateStart)
         {
             var resultados = new GraficoVentasConComparacion();
-            var dateCompare = DateTimeNowArg;
+            var dateCompare = TimeHelper.GetArgentinaTime();
 
             try
             {
@@ -356,7 +355,6 @@ namespace PointOfSale.Business.Services
 
         private static void FechasParaQuery(TypeValuesDashboard typeValues, DateTime dateStart, out DateTime dateCompare, out DateTime start)
         {
-            DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
 
             switch (typeValues)
             {
@@ -379,8 +377,8 @@ namespace PointOfSale.Business.Services
                     break;
 
                 default:
-                    dateCompare = DateTimeNowArg;
-                    start = DateTimeNowArg;
+                    dateCompare = TimeHelper.GetArgentinaTime();
+                    start = TimeHelper.GetArgentinaTime();
                     break;
             }
         }

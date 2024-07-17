@@ -17,7 +17,6 @@ namespace PointOfSale.Business.Utilities
 {
     public class ImportarExcelService : IImportarExcelService
     {
-        public DateTime DateTimeNowArg => TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
 
         private readonly IProveedorService _proveedorService;
         private readonly ICategoryService _categoryService;

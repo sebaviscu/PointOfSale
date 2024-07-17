@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Reportes;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
@@ -202,7 +203,7 @@ namespace PointOfSale.Controllers
                 foreach (var v in vmListVencimientos)
                 {
                     v.IdTienda = user.IdTienda;
-                    v.RegistrationDate = DateTimeNowArg;
+                    v.RegistrationDate = TimeHelper.GetArgentinaTime();
                     v.RegistrationUser = user.UserName;
                 }
 
@@ -263,7 +264,7 @@ namespace PointOfSale.Controllers
                 foreach (var v in vmListVencimientos.Where(_ => _.IdVencimiento == 0))
                 {
                     v.IdTienda = user.IdTienda;
-                    v.RegistrationDate = DateTimeNowArg;
+                    v.RegistrationDate = TimeHelper.GetArgentinaTime();
                     v.RegistrationUser = user.UserName;
                 }
 

@@ -10,12 +10,12 @@ using PointOfSale.Data.Repository;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using PointOfSale.Model;
+using PointOfSale.Business.Utilities;
 
 namespace PointOfSale.Data.Repository
 {
     public class SaleRepository : GenericRepository<Sale>, ISaleRepository
     {
-        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
         private readonly POINTOFSALEContext _dbcontext;
 
         public SaleRepository(POINTOFSALEContext context) : base(context)
@@ -47,7 +47,7 @@ namespace PointOfSale.Data.Repository
                 {
                     entity.SaleNumber = await GetLastSerialNumberSale();
                 }
-                entity.RegistrationDate = DateTimeNowArg;
+                entity.RegistrationDate = TimeHelper.GetArgentinaTime();
 
                 await _dbcontext.Sales.AddAsync(entity);
                 await _dbcontext.SaveChangesAsync();
@@ -84,7 +84,7 @@ namespace PointOfSale.Data.Repository
             CorrelativeNumber correlative = _dbcontext.CorrelativeNumbers.Where(n => n.Management == "Sale").First();
 
             correlative.LastNumber = correlative.LastNumber + 1;
-            correlative.DateUpdate = DateTimeNowArg;
+            correlative.DateUpdate = TimeHelper.GetArgentinaTime();
 
             _dbcontext.CorrelativeNumbers.Update(correlative);
             await _dbcontext.SaveChangesAsync();
@@ -103,7 +103,7 @@ namespace PointOfSale.Data.Repository
             {
                 try
                 {
-                    entity.RegistrationDate = DateTimeNowArg;
+                    entity.RegistrationDate = TimeHelper.GetArgentinaTime();
                     foreach (DetailSale dv in entity.DetailSales)
                     {
                         Product product_found = _dbcontext.Products.Include(_ => _.IdCategoryNavigation)

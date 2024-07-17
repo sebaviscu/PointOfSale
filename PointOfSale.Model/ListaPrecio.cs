@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PointOfSale.Business.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,6 @@ namespace PointOfSale.Model
 {
     public class ListaPrecio
     {
-        public DateTime DateTimeNowArg => TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
 
         public ListaPrecio()
         {
@@ -19,7 +19,7 @@ namespace PointOfSale.Model
         public ListaPrecio(ListaDePrecio listaDePrecio)
         {
             Lista = listaDePrecio;
-            RegistrationDate = DateTimeNowArg;
+            RegistrationDate = TimeHelper.GetArgentinaTime();
         }
 
         public ListaPrecio(int idProd, ListaDePrecio listaDePrecio, decimal precio, int porcentajeProfit)
@@ -27,7 +27,7 @@ namespace PointOfSale.Model
             IdProducto = idProd;
             Lista = listaDePrecio;
             Precio = precio;
-            RegistrationDate = DateTimeNowArg;
+            RegistrationDate = TimeHelper.GetArgentinaTime();
             PorcentajeProfit = porcentajeProfit;
         }
 

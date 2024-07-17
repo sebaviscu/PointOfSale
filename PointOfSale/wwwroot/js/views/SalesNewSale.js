@@ -187,30 +187,57 @@ $(document).on("click", "button.finalizarSaleParcial", function () {
         return;
     }
 
-    //let total = $("#txtTotal" + currentTabId).val();
-    let total = $("#txtTotal" + currentTabId).attr("totalReal");
+    let clientId = $("#cboCliente" + currentTabId).val() != '' ? $("#cboCliente" + currentTabId).val() : null;
 
-    $("#txtTotalView").val(total);
-    $("#txtTotalParcial").val(total);
-    $("#txtSumaSubtotales").val(0);
-    $("#btnCalcSubTotales").attr("idFormaDePago", 0);
+    if (clientId != null) {
+        let nombreCliente = $("#cboCliente" + currentTabId)[0].innerText;
 
-    $("#txtTotalParcial").on("change", function () {
-        calcularSuma();
-    });
+        swal({
+            title: `¿Desea agregar la venta a la cuenta corriente de ${nombreCliente}?`,
+            text: "",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-info",
+            confirmButtonText: "Si, Agregar",
+            cancelButtonText: "No, Cancelar",
+            closeOnConfirm: true,
+            closeOnCancel: true
+        },
+            function (respuesta) {
 
-    $("#btnCalcSubTotales").on("click", function () {
-        let subTotal = getSumaSubTotales();
+                if (respuesta) {
 
-        let valorParcial = $("#txtTotalParcial").val();
-        $("#txtTotalParcial").val(parseFloat(subTotal).toFixed(2) + parseFloat(valorParcial).toFixed(2));
-        calcularSuma();
-    });
+                    registrationSale(currentTabId);
+                }
+            });
 
-    $("#modalDividirPago").removeAttr("idTab");
-    $("#modalDividirPago").attr("idTab", currentTabId);
+    }
+    else {
 
-    $("#modalDividirPago").modal("show")
+        let total = $("#txtTotal" + currentTabId).attr("totalReal");
+
+        $("#txtTotalView").val(total);
+        $("#txtTotalParcial").val(total);
+        $("#txtSumaSubtotales").val(0);
+        $("#btnCalcSubTotales").attr("idFormaDePago", 0);
+
+        $("#txtTotalParcial").on("change", function () {
+            calcularSuma();
+        });
+
+        $("#btnCalcSubTotales").on("click", function () {
+            let subTotal = getSumaSubTotales();
+
+            let valorParcial = $("#txtTotalParcial").val();
+            $("#txtTotalParcial").val(parseFloat(subTotal).toFixed(2) + parseFloat(valorParcial).toFixed(2));
+            calcularSuma();
+        });
+
+        $("#modalDividirPago").removeAttr("idTab");
+        $("#modalDividirPago").attr("idTab", currentTabId);
+
+        $("#modalDividirPago").modal("show")
+    }
 })
 
 
@@ -291,18 +318,26 @@ function getVentaForRegister() {
 
     const vmDetailSale = currentTab.products;
 
-    var formasDePago = [];
-
-    $(".cboFormaDePago").each(function (index) {
-        let subTotal = {
-            total: index === 0 ? $("#txtTotalParcial").val() : $("#txtTotalParcial" + index).val(),
-            formaDePago: index === 0 ? $("#cboTypeDocumentSaleParcial").val() : $("#cboTypeDocumentSaleParcial" + index).val()
-        };
-        formasDePago.push(subTotal);
-    });
 
     let descRec = $("#txtDescRec" + currentTabId).attr('totalDescRec');
     let total = $("#txtTotalParcial").val();
+
+    let formasDePago = [];
+
+    if ($("#cboCliente" + currentTabId).val() == '') {
+
+        $(".cboFormaDePago").each(function (index) {
+            let subTotal = {
+                total: index === 0 ? $("#txtTotalParcial").val() : $("#txtTotalParcial" + index).val(),
+                formaDePago: index === 0 ? $("#cboTypeDocumentSaleParcial").val() : $("#cboTypeDocumentSaleParcial" + index).val()
+            };
+            formasDePago.push(subTotal);
+        });
+    }
+    else {
+        total = $("#txtSubTotal" + currentTabId).attr("subTotalReal");
+    }
+
 
     const sale = {
         idTypeDocumentSale: $("#cboTypeDocumentSaleParcial").val(),
@@ -311,7 +346,7 @@ function getVentaForRegister() {
         detailSales: vmDetailSale,
         tipoMovimiento: $("#cboCliente" + currentTabId).val() != '' ? 2 : null,
         imprimirTicket: document.querySelector('#cboImprimirTicket').checked,
-        multiplesFormaDePago: formasDePago,
+        multiplesFormaDePago: formasDePago != [] ? formasDePago : null,
         descuentorecargo: descRec != undefined ? descRec.replace('.', ',') : null
     }
 
@@ -335,9 +370,14 @@ $("#btnFinalizarVentaParcial").on("click", function () {
     }
 
     $("#modalDividirPago").modal("hide")
-    showLoading();
 
     var currentTabId = $("#modalDividirPago").attr("idtab");
+
+    registrationSale(currentTabId);
+});
+
+function registrationSale(currentTabId) {
+    showLoading();
 
     let sale = getVentaForRegister();
     console.log(JSON.stringify(sale));
@@ -353,40 +393,42 @@ $("#btnFinalizarVentaParcial").on("click", function () {
         removeLoading();
 
         if (responseJson.state) {
-            //swal("Registrado!", `Número de venta : ${responseJson.object.saleNumber}`, "success");
 
-            var nuevaVentaSpan = document.getElementById('profile-tab' + currentTabId).querySelector('span');
-            nuevaVentaSpan.textContent = responseJson.object.saleNumber;
+            let nuevaVentaSpan = document.getElementById('profile-tab' + currentTabId).querySelector('span');
+            if (nuevaVentaSpan != null)
+            {
+                nuevaVentaSpan.textContent = responseJson.object.saleNumber;
+            }
 
             $("#btnImprimirTicket" + currentTabId).attr("idSale", responseJson.object.idSale);
 
 
-            AllTabsForSale = AllTabsForSale.filter(p => p.idTab != currentTabId)
+            AllTabsForSale = AllTabsForSale.filter(p => p.idTab != currentTabId);
             cleanSaleParcial();
 
             if ($(".tab-venta").length > 2) {
 
                 // para cerrar la ultima venta de 3
-                var firstTabID = document.getElementsByClassName("tab-venta")[0].getAttribute("data-bs-target")
+                var firstTabID = document.getElementsByClassName("tab-venta")[0].getAttribute("data-bs-target");
 
                 if ($('#btnAgregarProducto' + firstTabID[firstTabID.length - 1]).is(':disabled')) { // si no esta cerrada la venta, no se cierra
                     $(firstTabID).remove();
-                    document.getElementsByClassName("li-tab")[0].remove()
+                    document.getElementsByClassName("li-tab")[0].remove();
                 }
             }
             disableAfterVenta(currentTabId);
 
-            if (sale.imprimirTicket && responseJson.object.nombreImpresora != '') {
-                printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora);
-            }
+            //if (sale.imprimirTicket && responseJson.object.nombreImpresora != '') {
+            //    printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora);
+            //}
 
             newTab();
 
         } else {
             swal("Lo sentimos", "La venta no fué registrada. Error: " + responseJson.message, "error");
         }
-    })
-});
+    });
+}
 
 function disableAfterVenta(tabID) {
     $('#btnAgregarProducto' + tabID).prop('disabled', true);
@@ -657,7 +699,7 @@ function addFunctions(idTab) {
 
         const element = document.getElementById("txtPeso" + idTab);
         window.setTimeout(() => element.focus(), 0);
-        
+
     })
 
     $("#btnAgregarProducto" + idTab).on("click", function () {

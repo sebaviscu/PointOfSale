@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Services;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
@@ -42,7 +43,7 @@ namespace PointOfSale.Controllers
             GenericResponse<VMGastos> gResponse = new GenericResponse<VMGastos>();
             try
             {
-                model.RegistrationDate = DateTimeNowArg;
+                model.RegistrationDate = TimeHelper.GetArgentinaTime();
                 model.RegistrationUser = user.UserName;
                 var gasto = _mapper.Map<Gastos>(model);
                 gasto.IdTienda = user.IdTienda;

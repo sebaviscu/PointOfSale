@@ -1,4 +1,5 @@
 ﻿using PointOfSale.Business.Contracts;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
 using System;
@@ -11,7 +12,6 @@ namespace PointOfSale.Business.Services
 {
     public class TiendaService : ITiendaService
     {
-        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
         private readonly IGenericRepository<Tienda> _repository;
         public TiendaService(IGenericRepository<Tienda> repository)
         {
@@ -69,7 +69,7 @@ namespace PointOfSale.Business.Services
                 Tienda_found.IdListaPrecio = entity.IdListaPrecio;
                 Tienda_found.Cuit = entity.Cuit;
 
-                Tienda_found.ModificationDate = DateTimeNowArg;
+                Tienda_found.ModificationDate = TimeHelper.GetArgentinaTime();
                 Tienda_found.ModificationUser = entity.ModificationUser;
 
                 bool response = await _repository.Edit(Tienda_found);

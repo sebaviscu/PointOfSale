@@ -17,6 +17,11 @@ namespace PointOfSale.Business.Services
         {
             return CreateTicket(tienda, sale.RegistrationDate.Value, sale.Total.Value, sale.DetailSales, null);
         }
+        public void ImprimirTiket(string impresora, string line)
+        {
+            PrinterModel.SendStringToPrinter(impresora, line);
+        }
+
         private string CreateTicket(Tienda tienda, DateTime registrationDate, decimal total, ICollection<DetailSale> detailSales, decimal? descuentoRecargo)
         {
 
@@ -67,6 +72,8 @@ namespace PointOfSale.Business.Services
             Ticket1.TextoAgradecimiento("Gracias por su compra!");
             Ticket1.TextoIzquierda(" ");
             Ticket1.TextoIzquierda(" ");
+
+            //ImprimirTiket("Microsoft XPS Document Writer'", Ticket1.Lineas.ToString());
 
             return Ticket1.Lineas.ToString();
         }
