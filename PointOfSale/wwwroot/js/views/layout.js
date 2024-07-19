@@ -205,29 +205,24 @@ function removeLoading() {
 };
 
 
-async function printTicket(nombreImpresora, ticketContent) {
-    try {
-        const conector = {
-            text: ticketContent,
-            nombre_impresora: nombreImpresora
-        };
-
-        const response = await fetch('/print/imprimir', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(conector)
+function printTicket(text, printerName) {
+    fetch('https://localhost:4567/print', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ printerName: printerName, text: text })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Documento enviado a la impresora con éxito');
+            } else {
+                console.error('Error al enviar el documento a la impresora:', data.error);
+            }
+        })
+        .catch(error => {
+            alert('Error al enviar el documento a la impresora: ' + error);
+            console.error('Error:', error);
         });
-
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-        const data = await response.json();
-        return data.success;
-    } catch (error) {
-        console.error('Error:', error);
-        return false;
-    }
 }

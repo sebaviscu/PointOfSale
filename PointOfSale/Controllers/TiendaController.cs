@@ -29,7 +29,8 @@ namespace PointOfSale.Controllers
 
         public IActionResult Tienda()
         {
-            return View();
+            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            return Validate_Sesion_View_or_Login();
         }
 
         [HttpGet]
@@ -75,7 +76,7 @@ namespace PointOfSale.Controllers
                 //    }
                 //}
                 //else
-                    vmTienda.Logo = null;
+                vmTienda.Logo = null;
 
                 Tienda Tienda_created = await _TiendaService.Add(_mapper.Map<Tienda>(vmTienda));
 

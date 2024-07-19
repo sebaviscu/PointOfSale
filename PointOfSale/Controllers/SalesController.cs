@@ -51,15 +51,15 @@ namespace PointOfSale.Controllers
         }
         public IActionResult NewSale()
         {
-            return View();
+            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado, Roles.Empleado });
+            return Validate_Sesion_View_or_Login();
         }
 
         public IActionResult SalesHistory()
         {
-            return View();
+            ValidarAutorizacion(new Roles[] {Roles.Administrador, Roles.Empleado, Roles.Encargado });
+            return Validate_Sesion_View_or_Login();
         }
-
-
 
         [HttpGet]
         public async Task<IActionResult> ListTypeDocumentSale()

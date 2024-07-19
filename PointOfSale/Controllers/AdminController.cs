@@ -60,12 +60,14 @@ namespace PointOfSale.Controllers
 
         public IActionResult DashBoard()
         {
-            return View();
+            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            return Validate_Sesion_View_or_Login();
         }
 
         public IActionResult Users()
         {
-            return View();
+            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            return Validate_Sesion_View_or_Login();
         }
 
         [HttpGet]
@@ -586,7 +588,8 @@ namespace PointOfSale.Controllers
 
         public IActionResult TipoVenta()
         {
-            return View();
+            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            return Validate_Sesion_View_or_Login();
         }
 
         [HttpGet]
@@ -674,7 +677,8 @@ namespace PointOfSale.Controllers
 
         public IActionResult Cliente()
         {
-            return View();
+            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            return Validate_Sesion_View_or_Login();
         }
 
         [HttpGet]
@@ -766,7 +770,8 @@ namespace PointOfSale.Controllers
 
         public IActionResult Proveedor()
         {
-            return View();
+            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            return Validate_Sesion_View_or_Login();
         }
 
         [HttpGet]
@@ -990,7 +995,8 @@ namespace PointOfSale.Controllers
 
         public IActionResult Promociones()
         {
-            return View();
+            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            return Validate_Sesion_View_or_Login();
         }
 
         [HttpGet]
@@ -1143,7 +1149,8 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> Ajuste()
         {
-            return View();
+            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            return Validate_Sesion_View_or_Login();
         }
 
         [HttpGet]

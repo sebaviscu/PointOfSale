@@ -28,9 +28,9 @@ namespace PointOfSale.Controllers
 
         public IActionResult Turno()
         {
-            return View();
+            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Empleado, Roles.Encargado });
+            return Validate_Sesion_View_or_Login();
         }
-
 
         [HttpGet]
         public async Task<IActionResult> GetTurnos()

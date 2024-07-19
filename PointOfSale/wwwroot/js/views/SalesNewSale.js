@@ -380,7 +380,6 @@ function registrationSale(currentTabId) {
     showLoading();
 
     let sale = getVentaForRegister();
-    console.log(JSON.stringify(sale));
 
     fetch("/Sales/RegisterSale", {
         method: "POST",
@@ -418,9 +417,9 @@ function registrationSale(currentTabId) {
             }
             disableAfterVenta(currentTabId);
 
-            //if (sale.imprimirTicket && responseJson.object.nombreImpresora != '') {
-            //    printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora);
-            //}
+            if (sale.imprimirTicket && responseJson.object.nombreImpresora != '') {
+                printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora);
+            }
 
             newTab();
 
@@ -519,11 +518,17 @@ function addFunctions(idTab) {
     $('#btnImprimirTicket' + idTab).on("click", function () {
         let idSale = $("#btnImprimirTicket" + idTab).attr("idsale");
 
-        fetch(`/Sales/PrintTicket?idSale=${idSale}`)
-            .then(response => {
-                $("#modalData").modal("hide");
-                swal("Exitoso!", "Ticket impreso!", "success");
-            })
+        fetch(`/Sales/PrintTicket?idSale=${idSale}`
+        ).then(response => {
+
+            return response.ok ? response.json() : Promise.reject(response);
+        }).then(response => {
+            $("#modalData").modal("hide");
+            printTicket(response.object.ticket, response.object.nombreImpresora);
+
+            swal("Exitoso!", "Ticket impreso!", "success");
+
+        });
     });
 
     $('#tbProduct' + idTab + ' tbody').on('dblclick', 'tr', function () {

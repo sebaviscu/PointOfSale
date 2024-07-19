@@ -70,7 +70,7 @@ $(document).ready(function () {
         $("<option>").val('').text('')
     )
 
-    fetch('http://localhost:4567/getprinters')
+    fetch('https://localhost:4567/getprinters')
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -87,96 +87,7 @@ $(document).ready(function () {
             console.error('Error:', error);
         });
 
-    //fetch('https://e6eb-186-13-96-179.ngrok-free.app/getprinters', {
-    //    method: 'GET',
-    //    headers: {
-    //        'ngrok-skip-browser-warning': 'false',
-    //        'Content-Type': 'application/json',
-    //        mode: 'cors'
-    //    }
-    //})
-    //    .then(response => {
-    //        if (!response.ok) {
-    //            throw new Error('Network response was not ok');
-    //        }
-    //        return response.json();
-    //    })
-    //    .then(r => {
-    //        r.printers.forEach(item => {
-    //            $("#cboNombreTienda").append(
-    //                $("<option>").val(item).text(item)
-    //            );
-    //        });
-    //    })
-    //    .catch(error => {
-    //        console.error('Fetch error:', error);
-    //    });
-
-
-
-    //fetch('/print/getprinters')
-    //    .then(response => {
-    //        if (!response.ok) {
-    //            throw new Error('Network response was not ok');
-    //        }
-    //        return response.json();
-    //    })
-    //    .then(r => {
-    //        r.printers.forEach(item => {
-    //            $("#cboNombreTienda").append(
-    //                $("<option>").val(item).text(item)
-    //            )
-    //        });
-    //    })
-    //    .catch(error => {
-    //        console.error('Fetch error:', error);
-    //    });
-
-
-    //const socket = new WebSocket('wss://e6eb-186-13-96-179.ngrok-free.app/');
-
-    //socket.addEventListener('open', function (event) {
-    //    console.log('WebSocket is open now.');
-    //    socket.send('getprinters');
-    //});
-
-    //socket.addEventListener('message', function (event) {
-    //    const result = JSON.parse(event.data);
-    //    result.printers.forEach(item => {
-    //        $("#cboNombreTienda").append(
-    //            $("<option>").val(item).text(item)
-    //        );
-    //    });
-    //});
-
-    //socket.addEventListener('close', function (event) {
-    //    console.log('WebSocket is closed now.');
-    //});
-
-    //socket.addEventListener('error', function (event) {
-    //    console.error('WebSocket error observed:', event);
-    //});
-
-
-    //fetch('http://localhost:4567/getprinters')
-    //    .then(response => {
-    //        if (!response.ok) {
-    //            throw new Error('Network response was not ok');
-    //        }
-    //        return response.json();
-    //    })
-    //    .then(r => {
-    //        r.printers.forEach((item) => {
-    //            $("#cboNombreTienda").append(
-    //                $("<option>").val(item).text(item)
-    //            )
-    //        })
-    //    })
-    //    .catch(error => {
-    //        console.error('Fetch error:', error);
-    //    });
-
-
+   
 })
 
 const openModal = (model = BASIC_MODEL) => {

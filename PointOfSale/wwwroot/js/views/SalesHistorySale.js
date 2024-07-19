@@ -219,7 +219,7 @@ $("#printTicket").click(function () {
 
             if (responseJson.object.nombreImpresora != '') {
 
-                printTicket(responseJson.object.nombreImpresora, responseJson.object.ticket);
+                printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora);
 
                 swal("Exitoso!", "Ticket impreso!", "success");
             }

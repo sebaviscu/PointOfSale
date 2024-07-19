@@ -34,14 +34,18 @@ namespace PointOfSale.Controllers
         }
         public IActionResult ProductsReport()
         {
-            return View();
+            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Empleado, Roles.Encargado });
+            return Validate_Sesion_View_or_Login();
         }
 
         [HttpGet]
         public async Task<IActionResult> GetProductsReport(string idCategoria, string startDate, string endDate)
         {
             if (idCategoria == null && startDate == null && endDate == null)
-                return View();
+            {
+                ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Empleado, Roles.Encargado });
+                return Validate_Sesion_View_or_Login();
+            }
 
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
 
