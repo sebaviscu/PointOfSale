@@ -11,7 +11,6 @@ using PointOfSale.Data.Repository;
 using PointOfSale.Utilities.Automapper;
 using System.Text.Json.Serialization;
 using PointOfSale.Controllers;
-using Serilog;
 
 public class Program
 {
@@ -23,19 +22,8 @@ public class Program
             .AddJsonFile($"appsettings.{environment}.json", optional: true)
             .Build();
 
-        var loggerConfiguration = new LoggerConfiguration()
-            .ReadFrom.Configuration(configuration);
-
-        if (environment == Environments.Production)
-        {
-            loggerConfiguration.WriteTo.Seq("http://localhost:5341");
-        }
-
-        Log.Logger = loggerConfiguration.CreateLogger();
-
         try
         {
-            Log.Information("Starting up");
 
             var builder = WebApplication.CreateBuilder(args);
 
@@ -111,7 +99,7 @@ public class Program
                 x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
 
-            builder.Host.UseSerilog();
+            //builder.Host.UseSerilog();
 
             var app = builder.Build();
 
@@ -136,12 +124,6 @@ public class Program
         }
         catch (Exception ex)
         {
-            Log.Fatal(ex, "Application start-up failed");
-        }
-        finally
-        {
-            Log.CloseAndFlush();
         }
     }
-
 }
