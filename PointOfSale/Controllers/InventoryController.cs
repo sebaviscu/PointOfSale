@@ -209,7 +209,13 @@ namespace PointOfSale.Controllers
                     v.RegistrationUser = user.UserName;
                 }
 
-                Product product_created = await _productService.Add(prod, listPrecios, _mapper.Map<List<Vencimiento>>(vmListVencimientos));
+                var s = new Stock(
+                vmProduct.Quantity.HasValue ? (int)vmProduct.Quantity : 0,
+                vmProduct.Minimo.HasValue ? (int)vmProduct.Minimo : 0,
+                0,
+                user.IdTienda);
+
+                Product product_created = await _productService.Add(prod, listPrecios, _mapper.Map<List<Vencimiento>>(vmListVencimientos), s);
 
                 vmProduct = _mapper.Map<VMProduct>(product_created);
 
@@ -265,12 +271,15 @@ namespace PointOfSale.Controllers
 
                 foreach (var v in vmListVencimientos.Where(_ => _.IdVencimiento == 0))
                 {
+                    v.IdProducto = vmProduct.IdProduct;
                     v.IdTienda = user.IdTienda;
                     v.RegistrationDate = TimeHelper.GetArgentinaTime();
                     v.RegistrationUser = user.UserName;
                 }
 
-                Product product_edited = await _productService.Edit(_mapper.Map<Product>(vmProduct), listPrecios, _mapper.Map<List<Vencimiento>>(vmListVencimientos));
+                var stock = new Stock(vmProduct.Quantity.HasValue ? (int)vmProduct.Quantity : 0, vmProduct.Minimo.HasValue ? (int)vmProduct.Minimo : 0, vmProduct.IdProduct, user.IdTienda);
+
+                Product product_edited = await _productService.Edit(_mapper.Map<Product>(vmProduct), listPrecios, _mapper.Map<List<Vencimiento>>(vmListVencimientos), stock);
 
                 vmProduct = _mapper.Map<VMProduct>(product_edited);
 

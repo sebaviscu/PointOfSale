@@ -43,6 +43,7 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<Pedido> Pedido { get; set; } = null!;
         public virtual DbSet<PedidoProducto> PedidoProducto { get; set; } = null!;
         public virtual DbSet<Ajustes> Ajustes { get; set; } = null!;
+        public virtual DbSet<Stock> Stocks { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -50,6 +51,21 @@ namespace PointOfSale.Data.DBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Stock>(entity =>
+            {
+                entity.HasKey(e => e.IdStock);
+
+                entity.ToTable("Stock");
+
+                entity.HasOne(d => d.Tienda)
+                    .WithMany(p => p.Stocks)
+                    .HasForeignKey(d => d.IdTienda);
+
+                entity.HasOne(d => d.Producto)
+                    .WithMany(p => p.Stocks)
+                    .HasForeignKey(d => d.IdProducto);
+
+            });
             modelBuilder.Entity<Ajustes>(entity =>
             {
                 entity.HasKey(e => e.IdAjuste);
