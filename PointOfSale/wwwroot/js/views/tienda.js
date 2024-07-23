@@ -70,25 +70,24 @@ $(document).ready(function () {
         $("<option>").val('').text('')
     )
 
-    fetch('https://localhost:4567/getprinters')
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                data.printers.forEach(printer => {
-                    $("#cboNombreTienda").append(
-                        $("<option>").val(printer).text(printer)
-                    );
-                });
-            } else {
-                console.error('Error fetching printers:', data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
 
+    getPrintersTienda();
    
 })
+
+async function getPrintersTienda() {
+    try {
+        let printers = await getPrinters();
+
+        printers.forEach(printer => {
+            $("#cboNombreTienda").append(
+                $("<option>").val(printer).text(printer)
+            );
+        });
+    } catch (error) {
+        console.error('Error fetching printers:', error);
+    }
+}
 
 const openModal = (model = BASIC_MODEL) => {
 
