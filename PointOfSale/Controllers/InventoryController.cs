@@ -36,13 +36,13 @@ namespace PointOfSale.Controllers
         public IActionResult Categories()
         {
             ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
-            return Validate_Sesion_View_or_Login();
+            return View();
         }
 
         public IActionResult Products()
         {
             ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
-            return Validate_Sesion_View_or_Login();
+            return View();
         }
 
         [HttpGet]

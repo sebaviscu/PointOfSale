@@ -22,7 +22,7 @@ namespace PointOfSale.Controllers
         public IActionResult Notification()
         {
             ValidarAutorizacion(new Roles[] { Roles.Administrador });
-            return Validate_Sesion_View_or_Login();
+            return View();
         }
 
         [HttpGet]

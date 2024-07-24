@@ -53,8 +53,6 @@ public class Program
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("SQL_Publich"));
             });
-            builder.Services.AddHttpClient();
-            builder.Services.AddHttpClient<PrintController>();
 
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 

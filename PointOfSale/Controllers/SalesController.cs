@@ -52,13 +52,13 @@ namespace PointOfSale.Controllers
         public IActionResult NewSale()
         {
             ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado, Roles.Empleado });
-            return Validate_Sesion_View_or_Login();
+            return View();
         }
 
         public IActionResult SalesHistory()
         {
             ValidarAutorizacion(new Roles[] {Roles.Administrador, Roles.Empleado, Roles.Encargado });
-            return Validate_Sesion_View_or_Login();
+            return View();
         }
 
         [HttpGet]

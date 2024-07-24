@@ -30,7 +30,7 @@ namespace PointOfSale.Controllers
         public IActionResult Tienda()
         {
             ValidarAutorizacion(new Roles[] { Roles.Administrador });
-            return Validate_Sesion_View_or_Login();
+            return View();
         }
 
         [HttpGet]

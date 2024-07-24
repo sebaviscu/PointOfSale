@@ -8,14 +8,6 @@ namespace PointOfSale.Controllers
 {
     public class BaseController : Controller
     {
-        public IActionResult Validate_Sesion_View_or_Login()
-        {
-            if (!HttpContext.User.Identity.IsAuthenticated)
-                return RedirectToAction("Login", "Access");
-            else
-                return View();
-        }
-
         public (bool Resultado, string UserName, int IdTienda, ListaDePrecio IdListaPrecios) ValidarAutorizacion(Roles[] rolesPermitidos)
         {
             var claimuser = HttpContext.User;

@@ -35,7 +35,7 @@ namespace PointOfSale.Controllers
         public IActionResult ProductsReport()
         {
             ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Empleado, Roles.Encargado });
-            return Validate_Sesion_View_or_Login();
+            return View();
         }
 
         [HttpGet]
@@ -44,7 +44,7 @@ namespace PointOfSale.Controllers
             if (idCategoria == null && startDate == null && endDate == null)
             {
                 ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Empleado, Roles.Encargado });
-                return Validate_Sesion_View_or_Login();
+                return View();
             }
 
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
