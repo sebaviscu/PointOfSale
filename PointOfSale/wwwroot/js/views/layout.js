@@ -1,5 +1,5 @@
-﻿
-$(document).ready(function () {
+﻿$(document).ready(function () {
+
     $("#limpiarNotificaciones").on("click", function () {
 
 
@@ -203,26 +203,3 @@ function removeLoading() {
     document.body.removeChild(document.getElementById("divLoadingFrame"));
     document.body.removeChild(document.getElementById("styleLoadingWindow"));
 };
-
-
-function printTicket(text, printerName) {
-    fetch('https://localhost:4567/print', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ printerName: printerName, text: text })
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                console.log('Documento enviado a la impresora con éxito');
-            } else {
-                console.error('Error al enviar el documento a la impresora:', data.error);
-            }
-        })
-        .catch(error => {
-            alert('Error al enviar el documento a la impresora: ' + error);
-            console.error('Error:', error);
-        });
-}

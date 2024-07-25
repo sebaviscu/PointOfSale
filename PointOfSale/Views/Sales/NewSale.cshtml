@@ -26,6 +26,7 @@
         }
     </style>
 }
+<span class="offset-md-3 text-danger" id="lblErrorPrintService" style="display: none;"><i class="mdi mdi-alert mdi-24px"></i>&nbsp; El servicio de impresión no se encuentra conectado</span>
 
 <ul class="nav nav-tabs d-lg-flex" id="tab-list" role="tablist">
     <a id="btn-add-tab" href="#" class="text-primary me-2">
@@ -44,7 +45,7 @@
             <div class="col-sm-8">
                 <div class="row">
                     <div class="col-sm-12">
-                        <div class="card shadow mb-4">
+                        <div class="card shadow">
                             <div class="card-header py-3">
                                 <h4>Productos</h4>
                             </div>
@@ -94,7 +95,7 @@
 
                 <div class="row">
                     <div class="col-sm-12">
-                        <div class="card shadow mb-4">
+                        <div class="card shadow">
                             <div class="card-header py-3">
                                 <h4>Detalles</h4>
                             </div>
@@ -272,6 +273,7 @@
 @section Scripts{
 
     <script src="~/plugins/select2/js/select2.js"></script>
+    <script src="~/plugins/printService.js"></script>
 
     <script src="~/js/views/SalesNewSale.js"></script>
     }

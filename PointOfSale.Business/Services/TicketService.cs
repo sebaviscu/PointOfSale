@@ -69,11 +69,9 @@ namespace PointOfSale.Business.Services
             Ticket1.LineasTotal();
 
             Ticket1.TextoIzquierda(" ");
-            Ticket1.TextoAgradecimiento("Gracias por su compra!");
+            Ticket1.TextoAgradecimiento("¡Gracias por su compra!");
             Ticket1.TextoIzquierda(" ");
             Ticket1.TextoIzquierda(" ");
-
-            //ImprimirTiket("Microsoft XPS Document Writer'", Ticket1.Lineas.ToString());
 
             return Ticket1.Lineas.ToString();
         }
