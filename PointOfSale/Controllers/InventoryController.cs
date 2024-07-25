@@ -36,13 +36,18 @@ namespace PointOfSale.Controllers
         public IActionResult Categories()
         {
             ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
-            return Validate_Sesion_View_or_Login();
+            return ValidateSesionViewOrLogin();
         }
 
         public IActionResult Products()
         {
             ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
-            return Validate_Sesion_View_or_Login();
+            return ValidateSesionViewOrLogin();
+        }
+        public IActionResult Stock()
+        {
+            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            return ValidateSesionViewOrLogin();
         }
 
         [HttpGet]
@@ -142,24 +147,37 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Se produjo un error al obtener los productos." });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Se produjo un error al obtener los productos. Error: " + ex.Message });
             }
         }
 
+        /// <summary>
+        /// Recupera un producto cuando se abre el modal de edit.
+        /// </summary>
+        /// <param name="idProduct"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetProduct(int idProduct)
         {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+
             try
             {
                 var producto = await _productService.Get(idProduct);
+                var stock = await _productService.GetStockByIdProductIdTienda(idProduct, user.IdTienda);
 
                 var prod = _mapper.Map<VMProduct>(producto);
+                if (stock != null)
+                {
+                    prod.Minimo = stock.StockMinimo;
+                    prod.Quantity = stock.StockActual;
+                }
 
                 return Ok(new { data = prod });
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Se produjo un error al obtener los productos." });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Se produjo un error al obtener los productos. Error: " + ex.Message });
             }
         }
 
@@ -209,13 +227,17 @@ namespace PointOfSale.Controllers
                     v.RegistrationUser = user.UserName;
                 }
 
-                var s = new Stock(
-                vmProduct.Quantity.HasValue ? (int)vmProduct.Quantity : 0,
-                vmProduct.Minimo.HasValue ? (int)vmProduct.Minimo : 0,
-                0,
-                user.IdTienda);
+                Stock stock = null;
+                if (vmProduct.Quantity.HasValue && vmProduct.Quantity.Value > 0 && vmProduct.Minimo.HasValue && vmProduct.Minimo.Value >= 0)
+                {
+                    stock = new Stock(
+                    vmProduct.Quantity.Value,
+                    (int)vmProduct.Minimo.Value,
+                    0,
+                    user.IdTienda);
+                }
 
-                Product product_created = await _productService.Add(prod, listPrecios, _mapper.Map<List<Vencimiento>>(vmListVencimientos), s);
+                Product product_created = await _productService.Add(prod, listPrecios, _mapper.Map<List<Vencimiento>>(vmListVencimientos), stock);
 
                 vmProduct = _mapper.Map<VMProduct>(product_created);
 
@@ -277,7 +299,15 @@ namespace PointOfSale.Controllers
                     v.RegistrationUser = user.UserName;
                 }
 
-                var stock = new Stock(vmProduct.Quantity.HasValue ? (int)vmProduct.Quantity : 0, vmProduct.Minimo.HasValue ? (int)vmProduct.Minimo : 0, vmProduct.IdProduct, user.IdTienda);
+                Stock stock = null;
+                if (vmProduct.Quantity.HasValue && vmProduct.Quantity.Value > 0 && vmProduct.Minimo.HasValue && vmProduct.Minimo.Value >= 0)
+                {
+                    stock = new Stock(
+                    vmProduct.Quantity.Value,
+                    (int)vmProduct.Minimo.Value,
+                    vmProduct.IdProduct,
+                    user.IdTienda);
+                }
 
                 Product product_edited = await _productService.Edit(_mapper.Map<Product>(vmProduct), listPrecios, _mapper.Map<List<Vencimiento>>(vmListVencimientos), stock);
 
@@ -487,5 +517,6 @@ namespace PointOfSale.Controllers
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
+
     }
 }

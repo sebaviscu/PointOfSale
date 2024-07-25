@@ -8,10 +8,10 @@ namespace PointOfSale.Model
     {
         public int IdProduct { get; set; }
         public string? BarCode { get; set; }
-        public string? Brand { get; set; }
+        //public string? Brand { get; set; }
         public string? Description { get; set; }
         public int? IdCategory { get; set; }
-        public decimal? Quantity { get; set; }
+        //public decimal? Quantity { get; set; }
         public decimal? Price { get; set; }
         public byte[]? Photo { get; set; }
         public bool IsActive { get; set; }
@@ -23,7 +23,7 @@ namespace PointOfSale.Model
         public decimal? CostPrice { get; set; }
         public string? Comentario { get; set; }
         public TipoVenta TipoVenta { get; set; }
-        public decimal? Minimo { get; set; }
+        //public decimal? Minimo { get; set; }
         public decimal? Iva {  get; set; }
         public virtual Category? IdCategoryNavigation { get; set; }
         public int? IdProveedor { get; set; }

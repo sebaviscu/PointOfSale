@@ -18,6 +18,7 @@ namespace PointOfSale.Business.Services
 {
     public class ProductService : IProductService
     {
+        private readonly IGenericRepository<Notifications> _notificationRepository;
         private readonly IGenericRepository<Product> _repository;
         private readonly IGenericRepository<ListaPrecio> _repositoryListaPrecios;
         private readonly IGenericRepository<DetailSale> _repositoryDetailSale;
@@ -30,7 +31,8 @@ namespace PointOfSale.Business.Services
             IGenericRepository<DetailSale> repositoryDetailSale,
             IGenericRepository<Vencimiento> repositoryVencimientos,
             INotificationService notificationService,
-            IGenericRepository<Stock> repositoryStock)
+            IGenericRepository<Stock> repositoryStock,
+            IGenericRepository<Notifications> notificationRepository)
         {
             _repository = repository;
             _repositoryListaPrecios = repositoryListaPrecios;
@@ -38,6 +40,7 @@ namespace PointOfSale.Business.Services
             _repositoryVencimientos = repositoryVencimientos;
             _notificationService = notificationService;
             _repositoryStock = repositoryStock;
+            _notificationRepository = notificationRepository;
         }
 
         public async Task<Product> Get(int idProducto)
@@ -57,6 +60,13 @@ namespace PointOfSale.Business.Services
         {
             IQueryable<Product> query = await _repository.Query(_ => _.IsActive);
             return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).OrderBy(_ => _.Description).ToList();
+        }
+
+
+        public async Task<Stock?> GetStockByIdProductIdTienda(int idProducto, int idTienda)
+        {
+            IQueryable<Stock> queryProduct = await _repositoryStock.Query(u => u.IdProducto== idProducto && u.IdTienda == idTienda);
+            return queryProduct.FirstOrDefault();
         }
 
         public async Task<List<Product>> ListActiveByCategory(int categoryId, int page, int pageSize, string searchText = "")
@@ -92,7 +102,7 @@ namespace PointOfSale.Business.Services
         }
 
 
-        public async Task<Product> Add(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos, Stock stock)
+        public async Task<Product> Add(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos, Stock? stock)
         {
             Product product_exists = await _repository.Get(p => p.BarCode != string.Empty && p.BarCode == entity.BarCode);
 
@@ -110,8 +120,11 @@ namespace PointOfSale.Business.Services
                 if (product_created.IdProduct == 0)
                     throw new TaskCanceledException("Error al crear producto");
 
-                stock.IdProducto = product_created.IdProduct;
-                _ = await _repositoryStock.Add(stock);
+                if (stock != null)
+                {
+                    stock.IdProducto = product_created.IdProduct;
+                    _ = await _repositoryStock.Add(stock);
+                }
 
                 listaPrecios[0].IdProducto = product_created.IdProduct;
                 listaPrecios[1].IdProducto = product_created.IdProduct;
@@ -139,6 +152,12 @@ namespace PointOfSale.Business.Services
             }
         }
 
+        /// <summary>
+        /// Importar Porductos.
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        /// <exception cref="TaskCanceledException"></exception>
         public async Task<Product> Add(Product entity)
         {
             Product product_exists = await _repository.Get(p => p.BarCode != string.Empty && p.BarCode == entity.BarCode);
@@ -166,7 +185,7 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task<Product> Edit(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos, Stock stock)
+        public async Task<Product> Edit(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos, Stock? stock)
         {
             Product product_exists = await _repository.Get(p => (p.BarCode != string.Empty && p.BarCode == entity.BarCode) && p.IdProduct != entity.IdProduct);
 
@@ -179,11 +198,10 @@ namespace PointOfSale.Business.Services
                 Product product_edit = queryProduct1.Include(_ => _.ListaPrecios).First();
 
                 product_edit.BarCode = entity.BarCode;
-                product_edit.Brand = entity.Brand;
                 product_edit.Description = entity.Description;
                 product_edit.IdCategory = entity.IdCategory;
-                product_edit.Quantity = entity.Quantity < product_edit.Quantity ? product_edit.Quantity : entity.Quantity;
-                product_edit.Minimo = entity.Minimo;
+                //product_edit.Quantity = entity.Quantity < product_edit.Quantity ? product_edit.Quantity : entity.Quantity;
+                //product_edit.Minimo = entity.Minimo;
                 product_edit.Price = entity.Price;
                 product_edit.CostPrice = entity.CostPrice;
                 product_edit.PriceWeb = entity.PriceWeb;
@@ -215,7 +233,9 @@ namespace PointOfSale.Business.Services
 
                 await EditListaPrecios(product_edit.ListaPrecios.ToList(), listaPrecios);
                 await EditOrCreateVencimientos(vencimientos);
-                await EditStock(stock);
+
+                if (stock != null)
+                    await EditStock(stock);
 
                 IQueryable<Product> queryProduct = await _repository.Query(u => u.IdProduct == entity.IdProduct);
 
@@ -223,7 +243,7 @@ namespace PointOfSale.Business.Services
 
                 return product_edited;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 throw;
             }
@@ -482,6 +502,13 @@ namespace PointOfSale.Business.Services
 
             return queryProducts.Include(c => c.Proveedor).Include(c => c.IdCategoryNavigation).Include(c => c.ListaPrecios).ToList();
         }
+        public async Task<List<Stock>> GetStockByProductsByIds(List<int> listIds, int idTienda)
+        {
+            var queryProducts = await _repositoryStock.Query(p =>
+                p.IdTienda == idTienda && listIds.Contains(p.IdProducto));
+
+            return queryProducts.ToList();
+        }
 
         public async Task<Dictionary<int, string?>> ProductsTopByCategory(string category, string starDate, string endDate, int idTienda)
         {
@@ -561,43 +588,47 @@ namespace PointOfSale.Business.Services
             {
                 var pedProd = pedidoProductos.First(_ => _.IdProducto == p.IdProduct);
 
-                var stockExiste = await _repositoryStock.Get(_ => _.IdTienda == idTienda && _.IdProducto == p.IdProduct);
-
-                if (stockExiste == null)
+                if (pedProd.CantidadProductoRecibida.HasValue)
                 {
-                    var stock = new Stock(
-                        pedProd.CantidadProductoRecibida.HasValue ? pedProd.CantidadProductoRecibida.Value : 0,
-                        0,
-                        p.IdProduct,
-                        idTienda
-                    );
-
-                    await _repositoryStock.Add(stock);
+                    await UpdateStock(idTienda, p, pedProd.CantidadProductoRecibida.Value);
                 }
-                else
-                {
-                    stockExiste.StockActual += pedProd.CantidadProductoRecibida.HasValue ? pedProd.CantidadProductoRecibida.Value : 0;
-
-                    bool response = await _repositoryStock.Edit(stockExiste);
-                    if (!response)
-                        throw new TaskCanceledException("El stock no se pudo editar");
-                }
-
 
                 if (pedProd.Vencimiento.HasValue)
                 {
-                    var v = new Vencimiento();
-                    v.IdTienda = idTienda;
-                    v.IdProducto = p.IdProduct;
-                    v.Notificar = true;
-                    v.FechaVencimiento = pedProd.Vencimiento.Value;
-                    v.Lote = pedProd.Lote;
-                    v.RegistrationDate = TimeHelper.GetArgentinaTime();
-                    v.RegistrationUser = registrationUser;
+                    var v = new Vencimiento()
+                    {
+                        IdTienda = idTienda,
+                        IdProducto = p.IdProduct,
+                        Notificar = true,
+                        FechaVencimiento = pedProd.Vencimiento.Value,
+                        Lote = pedProd.Lote,
+                        RegistrationDate = TimeHelper.GetArgentinaTime(),
+                        RegistrationUser = registrationUser
+                    };
 
                     await _repositoryVencimientos.Add(v);
                 }
 
+            }
+        }
+
+        public async Task UpdateStock(int idTienda, Product p, int stockRecibido)
+        {
+            var stockExiste = await _repositoryStock.Get(_ => _.IdTienda == idTienda && _.IdProducto == p.IdProduct);
+
+            if (stockExiste == null)
+            {
+                var stock = new Stock(stockRecibido, 0, p.IdProduct, idTienda);
+
+                await _repositoryStock.Add(stock);
+            }
+            else
+            {
+                stockExiste.StockActual += stockRecibido;
+
+                bool response = await _repositoryStock.Edit(stockExiste);
+                if (!response)
+                    throw new TaskCanceledException("El stock no se pudo editar");
             }
         }
 

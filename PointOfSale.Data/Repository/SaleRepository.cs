@@ -17,10 +17,14 @@ namespace PointOfSale.Data.Repository
     public class SaleRepository : GenericRepository<Sale>, ISaleRepository
     {
         private readonly POINTOFSALEContext _dbcontext;
+        private readonly IGenericRepository<Stock> _repositoryStock;
+        private readonly IGenericRepository<Notifications> _notificationRepository;
 
-        public SaleRepository(POINTOFSALEContext context) : base(context)
+        public SaleRepository(POINTOFSALEContext context, IGenericRepository<Stock> repositoryStock, IGenericRepository<Notifications> notificationRepository) : base(context)
         {
             _dbcontext = context;
+            _repositoryStock = repositoryStock;
+            _notificationRepository = notificationRepository;
         }
 
         public async Task<Sale> Register(Sale entity)
@@ -37,7 +41,7 @@ namespace PointOfSale.Data.Repository
                 foreach (DetailSale dv in entity.DetailSales)
                 {
                     var product_found = products.First(p => p.IdProduct == dv.IdProduct);
-                    ControlStock(dv, product_found);
+                    await ControlStock(dv.Quantity.Value, entity.IdTienda, product_found);
 
                     dv.TipoVenta = product_found.TipoVenta;
                     dv.CategoryProducty = product_found.IdCategoryNavigation.Description;
@@ -54,28 +58,30 @@ namespace PointOfSale.Data.Repository
 
                 return entity;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 throw;
             }
         }
 
 
-        private void ControlStock(DetailSale dv, Product p)
+        private async Task ControlStock(decimal cantidad, int idTienda, Product p)
         {
-            if (p.Minimo != null && p.Minimo > 0)
+            var stockExiste = await _repositoryStock.Get(_ => _.IdTienda == idTienda && _.IdProducto == p.IdProduct);
+
+            if (stockExiste != null && stockExiste.StockActual > 0)
             {
-                p.Quantity -= dv.Quantity;
-                if (p.Quantity < 0)
-                {
-                    p.Quantity = 0;
-                }
-                else if (p.Quantity <= p.Minimo)
+                stockExiste.StockActual -= cantidad;
+
+                bool response = await _repositoryStock.Edit(stockExiste);
+                if (!response)
+                    throw new TaskCanceledException("El stock no se pudo editar");
+
+                if (stockExiste.StockActual <= stockExiste.StockMinimo)
                 {
                     var notif = new Notifications(p);
-                    _dbcontext.Notificaciones.Add(notif);
+                    _ = _notificationRepository.Add(notif);
                 }
-                _dbcontext.Products.Update(p);
             }
         }
 
@@ -145,7 +151,7 @@ namespace PointOfSale.Data.Repository
             {
                 Product product_found = _dbcontext.Products.Include(_ => _.Proveedor).Where(p => p.IdProduct == dv.IdProduct).First();
 
-                ControlStock(dv, product_found);
+                await ControlStock(dv.Quantity.Value, entity.IdTienda.Value, product_found);
             }
 
             await _dbcontext.Sales.AddAsync(sale);

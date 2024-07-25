@@ -1,0 +1,93 @@
+﻿@{
+    ViewData["Title"] = "Stock y Vencimientos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@section StylesPOS {
+
+    <link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
+    <link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
+    <link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
+
+}
+
+
+<div class="row">
+    <div class="col-sm-12">
+
+        <div class="card card-default">
+            <div class="card-header card-header-border-bottom">
+                <div>
+                    <h4>Stock y Vencimientos</h4>
+                </div>
+@*                 <div class="ms-auto bd-highlight">
+                    <button class="btn btn-success" id="btnNew">Nueva Categoria</button>
+                </div> *@
+            </div>
+
+
+            <div class="card-body" style="padding-bottom: 0px;">
+                <div class="card-header card-header-border-bottom" style="padding-top: 0px;padding-left: 0px;">
+                    <div class="row col-md 3">
+                        <h4>Vencimientos</h4>
+                        <div class="row ms-5" id="rowFilterVencimientos">
+                            <div class="ms-3 h4">
+                                <input type="radio" id="rbtnTodos" name="filtroVencimientos" class="filtro-vencimientos" value="0">
+                                <label for="rbtnTodos" style="font-size: 13px;">Todos</label>
+                            </div>
+                            <div class="ms-3 h4">
+                                <input type="radio" id="rbtnProximosVencer" name="filtroVencimientos" class="filtro-vencimientos" value="1" checked />
+                                <label for="rbtnProximosVencer" style="font-size: 13px;">Proximos a Vencer</label>
+                            </div>
+                            <div class="ms-3 me-5 h4">
+                                <input type="radio" id="rbtnVencidos" name="filtroVencimientos" class="filtro-vencimientos" value="2">
+                                <label for="rbtnVencidos" style="font-size: 13px;">Vencidos</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body" style=" padding-left: 0px;padding-right: 0px;padding-top: 15px;">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table id="tbDataVencimientos" class="table" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                        <th>Fecha Vencimiento</th>
+                                        <th>Producto</th>
+                                        <th>Fecha Elaboracion</th>
+                                        <th>Lote</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
+    <script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
+    <script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
+
+
+    <script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
+    <script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
+    <script src="~/plugins/data-tables/jszip.min.js"></script>
+    <script src="~/plugins/data-tables/buttons.html5.min.js"></script>
+    <script src="~/plugins/data-tables/buttons.print.min.js"></script>
+
+    <script src="~/js/views/stock.js"></script>
+}
+

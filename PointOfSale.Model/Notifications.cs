@@ -18,7 +18,7 @@ namespace PointOfSale.Model
         {
             var proveedor = product.Proveedor != null ? "(" + product.Proveedor.Nombre + ") " : string.Empty;
 
-            Descripcion = $"{product.Description} {proveedor}llegó al minimo de {product.Minimo} {product.TipoVenta} en stock.";
+            Descripcion = $"{product.Description} {proveedor} llegó al minimo de stock.";
             IsActive = true;
             RegistrationDate = TimeHelper.GetArgentinaTime();
             Accion = "/Inventory/Products";

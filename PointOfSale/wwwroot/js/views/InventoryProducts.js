@@ -271,6 +271,8 @@ const openModal = (model = BASIC_MODEL) => {
     if (model.photoBase64 != null) {
         $("#imgProduct").attr("src", `data:image/png;base64,${model.photoBase64}`);
     }
+    else
+        $("#imgProduct").attr("src", "");
 
     if (model.modificationUser === null)
         document.getElementById("divModif").style.display = 'none';

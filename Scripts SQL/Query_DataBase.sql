@@ -119,10 +119,10 @@ go
 create table Product(
 [idProduct] int primary key identity(1,1),
 [barCode] varchar(50),
-[brand] varchar(50),
+--[brand] varchar(50),
 [description] varchar(100),
-[quantity] decimal(10,2),
-[minimo] decimal(10,2),
+--[quantity] decimal(10,2),
+--[minimo] decimal(10,2),
 [price] decimal(10,2),
 [photo] varbinary(max),
 [isActive] bit,
@@ -428,5 +428,15 @@ nombre varchar(50) null,
 codigoSeguridad varchar(20) null,
 ImprimirDefault bit null,
 [modificationDate] [datetime] null,
-[modificationUser] varchar(50) null,
+[modificationUser] varchar(50) null
+)
+
+go
+
+create table Stock(
+idStock int primary key identity(1,1),
+StockActual decimal(10,2) not null,
+StockMinimo int not null,
+[idProducto] int references Product(idProduct) not null,
+[idTienda] int references Tienda(idTienda) not null,
 )

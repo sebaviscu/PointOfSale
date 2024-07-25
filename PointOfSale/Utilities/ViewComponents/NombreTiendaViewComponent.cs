@@ -25,8 +25,17 @@ namespace PointOfSale.Utilities.ViewComponents
             {
                 var tiendaId = ((ClaimsIdentity)claimuser.Identity).FindFirst("Tienda").Value;
 
+                try
+                {
+
                 var tienda = await _tiendaService.Get(Convert.ToInt32(tiendaId));
                 nombreTienda = tienda.Nombre;
+                }
+                catch (Exception e)
+                {
+
+                    throw;
+                }
             }
 
             ViewData["NombreTienda"] = nombreTienda;

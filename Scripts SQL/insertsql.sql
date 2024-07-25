@@ -16,12 +16,12 @@ insert into Users(name,email,phone,idRol,[password],photo,isActive) values
 go
 
 insert into Menu([description],icon,isActive, orden, controller, pageAction) values
-('Configuracion','mdi mdi-settings',1,4,null,null),
-('Inventario','mdi mdi-package-variant-closed',1,3,null,null),
-('Venta','mdi mdi-shopping',1,7,'Sales','NewSale'),
-('Reportes','mdi mdi-chart-bar',1,5,null,null),
-('Dashboard','mdi mdi-view-dashboard-outline',1,1,'Admin','DashBoard'),
-('Admin','mdi mdi-account',1,2,null,null),
+('Configuracion','mdi mdi-settings',1,4,null,null), --1
+('Inventario','mdi mdi-package-variant-closed',1,3,null,null), --2
+('Venta','mdi mdi-shopping',1,7,'Sales','NewSale'), --3
+('Reportes','mdi mdi-chart-bar',1,5,null,null), --4
+('Dashboard','mdi mdi-view-dashboard-outline',1,1,'Admin','DashBoard'), --5
+('Admin','mdi mdi-account',1,2,null,null), --6
 ('Web','mdi mdi-web',1,6,null,null) --7
 
 go
@@ -45,7 +45,8 @@ insert into Menu([description],idMenuParent,controller,pageAction,isActive) valu
 ('Notificaciones',6,'Notification','Notification',1), --22
 ('Pedidos',2,'Pedido','Pedido',1), --23
 ('Ajustes',1,'Admin','Ajuste',1), --24
-('Libro de IVA',4,'Reports','LibroIva',1) -- 25
+('Libro de IVA',4,'Reports','LibroIva',1), -- 25
+('Stock',2,'Inventory','Stock',1) -- 26
 
 go
 
@@ -85,7 +86,8 @@ INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (1,22,1),
 (1,23,1),
 (1,24,1),
-(1,25,1)
+(1,25,1),
+(1,26,1)
 
 --*empleado
 INSERT INTO RolMenu(idRol,idMenu,isActive) values
@@ -105,7 +107,9 @@ INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (3,19,1),
 (3,20,1),
 (3,21,1),
-(3,16,1)
+(3,16,1),
+(3,26,1)
+
 go
 --________________________________ INSERT CATEGORIES ________________________________
 

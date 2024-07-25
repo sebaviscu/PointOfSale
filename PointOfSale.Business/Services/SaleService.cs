@@ -208,7 +208,7 @@ namespace PointOfSale.Business.Services
         {
 
             var tiposVentas = await _rTypeNumber.List();
-            var productos = await _rProduct.List();
+            var productos = await _rProduct.ListActive();
             var turno = await _turnoService.GetTurnoActual(idTienda);
 
             var random = new Random();
@@ -267,7 +267,6 @@ namespace PointOfSale.Business.Services
                 if (!listDet.Any(_ => _.IdProduct == p.IdProduct))
                 {
                     detalle.IdProduct = p.IdProduct;
-                    detalle.BrandProduct = p.Brand;
                     detalle.CategoryProducty = p.IdCategoryNavigation.Description;
                     detalle.DescriptionProduct = p.Description;
                     detalle.Price = p.Price;
@@ -286,7 +285,6 @@ namespace PointOfSale.Business.Services
                 if (!listDet.Any(_ => _.IdProduct == p.IdProduct))
                 {
                     detalle.IdProduct = p.IdProduct;
-                    detalle.BrandProduct = p.Brand;
                     detalle.CategoryProducty = p.IdCategoryNavigation.Description;
                     detalle.DescriptionProduct = p.Description;
                     detalle.Price = p.Price;

@@ -35,7 +35,7 @@ namespace PointOfSale.Controllers
         public IActionResult ProductsReport()
         {
             ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Empleado, Roles.Encargado });
-            return Validate_Sesion_View_or_Login();
+            return ValidateSesionViewOrLogin();
         }
 
         [HttpGet]
@@ -44,13 +44,15 @@ namespace PointOfSale.Controllers
             if (idCategoria == null && startDate == null && endDate == null)
             {
                 ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Empleado, Roles.Encargado });
-                return Validate_Sesion_View_or_Login();
+                return ValidateSesionViewOrLogin();
             }
 
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
 
             var prodsDictionary = await _productService.ProductsTopByCategory(idCategoria, startDate, endDate, user.IdTienda);
-            var products = await _productService.GetProductsByIds(prodsDictionary.Select(_ => _.Key).ToList());
+            var idsProducts = prodsDictionary.Select(_ => _.Key).ToList();
+            var products = await _productService.GetProductsByIds(idsProducts);
+            var stocks = await _productService.GetStockByProductsByIds(idsProducts, user.IdTienda);
             var listVMSalesReport = new List<VMProductReport>();
 
             foreach (var p in prodsDictionary)
@@ -58,6 +60,7 @@ namespace PointOfSale.Controllers
                 var vmSR = new VMProductReport();
                 var product = products.First(_ => _.IdProduct == p.Key);
                 var listaPrecio = product.ListaPrecios;
+                var stock = stocks.FirstOrDefault(_ => _.IdProducto == p.Key);
 
                 vmSR.ProductName = product.Description;
                 vmSR.Categoria = product.IdCategoryNavigation.Description;
@@ -68,7 +71,7 @@ namespace PointOfSale.Controllers
                 vmSR.TipoVenta = product.TipoVenta.ToString();
                 vmSR.Costo = "$ " + product.CostPrice.ToString();
                 vmSR.Proveedor = product.Proveedor.Nombre;
-                vmSR.Stock = product.Quantity.ToString();
+                vmSR.Stock = stock != null ? stock.StockActual.ToString() : "-";
 
                 listVMSalesReport.Add(vmSR);
             }

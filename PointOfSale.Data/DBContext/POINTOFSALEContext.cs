@@ -461,11 +461,6 @@ namespace PointOfSale.Data.DBContext
                     .IsUnicode(false)
                     .HasColumnName("barCode");
 
-                entity.Property(e => e.Brand)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("brand");
-
                 entity.Property(e => e.Description)
                     .HasMaxLength(100)
                     .IsUnicode(false)
@@ -480,8 +475,6 @@ namespace PointOfSale.Data.DBContext
                 entity.Property(e => e.Price)
                     .HasColumnType("decimal(10, 2)")
                     .HasColumnName("price");
-
-                entity.Property(e => e.Quantity).HasColumnName("quantity");
 
                 entity.Property(e => e.RegistrationDate)
                     .HasColumnType("datetime")

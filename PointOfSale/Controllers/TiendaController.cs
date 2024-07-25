@@ -1,18 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using NuGet.Protocol.Plugins;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
-using System.Security.Claims;
-using System.Security.Principal;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Controllers
@@ -30,7 +23,7 @@ namespace PointOfSale.Controllers
         public IActionResult Tienda()
         {
             ValidarAutorizacion(new Roles[] { Roles.Administrador });
-            return Validate_Sesion_View_or_Login();
+            return ValidateSesionViewOrLogin();
         }
 
         [HttpGet]

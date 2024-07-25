@@ -12,8 +12,8 @@ namespace PointOfSale.Business.Contracts
     {
         Task<List<Product>> List();
         Task<Product> Add(Product entity);
-        Task<Product> Add(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos, Stock stock);
-        Task<Product> Edit(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos, Stock stock);
+        Task<Product> Add(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos, Stock? stock);
+        Task<Product> Edit(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos, Stock? stock);
         Task<bool> Delete(int idProduct);
         Task<bool> EditMassive(string usuario, EditeMassiveProducts data, List<ListaPrecio> listaPrecios);
         Task<Product> Get(int idProducto);
@@ -30,5 +30,8 @@ namespace PointOfSale.Business.Contracts
         Task ActualizarStockAndVencimientos(List<PedidoProducto> pedidoProductos, int idTienda, string registrationUser);
         Task<bool> DeleteVencimiento(int idVencimiento);
         Task<bool> EditMassivePorTabla(string user, List<EditeMassiveProductsTable> data);
+        Task UpdateStock(int idTienda, Product p, int stockRecibido);
+        Task<Stock?> GetStockByIdProductIdTienda(int idProducto, int idTienda);
+        Task<List<Stock>> GetStockByProductsByIds(List<int> listIds, int idTienda);
     }
 }
