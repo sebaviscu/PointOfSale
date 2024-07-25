@@ -59,13 +59,15 @@ namespace PointOfSale.Data.DBContext
 
                 entity.HasOne(d => d.Tienda)
                     .WithMany(p => p.Stocks)
-                    .HasForeignKey(d => d.IdTienda);
+                    .HasForeignKey(d => d.IdTienda)
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasOne(d => d.Producto)
                     .WithMany(p => p.Stocks)
-                    .HasForeignKey(d => d.IdProducto);
-
+                    .HasForeignKey(d => d.IdProducto)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
+
             modelBuilder.Entity<Ajustes>(entity =>
             {
                 entity.HasKey(e => e.IdAjuste);
@@ -493,10 +495,10 @@ namespace PointOfSale.Data.DBContext
                     .HasForeignKey(d => d.IdCategory)
                     .HasConstraintName("FK__Product__idCateg__22AA2996");
 
-
                 entity.HasOne(d => d.Proveedor)
                     .WithMany(p => p.Products)
-                    .HasForeignKey(d => d.IdProveedor);
+                    .HasForeignKey(d => d.IdProveedor)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<Rol>(entity =>

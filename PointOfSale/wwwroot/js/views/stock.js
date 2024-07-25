@@ -1,4 +1,5 @@
 ﻿let tableData;
+let tableDataStock;
 let rowSelected;
 
 const BASIC_MODEL = {
@@ -14,6 +15,9 @@ $(document).ready(function () {
 
     cargarTablaVencimientos();
 
+    $('.filtro-vencimientos').change(function () {
+        filtrarTabla();
+    });
 })
 
 
@@ -68,6 +72,40 @@ function cargarTablaVencimientos() {
             filtrarTabla();
         }
     });
+
+    tableDataStock = $("#tbDataStock").DataTable({
+        responsive: true,
+        "ajax": {
+            "url": "/Inventory/GetStocks",
+            "type": "GET",
+            "datatype": "json"
+        },
+        "columns": [
+            {
+                "data": "idStock",
+                "visible": false,
+                "searchable": false
+            },
+            { "data": "producto.description" },
+            { "data": "stockActual" },
+            { "data": "stockMinimo" },
+
+        ],
+        order: [[0, "desc"]],
+        dom: "Bfrtip",
+        buttons: [
+            {
+                text: 'Exportar Excel',
+                extend: 'excelHtml5',
+                title: '',
+                filename: 'Reporte categories',
+                exportOptions: {
+                    columns: [1, 2]
+                }
+            }, 'pageLength'
+        ]
+    });
+
 }
 
 function filtrarTabla() {

@@ -382,7 +382,7 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<Ajustes, VMAjustes>();
             CreateMap<VMAjustes, Ajustes>();
 
-
+            CreateMap<Stock, VMStock>().ReverseMap();
         }
     }
 }

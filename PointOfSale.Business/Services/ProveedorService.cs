@@ -29,10 +29,15 @@ namespace PointOfSale.Business.Services
             IQueryable<Proveedor> query = await _repository.Query();
             return query.OrderBy(_ => _.Nombre).ToList();
         }
-        public async Task<List<Proveedor>> ListConProductos()
+        public async Task<List<Proveedor>> ListConProductos(int idTienda)
         {
             IQueryable<Proveedor> query = await _repository.Query();
-            return query.Include(_=>_.Products).OrderBy(_ => _.Nombre).ToList();
+            return await query
+                .Include(p => p.Products)
+                    .ThenInclude(p => p.Stocks.Where(s => s.IdTienda == idTienda))
+                .AsNoTracking()
+                .OrderBy(p => p.Nombre)
+                .ToListAsync();
         }
 
         public async Task<Proveedor> Add(Proveedor entity)

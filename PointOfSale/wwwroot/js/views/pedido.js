@@ -331,7 +331,7 @@ function cargarTabla(productos, idProveedor, nuevo) {
         let idProd = producto.idProducto;
         let descr = producto.description;
         let costo = producto.costPrice;
-        let stock = parseInt(producto.quantity != null ? producto.quantity : 0);
+        let stock = parseInt(producto.stocks != null && producto.stocks.length > 0 ? producto.stocks[0].stockActual : 0);
         if (prod != null) {
             if (prod.cantidadProductoRecibida != null) {
                 cantidadProducto = prod.cantidadProductoRecibida;

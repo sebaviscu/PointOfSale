@@ -33,11 +33,11 @@ namespace PointOfSale.Controllers
         {
             try
             {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+                var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
                 var list = await _pedidoService.List(user.IdTienda);
 
-            List<VMPedido> vmPedidoList = _mapper.Map<List<VMPedido>>(list);
-            return StatusCode(StatusCodes.Status200OK, new { data = vmPedidoList.OrderBy(_ => _.Orden).ThenByDescending(_=>_.IdPedido).ToList() });
+                List<VMPedido> vmPedidoList = _mapper.Map<List<VMPedido>>(list);
+                return StatusCode(StatusCodes.Status200OK, new { data = vmPedidoList.OrderBy(_ => _.Orden).ThenByDescending(_ => _.IdPedido).ToList() });
             }
             catch (Exception e)
             {

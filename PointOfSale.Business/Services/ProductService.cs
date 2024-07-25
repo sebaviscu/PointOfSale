@@ -62,6 +62,11 @@ namespace PointOfSale.Business.Services
             return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).OrderBy(_ => _.Description).ToList();
         }
 
+        public async Task<List<Stock>> ListStock(int idTienda)
+        {
+            IQueryable<Stock> query = await _repositoryStock.Query();
+            return await query.Include(_=> _.Producto).Where(_=>_.IdTienda == idTienda).ToListAsync();
+        }
 
         public async Task<Stock?> GetStockByIdProductIdTienda(int idProducto, int idTienda)
         {

@@ -1,4 +1,6 @@
-﻿namespace PointOfSale.Models
+﻿using PointOfSale.Model;
+
+namespace PointOfSale.Models
 {
     public class VMPedidoProducto
     {
@@ -11,7 +13,7 @@
         public int? CantidadProductoRecibida { get; set; }
         public string? Description { get; set; }
         public string? CostPrice { get; set; }
-        public string? Quantity { get; set; }
+        public virtual ICollection<Stock>? Stocks { get; set; }
 
     }
 }

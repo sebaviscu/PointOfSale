@@ -128,6 +128,15 @@ namespace PointOfSale.Controllers
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetStocks()
+        {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+
+            List<VMStock> vmCategoryList = _mapper.Map<List<VMStock>>(await _productService.ListStock(user.IdTienda));
+            return StatusCode(StatusCodes.Status200OK, new { data = vmCategoryList });
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> GetProducts()

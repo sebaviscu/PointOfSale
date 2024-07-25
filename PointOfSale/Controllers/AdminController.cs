@@ -793,10 +793,35 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProveedoresConProductos()
         {
+            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+
             try
             {
-                var listProveedor = _mapper.Map<List<VMPedidosProveedor>>(await _proveedorService.ListConProductos());
-                return StatusCode(StatusCodes.Status200OK, new { data = listProveedor });
+                var listProveedor = await _proveedorService.ListConProductos(user.IdTienda);
+
+                var list =  listProveedor
+                    .Select(p => new Proveedor
+                    {
+                        IdProveedor = p.IdProveedor,
+                        Nombre = p.Nombre,
+                        Products = p.Products.Select(prod => new Product
+                        {
+                            IdProduct = prod.IdProduct,
+                            Description = prod.Description,
+                            CostPrice = prod.CostPrice,
+                            Stocks = prod.Stocks
+                                        .Where(s => s.IdTienda == user.IdTienda)
+                                        .Select(stock => new Stock
+                                        {
+                                            IdStock = stock.IdStock,
+                                            StockActual = stock.StockActual
+                                        }).ToList()
+                        }).ToList()
+                    })
+                    .OrderBy(p => p.Nombre)
+                    .ToList();
+
+                return StatusCode(StatusCodes.Status200OK, new { data = _mapper.Map<List<VMPedidosProveedor>>(list) });
             }
             catch (Exception e)
             {

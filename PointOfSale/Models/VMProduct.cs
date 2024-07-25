@@ -38,6 +38,7 @@ namespace PointOfSale.Models
         public string? Precio3 { get; set; }
         public int? PorcentajeProfit3 { get; set; }
         public List<Vencimiento>? Vencimientos { get; set; }
+        public virtual ICollection<Stock>? Stocks { get; set; }
 
     }
 }

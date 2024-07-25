@@ -119,10 +119,10 @@ go
 create table Product(
 [idProduct] int primary key identity(1,1),
 [barCode] varchar(50),
---[brand] varchar(50),
+[brand] varchar(50),
 [description] varchar(100),
---[quantity] decimal(10,2),
---[minimo] decimal(10,2),
+[quantity] decimal(10,2),
+[minimo] decimal(10,2),
 [price] decimal(10,2),
 [photo] varbinary(max),
 [isActive] bit,

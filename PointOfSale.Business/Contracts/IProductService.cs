@@ -33,5 +33,6 @@ namespace PointOfSale.Business.Contracts
         Task UpdateStock(int idTienda, Product p, int stockRecibido);
         Task<Stock?> GetStockByIdProductIdTienda(int idProducto, int idTienda);
         Task<List<Stock>> GetStockByProductsByIds(List<int> listIds, int idTienda);
+        Task<List<Stock>> ListStock(int idTienda);
     }
 }
