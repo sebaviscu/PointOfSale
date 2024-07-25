@@ -67,6 +67,17 @@ $(document).ready(function () {
             "datatype": "json"
         },
         rowId: 'idProduct',
+        "columnDefs": [
+            {
+                "targets": [8],
+                "render": function (data, type, row) {
+                    if (type === 'display' || type === 'filter') {
+                        return data ? moment(data).format('DD/MM/YYYY HH:mm') : '';
+                    }
+                    return data;
+                }
+            }
+        ],
         "columns": [
             {
                 "data": "idProduct",
@@ -100,7 +111,7 @@ $(document).ready(function () {
                     return `$ ${data}`;
                 }
             },
-            { "data": "modificationDateString" },
+            { "data": "modificationDate" },
             {
                 "data": "isActive",
                 "className": "text-center", render: function (data) {

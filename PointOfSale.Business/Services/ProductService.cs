@@ -274,7 +274,7 @@ namespace PointOfSale.Business.Services
                 stockExiste.StockMinimo = stock.StockMinimo;
                 stockExiste.StockActual = stock.StockActual;
 
-                bool response = await _repositoryStock.Edit(stock);
+                bool response = await _repositoryStock.Edit(stockExiste);
                 if (!response)
                     throw new TaskCanceledException("El stock no se pudo editar");
             }
