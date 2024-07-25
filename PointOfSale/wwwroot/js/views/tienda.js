@@ -16,6 +16,7 @@ const BASIC_MODEL = {
     cuit: ""
 }
 
+let isHealthy = false;
 
 $(document).ready(function () {
     $("#general").show();
@@ -70,10 +71,19 @@ $(document).ready(function () {
         $("<option>").val('').text('')
     )
 
+    healthcheck();
 
-    getPrintersTienda();
-   
 })
+
+async function healthcheck() {
+    isHealthy = await getHealthcheck();
+
+    if (isHealthy) {
+        document.getElementById("lblErrorPrintService").style.display = 'none';
+    } else {
+        document.getElementById("lblErrorPrintService").style.display = '';
+    }
+}
 
 async function getPrintersTienda() {
     try {

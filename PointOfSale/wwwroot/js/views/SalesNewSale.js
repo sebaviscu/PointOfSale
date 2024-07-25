@@ -6,6 +6,7 @@ var formaDePagoID = 0;
 var promociones = [];
 var productSelected = null;
 var formasDePagosList = [];
+let isHealthy = false;
 
 const ProducstTab = {
     idTab: 0,
@@ -50,7 +51,18 @@ $(document).ready(function () {
         })
 
     newTab();
+    healthcheck();
 })
+
+async function healthcheck() {
+    isHealthy = await getHealthcheck();
+
+    if (isHealthy) {
+        document.getElementById("lblErrorPrintService").style.display = 'none';
+    } else {
+        document.getElementById("lblErrorPrintService").style.display = '';
+    }
+}
 
 $('#cboTypeDocumentSaleParcial').change(function () {
     var idFormaDePago = $(this).val();

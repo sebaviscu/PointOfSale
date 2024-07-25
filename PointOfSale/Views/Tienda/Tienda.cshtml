@@ -17,10 +17,10 @@
     <div class="col-sm-12">
 
         <div class="card card-default">
-            <div class="card-header card-header-border-bottom">
-                <div>
-                    <h4>Tiendas</h4>
-                </div>
+            <div class="card-header d-flex align-items-center">
+                <h4 class="col-md-2">Tiendas</h4>
+                <span class="offset-md-2 text-danger" id="lblErrorPrintService" style="display: none;"><i class="mdi mdi-alert mdi-24px"></i>&nbsp; El servicio de impresión no se encuentra conectado</span>
+
                 <div class="ms-auto bd-highlight">
                     <button class="btn btn-sm btn-success" id="btnNew">Nueva Tienda</button>
                 </div>
@@ -173,6 +173,7 @@
     <script src="~/plugins/data-tables/jszip.min.js"></script>
     <script src="~/plugins/data-tables/buttons.html5.min.js"></script>
     <script src="~/plugins/data-tables/buttons.print.min.js"></script>
+        <script src="~/plugins/printService.js"></script>
 
     <script src="~/js/views/tienda.js"></script>
 }

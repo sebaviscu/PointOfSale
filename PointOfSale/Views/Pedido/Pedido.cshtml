@@ -4,7 +4,7 @@
 }
 
 
-@section StylesPOS{
+@section StylesPOS {
 
     <link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
     <link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
@@ -93,7 +93,7 @@
 
 <!-- Grid Modal -->
 <div class="modal fade" id="modalData" tabindex="-1" role="dialog" data-bs-backdrop="static">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog  modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalGridTitle">Detalle Pedidos</h5>
@@ -104,17 +104,22 @@
             <div class="modal-body">
 
                 <input type="hidden" value="0" id="txtIdPedido">
-                <div class="row">
-                    <div class="col-sm-12" id="panelProductos">
-
+                <div class="row" id="panelProductos">
+                    <div class="col-md-5">
                         <div class="form-row">
-                            <div class="form-group col-sm-4" style="margin-bottom: 2px;">
+                            <div class="form-group col-sm-8" >
                                 <label for="txtNombrePago">Proveedor</label>
                                 <select class="form-control form-control-sm input-validate" id="cboProveedor" style="background-color: beige">
                                     <option value=""></option>
                                 </select>
                             </div>
-                            <div class="form-group col-sm-3" style="margin-bottom: 2px;">
+ 
+                            <div class="ms-auto bd-highlight" style="align-content: center;">
+                                <button class="btn btn-success btn-sm" id="btnGenerar">Generar</button>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-6" >
                                 <label for="txtNombrePago">Estado</label>
                                 <select class="form-control form-control-sm" id="cboEstado">
                                     <option value="0">Cancelado</option>
@@ -123,16 +128,7 @@
                                     <option value="3" id="optionRecibido" style="display:none">Recibido</option>
                                 </select>
                             </div>
-                            <div class="ms-auto bd-highlight" style="align-content: center;">
-                                <button class="btn btn-success" id="btnGenerar">Generar</button>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-sm-8">
-                                <label for="txtComentario">Comentario</label>
-                                <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario">
-                            </div>
-                            <div class="form-group col-sm-4">
+                            <div class="form-group col-sm-6" style="margin-bottom: 2px;">
                                 <label for="txtImporteEstimado">Estimado</label>
                                 <div class="input-group input-group-sm">
                                     <div class="input-group-prepend">
@@ -142,6 +138,24 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-12">
+                                <label for="txtComentario">Comentario</label>
+                                <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario">
+                            </div>
+                        </div>
+                        <div class="form-row" id="divFechaCerrado" style="margin-top: 15px;display: none;">
+                            <div class="form-group col-sm-6">
+                                <label for="txtModificado">Fecha Cerrado</label>
+                                <input type="text" class="form-control form-control-sm" id="txtCerrado" name="fechaCerrado" readonly>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="txtModificadoUsuario">Por:</label>
+                                <input type="text" class="form-control form-control-sm" id="txtCerradoUsuario" name="CerradoUsuario" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
                         <div id="tablaContainer">
                             <table id="tablaProductos">
                                 <thead>
@@ -155,16 +169,6 @@
                                 <tbody>
                                 </tbody>
                             </table>
-                        </div>
-                        <div class="form-row" id="divFechaCerrado" style="margin-top: 15px;display: none;">
-                            <div class="form-group col-sm-6">
-                                <label for="txtModificado">Fecha Cerrado</label>
-                                <input type="text" class="form-control form-control-sm" id="txtCerrado" name="fechaCerrado" readonly>
-                            </div>
-                            <div class="form-group col-sm-6">
-                                <label for="txtModificadoUsuario">Por:</label>
-                                <input type="text" class="form-control form-control-sm" id="txtCerradoUsuario" name="CerradoUsuario" readonly>
-                            </div>
                         </div>
                     </div>
 
@@ -349,7 +353,7 @@
 
 
 
-@section Scripts{
+@section Scripts {
     <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
     <script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
     <script src="~/plugins/data-tables/datatables.responsive.min.js"></script>

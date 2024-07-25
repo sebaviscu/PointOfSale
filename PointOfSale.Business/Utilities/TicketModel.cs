@@ -8,16 +8,9 @@ namespace PointOfSale.Business.Utilities
 {
     public class TicketModel
     {
-        public TicketModel()
-        {
-            line = new StringBuilder();
-        }
-        public static StringBuilder line = new StringBuilder();
-        string ticket = "";
-        string parte1, parte2;
+        static StringBuilder line = new StringBuilder();
 
-        int MAX = 34;
-        int cort;
+        readonly int MAX = 34;
 
         public StringBuilder Lineas
         {
@@ -26,7 +19,10 @@ namespace PointOfSale.Business.Utilities
 
         public void TextoAgradecimiento(string text)
         {
-            ticket = "";
+            var ticket = string.Empty;
+            var parte1 = string.Empty;
+            var cort = 0;
+
             var m = text.Length;
             if (m > MAX)
             {
@@ -35,39 +31,30 @@ namespace PointOfSale.Business.Utilities
             }
             else { parte1 = text; }
             m = (int)(MAX - parte1.Length) / 2;
-            for (int i = 0; i < m; i++)
-            {
-                ticket += " ";
-            }
+
+            ticket += new string(' ', m);
+
             var texto = ticket += parte1 + "\n";
             line.AppendLine(texto);
         }
 
         public void LineasGuion()
         {
-            string LineaGuion = string.Empty;
-
-            for (int i = 0; i < MAX; i++)
-            {
-                LineaGuion += "-";
-            }
-
+            string LineaGuion = new string('-', MAX);
             line.AppendLine(LineaGuion);
         }
         public void LineasTotal()
         {
-            string LineaGuion = string.Empty;
-
-            for (int i = 0; i < MAX; i++)
-            {
-                LineaGuion += "=";
-            }
-
+            string LineaGuion = new string('=', MAX);
             line.AppendLine(LineaGuion);
         }
 
         public void TextoIzquierda(string par1)
         {
+            var parte1 = string.Empty;
+            var ticket = string.Empty;
+            var cort = 0;
+
             var m = par1.Length;
             if (m > MAX)
             {
@@ -82,7 +69,10 @@ namespace PointOfSale.Business.Utilities
 
         public void TextoCentro(string par1)
         {
-            ticket = "";
+            var parte1 = string.Empty;
+            var ticket = string.Empty; 
+            var cort = 0;
+
             var m = par1.Length;
             if (m > MAX)
             {
@@ -91,10 +81,9 @@ namespace PointOfSale.Business.Utilities
             }
             else { parte1 = par1; }
             m = (int)(MAX - parte1.Length) / 2;
-            for (int i = 0; i < m; i++)
-            {
-                ticket += " ";
-            }
+
+            ticket += new string(' ', m);
+
             var text = ticket += parte1 + "\n";
             line.AppendLine(text);
 
@@ -102,6 +91,11 @@ namespace PointOfSale.Business.Utilities
 
         public void AgregaTotales(string par1, double total)
         {
+            var ticket = string.Empty;
+            var parte1 = string.Empty;
+            var parte2 = string.Empty;
+            var cort = 0;
+
             var m = par1.Length;
             if (m > 25)
             {
@@ -112,72 +106,42 @@ namespace PointOfSale.Business.Utilities
             ticket = parte1;
             parte2 = "$" + total.ToString();
             m = MAX - (parte1.Length + parte2.Length);
-            for (int i = 0; i < m; i++)
-            {
-                ticket += " ";
-            }
+
+            ticket += new string(' ', m);
+
             var text = ticket += parte2;
             line.AppendLine(text);
 
         }
 
-        // se le pasan los Aticulos  con sus detalles
-        public void AgregaArticulo(string Articulo, decimal precio, decimal cant, decimal subtotal)
+        public void AgregaArticulo(string articulo, decimal precio, decimal cant, decimal subtotalDecimal)
         {
-            string elementos = "", espacios = "";
+            string elementos = string.Empty;
             var nroEspacios = 0;
 
-            if (Articulo.Length > MAX)
+            if (articulo.Length > MAX)
             {
-                //cort = max - 16;
-                Articulo = Articulo.Substring(0, MAX - 7) + "...";
+                articulo = articulo.Substring(0, MAX - 5) + "...";
             }
 
-            for (int i = 0; i < (MAX - Articulo.Length); i++)
-            {
-                espacios += " ";
+            line.AppendLine(articulo);
 
-            }
-            elementos = Articulo + espacios;
-            line.AppendLine(elementos);
-
-            elementos = string.Empty;
-
-            nroEspacios = (5 - cant.ToString().Length);
-            espacios = "";
-            for (int i = 0; i < nroEspacios; i++)
-            {
-                espacios += " ";
-            }
             var precioString = MostrarNumeroConDecimales(precio);
             var cantString = MostrarNumeroConDecimales(cant);
-            elementos += espacios + cantString + " x $" + precioString;
+            var subtotal = MostrarNumeroConDecimales(subtotalDecimal);
+            elementos += $" {cantString} x ${precioString}";
 
             //colocar el subtotal a la dercha
-            nroEspacios = ((MAX - subtotal.ToString().Length) - elementos.Length) - 1;
-            espacios = "";
+            nroEspacios = ((MAX - subtotal.Length) - elementos.Length) - 2;
 
-            for (int i = 0; i < nroEspacios; i++)
-            {
-                espacios += " ";
-            }
-            elementos += espacios + "$" + subtotal.ToString();
+            elementos += new string(' ', nroEspacios) + "$" + subtotal;
             line.AppendLine(elementos);
         }
 
         static string MostrarNumeroConDecimales(decimal numero)
         {
             // Verificar si el número tiene decimales
-            if (numero % 1 == 0)
-            {
-                // Si no tiene decimales, mostrar solo la parte entera
-                return Math.Truncate(numero).ToString();
-            }
-            else
-            {
-                // Si tiene decimales, mostrar el número completo
-                return numero.ToString();
-            }
+            return numero % 1 == 0 ? Math.Truncate(numero).ToString() : numero.ToString();
         }
     }
 }

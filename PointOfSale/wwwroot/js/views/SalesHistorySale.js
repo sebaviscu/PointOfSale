@@ -21,6 +21,8 @@
 
 }
 
+let isHealthy = false;
+
 $(document).ready(function () {
     SEARCH_VIEW["searchDate"]();
 
@@ -52,7 +54,18 @@ $(document).ready(function () {
         $("#btnSearch").click();
     }
 
+    healthcheck();
 })
+
+async function healthcheck() {
+    isHealthy = await getHealthcheck();
+
+    if (isHealthy) {
+        document.getElementById("lblErrorPrintService").style.display = 'none';
+    } else {
+        document.getElementById("lblErrorPrintService").style.display = '';
+    }
+}
 
 $("#cboSearchBy").change(function () {
 

@@ -11,8 +11,9 @@
     @ViewData["saleNumber"]
 </div>
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <h6>Sale History</h6>
+    <div class="card-header d-flex align-items-center">
+        <h4 class="col-md-2">Sale History</h4>
+        <span class="offset-md-2 text-danger" id="lblErrorPrintService" style="display: none;"><i class="mdi mdi-alert mdi-24px"></i>&nbsp; El servicio de impresión no se encuentra conectado</span>
     </div>
     <div class="card-body">
         <div class="form-row">
@@ -224,6 +225,7 @@
 
     <script src="~/plugins/jquery-ui/jquery-ui.js"></script>
 
+    <script src="~/plugins/printService.js"></script>
     <script src="~/js/views/layout.js"></script>
     <script src="~/js/views/SalesHistorySale.js"></script>
  }
