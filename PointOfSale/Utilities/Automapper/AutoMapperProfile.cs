@@ -95,6 +95,7 @@ namespace PointOfSale.Utilities.Automapper
                 destiny.PhotoBase64,
                 opt => opt.MapFrom(source => Convert.ToBase64String(source.Photo))
             )
+            .ForMember(dest => dest.Photo, opt => opt.Ignore())
             .ForMember(user => user.ModificationDateString, opt => opt.MapFrom(userEdit => userEdit.ModificationDate.HasValue ? userEdit.ModificationDate.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty))
             .ForMember(destiny =>
                 destiny.Price,
@@ -114,7 +115,11 @@ namespace PointOfSale.Utilities.Automapper
             .ForMember(destiny =>
                 destiny.PorcentajeProfit3,
                 opt => opt.MapFrom(source => source.ListaPrecios.Any() && source.ListaPrecios.Count > 1 ? source.ListaPrecios[2].PorcentajeProfit : 0))
-                ;
+            .ForMember(dest => dest.IdCategoryNavigation, opt => opt.MapFrom(src => src.IdCategoryNavigation))
+            .ForMember(dest => dest.Proveedor, opt => opt.MapFrom(src => src.Proveedor))
+            .ForMember(dest => dest.ListaPrecios, opt => opt.MapFrom(src => src.ListaPrecios))
+            .ForMember(dest => dest.Vencimientos, opt => opt.MapFrom(src => src.Vencimientos))
+            ;
 
             CreateMap<VMProduct, Product>()
             .ForMember(destiny =>
@@ -158,7 +163,7 @@ namespace PointOfSale.Utilities.Automapper
                 )
                 .ForMember(destiny =>
                     destiny.Total,
-                    opt => opt.MapFrom(source => "$" + source.Total.Value.ToString("F2"))
+                    opt => opt.MapFrom(source => source.Total.Value)
                 ).ForMember(destiny =>
                     destiny.TotalDecimal,
                     opt => opt.MapFrom(source => source.Total)
@@ -176,7 +181,7 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<VMSale, Sale>()
                 .ForMember(destiny =>
                     destiny.Total,
-                    opt => opt.MapFrom(source => Convert.ToDecimal(source.Total))
+                    opt => opt.MapFrom(source => source.Total)
 
                 )
                 .ForMember(destiny =>
@@ -188,21 +193,21 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<DetailSale, VMDetailSale>()
                 .ForMember(destiny =>
                     destiny.Price,
-                    opt => opt.MapFrom(source => "$" + source.Price.Value.ToString("F2"))
+                    opt => opt.MapFrom(source => source.Price.Value)
                 )
                 .ForMember(destiny =>
                     destiny.Total,
-                    opt => opt.MapFrom(source => "$" + source.Total.Value.ToString("F2"))
+                    opt => opt.MapFrom(source => source.Total.Value)
                 );
 
             CreateMap<VMDetailSale, DetailSale>()
                 .ForMember(destiny =>
                     destiny.Price,
-                    opt => opt.MapFrom(source => Convert.ToDecimal(source.Price))
+                    opt => opt.MapFrom(source => source.Price)
                 )
                 .ForMember(destiny =>
                     destiny.Total,
-                    opt => opt.MapFrom(source => Convert.ToDecimal(source.Total))
+                    opt => opt.MapFrom(source => source.Total)
                 );
 
             #endregion
@@ -383,6 +388,11 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<VMAjustes, Ajustes>();
 
             CreateMap<Stock, VMStock>().ReverseMap();
+            CreateMap<ListaPrecio, VMListaPrecio>().ReverseMap();
+
+            CreateMap<Stock, VMStockSimplificado>().ReverseMap();
+            CreateMap<Proveedor, VMProveedorSimplificado>().ReverseMap();
+            CreateMap<Product, VMProductSimplificado>().ReverseMap();
         }
     }
 }

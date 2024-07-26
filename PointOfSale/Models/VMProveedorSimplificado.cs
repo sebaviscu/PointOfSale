@@ -3,7 +3,7 @@ using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Models
 {
-    public partial class VMProveedor
+    public class VMProveedorSimplificado
     {
         public int IdProveedor { get; set; }
         public string? Nombre { get; set; }
@@ -21,9 +21,5 @@ namespace PointOfSale.Models
         public DateTime? RegistrationDate { get; set; }
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }
-
-        public ICollection<VMProduct>? Products { get; set; }
-
-
     }
 }

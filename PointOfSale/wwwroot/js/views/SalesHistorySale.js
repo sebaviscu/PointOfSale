@@ -141,7 +141,7 @@ $("#btnSearch").click(function () {
                                     ).data("sale", sale) : "")
                             ,
                             $("<td>").text(sale.cantidadProductos),
-                            $("<td>").text(sale.total),
+                            $("<td>").text("$ " + sale.total),
                             $("<td>").append(
                                 $("<button>").addClass("btn btn-info btn-sm").append(
                                     $("<i>").addClass("mdi mdi-eye")
@@ -194,7 +194,7 @@ $("#tbsale tbody").on("click", ".btn-info", function () {
     $("#txtRegisterUser").val(d.users)
     $("#txtDocumentType").val(d.typeDocumentSale)
     $("#txtClientName").val(d.clientName)
-    $("#txtTotal").val(d.total)
+    $("#txtTotal").val("$ " + d.total)
     $("#txtDescRec").val(d.descuentoRecargo)
     idSale = d.idSale;
 
@@ -205,9 +205,9 @@ $("#tbsale tbody").on("click", ".btn-info", function () {
             $("<tr>").append(
                 $("<td>").text(item.descriptionProduct),
                 $("<td>").text(item.quantity),
-                $("<td>").text(item.price + " ").append(item.promocion != null ?
+                $("<td>").text("$ " + item.price + " ").append(item.promocion != null ?
                     $("<i>").addClass("mdi mdi-percent").attr("data-toggle", "tooltip").attr("title", item.promocion) : ""),
-                $("<td>").text(item.total)
+                $("<td>").text("$ " + item.total)
             )
         )
     })

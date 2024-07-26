@@ -59,92 +59,102 @@ const BASIC_vencimientos = {
 $(document).ready(function () {
     showLoading();
 
-    tableData = $("#tbData").DataTable({
-        pageLength: 50,
-        responsive: true,
-        "ajax": {
-            "url": "/Inventory/GetProducts",
-            "type": "GET",
-            "datatype": "json"
-        },
-        rowId: 'idProduct',
-        "columnDefs": [
-            {
-                "targets": [8],
-                "render": function (data, type, row) {
-                    if (type === 'display' || type === 'filter') {
-                        return data ? moment(data).format('DD/MM/YYYY HH:mm') : '';
+    $(document).ready(function () {
+        tableData = $("#tbData").DataTable({
+            pageLength: 50,
+            responsive: true,
+            "ajax": {
+                "url": "/Inventory/GetProducts",
+                "type": "GET",
+                "datatype": "json"
+            },
+            rowId: 'idProduct',
+            "columnDefs": [
+                {
+                    "targets": [8],
+                    "render": function (data, type, row) {
+                        if (type === 'display' || type === 'filter') {
+                            return data ? moment(data).format('DD/MM/YYYY HH:mm') : '';
+                        }
+                        return data;
                     }
-                    return data;
                 }
-            }
-        ],
-        "columns": [
-            {
-                "data": "idProduct",
-                "visible": false,
-                "searchable": false
-            },
-            {
-                "defaultContent": `<input type="checkbox" class="chkProducto">`,
-                "orderable": false,
-                "searchable": false,
-                "width": "40px",
-                "className": "text-center"
-            },
-            //{
-            //    "data": "photoBase64", render: function (data) {
-            //        return `<img style="height:40px;" src="data:image/png;base64,${data}" class="rounded mx-auto d-block" />`;
-            //    },
-            //    "className": "text-center"
-            //},
-            { "data": "description" },
-            { "data": "nameCategory" },
-            { "data": "nameProveedor" },
-            { "data": "priceString" },
-            {
-                "data": "precio2", render: function (data) {
-                    return `$ ${data}`;
+            ],
+            "columns": [
+                {
+                    "data": "idProduct",
+                    "visible": false,
+                    "searchable": false
+                },
+                {
+                    "defaultContent": `<input type="checkbox" class="chkProducto">`,
+                    "orderable": false,
+                    "searchable": false,
+                    "width": "40px",
+                    "className": "text-center"
+                },
+                { "data": "description" },
+                { "data": "idCategoryNavigation.description" },
+                {
+                    "data": "proveedor.nombre",
+                    "render": function (data, type, row) {
+                        return data ? data : '';
+                    }
+                },
+                {
+                    "data": "listaPrecios",
+                    "render": function (data, type, row) {
+                        return data && data.length > 0 ? `$ ${data[0].precio}` : '';
+                    }
+                },
+                {
+                    "data": "listaPrecios",
+                    "render": function (data, type, row) {
+                        return data && data.length > 1 ? `$ ${data[1].precio}` : '';
+                    }
+                },
+                {
+                    "data": "priceWeb",
+                    "render": function (data, type, row) {
+                        return `$ ${data}`;
+                    }
+                },
+                { "data": "modificationDate" },
+                {
+                    "data": "isActive",
+                    "className": "text-center",
+                    "render": function (data) {
+                        if (data == 1)
+                            return '<span class="badge badge-info">Activo</span>';
+                        else
+                            return '<span class="badge badge-danger">Inactivo</span>';
+                    }
+                },
+                {
+                    "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
+                        '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-trash-can"></i></button>',
+                    "orderable": false,
+                    "searchable": false,
+                    "width": "130px",
+                    "className": "text-center"
                 }
-            },
-            {
-                "data": "priceWeb", render: function (data) {
-                    return `$ ${data}`;
-                }
-            },
-            { "data": "modificationDate" },
-            {
-                "data": "isActive",
-                "className": "text-center", render: function (data) {
-                    if (data == 1)
-                        return '<span class="badge badge-info">Activo</span>';
-                    else
-                        return '<span class="badge badge-danger">Inactivo</span>';
-                }
-            },
-            {
-                "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
-                    '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-trash-can"></i></button>',
-                "orderable": false,
-                "searchable": false,
-                "width": "130px",
-                "className": "text-center"
-            }
-        ],
-        order: [[2, "asc"]],
-        dom: "Bfrtip",
-        buttons: [
-            {
-                text: 'Exportar Excel',
-                extend: 'excelHtml5',
-                title: '',
-                filename: 'Report Productos',
-                exportOptions: {
-                    columns: [2, 3, 4, 5, 6, 7, 8]
-                }
-            }, 'pageLength'
-        ]
+            ],
+            order: [[2, "asc"]],
+            dom: "Bfrtip",
+            buttons: [
+                {
+                    text: 'Exportar Excel',
+                    extend: 'excelHtml5',
+                    title: '',
+                    filename: 'Report Productos',
+                    exportOptions: {
+                        columns: [2, 3, 4, 5, 6, 7, 8]
+                    }
+                }, 'pageLength'
+            ]
+        });
     });
+
 
 
     fetch("/Inventory/GetCategories")

@@ -143,16 +143,17 @@ namespace PointOfSale.Controllers
         {
             try
             {
-                var productos = await _productService.List();
+                var productosQuery = await _productService.List();                
 
+                var d = _mapper.Map<List<VMProductSimplificado>>(productosQuery);
                 // Asignar Photo a null y mapear a VMProduct en una sola operación
-                var vmProductList = productos.Select(producto =>
+                var vmProductList = productosQuery.Select(producto =>
                 {
                     producto.Photo = null;
                     return _mapper.Map<VMProduct>(producto);
                 }).ToList();
 
-                return Ok(new { data = vmProductList });
+                return Ok(new { data = d });
             }
             catch (Exception ex)
             {

@@ -14,7 +14,7 @@ namespace PointOfSale.Models
         public VMProveedorMovimiento? ProveedorMovimiento { get; set; }
         public string? Comentario { get; set; }
         public int IdProveedor { get; set; }
-        public Proveedor? Proveedor { get; set; }
+        public VMProveedorSimplificado? Proveedor { get; set; }
         public int IdTienda { get; set; }
 
         public DateTime? RegistrationDate { get; set; }

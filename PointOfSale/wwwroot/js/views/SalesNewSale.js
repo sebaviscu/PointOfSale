@@ -87,7 +87,7 @@ function formatResults(data) {
                 </td>
                 <td>
                     <p style="font-weight: bolder;margin:2px">${data.text}</p>
-                    <p>$ ${parseFloat(data.price).toFixed(2)}</p>
+                    <p>$ ${formatNumber(data.price)}</p>
                 </td>
             </tr>
          </table>`
@@ -143,8 +143,8 @@ function showProducts_Prices(idTab, currentTab) {
                 ),
                 $("<td>").text(item.descriptionproduct),
                 $("<td>").text(item.quantity),
-                $("<td>").text("$ " + parseFloat(item.price).toFixed(2)),
-                $("<td>").text("$ " + parseFloat(item.total).toFixed(2)),
+                $("<td>").text("$ " + item.price),
+                $("<td>").text("$ " + item.total),
                 $("<td>").append(item.promocion != null ?
                     $("<i>").addClass("mdi mdi-percent").attr("data-toggle", "tooltip").attr("title", item.promocion) : "")
             )
@@ -156,10 +156,10 @@ function showProducts_Prices(idTab, currentTab) {
         row++;
     })
 
-    $('#txtTotal' + idTab).val('$ ' + parseFloat(total).toFixed(2));
+    $('#txtTotal' + idTab).val('$ ' + formatNumber(total));
     $("#txtTotal" + idTab).attr("totalReal", parseFloat(total).toFixed(2));
-    $('#txtPromociones' + idTab).html('$ ' + parseFloat(totalPromocion).toFixed(2));
-    $('#txtSubTotal' + idTab).html('$ ' + parseFloat(subTotal).toFixed(2));
+    $('#txtPromociones' + idTab).html('$ ' + formatNumber(totalPromocion));
+    $('#txtSubTotal' + idTab).html('$ ' + formatNumber(subTotal));
     $("#txtSubTotal" + idTab).attr("subTotalReal", parseFloat(total).toFixed(2));
 
     $("#lblCantidadProductos" + idTab).html("Cantidad de Articulos: <strong> " + currentTab.products.length + "</strong>");
@@ -340,7 +340,7 @@ function getVentaForRegister() {
 
         $(".cboFormaDePago").each(function (index) {
             let subTotal = {
-                total: index === 0 ? $("#txtTotalParcial").val() : $("#txtTotalParcial" + index).val(),
+                total: parseFloat(index === 0 ? $("#txtTotalParcial").val() : $("#txtTotalParcial" + index).val()).toFixed(2),
                 formaDePago: index === 0 ? $("#cboTypeDocumentSaleParcial").val() : $("#cboTypeDocumentSaleParcial" + index).val()
             };
             formasDePago.push(subTotal);
@@ -354,7 +354,7 @@ function getVentaForRegister() {
     const sale = {
         idTypeDocumentSale: $("#cboTypeDocumentSaleParcial").val(),
         clientId: $("#cboCliente" + currentTabId).val() != '' ? $("#cboCliente" + currentTabId).val() : null,
-        total: total.replace('.', ','), //total.toString(),
+        total: parseFloat(total).toFixed(2), //total.replace('.', ','), //total.toString(),
         detailSales: vmDetailSale,
         tipoMovimiento: $("#cboCliente" + currentTabId).val() != '' ? 2 : null,
         imprimirTicket: document.querySelector('#cboImprimirTicket').checked,
@@ -755,7 +755,7 @@ function agregarProductoEvento(idTab) {
 function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
     let totalQuantity = parseFloat(cant) + parseFloat(quantity_product_found);
     data.total = totalQuantity * parseFloat(data.price);
-    data.quantity = totalQuantity;
+    data.quantity = Math.trunc(totalQuantity * 10000) / 10000;
 
     data = applyPromociones(totalQuantity, data, currentTab);
 
@@ -765,8 +765,8 @@ function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
     product.descriptionproduct = data.text;
     product.categoryproduct = data.category;
     product.quantity = data.quantity;
-    product.price = data.price.toString();
-    product.total = data.total.toString();
+    product.price = formatNumber(data.price);
+    product.total = formatNumber(data.total);
 
     if (data.promocion) {
         product.promocion = data.promocion;
@@ -779,6 +779,20 @@ function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
     $('#cboSearchProduct' + idTab).val("").trigger('change');
     $('#cboSearchProduct' + idTab).select2('open');
     $('#txtPeso' + idTab).val('');
+}
+
+function formatNumber(num) {
+    // Si el número es una cadena con coma como separador decimal, reemplazarla por punto
+    if (typeof num === 'string') {
+        num = parseFloat(num.replace(',', '.'));
+    }
+
+    // Verificar si el número es un entero
+    if (Number.isInteger(num)) {
+        return num.toString();
+    }
+    // Si no es un entero, truncar a 2 decimales
+    return num.toFixed(2);
 }
 
 function applyPromociones(totalQuantity, data, currentTab) {

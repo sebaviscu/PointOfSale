@@ -57,7 +57,7 @@ namespace PointOfSale.Controllers
 
         public IActionResult SalesHistory()
         {
-            ValidarAutorizacion(new Roles[] {Roles.Administrador, Roles.Empleado, Roles.Encargado });
+            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Empleado, Roles.Encargado });
             return ValidateSesionViewOrLogin();
         }
 
@@ -124,7 +124,7 @@ namespace PointOfSale.Controllers
 
                 if (model.ClientId.HasValue)
                 {
-                    var mov = await _clienteService.RegistrarMovimiento(model.ClientId.Value, decimal.Parse(model.Total.Replace('.', ',')), user.UserName, user.IdTienda, sale_created.IdSale, model.TipoMovimiento.Value);
+                    var mov = await _clienteService.RegistrarMovimiento(model.ClientId.Value, model.Total.Value, user.UserName, user.IdTienda, sale_created.IdSale, model.TipoMovimiento.Value);
 
                     sale_created.IdClienteMovimiento = mov.IdClienteMovimiento;
                     sale_created = await _saleService.Edit(sale_created);
@@ -198,7 +198,7 @@ namespace PointOfSale.Controllers
                 model.IdTurno = int.Parse(idTurno);
                 model.IdTienda = user.IdTienda;
 
-                
+
                 //model = _mapper.Map<VMSale>(sale_created);
 
                 gResponse.State = true;
@@ -224,24 +224,32 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> History(string saleNumber, string startDate, string endDate, string presupuestos)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
-
-            List<VMSale> vmHistorySale = _mapper.Map<List<VMSale>>(await _saleService.SaleHistory(saleNumber, startDate, endDate, presupuestos));
-
-            if (vmHistorySale.Any(_ => _.IdClienteMovimiento != null))
+            try
             {
-                var movslist = vmHistorySale.Where(_ => _.IdClienteMovimiento != null).ToList();
-                var idMov = movslist.Select(_ => _.IdClienteMovimiento.Value).ToList();
-                var movs = await _clienteService.GetClienteByMovimientos(idMov, user.IdTienda);
+                var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
 
-                foreach (var m in movslist)
+                List<VMSale> vmHistorySale = _mapper.Map<List<VMSale>>(await _saleService.SaleHistory(saleNumber, startDate, endDate, presupuestos));
+
+                if (vmHistorySale.Any(_ => _.IdClienteMovimiento != null))
                 {
-                    var cliente = movs.FirstOrDefault(_ => _.IdClienteMovimiento == m.IdClienteMovimiento).Cliente;
-                    m.ClientName = cliente.Nombre;
-                }
-            }
+                    var movslist = vmHistorySale.Where(_ => _.IdClienteMovimiento != null).ToList();
+                    var idMov = movslist.Select(_ => _.IdClienteMovimiento.Value).ToList();
+                    var movs = await _clienteService.GetClienteByMovimientos(idMov, user.IdTienda);
 
-            return StatusCode(StatusCodes.Status200OK, vmHistorySale);
+                    foreach (var m in movslist)
+                    {
+                        var cliente = movs.FirstOrDefault(_ => _.IdClienteMovimiento == m.IdClienteMovimiento).Cliente;
+                        m.ClientName = cliente.Nombre;
+                    }
+                }
+
+                return StatusCode(StatusCodes.Status200OK, vmHistorySale);
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
         }
 
         public async Task<IActionResult> PrintTicket(int idSale)
