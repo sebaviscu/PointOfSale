@@ -1,4 +1,5 @@
-var proveedoresList = [];
+let proveedoresList = [];
+let tableData;
 
 const BASIC_MODEL = {
     idPedido: 0,
@@ -58,6 +59,26 @@ $(document).ready(function () {
             "type": "GET",
             "datatype": "json"
         },
+        "columnDefs": [
+            {
+                "targets": [3],
+                "render": function (data, type, row) {
+                    if (type === 'display' || type === 'filter') {
+                        return data ? moment(data).format('DD/MM/YYYY HH:mm') : '';
+                    }
+                    return data;
+                }
+            },
+            {
+                "targets": [5],
+                "render": function (data, type, row) {
+                    if (type === 'display' || type === 'filter') {
+                        return data ? moment(data).format('DD/MM/YYYY HH:mm') : '';
+                    }
+                    return data;
+                }
+            }
+        ],
         "columns": [
             {
                 "data": "idPedido",
@@ -70,9 +91,9 @@ $(document).ready(function () {
                 "searchable": false
             },
             { "data": "proveedor.nombre" },
-            { "data": "registrationDateString" },
+            { "data": "registrationDate" },
             { "data": "importeEstimadoString" },
-            { "data": "fechaCerradoString" },
+            { "data": "fechaCerrado" },
             {
                 "data": "estado",
                 "className": "text-center", render: function (data) {
@@ -121,7 +142,7 @@ $(document).ready(function () {
     new ClipboardJS('#btnCopiar');
 
     $(document).on('blur', '.editable', function () {
-        var input = parseInt($(this).text());
+        let input = parseInt($(this).text());
         if (isNaN(input) || input < 0) {
             $(this).text('');
         }
@@ -142,13 +163,13 @@ function calcularTotalCosto() {
     let totalCosto = 0;
     $('#tablaProductos tbody').find('tr').each(function () {
         let cantCelda = $(this).find('.editable').text();
-        var cantidad = parseInt(cantCelda != '' ? cantCelda : 0);
+        let cantidad = parseInt(cantCelda != '' ? cantCelda : 0);
 
         if (isNaN(cantidad) || cantidad < 1) {
             cantidad = 0;
         }
-        var str = $(this).find('td:eq(2)').text();
-        var costoString = str.slice(1).trim();
+        let str = $(this).find('td:eq(2)').text();
+        let costoString = str.slice(1).trim();
 
         const costo = parseFloat(costoString);
         totalCosto += cantidad * costo;
@@ -165,13 +186,13 @@ function calcularTotalProductosRecibidos() {
     let totalCosto = 0;
     $('#tablaProductosRecibidos tbody').find('tr').each(function () {
         let cantCelda = $(this).find('.editable').text();
-        var cantidad = parseInt(cantCelda != '' ? cantCelda : 0);
+        let cantidad = parseInt(cantCelda != '' ? cantCelda : 0);
 
         if (isNaN(cantidad) || cantidad < 1) {
             cantidad = 0;
         }
-        var str = $(this).find('td:eq(3)').text();
-        var costoString = str.slice(1).trim();
+        let str = $(this).find('td:eq(3)').text();
+        let costoString = str.slice(1).trim();
 
         const costo = parseFloat(costoString);
         totalCosto += cantidad * costo;
@@ -197,7 +218,7 @@ const openModal = (model = BASIC_MODEL) => {
             $('#txtImporteEstimado').val(model.importeFinal ?? model.importeEstimado);
         }, 500);
 
-        var deshabilitado = model.estado === 3;
+        let deshabilitado = model.estado === 3;
         $('#txtComentario, #btnGenerar, #cboEstado, #btnSave').prop('disabled', deshabilitado);
 
     }
@@ -205,7 +226,7 @@ const openModal = (model = BASIC_MODEL) => {
         $('#cboProveedor').prop('disabled', false);
     }
 
-    if (model.fechaCerradoString == '')
+    if (model.fechaCerradoString == null || model.fechaCerradoString == '')
         document.getElementById("divFechaCerrado").style.display = 'none';
     else {
         document.getElementById("divFechaCerrado").style.display = '';
@@ -260,12 +281,12 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
 })
 
 $("#btnGenerar").on("click", function () {
-    var texto = 'Pedido:<br><br>';
-    var alMenosUno = false;
+    let texto = 'Pedido:<br><br>';
+    let alMenosUno = false;
 
     $('#tablaProductos').find('tbody tr').each(function () {
         let cant = $(this).find('td:eq(4)').text();
-        var cantidad = parseInt(cant != null ? cant : 0);
+        let cantidad = parseInt(cant != null ? cant : 0);
         if (cantidad > 0) {
             alMenosUno = true;
             texto += '- ' + $(this).find('td:eq(1)').text() + ' x ' + cant.toLowerCase() + '<br>';
@@ -289,14 +310,14 @@ $("#btnGenerar").on("click", function () {
         $('#panelProductos').show();
     }
 
-    var celdasEditables = document.querySelectorAll(".editable");
+    let celdasEditables = document.querySelectorAll(".editable");
     celdasEditables.forEach(function (celda) {
         celda.addEventListener("click", function () {
             this.focus();
         });
 
         celda.addEventListener("input", function () {
-            var cantidad = parseFloat(this.textContent);
+            let cantidad = parseFloat(this.textContent);
             if (isNaN(cantidad)) {
                 cantidad = 0;
             }
@@ -308,8 +329,8 @@ $("#btnGenerar").on("click", function () {
 $('#cboProveedor').change(function () {
 
     $('#txtImporteEstimado').val(0);
-    var idProv = $(this).val();
-    var proveedor = proveedoresList.find(_ => _.idProveedor == idProv);
+    let idProv = $(this).val();
+    let proveedor = proveedoresList.find(_ => _.idProveedor == idProv);
 
     cargarTabla(proveedor.products, idProv, true);
 })
@@ -317,7 +338,7 @@ $('#cboProveedor').change(function () {
 function cargarTabla(productos, idProveedor, nuevo) {
     const tablaBody = document.querySelector('#tablaProductos tbody');
     tablaBody.innerHTML = '';
-    var proveedor = proveedoresList.find(_ => _.idProveedor == idProveedor);
+    let proveedor = proveedoresList.find(_ => _.idProveedor == idProveedor);
 
     let disable = nuevo ? `class="editable" contenteditable="true"` : "";
 
@@ -378,13 +399,13 @@ $("#btnSave").on("click", function () {
     model["cantidadProductos"] = $("#txtDescripcionTipoDeGasto").val();
     model["estado"] = parseInt($("#cboEstado").val());
 
-    var productosConCantidad = [];
+    let productosConCantidad = [];
 
     $('#tablaProductos tbody tr').each(function () {
-        var cantidadPedir = parseInt($(this).find('td:last-child').text());
+        let cantidadPedir = parseInt($(this).find('td:last-child').text());
 
         if (!isNaN(cantidadPedir) && cantidadPedir > 0) {
-            var producto = {
+            let producto = {
                 idProducto: parseInt($(this).find('td:eq(0)').text()),
                 cantidadProducto: cantidadPedir
             };
@@ -524,7 +545,7 @@ const openModalRecibido = (model = BASIC_MODEL) => {
     $("#txtIva").val(model.proveedor.iva ?? '');
     $("#cboTipoFactura").val(model.proveedor.tipoFactura ?? '');
 
-    var sumaCantidadProductos = 0;
+    let sumaCantidadProductos = 0;
     $.each(model.productos, function (index, producto) {
         sumaCantidadProductos += producto.cantidadProducto;
     });
@@ -540,7 +561,7 @@ function cargarTablaRecibidos(productos, idProveedor) {
     const tablaBody = document.querySelector('#tablaProductosRecibidos tbody');
     tablaBody.innerHTML = '';
 
-    var proveedor = proveedoresList.find(_ => _.idProveedor == idProveedor);
+    let proveedor = proveedoresList.find(_ => _.idProveedor == idProveedor);
 
     productos.forEach(producto => {
         const tr = document.createElement('tr');
@@ -599,16 +620,16 @@ $("#btnCerrarPedido").on("click", function () {
     model["facturaPendiente"] = document.querySelector('#cbxFacturaPendiente').checked;
 
 
-    var productosConCantidad = [];
+    let productosConCantidad = [];
     let fechaValida = true;
     let cantidadesVacias = false;
     $('#tablaProductosRecibidos tbody tr').each(function () {
-        var idPedidoProducto = parseInt($(this).find('td:eq(0)').text());
-        var idProducto = parseInt($(this).find('td:eq(1)').text());
-        var cantidadPedida = parseInt($(this).find('td:eq(4)').text());
-        var cantidadRecibida = parseInt($(this).find('td:eq(5)').text());
-        var vencimiento = $(this).find('td:eq(6)').text();
-        var lote = $(this).find('td:eq(7)').text();
+        let idPedidoProducto = parseInt($(this).find('td:eq(0)').text());
+        let idProducto = parseInt($(this).find('td:eq(1)').text());
+        let cantidadPedida = parseInt($(this).find('td:eq(4)').text());
+        let cantidadRecibida = parseInt($(this).find('td:eq(5)').text());
+        let vencimiento = $(this).find('td:eq(6)').text();
+        let lote = $(this).find('td:eq(7)').text();
 
         cantidadesVacias = $(this).find('td:eq(5)').text() == '';
 
@@ -619,7 +640,7 @@ $("#btnCerrarPedido").on("click", function () {
         }
 
         if (!isNaN(cantidadRecibida)) {
-            var producto = {
+            let producto = {
                 idPedidoProducto: idPedidoProducto,
                 idPedido: idPedido,
                 idProducto: idProducto,
@@ -676,15 +697,15 @@ function mostrarAdvertencia(msg) {
 }
 
 function validarFecha(fechaString) {
-    var regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+    let regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
 
     if (!regex.test(fechaString)) {
     }
 
-    var partes = fechaString.split('/');
-    var dia = parseInt(partes[0], 10);
-    var mes = parseInt(partes[1], 10);
-    var anio = parseInt(partes[2], 10);
+    let partes = fechaString.split('/');
+    let dia = parseInt(partes[0], 10);
+    let mes = parseInt(partes[1], 10);
+    let anio = parseInt(partes[2], 10);
 
     if (isNaN(dia) || isNaN(mes) || isNaN(anio)) {
         return false;
@@ -702,13 +723,13 @@ function validarFecha(fechaString) {
 }
 
 function calcularIva() {
-    var importeText = $('#txtImporteRecibido').val();
-    var importe = parseFloat(importeText == '' ? 0 : importeText);
-    var iva = parseFloat($('#txtIva').val());
+    let importeText = $('#txtImporteRecibido').val();
+    let importe = parseFloat(importeText == '' ? 0 : importeText);
+    let iva = parseFloat($('#txtIva').val());
 
     if (!isNaN(importe) && !isNaN(iva)) {
-        var importeSinIva = importe / (1 + (iva / 100));
-        var importeIva = importe - importeSinIva;
+        let importeSinIva = importe / (1 + (iva / 100));
+        let importeIva = importe - importeSinIva;
 
         $('#txtImporteSinIva').val(importeSinIva.toFixed(2));
         $('#txtImporteIva').val(importeIva.toFixed(2));

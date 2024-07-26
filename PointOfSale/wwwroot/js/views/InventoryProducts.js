@@ -1,9 +1,10 @@
 ﻿let tableData;
 let rowSelected;
 let edicionMasiva = false;
-var aProductos = [];
-var tienda;
-var aumentoWeb = 0;
+let aProductos = [];
+let tienda;
+let aumentoWeb = 0;
+let cantProductosImportar = 0;
 
 const BASIC_MODEL = {
     idProduct: 0,
@@ -187,22 +188,17 @@ $(document).ready(function () {
             }
         })
 
-    //$('.filtro-vencimientos').change(function () {
-    //    filtrarTabla();
-    //});
-
     $("#txtfVencimiento").datepicker({ dateFormat: 'dd/mm/yy' });
     $("#txtfElaborado").datepicker({ dateFormat: 'dd/mm/yy' });
-    //cargarTablaVencimientos();
     removeLoading();
 })
 
 $("#chkSelectAll").on("click", function () {
-    var estado = document.querySelector('#chkSelectAll').checked;
+    let estado = document.querySelector('#chkSelectAll').checked;
 
-    var checkboxes = document.querySelectorAll('input[type="checkbox"].chkProducto');
+    let checkboxes = document.querySelectorAll('input[type="checkbox"].chkProducto');
 
-    for (var i = 0; i < checkboxes.length; i++) {
+    for (let i = 0; i < checkboxes.length; i++) {
         checkboxes[i].checked = estado;
     }
 })
@@ -229,15 +225,15 @@ function editAll() {
     $("#txtProfit3Masivo").val('');
 
     // Lista tipo de ventas
-    var cont = document.getElementById('listProductosEditar');
+    let cont = document.getElementById('listProductosEditar');
     cont.innerHTML = "";
-    var ul = document.createElement('ul');
+    let ul = document.createElement('ul');
     ul.setAttribute('style', 'padding: 0; margin: 0;');
     ul.setAttribute('id', 'theList');
     //ul.classList.add("list-group");
 
     for (i = 0; i <= aProductos.length - 1; i++) {
-        var li = document.createElement('li');
+        let li = document.createElement('li');
         li.innerHTML = aProductos[i][1] + ": " + aProductos[i][2];
         li.setAttribute('style', 'display: block;');
         //li.classList.add("list-group-item");
@@ -289,7 +285,7 @@ const openModal = (model = BASIC_MODEL) => {
         document.getElementById("divModif").style.display = 'none';
     else {
         document.getElementById("divModif").style.display = '';
-        var dateTimeModif = new Date(model.modificationDate);
+        let dateTimeModif = new Date(model.modificationDate);
 
         $("#txtModificado").val(dateTimeModif.toLocaleString());
         $("#txtModificadoUsuario").val(model.modificationUser);
@@ -317,9 +313,9 @@ const openModal = (model = BASIC_MODEL) => {
 }
 
 function addVencimientoTable(data) {
-    var fechaElaboracion = "";
-    var fechaVencimiento = "";
-    var fechaCompleta = "";
+    let fechaElaboracion = "";
+    let fechaVencimiento = "";
+    let fechaCompleta = "";
 
     if (data.fechaVencimiento != null) {
 
@@ -356,8 +352,8 @@ function addVencimientoTable(data) {
 $("#tbVencimientos tbody").on("click", ".btn-delete-vencimiento", function (event) {
     event.preventDefault();
 
-    var v = $(this).data("vencimiento")
-    var btn = $(this);
+    let v = $(this).data("vencimiento")
+    let btn = $(this);
 
     swal({
         title: "¿Desea eliminar el vencimiento? ",
@@ -407,27 +403,21 @@ $("#tbVencimientos tbody").on("click", ".btn-delete-vencimiento", function (even
 })
 
 function obtenerDatosTabla() {
-    var datos = [];
+    let datos = [];
     $("#tbVencimientos tbody tr").each(function () {
-        var fila = {};
+        let fila = {};
         fila.fechaVencimiento = $(this).find("td:eq(0)").text();
         fila.fechaElaboracion = $(this).find("td:eq(1)").text();
         fila.lote = $(this).find("td:eq(2)").text();
         fila.notificar = $(this).find("td:eq(3) input[type=checkbox]").prop("checked");
         fila.idVencimiento = $(this).find("button").data("vencimiento").idVencimiento;
-        //fila.cambio = false; // Inicialmente establecido como false
 
         // Verificar si el valor del checkbox ha cambiado
-        var estadoInicial = $(this).find("td:eq(3) input[type=checkbox]").data("estado-inicial");
+        let estadoInicial = $(this).find("td:eq(3) input[type=checkbox]").data("estado-inicial");
         if ((estadoInicial !== undefined && fila.notificar !== estadoInicial) || fila.idVencimiento === 0) {
-            //fila.cambio = true; // Si ha cambiado, establecer cambio a true
             datos.push(fila);
         }
 
-        // Verificar si data.idVencimiento es igual a 0
-        //if (fila.idVencimiento === 0 || fila.cambio) {
-        //    datos.push(fila);
-        //}
     });
     return datos;
 }
@@ -456,7 +446,7 @@ $("#tbVencimientos tbody").on("click", ".btn-danger", function () {
     } else {
         rowSelected = $(this).closest('tr');
     }
-    var v = $(this).data("vencimiento")
+    let v = $(this).data("vencimiento")
 
     if (v.idVencimiento == 0) {
         rowSelected.remove();
@@ -510,7 +500,6 @@ $("#btnImportar").on("click", function () {
 
 })
 
-var cantProductosImportar = 0;
 
 $("#btnCargarImportar").on("click", function () {
     $("#btnCargarImportar").LoadingOverlay("show")
@@ -633,12 +622,6 @@ $("#btnSave").on("click", function () {
         return;
     }
 
-    //if (document.getElementById("cboProveedor").value == '') {
-    //    const msg = `Debe completaro el campo Proveedor"`;
-    //    toastr.warning(msg, "");
-    //    return;
-    //}
-
     if (document.getElementById("cboTipoVenta").value == '') {
         const msg = `Debe completaro el campo Tipo Venta"`;
         toastr.warning(msg, "");
@@ -736,6 +719,7 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
     } else {
         rowSelected = $(this).closest('tr');
     }
+    showLoading();
 
     const data = tableData.row(rowSelected).data();
 
@@ -743,6 +727,8 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
         .then(response => {
             return response.ok ? response.json() : Promise.reject(response);
         }).then(responseJson => {
+            removeLoading();
+
             if (responseJson.data != null) {
                 openModal(responseJson.data);
             }
@@ -823,11 +809,11 @@ function calcularPrecio() {
         });
     }
 
-    var aumento = $("#txtAumento").val();
-    var precio = $("#txtPrice").val();
+    let aumento = $("#txtAumento").val();
+    let precio = $("#txtPrice").val();
 
     if (aumento !== '' && precio !== '') {
-        var precioFinal = parseFloat(precio) * (1 + (parseFloat(aumento) / 100));
+        let precioFinal = parseFloat(precio) * (1 + (parseFloat(aumento) / 100));
         $("#txtPriceWeb").val(precioFinal);
     }
 }
@@ -863,11 +849,11 @@ function calcularPrecioMasivo() {
         });
     }
 
-    var aumento = $("#txtAumento").val();
-    var precio = $("#txtPriceMasivo").val();
+    let aumento = $("#txtAumento").val();
+    let precio = $("#txtPriceMasivo").val();
 
     if (aumento !== '' && precio !== '') {
-        var precioFinal = parseFloat(precio) * (1 + (parseFloat(aumento) / 100));
+        let precioFinal = parseFloat(precio) * (1 + (parseFloat(aumento) / 100));
         let roundedPrice = roundToDigits(precioFinal, roundingDigits);
 
         $("#txtPriceWebMasivo").val(roundedPrice.replace(',', '.'));
@@ -888,18 +874,16 @@ function imprimirPrecios() {
     })
 
     // Lista tipo de ventas
-    var cont = document.getElementById('listProdImprimir');
+    let cont = document.getElementById('listProdImprimir');
     cont.innerHTML = "";
-    var ul = document.createElement('ul');
+    let ul = document.createElement('ul');
     ul.setAttribute('style', 'padding: 0; margin: 0;text-align: left;');
     ul.setAttribute('id', 'theList');
-    //ul.classList.add("list-group");
 
     for (i = 0; i <= aProductos.length - 1; i++) {
-        var li = document.createElement('li');
+        let li = document.createElement('li');
         li.innerHTML = "· " + aProductos[i][1];
         li.setAttribute('style', 'display: block;');
-        //li.classList.add("list-group-item");
         ul.appendChild(li);
     }
     cont.appendChild(ul);
@@ -927,14 +911,14 @@ $("#btnImprimir").on("click", function () {
 
         if (responseJson.state) {
 
-            var byteCharacters = atob(responseJson.data);
-            var byteNumbers = new Array(byteCharacters.length);
-            for (var i = 0; i < byteCharacters.length; i++) {
+            let byteCharacters = atob(responseJson.data);
+            let byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
                 byteNumbers[i] = byteCharacters.charCodeAt(i);
             }
-            var byteArray = new Uint8Array(byteNumbers);
-            var file = new Blob([byteArray], { type: 'application/pdf;base64' });
-            var fileURL = URL.createObjectURL(file);
+            let byteArray = new Uint8Array(byteNumbers);
+            let file = new Blob([byteArray], { type: 'application/pdf;base64' });
+            let fileURL = URL.createObjectURL(file);
             window.open(fileURL);
 
             removeLoading()
@@ -947,77 +931,6 @@ $("#btnImprimir").on("click", function () {
     })
 
 })
-
-//function cargarTablaVencimientos() {
-
-//    $("#tbDataVencimientos").DataTable({
-//        createdRow: function (row, data, dataIndex) {
-//            if (data.estado == 2) {
-//                $(row).addClass('vencidoClass');
-//            } else if (data.estado == 1) {
-//                $(row).addClass('proximoClass');
-//            } else {
-//                $(row).addClass('aptoClass');
-//            }
-//        },
-//        pageLength: 25,
-//        "ajax": {
-//            "url": "/Inventory/GetVencimientos",
-//            "type": "GET",
-//            "datatype": "json"
-//        },
-//        "columns": [
-//            {
-//                "data": "idVencimiento",
-//                "visible": false,
-//                "searchable": false
-//            },
-//            {
-//                "data": "estado",
-//                "visible": false,
-//                "searchable": false
-//            },
-//            { "data": "fechaVencimientoString" },
-//            { "data": "producto" },
-//            { "data": "fechaElaboracionString" },
-//            { "data": "lote" }
-//        ],
-//        order: [[1, "desc"]],
-//        dom: "Bfrtip",
-//        buttons: [
-//            {
-//                text: 'Exportar Excel',
-//                extend: 'excelHtml5',
-//                title: '',
-//                filename: 'Reporte Vencimientos',
-//                exportOptions: {
-//                    columns: [2, 3, 4, 5]
-//                }
-//            }, 'pageLength'
-//        ],
-//        drawCallback: function (settings) {
-//            filtrarTabla();
-//        }
-//    });
-
-
-//}
-
-//function filtrarTabla() {
-//    var valorSeleccionado = $('.filtro-vencimientos:checked').val();
-
-//    // Ocultar todas las filas
-//    $('#tbDataVencimientos tbody tr').hide();
-
-//    // Mostrar las filas correspondientes al filtro seleccionado
-//    if (valorSeleccionado === '0') {
-//        $('#tbDataVencimientos tbody tr').show();
-//    } else if (valorSeleccionado === '1') {
-//        $('.proximoClass').show();
-//    } else if (valorSeleccionado === '2') {
-//        $('.vencidoClass').show();
-//    }
-//}
 
 function cargarTabla(productosFiltrados) {
     const tablaBody = $('#tablaProductosEditar tbody');
@@ -1095,11 +1008,11 @@ function cargarTabla(productosFiltrados) {
         recalculatePrices();
     });
 
-    var celdasEditables = document.querySelectorAll(".editable");
+    let celdasEditables = document.querySelectorAll(".editable");
     celdasEditables.forEach(function (celda) {
-        var celdasEditables = document.querySelectorAll(".editable");
+        let celdasEditables = document.querySelectorAll(".editable");
         celdasEditables.forEach(function (celda) {
-            var contenidoOriginal = celda.textContent.trim();
+            let contenidoOriginal = celda.textContent.trim();
             celda.addEventListener("click", function () {
                 if (this.textContent.trim() === contenidoOriginal) {
                     this.textContent = '';
@@ -1108,9 +1021,9 @@ function cargarTabla(productosFiltrados) {
             });
 
             celda.addEventListener("input", function () {
-                var contenido = this.textContent.trim();
+                let contenido = this.textContent.trim();
                 if (/^\$?\s?\d*\.?\d*$/.test(contenido)) {
-                    var cantidad = parseFloat(contenido.replace(/\$|\s/g, '').replace('.', ','));
+                    let cantidad = parseFloat(contenido.replace(/\$|\s/g, '').replace('.', ','));
                     if (!isNaN(cantidad)) {
                         this.textContent = cantidad;
                     }
@@ -1120,11 +1033,11 @@ function cargarTabla(productosFiltrados) {
             });
 
             celda.addEventListener("blur", function () {
-                var contenido = this.textContent.trim();
+                let contenido = this.textContent.trim();
                 if (contenido === '') {
                     this.textContent = contenidoOriginal;
                 } else if (/^\d*\.?\d*$/.test(contenido)) {
-                    var cantidad = parseFloat(contenido.replace('.', ','));
+                    let cantidad = parseFloat(contenido.replace('.', ','));
                     if (!isNaN(cantidad)) {
                         this.textContent = `$ ${cantidad.toFixed(2).replace('.', ',')}`;
                     }
@@ -1166,7 +1079,7 @@ function recalculatePrices() {
 
             if (profit != 0 && costo != 0) {
                 costo = costo * (1 + (iva / 100));
-                var nuevoPrecio = costo * (1 + profit / 100);
+                let nuevoPrecio = costo * (1 + profit / 100);
                 nuevoPrecio = nuevoPrecio * (1 + (web / 100));
 
                 let roundedPrice = roundToDigits(nuevoPrecio, roundingDigits);
@@ -1178,16 +1091,16 @@ function recalculatePrices() {
 }
 
 $('#btnSaveMasivoTabla').click(function () {
-    var model = [];
+    let model = [];
     showLoading();
 
     $('#tablaProductosEditar tbody tr').each(function () {
-        var rowData = {};
+        let rowData = {};
         $(this).find('td').each(function (index) {
-            var fieldName = $('#tablaProductosEditar th').eq(index).attr('title');
+            let fieldName = $('#tablaProductosEditar th').eq(index).attr('title');
 
             if (fieldName != null) {
-                var fieldValue = $(this).text().trim().replace('$ ', '').replace(',', '.');
+                let fieldValue = $(this).text().trim().replace('$ ', '').replace(',', '.');
                 rowData[fieldName.trim()] = fieldValue;
             }
         });

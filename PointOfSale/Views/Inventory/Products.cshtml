@@ -106,48 +106,6 @@
                     </div>
                 </div>
             </div>
-
-
-            <div class="card-body" style="padding-bottom: 0px;">
-                <div class="card-header card-header-border-bottom" style="padding-top: 0px;padding-left: 0px;">
-                    <div class="row col-md 3">
-                        <h4>Vencimientos</h4>
-                        <div class="row ms-5" id="rowFilterVencimientos">
-                            <div class="ms-3 h4">
-                                <input type="radio" id="rbtnTodos" name="filtroVencimientos" class="filtro-vencimientos" value="0">
-                                <label for="rbtnTodos" style="font-size: 13px;">Todos</label>
-                            </div>
-                            <div class="ms-3 h4">
-                                <input type="radio" id="rbtnProximosVencer" name="filtroVencimientos" class="filtro-vencimientos" value="1" checked />
-                                <label for="rbtnProximosVencer" style="font-size: 13px;">Proximos a Vencer</label>
-                            </div>
-                            <div class="ms-3 me-5 h4">
-                                <input type="radio" id="rbtnVencidos" name="filtroVencimientos" class="filtro-vencimientos" value="2">
-                                <label for="rbtnVencidos" style="font-size: 13px;">Vencidos</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body" style=" padding-left: 0px;padding-right: 0px;padding-top: 15px;">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <table id="tbDataVencimientos" class="table" style="width:100%">
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th></th>
-                                        <th>Fecha Vencimiento</th>
-                                        <th>Producto</th>
-                                        <th>Fecha Elaboracion</th>
-                                        <th>Lote</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
 
     </div>
@@ -202,7 +160,7 @@
                                         <option value="27">27 %</option>
                                     </select>
                                 </div>
-                                <div class="form-group col-sm-1" style="align-content: flex-end;">
+                                <div class="form-group col-sm-1" style="align-content: center;">
                                     <button type="button" id="btnCalcularTodo" class="btn btn-secondary btn-sm" onclick="calcularPrecio()">Calcular</button>
                                 </div>
                                 <div class="form-group col-sm-3">
