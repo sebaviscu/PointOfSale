@@ -57,7 +57,7 @@ $(document).ready(function () {
                 "width": "100px"
             }
         ],
-        order: [[0, "desc"]],
+        order: [[1, "desc"]],
         dom: "Bfrtip",
         buttons: [
             {
@@ -105,6 +105,17 @@ const openModal = (model = BASIC_MODEL) => {
             "type": "GET",
             "datatype": "json"
         },
+        "columnDefs": [
+            {
+                "targets": [3],
+                "render": function (data, type, row) {
+                    if (type === 'display' || type === 'filter') {
+                        return data ? moment(data).format('DD/MM/YYYY HH:mm') : '';
+                    }
+                    return data;
+                }
+            }
+        ],
         "columns": [
             {
                 "data": "idClienteMovimiento",
@@ -113,7 +124,7 @@ const openModal = (model = BASIC_MODEL) => {
             },
             { "data": "totalString" },
             { "data": "sale.saleNumber" },
-            { "data": "registrationDateString" },
+            { "data": "registrationDate" },
             { "data": "registrationUser" },
             {
                 "data": "idSale",
@@ -128,7 +139,7 @@ const openModal = (model = BASIC_MODEL) => {
                 "width": "40px"
             }
         ],
-        order: [[0, "desc"]],
+        order: [[3, "desc"]],
         dom: "Bfrtip",
         buttons: [
             {

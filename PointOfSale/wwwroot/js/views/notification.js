@@ -8,6 +8,17 @@
             "type": "GET",
             "datatype": "json"
         },
+        "columnDefs": [
+            {
+                "targets": [2],
+                "render": function (data, type, row) {
+                    if (type === 'display' || type === 'filter') {
+                        return data ? moment(data).format('DD/MM/YYYY HH:mm') : '';
+                    }
+                    return data;
+                }
+            }
+        ],
         "columns": [
             {
                 "data": "idNotifications",
@@ -15,7 +26,7 @@
                 "searchable": false
             },
             { "data": "descripcion" },
-            { "data": "registrationDateString" },
+            { "data": "registrationDate" },
             {
                 "data": "isActive", render: function (data) {
                     if (data == 1)
@@ -27,7 +38,7 @@
             { "data": "modificationUser" },
             { "data": "modificationDateString" }
         ],
-        order: [[0, "desc"]],
+        order: [[2, "desc"]],
         dom: "Bfrtip",
         buttons: [
             {

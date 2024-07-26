@@ -24,10 +24,6 @@ const BASIC_MODEL = {
 }
 
 
-//$(document).on('select2:open', () => {
-//    document.querySelector('.select2-search__field').focus();
-//});
-
 $(document).ready(function () {
     $('[data-toggle="popover"]').popover({
         html: true,
@@ -42,13 +38,24 @@ $(document).ready(function () {
             "type": "GET",
             "datatype": "json"
         },
+        "columnDefs": [
+            {
+                "targets": [1],
+                "render": function (data, type, row) {
+                    if (type === 'display' || type === 'filter') {
+                        return data ? moment(data).format('DD/MM/YYYY HH:mm') : '';
+                    }
+                    return data;
+                }
+            }
+        ],
         "columns": [
             {
                 "data": "idVentaWeb",
                 "visible": false,
                 "searchable": false
             },
-            { "data": "fecha" },
+            { "data": "registrationDate" },
             { "data": "nombre" },
             { "data": "direccion" },
             { "data": "telefono" },

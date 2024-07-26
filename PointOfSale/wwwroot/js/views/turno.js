@@ -20,13 +20,24 @@ $(document).ready(function () {
             "type": "GET",
             "datatype": "json"
         },
+        "columnDefs": [
+            {
+                "targets": [1],
+                "render": function (data, type, row) {
+                    if (type === 'display' || type === 'filter') {
+                        return data ? moment(data).format('DD/MM/YYYY') : '';
+                    }
+                    return data;
+                }
+            }
+        ],
         "columns": [
             {
                 "data": "idTurno",
                 "visible": false,
                 "searchable": false
             },
-            { "data": "fecha" },
+            { "data": "fechaInicio" },
             { "data": "horaInicio" },
             { "data": "horaFin" },
             { "data": "modificationUser" },
@@ -39,7 +50,7 @@ $(document).ready(function () {
                 "width": "80px"
             }
         ],
-        order: [[0, "desc"]],
+        order: [[1, "desc"]],
         dom: "Bfrtip",
         buttons: [
             {
@@ -76,7 +87,7 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtFecha").val(model.fecha);
     $("#txtHoraInicio").val(model.horaInicio);
     $("#txtHoraFin").val(model.horaFin);
-    document.getElementById('txtTotal').innerHTML = "Total: " + model.total;
+    $("#txtTotal").val(model.total);
 
     fetch(`/Turno/GetOneTurno?idTurno=` + model.idTurno, {
         method: "GET"

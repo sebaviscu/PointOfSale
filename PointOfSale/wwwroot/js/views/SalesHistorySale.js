@@ -230,7 +230,7 @@ $("#printTicket").click(function () {
         if (responseJson.state) {
             $("#modalData").modal("hide");
 
-            if (responseJson.object.nombreImpresora != '') {
+            if (isHealthy && responseJson.object.nombreImpresora != '') {
 
                 printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora);
 

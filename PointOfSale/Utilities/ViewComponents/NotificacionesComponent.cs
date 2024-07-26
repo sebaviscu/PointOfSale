@@ -20,6 +20,12 @@ namespace PointOfSale.Utilities.ViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
+            var claimuser = HttpContext.User;
+
+            var userRol = Convert.ToInt32(claimuser.Claims
+                .Where(c => c.Type == ClaimTypes.Role)
+                .Select(c => c.Value).SingleOrDefault());
+
             var notifications = _mapper.Map<List<VMNotifications>>(await _notificationService.GetActive());
 
             //ViewData["emailUser"] = notifications;

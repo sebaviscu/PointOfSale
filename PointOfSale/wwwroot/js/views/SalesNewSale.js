@@ -433,7 +433,7 @@ function registrationSale(currentTabId) {
             }
             disableAfterVenta(currentTabId);
 
-            if (sale.imprimirTicket && responseJson.object.nombreImpresora != '') {
+            if (isHealthy && sale.imprimirTicket && responseJson.object.nombreImpresora != '') {
                 printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora);
             }
 

@@ -70,7 +70,7 @@ $(document).ready(function () {
                 "width": "80px"
             }
         ],
-        order: [[0, "desc"]],
+        order: [[1, "asc"]],
         dom: "Bfrtip",
         buttons: [
             {

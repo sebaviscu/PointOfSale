@@ -36,7 +36,12 @@ $(document).ready(function () {
                         return '<input type="checkbox" disabled>';
                 }
             },
-            { "data": "comision" },
+            {
+                "data": "comision",
+                "render": function (data, type, row) {
+                    return data ? data + ' %' : '';
+                }
+            },
             {
                 "data": "isActive", render: function (data) {
                     if (data == 1)
@@ -62,7 +67,7 @@ $(document).ready(function () {
                 title: '',
                 filename: 'Reporte Formas de Pago',
                 exportOptions: {
-                    columns: [1, 2,3,4]
+                    columns: [1, 2, 3, 4]
                 }
             }, 'pageLength'
         ]

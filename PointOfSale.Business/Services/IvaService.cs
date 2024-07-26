@@ -108,7 +108,8 @@ namespace PointOfSale.Business.Services
             return query.Where(v =>
                     v.IdTienda == idTienda &&
                     v.RegistrationDate.Value.Date >= start_date.Date &&
-                    v.RegistrationDate.Value.Date <= end_date.Date&&
+                    v.RegistrationDate.Value.Date <= end_date.Date &&
+                    v.TypeDocumentSaleNavigation != null &&
                     v.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu)
                 .Include(_ => _.TypeDocumentSaleNavigation)
                 .Include(dv => dv.DetailSales)

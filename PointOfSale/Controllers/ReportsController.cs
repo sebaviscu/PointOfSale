@@ -70,7 +70,7 @@ namespace PointOfSale.Controllers
                 vmSR.Cantidad = p.Value;
                 vmSR.TipoVenta = product.TipoVenta.ToString();
                 vmSR.Costo = "$ " + product.CostPrice.ToString();
-                vmSR.Proveedor = product.Proveedor.Nombre;
+                vmSR.Proveedor = product.Proveedor != null ? product.Proveedor.Nombre : string.Empty;
                 vmSR.Stock = stock != null ? stock.StockActual.ToString() : "-";
 
                 listVMSalesReport.Add(vmSR);
@@ -193,6 +193,7 @@ namespace PointOfSale.Controllers
         private VMLibroIvaTotalOutput ConstructVentaListByTipoFactura(IEnumerable<Sale> listSale, TipoFactura tipoFactura)
         {
             var iva = Convert.ToDecimal("1.21");
+            var ventasByTipoFactura2 = listSale.Where(_ => _.TypeDocumentSaleNavigation == null).ToList();
 
             var ventasByTipoFactura = listSale.Where(_ => _.TypeDocumentSaleNavigation.TipoFactura == tipoFactura).ToList();
             var bruto = ventasByTipoFactura.Any() ? ventasByTipoFactura.Sum(_ => _.Total).Value : 0;

@@ -91,7 +91,7 @@ function cargarTablaVencimientos() {
             { "data": "stockMinimo" },
 
         ],
-        order: [[0, "desc"]],
+        order: [[2, "asc"]],
         dom: "Bfrtip",
         buttons: [
             {
