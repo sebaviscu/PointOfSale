@@ -4,7 +4,7 @@
 }
 
 
-@section StylesPOS{
+@section StylesPOS {
     <link href="~/plugins/select2/css/select2.min.css" rel="stylesheet">
 
     <style>
@@ -28,15 +28,20 @@
 }
 <span class="offset-md-3 text-danger" id="lblErrorPrintService" style="display: none;"><i class="mdi mdi-alert mdi-24px"></i>&nbsp; El servicio de impresión no se encuentra conectado</span>
 
-<ul class="nav nav-tabs d-lg-flex" id="tab-list" role="tablist">
-    <a id="btn-add-tab" href="#" class="text-primary me-2">
-        <i class="mdi mdi-36px mdi-plus-circle"></i>
-    </a>
+<div class="d-flex justify-content-between">
+    <ul class="nav nav-tabs d-lg-flex" id="tab-list" role="tablist">
+        <a id="btn-add-tab" href="#" class="text-primary me-2">
+            <i class="mdi mdi-36px mdi-plus-circle"></i>
+        </a>
 
-    <li class="nav-item" role="presentation" hidden>
-        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Home <span class="close" type="button" title="Remove this page">×</span> </button>
-    </li>
-</ul>
+        <li class="nav-item" role="presentation" hidden>
+            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Home <span class="close" type="button" title="Remove this page">×</span> </button>
+        </li>
+    </ul>
+    <button data-bs-container="body" data-bs-toggle="popover" data-bs-placement="left" data-bs-html="true" data-bs-content="<b>F2:</b> Finalizar venta <br /><b>F9:</b> Buscar precios <br /><b>Alt + N:</b> Nueva venta">
+        <i class="mdi mdi-36px mdi-information-outline"></i>
+    </button>
+</div>
 
 <div class="tab-content" id="tab-content">
     <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0" hidden>
@@ -270,11 +275,12 @@
     </div>
 </div>
 
-@section Scripts{
+@section Scripts {
 
     <script src="~/plugins/select2/js/select2.js"></script>
     <script src="~/plugins/printService.js"></script>
 
+    <script src="~/plugins/popper.min.js"></script>
     <script src="~/js/views/SalesNewSale.js"></script>
-    }
+}
 

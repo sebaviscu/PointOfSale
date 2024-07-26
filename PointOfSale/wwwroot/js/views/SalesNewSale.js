@@ -52,6 +52,10 @@ $(document).ready(function () {
 
     newTab();
     healthcheck();
+
+    $('[data-bs-toggle="popover"]').popover({
+        html: true
+    });
 })
 
 async function healthcheck() {

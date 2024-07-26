@@ -50,8 +50,8 @@ function cerrarTurno() {
             let list = document.getElementById("contMetodosPagoLayout");
             for (i = 0; i < resp.ventasPorTipoVenta.length; ++i) {
                 let li = document.createElement('li');
-                li.innerText = resp.ventasPorTipoVenta[i].descripcion + ": $" + resp.ventasPorTipoVenta[i].total;
-                console.log(resp.ventasPorTipoVenta[i].descripcion + ": $" + resp.ventasPorTipoVenta[i].total);
+                li.innerText = resp.ventasPorTipoVenta[i].descripcion + ": $ " + resp.ventasPorTipoVenta[i].total;
+                console.log(resp.ventasPorTipoVenta[i].descripcion + ": $ " + resp.ventasPorTipoVenta[i].total);
                 list.appendChild(li);
             }
 
