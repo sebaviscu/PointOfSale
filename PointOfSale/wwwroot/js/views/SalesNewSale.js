@@ -56,6 +56,19 @@ $(document).ready(function () {
     $('[data-bs-toggle="popover"]').popover({
         html: true
     });
+
+    $('#modalConsultarPrecio').on('shown.bs.modal', function () {
+        if (!$('#cboSearchProductConsultarPrecio').data('select2')) {
+            funConsultarPrecio();
+        }
+        setTimeout(function () {
+            $('#cboSearchProductConsultarPrecio').select2('open');
+        }, 100);
+    });
+
+    $('#modalConsultarPrecio').on('hidden.bs.modal', function () {
+        resetModaConsultarPreciol();
+    });
 })
 
 async function healthcheck() {
@@ -69,8 +82,8 @@ async function healthcheck() {
 }
 
 $('#cboTypeDocumentSaleParcial').change(function () {
-    var idFormaDePago = $(this).val();
-    var formaDePago = formasDePagosList.find(_ => _.idTypeDocumentSale == idFormaDePago);
+    let idFormaDePago = $(this).val();
+    let formaDePago = formasDePagosList.find(_ => _.idTypeDocumentSale == idFormaDePago);
 
     if (formaDePago != null) {
         $("#cboFactura").val(formaDePago.tipoFactura);
@@ -83,7 +96,7 @@ function formatResults(data) {
     if (data.loading)
         return data.text;
 
-    var container = $(
+    let container = $(
         `<table width="90%">
             <tr>
                 <td style="width:60px">
@@ -99,13 +112,29 @@ function formatResults(data) {
 
     return container;
 }
+function formatResultsBuscarPrecio(data) {
+    if (data.loading)
+        return data.text;
+
+    let container = $(
+        `<table width="90%">
+            <tr>
+                <td>
+                    <p style="font-weight: bolder;margin:2px">${data.text}</p>
+                </td>
+            </tr>
+         </table>`
+    );
+
+    return container;
+}
 
 function formatResultsClients(data) {
 
     if (data.loading)
         return data.text;
 
-    var container = $(
+    let container = $(
         `<table width="100%">
             <tr>
                 <td class="col-sm-8">
@@ -410,8 +439,7 @@ function registrationSale(currentTabId) {
         if (responseJson.state) {
 
             let nuevaVentaSpan = document.getElementById('profile-tab' + currentTabId).querySelector('span');
-            if (nuevaVentaSpan != null)
-            {
+            if (nuevaVentaSpan != null) {
                 nuevaVentaSpan.textContent = responseJson.object.saleNumber;
             }
 
@@ -467,8 +495,61 @@ document.onkeyup = function (e) {
         $('#cboSearchProduct' + id).select2('close');
         $('#btnFinalizeSaleParcial' + id).click();
         return false;
+    } else if (e.which == 120) { // F9
+        $("#modalConsultarPrecio").modal("show")
+        return false;
     }
 };
+
+function resetModaConsultarPreciol() {
+    $('#cboSearchProductConsultarPrecio').val(null).trigger('change');
+    $('#txtPrecioConsultarPrecio').val('');
+    $('#imgProductConsultarPrecio').attr('src', '');
+    $('#lblProductName').text('');
+}
+
+function funConsultarPrecio() {
+    $('#cboSearchProductConsultarPrecio').select2({
+        ajax: {
+            url: "/Sales/GetProducts",
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            delay: 250,
+            data: function (params) {
+                return {
+                    search: params.term
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data.map((item) => ({
+                        id: item.idProduct,
+                        text: item.description,
+                        brand: item.brand,
+                        category: item.idCategory,
+                        photoBase64: item.photoBase64,
+                        price: item.price,
+                        tipoVenta: item.tipoVenta
+                    }))
+                };
+            }
+        },
+        placeholder: 'Buscando producto...',
+        minimumInputLength: 2,
+        templateResult: formatResultsBuscarPrecio,
+        allowClear: true,
+        dropdownParent: $('#modalConsultarPrecio .modal-content')
+    });
+
+    $('#cboSearchProductConsultarPrecio').on('select2:select', function (e) {
+        let data = e.params.data;
+        productSelected = data;
+        $('#txtPrecioConsultarPrecio').val(data.price);
+        $('#lblProductName').text(data.text);
+        $('#imgProductConsultarPrecio').attr('src', `data:image/png;base64,${data.photoBase64}`);
+       });
+}
+
 
 $('#btn-add-tab').click(function () {
     newTab();

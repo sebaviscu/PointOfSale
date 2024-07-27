@@ -291,19 +291,22 @@ function SetTopSeler(typeValues, idCategory) {
             $("#chartTopSeller").LoadingOverlay("hide")
             return response.ok ? response.json() : Promise.reject(response);
         }).then(responseJson => {
+            if (responseJson.state) {
 
-            let d = responseJson;
-
-            const tableData = d.map(value => {
-                return (
-                    `<tr>
+                const tableData = responseJson.object.map(value => {
+                    return (
+                        `<tr>
                        <td><h3 style="color: darkgray;">${value.product}&nbsp;</h3></td>
                        <td style="text-align: right;"><h4>&nbsp;${value.quantity}</h4></td>
                     </tr>`
-                );
-            }).join('');
+                    );
+                }).join('');
 
-            tableBody.innerHTML = tableData;
+                tableBody.innerHTML = tableData;
+            }
+            else {
+                swal("Lo sentimos", "Se ha producido un error: " + responseJson.message, "error");
+            }
         })
         .catch((error) => {
             $("#chartTopSeller").LoadingOverlay("hide")

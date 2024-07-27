@@ -31,6 +31,7 @@ namespace PointOfSale.Controllers
         private readonly IProductService _productService;
         private readonly ICategoryService _categoryService;
         private readonly IAjusteService _ajusteService;
+        private readonly ILogger<AdminController> _logger;
 
         public AdminController(
             IDashBoardService dashboardService,
@@ -43,7 +44,8 @@ namespace PointOfSale.Controllers
             IPromocionService promocionService,
             IProductService productService,
             ICategoryService categoryService,
-            IAjusteService ajusteService)
+            IAjusteService ajusteService,
+            ILogger<AdminController> logger)
         {
             _dashboardService = dashboardService;
             _userService = userService;
@@ -56,6 +58,7 @@ namespace PointOfSale.Controllers
             _productService = productService;
             _categoryService = categoryService;
             _ajusteService = ajusteService;
+            _logger = logger;
         }
 
         public IActionResult DashBoard()
@@ -74,74 +77,73 @@ namespace PointOfSale.Controllers
         public async Task<IActionResult> GetSummary(TypeValuesDashboard typeValues, string dateFilter)
         {
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
-
-            var vmDashboard = new VMDashBoard();
-
-            var ejeXint = new int[0];
-            var ejeX = new string[0];
-            var dateActual = SetDate(typeValues, dateFilter);
-            DateTime dateCompare;
-            var textoFiltroDiaSemanaMes = string.Empty;
-
-            switch (typeValues)
-            {
-                case TypeValuesDashboard.Dia:
-                    dateCompare = dateActual.AddDays(-1);
-                    vmDashboard.Actual = "Hoy";
-                    vmDashboard.Anterior = "Ayer";
-                    vmDashboard.EjeXLeyenda = "Horas";
-                    textoFiltroDiaSemanaMes = dateActual.Date.ToShortDateString();
-                    break;
-
-                case TypeValuesDashboard.Semana:
-                    ejeXint = new int[7];
-                    ejeX = new string[7];
-                    dateCompare = dateActual.AddDays(-7);
-
-                    for (int i = 0; i < 7; i++)
-                    {
-                        ejeXint[i] = i + 1;
-                        ejeX[i] = ((DiasSemana)i + 1).ToString();
-                    }
-
-                    vmDashboard.Actual = "Semana actual";
-                    vmDashboard.Anterior = "Semana pasada";
-                    vmDashboard.EjeXLeyenda = "Dias";
-
-                    var weekInt = (int)dateActual.DayOfWeek != 0 ? (int)dateActual.DayOfWeek : 7;
-                    var fechaString = dateActual.AddDays(-(weekInt - 1));
-
-                    textoFiltroDiaSemanaMes = $"{fechaString.ToShortDateString()} - {fechaString.AddDays(6).ToShortDateString()}";
-                    break;
-
-                case TypeValuesDashboard.Mes:
-                    var cantDaysInMonth = DateTime.DaysInMonth(dateActual.Date.Year, dateActual.Date.Month);
-                    ejeXint = new int[cantDaysInMonth];
-                    ejeX = new string[cantDaysInMonth];
-                    dateCompare = dateActual.AddMonths(-1);
-
-                    for (int i = 0; i < cantDaysInMonth; i++)
-                    {
-                        ejeXint[i] = i;
-                        ejeX[i] = (i + 1).ToString();
-                    }
-                    vmDashboard.Actual = "Mes actual";
-                    vmDashboard.Anterior = "Mes pasado";
-                    vmDashboard.EjeXLeyenda = "Dias";
-
-                    DateTimeFormatInfo dtinfo = new CultureInfo("es-ES", false).DateTimeFormat;
-                    textoFiltroDiaSemanaMes = dtinfo.GetMonthName(dateActual.Month);
-
-                    break;
-                default:
-                    dateCompare = dateActual;
-                    break;
-            }
-
             GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
 
             try
             {
+                var vmDashboard = new VMDashBoard();
+
+                var ejeXint = new int[0];
+                var ejeX = new string[0];
+                var dateActual = SetDate(typeValues, dateFilter);
+                DateTime dateCompare;
+                var textoFiltroDiaSemanaMes = string.Empty;
+
+                switch (typeValues)
+                {
+                    case TypeValuesDashboard.Dia:
+                        dateCompare = dateActual.AddDays(-1);
+                        vmDashboard.Actual = "Hoy";
+                        vmDashboard.Anterior = "Ayer";
+                        vmDashboard.EjeXLeyenda = "Horas";
+                        textoFiltroDiaSemanaMes = dateActual.Date.ToShortDateString();
+                        break;
+
+                    case TypeValuesDashboard.Semana:
+                        ejeXint = new int[7];
+                        ejeX = new string[7];
+                        dateCompare = dateActual.AddDays(-7);
+
+                        for (int i = 0; i < 7; i++)
+                        {
+                            ejeXint[i] = i + 1;
+                            ejeX[i] = ((DiasSemana)i + 1).ToString();
+                        }
+
+                        vmDashboard.Actual = "Semana actual";
+                        vmDashboard.Anterior = "Semana pasada";
+                        vmDashboard.EjeXLeyenda = "Dias";
+
+                        var weekInt = (int)dateActual.DayOfWeek != 0 ? (int)dateActual.DayOfWeek : 7;
+                        var fechaString = dateActual.AddDays(-(weekInt - 1));
+
+                        textoFiltroDiaSemanaMes = $"{fechaString.ToShortDateString()} - {fechaString.AddDays(6).ToShortDateString()}";
+                        break;
+
+                    case TypeValuesDashboard.Mes:
+                        var cantDaysInMonth = DateTime.DaysInMonth(dateActual.Date.Year, dateActual.Date.Month);
+                        ejeXint = new int[cantDaysInMonth];
+                        ejeX = new string[cantDaysInMonth];
+                        dateCompare = dateActual.AddMonths(-1);
+
+                        for (int i = 0; i < cantDaysInMonth; i++)
+                        {
+                            ejeXint[i] = i;
+                            ejeX[i] = (i + 1).ToString();
+                        }
+                        vmDashboard.Actual = "Mes actual";
+                        vmDashboard.Anterior = "Mes pasado";
+                        vmDashboard.EjeXLeyenda = "Dias";
+
+                        DateTimeFormatInfo dtinfo = new CultureInfo("es-ES", false).DateTimeFormat;
+                        textoFiltroDiaSemanaMes = dtinfo.GetMonthName(dateActual.Month);
+
+                        break;
+                    default:
+                        dateCompare = dateActual;
+                        break;
+                }
+
                 List<VMSalesWeek> listSales = new List<VMSalesWeek>();
                 List<VMSalesWeek> listSalesComparacion = new List<VMSalesWeek>();
 
@@ -189,12 +191,12 @@ namespace PointOfSale.Controllers
         public async Task<IActionResult> GetGastosSueldos(TypeValuesDashboard typeValues, string dateFilter)
         {
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
-            var dateActual = SetDate(typeValues, dateFilter);
 
             GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
 
             try
             {
+                var dateActual = SetDate(typeValues, dateFilter);
 
                 var gastosSueldosList = new List<VMVentasPorTipoDeVenta>();
                 foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetGastosSueldos(typeValues, user.IdTienda, dateActual))
@@ -227,12 +229,12 @@ namespace PointOfSale.Controllers
         public async Task<IActionResult> GetSalesByTypoVentaByGrafico(TypeValuesDashboard typeValues, string dateFilter)
         {
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
-            var dateActual = SetDate(typeValues, dateFilter);
 
             GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
 
             try
             {
+                var dateActual = SetDate(typeValues, dateFilter);
                 var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
 
                 foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetSalesByTypoVenta(typeValues, user.IdTienda, dateActual))
@@ -262,12 +264,12 @@ namespace PointOfSale.Controllers
         public async Task<IActionResult> GetGastos(TypeValuesDashboard typeValues, string dateFilter)
         {
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
-            var dateActual = SetDate(typeValues, dateFilter);
 
             GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
 
             try
             {
+                var dateActual = SetDate(typeValues, dateFilter);
                 var gastosParticualresList = new List<VMVentasPorTipoDeVenta>();
                 foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetGastos(typeValues, user.IdTienda, dateActual))
                 {
@@ -299,12 +301,12 @@ namespace PointOfSale.Controllers
         public async Task<IActionResult> GetMovimientosProveedoresByTienda(TypeValuesDashboard typeValues, string dateFilter)
         {
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
-            var dateActual = SetDate(typeValues, dateFilter);
 
             GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
 
             try
             {
+                var dateActual = SetDate(typeValues, dateFilter);
                 var gastosProveedores = new List<VMVentasPorTipoDeVenta>();
                 var movimientosProv = await _dashboardService.GetMovimientosProveedoresByTienda(typeValues, user.IdTienda, dateActual);
                 var gastosProvTotales = movimientosProv.Sum(_ => _.Value);
@@ -371,33 +373,47 @@ namespace PointOfSale.Controllers
         public async Task<IActionResult> GetSalesByTypoVenta(TypeValuesDashboard typeValues, string idCategoria, string dateFilter)
         {
             ValidarAutorizacion(new Roles[] { Roles.Administrador });
-            var tiendaId = Convert.ToInt32(((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value);
+            var gResponse = new GenericResponse<List<VMProductsWeek>>();
 
-            var ProductListWeek = new List<VMProductsWeek>();
-            var prods = await _productService.List();
-            int i = 0;
-            var dateActual = TimeHelper.GetArgentinaTime();
-            if (dateFilter != null)
+            try
             {
-                var dateSplit = dateFilter.Split('/');
-                dateActual = new DateTime(Convert.ToInt32(dateSplit[2]), Convert.ToInt32(dateSplit[1]), Convert.ToInt32(dateSplit[0]), 0, 0, 0);
-            }
+                var tiendaId = Convert.ToInt32(((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value);
 
-            foreach (KeyValuePair<string, string?> item in await _dashboardService.ProductsTopByCategory(typeValues, idCategoria, tiendaId, dateActual))
-            {
-                var prod = prods.FirstOrDefault(_ => _.Description == item.Key);
-                if (prod != null)
+                var ProductListWeek = new List<VMProductsWeek>();
+                var prods = await _productService.List();
+                int i = 0;
+                var dateActual = TimeHelper.GetArgentinaTime();
+                if (dateFilter != null)
                 {
-                    ProductListWeek.Add(new VMProductsWeek()
-                    {
-                        Product = $"{++i}. {item.Key} ",
-                        Quantity = $" {item.Value} {(prod.TipoVenta == Model.Enum.TipoVenta.U ? "U." : prod.TipoVenta)}"
-                    });
+                    var dateSplit = dateFilter.Split('/');
+                    dateActual = new DateTime(Convert.ToInt32(dateSplit[2]), Convert.ToInt32(dateSplit[1]), Convert.ToInt32(dateSplit[0]), 0, 0, 0);
                 }
 
-            }
+                foreach (KeyValuePair<string, string?> item in await _dashboardService.ProductsTopByCategory(typeValues, idCategoria, tiendaId, dateActual))
+                {
+                    var prod = prods.FirstOrDefault(_ => _.Description == item.Key);
+                    if (prod != null)
+                    {
+                        ProductListWeek.Add(new VMProductsWeek()
+                        {
+                            Product = $"{++i}. {item.Key} ",
+                            Quantity = $" {item.Value} {(prod.TipoVenta == Model.Enum.TipoVenta.U ? "U." : prod.TipoVenta)}"
+                        });
+                    }
 
-            return StatusCode(StatusCodes.Status200OK, ProductListWeek);
+                }
+
+                gResponse.State = true;
+                gResponse.Object = ProductListWeek;
+            }
+            catch (Exception e)
+            {
+                gResponse.State = false;
+                gResponse.Message = $"GetSalesByTypoVenta: {e.Message}";
+                _logger.LogError(e, "Error al recuperar el top ventas de dashboard");
+            }
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+
         }
 
         private static List<VMSalesWeek> GetSalesComparacionWeek(DateTime fechaInicio, Dictionary<DateTime, decimal> resultados, bool semanaCompleta)
@@ -479,15 +495,40 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetRoles()
         {
-            List<VMRol> listRoles = _mapper.Map<List<VMRol>>(await _rolService.List());
-            return StatusCode(StatusCodes.Status200OK, listRoles);
+            var gResponse = new GenericResponse<List<VMRol>>();
+
+            try
+            {
+                var listRoles = _mapper.Map<List<VMRol>>(await _rolService.List());
+                gResponse.State = true;
+                gResponse.Object = listRoles;
+            }
+            catch (Exception e)
+            {
+                gResponse.State = false;
+                gResponse.Message = $"GetRoles: {e.Message}";
+                _logger.LogError(e, "Error al recuperar los roles");
+            }
+            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
+        /// <summary>
+        /// Devuelve los usuarios para un DataTable
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
-            List<VMUser> listUsers = _mapper.Map<List<VMUser>>(await _userService.List());
-            return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
+            try
+            {
+                List<VMUser> listUsers = _mapper.Map<List<VMUser>>(await _userService.List());
+                return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error al recuperar los usuarios");
+                return StatusCode(StatusCodes.Status500InternalServerError, new { data = e.Message });
+            }
         }
 
         [HttpPost]
@@ -525,6 +566,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al crear un usuarios");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -562,6 +604,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al actualizar un usuarios");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -581,6 +624,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al borrar un usuarios");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -592,6 +636,10 @@ namespace PointOfSale.Controllers
             return ValidateSesionViewOrLogin();
         }
 
+        /// <summary>
+        /// Recupero las formas de pago para DataTable
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetTipoVenta()
         {
@@ -599,12 +647,12 @@ namespace PointOfSale.Controllers
             return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetTipoVentaWeb()
-        {
-            List<VMTypeDocumentSale> listUsers = _mapper.Map<List<VMTypeDocumentSale>>(await _typeDocumentSaleService.ListWeb());
-            return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> GetTipoVentaWeb()
+        //{
+        //    List<VMTypeDocumentSale> listUsers = _mapper.Map<List<VMTypeDocumentSale>>(await _typeDocumentSaleService.ListWeb());
+        //    return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
+        //}
 
 
         [HttpPost]
@@ -624,6 +672,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al crear una forma de pago");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -650,6 +699,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al actualizar una forma de pago");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -669,6 +719,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al eliminar una forma de pago");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -681,22 +732,46 @@ namespace PointOfSale.Controllers
             return ValidateSesionViewOrLogin();
         }
 
+        /// <summary>
+        /// Recupero cliente para DataTable y select2
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetCliente()
         {
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            try
+            {
+                var listUsers = _mapper.Map<List<VMCliente>>(await _clienteService.List(user.IdTienda));
+                return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error al recuperar clientes");
+                throw;
+            }
 
-            var listUsers = _mapper.Map<List<VMCliente>>(await _clienteService.List(user.IdTienda));
-            return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
         }
 
+        /// <summary>
+        /// Recupera movimientos de cliente para DataTabe
+        /// </summary>
+        /// <param name="idCliente"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetMovimientoCliente(int idCliente)
         {
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
-
-            var listUsers = _mapper.Map<List<VMClienteMovimiento>>(await _clienteService.ListMovimientoscliente(idCliente, user.IdTienda));
-            return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
+            try
+            {
+                var listUsers = _mapper.Map<List<VMClienteMovimiento>>(await _clienteService.ListMovimientoscliente(idCliente, user.IdTienda));
+                return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error al recuperar movimientos de cliente");
+                throw;
+            }
         }
 
         [HttpPost]
@@ -719,6 +794,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al crear cliente");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -744,6 +820,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al actualizar cliente");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -763,6 +840,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al eliminar cliente");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -774,6 +852,10 @@ namespace PointOfSale.Controllers
             return ValidateSesionViewOrLogin();
         }
 
+        /// <summary>
+        /// Recupera proveedores para DataTable y Selects
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetProveedores()
         {
@@ -784,10 +866,9 @@ namespace PointOfSale.Controllers
             }
             catch (Exception e)
             {
-
+                _logger.LogError(e, "Error al recuperar proveedores");
                 throw;
             }
-
         }
 
         [HttpGet]
@@ -799,7 +880,7 @@ namespace PointOfSale.Controllers
             {
                 var listProveedor = await _proveedorService.ListConProductos(user.IdTienda);
 
-                var list =  listProveedor
+                var list = listProveedor
                     .Select(p => new Proveedor
                     {
                         IdProveedor = p.IdProveedor,
@@ -825,7 +906,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception e)
             {
-
+                _logger.LogError(e, "Error al recuperar proveedores con productos para pedido");
                 throw;
             }
 
@@ -848,6 +929,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al crear proveedor");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -875,27 +957,54 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al crear pago a proveedor");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
+        /// <summary>
+        /// Recupera movimientos de proveedor para DataTable
+        /// </summary>
+        /// <param name="idProveedor"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetMovimientoProveedor(int idProveedor)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            try
+            {
+                var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
 
-            var listUsers = _mapper.Map<List<VMProveedorMovimiento>>(await _proveedorService.ListMovimientosProveedor(idProveedor, user.IdTienda));
-            return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
+                var listUsers = _mapper.Map<List<VMProveedorMovimiento>>(await _proveedorService.ListMovimientosProveedor(idProveedor, user.IdTienda));
+                return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al recuperar pago a proveedor");
+                throw;
+            }
+
         }
 
+        /// <summary>
+        /// Recupera movimientos de proveedores para DataTable
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetAllMovimientoProveedor()
         {
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
 
-            var listUsers = _mapper.Map<List<VMProveedorMovimiento>>(await _proveedorService.ListMovimientosProveedorForTablaDinamica(user.IdTienda));
-            return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
+            try
+            {
+                var listUsers = _mapper.Map<List<VMProveedorMovimiento>>(await _proveedorService.ListMovimientosProveedorForTablaDinamica(user.IdTienda));
+                return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al recuperar pagos a proveedores");
+                throw;
+            }
         }
 
         [HttpGet]
@@ -903,8 +1012,16 @@ namespace PointOfSale.Controllers
         {
             var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
 
-            var listUsers = _mapper.Map<List<VMMovimientoProveedoresTablaDinamica>>(await _proveedorService.ListMovimientosProveedorForTablaDinamica(user.IdTienda));
-            return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
+            try
+            {
+                var listUsers = _mapper.Map<List<VMMovimientoProveedoresTablaDinamica>>(await _proveedorService.ListMovimientosProveedorForTablaDinamica(user.IdTienda));
+                return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al recuperar pagos a proveedores para tabla dinamica");
+                throw;
+            }
         }
 
         [HttpPut]
@@ -927,6 +1044,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al actualizar proveedor");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -946,6 +1064,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al eliminar proveedor");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -960,8 +1079,7 @@ namespace PointOfSale.Controllers
             var gResponse = new GenericResponse<VMProveedor>();
             try
             {
-                var user_edited = await _proveedorService.CambiarEstadoMovimiento(idMovimiento);
-
+                _ = await _proveedorService.CambiarEstadoMovimiento(idMovimiento);
 
                 gResponse.State = true;
             }
@@ -969,6 +1087,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al cambiar estado de pago de proveedor");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -994,6 +1113,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al actualizar pago de proveedor");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -1013,6 +1133,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al eliminar pago de proveedor");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -1024,18 +1145,31 @@ namespace PointOfSale.Controllers
             return ValidateSesionViewOrLogin();
         }
 
+        /// <summary>
+        /// Recupera promociones para DataTable
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetPromociones()
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
-
-            var listPromocion = _mapper.Map<List<VMPromocion>>(await _promocionService.List(user.IdTienda));
-            foreach (var p in listPromocion)
+            try
             {
-                await SetStringPromocion(p);
+                var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
 
+                var listPromocion = _mapper.Map<List<VMPromocion>>(await _promocionService.List(user.IdTienda));
+                foreach (var p in listPromocion)
+                {
+                    await SetStringPromocion(p);
+
+                }
+                return StatusCode(StatusCodes.Status200OK, new { data = listPromocion });
             }
-            return StatusCode(StatusCodes.Status200OK, new { data = listPromocion });
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al recuperar promociones");
+                throw;
+            }
+
         }
 
         private async Task SetStringPromocion(VMPromocion p)
@@ -1068,10 +1202,18 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPromocionesActivas()
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado, Roles.Empleado });
+            try
+            {
+                var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado, Roles.Empleado });
 
-            var listPromocion = _mapper.Map<List<VMPromocion>>(await _promocionService.Activas(user.IdTienda));
-            return StatusCode(StatusCodes.Status200OK, new { data = listPromocion });
+                var listPromocion = _mapper.Map<List<VMPromocion>>(await _promocionService.Activas(user.IdTienda));
+                return StatusCode(StatusCodes.Status200OK, new { data = listPromocion });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al recuperar promociones activas");
+                throw;
+            }
         }
 
         [HttpPost]
@@ -1096,6 +1238,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al crear una promociones");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -1121,6 +1264,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al actualizar una promociones");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -1140,6 +1284,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al eliminar una promociones");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -1166,6 +1311,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al cambiar estado de una promociones");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -1189,7 +1335,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception e)
             {
-
+                _logger.LogError(e, "Error al recuperarajustes");
                 throw;
             }
         }
@@ -1215,53 +1361,86 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al actualizar una ajustes");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
-
+        /// <summary>
+        /// Recupera ajustes para saber aumento web
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetAjustesProductos()
         {
-            var ajuste = await _ajusteService.Get();
-
-
-            return StatusCode(StatusCodes.Status200OK, new
+            try
             {
-                data = new
+                var ajuste = await _ajusteService.Get();
+
+
+                return StatusCode(StatusCodes.Status200OK, new
                 {
-                    AumentoWeb = ajuste.AumentoWeb.HasValue ? ajuste.AumentoWeb.Value.ToString("F0") : string.Empty
-                }
-            });
+                    data = new
+                    {
+                        AumentoWeb = ajuste.AumentoWeb.HasValue ? ajuste.AumentoWeb.Value.ToString("F0") : string.Empty
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al recuperar aumento web");
+                throw;
+            }
+
         }
 
+        /// <summary>
+        /// Recupera nombre de impresora
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetAjustesVentas()
         {
-            var ajuste = await _ajusteService.Get();
-
-            return StatusCode(StatusCodes.Status200OK, new
+            try
             {
-                data = new
+                var ajuste = await _ajusteService.Get();
+
+                return StatusCode(StatusCodes.Status200OK, new
                 {
-                    ImprimirDefault = ajuste.ImprimirDefault != null ? ajuste.ImprimirDefault : false
-                }
-            });
+                    data = new
+                    {
+                        ImprimirDefault = ajuste.ImprimirDefault != null ? ajuste.ImprimirDefault : false
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al recuperar nombre de la impresora");
+                throw;
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> ValidateSecurityCode(string encryptedCode)
         {
-            var ajuste = await _ajusteService.Get();
-
-            var codigo = ajuste.CodigoSeguridad != null ? ajuste.CodigoSeguridad : string.Empty;
-
-            if (encryptedCode == codigo)
+            try
             {
-                return Ok(new { valid = true });
+                var ajuste = await _ajusteService.Get();
+
+                var codigo = ajuste.CodigoSeguridad != null ? ajuste.CodigoSeguridad : string.Empty;
+
+                if (encryptedCode == codigo)
+                {
+                    return Ok(new { valid = true });
+                }
+                return Unauthorized(new { valid = false });
             }
-            return Unauthorized(new { valid = false });
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al validar codigo de seguridad");
+                throw;
+            }
         }
     }
 }

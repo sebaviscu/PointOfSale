@@ -211,52 +211,50 @@
             </div>
 
             <div class="modal-body">
-                <form>
-                    <div class="row" id="rowDividirPago">
-                        <div class="col-md-12 d-flex justify-content-center">
-                        </div>
-                        <div class="col-sm-12" id="formaDePagoPanel">
-                            <div class="card-body ">
-                                <div class="card shadow row">
-                                    <div class="form-row" style="padding:0px 12px 4px 12px;">
-                                        <div class="form-group col-sm-5" style="padding-top:10px">
-                                            <label for="cboTypeDocumentSaleParcial">Forma de Pago</label>
-                                            <select class="form-control form-control-sm cboFormaDePago" id="cboTypeDocumentSaleParcial" tabindex="0">
-                                            </select>
+                <div class="row" id="rowDividirPago">
+                    <div class="col-md-12 d-flex justify-content-center">
+                    </div>
+                    <div class="col-sm-12" id="formaDePagoPanel">
+                        <div class="card-body ">
+                            <div class="card shadow row">
+                                <div class="form-row" style="padding:0px 12px 4px 12px;">
+                                    <div class="form-group col-sm-5" style="padding-top:10px">
+                                        <label for="cboTypeDocumentSaleParcial">Forma de Pago</label>
+                                        <select class="form-control form-control-sm cboFormaDePago" id="cboTypeDocumentSaleParcial" tabindex="0">
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-sm-2" style="padding-top:10px">
+                                        <label for="cboFactura">Factura</label>
+                                        <select class="form-control form-control-sm" id="cboFactura" tabindex="0" disabled>
+                                            <option value="-1"></option>
+                                            <option value="0">A</option>
+                                            <option value="1">B</option>
+                                            <option value="2">C</option>
+                                            <option value="3">X</option>
+                                            <option value="4">Presu</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-sm-4" style="padding-top:10px">
+                                        <label for="txtTotalParcial">Sub Total</label>
+                                        <div class="input-group mb-3">
+                                            <input type="number" min="0" class="form-control form-control-sm text-end inputSubtotal" tabindex="-1" aria-label="Small" aria-describedby="inputGroupTotal" id="txtTotalParcial">
+                                            @*                                                 <div class="input-group-prepend">
+                                            <a class="input-group-text btn calcSubTotales" id="btnCalcSubTotales">Calc.</a>
+                                            </div> *@
                                         </div>
-                                        <div class="form-group col-sm-2" style="padding-top:10px">
-                                            <label for="cboFactura">Factura</label>
-                                            <select class="form-control form-control-sm" id="cboFactura" tabindex="0" disabled>
-                                                <option value="-1"></option>
-                                                <option value="0">A</option>
-                                                <option value="1">B</option>
-                                                <option value="2">C</option>
-                                                <option value="3">X</option>
-                                                <option value="4">Presu</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group col-sm-4" style="padding-top:10px">
-                                            <label for="txtTotalParcial">Sub Total</label>
-                                            <div class="input-group mb-3">
-                                                <input type="number" min="0" class="form-control form-control-sm text-end inputSubtotal" tabindex="-1" aria-label="Small" aria-describedby="inputGroupTotal" id="txtTotalParcial">
-                                                @*                                                 <div class="input-group-prepend">
-                                                <a class="input-group-text btn calcSubTotales" id="btnCalcSubTotales">Calc.</a>
-                                                </div> *@
-                                            </div>
 
-                                        </div>
-                                        <div class="form-group col-sm-1" style="align-self: center; text-align: end;">
-                                            <button id="btnAddNuevaFormaDePago" class="pull-right me-2 btnAddFormaDePago text-success" tabindex="-1">
-                                                <i class="mdi mdi-36px mdi-plus-circle"></i>
-                                            </button>
-                                        </div>
+                                    </div>
+                                    <div class="form-group col-sm-1" style="align-self: center; text-align: end;">
+                                        <button id="btnAddNuevaFormaDePago" class="pull-right me-2 btnAddFormaDePago text-success" tabindex="-1">
+                                            <i class="mdi mdi-36px mdi-plus-circle"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
+
                     </div>
-                </form>
+                </div>
             </div>
 
             <div class="modal-footer d-flex bd-highlight">
@@ -272,6 +270,72 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+
+<!-- Modal Consultar Precio-->
+<div class="modal fade" id="modalConsultarPrecio" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="p-2 bd-highlight">
+                    <h5 class="modal-title">Consultar Precio</h5>
+                </div>
+                <div class="p-2 bd-highlight">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    <div class="card-body" style="padding-bottom: 0px;">
+
+                        <div class="form-row">
+                            <div class="form-group col-sm-12">
+                                <select class="form-control form-control-sm" id="cboSearchProductConsultarPrecio" style="width: 100%;">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-sm-7">
+                                <img id="imgProductConsultarPrecio" style="max-width:250px;max-height: 200px;" src="" class="rounded mx-auto d-block" alt="Photo Product">
+                            </div>
+                            <div class="offset-col-1 col-md-4">
+                                <div class="form-group">
+                                    <div class="form-group">
+                                        <label id="lblProductName" class="font-weight-bold"></label>
+                                    </div>
+                                    <label for="txtImporteEstimado">Precio</label>
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">$</span>
+                                        </div>
+                                        <input type="text" class="form-control" id="txtPrecioConsultarPrecio" name="Importe Estimado" disabled>
+                                    </div>
+                                </div>
+
+ @*                                <div class="form-group">
+                                    <label for="cboTypeDocumentSaleParcial">Promociones</label>
+
+                                </div> *@
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer d-flex bd-highlight">
+                <div class="bd-highlight">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" tabindex="-1">Cerrar</button>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 

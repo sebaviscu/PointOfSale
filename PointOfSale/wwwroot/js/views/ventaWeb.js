@@ -208,7 +208,6 @@ const openModal = (model = BASIC_MODEL) => {
 
     $('#modalData').on('shown.bs.modal', function () {
         select2Modal();
-        //$('#cboSearchProduct').select2('open');
     });
 
     $('#cboSearchProduct').on('select2:select', function (e) {

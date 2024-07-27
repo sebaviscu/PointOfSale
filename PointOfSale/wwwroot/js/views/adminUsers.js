@@ -23,13 +23,18 @@ $(document).ready(function () {
         .then(response => {
             return response.ok ? response.json() : Promise.reject(response);
         }).then(responseJson => {
+            if (responseJson.state) {
 
-            if (responseJson.length > 0) {
-                responseJson.forEach((item) => {
-                    $("#cboRol").append(
-                        $("<option>").val(item.idRol).text(item.description)
-                    )
-                });
+                if (responseJson.length > 0) {
+                    responseJson.forEach((item) => {
+                        $("#cboRol").append(
+                            $("<option>").val(item.idRol).text(item.description)
+                        )
+                    });
+                }
+            }
+            else {
+                swal("Lo sentimos", "Se ha producido un error: " + responseJson.message, "error");
             }
         })
 
@@ -162,10 +167,10 @@ $("#btnSave").on("click", function () {
         return;
     }
     else
-    if (rol === '1' &&  tienda !== '-1') {
-        toastr.warning("No se debe seleccionar tienda para un Administrador", "");
-        return;
-    }
+        if (rol === '1' && tienda !== '-1') {
+            toastr.warning("No se debe seleccionar tienda para un Administrador", "");
+            return;
+        }
 
     const model = structuredClone(BASIC_MODEL);
     model["idUsers"] = parseInt($("#txtId").val());
