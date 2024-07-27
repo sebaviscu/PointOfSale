@@ -21,7 +21,7 @@ namespace PointOfSale.Controllers
 
         public IActionResult Notification()
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            ValidarAutorizacion([Roles.Administrador]);
             return ValidateSesionViewOrLogin();
         }
 
@@ -64,7 +64,7 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateNotificacion(int idNotificacion)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var user = ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMNotifications> gResponse = new GenericResponse<VMNotifications>();
             try
@@ -87,7 +87,7 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> LimpiarTodoNotificacion()
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var user = ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMNotifications> gResponse = new GenericResponse<VMNotifications>();
             try

@@ -47,7 +47,7 @@ namespace PointOfSale.Controllers
                 return ValidateSesionViewOrLogin();
             }
 
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             var prodsDictionary = await _productService.ProductsTopByCategory(idCategoria, startDate, endDate, user.IdTienda);
             var idsProducts = prodsDictionary.Select(_ => _.Key).ToList();
@@ -86,7 +86,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetFechasReporteIva()
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var user = ValidarAutorizacion([Roles.Administrador]);
 
             var fechas = _ivaService.GetDatesFilterList(user.IdTienda);
 
@@ -101,7 +101,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetIvaReport(TipoIvaReport idTipoIva, string date)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var user = ValidarAutorizacion([Roles.Administrador]);
             GenericResponse<List<VMLibroIvaTotalOutput>> gResponse = new GenericResponse<List<VMLibroIvaTotalOutput>>();
 
             var splitDate = date.Split('-');

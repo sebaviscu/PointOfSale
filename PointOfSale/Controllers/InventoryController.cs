@@ -35,18 +35,18 @@ namespace PointOfSale.Controllers
 
         public IActionResult Categories()
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
             return ValidateSesionViewOrLogin();
         }
 
         public IActionResult Products()
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
             return ValidateSesionViewOrLogin();
         }
         public IActionResult Stock()
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
             return ValidateSesionViewOrLogin();
         }
 
@@ -61,7 +61,7 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCategory([FromBody] VMCategory model)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<VMCategory> gResponse = new GenericResponse<VMCategory>();
             try
@@ -85,7 +85,7 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateCategory([FromBody] VMCategory model)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<VMCategory> gResponse = new GenericResponse<VMCategory>();
             try
@@ -112,7 +112,7 @@ namespace PointOfSale.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteCategory(int idCategory)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<string> gResponse = new GenericResponse<string>();
             try
@@ -131,7 +131,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetStocks()
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             List<VMStock> vmCategoryList = _mapper.Map<List<VMStock>>(await _productService.ListStock(user.IdTienda));
             return StatusCode(StatusCodes.Status200OK, new { data = vmCategoryList });
@@ -169,7 +169,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProduct(int idProduct)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             try
             {
@@ -194,7 +194,7 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProduct([FromForm] IFormFile photo, [FromForm] string model, [FromForm] string vencimientos)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<VMProduct> gResponse = new GenericResponse<VMProduct>();
             try
@@ -266,7 +266,7 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> EditProduct([FromForm] IFormFile photo, [FromForm] string model, [FromForm] string vencimientos)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<VMProduct> gResponse = new GenericResponse<VMProduct>();
             try
@@ -338,7 +338,7 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> EditMassiveProducts([FromBody] EditeMassiveProducts data)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<VMProduct> gResponse = new GenericResponse<VMProduct>();
             try
@@ -367,7 +367,7 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> EditMassiveProductsForTable([FromBody] List<EditeMassiveProductsTable> data)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<VMProduct> gResponse = new GenericResponse<VMProduct>();
             try
@@ -388,7 +388,7 @@ namespace PointOfSale.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteProduct(int IdProduct)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<string> gResponse = new GenericResponse<string>();
             try
@@ -441,7 +441,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetVencimientos()
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado, Roles.Empleado });
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
 
             List<VMVencimiento> vmVencimientos = _mapper.Map<List<VMVencimiento>>(await _productService.GetProximosVencimientos(user.IdTienda));
             return StatusCode(StatusCodes.Status200OK, new { data = vmVencimientos.OrderBy(_ => _.Estado).ThenBy(_ => _.FechaVencimiento) });
@@ -450,7 +450,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> CargarProductosAsync(string path)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<List<VMProduct>> gResponse = new GenericResponse<List<VMProduct>>();
             try
@@ -475,7 +475,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> ImportarProductosAsync(string path)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<List<VMProduct>> gResponse = new GenericResponse<List<VMProduct>>();
             try
@@ -512,7 +512,7 @@ namespace PointOfSale.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteVencimiento(int idVencimiento)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<string> gResponse = new GenericResponse<string>();
             try

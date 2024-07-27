@@ -63,20 +63,20 @@ namespace PointOfSale.Controllers
 
         public IActionResult DashBoard()
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            ValidarAutorizacion([Roles.Administrador]);
             return ValidateSesionViewOrLogin();
         }
 
         public IActionResult Users()
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            ValidarAutorizacion([Roles.Administrador]);
             return ValidateSesionViewOrLogin();
         }
 
         [HttpGet]
         public async Task<IActionResult> GetSummary(TypeValuesDashboard typeValues, string dateFilter)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var user = ValidarAutorizacion([Roles.Administrador]);
             GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
 
             try
@@ -190,7 +190,7 @@ namespace PointOfSale.Controllers
 
         public async Task<IActionResult> GetGastosSueldos(TypeValuesDashboard typeValues, string dateFilter)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var user = ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
 
@@ -228,7 +228,7 @@ namespace PointOfSale.Controllers
 
         public async Task<IActionResult> GetSalesByTypoVentaByGrafico(TypeValuesDashboard typeValues, string dateFilter)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var user = ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
 
@@ -263,7 +263,7 @@ namespace PointOfSale.Controllers
 
         public async Task<IActionResult> GetGastos(TypeValuesDashboard typeValues, string dateFilter)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var user = ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
 
@@ -300,7 +300,7 @@ namespace PointOfSale.Controllers
 
         public async Task<IActionResult> GetMovimientosProveedoresByTienda(TypeValuesDashboard typeValues, string dateFilter)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var user = ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
 
@@ -372,7 +372,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetSalesByTypoVenta(TypeValuesDashboard typeValues, string idCategoria, string dateFilter)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            ValidarAutorizacion([Roles.Administrador]);
             var gResponse = new GenericResponse<List<VMProductsWeek>>();
 
             try
@@ -534,7 +534,7 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromForm] IFormFile photo, [FromForm] string model)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var user = ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMUser> gResponse = new GenericResponse<VMUser>();
             try
@@ -575,7 +575,7 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateUser([FromForm] IFormFile photo, [FromForm] string model)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<VMUser> gResponse = new GenericResponse<VMUser>();
             try
@@ -613,7 +613,7 @@ namespace PointOfSale.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteUser(int IdUser)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<string> gResponse = new GenericResponse<string>();
             try
@@ -632,7 +632,7 @@ namespace PointOfSale.Controllers
 
         public IActionResult TipoVenta()
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            ValidarAutorizacion([Roles.Administrador]);
             return ValidateSesionViewOrLogin();
         }
 
@@ -681,13 +681,11 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateTipoVenta([FromBody] VMTypeDocumentSale vmUser)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<VMTypeDocumentSale> gResponse = new GenericResponse<VMTypeDocumentSale>();
             try
             {
-                //VMTypeDocumentSale vmUser = JsonConvert.DeserializeObject<VMTypeDocumentSale>(model);
-
                 TypeDocumentSale user_edited = await _typeDocumentSaleService.Edit(_mapper.Map<TypeDocumentSale>(vmUser));
 
                 vmUser = _mapper.Map<VMTypeDocumentSale>(user_edited);
@@ -708,7 +706,7 @@ namespace PointOfSale.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteTipoVenta(int idTypeDocumentSale)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<string> gResponse = new GenericResponse<string>();
             try
@@ -728,7 +726,7 @@ namespace PointOfSale.Controllers
 
         public IActionResult Cliente()
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            ValidarAutorizacion([Roles.Administrador]);
             return ValidateSesionViewOrLogin();
         }
 
@@ -739,7 +737,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCliente()
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var user = ValidarAutorizacion([Roles.Administrador]);
             try
             {
                 var listUsers = _mapper.Map<List<VMCliente>>(await _clienteService.List(user.IdTienda));
@@ -761,7 +759,12 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetMovimientoCliente(int idCliente)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            if (!ModelState.IsValid)
+            {
+                return View(idCliente);
+            }
+
+            var user = ValidarAutorizacion([Roles.Administrador]);
             try
             {
                 var listUsers = _mapper.Map<List<VMClienteMovimiento>>(await _clienteService.ListMovimientoscliente(idCliente, user.IdTienda));
@@ -777,7 +780,12 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCliente([FromBody] VMCliente model)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = ValidarAutorizacion([Roles.Administrador]);
 
             var gResponse = new GenericResponse<VMCliente>();
             try
@@ -803,7 +811,12 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateCliente([FromBody] VMCliente vmUser)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            if (!ModelState.IsValid)
+            {
+                return View(vmUser);
+            }
+
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             var gResponse = new GenericResponse<VMCliente>();
             try
@@ -829,7 +842,12 @@ namespace PointOfSale.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteCliente(int idCliente)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            if (!ModelState.IsValid)
+            {
+                return View(idCliente);
+            }
+
+            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             var gResponse = new GenericResponse<string>();
             try
@@ -848,7 +866,7 @@ namespace PointOfSale.Controllers
 
         public IActionResult Proveedor()
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            ValidarAutorizacion([Roles.Administrador]);
             return ValidateSesionViewOrLogin();
         }
 
@@ -874,7 +892,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProveedoresConProductos()
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             try
             {
@@ -915,6 +933,11 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProveedor([FromBody] VMProveedor model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
             var gResponse = new GenericResponse<VMProveedor>();
             try
             {
@@ -938,7 +961,12 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> RegistrarPagoProveedor([FromBody] VMProveedorMovimiento model)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             var gResponse = new GenericResponse<VMProveedorMovimiento>();
             try
@@ -971,9 +999,14 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetMovimientoProveedor(int idProveedor)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(idProveedor);
+            }
+
             try
             {
-                var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+                var user = ValidarAutorizacion([Roles.Administrador]);
 
                 var listUsers = _mapper.Map<List<VMProveedorMovimiento>>(await _proveedorService.ListMovimientosProveedor(idProveedor, user.IdTienda));
                 return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
@@ -993,7 +1026,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllMovimientoProveedor()
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var user = ValidarAutorizacion([Roles.Administrador]);
 
             try
             {
@@ -1010,7 +1043,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProveedorTablaDinamica()
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var user = ValidarAutorizacion([Roles.Administrador]);
 
             try
             {
@@ -1027,7 +1060,12 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateProveedor([FromBody] VMProveedor vmUser)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            if (!ModelState.IsValid)
+            {
+                return View(vmUser);
+            }
+
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             var gResponse = new GenericResponse<VMProveedor>();
             try
@@ -1053,7 +1091,12 @@ namespace PointOfSale.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteProveedor(int idProveedor)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            if (!ModelState.IsValid)
+            {
+                return View(idProveedor);
+            }
+
+            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             var gResponse = new GenericResponse<string>();
             try
@@ -1074,7 +1117,12 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> CambioEstadoPagoProveedor(int idMovimiento)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            if (!ModelState.IsValid)
+            {
+                return View(idMovimiento);
+            }
+
+            ValidarAutorizacion([Roles.Administrador]);
 
             var gResponse = new GenericResponse<VMProveedor>();
             try
@@ -1096,7 +1144,12 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdatePagoProveedor([FromBody] VMProveedorMovimiento vmUser)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            if (!ModelState.IsValid)
+            {
+                return View(vmUser);
+            }
+
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             var gResponse = new GenericResponse<VMProveedorMovimiento>();
             try
@@ -1122,7 +1175,12 @@ namespace PointOfSale.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeletePagoProveedor(int idPagoProveedor)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            if (!ModelState.IsValid)
+            {
+                return View(idPagoProveedor);
+            }
+
+            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             var gResponse = new GenericResponse<string>();
             try
@@ -1141,7 +1199,7 @@ namespace PointOfSale.Controllers
 
         public IActionResult Promociones()
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
             return ValidateSesionViewOrLogin();
         }
 
@@ -1154,7 +1212,7 @@ namespace PointOfSale.Controllers
         {
             try
             {
-                var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
                 var listPromocion = _mapper.Map<List<VMPromocion>>(await _promocionService.List(user.IdTienda));
                 foreach (var p in listPromocion)
@@ -1204,7 +1262,7 @@ namespace PointOfSale.Controllers
         {
             try
             {
-                var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado, Roles.Empleado });
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
 
                 var listPromocion = _mapper.Map<List<VMPromocion>>(await _promocionService.Activas(user.IdTienda));
                 return StatusCode(StatusCodes.Status200OK, new { data = listPromocion });
@@ -1219,7 +1277,12 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePromociones([FromBody] VMPromocion model)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             var gResponse = new GenericResponse<VMPromocion>();
             try
@@ -1247,7 +1310,12 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdatePromociones([FromBody] VMPromocion vmUser)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            if (!ModelState.IsValid)
+            {
+                return View(vmUser);
+            }
+
+            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             var gResponse = new GenericResponse<VMPromocion>();
             try
@@ -1273,7 +1341,12 @@ namespace PointOfSale.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeletePromociones(int idPromocion)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            if (!ModelState.IsValid)
+            {
+                return View(idPromocion);
+            }
+
+            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             var gResponse = new GenericResponse<string>();
             try
@@ -1294,7 +1367,12 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> CambiarEstadoPromocion(int idPromocion)
         {
-            var resp = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            if (!ModelState.IsValid)
+            {
+                return View(idPromocion);
+            }
+
+            var resp = ValidarAutorizacion([Roles.Administrador]);
 
             var gResponse = new GenericResponse<VMPromocion>();
             try
@@ -1320,7 +1398,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> Ajuste()
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            ValidarAutorizacion([Roles.Administrador]);
             return ValidateSesionViewOrLogin();
         }
 
@@ -1343,7 +1421,12 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateAjuste([FromBody] VMAjustes model)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMAjustes> gResponse = new GenericResponse<VMAjustes>();
             try
@@ -1424,6 +1507,11 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> ValidateSecurityCode(string encryptedCode)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(encryptedCode);
+            }
+
             try
             {
                 var ajuste = await _ajusteService.Get();

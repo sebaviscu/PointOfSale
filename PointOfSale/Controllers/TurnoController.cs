@@ -35,7 +35,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTurnos()
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var user = ValidarAutorizacion([Roles.Administrador]);
             List<VMTurno> VMTurnoList = _mapper.Map<List<VMTurno>>(await _turnoService.List(user.IdTienda));
             return StatusCode(StatusCodes.Status200OK, new { data = VMTurnoList });
         }
@@ -43,7 +43,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTurnoActual()
         {
-            //ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            //ValidarAutorizacion([Roles.Administrador]);
             var tiendaId = Convert.ToInt32(((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value);
 
             var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurnoActualConVentas(tiendaId));
@@ -66,7 +66,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTurno(int idturno)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            ValidarAutorizacion([Roles.Administrador]);
             var tiendaId = Convert.ToInt32(((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value);
 
             var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurno(idturno));
@@ -89,7 +89,7 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> CerrarTurno([FromBody] VMSaveTurno modelTurno)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado, Roles.Empleado });
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
 
             var model = _mapper.Map<VMTurno>(await _turnoService.GetTurnoActual(user.IdTienda));
 
@@ -121,7 +121,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetOneTurno(int idTurno)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            ValidarAutorizacion([Roles.Administrador]);
             var tiendaId = Convert.ToInt32(((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value);
 
             var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurno(idTurno));
@@ -143,7 +143,7 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] VMTurno VMTurno)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var user = ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMTurno> gResponse = new GenericResponse<VMTurno>();
             try

@@ -24,7 +24,7 @@ namespace PointOfSale.Controllers
 
         public IActionResult Pedido()
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
             return ValidateSesionViewOrLogin();
         }
 
@@ -33,7 +33,7 @@ namespace PointOfSale.Controllers
         {
             try
             {
-                var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
                 var list = await _pedidoService.List(user.IdTienda);
 
                 List<VMPedido> vmPedidoList = _mapper.Map<List<VMPedido>>(list);
@@ -50,7 +50,7 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePedido([FromBody] VMPedido model)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<VMPedido> gResponse = new GenericResponse<VMPedido>();
             try
@@ -78,7 +78,7 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdatePedidos([FromBody] VMPedido model)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var user = ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMPedido> gResponse = new GenericResponse<VMPedido>();
             try
@@ -104,7 +104,7 @@ namespace PointOfSale.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeletePedido(int idPedido)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<string> gResponse = new GenericResponse<string>();
             try
@@ -124,7 +124,7 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> CerrarPedidos([FromBody] VMPedido model)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var user = ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMPedido> gResponse = new GenericResponse<VMPedido>();
             try

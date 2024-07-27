@@ -25,8 +25,8 @@ $(document).ready(function () {
         }).then(responseJson => {
             if (responseJson.state) {
 
-                if (responseJson.length > 0) {
-                    responseJson.forEach((item) => {
+                if (responseJson.object.length > 0) {
+                    responseJson.object.forEach((item) => {
                         $("#cboRol").append(
                             $("<option>").val(item.idRol).text(item.description)
                         )

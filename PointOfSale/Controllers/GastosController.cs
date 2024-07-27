@@ -14,32 +14,46 @@ namespace PointOfSale.Controllers
     {
         private readonly IGastosService _GastosService;
         private readonly IMapper _mapper;
-        public GastosController(IGastosService GastosService, IMapper mapper)
+        private readonly ILogger<GastosController> _logger;
+
+        public GastosController(IGastosService GastosService, IMapper mapper, ILogger<GastosController> logger)
         {
             _GastosService = GastosService;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public IActionResult Gastos()
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            ValidarAutorizacion([Roles.Administrador]);
             return ValidateSesionViewOrLogin();
         }
 
+        /// <summary>
+        /// Recupera gastos para DataTable
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetGastos()
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador]);
 
-            List<VMGastos> vmGastosList = _mapper.Map<List<VMGastos>>(await _GastosService.List(user.IdTienda));
-            return StatusCode(StatusCodes.Status200OK, new { data = vmGastosList });
-
+                List<VMGastos> vmGastosList = _mapper.Map<List<VMGastos>>(await _GastosService.List(user.IdTienda));
+                return StatusCode(StatusCodes.Status200OK, new { data = vmGastosList });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error al recuperar gastos");
+                throw;
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateGastos([FromBody] VMGastos model)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var user = ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMGastos> gResponse = new GenericResponse<VMGastos>();
             try
@@ -59,6 +73,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al crear gastos");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -67,7 +82,7 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateGastos([FromBody] VMGastos model)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var user = ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMGastos> gResponse = new GenericResponse<VMGastos>();
             try
@@ -86,6 +101,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al actualizar gastos");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -95,7 +111,7 @@ namespace PointOfSale.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteGastos(int idGastos)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<string> gResponse = new GenericResponse<string>();
             try
@@ -106,23 +122,36 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al eliminar gastos");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
-
+        /// <summary>
+        /// Recupera tipo de gastos para Selects
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetTipoDeGasto()
         {
-            List<VMTipoDeGasto> vmGastosList = _mapper.Map<List<VMTipoDeGasto>>(await _GastosService.ListTipoDeGasto());
-            return StatusCode(StatusCodes.Status200OK, new { data = vmGastosList });
+            try
+            {
+                List<VMTipoDeGasto> vmGastosList = _mapper.Map<List<VMTipoDeGasto>>(await _GastosService.ListTipoDeGasto());
+                return StatusCode(StatusCodes.Status200OK, new { data = vmGastosList });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error al recuperar tipo de gastos");
+                throw;
+            }
+
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateTipoDeGastos([FromBody] VMTipoDeGasto model)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMTipoDeGasto> gResponse = new GenericResponse<VMTipoDeGasto>();
             try
@@ -138,6 +167,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al crear tipo de gastos");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -146,7 +176,7 @@ namespace PointOfSale.Controllers
         //[HttpPut]
         //public async Task<IActionResult> UpdateGastos([FromBody] VMGastos model)
         //{
-        //    var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+        //    var user = ValidarAutorizacion([Roles.Administrador]);
 
         //    GenericResponse<VMGastos> gResponse = new GenericResponse<VMGastos>();
         //    try
@@ -173,7 +203,7 @@ namespace PointOfSale.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteTipoDeGastos(int IdTipoGastoss)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<string> gResponse = new GenericResponse<string>();
             try
@@ -184,6 +214,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al eliminar gastos");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -195,13 +226,13 @@ namespace PointOfSale.Controllers
         {
             try
             {
-
-                var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+                var user = ValidarAutorizacion([Roles.Administrador]);
                 var listUsers = _mapper.Map<List<VMGastosTablaDinamica>>(await _GastosService.ListGastosForTablaDinamica(user.IdTienda));
                 return StatusCode(StatusCodes.Status200OK, new { data = listUsers.OrderByDescending(_ => _.RegistrationUser).ThenByDescending(_ => _.Gasto).ThenByDescending(_ => _.Tipo_Gasto) });
             }
             catch (Exception e)
             {
+                _logger.LogError(e, "Error al recuperar gastos para tabla dinamica");
                 return StatusCode(StatusCodes.Status500InternalServerError, new { error = e.ToString() });
             }
         }

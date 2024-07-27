@@ -22,7 +22,7 @@ namespace PointOfSale.Controllers
 
         public IActionResult Tienda()
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            ValidarAutorizacion([Roles.Administrador]);
             return ValidateSesionViewOrLogin();
         }
 
@@ -43,7 +43,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetOneTienda()
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var user = ValidarAutorizacion([Roles.Administrador]);
 
             var tienda = _mapper.Map<VMTienda>(await _TiendaService.Get(user.IdTienda));
             return StatusCode(StatusCodes.Status200OK, new { data = tienda });
@@ -52,7 +52,7 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateTienda(/*[FromForm] IFormFile photo,*/ [FromBody] VMTienda vmTienda)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMTienda> gResponse = new GenericResponse<VMTienda>();
             try
@@ -90,7 +90,7 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateTienda([FromBody] VMTienda vmTienda)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            var user = ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMTienda> gResponse = new GenericResponse<VMTienda>();
             try
@@ -141,7 +141,7 @@ namespace PointOfSale.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteTienda(int idTienda)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador });
+            ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<string> gResponse = new GenericResponse<string>();
             try

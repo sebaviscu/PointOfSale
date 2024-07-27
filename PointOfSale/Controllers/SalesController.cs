@@ -51,7 +51,7 @@ namespace PointOfSale.Controllers
         }
         public IActionResult NewSale()
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado, Roles.Empleado });
+            ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
             return ValidateSesionViewOrLogin();
         }
 
@@ -97,7 +97,7 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> RegisterSale([FromBody] VMSale model)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado, Roles.Empleado });
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
             var nombreImpresora = string.Empty;
             var ticket = string.Empty;
 
@@ -184,7 +184,7 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> RegisterNoCierreSale([FromBody] VMSale model)
         {
-            var user = ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado, Roles.Empleado });
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
 
             GenericResponse<VMSale> gResponse = new GenericResponse<VMSale>();
             try
@@ -226,7 +226,7 @@ namespace PointOfSale.Controllers
         {
             try
             {
-                var user = ValidarAutorizacion(new Roles[] { Roles.Administrador });
+                var user = ValidarAutorizacion([Roles.Administrador]);
 
                 List<VMSale> vmHistorySale = _mapper.Map<List<VMSale>>(await _saleService.SaleHistory(saleNumber, startDate, endDate, presupuestos));
 
@@ -314,7 +314,7 @@ namespace PointOfSale.Controllers
 
         public async Task<IActionResult> UpstatSale(int idSale, int formaPago)
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Encargado });
+            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             var sale = await _saleService.Edit(idSale, formaPago);
 
