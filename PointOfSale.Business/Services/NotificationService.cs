@@ -28,21 +28,12 @@ namespace PointOfSale.Business.Services
 
         public async Task<Notifications> Save(Notifications notifications)
         {
-            try
-            {
-                notifications.RegistrationDate = TimeHelper.GetArgentinaTime();
-                var not = await _repository.Add(notifications);
-                if (not.IdNotifications == 0)
-                    throw new TaskCanceledException("La Notificacion no se pudo crear.");
+            notifications.RegistrationDate = TimeHelper.GetArgentinaTime();
+            var not = await _repository.Add(notifications);
+            if (not.IdNotifications == 0)
+                throw new TaskCanceledException("La Notificacion no se pudo crear.");
 
-                return not;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-
+            return not;
         }
 
         public async Task<Notifications> Edit(int idNotificacion, string modificationUser)

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Model
 {
@@ -16,12 +17,11 @@ namespace PointOfSale.Model
 
         public Notifications(Product product)
         {
-            var proveedor = product.Proveedor != null ? "(" + product.Proveedor.Nombre + ") " : string.Empty;
-
-            Descripcion = $"{product.Description} {proveedor} llegó al minimo de stock.";
+            Descripcion = $"{product.Description} llegó al minimo de stock.";
             IsActive = true;
             RegistrationDate = TimeHelper.GetArgentinaTime();
-            Accion = "/Inventory/Products";
+            Accion = "/Inventory/Stock";
+            Rols = $"{(int)Roles.Administrador},{(int)Roles.Encargado}";
         }
 
         public Notifications(VentaWeb sale)
@@ -30,6 +30,7 @@ namespace PointOfSale.Model
             IsActive = true;
             RegistrationDate = TimeHelper.GetArgentinaTime();
             Accion = "/Shop/VentaWeb";
+            Rols = $"{(int)Roles.Administrador},{(int)Roles.Encargado},{(int)Roles.Empleado}";
         }
 
         public Notifications(Vencimiento vencimiento)
@@ -37,7 +38,8 @@ namespace PointOfSale.Model
             Descripcion = $"Se ha llegado a la fecha de Vencimiento del Producto {vencimiento.Producto.Description}.";
             IsActive = true;
             RegistrationDate = TimeHelper.GetArgentinaTime();
-            Accion = "/Inventory/Products";
+            Accion = "/Inventory/Stock";
+            Rols = $"{(int)Roles.Administrador},{(int)Roles.Encargado}";
         }
 
         public int IdNotifications { get; set; }
@@ -47,5 +49,6 @@ namespace PointOfSale.Model
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }
         public string? Accion { get; set; }
+        public string Rols { get; set; }
     }
 }

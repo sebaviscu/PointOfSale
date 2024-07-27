@@ -6,29 +6,40 @@
         fetch("/Notification/LimpiarTodoNotificacion", {
             method: "PUT",
             headers: { 'Content-Type': 'application/json;charset=utf-8' }
-        }).then(response => {
-            $(".dropdown-menu .dropdown-header").remove();
-            $("#listaNotificaciones").remove();
+        }).then(responseJson => {
+            if (responseJson.state) {
+                $(".dropdown-menu .dropdown-header").remove();
+                $("#listaNotificaciones").remove();
+
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
         }).catch((error) => {
         })
     })
 
 
     $(".notificacion").on("click", function () {
+        if ($(this).attr('accion') != '') {
 
-        fetch(`/Notification/UpdateNotificacion?idNotificacion=${$(this)[0].id}`, {
-            method: "PUT",
-            headers: { 'Content-Type': 'application/json;charset=utf-8' }
-        })
-            .then(response => {
-                return response.ok ? response.json() : Promise.reject(response);
-            }).then(responseJson => {
-
-                window.location.href = responseJson.object.accion;
-
-            }).catch((error) => {
-                $("#modalDataTurno").find("div.modal-content").LoadingOverlay("hide")
+            fetch(`/Notification/UpdateNotificacion?idNotificacion=${$(this)[0].id}`, {
+                method: "PUT",
+                headers: { 'Content-Type': 'application/json;charset=utf-8' }
             })
+                .then(response => {
+                    return response.ok ? response.json() : Promise.reject(response);
+                }).then(responseJson => {
+                    if (responseJson.state) {
+                        window.location.href = responseJson.object.accion;
+
+                    } else {
+                        swal("Lo sentimos", responseJson.message, "error");
+                    }
+
+                }).catch((error) => {
+                    $("#modalDataTurno").find("div.modal-content").LoadingOverlay("hide")
+                })
+        }
     })
 });
 

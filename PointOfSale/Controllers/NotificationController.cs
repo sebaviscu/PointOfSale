@@ -12,11 +12,13 @@ namespace PointOfSale.Controllers
     {
         private readonly INotificationService _notificationService;
         private readonly IMapper _mapper;
+        private readonly ILogger<NotificationController> _logger;
 
-        public NotificationController(INotificationService notificationService, IMapper mapper)
+        public NotificationController(INotificationService notificationService, IMapper mapper, ILogger<NotificationController> logger)
         {
             _notificationService = notificationService;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public IActionResult Notification()
@@ -64,11 +66,11 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateNotificacion(int idNotificacion)
         {
-            var user = ValidarAutorizacion([Roles.Administrador]);
-
             GenericResponse<VMNotifications> gResponse = new GenericResponse<VMNotifications>();
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
                 Notifications edited_Notifications = await _notificationService.Edit(idNotificacion, user.UserName);
 
                 var model = _mapper.Map<VMNotifications>(edited_Notifications);
@@ -87,14 +89,14 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> LimpiarTodoNotificacion()
         {
-            var user = ValidarAutorizacion([Roles.Administrador]);
-
             GenericResponse<VMNotifications> gResponse = new GenericResponse<VMNotifications>();
+
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador]);
                 var result = await _notificationService.LimpiarTodo(user.UserName);
 
-
+                gResponse.State = true;
                 gResponse.State = result;
             }
             catch (Exception ex)

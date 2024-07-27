@@ -55,6 +55,8 @@ create table Rol(
 [isActive] bit,
 [registrationDate] datetime default getdate()
 )
+
+select * from rol
  go
  
  create table RolMenu(
@@ -338,6 +340,7 @@ idNotifications int primary key identity(1,1),
 descripcion varchar(100) not null,
 [isActive] bit not null,
 accion varchar(100) null,
+[rols] varchar(20) not null,
 registrationDate [datetime] not null,
 [modificationDate] [datetime] null,
 [modificationUser] varchar(50) null

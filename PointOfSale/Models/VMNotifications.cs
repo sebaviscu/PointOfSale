@@ -14,5 +14,6 @@
 
         public string? ModificationUser { get; set; }
         public string? Accion { get; set; }
+        public string Rols { get; set; }
     }
 }

@@ -4,7 +4,7 @@
     Layout = null;
 }
 
-@section StylesPOS{
+@section StylesPOS {
 
     <link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
     <link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
@@ -22,7 +22,7 @@
             {
                 <li class="dropdown-header" style="padding: 5px;width: max-content;margin: 0;">
                     <div class="d-inline-block">
-                        <a class="notificacion" id="@n.IdNotifications" href="#">
+                        <a class="notificacion" id="@n.IdNotifications" accion="@n.Accion" href="#">
                             @n.Descripcion
                             <small class="pt-1">@n.RegistrationDate</small>
                         </a>
@@ -30,17 +30,20 @@
                     </div>
                 </li>
             }
-            <li style="padding: 5px;width: max-content;margin: 0;">
-                <a id="limpiarNotificaciones" href="#">
-                    <i class="mdi mdi-delete"></i>Limpiar todo
-                </a >
-            </li>
+            @if (ViewData["userRol"] != null && (Convert.ToInt32(ViewData["userRol"]) == 1))
+            {
+                <li style="padding: 5px;width: max-content;margin: 0;">
+                    <a id="limpiarNotificaciones" href="#">
+                        <i class="mdi mdi-delete"></i>Limpiar todo
+                    </a>
+                </li>
+            }
         </ul>
     </ul>
 }
 
 
-@section Scripts{
+@section Scripts {
     <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
     <script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
     <script src="~/plugins/data-tables/datatables.responsive.min.js"></script>

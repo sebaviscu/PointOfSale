@@ -76,11 +76,12 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetSummary(TypeValuesDashboard typeValues, string dateFilter)
         {
-            var user = ValidarAutorizacion([Roles.Administrador]);
             GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
 
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador]);
+
                 var vmDashboard = new VMDashBoard();
 
                 var ejeXint = new int[0];
@@ -182,6 +183,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al recuperar los datos del dashboard");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -190,12 +192,13 @@ namespace PointOfSale.Controllers
 
         public async Task<IActionResult> GetGastosSueldos(TypeValuesDashboard typeValues, string dateFilter)
         {
-            var user = ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
 
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador]);
+
                 var dateActual = SetDate(typeValues, dateFilter);
 
                 var gastosSueldosList = new List<VMVentasPorTipoDeVenta>();
@@ -221,6 +224,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al recuperar los datos de sueldos");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -228,12 +232,13 @@ namespace PointOfSale.Controllers
 
         public async Task<IActionResult> GetSalesByTypoVentaByGrafico(TypeValuesDashboard typeValues, string dateFilter)
         {
-            var user = ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
 
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador]);
+
                 var dateActual = SetDate(typeValues, dateFilter);
                 var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
 
@@ -256,6 +261,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al recuperar los datos de ventas por forma de pago");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -263,12 +269,13 @@ namespace PointOfSale.Controllers
 
         public async Task<IActionResult> GetGastos(TypeValuesDashboard typeValues, string dateFilter)
         {
-            var user = ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
 
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador]);
+
                 var dateActual = SetDate(typeValues, dateFilter);
                 var gastosParticualresList = new List<VMVentasPorTipoDeVenta>();
                 foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetGastos(typeValues, user.IdTienda, dateActual))
@@ -293,6 +300,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al recuperar los datos de gastos");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -300,12 +308,13 @@ namespace PointOfSale.Controllers
 
         public async Task<IActionResult> GetMovimientosProveedoresByTienda(TypeValuesDashboard typeValues, string dateFilter)
         {
-            var user = ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
 
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador]);
+
                 var dateActual = SetDate(typeValues, dateFilter);
                 var gastosProveedores = new List<VMVentasPorTipoDeVenta>();
                 var movimientosProv = await _dashboardService.GetMovimientosProveedoresByTienda(typeValues, user.IdTienda, dateActual);
@@ -332,6 +341,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al recuperar los datos de pagos a proveedores");
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -372,11 +382,12 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetSalesByTypoVenta(TypeValuesDashboard typeValues, string idCategoria, string dateFilter)
         {
-            ValidarAutorizacion([Roles.Administrador]);
             var gResponse = new GenericResponse<List<VMProductsWeek>>();
 
             try
             {
+                ValidarAutorizacion([Roles.Administrador]);
+
                 var tiendaId = Convert.ToInt32(((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value);
 
                 var ProductListWeek = new List<VMProductsWeek>();
@@ -534,11 +545,12 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromForm] IFormFile photo, [FromForm] string model)
         {
-            var user = ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMUser> gResponse = new GenericResponse<VMUser>();
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador]);
+
                 VMUser vmUser = JsonConvert.DeserializeObject<VMUser>(model);
                 vmUser.IdTienda = user.IdTienda;
 
@@ -575,11 +587,12 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateUser([FromForm] IFormFile photo, [FromForm] string model)
         {
-            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<VMUser> gResponse = new GenericResponse<VMUser>();
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
                 VMUser vmUser = JsonConvert.DeserializeObject<VMUser>(model);
                 vmUser.ModificationUser = user.UserName;
 
@@ -613,11 +626,12 @@ namespace PointOfSale.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteUser(int IdUser)
         {
-            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<string> gResponse = new GenericResponse<string>();
             try
             {
+                ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
                 gResponse.State = await _userService.Delete(IdUser);
             }
             catch (Exception ex)
@@ -661,6 +675,8 @@ namespace PointOfSale.Controllers
             GenericResponse<VMTypeDocumentSale> gResponse = new GenericResponse<VMTypeDocumentSale>();
             try
             {
+                ValidarAutorizacion([Roles.Administrador]);
+
                 TypeDocumentSale usuario_creado = await _typeDocumentSaleService.Add(_mapper.Map<TypeDocumentSale>(vmUser));
 
                 vmUser = _mapper.Map<VMTypeDocumentSale>(usuario_creado);
@@ -681,11 +697,12 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateTipoVenta([FromBody] VMTypeDocumentSale vmUser)
         {
-            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<VMTypeDocumentSale> gResponse = new GenericResponse<VMTypeDocumentSale>();
             try
             {
+                ValidarAutorizacion([Roles.Administrador]);
+
                 TypeDocumentSale user_edited = await _typeDocumentSaleService.Edit(_mapper.Map<TypeDocumentSale>(vmUser));
 
                 vmUser = _mapper.Map<VMTypeDocumentSale>(user_edited);
@@ -706,11 +723,12 @@ namespace PointOfSale.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteTipoVenta(int idTypeDocumentSale)
         {
-            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<string> gResponse = new GenericResponse<string>();
             try
             {
+                ValidarAutorizacion([Roles.Administrador]);
+
                 gResponse.State = await _typeDocumentSaleService.Delete(idTypeDocumentSale);
             }
             catch (Exception ex)
@@ -737,9 +755,9 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCliente()
         {
-            var user = ValidarAutorizacion([Roles.Administrador]);
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador]);
                 var listUsers = _mapper.Map<List<VMCliente>>(await _clienteService.List(user.IdTienda));
                 return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
             }
@@ -764,9 +782,10 @@ namespace PointOfSale.Controllers
                 return View(idCliente);
             }
 
-            var user = ValidarAutorizacion([Roles.Administrador]);
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador]);
+
                 var listUsers = _mapper.Map<List<VMClienteMovimiento>>(await _clienteService.ListMovimientoscliente(idCliente, user.IdTienda));
                 return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
             }
@@ -785,11 +804,12 @@ namespace PointOfSale.Controllers
                 return View(model);
             }
 
-            var user = ValidarAutorizacion([Roles.Administrador]);
 
             var gResponse = new GenericResponse<VMCliente>();
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador]);
+
                 model.IdTienda = user.IdTienda;
                 var usuario_creado = await _clienteService.Add(_mapper.Map<Cliente>(model));
 
@@ -816,11 +836,11 @@ namespace PointOfSale.Controllers
                 return View(vmUser);
             }
 
-            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
-
             var gResponse = new GenericResponse<VMCliente>();
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
                 vmUser.ModificationUser = user.UserName;
                 var user_edited = await _clienteService.Edit(_mapper.Map<Cliente>(vmUser));
 
@@ -847,11 +867,12 @@ namespace PointOfSale.Controllers
                 return View(idCliente);
             }
 
-            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             var gResponse = new GenericResponse<string>();
             try
             {
+                ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
                 gResponse.State = await _clienteService.Delete(idCliente);
             }
             catch (Exception ex)
@@ -892,10 +913,11 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProveedoresConProductos()
         {
-            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
                 var listProveedor = await _proveedorService.ListConProductos(user.IdTienda);
 
                 var list = listProveedor
@@ -966,11 +988,12 @@ namespace PointOfSale.Controllers
                 return View(model);
             }
 
-            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             var gResponse = new GenericResponse<VMProveedorMovimiento>();
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
                 model.RegistrationUser = user.UserName;
                 model.RegistrationDate = TimeHelper.GetArgentinaTime();
                 model.idTienda = user.IdTienda;
@@ -1026,10 +1049,11 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllMovimientoProveedor()
         {
-            var user = ValidarAutorizacion([Roles.Administrador]);
 
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador]);
+
                 var listUsers = _mapper.Map<List<VMProveedorMovimiento>>(await _proveedorService.ListMovimientosProveedorForTablaDinamica(user.IdTienda));
                 return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
             }
@@ -1043,10 +1067,11 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProveedorTablaDinamica()
         {
-            var user = ValidarAutorizacion([Roles.Administrador]);
 
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador]);
+
                 var listUsers = _mapper.Map<List<VMMovimientoProveedoresTablaDinamica>>(await _proveedorService.ListMovimientosProveedorForTablaDinamica(user.IdTienda));
                 return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
             }
@@ -1065,11 +1090,12 @@ namespace PointOfSale.Controllers
                 return View(vmUser);
             }
 
-            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             var gResponse = new GenericResponse<VMProveedor>();
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
                 vmUser.ModificationUser = user.UserName;
                 var user_edited = await _proveedorService.Edit(_mapper.Map<Proveedor>(vmUser));
 
@@ -1096,11 +1122,12 @@ namespace PointOfSale.Controllers
                 return View(idProveedor);
             }
 
-            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             var gResponse = new GenericResponse<string>();
             try
             {
+                ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
                 gResponse.State = await _proveedorService.Delete(idProveedor);
             }
             catch (Exception ex)
@@ -1122,11 +1149,12 @@ namespace PointOfSale.Controllers
                 return View(idMovimiento);
             }
 
-            ValidarAutorizacion([Roles.Administrador]);
 
             var gResponse = new GenericResponse<VMProveedor>();
             try
             {
+                ValidarAutorizacion([Roles.Administrador]);
+
                 _ = await _proveedorService.CambiarEstadoMovimiento(idMovimiento);
 
                 gResponse.State = true;
@@ -1149,11 +1177,12 @@ namespace PointOfSale.Controllers
                 return View(vmUser);
             }
 
-            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             var gResponse = new GenericResponse<VMProveedorMovimiento>();
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
                 vmUser.ModificationUser = user.UserName;
                 var user_edited = await _proveedorService.Edit(_mapper.Map<ProveedorMovimiento>(vmUser));
 
@@ -1180,11 +1209,12 @@ namespace PointOfSale.Controllers
                 return View(idPagoProveedor);
             }
 
-            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             var gResponse = new GenericResponse<string>();
             try
             {
+                ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
                 gResponse.State = await _proveedorService.DeleteProveedorMovimiento(idPagoProveedor);
             }
             catch (Exception ex)
@@ -1282,11 +1312,12 @@ namespace PointOfSale.Controllers
                 return View(model);
             }
 
-            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             var gResponse = new GenericResponse<VMPromocion>();
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
                 model.IdTienda = user.IdTienda;
                 var usuario_creado = await _promocionService.Add(_mapper.Map<Promocion>(model));
 
@@ -1315,11 +1346,12 @@ namespace PointOfSale.Controllers
                 return View(vmUser);
             }
 
-            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             var gResponse = new GenericResponse<VMPromocion>();
             try
             {
+                ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
                 var user_edited = await _promocionService.Edit(_mapper.Map<Promocion>(vmUser));
 
                 vmUser = _mapper.Map<VMPromocion>(user_edited);
@@ -1346,11 +1378,12 @@ namespace PointOfSale.Controllers
                 return View(idPromocion);
             }
 
-            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             var gResponse = new GenericResponse<string>();
             try
             {
+                ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
                 gResponse.State = await _promocionService.Delete(idPromocion);
             }
             catch (Exception ex)
@@ -1372,11 +1405,12 @@ namespace PointOfSale.Controllers
                 return View(idPromocion);
             }
 
-            var resp = ValidarAutorizacion([Roles.Administrador]);
 
             var gResponse = new GenericResponse<VMPromocion>();
             try
             {
+                var resp = ValidarAutorizacion([Roles.Administrador]);
+
                 var user_edited = await _promocionService.CambiarEstado(idPromocion, resp.UserName);
 
                 var model = _mapper.Map<VMPromocion>(user_edited);
@@ -1426,11 +1460,12 @@ namespace PointOfSale.Controllers
                 return View(model);
             }
 
-            var user = ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMAjustes> gResponse = new GenericResponse<VMAjustes>();
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador]);
+
 
                 model.ModificationUser = user.UserName;
                 var edited_Ajuste = await _ajusteService.Edit(_mapper.Map<Ajustes>(model));
