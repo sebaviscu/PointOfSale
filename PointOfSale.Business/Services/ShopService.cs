@@ -138,7 +138,7 @@ namespace PointOfSale.Business.Services
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
 
                 throw;

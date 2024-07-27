@@ -15,11 +15,13 @@ namespace PointOfSale.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IPedidoService _pedidoService;
+        private readonly ILogger<PedidoController> _logger;
 
-        public PedidoController(IMapper mapper, IPedidoService pedidoService)
+        public PedidoController(IMapper mapper, IPedidoService pedidoService, ILogger<PedidoController> logger)
         {
             _mapper = mapper;
             _pedidoService = pedidoService;
+            _logger = logger;
         }
 
         public IActionResult Pedido()
@@ -50,11 +52,12 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePedido([FromBody] VMPedido model)
         {
-            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<VMPedido> gResponse = new GenericResponse<VMPedido>();
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
                 model.RegistrationUser = user.UserName;
                 model.IdTienda = user.IdTienda;
 
@@ -78,11 +81,12 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdatePedidos([FromBody] VMPedido model)
         {
-            var user = ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMPedido> gResponse = new GenericResponse<VMPedido>();
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador]);
+
                 model.UsuarioFechaCerrado = user.UserName;
 
                 Pedido edited_Pedido = await _pedidoService.Edit(_mapper.Map<Pedido>(model));
@@ -104,11 +108,12 @@ namespace PointOfSale.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeletePedido(int idPedido)
         {
-            ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<string> gResponse = new GenericResponse<string>();
             try
             {
+                ValidarAutorizacion([Roles.Administrador]);
+
                 gResponse.State = await _pedidoService.Delete(idPedido);
             }
             catch (Exception ex)
@@ -124,11 +129,12 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> CerrarPedidos([FromBody] VMPedido model)
         {
-            var user = ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMPedido> gResponse = new GenericResponse<VMPedido>();
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador]);
+
                 var m = new VMProveedorMovimiento();
                 m.NroFactura = model.NroFactura;
                 m.TipoFactura = model.TipoFactura;

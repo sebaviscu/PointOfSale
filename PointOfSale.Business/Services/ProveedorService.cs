@@ -77,7 +77,7 @@ namespace PointOfSale.Business.Services
 
                 return Proveedor_edit;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 throw;
             }
@@ -112,7 +112,7 @@ namespace PointOfSale.Business.Services
 
                 return Proveedor_edit;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 throw;
             }
@@ -136,7 +136,7 @@ namespace PointOfSale.Business.Services
 
                 return Proveedor_edit;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 throw;
             }
@@ -172,7 +172,7 @@ namespace PointOfSale.Business.Services
 
                 return Proveedor_edit;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 throw;
             }

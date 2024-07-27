@@ -22,8 +22,9 @@ namespace PointOfSale.Controllers
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _env;
         private readonly IImportarExcelService _excelService;
+        private readonly ILogger<InventoryController> _logger;
 
-        public InventoryController(ICategoryService categoryService, IProductService productService, IMapper mapper, ISaleService saleService, IWebHostEnvironment env, IImportarExcelService excelService)
+        public InventoryController(ICategoryService categoryService, IProductService productService, IMapper mapper, ISaleService saleService, IWebHostEnvironment env, IImportarExcelService excelService, ILogger<InventoryController> logger)
         {
             _categoryService = categoryService;
             _productService = productService;
@@ -31,6 +32,7 @@ namespace PointOfSale.Controllers
             _saleService = saleService;
             _env = env;
             _excelService = excelService;
+            _logger = logger;
         }
 
         public IActionResult Categories()
@@ -61,11 +63,12 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCategory([FromBody] VMCategory model)
         {
-            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<VMCategory> gResponse = new GenericResponse<VMCategory>();
             try
             {
+                ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
                 Category category_created = await _categoryService.Add(_mapper.Map<Category>(model));
 
                 model = _mapper.Map<VMCategory>(category_created);
@@ -85,11 +88,11 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateCategory([FromBody] VMCategory model)
         {
-            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<VMCategory> gResponse = new GenericResponse<VMCategory>();
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
                 model.ModificationUser = user.UserName;
                 Category edited_category = await _categoryService.Edit(_mapper.Map<Category>(model));
@@ -112,11 +115,12 @@ namespace PointOfSale.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteCategory(int idCategory)
         {
-            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<string> gResponse = new GenericResponse<string>();
             try
             {
+                ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
                 gResponse.State = await _categoryService.Delete(idCategory);
             }
             catch (Exception ex)
@@ -131,10 +135,19 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetStocks()
         {
-            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
-            List<VMStock> vmCategoryList = _mapper.Map<List<VMStock>>(await _productService.ListStock(user.IdTienda));
-            return StatusCode(StatusCodes.Status200OK, new { data = vmCategoryList });
+                List<VMStock> vmCategoryList = _mapper.Map<List<VMStock>>(await _productService.ListStock(user.IdTienda));
+                return StatusCode(StatusCodes.Status200OK, new { data = vmCategoryList });
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+
         }
 
 
@@ -143,7 +156,7 @@ namespace PointOfSale.Controllers
         {
             try
             {
-                var productosQuery = await _productService.List();                
+                var productosQuery = await _productService.List();
 
                 var d = _mapper.Map<List<VMProductSimplificado>>(productosQuery);
                 // Asignar Photo a null y mapear a VMProduct en una sola operación
@@ -169,10 +182,11 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProduct(int idProduct)
         {
-            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
                 var producto = await _productService.Get(idProduct);
                 var stock = await _productService.GetStockByIdProductIdTienda(idProduct, user.IdTienda);
 
@@ -194,11 +208,12 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProduct([FromForm] IFormFile photo, [FromForm] string model, [FromForm] string vencimientos)
         {
-            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<VMProduct> gResponse = new GenericResponse<VMProduct>();
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
                 var settings = new JsonSerializerSettings
                 {
                     DateFormatString = "dd/MM/yyyy",
@@ -266,11 +281,12 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> EditProduct([FromForm] IFormFile photo, [FromForm] string model, [FromForm] string vencimientos)
         {
-            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<VMProduct> gResponse = new GenericResponse<VMProduct>();
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
                 var settings = new JsonSerializerSettings
                 {
                     DateFormatString = "dd/MM/yyyy",
@@ -338,11 +354,11 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> EditMassiveProducts([FromBody] EditeMassiveProducts data)
         {
-            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<VMProduct> gResponse = new GenericResponse<VMProduct>();
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
                 var listPrecios = new List<ListaPrecio>()
                 {
@@ -367,11 +383,12 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> EditMassiveProductsForTable([FromBody] List<EditeMassiveProductsTable> data)
         {
-            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<VMProduct> gResponse = new GenericResponse<VMProduct>();
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
                 var resp = await _productService.EditMassivePorTabla(user.UserName, data);
 
                 gResponse.State = true;
@@ -388,11 +405,12 @@ namespace PointOfSale.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteProduct(int IdProduct)
         {
-            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<string> gResponse = new GenericResponse<string>();
             try
             {
+                ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
                 gResponse.State = await _productService.Delete(IdProduct);
             }
             catch (Exception ex)
@@ -441,20 +459,29 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetVencimientos()
         {
-            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
 
-            List<VMVencimiento> vmVencimientos = _mapper.Map<List<VMVencimiento>>(await _productService.GetProximosVencimientos(user.IdTienda));
-            return StatusCode(StatusCodes.Status200OK, new { data = vmVencimientos.OrderBy(_ => _.Estado).ThenBy(_ => _.FechaVencimiento) });
+                List<VMVencimiento> vmVencimientos = _mapper.Map<List<VMVencimiento>>(await _productService.GetProximosVencimientos(user.IdTienda));
+                return StatusCode(StatusCodes.Status200OK, new { data = vmVencimientos.OrderBy(_ => _.Estado).ThenBy(_ => _.FechaVencimiento) });
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+
         }
 
         [HttpGet]
         public async Task<IActionResult> CargarProductosAsync(string path)
         {
-            ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<List<VMProduct>> gResponse = new GenericResponse<List<VMProduct>>();
             try
             {
+                ValidarAutorizacion([Roles.Administrador]);
                 var (exito, products) = await _excelService.ImportarProductoAsync(path);
 
                 var vmProduct = _mapper.Map<List<VMProduct>>(products);
@@ -475,11 +502,12 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> ImportarProductosAsync(string path)
         {
-            ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<List<VMProduct>> gResponse = new GenericResponse<List<VMProduct>>();
             try
             {
+                ValidarAutorizacion([Roles.Administrador]);
+
                 var (exito, products) = await _excelService.ImportarProductoAsync(path);
 
                 foreach (var p in products)
@@ -512,11 +540,12 @@ namespace PointOfSale.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteVencimiento(int idVencimiento)
         {
-            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
             GenericResponse<string> gResponse = new GenericResponse<string>();
             try
             {
+                ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
                 gResponse.State = await _productService.DeleteVencimiento(idVencimiento);
             }
             catch (Exception ex)

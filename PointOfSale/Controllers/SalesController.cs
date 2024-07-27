@@ -26,6 +26,7 @@ namespace PointOfSale.Controllers
         private readonly ITicketService _ticketService;
         private readonly ITiendaService _tiendaService;
         private readonly IShopService _shopService;
+        private readonly ILogger<SalesController> _logger;
         private readonly IAFIPFacturacionService _afipFacturacionService;
 
         public SalesController(
@@ -37,7 +38,8 @@ namespace PointOfSale.Controllers
             ITicketService ticketService,
             ITiendaService tiendaService,
             IShopService shopService,
-            IAFIPFacturacionService afipFacturacionService)
+            IAFIPFacturacionService afipFacturacionService,
+            ILogger<SalesController> logger)
         {
             _typeDocumentSaleService = typeDocumentSaleService;
             _saleService = saleService;
@@ -48,6 +50,7 @@ namespace PointOfSale.Controllers
             _tiendaService = tiendaService;
             _shopService = shopService;
             _afipFacturacionService = afipFacturacionService;
+            _logger = logger;
         }
         public IActionResult NewSale()
         {
@@ -57,29 +60,38 @@ namespace PointOfSale.Controllers
 
         public IActionResult SalesHistory()
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Empleado, Roles.Encargado });
+            ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Encargado]);
             return ValidateSesionViewOrLogin();
         }
 
         [HttpGet]
         public async Task<IActionResult> ListTypeDocumentSale()
         {
-            List<VMTypeDocumentSale> vmListTypeDocumentSale = _mapper.Map<List<VMTypeDocumentSale>>(await _typeDocumentSaleService.GetActive());
-            return StatusCode(StatusCodes.Status200OK, vmListTypeDocumentSale);
+            try
+            {
+                List<VMTypeDocumentSale> vmListTypeDocumentSale = _mapper.Map<List<VMTypeDocumentSale>>(await _typeDocumentSaleService.GetActive());
+                return StatusCode(StatusCodes.Status200OK, vmListTypeDocumentSale);
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+
         }
 
         [HttpGet]
         public async Task<IActionResult> GetProducts(string search)
         {
-            ClaimsPrincipal claimuser = HttpContext.User;
-            var listaPrecioInt = Convert.ToInt32(claimuser.Claims.Where(c => c.Type == "ListaPrecios").Select(c => c.Value).SingleOrDefault());
             try
             {
+                ClaimsPrincipal claimuser = HttpContext.User;
+                var listaPrecioInt = Convert.ToInt32(claimuser.Claims.Where(c => c.Type == "ListaPrecios").Select(c => c.Value).SingleOrDefault());
                 List<VMProduct> vmListProducts = _mapper.Map<List<VMProduct>>(await _saleService.GetProductsSearchAndIdLista(search.Trim(), (ListaDePrecio)listaPrecioInt));
                 return StatusCode(StatusCodes.Status200OK, vmListProducts);
 
             }
-            catch (Exception)
+            catch (Exception e)
             {
 
                 throw;
@@ -90,20 +102,30 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetClientes(string search)
         {
-            List<VMCliente> vmListClients = _mapper.Map<List<VMCliente>>(await _saleService.GetClients(search));
-            return StatusCode(StatusCodes.Status200OK, vmListClients);
+            try
+            {
+                List<VMCliente> vmListClients = _mapper.Map<List<VMCliente>>(await _saleService.GetClients(search));
+                return StatusCode(StatusCodes.Status200OK, vmListClients);
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+
         }
 
         [HttpPost]
         public async Task<IActionResult> RegisterSale([FromBody] VMSale model)
         {
-            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
-            var nombreImpresora = string.Empty;
-            var ticket = string.Empty;
 
             var gResponse = new GenericResponse<VMSale>();
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
+                var nombreImpresora = string.Empty;
+                var ticket = string.Empty;
+
                 ClaimsPrincipal claimuser = HttpContext.User;
 
                 string idUsuario = claimuser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
@@ -184,11 +206,12 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> RegisterNoCierreSale([FromBody] VMSale model)
         {
-            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
 
             GenericResponse<VMSale> gResponse = new GenericResponse<VMSale>();
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
+
                 ClaimsPrincipal claimuser = HttpContext.User;
 
                 string idUsuario = claimuser.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).Select(c => c.Value).SingleOrDefault();
@@ -256,39 +279,57 @@ namespace PointOfSale.Controllers
         {
             GenericResponse<VMSale> gResponse = new GenericResponse<VMSale>();
 
-            var sale = await _saleService.GetSale(idSale);
-            var tienda = await _tiendaService.Get(sale.IdTienda);
-            var ticket = _ticketService.TicketSale(sale, tienda);
+            try
+            {
+                var sale = await _saleService.GetSale(idSale);
+                var tienda = await _tiendaService.Get(sale.IdTienda);
+                var ticket = _ticketService.TicketSale(sale, tienda);
 
-            var model = new VMSale();
+                var model = new VMSale();
 
 
-            model.NombreImpresora = tienda.NombreImpresora;
-            model.Ticket = ticket;
+                model.NombreImpresora = tienda.NombreImpresora;
+                model.Ticket = ticket;
 
-            gResponse.State = true;
-            gResponse.Object = model;
+                gResponse.State = true;
+                gResponse.Object = model;
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+
         }
 
         public async Task<IActionResult> PrintTicketVentaWeb(int idVentaWeb)
         {
-            var ventaWeb = await _shopService.Get(idVentaWeb);
-            var tienda = await _tiendaService.Get(ventaWeb.IdTienda.Value);
-            var ticket = _ticketService.TicketVentaWeb(ventaWeb, tienda);
+            try
+            {
+                var ventaWeb = await _shopService.Get(idVentaWeb);
+                var tienda = await _tiendaService.Get(ventaWeb.IdTienda.Value);
+                var ticket = _ticketService.TicketVentaWeb(ventaWeb, tienda);
 
-            GenericResponse<VMSale> gResponse = new GenericResponse<VMSale>();
+                GenericResponse<VMSale> gResponse = new GenericResponse<VMSale>();
 
-            var model = new VMSale();
+                var model = new VMSale();
 
-            model.NombreImpresora = tienda.NombreImpresora;
-            model.Ticket = ticket;
+                model.NombreImpresora = tienda.NombreImpresora;
+                model.Ticket = ticket;
 
-            gResponse.State = true;
-            gResponse.Object = model;
+                gResponse.State = true;
+                gResponse.Object = model;
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+
         }
 
         public async Task<IActionResult> ShowPDFSaleAsync(string saleNumber)

@@ -14,10 +14,13 @@ namespace PointOfSale.Controllers
     {
         private readonly ITiendaService _TiendaService;
         private readonly IMapper _mapper;
-        public TiendaController(ITiendaService TiendaService, IMapper mapper)
+        private readonly ILogger<TiendaController> _logger;
+
+        public TiendaController(ITiendaService TiendaService, IMapper mapper, ILogger<TiendaController> logger)
         {
             _TiendaService = TiendaService;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public IActionResult Tienda()
@@ -43,20 +46,30 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetOneTienda()
         {
-            var user = ValidarAutorizacion([Roles.Administrador]);
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador]);
 
-            var tienda = _mapper.Map<VMTienda>(await _TiendaService.Get(user.IdTienda));
-            return StatusCode(StatusCodes.Status200OK, new { data = tienda });
+                var tienda = _mapper.Map<VMTienda>(await _TiendaService.Get(user.IdTienda));
+                return StatusCode(StatusCodes.Status200OK, new { data = tienda });
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateTienda(/*[FromForm] IFormFile photo,*/ [FromBody] VMTienda vmTienda)
         {
-            ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMTienda> gResponse = new GenericResponse<VMTienda>();
             try
             {
+                ValidarAutorizacion([Roles.Administrador]);
+
                 //VMTienda vmTienda = JsonConvert.DeserializeObject<VMTienda>(model);
 
                 //if (photo != null)
@@ -90,11 +103,12 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateTienda([FromBody] VMTienda vmTienda)
         {
-            var user = ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMTienda> gResponse = new GenericResponse<VMTienda>();
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador]);
+
                 //VMTienda vmTienda = JsonConvert.DeserializeObject<VMTienda>(model);
 
                 //if (photo != null)
@@ -141,11 +155,12 @@ namespace PointOfSale.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteTienda(int idTienda)
         {
-            ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<string> gResponse = new GenericResponse<string>();
             try
             {
+                ValidarAutorizacion([Roles.Administrador]);
+
                 gResponse.State = await _TiendaService.Delete(idTienda);
             }
             catch (Exception ex)

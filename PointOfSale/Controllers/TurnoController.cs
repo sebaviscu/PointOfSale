@@ -19,11 +19,14 @@ namespace PointOfSale.Controllers
         private readonly ITurnoService _turnoService;
         private readonly IMapper _mapper;
         private readonly IDashBoardService _dashBoardService;
-        public TurnoController(ITurnoService turnoService, IMapper mapper, IDashBoardService dashBoardService)
+        private readonly ILogger<TurnoController> _logger;
+
+        public TurnoController(ITurnoService turnoService, IMapper mapper, IDashBoardService dashBoardService, ILogger<TurnoController> logger)
         {
             _turnoService = turnoService;
             _mapper = mapper;
             _dashBoardService = dashBoardService;
+            _logger = logger;
         }
 
         public IActionResult Turno()
@@ -43,126 +46,170 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTurnoActual()
         {
-            //ValidarAutorizacion([Roles.Administrador]);
-            var tiendaId = Convert.ToInt32(((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value);
-
-            var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurnoActualConVentas(tiendaId));
-
-            var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
-            var dateActual = TimeHelper.GetArgentinaTime();
-            foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, tiendaId, dateActual))
+            try
             {
-                VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
-                {
-                    Descripcion = item.Key,
-                    Total = item.Value
-                });
-            }
-            vmTurnp.VentasPorTipoVenta = VentasPorTipoVenta;
+                var tiendaId = Convert.ToInt32(((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value);
 
-            return StatusCode(StatusCodes.Status200OK, new { data = vmTurnp });
+                var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurnoActualConVentas(tiendaId));
+
+                var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
+                var dateActual = TimeHelper.GetArgentinaTime();
+                foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, tiendaId, dateActual))
+                {
+                    VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
+                    {
+                        Descripcion = item.Key,
+                        Total = item.Value
+                    });
+                }
+                vmTurnp.VentasPorTipoVenta = VentasPorTipoVenta;
+
+                return StatusCode(StatusCodes.Status200OK, new { data = vmTurnp });
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+
         }
 
         [HttpGet]
         public async Task<IActionResult> GetTurno(int idturno)
         {
-            ValidarAutorizacion([Roles.Administrador]);
-            var tiendaId = Convert.ToInt32(((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value);
-
-            var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurno(idturno));
-
-            var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
-            var dateActual = TimeHelper.GetArgentinaTime();
-            foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, tiendaId, dateActual))
+            try
             {
-                VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
-                {
-                    Descripcion = item.Key,
-                    Total = item.Value
-                });
-            }
-            vmTurnp.VentasPorTipoVenta = VentasPorTipoVenta;
+                ValidarAutorizacion([Roles.Administrador]);
+                var tiendaId = Convert.ToInt32(((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value);
 
-            return StatusCode(StatusCodes.Status200OK, new { data = vmTurnp });
+                var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurno(idturno));
+
+                var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
+                var dateActual = TimeHelper.GetArgentinaTime();
+                foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, tiendaId, dateActual))
+                {
+                    VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
+                    {
+                        Descripcion = item.Key,
+                        Total = item.Value
+                    });
+                }
+                vmTurnp.VentasPorTipoVenta = VentasPorTipoVenta;
+
+                return StatusCode(StatusCodes.Status200OK, new { data = vmTurnp });
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+
         }
 
         [HttpPost]
         public async Task<IActionResult> CerrarTurno([FromBody] VMSaveTurno modelTurno)
         {
-            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
-
-            var model = _mapper.Map<VMTurno>(await _turnoService.GetTurnoActual(user.IdTienda));
-
-            GenericResponse<VMTurno> gResponse = new GenericResponse<VMTurno>();
             try
             {
-                model.ModificationUser = user.UserName;
-                var tiendaId = ((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value;
-                model.Descripcion = modelTurno.Descripcion;
-                var turno_cerrar = await _turnoService.CloseTurno(user.IdTienda, _mapper.Map<Turno>(model));
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
 
-                var nuevoTurno = await _turnoService.AbrirTurno(Convert.ToInt32(tiendaId), user.UserName);
+                var model = _mapper.Map<VMTurno>(await _turnoService.GetTurnoActual(user.IdTienda));
 
-                gResponse.State = true;
-                gResponse.Object = _mapper.Map<VMTurno>(nuevoTurno);
+                GenericResponse<VMTurno> gResponse = new GenericResponse<VMTurno>();
+                try
+                {
+                    model.ModificationUser = user.UserName;
+                    var tiendaId = ((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value;
+                    model.Descripcion = modelTurno.Descripcion;
+                    var turno_cerrar = await _turnoService.CloseTurno(user.IdTienda, _mapper.Map<Turno>(model));
+
+                    var nuevoTurno = await _turnoService.AbrirTurno(Convert.ToInt32(tiendaId), user.UserName);
+
+                    gResponse.State = true;
+                    gResponse.Object = _mapper.Map<VMTurno>(nuevoTurno);
+                }
+                catch (Exception ex)
+                {
+                    gResponse.State = false;
+                    gResponse.Message = ex.Message;
+                }
+
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                gResponse.State = false;
-                gResponse.Message = ex.Message;
+
+                throw;
             }
 
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
 
         [HttpGet]
         public async Task<IActionResult> GetOneTurno(int idTurno)
         {
-            ValidarAutorizacion([Roles.Administrador]);
-            var tiendaId = Convert.ToInt32(((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value);
-
-            var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurno(idTurno));
-
-            var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
-            foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurno(TypeValuesDashboard.Dia, vmTurnp.IdTurno, tiendaId))
+            try
             {
-                VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
-                {
-                    Descripcion = item.Key,
-                    Total = item.Value
-                });
-            }
-            vmTurnp.VentasPorTipoVenta = VentasPorTipoVenta;
+                ValidarAutorizacion([Roles.Administrador]);
+                var tiendaId = Convert.ToInt32(((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value);
 
-            return StatusCode(StatusCodes.Status200OK, new { data = vmTurnp });
+                var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurno(idTurno));
+
+                var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
+                foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurno(TypeValuesDashboard.Dia, vmTurnp.IdTurno, tiendaId))
+                {
+                    VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
+                    {
+                        Descripcion = item.Key,
+                        Total = item.Value
+                    });
+                }
+                vmTurnp.VentasPorTipoVenta = VentasPorTipoVenta;
+
+                return StatusCode(StatusCodes.Status200OK, new { data = vmTurnp });
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+
         }
 
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] VMTurno VMTurno)
         {
-            var user = ValidarAutorizacion([Roles.Administrador]);
-
-            GenericResponse<VMTurno> gResponse = new GenericResponse<VMTurno>();
             try
             {
-                VMTurno.ModificationUser = user.UserName;
-                Turno edited_Tienda = await _turnoService.Edit(_mapper.Map<Turno>(VMTurno));
+                var user = ValidarAutorizacion([Roles.Administrador]);
 
-                VMTurno = _mapper.Map<VMTurno>(edited_Tienda);
+                GenericResponse<VMTurno> gResponse = new GenericResponse<VMTurno>();
+                try
+                {
+                    VMTurno.ModificationUser = user.UserName;
+                    Turno edited_Tienda = await _turnoService.Edit(_mapper.Map<Turno>(VMTurno));
 
-                gResponse.State = true;
-                gResponse.Object = VMTurno;
+                    VMTurno = _mapper.Map<VMTurno>(edited_Tienda);
+
+                    gResponse.State = true;
+                    gResponse.Object = VMTurno;
+                }
+                catch (Exception ex)
+                {
+                    gResponse.State = false;
+                    gResponse.Message = ex.Message;
+                }
+
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                gResponse.State = false;
-                gResponse.Message = ex.Message;
+
+                throw;
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
     }
 }

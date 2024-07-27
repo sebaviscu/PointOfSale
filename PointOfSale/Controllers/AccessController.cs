@@ -18,14 +18,16 @@ namespace PointOfSale.Controllers
         private readonly ITiendaService _tiendaService;
         private readonly ISaleService _saleService;
         private readonly IProductService _productService;
+        private readonly ILogger<AccessController> _logger;
 
-        public AccessController(IUserService userService, ITurnoService turnoService, ITiendaService tiendaService, ISaleService saleService, IProductService productService)
+        public AccessController(IUserService userService, ITurnoService turnoService, ITiendaService tiendaService, ISaleService saleService, IProductService productService, ILogger<AccessController> logger)
         {
             _userService = userService;
             _turnoService = turnoService;
             _tiendaService = tiendaService;
             _saleService = saleService;
             _productService = productService;
+            _logger = logger;
         }
 
         public IActionResult Login()

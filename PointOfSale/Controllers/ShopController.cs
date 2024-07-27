@@ -46,7 +46,7 @@ namespace PointOfSale.Controllers
         public async Task<IActionResult> Index()
         {
             ClaimsPrincipal claimuser = HttpContext.User;
-            var ajuste = _mapper.Map<VMAjustes>( await _ajusteService.Get());
+            var ajuste = _mapper.Map<VMAjustes>(await _ajusteService.Get());
             var shop = new VMShop(ajuste);
             shop.Products = _mapper.Map<List<VMProduct>>(await _productService.GetRandomProducts());
             shop.IsLogin = claimuser.Identity.IsAuthenticated;
@@ -57,26 +57,44 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> Lista(int page = 1, int pageSize = 6)
         {
-            ClaimsPrincipal claimuser = HttpContext.User;
+            try
+            {
 
-            var ajuste = _mapper.Map<VMAjustes>(await _ajusteService.Get());
-            var shop = new VMShop(ajuste);
-            shop.IsLogin = claimuser.Identity.IsAuthenticated;
-            shop.Products = new List<VMProduct>();//_mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategory(0, page, pageSize));
-            shop.FormasDePago = _mapper.Map<List<VMTypeDocumentSale>>(await _typeDocumentSaleService.ListWeb());
-            shop.Categorias = _mapper.Map<List<VMCategory>>(await _categoryService.ListActive());
-            return View("Lista", shop);
+                ClaimsPrincipal claimuser = HttpContext.User;
+
+                var ajuste = _mapper.Map<VMAjustes>(await _ajusteService.Get());
+                var shop = new VMShop(ajuste);
+                shop.IsLogin = claimuser.Identity.IsAuthenticated;
+                shop.Products = new List<VMProduct>();//_mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategory(0, page, pageSize));
+                shop.FormasDePago = _mapper.Map<List<VMTypeDocumentSale>>(await _typeDocumentSaleService.ListWeb());
+                shop.Categorias = _mapper.Map<List<VMCategory>>(await _categoryService.ListActive());
+                return View("Lista", shop);
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> GetMoreProducts(int page, int pageSize, int categoryId = 0, string searchText = "")
         {
+            try
+            {
             var products = _mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategory(categoryId, page, pageSize, searchText));
             var hasMoreProducts = products.Count == pageSize;
 
             var html = await RenderViewAsync("PVProducts", products);
 
             return Json(new { hasMoreProducts, html });
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+
         }
 
         private async Task<string> RenderViewAsync(string viewName, object model)
