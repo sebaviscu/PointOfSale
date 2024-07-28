@@ -105,6 +105,7 @@ const openModal = (model = BASIC_MODEL) => {
 
     tableDataMovimientos = $("#tbMovimientos").DataTable({
         responsive: true,
+        pageLength: 5,
         "ajax": {
             "url": url,
             "type": "GET",

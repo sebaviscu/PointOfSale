@@ -316,7 +316,8 @@ function finalizarVenta() {
                 return response.json();
             }).then(responseJson => {
 
-                if (responseJson.state) {
+                if (!responseJson.state) {
+                    swal("Lo sentimos", responseJson.message, "error");
                 }
             })
 

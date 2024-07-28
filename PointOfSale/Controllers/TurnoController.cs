@@ -173,7 +173,9 @@ namespace PointOfSale.Controllers
                 }
                 vmTurnp.VentasPorTipoVenta = VentasPorTipoVenta;
 
-                return StatusCode(StatusCodes.Status200OK, new { data = vmTurnp });
+                gResponse.Object = vmTurnp;
+                gResponse.State = true;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {

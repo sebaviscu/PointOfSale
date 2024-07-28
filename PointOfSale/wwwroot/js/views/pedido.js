@@ -42,7 +42,7 @@ $(document).ready(function () {
             if (responseJson.state) {
                 proveedoresList = responseJson.object;
 
-                responseJson.objectobject.forEach((item) => {
+                proveedoresList.forEach((item) => {
                     $("#cboProveedor").append(
                         $("<option>").val(item.idProveedor).text(item.nombre)
                     )
@@ -52,7 +52,7 @@ $(document).ready(function () {
             } else {
                 swal("Lo sentimos", responseJson.message, "error");
             }
-            }
+
         })
 
     tableData = $("#tbData").DataTable({

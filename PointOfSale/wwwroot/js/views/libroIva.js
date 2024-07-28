@@ -14,12 +14,14 @@ $(document).ready(function () {
             return response.json();
         })
         .then(responseJson => {
-            if (responseJson.state && responseJson.object.length > 0) {
-                responseJson.data.forEach((item) => {
-                    $("#txtFecha").append(
-                        $("<option>").val(item.dateId).text(item.dateText)
-                    );
-                });
+            if (responseJson.state) {
+                if (responseJson.object.length > 0) {
+                    responseJson.object.forEach((item) => {
+                        $("#txtFecha").append(
+                            $("<option>").val(item.dateId).text(item.dateText)
+                        );
+                    });
+                }
 
             } else {
                 swal("Lo sentimos", responseJson.message, "error");

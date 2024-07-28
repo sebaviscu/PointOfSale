@@ -71,7 +71,7 @@ namespace PointOfSale.Controllers
             try
             {
                 List<VMTypeDocumentSale> vmListTypeDocumentSale = _mapper.Map<List<VMTypeDocumentSale>>(await _typeDocumentSaleService.GetActive());
-                gResponse.State = false;
+                gResponse.State = true;
                 gResponse.Object = vmListTypeDocumentSale;
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }

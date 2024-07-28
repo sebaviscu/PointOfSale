@@ -39,6 +39,17 @@ function cargarTablaVencimientos() {
             "type": "GET",
             "datatype": "json"
         },
+        "columnDefs": [
+            {
+                "targets": [2,4],
+                "render": function (data, type, row) {
+                    if (type === 'display' || type === 'filter') {
+                        return data ? moment(data).format('DD/MM/YYYY') : '';
+                    }
+                    return data;
+                }
+            }
+        ],
         "columns": [
             {
                 "data": "idVencimiento",
@@ -50,12 +61,12 @@ function cargarTablaVencimientos() {
                 "visible": false,
                 "searchable": false
             },
-            { "data": "fechaVencimientoString" },
+            { "data": "fechaVencimiento" },
             { "data": "producto" },
-            { "data": "fechaElaboracionString" },
+            { "data": "fechaElaboracion" },
             { "data": "lote" }
         ],
-        order: [[1, "desc"]],
+        order: [[1, "desc"], [2, "desc"]],
         dom: "Bfrtip",
         buttons: [
             {

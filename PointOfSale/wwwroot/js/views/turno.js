@@ -100,7 +100,7 @@ const openModal = (model = BASIC_MODEL) => {
 
                 $("#contMetodosPago").empty();
 
-                let resp = responseJson.data;
+                let resp = responseJson.object;
                 let list = document.getElementById("contMetodosPago");
                 for (i = 0; i < resp.ventasPorTipoVenta.length; ++i) {
                     let li = document.createElement('li');

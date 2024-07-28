@@ -13,7 +13,7 @@ namespace PointOfSale.Business.Contracts
         Task<User> Add(User entity);
         Task<User> Edit(User entity);
         Task<bool> Delete(int idUser);
-        Task<User> GetByCredentials(string email, string password);
+        Task<User?> GetByCredentials(string email, string password);
         Task<User> GetById(int IdUser);
 
         Task<User> GetByIdWithRol(int IdUser);

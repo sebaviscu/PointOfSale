@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Org.BouncyCastle.Pkcs;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Services;
 using PointOfSale.Model;
@@ -19,28 +20,22 @@ namespace PointOfSale.Controllers
         private readonly IProductService _productService;
         private readonly IMapper _mapper;
         private readonly IShopService _shopService;
-        private readonly ITiendaService _tiendaService;
         private readonly ICategoryService _categoryService;
         private readonly ITypeDocumentSaleService _typeDocumentSaleService;
         private readonly IAjusteService _ajusteService;
-
         private readonly IRazorViewEngine _razorViewEngine;
-        private readonly IServiceProvider _serviceProvider;
-        private readonly ITempDataProvider _tempDataProvider;
-        public ShopController(IProductService productService, IMapper mapper, IShopService shopService, ITiendaService tiendaService, ICategoryService categoryService, ITypeDocumentSaleService typeDocumentSaleService, IAjusteService ajusteService, IRazorViewEngine razorViewEngine, IServiceProvider serviceProvider, ITempDataProvider tempDataProvider)
+        private readonly ILogger<ShopController> _logger;
+        public ShopController(IProductService productService, IMapper mapper, IShopService shopService, ICategoryService categoryService, ITypeDocumentSaleService typeDocumentSaleService, IAjusteService ajusteService, IRazorViewEngine razorViewEngine, ILogger<ShopController> logger)
         {
             _productService = productService;
             _mapper = mapper;
             _shopService = shopService;
-            _tiendaService = tiendaService;
             _categoryService = categoryService;
             _typeDocumentSaleService = typeDocumentSaleService;
             _ajusteService = ajusteService;
 
             _razorViewEngine = razorViewEngine;
-            _serviceProvider = serviceProvider;
-            _tempDataProvider = tempDataProvider;
-
+            _logger = logger;
         }
 
         public async Task<IActionResult> Index()
@@ -57,9 +52,10 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> Lista(int page = 1, int pageSize = 6)
         {
+            var gResponse = new GenericResponse<VMShop>();
+
             try
             {
-
                 ClaimsPrincipal claimuser = HttpContext.User;
 
                 var ajuste = _mapper.Map<VMAjustes>(await _ajusteService.Get());
@@ -70,29 +66,34 @@ namespace PointOfSale.Controllers
                 shop.Categorias = _mapper.Map<List<VMCategory>>(await _categoryService.ListActive());
                 return View("Lista", shop);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-
-                throw;
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al recuperar productos paginados para la web");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }
 
         [HttpGet]
         public async Task<IActionResult> GetMoreProducts(int page, int pageSize, int categoryId = 0, string searchText = "")
         {
+            var gResponse = new GenericResponse<VMShop>();
             try
             {
-            var products = _mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategory(categoryId, page, pageSize, searchText));
-            var hasMoreProducts = products.Count == pageSize;
+                var products = _mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategory(categoryId, page, pageSize, searchText));
+                var hasMoreProducts = products.Count == pageSize;
 
-            var html = await RenderViewAsync("PVProducts", products);
+                var html = await RenderViewAsync("PVProducts", products);
 
-            return Json(new { hasMoreProducts, html });
+                return Json(new { hasMoreProducts, html });
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-
-                throw;
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al recuperar mas productos paginados para la web");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
         }
@@ -145,14 +146,15 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateVentaWeb([FromBody] VMVentaWeb model)
         {
-            ClaimsPrincipal claimuser = HttpContext.User;
-            var userName = claimuser.Claims
-                    .Where(c => c.Type == ClaimTypes.Name)
-                    .Select(c => c.Value).SingleOrDefault();
-
             GenericResponse<VMVentaWeb> gResponse = new GenericResponse<VMVentaWeb>();
+
             try
             {
+                ClaimsPrincipal claimuser = HttpContext.User;
+                var userName = claimuser.Claims
+                        .Where(c => c.Type == ClaimTypes.Name)
+                        .Select(c => c.Value).SingleOrDefault();
+
                 model.ModificationUser = userName;
 
                 VentaWeb edited_VemntaWeb = await _shopService.Update(_mapper.Map<VentaWeb>(model));
@@ -166,6 +168,8 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al actualizar una venta web");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -188,6 +192,8 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al registrar una venta web");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);

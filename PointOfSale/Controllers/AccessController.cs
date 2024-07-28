@@ -60,7 +60,7 @@ namespace PointOfSale.Controllers
         {
             try
             {
-                User user_found = await _userService.GetByCredentials(model.Email, model.PassWord);
+                var user_found = await _userService.GetByCredentials(model.Email, model.PassWord);
 
                 if (user_found == null)
                 {
@@ -142,7 +142,7 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
-                _logger.LogError(ex, "Error al revuperar todos los usuarios");
+                _logger.LogError(ex, "Error al recuperar todos los usuarios");
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }
