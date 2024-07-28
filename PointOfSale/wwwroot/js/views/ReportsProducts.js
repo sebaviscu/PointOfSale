@@ -7,7 +7,7 @@ $(document).ready(function () {
 
     fetch("/Inventory/GetCategories")
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
             $("#cboCategory").append(
                 $("<option>").val('Todo').text('Todo')

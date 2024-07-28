@@ -38,6 +38,13 @@ namespace PointOfSale.Controllers
             return ValidateSesionViewOrLogin();
         }
 
+        /// <summary>
+        /// Recupera productos para DataTable de reportes
+        /// </summary>
+        /// <param name="idCategoria"></param>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetProductsReport(string idCategoria, string startDate, string endDate)
         {
@@ -86,11 +93,22 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetFechasReporteIva()
         {
-            var user = ValidarAutorizacion([Roles.Administrador]);
+            var gResponse = new GenericResponse<List<DatesFilterIvaReportOutput>>();
 
-            var fechas = _ivaService.GetDatesFilterList(user.IdTienda);
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador]);
 
-            return StatusCode(StatusCodes.Status200OK, new { data = fechas });
+                gResponse.Object = _ivaService.GetDatesFilterList(user.IdTienda);
+                gResponse.State = true;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+            }
         }
 
         public IActionResult LibroIva()
@@ -127,14 +145,15 @@ namespace PointOfSale.Controllers
 
                 gResponse.State = true;
                 gResponse.Object = list;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception e)
             {
                 gResponse.State = false;
                 gResponse.Message = e.Message;
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         private async Task<List<VMLibroIvaTotalOutput>> HandleCompra(int idTienda, DateTime start_date, DateTime end_date)

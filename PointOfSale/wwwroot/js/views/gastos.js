@@ -1,6 +1,6 @@
 ﻿let tableData;
 let rowSelected;
-var tipoGastosList = [];
+let tipoGastosList = [];
 const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun",
     "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
 ];
@@ -27,31 +27,43 @@ $(document).ready(function () {
 
     fetch("/Gastos/GetTipoDeGasto")
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
-            if (responseJson.data.length > 0) {
-                tipoGastosList = responseJson.data;
-                responseJson.data.forEach((item) => {
-                    $("#cboTipoDeGastoEnGasto").append(
-                        $("<option>").val(item.idTipoGastos).text(item.descripcion)
-                    )
-                });
+            if (responseJson.state) {
+                if (responseJson.object.length > 0) {
+                    tipoGastosList = responseJson.object;
+
+                    responseJson.object.forEach((item) => {
+                        $("#cboTipoDeGastoEnGasto").append(
+                            $("<option>").val(item.idTipoGastos).text(item.descripcion)
+                        )
+                    });
+                }
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
             }
         })
 
     fetch("/Access/GetAllUsers")
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
-            if (responseJson.length > 0) {
-                responseJson.forEach((item) => {
-                    $("#cboUsuario").append(
-                        $("<option>").val(item.idUsers).text(item.name)
-                    )
-                });
+            if (responseJson.state) {
+                if (responseJson.object.length > 0) {
+                    tipoGastosList = responseJson.object;
+
+                    responseJson.object.forEach((item) => {
+                        $("#cboUsuario").append(
+                            $("<option>").val(item.idUsers).text(item.name)
+                        )
+                    });
+                }
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
             }
+
         })
 
     tableData = $("#tbData").DataTable({
@@ -104,7 +116,7 @@ $(document).ready(function () {
                 title: '',
                 filename: 'Reporte Gastos',
                 exportOptions: {
-                    columns: [1, 2,3,4,5,6]
+                    columns: [1, 2, 3, 4, 5, 6]
                 }
             }, 'pageLength'
         ]
@@ -156,7 +168,7 @@ $("#btnSaveTipoDeGastos").on("click", function () {
             body: JSON.stringify(model)
         }).then(response => {
             $("#modalDataTipoDeGasto").find("div.modal-content").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
             if (responseJson.state) {
@@ -189,7 +201,7 @@ const openModal = (model = BASIC_MODEL) => {
         document.getElementById("divModif").style.display = 'none';
     else {
         document.getElementById("divModif").style.display = '';
-        var dateTimeModif = new Date(model.modificationDate);
+        let dateTimeModif = new Date(model.modificationDate);
 
         $("#txtModificado").val(dateTimeModif.toLocaleString());
         $("#txtModificadoUsuario").val(model.modificationUser);
@@ -243,7 +255,7 @@ $("#btnSave").on("click", function () {
             body: JSON.stringify(model)
         }).then(response => {
             $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
             if (responseJson.state) {
@@ -266,7 +278,7 @@ $("#btnSave").on("click", function () {
             body: JSON.stringify(model)
         }).then(response => {
             $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
             if (responseJson.state) {
                 swal("Exitoso!", "Modificado con éxito", "success");
@@ -328,28 +340,25 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                     method: "DELETE"
                 }).then(response => {
                     $(".showSweetAlert").LoadingOverlay("hide")
-                    return response.ok ? response.json() : Promise.reject(response);
+                    return response.json();
                 }).then(responseJson => {
-                    if (responseJson.state) {
-
-                        tableData.row(row).remove().draw();
-                        swal("Exitoso!", "El gasto  fue eliminada", "success");
-
-                    } else {
-                        swal("Lo sentimos", responseJson.message, "error");
-                    }
-                })
-                    .catch((error) => {
-                        $(".showSweetAlert").LoadingOverlay("hide")
+                        if (responseJson.state) {
+                            tableData.row(row).remove().draw();
+                            swal("Exitoso!", "El gasto  fue eliminada", "success");
+                        } else {
+                            swal("Lo sentimos", responseJson.message, "error");
+                        }
                     })
+                .catch((error) => {
+                    $(".showSweetAlert").LoadingOverlay("hide")
+                })
             }
         });
 })
 
 $('#cboTipoDeGastoEnGasto').change(function () {
-    var idTipoGasro = $(this).val();
-    var tipoGasto = tipoGastosList.find(_ => _.idTipoGastos == idTipoGasro);
-
+    let idTipoGasro = $(this).val();
+    let tipoGasto = tipoGastosList.find(_ => _.idTipoGastos == idTipoGasro);
     if (tipoGasto != null) {
         $("#txtGasto").val(tipoGasto.gastoParticular);
         $("#txtIva").val(tipoGasto.iva ?? '')
@@ -364,12 +373,10 @@ $('#cboTipoDeGastoEnGasto').change(function () {
 
 
 function calcularImportes() {
-    var importe = $("#txtImporte").val();
-    var iva = $("#txtIva").val();
-
-    if (importe !== '' && iva !== '') {
-
-        var importeSinIva = parseFloat(importe) * (1 - (parseFloat(iva) / 100));
+    let importe = $("#txtImporte").val();
+    let iva = $("#txtIva").val();
+    if(importe !== '' && iva !== '') {
+        let importeSinIva = parseFloat(importe) * (1 - (parseFloat(iva) / 100));
         $("#txtImporteSinIva").val(importeSinIva);
         $("#txtImporteIva").val(importe - importeSinIva);
 
@@ -377,14 +384,12 @@ function calcularImportes() {
 }
 
 function calcularIva() {
-    var importeText = $('#txtImporte').val();
-    var importe = parseFloat(importeText == '' ? 0 : importeText);
-    var iva = parseFloat($('#txtIva').val());
-
-    if (!isNaN(importe) && !isNaN(iva)) {
-        var importeSinIva = importe / (1 + (iva / 100));
-        var importeIva = importe - importeSinIva;
-
+    let importeText = $('#txtImporte').val();
+    let importe = parseFloat(importeText == '' ? 0 : importeText);
+    let iva = parseFloat($('#txtIva').val());
+    if(!isNaN(importe) && !isNaN(iva)) {
+        let importeSinIva = importe / (1 + (iva / 100));
+        let importeIva = importe - importeSinIva;
         $('#txtImporteSinIva').val(importeSinIva.toFixed(2));
         $('#txtImporteIva').val(importeIva.toFixed(2));
     }
@@ -409,18 +414,17 @@ function cargarTablaDinamica() {
             return false;
         }
 
-        if (responseJson.data !== []) {
+        if (responseJson.state && responseJson.data !== []) {
 
-            var today = new Date();
-            var month = "fecha.Month." + monthNames[today.getMonth()];
-            var year = "fecha.Year." + today.getFullYear();
-
-            var pivot = new WebDataRocks({
+            let today = new Date();
+            let month = "fecha.Month." + monthNames[today.getMonth()];
+            let year = "fecha.Year." + today.getFullYear();
+            let pivot = new WebDataRocks({
                 container: "#wdr-component",
                 toolbar: true,
                 report: {
                     dataSource: {
-                        data: responseJson.data
+                        data: responseJson.object
                     },
                     formats: [
                         {
@@ -499,7 +503,9 @@ function cargarTablaDinamica() {
                     localization: "https://cdn.webdatarocks.com/loc/es.json"
                 }
             });
-
+        }
+        else {
+            swal("Lo sentimos", responseJson.message, "error");
         }
     })
 }

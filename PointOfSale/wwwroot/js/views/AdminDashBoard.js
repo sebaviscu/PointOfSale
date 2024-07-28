@@ -1,17 +1,17 @@
-﻿var typeValuesGlobal = 0;
-var proveedoresList = [];
-var tipoGastosList = [];
-var tipoDeGasto = "1";
-var chartVentas;
-var charGastosSueldos;
-var charGastosProveedor;
-var charGastos;
-var charTipoVentas;
+﻿let typeValuesGlobal = 0;
+let proveedoresList = [];
+let tipoGastosList = [];
+let tipoDeGasto = "1";
+let chartVentas;
+let charGastosSueldos;
+let charGastosProveedor;
+let charGastos;
+let charTipoVentas;
 
-var gastoTotal = 0;
-var proveedorTotal = 0;
-var sueldoTotal = 0;
-var saleTotal = 0;
+let gastoTotal = 0;
+let proveedorTotal = 0;
+let sueldoTotal = 0;
+let saleTotal = 0;
 
 
 const BASIC_MODEL_GASTO = {
@@ -41,36 +41,47 @@ const BASIC_MODEL_PAGO_PROVEEDOR = {
 $(document).ready(function () {
     fetch("/Gastos/GetTipoDeGasto")
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
-            if (responseJson.data.length > 0) {
-                tipoGastosList = responseJson.data;
-                responseJson.data.forEach((item) => {
-                    $("#cboTipoDeGastoEnGasto").append(
-                        $("<option>").val(item.idTipoGastos).text(item.descripcion)
-                    )
-                });
+            if (responseJson.state) {
+                if (responseJson.object.length > 0) {
+                    tipoGastosList = responseJson.object;
+
+                    responseJson.object.forEach((item) => {
+                        $("#cboTipoDeGastoEnGasto").append(
+                            $("<option>").val(item.idTipoGastos).text(item.descripcion)
+                        )
+                    });
+                }
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
             }
         })
 
     fetch("/Access/GetAllUsers")
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
+            if (responseJson.state) {
+                if (responseJson.object.length > 0) {
+                    tipoGastosList = responseJson.object;
 
-            if (responseJson.length > 0) {
-                responseJson.forEach((item) => {
-                    $("#cboUsuario").append(
-                        $("<option>").val(item.idUsers).text(item.name)
-                    )
-                });
+                    responseJson.object.forEach((item) => {
+                        $("#cboUsuario").append(
+                            $("<option>").val(item.idUsers).text(item.name)
+                        )
+                    });
+                }
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
             }
+
         })
 
     fetch("/Admin/GetProveedores")
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
             if (responseJson.data.length > 0) {
@@ -86,7 +97,7 @@ $(document).ready(function () {
 
     fetch("/Inventory/GetCategories")
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
             $("#cboCategory").append(
                 $("<option>").val('Todo').text('Todo')
@@ -136,7 +147,7 @@ function changeChart(typeValues, dateFilter) {
     })
         .then(response => {
             LoadingText("hide");
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
             if (responseJson.state) {
@@ -179,7 +190,7 @@ function LoadingText(text) {
 
 function SetGraficoVentas(d) {
 
-    var options = {
+    let options = {
         series: [
             {
                 name: d.actual,
@@ -289,7 +300,7 @@ function SetTopSeler(typeValues, idCategory) {
     })
         .then(response => {
             $("#chartTopSeller").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
             if (responseJson.state) {
 
@@ -322,19 +333,19 @@ function SetGraficoGastosSueldos(typeValues, dateFilter) {
     })
         .then(response => {
             $("#charGastosSueldos").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
             if (responseJson.state) {
-                var respuesta = responseJson.object;
+                let respuesta = responseJson.object;
 
-                var gastosPorTipoSueldos = respuesta.gastosPorTipoSueldos;
+                let gastosPorTipoSueldos = respuesta.gastosPorTipoSueldos;
 
                 $("#gastosSueldosTexto").LoadingOverlay("hide")
                 $("#gastosSueldosTexto").text("$ " + respuesta.gastosSueldosTexto)
                 sueldoTotal = respuesta.gastosSueldosTexto;
                 setGastosGanancia();
-                //var options = {
+                //let options = {
                 //    series: gastosPorTipoSueldos.map((item) => { return item.total }),
                 //    chart: {
                 //        type: 'pie',
@@ -377,11 +388,11 @@ function SetGraficoGastosSueldos(typeValues, dateFilter) {
 
                 //    });
                 //}
-
+            }
+            else {
+                swal("Lo sentimos", "Se ha producido un error: " + responseJson.message, "error");
             }
         });
-
-
 }
 
 function SetGraficoGastosProveedor(typeValues, dateFilter) {
@@ -393,21 +404,21 @@ function SetGraficoGastosProveedor(typeValues, dateFilter) {
     })
         .then(response => {
             $("#charGastosProveedor").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
             if (responseJson.state) {
 
-                var respuesta = responseJson.object;
+                let respuesta = responseJson.object;
 
-                var gastoProveedores = respuesta.gastosPorTipoProveedor;
+                let gastoProveedores = respuesta.gastosPorTipoProveedor;
 
                 $("#gastosProvvedoresTexto").LoadingOverlay("hide")
                 $("#gastosProvvedoresTexto").text("$ " + respuesta.gastosProvvedoresTexto)
                 proveedorTotal = respuesta.gastosProvvedoresTexto;
                 setGastosGanancia();
 
-                var options = {
+                let options = {
                     series: gastoProveedores.map((item) => { return item.total }),
                     chart: {
                         type: 'pie',
@@ -451,6 +462,9 @@ function SetGraficoGastosProveedor(typeValues, dateFilter) {
                     });
                 }
             }
+            else {
+                swal("Lo sentimos", "Se ha producido un error: " + responseJson.message, "error");
+            }
         });
 
 }
@@ -464,21 +478,21 @@ function SetGraficoGastos(typeValues, dateFilter) {
     })
         .then(response => {
             $("#charGastos").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
             if (responseJson.state) {
 
-                var respuesta = responseJson.object;
+                let respuesta = responseJson.object;
 
-                var gastosPorTipo = respuesta.gastosPorTipo;
+                let gastosPorTipo = respuesta.gastosPorTipo;
                 $("#gastoTexto").LoadingOverlay("hide")
                 $("#gastoTexto").text("$ " + respuesta.gastosTexto);
 
                 gastoTotal = respuesta.gastosTexto;
                 setGastosGanancia();
 
-                var options = {
+                let options = {
                     series: gastosPorTipo.map((item) => { return item.total }),
                     chart: {
                         type: 'pie',
@@ -521,8 +535,9 @@ function SetGraficoGastos(typeValues, dateFilter) {
                         labels: gastosPorTipo.map((item) => { return item.descripcion })
                     });
                 }
-
-
+            }
+            else {
+                swal("Lo sentimos", "Se ha producido un error: " + responseJson.message, "error");
             }
         });
 }
@@ -537,16 +552,16 @@ function SetTipoVentas(typeValues, dateFilter) {
     })
         .then(response => {
             $("#charTipoVentas").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
             if (responseJson.state) {
 
-                var respuesta = responseJson.object;
+                let respuesta = responseJson.object;
 
-                var tipoVentas = respuesta.ventasPorTipoVenta;
+                let tipoVentas = respuesta.ventasPorTipoVenta;
 
-                var options = {
+                let options = {
                     series: tipoVentas.map((item) => { return item.total }),
                     chart: {
                         type: 'pie',
@@ -576,7 +591,6 @@ function SetTipoVentas(typeValues, dateFilter) {
                     }
                 };
 
-
                 if (!charTipoVentas) {
                     charTipoVentas = new ApexCharts(document.querySelector("#charTipoVentas"), options);
                     charTipoVentas.render();
@@ -584,18 +598,18 @@ function SetTipoVentas(typeValues, dateFilter) {
                     charTipoVentas.updateOptions({
                         series: tipoVentas.map((item) => { return item.total }),
                         labels: tipoVentas.map((item) => { return item.descripcion })
-
                     });
                 }
-
-
+            }
+            else {
+                swal("Lo sentimos", "Se ha producido un error: " + responseJson.message, "error");
             }
         });
 }
 
 $('#cboTipoDeGastoEnGasto').change(function () {
-    var idTipoGasro = $(this).val();
-    var tipoGasto = tipoGastosList.find(_ => _.idTipoGastos == idTipoGasro);
+    let idTipoGasro = $(this).val();
+    let tipoGasto = tipoGastosList.find(_ => _.idTipoGastos == idTipoGasro);
 
     if (tipoGasto != null) {
         $("#txtGasto").val(tipoGasto.gastoParticular);
@@ -627,8 +641,8 @@ $('#cboTipoDePago').change(function () {
 })
 
 $('#cboProveedor').change(function () {
-    var idProv = $(this).val();
-    var proveedor = proveedoresList.find(_ => _.idProveedor == idProv);
+    let idProv = $(this).val();
+    let proveedor = proveedoresList.find(_ => _.idProveedor == idProv);
     $('#txtImporte').val('');
     $("#txtIva").val('');
     $('#txtImporteSinIva').val('');
@@ -741,7 +755,7 @@ $("#btnSavePagoProveedor").on("click", function () {
         body: JSON.stringify(model)
     }).then(response => {
         removeLoading();
-        return response.ok ? response.json() : Promise.reject(response);
+        return response.json();
     }).then(responseJson => {
 
         if (responseJson.state) {
@@ -757,13 +771,13 @@ $("#btnSavePagoProveedor").on("click", function () {
 })
 
 function calcularIva() {
-    var importeText = $('#txtImporte').val();
-    var importe = parseFloat(importeText == '' ? 0 : importeText);
-    var iva = parseFloat($('#txtIva').val());
+    let importeText = $('#txtImporte').val();
+    let importe = parseFloat(importeText == '' ? 0 : importeText);
+    let iva = parseFloat($('#txtIva').val());
 
     if (!isNaN(importe) && !isNaN(iva)) {
-        var importeSinIva = importe / (1 + (iva / 100));
-        var importeIva = importe - importeSinIva;
+        let importeSinIva = importe / (1 + (iva / 100));
+        let importeIva = importe - importeSinIva;
 
         $('#txtImporteSinIva').val(importeSinIva.toFixed(2));
         $('#txtImporteIva').val(importeIva.toFixed(2));

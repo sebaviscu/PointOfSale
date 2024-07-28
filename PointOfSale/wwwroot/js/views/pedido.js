@@ -36,19 +36,22 @@ $(document).ready(function () {
 
     fetch("/Admin/GetProveedoresConProductos")
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
-            if (responseJson.data.length > 0) {
-                proveedoresList = responseJson.data;
+            if (responseJson.state) {
+                proveedoresList = responseJson.object;
 
-                responseJson.data.forEach((item) => {
+                responseJson.objectobject.forEach((item) => {
                     $("#cboProveedor").append(
                         $("<option>").val(item.idProveedor).text(item.nombre)
                     )
                 });
 
                 removeLoading();
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
             }
         })
 
@@ -422,7 +425,7 @@ $("#btnSave").on("click", function () {
             body: JSON.stringify(model)
         }).then(response => {
             $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
             if (responseJson.state) {
@@ -445,7 +448,7 @@ $("#btnSave").on("click", function () {
             body: JSON.stringify(model)
         }).then(response => {
             $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
             if (responseJson.state) {
@@ -497,7 +500,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                         method: "DELETE"
                     }).then(response => {
                         $(".showSweetAlert").LoadingOverlay("hide")
-                        return response.ok ? response.json() : Promise.reject(response);
+                        return response.json();
                     }).then(responseJson => {
                         if (responseJson.state) {
 
@@ -673,7 +676,7 @@ $("#btnCerrarPedido").on("click", function () {
             body: JSON.stringify(model)
         }).then(response => {
             $("#modalDataRecibido").find("div.modal-content").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
             if (responseJson.state) {

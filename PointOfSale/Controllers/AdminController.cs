@@ -178,17 +178,16 @@ namespace PointOfSale.Controllers
 
                 gResponse.State = true;
                 gResponse.Object = vmDashboard;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al recuperar los datos del dashboard");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
-
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
-
 
         public async Task<IActionResult> GetGastosSueldos(TypeValuesDashboard typeValues, string dateFilter)
         {
@@ -219,15 +218,16 @@ namespace PointOfSale.Controllers
 
                 gResponse.State = true;
                 gResponse.Object = vmDashboard;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al recuperar los datos de sueldos");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         public async Task<IActionResult> GetSalesByTypoVentaByGrafico(TypeValuesDashboard typeValues, string dateFilter)
@@ -256,15 +256,16 @@ namespace PointOfSale.Controllers
 
                 gResponse.State = true;
                 gResponse.Object = vmDashboard;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al recuperar los datos de ventas por forma de pago");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         public async Task<IActionResult> GetGastos(TypeValuesDashboard typeValues, string dateFilter)
@@ -295,15 +296,16 @@ namespace PointOfSale.Controllers
 
                 gResponse.State = true;
                 gResponse.Object = vmDashboard;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al recuperar los datos de gastos");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         public async Task<IActionResult> GetMovimientosProveedoresByTienda(TypeValuesDashboard typeValues, string dateFilter)
@@ -336,15 +338,16 @@ namespace PointOfSale.Controllers
 
                 gResponse.State = true;
                 gResponse.Object = vmDashboard;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al recuperar los datos de pagos a proveedores");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         public DateTime SetDate(TypeValuesDashboard typeValues, string dateFilter)
@@ -416,14 +419,15 @@ namespace PointOfSale.Controllers
 
                 gResponse.State = true;
                 gResponse.Object = ProductListWeek;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception e)
             {
                 gResponse.State = false;
                 gResponse.Message = $"GetSalesByTypoVenta: {e.Message}";
                 _logger.LogError(e, "Error al recuperar el top ventas de dashboard");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
-            return StatusCode(StatusCodes.Status200OK, gResponse);
 
         }
 
@@ -510,17 +514,17 @@ namespace PointOfSale.Controllers
 
             try
             {
-                var listRoles = _mapper.Map<List<VMRol>>(await _rolService.List());
+                gResponse.Object = _mapper.Map<List<VMRol>>(await _rolService.List());
                 gResponse.State = true;
-                gResponse.Object = listRoles;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception e)
             {
                 gResponse.State = false;
-                gResponse.Message = $"GetRoles: {e.Message}";
+                gResponse.Message = e.Message;
                 _logger.LogError(e, "Error al recuperar los roles");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         /// <summary>
@@ -569,19 +573,18 @@ namespace PointOfSale.Controllers
 
                 User usuario_creado = await _userService.Add(_mapper.Map<User>(vmUser));
 
-                vmUser = _mapper.Map<VMUser>(usuario_creado);
-
+                gResponse.Object = _mapper.Map<VMUser>(usuario_creado); ;
                 gResponse.State = true;
-                gResponse.Object = vmUser;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al crear un usuarios");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         [HttpPut]
@@ -608,19 +611,18 @@ namespace PointOfSale.Controllers
 
                 User user_edited = await _userService.Edit(_mapper.Map<User>(vmUser));
 
-                vmUser = _mapper.Map<VMUser>(user_edited);
-
+                gResponse.Object = _mapper.Map<VMUser>(user_edited); ;
                 gResponse.State = true;
-                gResponse.Object = vmUser;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al actualizar un usuarios");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         [HttpDelete]
@@ -633,15 +635,16 @@ namespace PointOfSale.Controllers
                 ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
                 gResponse.State = await _userService.Delete(IdUser);
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al borrar un usuarios");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         public IActionResult TipoVenta()
@@ -657,6 +660,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTipoVenta()
         {
+
             List<VMTypeDocumentSale> listUsers = _mapper.Map<List<VMTypeDocumentSale>>(await _typeDocumentSaleService.List());
             return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
         }
@@ -672,26 +676,25 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateTipoVenta([FromBody] VMTypeDocumentSale vmUser)
         {
-            GenericResponse<VMTypeDocumentSale> gResponse = new GenericResponse<VMTypeDocumentSale>();
+            var gResponse = new GenericResponse<VMTypeDocumentSale>();
             try
             {
                 ValidarAutorizacion([Roles.Administrador]);
 
-                TypeDocumentSale usuario_creado = await _typeDocumentSaleService.Add(_mapper.Map<TypeDocumentSale>(vmUser));
+                var usuario_creado = await _typeDocumentSaleService.Add(_mapper.Map<TypeDocumentSale>(vmUser));
 
-                vmUser = _mapper.Map<VMTypeDocumentSale>(usuario_creado);
-
+                gResponse.Object = _mapper.Map<VMTypeDocumentSale>(usuario_creado);
                 gResponse.State = true;
-                gResponse.Object = vmUser;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al crear una forma de pago");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         [HttpPut]
@@ -705,19 +708,18 @@ namespace PointOfSale.Controllers
 
                 TypeDocumentSale user_edited = await _typeDocumentSaleService.Edit(_mapper.Map<TypeDocumentSale>(vmUser));
 
-                vmUser = _mapper.Map<VMTypeDocumentSale>(user_edited);
-
+                gResponse.Object = _mapper.Map<VMTypeDocumentSale>(user_edited);
                 gResponse.State = true;
-                gResponse.Object = vmUser;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al actualizar una forma de pago");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         [HttpDelete]
@@ -730,15 +732,15 @@ namespace PointOfSale.Controllers
                 ValidarAutorizacion([Roles.Administrador]);
 
                 gResponse.State = await _typeDocumentSaleService.Delete(idTypeDocumentSale);
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al eliminar una forma de pago");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
-
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
 
@@ -755,6 +757,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCliente()
         {
+            var gResponse = new GenericResponse<List<VMCliente>>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
@@ -763,8 +766,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception e)
             {
+                gResponse.State = false;
+                gResponse.Message = e.ToString();
                 _logger.LogError(e, "Error al recuperar clientes");
-                throw;
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
         }
@@ -781,6 +786,7 @@ namespace PointOfSale.Controllers
             {
                 return View(idCliente);
             }
+            var gResponse = new GenericResponse<List<VMClienteMovimiento>>();
 
             try
             {
@@ -791,8 +797,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception e)
             {
+                gResponse.State = false;
+                gResponse.Message = e.ToString();
                 _logger.LogError(e, "Error al recuperar movimientos de cliente");
-                throw;
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }
 
@@ -804,7 +812,6 @@ namespace PointOfSale.Controllers
                 return View(model);
             }
 
-
             var gResponse = new GenericResponse<VMCliente>();
             try
             {
@@ -813,19 +820,18 @@ namespace PointOfSale.Controllers
                 model.IdTienda = user.IdTienda;
                 var usuario_creado = await _clienteService.Add(_mapper.Map<Cliente>(model));
 
-                model = _mapper.Map<VMCliente>(usuario_creado);
-
+                gResponse.Object = _mapper.Map<VMCliente>(usuario_creado);
                 gResponse.State = true;
-                gResponse.Object = model;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al crear cliente");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         [HttpPut]
@@ -844,19 +850,18 @@ namespace PointOfSale.Controllers
                 vmUser.ModificationUser = user.UserName;
                 var user_edited = await _clienteService.Edit(_mapper.Map<Cliente>(vmUser));
 
-                vmUser = _mapper.Map<VMCliente>(user_edited);
-
+                gResponse.Object = _mapper.Map<VMCliente>(user_edited);
                 gResponse.State = true;
-                gResponse.Object = vmUser;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al actualizar cliente");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         [HttpDelete]
@@ -874,15 +879,16 @@ namespace PointOfSale.Controllers
                 ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
                 gResponse.State = await _clienteService.Delete(idCliente);
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al eliminar cliente");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         public IActionResult Proveedor()
@@ -898,6 +904,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProveedores()
         {
+            var gResponse = new GenericResponse<List<VMProveedor>>();
             try
             {
                 var listProveedor = _mapper.Map<List<VMProveedor>>(await _proveedorService.List());
@@ -905,8 +912,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception e)
             {
+                gResponse.State = false;
+                gResponse.Message = e.ToString();
                 _logger.LogError(e, "Error al recuperar proveedores");
-                throw;
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }
 
@@ -914,6 +923,7 @@ namespace PointOfSale.Controllers
         public async Task<IActionResult> GetProveedoresConProductos()
         {
 
+            var gResponse = new GenericResponse<List<VMPedidosProveedor>>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
@@ -942,12 +952,16 @@ namespace PointOfSale.Controllers
                     .OrderBy(p => p.Nombre)
                     .ToList();
 
-                return StatusCode(StatusCodes.Status200OK, new { data = _mapper.Map<List<VMPedidosProveedor>>(list) });
+                gResponse.State = true;
+                gResponse.Object = _mapper.Map<List<VMPedidosProveedor>>(list);
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception e)
             {
+                gResponse.State = false;
+                gResponse.Message = e.ToString();
                 _logger.LogError(e, "Error al recuperar proveedores con productos para pedido");
-                throw;
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
         }
@@ -965,19 +979,18 @@ namespace PointOfSale.Controllers
             {
                 var usuario_creado = await _proveedorService.Add(_mapper.Map<Proveedor>(model));
 
-                model = _mapper.Map<VMProveedor>(usuario_creado);
-
+                gResponse.Object = _mapper.Map<VMProveedor>(usuario_creado);
                 gResponse.State = true;
-                gResponse.Object = model;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al crear proveedor");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         [HttpPost]
@@ -987,7 +1000,6 @@ namespace PointOfSale.Controllers
             {
                 return View(model);
             }
-
 
             var gResponse = new GenericResponse<VMProveedorMovimiento>();
             try
@@ -1003,15 +1015,16 @@ namespace PointOfSale.Controllers
 
                 gResponse.State = true;
                 gResponse.Object = model;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al crear pago a proveedor");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         /// <summary>
@@ -1026,6 +1039,7 @@ namespace PointOfSale.Controllers
             {
                 return View(idProveedor);
             }
+            var gResponse = new GenericResponse<List<VMProveedorMovimiento>>();
 
             try
             {
@@ -1036,8 +1050,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                gResponse.State = false;
+                gResponse.Message = ex.ToString();
                 _logger.LogError(ex, "Error al recuperar pago a proveedor");
-                throw;
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
         }
@@ -1050,6 +1066,7 @@ namespace PointOfSale.Controllers
         public async Task<IActionResult> GetAllMovimientoProveedor()
         {
 
+            var gResponse = new GenericResponse<List<VMProveedorMovimiento>>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
@@ -1059,8 +1076,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                gResponse.State = false;
+                gResponse.Message = ex.ToString();
                 _logger.LogError(ex, "Error al recuperar pagos a proveedores");
-                throw;
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }
 
@@ -1068,17 +1087,22 @@ namespace PointOfSale.Controllers
         public async Task<IActionResult> GetProveedorTablaDinamica()
         {
 
+            var gResponse = new GenericResponse<List<VMMovimientoProveedoresTablaDinamica>>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
 
                 var listUsers = _mapper.Map<List<VMMovimientoProveedoresTablaDinamica>>(await _proveedorService.ListMovimientosProveedorForTablaDinamica(user.IdTienda));
-                return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
+                gResponse.State = true;
+                gResponse.Object = listUsers;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
+                gResponse.State = false;
+                gResponse.Message = ex.ToString();
                 _logger.LogError(ex, "Error al recuperar pagos a proveedores para tabla dinamica");
-                throw;
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }
 
@@ -1103,15 +1127,16 @@ namespace PointOfSale.Controllers
 
                 gResponse.State = true;
                 gResponse.Object = vmUser;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al actualizar proveedor");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         [HttpDelete]
@@ -1129,15 +1154,16 @@ namespace PointOfSale.Controllers
                 ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
                 gResponse.State = await _proveedorService.Delete(idProveedor);
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al eliminar proveedor");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
 
@@ -1158,15 +1184,16 @@ namespace PointOfSale.Controllers
                 _ = await _proveedorService.CambiarEstadoMovimiento(idMovimiento);
 
                 gResponse.State = true;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al cambiar estado de pago de proveedor");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         [HttpPut]
@@ -1176,7 +1203,6 @@ namespace PointOfSale.Controllers
             {
                 return View(vmUser);
             }
-
 
             var gResponse = new GenericResponse<VMProveedorMovimiento>();
             try
@@ -1190,15 +1216,16 @@ namespace PointOfSale.Controllers
 
                 gResponse.State = true;
                 gResponse.Object = vmUser;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al actualizar pago de proveedor");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         [HttpDelete]
@@ -1209,22 +1236,22 @@ namespace PointOfSale.Controllers
                 return View(idPagoProveedor);
             }
 
-
             var gResponse = new GenericResponse<string>();
             try
             {
                 ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
                 gResponse.State = await _proveedorService.DeleteProveedorMovimiento(idPagoProveedor);
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al eliminar pago de proveedor");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         public IActionResult Promociones()
@@ -1240,6 +1267,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPromociones()
         {
+            var gResponse = new GenericResponse<List<VMPromocion>>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
@@ -1254,8 +1282,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                gResponse.State = false;
+                gResponse.Message = ex.ToString();
                 _logger.LogError(ex, "Error al recuperar promociones");
-                throw;
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
         }
@@ -1290,17 +1320,23 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPromocionesActivas()
         {
+            var gResponse = new GenericResponse<List<VMPromocion>>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
 
                 var listPromocion = _mapper.Map<List<VMPromocion>>(await _promocionService.Activas(user.IdTienda));
-                return StatusCode(StatusCodes.Status200OK, new { data = listPromocion });
+
+                gResponse.State = true;
+                gResponse.Object = listPromocion;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
+                gResponse.State = false;
+                gResponse.Message = ex.ToString();
                 _logger.LogError(ex, "Error al recuperar promociones activas");
-                throw;
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }
 
@@ -1327,15 +1363,16 @@ namespace PointOfSale.Controllers
 
                 gResponse.State = true;
                 gResponse.Object = model;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al crear una promociones");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         [HttpPut]
@@ -1359,15 +1396,16 @@ namespace PointOfSale.Controllers
                 await SetStringPromocion(vmUser);
                 gResponse.State = true;
                 gResponse.Object = vmUser;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al actualizar una promociones");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         [HttpDelete]
@@ -1385,15 +1423,16 @@ namespace PointOfSale.Controllers
                 ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
                 gResponse.State = await _promocionService.Delete(idPromocion);
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al eliminar una promociones");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
 
@@ -1418,15 +1457,16 @@ namespace PointOfSale.Controllers
 
                 gResponse.Object = model;
                 gResponse.State = true;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al cambiar estado de una promociones");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         [HttpGet]
@@ -1436,10 +1476,15 @@ namespace PointOfSale.Controllers
             return ValidateSesionViewOrLogin();
         }
 
+        /// <summary>
+        /// Recupera ajustes para DataTable
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetAjuste()
         {
 
+            var gResponse = new GenericResponse<VMAjustes>();
             try
             {
                 var vmAjusteList = _mapper.Map<VMAjustes>(await _ajusteService.Get());
@@ -1447,8 +1492,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Error al recuperarajustes");
-                throw;
+                gResponse.State = false;
+                gResponse.Message = e.ToString();
+                _logger.LogError(e, "Error al recuperar ajustes");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }
 
@@ -1474,15 +1521,16 @@ namespace PointOfSale.Controllers
 
                 gResponse.State = true;
                 gResponse.Object = model;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al actualizar una ajustes");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         /// <summary>
@@ -1492,23 +1540,21 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAjustesProductos()
         {
+            var gResponse = new GenericResponse<string>();
             try
             {
                 var ajuste = await _ajusteService.Get();
 
-
-                return StatusCode(StatusCodes.Status200OK, new
-                {
-                    data = new
-                    {
-                        AumentoWeb = ajuste.AumentoWeb.HasValue ? ajuste.AumentoWeb.Value.ToString("F0") : string.Empty
-                    }
-                });
+                gResponse.State = true;
+                gResponse.Object = ajuste.AumentoWeb.HasValue ? ajuste.AumentoWeb.Value.ToString("F0") : string.Empty;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
+                gResponse.State = false;
+                gResponse.Message = ex.ToString();
                 _logger.LogError(ex, "Error al recuperar aumento web");
-                throw;
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
         }
@@ -1520,22 +1566,21 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAjustesVentas()
         {
+            var gResponse = new GenericResponse<bool?>();
             try
             {
                 var ajuste = await _ajusteService.Get();
 
-                return StatusCode(StatusCodes.Status200OK, new
-                {
-                    data = new
-                    {
-                        ImprimirDefault = ajuste.ImprimirDefault != null ? ajuste.ImprimirDefault : false
-                    }
-                });
+                gResponse.State = true;
+                gResponse.Object = ajuste.ImprimirDefault != null ? ajuste.ImprimirDefault : false;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
+                gResponse.State = false;
+                gResponse.Message = ex.ToString();
                 _logger.LogError(ex, "Error al recuperar nombre de la impresora");
-                throw;
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }
 
@@ -1546,6 +1591,7 @@ namespace PointOfSale.Controllers
             {
                 return View(encryptedCode);
             }
+            var gResponse = new GenericResponse<bool>();
 
             try
             {
@@ -1553,16 +1599,16 @@ namespace PointOfSale.Controllers
 
                 var codigo = ajuste.CodigoSeguridad != null ? ajuste.CodigoSeguridad : string.Empty;
 
-                if (encryptedCode == codigo)
-                {
-                    return Ok(new { valid = true });
-                }
-                return Unauthorized(new { valid = false });
+                gResponse.State = true;
+                gResponse.Object = encryptedCode == codigo;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
+                gResponse.State = false;
+                gResponse.Message = ex.ToString();
                 _logger.LogError(ex, "Error al validar codigo de seguridad");
-                throw;
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }
     }

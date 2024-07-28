@@ -313,7 +313,7 @@ function finalizarVenta() {
                 headers: { 'Content-Type': 'application/json;charset=utf-8' },
                 body: JSON.stringify(sale)
             }).then(response => {
-                return response.ok ? response.json() : Promise.reject(response);
+                return response.json();
             }).then(responseJson => {
 
                 if (responseJson.state) {

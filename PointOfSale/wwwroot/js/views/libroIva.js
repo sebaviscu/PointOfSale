@@ -14,12 +14,15 @@ $(document).ready(function () {
             return response.json();
         })
         .then(responseJson => {
-            if (responseJson.data.length > 0) {
+            if (responseJson.state && responseJson.object.length > 0) {
                 responseJson.data.forEach((item) => {
                     $("#txtFecha").append(
                         $("<option>").val(item.dateId).text(item.dateText)
                     );
                 });
+
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
             }
         })
         .catch(error => {
@@ -104,7 +107,7 @@ function LoadCompra(fecha) {
         method: "GET"
     })
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
             if (responseJson.state) {
@@ -201,7 +204,7 @@ function LoadVenta(fecha) {
         method: "GET"
     })
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
             if (responseJson.state) {
@@ -279,7 +282,9 @@ function LoadVenta(fecha) {
                         ]
                     });
                 }
-            };
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
         });
 }
 
@@ -288,7 +293,7 @@ function LoadServiciosGastos(fecha) {
         method: "GET"
     })
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
             if (responseJson.state) {

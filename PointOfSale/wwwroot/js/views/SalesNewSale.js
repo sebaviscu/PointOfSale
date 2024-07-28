@@ -17,36 +17,46 @@ $(document).ready(function () {
 
     fetch("/Sales/ListTypeDocumentSale")
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
-            $("#cboTypeDocumentSaleParcial").append(
-                //$("<option>").val('').text('')
-            )
-            if (responseJson.length > 0) {
-                formasDePagosList = responseJson;
 
-                responseJson.forEach((item) => {
-                    $("#cboTypeDocumentSaleParcial").append(
-                        $("<option>").val(item.idTypeDocumentSale).text(item.description)
-                    )
-                });
+            if (responseJson.state > 0) {
+                if (responseJson.object.length > 0) {
+                    responseJson.object.forEach((item) => {
+                        $("#cboTypeDocumentSale").append(
+                            $("<option>").val(item.idTypeDocumentSale).text(item.description)
+                        )
+                    });
+                }
+            }
+            else {
+                swal("Lo sentimos", responseJson.message, "error");
             }
         });
 
     fetch("/Admin/GetPromocionesActivas")
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
-            promociones = responseJson.data;
+
+            if (responseJson.state) {
+                promociones = responseJson.object;
+
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+
         });
 
     fetch("/Admin/GetAjustesVentas")
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
-            if (responseJson.data != null) {
+            if (responseJson.state) {
+                document.getElementById('cboImprimirTicket').checked = responseJson.object;
 
-                document.getElementById('cboImprimirTicket').checked = responseJson.data.imprimirDefault;
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
             }
         })
 
@@ -432,7 +442,7 @@ function registrationSale(currentTabId) {
         body: JSON.stringify(sale)
     }).then(response => {
 
-        return response.ok ? response.json() : Promise.reject(response);
+        return response.json();
     }).then(responseJson => {
         removeLoading();
 
@@ -618,7 +628,7 @@ function addFunctions(idTab) {
         fetch(`/Sales/PrintTicket?idSale=${idSale}`
         ).then(response => {
 
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(response => {
             $("#modalData").modal("hide");
             printTicket(response.object.ticket, response.object.nombreImpresora);
@@ -1022,10 +1032,13 @@ function validateCode(userCode) {
     })
         .then(response => response.json())
         .then(data => {
-            if (data.valid) {
-                alert('Código válido');
+            if (responseJson.state) {
+                if (data.valid) {
+                } else {
+                    alert('Código inválido');
+                }
             } else {
-                alert('Código inválido');
+                swal("Lo sentimos", responseJson.message, "error");
             }
         })
         .catch(error => {

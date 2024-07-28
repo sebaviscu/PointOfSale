@@ -21,7 +21,7 @@ $(document).ready(function () {
 
     fetch("/Admin/GetRoles")
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
             if (responseJson.state) {
 
@@ -40,7 +40,7 @@ $(document).ready(function () {
 
     fetch("/Tienda/GetTienda")
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
             $("#cboTiendas").append(
                 $("<option>").val('-1').text(''))
@@ -196,7 +196,7 @@ $("#btnSave").on("click", function () {
             body: formData
         }).then(response => {
             $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
             if (responseJson.state) {
@@ -218,7 +218,7 @@ $("#btnSave").on("click", function () {
             body: formData
         }).then(response => {
             $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
             if (responseJson.state) {
 
@@ -284,7 +284,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                     method: "DELETE"
                 }).then(response => {
                     $(".showSweetAlert").LoadingOverlay("hide")
-                    return response.ok ? response.json() : Promise.reject(response);
+                    return response.json();
                 }).then(responseJson => {
                     if (responseJson.state) {
 

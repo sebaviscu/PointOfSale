@@ -29,7 +29,7 @@ $(document).ready(function () {
     fetch("/Admin/GetAjuste")
         .then(response => {
             removeLoading();
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
             if (responseJson.data != null) {
 
@@ -125,7 +125,7 @@ $("#btnSave").on("click", function () {
         body: JSON.stringify(model)
     }).then(response => {
         removeLoading();
-        return response.ok ? response.json() : Promise.reject(response);
+        return response.json();
     }).then(responseJson => {
         if (responseJson.state) {
 

@@ -46,8 +46,10 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTurnoActual()
         {
+            var gResponse = new GenericResponse<VMTurno>();
             try
             {
+
                 var tiendaId = Convert.ToInt32(((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value);
 
                 var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurnoActualConVentas(tiendaId));
@@ -64,12 +66,16 @@ namespace PointOfSale.Controllers
                 }
                 vmTurnp.VentasPorTipoVenta = VentasPorTipoVenta;
 
-                return StatusCode(StatusCodes.Status200OK, new { data = vmTurnp });
+                gResponse.State = true;
+                gResponse.Object = vmTurnp;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-
-                throw;
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al recuperar turno actual");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
         }
@@ -77,6 +83,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTurno(int idturno)
         {
+            var gResponse = new GenericResponse<VMTurno>();
             try
             {
                 ValidarAutorizacion([Roles.Administrador]);
@@ -98,10 +105,12 @@ namespace PointOfSale.Controllers
 
                 return StatusCode(StatusCodes.Status200OK, new { data = vmTurnp });
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-
-                throw;
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al recuperar un turno");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
         }
@@ -109,47 +118,43 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> CerrarTurno([FromBody] VMSaveTurno modelTurno)
         {
+            var gResponse = new GenericResponse<VMTurno>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
 
                 var model = _mapper.Map<VMTurno>(await _turnoService.GetTurnoActual(user.IdTienda));
 
-                GenericResponse<VMTurno> gResponse = new GenericResponse<VMTurno>();
-                try
-                {
-                    model.ModificationUser = user.UserName;
-                    var tiendaId = ((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value;
-                    model.Descripcion = modelTurno.Descripcion;
-                    var turno_cerrar = await _turnoService.CloseTurno(user.IdTienda, _mapper.Map<Turno>(model));
 
-                    var nuevoTurno = await _turnoService.AbrirTurno(Convert.ToInt32(tiendaId), user.UserName);
+                model.ModificationUser = user.UserName;
+                var tiendaId = ((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value;
+                model.Descripcion = modelTurno.Descripcion;
+                var turno_cerrar = await _turnoService.CloseTurno(user.IdTienda, _mapper.Map<Turno>(model));
 
-                    gResponse.State = true;
-                    gResponse.Object = _mapper.Map<VMTurno>(nuevoTurno);
-                }
-                catch (Exception ex)
-                {
-                    gResponse.State = false;
-                    gResponse.Message = ex.Message;
-                }
+                var nuevoTurno = await _turnoService.AbrirTurno(Convert.ToInt32(tiendaId), user.UserName);
+
+                gResponse.State = true;
+                gResponse.Object = _mapper.Map<VMTurno>(nuevoTurno);
 
                 await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-
-                throw;
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al cerrar un turno");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
-
         }
 
 
         [HttpGet]
         public async Task<IActionResult> GetOneTurno(int idTurno)
         {
+            var gResponse = new GenericResponse<VMTurno>();
+
             try
             {
                 ValidarAutorizacion([Roles.Administrador]);
@@ -170,22 +175,24 @@ namespace PointOfSale.Controllers
 
                 return StatusCode(StatusCodes.Status200OK, new { data = vmTurnp });
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-
-                throw;
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al recuperar un turno");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] VMTurno VMTurno)
+        public async Task<IActionResult> UpdateTurno([FromBody] VMTurno VMTurno)
         {
+            GenericResponse<VMTurno> gResponse = new GenericResponse<VMTurno>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
 
-                GenericResponse<VMTurno> gResponse = new GenericResponse<VMTurno>();
                 try
                 {
                     VMTurno.ModificationUser = user.UserName;
@@ -204,10 +211,12 @@ namespace PointOfSale.Controllers
 
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-
-                throw;
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al actualizar un turno");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
         }

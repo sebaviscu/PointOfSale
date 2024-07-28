@@ -94,7 +94,7 @@ $(document).ready(function () {
 
     fetch("/Tienda/GetTienda")
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
             if (responseJson.data.length > 0) {
 
@@ -108,19 +108,21 @@ $(document).ready(function () {
 
     fetch("/Sales/ListTypeDocumentSale")
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
-            $("#txtFormaPago").append(
-            )
-            if (responseJson.length > 0) {
-                formasDePagosList = responseJson;
-
-                responseJson.forEach((item) => {
-                    $("#txtFormaPago").append(
-                        $("<option>").val(item.idTypeDocumentSale).text(item.description)
-                    )
-                });
+            if (responseJson.state > 0) {
+                if (responseJson.object.length > 0) {
+                    responseJson.object.forEach((item) => {
+                        $("#txtFormaPago").append(
+                            $("<option>").val(item.idTypeDocumentSale).text(item.description)
+                        )
+                    });
+                }
             }
+            else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+
         });
 })
 
@@ -380,7 +382,7 @@ $("#btnSave").on("click", function () {
         body: JSON.stringify(model)
     }).then(response => {
         $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-        return response.ok ? response.json() : Promise.reject(response);
+        return response.json();
     }).then(responseJson => {
         if (responseJson.state) {
 

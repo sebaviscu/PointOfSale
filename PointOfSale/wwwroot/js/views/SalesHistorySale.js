@@ -31,17 +31,22 @@ $(document).ready(function () {
 
     fetch("/Sales/ListTypeDocumentSale")
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
             $("#cboTypeDocumentSale").append(
                 $("<option>").val('').text('')
             )
-            if (responseJson.length > 0) {
-                responseJson.forEach((item) => {
-                    $("#cboTypeDocumentSale").append(
-                        $("<option>").val(item.idTypeDocumentSale).text(item.description)
-                    )
-                });
+            if (responseJson.state > 0) {
+                if (responseJson.object.length > 0) {
+                    responseJson.object.forEach((item) => {
+                        $("#cboTypeDocumentSale").append(
+                            $("<option>").val(item.idTypeDocumentSale).text(item.description)
+                        )
+                    });
+                }
+            }
+            else {
+                swal("Lo sentimos", responseJson.message, "error");
             }
         });
 
@@ -108,7 +113,7 @@ $("#btnSearch").click(function () {
     fetch(`/Sales/History?saleNumber=${saleNumber}&startDate=${startDate}&endDate=${endDate}&presupuestos=${presu}`)
         .then(response => {
             $(".card-body").find("div.row").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
             $("#tbsale tbody").html("");
             if (responseJson.length > 0) {
@@ -224,7 +229,7 @@ $("#printTicket").click(function () {
     fetch(`/Sales/PrintTicket?idSale=${idSale}`, {
     }).then(response => {
 
-        return response.ok ? response.json() : Promise.reject(response);
+        return response.json();
     }).then(responseJson => {
 
         if (responseJson.state) {

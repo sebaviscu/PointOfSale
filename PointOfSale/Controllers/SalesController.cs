@@ -67,22 +67,33 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> ListTypeDocumentSale()
         {
+            var gResponse = new GenericResponse<List<VMTypeDocumentSale>>();
             try
             {
                 List<VMTypeDocumentSale> vmListTypeDocumentSale = _mapper.Map<List<VMTypeDocumentSale>>(await _typeDocumentSaleService.GetActive());
-                return StatusCode(StatusCodes.Status200OK, vmListTypeDocumentSale);
+                gResponse.State = false;
+                gResponse.Object = vmListTypeDocumentSale;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-
-                throw;
+                gResponse.State = false;
+                gResponse.Message = ex.ToString();
+                _logger.LogError(ex, "Error al recuperar formas de ventas");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
         }
 
+        /// <summary>
+        /// Devuelve productos para select2
+        /// </summary>
+        /// <param name="search"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetProducts(string search)
         {
+            var gResponse = new GenericResponse<List<VMProduct>>();
             try
             {
                 ClaimsPrincipal claimuser = HttpContext.User;
@@ -91,26 +102,35 @@ namespace PointOfSale.Controllers
                 return StatusCode(StatusCodes.Status200OK, vmListProducts);
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-
-                throw;
+                gResponse.State = false;
+                gResponse.Message = ex.ToString();
+                _logger.LogError(ex, "Error al recuperar lista de productos");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
-            return default;
         }
 
+        /// <summary>
+        /// Devuelve clientes para select2
+        /// </summary>
+        /// <param name="search"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetClientes(string search)
         {
+            var gResponse = new GenericResponse<List<VMCliente>>();
             try
             {
                 List<VMCliente> vmListClients = _mapper.Map<List<VMCliente>>(await _saleService.GetClients(search));
                 return StatusCode(StatusCodes.Status200OK, vmListClients);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-
-                throw;
+                gResponse.State = false;
+                gResponse.Message = ex.ToString();
+                _logger.LogError(ex, "Error al recuperar lista de clientes");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
         }
@@ -193,14 +213,16 @@ namespace PointOfSale.Controllers
 
                 gResponse.State = true;
                 gResponse.Object = model;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.ToString();
+                _logger.LogError(ex, "Error al registrar venta");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         [HttpPost]
@@ -226,14 +248,16 @@ namespace PointOfSale.Controllers
 
                 gResponse.State = true;
                 gResponse.Object = model;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.ToString();
+                _logger.LogError(ex, "Error RegisterNoCierreSale");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         [HttpGet]
@@ -247,6 +271,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> History(string saleNumber, string startDate, string endDate, string presupuestos)
         {
+            var gResponse = new GenericResponse<List<VMSale>>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
@@ -268,10 +293,12 @@ namespace PointOfSale.Controllers
 
                 return StatusCode(StatusCodes.Status200OK, vmHistorySale);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-
-                throw;
+                gResponse.State = false;
+                gResponse.Message = ex.ToString();
+                _logger.LogError(ex, "Error al recuperar historico de ventas");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }
 
@@ -296,23 +323,25 @@ namespace PointOfSale.Controllers
 
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-
-                throw;
+                gResponse.State = false;
+                gResponse.Message = ex.ToString();
+                _logger.LogError(ex, "Error al imprimir ticket");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
         }
 
         public async Task<IActionResult> PrintTicketVentaWeb(int idVentaWeb)
         {
+            GenericResponse<VMSale> gResponse = new GenericResponse<VMSale>();
             try
             {
                 var ventaWeb = await _shopService.Get(idVentaWeb);
                 var tienda = await _tiendaService.Get(ventaWeb.IdTienda.Value);
                 var ticket = _ticketService.TicketVentaWeb(ventaWeb, tienda);
 
-                GenericResponse<VMSale> gResponse = new GenericResponse<VMSale>();
 
                 var model = new VMSale();
 
@@ -324,10 +353,12 @@ namespace PointOfSale.Controllers
 
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-
-                throw;
+                gResponse.State = false;
+                gResponse.Message = ex.ToString();
+                _logger.LogError(ex, "Error al imprimir ticket en venta web");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
         }

@@ -36,6 +36,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetGastos()
         {
+            var gResponse = new GenericResponse<List<VMGastos>>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
@@ -43,21 +44,23 @@ namespace PointOfSale.Controllers
                 List<VMGastos> vmGastosList = _mapper.Map<List<VMGastos>>(await _GastosService.List(user.IdTienda));
                 return StatusCode(StatusCodes.Status200OK, new { data = vmGastosList });
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _logger.LogError(e, "Error al recuperar gastos");
-                throw;
+                gResponse.State = false;
+                gResponse.Message = ex.ToString();
+                _logger.LogError(ex, "Error al recuperar lista de gastos");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateGastos([FromBody] VMGastos model)
         {
-            var user = ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMGastos> gResponse = new GenericResponse<VMGastos>();
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador]);
                 model.RegistrationDate = TimeHelper.GetArgentinaTime();
                 model.RegistrationUser = user.UserName;
                 var gasto = _mapper.Map<Gastos>(model);
@@ -82,11 +85,11 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateGastos([FromBody] VMGastos model)
         {
-            var user = ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMGastos> gResponse = new GenericResponse<VMGastos>();
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador]);
                 model.ModificationUser = user.UserName;
 
                 Gastos edited_Gastos = await _GastosService.Edit(_mapper.Map<Gastos>(model));
@@ -111,21 +114,21 @@ namespace PointOfSale.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteGastos(int idGastos)
         {
-            ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<string> gResponse = new GenericResponse<string>();
             try
             {
+                ValidarAutorizacion([Roles.Administrador]);
                 gResponse.State = await _GastosService.Delete(idGastos);
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al eliminar gastos");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
-
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         /// <summary>
@@ -135,42 +138,47 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTipoDeGasto()
         {
+            var gResponse = new GenericResponse<List<VMTipoDeGasto>>();
+
             try
             {
-                List<VMTipoDeGasto> vmGastosList = _mapper.Map<List<VMTipoDeGasto>>(await _GastosService.ListTipoDeGasto());
-                return StatusCode(StatusCodes.Status200OK, new { data = vmGastosList });
+                gResponse.State = true;
+                gResponse.Object = _mapper.Map<List<VMTipoDeGasto>>(await _GastosService.ListTipoDeGasto());
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception e)
             {
+                gResponse.State = false;
+                gResponse.Message = e.Message;
                 _logger.LogError(e, "Error al recuperar tipo de gastos");
-                throw;
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
-
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateTipoDeGastos([FromBody] VMTipoDeGasto model)
         {
-            ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<VMTipoDeGasto> gResponse = new GenericResponse<VMTipoDeGasto>();
             try
             {
+                ValidarAutorizacion([Roles.Administrador]);
                 TipoDeGasto Gastos_created = await _GastosService.AddTipoDeGasto(_mapper.Map<TipoDeGasto>(model));
 
                 model = _mapper.Map<VMTipoDeGasto>(Gastos_created);
 
                 gResponse.State = true;
                 gResponse.Object = model;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al crear tipo de gastos");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         //[HttpPut]
@@ -203,37 +211,41 @@ namespace PointOfSale.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteTipoDeGastos(int IdTipoGastoss)
         {
-            ValidarAutorizacion([Roles.Administrador]);
 
             GenericResponse<string> gResponse = new GenericResponse<string>();
             try
             {
+                ValidarAutorizacion([Roles.Administrador]);
                 gResponse.State = await _GastosService.DeleteTipoDeGasto(IdTipoGastoss);
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
                 _logger.LogError(ex, "Error al eliminar gastos");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
 
         [HttpGet]
         public async Task<IActionResult> GetGastosTablaDinamica()
         {
+            var gResponse = new GenericResponse<List<VMGastosTablaDinamica>>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
                 var listUsers = _mapper.Map<List<VMGastosTablaDinamica>>(await _GastosService.ListGastosForTablaDinamica(user.IdTienda));
                 return StatusCode(StatusCodes.Status200OK, new { data = listUsers.OrderByDescending(_ => _.RegistrationUser).ThenByDescending(_ => _.Gasto).ThenByDescending(_ => _.Tipo_Gasto) });
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _logger.LogError(e, "Error al recuperar gastos para tabla dinamica");
-                return StatusCode(StatusCodes.Status500InternalServerError, new { error = e.ToString() });
+                gResponse.State = false;
+                gResponse.Message = ex.ToString();
+                _logger.LogError(ex, "Error al recuperar gastos para tabla dinamica");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }
     }

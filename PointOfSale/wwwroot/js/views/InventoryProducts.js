@@ -159,7 +159,7 @@ $(document).ready(function () {
 
     fetch("/Inventory/GetCategories")
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
             if (responseJson.data.length > 0) {
 
@@ -173,7 +173,7 @@ $(document).ready(function () {
 
     fetch("/Admin/GetProveedores")
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
             if (responseJson.data.length > 0) {
                 $("#cboProveedor").append(
@@ -189,12 +189,16 @@ $(document).ready(function () {
 
     fetch("/Admin/GetAjustesProductos")
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
-            if (responseJson.data != null) {
-                $("#txtAumento").val(responseJson.data.aumentoWeb + ' %');
-                $("#txtAumentoMasivo").val(responseJson.data.aumentoWeb + ' %');
-                aumentoWeb = responseJson.data.aumentoWeb;
+
+            if (responseJson.state) {
+
+                $("#txtAumento").val(responseJson.object + ' %');
+                $("#txtAumentoMasivo").val(responseJson.object + ' %');
+                aumentoWeb = responseJson.object;
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
             }
         })
 
@@ -391,7 +395,7 @@ $("#tbVencimientos tbody").on("click", ".btn-delete-vencimiento", function (even
                         method: "DELETE"
                     }).then(response => {
                         $(".showSweetAlert").LoadingOverlay("hide")
-                        return response.ok ? response.json() : Promise.reject(response);
+                        return response.json();
                     }).then(responseJson => {
                         if (responseJson.state) {
 
@@ -490,7 +494,7 @@ $("#btnImportar").on("click", function () {
                     method: "GET"
                 }).then(response => {
                     $(".showSweetAlert").LoadingOverlay("hide")
-                    return response.ok ? response.json() : Promise.reject(response);
+                    return response.json();
                 }).then(responseJson => {
                     if (responseJson.state) {
                         swal("Exitoso!", "Se han importado " + cantProductosImportar + " filas", "success");
@@ -520,7 +524,7 @@ $("#btnCargarImportar").on("click", function () {
         method: "GET"
     }).then(response => {
         $("#btnCargarImportar").LoadingOverlay("hide")
-        return response.ok ? response.json() : Promise.reject(response);
+        return response.json();
     }).then(responseJson => {
         if (responseJson.state) {
             cantProductosImportar = responseJson.object.length;
@@ -585,8 +589,7 @@ $("#btnSaveMasivo").on("click", function () {
     model["profit"] = $("#txtProfitMasivo").val() != '' ? $("#txtProfitMasivo").val().replace('.', ',') : '0';
     model["costo"] = $("#txtCostoMasivo").val();
     model["comentario"] = $("#txtComentarioMasivo").val();
-    if ($("#cboStateMasivo").val() != '-1')
-    {
+    if ($("#cboStateMasivo").val() != '-1') {
         model["isActive"] = $("#cboStateMasivo").val() == '1' ? true : false;
     }
     model["porPorcentaje"] = $("#txtPorPorcentajeMasivo").val();
@@ -605,7 +608,7 @@ $("#btnSaveMasivo").on("click", function () {
         body: JSON.stringify(model)
     }).then(response => {
         $("#modalDataMasivo").find("div.modal-content").LoadingOverlay("hide")
-        return response.ok ? response.json() : Promise.reject(response);
+        return response.json();
     }).then(responseJson => {
         removeLoading();
 
@@ -681,7 +684,7 @@ $("#btnSave").on("click", function () {
             body: formData
         }).then(response => {
             $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
             if (responseJson.state) {
@@ -703,7 +706,7 @@ $("#btnSave").on("click", function () {
             body: formData
         }).then(response => {
             $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
             if (responseJson.state) {
 
@@ -735,12 +738,15 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
 
     fetch(`/Inventory/GetProduct?IdProduct=${data.idProduct}`,)
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
             removeLoading();
+            if (responseJson.state) {
 
-            if (responseJson.data != null) {
-                openModal(responseJson.data);
+                openModal(responseJson.object);
+
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
             }
         })
 })
@@ -779,7 +785,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                     method: "DELETE"
                 }).then(response => {
                     $(".showSweetAlert").LoadingOverlay("hide")
-                    return response.ok ? response.json() : Promise.reject(response);
+                    return response.json();
                 }).then(responseJson => {
                     if (responseJson.state) {
 
@@ -916,12 +922,12 @@ $("#btnImprimir").on("click", function () {
         body: JSON.stringify(model)
     }).then(response => {
         $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-        return response.ok ? response.json() : Promise.reject(response);
+        return response.json();
     }).then(responseJson => {
 
         if (responseJson.state) {
 
-            let byteCharacters = atob(responseJson.data);
+            let byteCharacters = atob(responseJson.object);
             let byteNumbers = new Array(byteCharacters.length);
             for (let i = 0; i < byteCharacters.length; i++) {
                 byteNumbers[i] = byteCharacters.charCodeAt(i);
@@ -1124,7 +1130,7 @@ $('#btnSaveMasivoTabla').click(function () {
         body: JSON.stringify(model)
     }).then(response => {
         $("#modalDataMasivo").find("div.modal-content").LoadingOverlay("hide")
-        return response.ok ? response.json() : Promise.reject(response);
+        return response.json();
     }).then(responseJson => {
         removeLoading();
 

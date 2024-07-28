@@ -109,7 +109,7 @@ $("#btnSave").on("click", function () {
             body: JSON.stringify(model)
         }).then(response => {
             $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
             if (responseJson.state) {
@@ -132,7 +132,7 @@ $("#btnSave").on("click", function () {
             body: JSON.stringify(model)
         }).then(response => {
             $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
             if (responseJson.state) {
 
@@ -198,7 +198,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                     method: "DELETE"
                 }).then(response => {
                     $(".showSweetAlert").LoadingOverlay("hide")
-                    return response.ok ? response.json() : Promise.reject(response);
+                    return response.json();
                 }).then(responseJson => {
                     if (responseJson.state) {
 

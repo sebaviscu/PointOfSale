@@ -27,7 +27,7 @@
                 headers: { 'Content-Type': 'application/json;charset=utf-8' }
             })
                 .then(response => {
-                    return response.ok ? response.json() : Promise.reject(response);
+                    return response.json();
                 }).then(responseJson => {
                     if (responseJson.state) {
                         window.location.href = responseJson.object.accion;
@@ -49,24 +49,29 @@ function cerrarTurno() {
     })
         .then(response => {
             $("div.container-fluid").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
-            var resp = responseJson.data;
+            if (responseJson.state) {
 
-            var dateTimeModif = new Date(resp.fechaInicio);
-            $("#txtInicioTurno").val(dateTimeModif.toLocaleString());
-            $("#contMetodosPagoLayout").empty();
+                var resp = responseJson.object;
 
-            let list = document.getElementById("contMetodosPagoLayout");
-            for (i = 0; i < resp.ventasPorTipoVenta.length; ++i) {
-                let li = document.createElement('li');
-                li.innerText = resp.ventasPorTipoVenta[i].descripcion + ": $ " + resp.ventasPorTipoVenta[i].total;
-                console.log(resp.ventasPorTipoVenta[i].descripcion + ": $ " + resp.ventasPorTipoVenta[i].total);
-                list.appendChild(li);
+                var dateTimeModif = new Date(resp.fechaInicio);
+                $("#txtInicioTurno").val(dateTimeModif.toLocaleString());
+                $("#contMetodosPagoLayout").empty();
+
+                let list = document.getElementById("contMetodosPagoLayout");
+                for (i = 0; i < resp.ventasPorTipoVenta.length; ++i) {
+                    let li = document.createElement('li');
+                    li.innerText = resp.ventasPorTipoVenta[i].descripcion + ": $ " + resp.ventasPorTipoVenta[i].total;
+                    console.log(resp.ventasPorTipoVenta[i].descripcion + ": $ " + resp.ventasPorTipoVenta[i].total);
+                    list.appendChild(li);
+                }
+
+                $("#modalDataTurno").modal("show")
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
             }
-
-            $("#modalDataTurno").modal("show")
         })
         .catch((error) => {
             $("div.container-fluid").LoadingOverlay("hide")
@@ -87,7 +92,7 @@ $("#btnSaveTurno").on("click", function () {
         body: JSON.stringify(modelTurno)
     }).then(response => {
         $("#modalDataTurno").find("div.modal-content").LoadingOverlay("hide")
-        return response.ok ? response.json() : Promise.reject(response);
+        return response.json();
     }).then(responseJson => {
         if (responseJson.state) {
 

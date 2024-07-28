@@ -18,17 +18,22 @@ $(document).ready(function () {
 
     fetch("/Sales/ListTypeDocumentSale")
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
             $("#cboTypeDocumentSale").append(
                 $("<option>").val('').text('')
             )
-            if (responseJson.length > 0) {
-                responseJson.forEach((item) => {
-                    $("#cboTypeDocumentSale").append(
-                        $("<option>").val(item.idTypeDocumentSale).text(item.description)
-                    )
-                });
+            if (responseJson.state > 0) {
+                if (responseJson.object.length > 0) {
+                    responseJson.object.forEach((item) => {
+                        $("#cboTypeDocumentSale").append(
+                            $("<option>").val(item.idTypeDocumentSale).text(item.description)
+                        )
+                    });
+                }
+            }
+            else {
+                swal("Lo sentimos", responseJson.message, "error");
             }
         })
 
@@ -66,7 +71,7 @@ $(document).ready(function () {
                 title: '',
                 filename: 'Reporte Clientes',
                 exportOptions: {
-                    columns: [1, 2,3,4]
+                    columns: [1, 2, 3, 4]
                 }
             }, 'pageLength'
         ]
@@ -189,7 +194,7 @@ $("#btnSave").on("click", function () {
             body: JSON.stringify(model)
         }).then(response => {
             $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
             if (responseJson.state) {
@@ -212,7 +217,7 @@ $("#btnSave").on("click", function () {
             body: JSON.stringify(model)
         }).then(response => {
             $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
             if (responseJson.state) {
 
@@ -286,7 +291,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                     method: "DELETE"
                 }).then(response => {
                     $(".showSweetAlert").LoadingOverlay("hide")
-                    return response.ok ? response.json() : Promise.reject(response);
+                    return response.json();
                 }).then(responseJson => {
                     if (responseJson.state) {
 
@@ -334,7 +339,7 @@ $(document).on("click", "button.finalizeSale", function () {
     }).then(response => {
 
         $("#btnFinalizeSale").closest("div.card-body").LoadingOverlay("hide")
-        return response.ok ? response.json() : Promise.reject(response);
+        return response.json();
     }).then(responseJson => {
 
         if (responseJson.state) {

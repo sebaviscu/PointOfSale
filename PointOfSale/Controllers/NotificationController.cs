@@ -53,14 +53,14 @@ namespace PointOfSale.Controllers
 
                 gResponse.State = true;
                 gResponse.Object = model;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
-
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         [HttpPut]
@@ -77,13 +77,15 @@ namespace PointOfSale.Controllers
 
                 gResponse.State = true;
                 gResponse.Object = model;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error actualizar notificacion");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         [HttpPut]
@@ -98,14 +100,16 @@ namespace PointOfSale.Controllers
 
                 gResponse.State = true;
                 gResponse.State = result;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al limpiar todas las notificaciones");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
     }
 }

@@ -59,7 +59,7 @@ $(document).ready(function () {
                 title: '',
                 filename: 'Reporte Turnos',
                 exportOptions: {
-                    columns: [1, 2,3,4,5,6]
+                    columns: [1, 2, 3, 4, 5, 6]
                 }
             }, 'pageLength'
         ]
@@ -94,18 +94,22 @@ const openModal = (model = BASIC_MODEL) => {
     })
         .then(response => {
             $("div.container-fluid").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
-            $("#contMetodosPago").empty();
+            if (responseJson.state) {
 
-            var resp = responseJson.data;
-            let list = document.getElementById("contMetodosPago");
-            for (i = 0; i < resp.ventasPorTipoVenta.length; ++i) {
-                let li = document.createElement('li');
-                li.innerText = resp.ventasPorTipoVenta[i].descripcion + ": $" + resp.ventasPorTipoVenta[i].total;
-                list.appendChild(li);
+                $("#contMetodosPago").empty();
+
+                let resp = responseJson.data;
+                let list = document.getElementById("contMetodosPago");
+                for (i = 0; i < resp.ventasPorTipoVenta.length; ++i) {
+                    let li = document.createElement('li');
+                    li.innerText = resp.ventasPorTipoVenta[i].descripcion + ": $" + resp.ventasPorTipoVenta[i].total;
+                    list.appendChild(li);
+                }
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
             }
-
         })
         .catch((error) => {
             $("div.container-fluid").LoadingOverlay("hide")
@@ -122,13 +126,13 @@ $("#btnSave").on("click", function () {
     model["idTurno"] = parseInt($("#txtId").val());
     model["descripcion"] = $("#txtDescripcion").val();
 
-    fetch("/Turno/Update", {
+    fetch("/Turno/UpdateTurno", {
         method: "PUT",
         headers: { 'Content-Type': 'application/json;charset=utf-8' },
         body: JSON.stringify(model)
     }).then(response => {
         $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-        return response.ok ? response.json() : Promise.reject(response);
+        return response.json();
     }).then(responseJson => {
         if (responseJson.state) {
 

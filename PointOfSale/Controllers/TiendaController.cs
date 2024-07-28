@@ -32,6 +32,8 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTienda()
         {
+            var gResponse = new GenericResponse<VMTienda>();
+
             try
             {
                 List<VMTienda> vmTiendaList = _mapper.Map<List<VMTienda>>(await _TiendaService.List());
@@ -39,13 +41,18 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = ex.Message });
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al recuperar lista de tiendas");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }
 
         [HttpGet]
         public async Task<IActionResult> GetOneTienda()
         {
+            var gResponse = new GenericResponse<VMTienda>();
+
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
@@ -53,10 +60,12 @@ namespace PointOfSale.Controllers
                 var tienda = _mapper.Map<VMTienda>(await _TiendaService.Get(user.IdTienda));
                 return StatusCode(StatusCodes.Status200OK, new { data = tienda });
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-
-                throw;
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al recuperar una tienda");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
         }
@@ -95,6 +104,8 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al crear la tienda");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -146,6 +157,8 @@ namespace PointOfSale.Controllers
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al actualizar la tienda");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -162,14 +175,16 @@ namespace PointOfSale.Controllers
                 ValidarAutorizacion([Roles.Administrador]);
 
                 gResponse.State = await _TiendaService.Delete(idTienda);
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al borrar una tienda");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
     }
 }

@@ -90,7 +90,7 @@ $(document).ready(function () {
 
     fetch("/Admin/GetProveedores")
         .then(response => {
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
             if (responseJson.data.length > 0) {
@@ -142,7 +142,7 @@ $(document).ready(function () {
                         method: "PUT"
                     }).then(response => {
                         $(".showSweetAlert").LoadingOverlay("hide")
-                        return response.ok ? response.json() : Promise.reject(response);
+                        return response.json();
                     }).then(responseJson => {
                         if (responseJson.state) {
 
@@ -302,7 +302,7 @@ $("#btnSave").on("click", function () {
             body: JSON.stringify(model)
         }).then(response => {
             $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
             if (responseJson.state) {
@@ -325,7 +325,7 @@ $("#btnSave").on("click", function () {
             body: JSON.stringify(model)
         }).then(response => {
             $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
             if (responseJson.state) {
 
@@ -384,7 +384,7 @@ $("#btnSavePago").on("click", function () {
             body: JSON.stringify(model)
         }).then(response => {
             $("#modalPago").find("div.modal-content").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
 
             if (responseJson.state) {
@@ -408,7 +408,7 @@ $("#btnSavePago").on("click", function () {
             body: JSON.stringify(model)
         }).then(response => {
             $("#modalPago").find("div.modal-content").LoadingOverlay("hide")
-            return response.ok ? response.json() : Promise.reject(response);
+            return response.json();
         }).then(responseJson => {
             if (responseJson.state) {
                 tableDataGastos.row(rowSelected).data(responseJson.object).draw(false);
@@ -472,7 +472,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                     method: "DELETE"
                 }).then(response => {
                     $(".showSweetAlert").LoadingOverlay("hide")
-                    return response.ok ? response.json() : Promise.reject(response);
+                    return response.json();
                 }).then(responseJson => {
                     if (responseJson.state) {
 
@@ -601,7 +601,7 @@ $("#tbDataGastos tbody").on("click", ".btn-delete-pago", function () {
                     method: "DELETE"
                 }).then(response => {
                     $(".showSweetAlert").LoadingOverlay("hide")
-                    return response.ok ? response.json() : Promise.reject(response);
+                    return response.json();
                 }).then(responseJson => {
                     if (responseJson.state) {
 
@@ -677,10 +677,10 @@ function cargarTablaDinamica() {
     fetch(`/Admin/GetProveedorTablaDinamica`, {
         method: "GET"
     }).then(response => {
-        return response.ok ? response.json() : Promise.reject(response);
+        return response.json();
     }).then(responseJson => {
 
-        if (responseJson.data !== []) {
+        if (responseJson.state && responseJson.object !== []) {
 
             var today = new Date();
             var month = "fecha.Month." + monthNames[today.getMonth()];
@@ -691,7 +691,7 @@ function cargarTablaDinamica() {
                 toolbar: true,
                 report: {
                     dataSource: {
-                        data: responseJson.data
+                        data: responseJson.object
                     },
                     formats: [
                         {
@@ -770,6 +770,9 @@ function cargarTablaDinamica() {
                 }
             });
 
+        }
+        else {
+            swal("Lo sentimos", responseJson.message, "error");
         }
     })
 }

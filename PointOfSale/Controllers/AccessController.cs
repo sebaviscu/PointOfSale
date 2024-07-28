@@ -49,7 +49,9 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = ex.Message });
+                _logger.LogError(ex, "Error hacer login");
+                ViewData["Message"] = $"Error: {ex.Message}.";
+                return View();
             }
         }
 
@@ -62,7 +64,7 @@ namespace PointOfSale.Controllers
 
                 if (user_found == null)
                 {
-                    ViewData["Message"] = "No user Found";
+                    ViewData["Message"] = "Usuario no encontrado";
                     return View();
                 }
 
@@ -111,7 +113,7 @@ namespace PointOfSale.Controllers
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), properties);
 
-                ViewData["Message"] = null;
+                ViewData["Message"] = string.Empty;
 
                 if (user_found.IdRol == 1)
                     return RedirectToAction("DashBoard", "Admin");
@@ -120,15 +122,29 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = ex.Message });
+                _logger.LogError(ex, "Error al ingresar al login");
+                ViewData["Message"] = $"Error: {ex.Message}.";
+                return View();
             }
         }
 
         [HttpGet]
-        public async Task<List<User>> GetAllUsers()
+        public async Task<IActionResult> GetAllUsers()
         {
-            var users = await _userService.GetAllUsers();
-            return users;
+            var gResponse = new GenericResponse<List<User>>();
+            try
+            {
+                gResponse.Object = await _userService.GetAllUsers();
+                gResponse.State = true;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.Message;
+                _logger.LogError(ex, "Error al revuperar todos los usuarios");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+            }
         }
 
         [HttpPost]
