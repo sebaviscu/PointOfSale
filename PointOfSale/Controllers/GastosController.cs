@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Services;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
+using System.IO;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Controllers
@@ -71,15 +73,17 @@ namespace PointOfSale.Controllers
 
                 gResponse.State = true;
                 gResponse.Object = model;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
+                var str = "Error al crear gastos.\n";
                 gResponse.State = false;
-                gResponse.Message = ex.Message;
-                _logger.LogError(ex, "Error al crear gastos");
+                gResponse.Message = str + ex.Message;
+                _logger.LogError(ex, $"{str} Request: {model.ToJson()}");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         [HttpPut]
@@ -99,15 +103,16 @@ namespace PointOfSale.Controllers
 
                 gResponse.State = true;
                 gResponse.Object = model;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
+                var str = "Error al actualizar gastos.\n";
                 gResponse.State = false;
-                gResponse.Message = ex.Message;
-                _logger.LogError(ex, "Error al actualizar gastos");
+                gResponse.Message = str + ex.Message;
+                _logger.LogError(ex, $"{str} Request: {model.ToJson()}");
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
-
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
 
@@ -124,9 +129,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var str = "Error al eliminar gastos.\n";
                 gResponse.State = false;
                 gResponse.Message = ex.Message;
-                _logger.LogError(ex, "Error al eliminar gastos");
+                _logger.LogError(ex, $"{str} Request: {idGastos.ToJson()}");
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }
@@ -173,12 +179,12 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var str = "Error al crear tipo de gastos.\n";
                 gResponse.State = false;
-                gResponse.Message = ex.Message;
-                _logger.LogError(ex, "Error al crear tipo de gastos");
+                gResponse.Message = str + ex.Message;
+                _logger.LogError(ex, $"{str} Request: {model.ToJson()}");
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
-
         }
 
         //[HttpPut]
@@ -209,24 +215,24 @@ namespace PointOfSale.Controllers
 
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteTipoDeGastos(int IdTipoGastoss)
+        public async Task<IActionResult> DeleteTipoDeGastos(int idTipoGastos)
         {
 
             GenericResponse<string> gResponse = new GenericResponse<string>();
             try
             {
                 ValidarAutorizacion([Roles.Administrador]);
-                gResponse.State = await _GastosService.DeleteTipoDeGasto(IdTipoGastoss);
+                gResponse.State = await _GastosService.DeleteTipoDeGasto(idTipoGastos);
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
+                var str = "Error al eliminar tipo de gastos.\n";
                 gResponse.State = false;
-                gResponse.Message = ex.Message;
-                _logger.LogError(ex, "Error al eliminar gastos");
+                gResponse.Message = str + ex.Message;
+                _logger.LogError(ex, $"{str} Request: {idTipoGastos.ToJson()}");
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
-
         }
 
 
@@ -245,9 +251,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var str = "Error al recuperar gastos para tabla dinamica.\n";
                 gResponse.State = false;
-                gResponse.Message = ex.ToString();
-                _logger.LogError(ex, "Error al recuperar gastos para tabla dinamica");
+                gResponse.Message = str + ex.Message;
+                _logger.LogError(ex, str);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }

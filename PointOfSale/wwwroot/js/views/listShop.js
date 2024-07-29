@@ -13,6 +13,22 @@ $(window).scroll(function () {
 
 $(document).ready(function () {
 
+    //function checkScreenWidth() {
+    //    if ($(window).width() < 700) {
+    //        $('.product-list').removeClass('col-md-2');
+    //    } else {
+    //        $('.product-list').addClass('col-md-2');
+    //    }
+    //}
+
+    //// Check on load
+    //checkScreenWidth();
+
+    //// Check on window resize
+    //$(window).resize(function () {
+    //    checkScreenWidth();
+    //});
+
     loadMoreProducts();
 
     $(".btnCategoria").on("click", function () {
