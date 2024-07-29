@@ -1,6 +1,6 @@
-﻿let tableData;
+﻿let tableDataClients;
 let tableDataMovimientos;
-let rowSelected;
+let rowSelectedClient;
 
 const BASIC_MODEL = {
     idCliente: 0,
@@ -37,7 +37,7 @@ $(document).ready(function () {
             }
         })
 
-    tableData = $("#tbData").DataTable({
+    tableDataClients = $("#tbData").DataTable({
         responsive: true,
         "ajax": {
             "url": "/Admin/GetCliente",
@@ -88,7 +88,7 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtTotal").val(model.total);
 
 
-    if (model.modificationUser === null)
+    if (model.modificationUser == null)
         document.getElementById("divModif").style.display = 'none';
     else {
         document.getElementById("divModif").style.display = '';
@@ -115,7 +115,7 @@ const openModal = (model = BASIC_MODEL) => {
             {
                 "targets": [3],
                 "render": function (data, type, row) {
-                    if (type === 'display' || type === 'filter') {
+                    if (type == 'display' || type == 'filter') {
                         return data ? moment(data).format('DD/MM/YYYY HH:mm') : '';
                     }
                     return data;
@@ -200,7 +200,7 @@ $("#btnSave").on("click", function () {
 
             if (responseJson.state) {
 
-                tableData.row.add(responseJson.object).draw(false);
+                tableDataClients.row.add(responseJson.object).draw(false);
                 $("#modalData").modal("hide");
                 swal("Exitoso!", "Cliente fué creada", "success");
 
@@ -222,8 +222,8 @@ $("#btnSave").on("click", function () {
         }).then(responseJson => {
             if (responseJson.state) {
 
-                tableData.row(rowSelected).data(responseJson.object).draw(false);
-                rowSelected = null;
+                tableDataClients.row(rowSelectedClient).data(responseJson.object).draw(false);
+                rowSelectedClient = null;
                 $("#modalData").modal("hide");
                 swal("Exitoso!", "Cliente fué modificada", "success");
 
@@ -240,12 +240,12 @@ $("#btnSave").on("click", function () {
 $("#tbData tbody").on("click", ".btn-edit", function () {
 
     if ($(this).closest('tr').hasClass('child')) {
-        rowSelected = $(this).closest('tr').prev();
+        rowSelectedClient = $(this).closest('tr').prev();
     } else {
-        rowSelected = $(this).closest('tr');
+        rowSelectedClient = $(this).closest('tr');
     }
 
-    const data = tableData.row(rowSelected).data();
+    const data = tableDataClients.row(rowSelectedClient).data();
 
     openModal(data);
 })
@@ -269,7 +269,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
     } else {
         row = $(this).closest('tr');
     }
-    const data = tableData.row(row).data();
+    const data = tableDataClients.row(row).data();
 
     swal({
         title: "¿Está seguro?",
@@ -296,7 +296,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                 }).then(responseJson => {
                     if (responseJson.state) {
 
-                        tableData.row(row).remove().draw();
+                        tableDataClients.row(row).remove().draw();
                         swal("Exitoso!", "Cliente  fué eliminada", "success");
 
                     } else {

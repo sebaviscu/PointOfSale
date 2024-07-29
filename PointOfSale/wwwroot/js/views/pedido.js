@@ -1,5 +1,6 @@
-let proveedoresList = [];
+let proveedoresListPedido = [];
 let tableData;
+let rowSelectedPedido;
 
 const BASIC_MODEL = {
     idPedido: 0,
@@ -40,9 +41,9 @@ $(document).ready(function () {
         }).then(responseJson => {
 
             if (responseJson.state) {
-                proveedoresList = responseJson.object;
+                proveedoresListPedido = responseJson.object;
 
-                proveedoresList.forEach((item) => {
+                proveedoresListPedido.forEach((item) => {
                     $("#cboProveedor").append(
                         $("<option>").val(item.idProveedor).text(item.nombre)
                     )
@@ -271,12 +272,12 @@ $("#btnNew").on("click", function () {
 $("#tbData tbody").on("click", ".btn-edit", function () {
 
     if ($(this).closest('tr').hasClass('child')) {
-        rowSelected = $(this).closest('tr').prev();
+        rowSelectedPedido = $(this).closest('tr').prev();
     } else {
-        rowSelected = $(this).closest('tr');
+        rowSelectedPedido = $(this).closest('tr');
     }
 
-    const data = tableData.row(rowSelected).data();
+    const data = tableData.row(rowSelectedPedido).data();
 
 
     openModal(data);
@@ -333,7 +334,7 @@ $('#cboProveedor').change(function () {
 
     $('#txtImporteEstimado').val(0);
     let idProv = $(this).val();
-    let proveedor = proveedoresList.find(_ => _.idProveedor == idProv);
+    let proveedor = proveedoresListPedido.find(_ => _.idProveedor == idProv);
 
     cargarTabla(proveedor.products, idProv, true);
 })
@@ -341,7 +342,7 @@ $('#cboProveedor').change(function () {
 function cargarTabla(productos, idProveedor, nuevo) {
     const tablaBody = document.querySelector('#tablaProductos tbody');
     tablaBody.innerHTML = '';
-    let proveedor = proveedoresList.find(_ => _.idProveedor == idProveedor);
+    let proveedor = proveedoresListPedido.find(_ => _.idProveedor == idProveedor);
 
     let disable = nuevo ? `class="editable" contenteditable="true"` : "";
 
@@ -523,12 +524,12 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
 $("#tbData tbody").on("click", ".btn-recibir", function () {
 
     if ($(this).closest('tr').hasClass('child')) {
-        rowSelected = $(this).closest('tr').prev();
+        rowSelectedPedido = $(this).closest('tr').prev();
     } else {
-        rowSelected = $(this).closest('tr');
+        rowSelectedPedido = $(this).closest('tr');
     }
 
-    const data = tableData.row(rowSelected).data();
+    const data = tableData.row(rowSelectedPedido).data();
 
 
     openModalRecibido(data);
@@ -564,7 +565,7 @@ function cargarTablaRecibidos(productos, idProveedor) {
     const tablaBody = document.querySelector('#tablaProductosRecibidos tbody');
     tablaBody.innerHTML = '';
 
-    let proveedor = proveedoresList.find(_ => _.idProveedor == idProveedor);
+    let proveedor = proveedoresListPedido.find(_ => _.idProveedor == idProveedor);
 
     productos.forEach(producto => {
         const tr = document.createElement('tr');

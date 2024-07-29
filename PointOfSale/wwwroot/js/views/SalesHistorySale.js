@@ -1,4 +1,6 @@
-﻿const SEARCH_VIEW = {
+﻿let rowSelectedHistoric;
+
+const SEARCH_VIEW = {
 
     searchDate: () => {
 
@@ -163,9 +165,9 @@ $("#btnSearch").click(function () {
 $("#tbsale tbody").on("click", ".btn-pago", function () {
 
     if ($(this).closest('tr').hasClass('child')) {
-        rowSelected = $(this).closest('tr').prev();
+        rowSelectedHistoric = $(this).closest('tr').prev();
     } else {
-        rowSelected = $(this).closest('tr');
+        rowSelectedHistoric = $(this).closest('tr');
     }
     var d = $(this).data("sale")
 

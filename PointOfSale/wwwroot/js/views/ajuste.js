@@ -59,7 +59,7 @@ $(document).ready(function () {
                 $("#txtCodigoSeguridad").val(model.codigoSeguridad);
                 document.getElementById('switchImprimirDefault').checked = model.imprimirDefault;
 
-                if (model.modificationUser === null)
+                if (model.modificationUser == null)
                     document.getElementById("divModif").style.display = 'none';
                 else {
                     document.getElementById("divModif").style.display = '';

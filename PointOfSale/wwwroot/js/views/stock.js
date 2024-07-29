@@ -1,6 +1,6 @@
 ﻿let tableData;
 let tableDataStock;
-let rowSelected;
+let rowSelectedStock;
 
 const BASIC_MODEL = {
     idCategory: 0,

@@ -1,5 +1,5 @@
 ﻿let tableData;
-let rowSelected;
+let rowSelectedTienda;
 
 const BASIC_MODEL = {
     idTienda: 0,
@@ -213,8 +213,8 @@ $("#btnSave").on("click", function () {
 
                 }
                 else {
-                    tableData.row(rowSelected).data(responseJson.object).draw(false);
-                    rowSelected = null;
+                    tableData.row(rowSelectedTienda).data(responseJson.object).draw(false);
+                    rowSelectedTienda = null;
                     swal("Exitoso!", "La tienda fué modificada", "success");
                 }
 
@@ -232,12 +232,12 @@ $("#btnSave").on("click", function () {
 $("#tbData tbody").on("click", ".btn-edit", function () {
 
     if ($(this).closest('tr').hasClass('child')) {
-        rowSelected = $(this).closest('tr').prev();
+        rowSelectedTienda = $(this).closest('tr').prev();
     } else {
-        rowSelected = $(this).closest('tr');
+        rowSelectedTienda = $(this).closest('tr');
     }
 
-    const data = tableData.row(rowSelected).data();
+    const data = tableData.row(rowSelectedTienda).data();
 
     openModal(data);
 })

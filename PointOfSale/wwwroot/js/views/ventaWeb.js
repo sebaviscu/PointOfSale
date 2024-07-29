@@ -1,5 +1,5 @@
 ﻿let tableData;
-let rowSelected;
+let rowSelectedVentaWeb;
 var productSelected = null;
 
 const BASIC_MODEL = {
@@ -386,8 +386,8 @@ $("#btnSave").on("click", function () {
     }).then(responseJson => {
         if (responseJson.state) {
 
-            tableData.row(rowSelected).data(responseJson.object).draw(false);
-            rowSelected = null;
+            tableData.row(rowSelectedVentaWeb).data(responseJson.object).draw(false);
+            rowSelectedVentaWeb = null;
             $("#modalData").modal("hide");
             swal("Exitoso!", "La Venta Web fué modificada", "success");
             location.reload()
@@ -403,12 +403,12 @@ $("#btnSave").on("click", function () {
 $("#tbData tbody").on("click", ".btn-edit", function () {
 
     if ($(this).closest('tr').hasClass('child')) {
-        rowSelected = $(this).closest('tr').prev();
+        rowSelectedVentaWeb = $(this).closest('tr').prev();
     } else {
-        rowSelected = $(this).closest('tr');
+        rowSelectedVentaWeb = $(this).closest('tr');
     }
 
-    const data = tableData.row(rowSelected).data();
+    const data = tableData.row(rowSelectedVentaWeb).data();
 
     openModal(data);
 })

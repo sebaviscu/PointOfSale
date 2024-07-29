@@ -1,5 +1,5 @@
-﻿let tableData;
-let rowSelected;
+﻿let tableDataUsers;
+let rowSelectedUser;
 
 const BASIC_MODEL = {
     idUsers: 0,
@@ -122,7 +122,7 @@ const openModal = (model = BASIC_MODEL) => {
     var rol = $('#cboRol').val();
     $("#cboTiendas").prop("disabled", rol == '1');
 
-    if (model.modificationUser === null)
+    if (model.modificationUser == null)
         document.getElementById("divModif").style.display = 'none';
     else {
         document.getElementById("divModif").style.display = '';
@@ -162,12 +162,12 @@ $("#btnSave").on("click", function () {
     var rol = $("#cboRol").val();
     var tienda = $("#cboTiendas").val();
 
-    if (rol !== '1' && tienda === '-1') {
+    if (rol != '1' && tienda == '-1') {
         toastr.warning("Se debe seleccionar una tienda", "");
         return;
     }
     else
-        if (rol === '1' && tienda !== '-1') {
+        if (rol == '1' && tienda != '-1') {
             toastr.warning("No se debe seleccionar tienda para un Administrador", "");
             return;
         }
@@ -222,8 +222,8 @@ $("#btnSave").on("click", function () {
         }).then(responseJson => {
             if (responseJson.state) {
 
-                tableData.row(rowSelected).data(responseJson.object).draw(false);
-                rowSelected = null;
+                tableData.row(rowSelectedUser).data(responseJson.object).draw(false);
+                rowSelectedUser = null;
                 $("#modalData").modal("hide");
                 swal("Exitoso!", "El usuario fué modificado", "success");
 
@@ -240,12 +240,12 @@ $("#btnSave").on("click", function () {
 $("#tbData tbody").on("click", ".btn-edit", function () {
 
     if ($(this).closest('tr').hasClass('child')) {
-        rowSelected = $(this).closest('tr').prev();
+        rowSelectedUser = $(this).closest('tr').prev();
     } else {
-        rowSelected = $(this).closest('tr');
+        rowSelectedUser = $(this).closest('tr');
     }
 
-    const data = tableData.row(rowSelected).data();
+    const data = tableData.row(rowSelectedUser).data();
 
     openModal(data);
 })

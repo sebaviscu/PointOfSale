@@ -1,5 +1,5 @@
 ﻿let tableData;
-let rowSelected;
+let rowSelectedFormaPago;
 
 const BASIC_MODEL = {
     idTypeDocumentSale: 0,
@@ -148,8 +148,8 @@ $("#btnSave").on("click", function () {
         }).then(responseJson => {
             if (responseJson.state) {
 
-                tableData.row(rowSelected).data(responseJson.object).draw(false);
-                rowSelected = null;
+                tableData.row(rowSelectedFormaPago).data(responseJson.object).draw(false);
+                rowSelectedFormaPago = null;
                 $("#modalData").modal("hide");
                 swal("Exitoso!", "Tipo de Venta fué modificada", "success");
 
@@ -166,12 +166,12 @@ $("#btnSave").on("click", function () {
 $("#tbData tbody").on("click", ".btn-edit", function () {
 
     if ($(this).closest('tr').hasClass('child')) {
-        rowSelected = $(this).closest('tr').prev();
+        rowSelectedFormaPago = $(this).closest('tr').prev();
     } else {
-        rowSelected = $(this).closest('tr');
+        rowSelectedFormaPago = $(this).closest('tr');
     }
 
-    const data = tableData.row(rowSelected).data();
+    const data = tableData.row(rowSelectedFormaPago).data();
 
     openModal(data);
 })

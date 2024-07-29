@@ -1,5 +1,5 @@
 ﻿let tableData;
-let rowSelected;
+let rowSelectedProduct;
 let edicionMasiva = false;
 let aProductos = [];
 let tienda;
@@ -456,14 +456,14 @@ $("#btnAddVencimiento").on("click", function () {
 $("#tbVencimientos tbody").on("click", ".btn-danger", function () {
 
     if ($(this).closest('tr').hasClass('child')) {
-        rowSelected = $(this).closest('tr').prev();
+        rowSelectedProduct = $(this).closest('tr').prev();
     } else {
-        rowSelected = $(this).closest('tr');
+        rowSelectedProduct = $(this).closest('tr');
     }
     let v = $(this).data("vencimiento")
 
     if (v.idVencimiento == 0) {
-        rowSelected.remove();
+        rowSelectedProduct.remove();
     }
 })
 
@@ -710,8 +710,8 @@ $("#btnSave").on("click", function () {
         }).then(responseJson => {
             if (responseJson.state) {
 
-                tableData.row(rowSelected).data(responseJson.object).draw(false);
-                rowSelected = null;
+                tableData.row(rowSelectedProduct).data(responseJson.object).draw(false);
+                rowSelectedProduct = null;
                 $("#modalData").modal("hide");
                 swal("Exitoso!", "El producto fué modificado", "success");
 
@@ -728,13 +728,13 @@ $("#btnSave").on("click", function () {
 $("#tbData tbody").on("click", ".btn-edit", function () {
 
     if ($(this).closest('tr').hasClass('child')) {
-        rowSelected = $(this).closest('tr').prev();
+        rowSelectedProduct = $(this).closest('tr').prev();
     } else {
-        rowSelected = $(this).closest('tr');
+        rowSelectedProduct = $(this).closest('tr');
     }
     showLoading();
 
-    const data = tableData.row(rowSelected).data();
+    const data = tableData.row(rowSelectedProduct).data();
 
     fetch(`/Inventory/GetProduct?IdProduct=${data.idProduct}`,)
         .then(response => {

@@ -1,7 +1,8 @@
 ﻿let tableData;
-let rowSelected;
-var tableDataMovimientos;
+let rowSelectedProveedor;
+let tableDataMovimientos;
 let tableDataGastos;
+let proveedoresList;
 
 const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun",
     "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
@@ -329,8 +330,8 @@ $("#btnSave").on("click", function () {
         }).then(responseJson => {
             if (responseJson.state) {
 
-                tableData.row(rowSelected).data(responseJson.object).draw(false);
-                rowSelected = null;
+                tableData.row(rowSelectedProveedor).data(responseJson.object).draw(false);
+                rowSelectedProveedor = null;
                 $("#modalData").modal("hide");
                 swal("Exitoso!", "Proveedor fué modificada", "success");
 
@@ -411,8 +412,8 @@ $("#btnSavePago").on("click", function () {
             return response.json();
         }).then(responseJson => {
             if (responseJson.state) {
-                tableDataGastos.row(rowSelected).data(responseJson.object).draw(false);
-                rowSelected = null;
+                tableDataGastos.row(rowSelectedProveedor).data(responseJson.object).draw(false);
+                rowSelectedProveedor = null;
                 $("#modalPago").modal("hide");
                 swal("Exitoso!", "Pago a proveedor fué modificada", "success");
 
@@ -423,17 +424,17 @@ $("#btnSavePago").on("click", function () {
             $("#modalPago").find("div.modal-content").LoadingOverlay("hide")
         })
     }
-    })
+})
 
 $("#tbData tbody").on("click", ".btn-edit", function () {
 
     if ($(this).closest('tr').hasClass('child')) {
-        rowSelected = $(this).closest('tr').prev();
+        rowSelectedProveedor = $(this).closest('tr').prev();
     } else {
-        rowSelected = $(this).closest('tr');
+        rowSelectedProveedor = $(this).closest('tr');
     }
 
-    const data = tableData.row(rowSelected).data();
+    const data = tableData.row(rowSelectedProveedor).data();
 
     openModal(data);
 })
@@ -558,12 +559,12 @@ function cargarTablaGastos() {
 $("#tbDataGastos tbody").on("click", ".btn-edit-pago", function () {
 
     if ($(this).closest('tr').hasClass('child')) {
-        rowSelected = $(this).closest('tr').prev();
+        rowSelectedProveedor = $(this).closest('tr').prev();
     } else {
-        rowSelected = $(this).closest('tr');
+        rowSelectedProveedor = $(this).closest('tr');
     }
 
-    const data = tableDataGastos.row(rowSelected).data();
+    const data = tableDataGastos.row(rowSelectedProveedor).data();
 
     openModalPago(data);
 })
@@ -680,95 +681,99 @@ function cargarTablaDinamica() {
         return response.json();
     }).then(responseJson => {
 
-        if (responseJson.state && responseJson.object !== []) {
+        if (responseJson.state) {
 
-            var today = new Date();
-            var month = "fecha.Month." + monthNames[today.getMonth()];
-            var year = "fecha.Year." + today.getFullYear();
+            if (responseJson.object != []) {
 
-            var pivot = new WebDataRocks({
-                container: "#wdr-component",
-                toolbar: true,
-                report: {
-                    dataSource: {
-                        data: responseJson.object
-                    },
-                    formats: [
-                        {
-                            name: "currency",
-                            currencySymbol: "$"
+                var today = new Date();
+                var month = "fecha.Month." + monthNames[today.getMonth()];
+                var year = "fecha.Year." + today.getFullYear();
+
+                var pivot = new WebDataRocks({
+                    container: "#wdr-component",
+                    toolbar: true,
+                    report: {
+                        dataSource: {
+                            data: responseJson.object
+                        },
+                        formats: [
+                            {
+                                name: "currency",
+                                currencySymbol: "$"
+                            }
+                        ],
+                        "slice": {
+                            reportFilters: [
+                                {
+                                    uniqueName: "fecha.Day"
+                                },
+                                {
+                                    uniqueName: "fecha.Month",
+                                    "filter": {
+                                        "members": [
+                                            month
+                                        ]
+                                    }
+                                },
+                                {
+                                    uniqueName: "fecha.Year",
+                                    "filter": {
+                                        "members": [
+                                            year
+                                        ]
+                                    }
+                                }
+                            ],
+                            "rows": [
+                                {
+                                    "uniqueName": "nombre_Proveedor",
+                                    sort: "desc"
+                                },
+                                {
+                                    "uniqueName": "tipo_Factura",
+                                    sort: "desc"
+                                },
+                                {
+                                    "uniqueName": "nro_Factura",
+                                    sort: "desc"
+                                }
+                            ],
+                            columns: [
+                                {
+                                    uniqueName: "[Measures]"
+                                }
+                            ],
+                            measures: [
+                                {
+                                    uniqueName: "importe",
+                                    caption: "Importe",
+                                    aggregation: "sum",
+                                    active: true,
+                                    format: "currency"
+                                },
+                                {
+                                    uniqueName: "importe_Sin_Iva",
+                                    caption: "Importe sin IVA",
+                                    aggregation: "sum",
+                                    active: true,
+                                    format: "currency"
+                                },
+                                {
+                                    uniqueName: "iva_Importe",
+                                    caption: "Importe IVA",
+                                    aggregation: "sum",
+                                    active: true,
+                                    format: "currency"
+                                }
+                            ]
                         }
-                    ],
-                    "slice": {
-                        reportFilters: [
-                            {
-                                uniqueName: "fecha.Day"
-                            },
-                            {
-                                uniqueName: "fecha.Month",
-                                "filter": {
-                                    "members": [
-                                        month
-                                    ]
-                                }
-                            },
-                            {
-                                uniqueName: "fecha.Year",
-                                "filter": {
-                                    "members": [
-                                        year
-                                    ]
-                                }
-                            }
-                        ],
-                        "rows": [
-                            {
-                                "uniqueName": "nombre_Proveedor",
-                                sort: "desc"
-                            },
-                            {
-                                "uniqueName": "tipo_Factura",
-                                sort: "desc"
-                            },
-                            {
-                                "uniqueName": "nro_Factura",
-                                sort: "desc"
-                            }
-                        ],
-                        columns: [
-                            {
-                                uniqueName: "[Measures]"
-                            }
-                        ],
-                        measures: [
-                            {
-                                uniqueName: "importe",
-                                caption: "Importe",
-                                aggregation: "sum",
-                                active: true,
-                                format: "currency"
-                            },
-                            {
-                                uniqueName: "importe_Sin_Iva",
-                                caption: "Importe sin IVA",
-                                aggregation: "sum",
-                                active: true,
-                                format: "currency"
-                            },
-                            {
-                                uniqueName: "iva_Importe",
-                                caption: "Importe IVA",
-                                aggregation: "sum",
-                                active: true,
-                                format: "currency"
-                            }
-                        ]
+                    },
+                    global: {
+                        localization: "https://cdn.webdatarocks.com/loc/es.json"
                     }
-                },
-                global: {
-                    localization: "https://cdn.webdatarocks.com/loc/es.json"
-                }
-            });
+                });
+            }
+
 
         }
         else {

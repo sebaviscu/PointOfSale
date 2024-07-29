@@ -1,5 +1,5 @@
 ﻿let tableData;
-let rowSelected;
+let rowSelectedPromocion;
 
 const BASIC_MODEL = {
     idPromocion: 0,
@@ -351,8 +351,8 @@ $("#btnSave").on("click", function () {
         }).then(responseJson => {
             if (responseJson.state) {
 
-                tableData.row(rowSelected).data(responseJson.object).draw(false);
-                rowSelected = null;
+                tableData.row(rowSelectedPromocion).data(responseJson.object).draw(false);
+                rowSelectedPromocion = null;
                 $("#modalData").modal("hide");
                 swal("Exitoso!", "Promociones fué modificada", "success");
 
@@ -368,12 +368,12 @@ $("#btnSave").on("click", function () {
 $("#tbData tbody").on("click", ".btn-edit", function () {
 
     if ($(this).closest('tr').hasClass('child')) {
-        rowSelected = $(this).closest('tr').prev();
+        rowSelectedPromocion = $(this).closest('tr').prev();
     } else {
-        rowSelected = $(this).closest('tr');
+        rowSelectedPromocion = $(this).closest('tr');
     }
 
-    const data = tableData.row(rowSelected).data();
+    const data = tableData.row(rowSelectedPromocion).data();
 
     openModal(data);
 })

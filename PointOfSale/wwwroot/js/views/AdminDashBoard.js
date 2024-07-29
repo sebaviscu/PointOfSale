@@ -1,6 +1,6 @@
 ﻿let typeValuesGlobal = 0;
-let proveedoresList = [];
-let tipoGastosList = [];
+let proveedoresListDashboard = [];
+let tipoGastosListDashboard = [];
 let tipoDeGasto = "1";
 let chartVentas;
 let charGastosSueldos;
@@ -12,6 +12,7 @@ let gastoTotal = 0;
 let proveedorTotal = 0;
 let sueldoTotal = 0;
 let saleTotal = 0;
+let prueba_ver_si_lo_agarra = 0;
 
 
 const BASIC_MODEL_GASTO = {
@@ -46,7 +47,7 @@ $(document).ready(function () {
 
             if (responseJson.state) {
                 if (responseJson.object.length > 0) {
-                    tipoGastosList = responseJson.object;
+                    tipoGastosListDashboard = responseJson.object;
 
                     responseJson.object.forEach((item) => {
                         $("#cboTipoDeGastoEnGasto").append(
@@ -65,7 +66,7 @@ $(document).ready(function () {
         }).then(responseJson => {
             if (responseJson.state) {
                 if (responseJson.object.length > 0) {
-                    tipoGastosList = responseJson.object;
+                    tipoGastosListDashboard = responseJson.object;
 
                     responseJson.object.forEach((item) => {
                         $("#cboUsuario").append(
@@ -85,7 +86,7 @@ $(document).ready(function () {
         }).then(responseJson => {
 
             if (responseJson.data.length > 0) {
-                proveedoresList = responseJson.data;
+                proveedoresListDashboard = responseJson.data;
 
                 responseJson.data.forEach((item) => {
                     $("#cboProveedor").append(
@@ -304,7 +305,7 @@ function SetTopSeler(typeValues, idCategory) {
         }).then(responseJson => {
             if (responseJson.state) {
 
-                const tableData = responseJson.object.map(value => {
+                const tableDataSales = responseJson.object.map(value => {
                     return (
                         `<tr>
                        <td><h3 style="color: darkgray;">${value.product}&nbsp;</h3></td>
@@ -313,7 +314,7 @@ function SetTopSeler(typeValues, idCategory) {
                     );
                 }).join('');
 
-                tableBody.innerHTML = tableData;
+                tableBody.innerHTML = tableDataSales;
             }
             else {
                 swal("Lo sentimos", "Se ha producido un error: " + responseJson.message, "error");
@@ -609,7 +610,7 @@ function SetTipoVentas(typeValues, dateFilter) {
 
 $('#cboTipoDeGastoEnGasto').change(function () {
     let idTipoGasro = $(this).val();
-    let tipoGasto = tipoGastosList.find(_ => _.idTipoGastos == idTipoGasro);
+    let tipoGasto = tipoGastosListDashboard.find(_ => _.idTipoGastos == idTipoGasro);
 
     if (tipoGasto != null) {
         $("#txtGasto").val(tipoGasto.gastoParticular);
@@ -630,7 +631,7 @@ $('#cboTipoDePago').change(function () {
     $('#txtImporteSinIva').val('');
     $('#txtImporteIva').val('');
 
-    if (tipoDeGasto === "1") { // gasto
+    if (tipoDeGasto == "1") { // gasto
         $(".pago-gasto").show();
         $(".pago-proveedor").hide();
     }
@@ -642,7 +643,7 @@ $('#cboTipoDePago').change(function () {
 
 $('#cboProveedor').change(function () {
     let idProv = $(this).val();
-    let proveedor = proveedoresList.find(_ => _.idProveedor == idProv);
+    let proveedor = proveedoresListDashboard.find(_ => _.idProveedor == idProv);
     $('#txtImporte').val('');
     $("#txtIva").val('');
     $('#txtImporteSinIva').val('');
@@ -685,12 +686,12 @@ $("#btnSavePagoProveedor").on("click", function () {
     let model;
 
     showLoading();
-    if (tipoDeGasto === "1") { // gasto
+    if (tipoDeGasto == "1") { // gasto
         url = "/Gastos/CreateGastos";
 
         let validacion = true;
         $(".input-validate-gasto").each(function () {
-            validacion = ($(this).val().trim() === "") ? false : validacion;
+            validacion = ($(this).val().trim() == "") ? false : validacion;
         });
 
         if ($("#txtImporte").val().trim() == "") {

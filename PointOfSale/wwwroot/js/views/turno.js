@@ -1,5 +1,5 @@
 ﻿let tableData;
-let rowSelected;
+let rowSelectedTurno;
 
 const BASIC_MODEL = {
     idturno: 0,
@@ -70,12 +70,12 @@ $(document).ready(function () {
 $("#tbData tbody").on("click", ".btn-edit", function () {
 
     if ($(this).closest('tr').hasClass('child')) {
-        rowSelected = $(this).closest('tr').prev();
+        rowSelectedTurno = $(this).closest('tr').prev();
     } else {
-        rowSelected = $(this).closest('tr');
+        rowSelectedTurno = $(this).closest('tr');
     }
 
-    const data = tableData.row(rowSelected).data();
+    const data = tableData.row(rowSelectedTurno).data();
 
     openModal(data);
 })
@@ -136,8 +136,8 @@ $("#btnSave").on("click", function () {
     }).then(responseJson => {
         if (responseJson.state) {
 
-            tableData.row(rowSelected).data(responseJson.object).draw(false);
-            rowSelected = null;
+            tableData.row(rowSelectedTurno).data(responseJson.object).draw(false);
+            rowSelectedTurno = null;
             $("#modalData").modal("hide");
             swal("Exitoso!", "Turno fué modificada", "success");
 

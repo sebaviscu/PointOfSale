@@ -1,5 +1,5 @@
 ﻿let tableData;
-let rowSelected;
+let rowSelectedGastos;
 let tipoGastosList = [];
 const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun",
     "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
@@ -52,8 +52,6 @@ $(document).ready(function () {
 
             if (responseJson.state) {
                 if (responseJson.object.length > 0) {
-                    tipoGastosList = responseJson.object;
-
                     responseJson.object.forEach((item) => {
                         $("#cboUsuario").append(
                             $("<option>").val(item.idUsers).text(item.name)
@@ -197,7 +195,7 @@ const openModal = (model = BASIC_MODEL) => {
     $("#cboEstado").val(model.estadoPago);
     document.getElementById("cbxFacturaPendiente").checked = model.facturaPendiente;
 
-    if (model.modificationDate === null)
+    if (model.modificationDate == null)
         document.getElementById("divModif").style.display = 'none';
     else {
         document.getElementById("divModif").style.display = '';
@@ -297,12 +295,12 @@ $("#btnSave").on("click", function () {
 $("#tbData tbody").on("click", ".btn-edit", function () {
 
     if ($(this).closest('tr').hasClass('child')) {
-        rowSelected = $(this).closest('tr').prev();
+        rowSelectedGastos = $(this).closest('tr').prev();
     } else {
-        rowSelected = $(this).closest('tr');
+        rowSelectedGastos = $(this).closest('tr');
     }
 
-    const data = tableData.row(rowSelected).data();
+    const data = tableData.row(rowSelectedGastos).data();
 
     openModal(data);
 })
@@ -342,16 +340,16 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                     $(".showSweetAlert").LoadingOverlay("hide")
                     return response.json();
                 }).then(responseJson => {
-                        if (responseJson.state) {
-                            tableData.row(row).remove().draw();
-                            swal("Exitoso!", "El gasto  fue eliminada", "success");
-                        } else {
-                            swal("Lo sentimos", responseJson.message, "error");
-                        }
-                    })
-                .catch((error) => {
-                    $(".showSweetAlert").LoadingOverlay("hide")
+                    if (responseJson.state) {
+                        tableData.row(row).remove().draw();
+                        swal("Exitoso!", "El gasto  fue eliminada", "success");
+                    } else {
+                        swal("Lo sentimos", responseJson.message, "error");
+                    }
                 })
+                    .catch((error) => {
+                        $(".showSweetAlert").LoadingOverlay("hide")
+                    })
             }
         });
 })
@@ -375,7 +373,7 @@ $('#cboTipoDeGastoEnGasto').change(function () {
 function calcularImportes() {
     let importe = $("#txtImporte").val();
     let iva = $("#txtIva").val();
-    if(importe !== '' && iva !== '') {
+    if (importe !== '' && iva !== '') {
         let importeSinIva = parseFloat(importe) * (1 - (parseFloat(iva) / 100));
         $("#txtImporteSinIva").val(importeSinIva);
         $("#txtImporteIva").val(importe - importeSinIva);
@@ -387,7 +385,7 @@ function calcularIva() {
     let importeText = $('#txtImporte').val();
     let importe = parseFloat(importeText == '' ? 0 : importeText);
     let iva = parseFloat($('#txtIva').val());
-    if(!isNaN(importe) && !isNaN(iva)) {
+    if (!isNaN(importe) && !isNaN(iva)) {
         let importeSinIva = importe / (1 + (iva / 100));
         let importeIva = importe - importeSinIva;
         $('#txtImporteSinIva').val(importeSinIva.toFixed(2));
@@ -414,95 +412,98 @@ function cargarTablaDinamica() {
             return false;
         }
 
-        if (responseJson.state && responseJson.data !== []) {
+        if (responseJson.state) {
+            if (responseJson.data != []) {
 
-            let today = new Date();
-            let month = "fecha.Month." + monthNames[today.getMonth()];
-            let year = "fecha.Year." + today.getFullYear();
-            let pivot = new WebDataRocks({
-                container: "#wdr-component",
-                toolbar: true,
-                report: {
-                    dataSource: {
-                        data: responseJson.object
-                    },
-                    formats: [
-                        {
-                            name: "currency",
-                            currencySymbol: "$"
+                let today = new Date();
+                let month = "fecha.Month." + monthNames[today.getMonth()];
+                let year = "fecha.Year." + today.getFullYear();
+                let pivot = new WebDataRocks({
+                    container: "#wdr-component",
+                    toolbar: true,
+                    report: {
+                        dataSource: {
+                            data: responseJson.object
+                        },
+                        formats: [
+                            {
+                                name: "currency",
+                                currencySymbol: "$"
+                            }
+                        ],
+                        "slice": {
+                            reportFilters: [
+                                {
+                                    uniqueName: "fecha.Day"
+                                },
+                                {
+                                    uniqueName: "fecha.Month",
+                                    "filter": {
+                                        "members": [
+                                            month
+                                        ]
+                                    }
+                                },
+                                {
+                                    uniqueName: "fecha.Year",
+                                    "filter": {
+                                        "members": [
+                                            year
+                                        ]
+                                    }
+                                }
+                            ],
+                            "rows": [
+                                {
+                                    "uniqueName": "gasto",
+                                    sort: "desc"
+                                },
+                                {
+                                    "uniqueName": "tipo_Gasto",
+                                    sort: "desc"
+                                },
+                                {
+                                    "uniqueName": "tipo_Factura",
+                                    sort: "desc"
+                                },
+                                {
+                                    "uniqueName": "nro_Factura",
+                                    sort: "desc"
+                                }
+                            ],
+                            columns: [
+                                {
+                                    uniqueName: "[Measures]"
+                                }
+                            ],
+                            measures: [
+                                {
+                                    uniqueName: "importe",
+                                    caption: "Importe",
+                                    aggregation: "sum",
+                                    format: "currency"
+                                },
+                                {
+                                    uniqueName: "importe_Sin_Iva",
+                                    caption: "Importe sin IVA",
+                                    aggregation: "sum",
+                                    format: "currency"
+                                },
+                                {
+                                    uniqueName: "iva_Importe",
+                                    caption: "Importe IVA",
+                                    aggregation: "sum",
+                                    format: "currency"
+                                }
+                            ]
                         }
-                    ],
-                    "slice": {
-                        reportFilters: [
-                            {
-                                uniqueName: "fecha.Day"
-                            },
-                            {
-                                uniqueName: "fecha.Month",
-                                "filter": {
-                                    "members": [
-                                        month
-                                    ]
-                                }
-                            },
-                            {
-                                uniqueName: "fecha.Year",
-                                "filter": {
-                                    "members": [
-                                        year
-                                    ]
-                                }
-                            }
-                        ],
-                        "rows": [
-                            {
-                                "uniqueName": "gasto",
-                                sort: "desc"
-                            },
-                            {
-                                "uniqueName": "tipo_Gasto",
-                                sort: "desc"
-                            },
-                            {
-                                "uniqueName": "tipo_Factura",
-                                sort: "desc"
-                            },
-                            {
-                                "uniqueName": "nro_Factura",
-                                sort: "desc"
-                            }
-                        ],
-                        columns: [
-                            {
-                                uniqueName: "[Measures]"
-                            }
-                        ],
-                        measures: [
-                            {
-                                uniqueName: "importe",
-                                caption: "Importe",
-                                aggregation: "sum",
-                                format: "currency"
-                            },
-                            {
-                                uniqueName: "importe_Sin_Iva",
-                                caption: "Importe sin IVA",
-                                aggregation: "sum",
-                                format: "currency"
-                            },
-                            {
-                                uniqueName: "iva_Importe",
-                                caption: "Importe IVA",
-                                aggregation: "sum",
-                                format: "currency"
-                            }
-                        ]
+                    },
+                    global: {
+                        localization: "https://cdn.webdatarocks.com/loc/es.json"
                     }
-                },
-                global: {
-                    localization: "https://cdn.webdatarocks.com/loc/es.json"
-                }
-            });
+                });
+            }
+
         }
         else {
             swal("Lo sentimos", responseJson.message, "error");

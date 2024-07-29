@@ -1,5 +1,5 @@
 ﻿let tableData;
-let rowSelected;
+let rowSelectedCategory;
 
 const BASIC_MODEL = {
     idCategory: 0,
@@ -64,7 +64,7 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtDescription").val(model.description);
     $("#cboState").val(model.isActive);
 
-    if (model.modificationUser === null)
+    if (model.modificationUser == null)
         document.getElementById("divModif").style.display = 'none';
     else {
         document.getElementById("divModif").style.display = '';
@@ -136,8 +136,8 @@ $("#btnSave").on("click", function () {
         }).then(responseJson => {
             if (responseJson.state) {
 
-                tableData.row(rowSelected).data(responseJson.object).draw(false);
-                rowSelected = null;
+                tableData.row(rowSelectedCategory).data(responseJson.object).draw(false);
+                rowSelectedCategory = null;
                 $("#modalData").modal("hide");
                 swal("Exitoso!", "La categoria fué modificada", "success");
 
@@ -154,12 +154,12 @@ $("#btnSave").on("click", function () {
 $("#tbData tbody").on("click", ".btn-edit", function () {
 
     if ($(this).closest('tr').hasClass('child')) {
-        rowSelected = $(this).closest('tr').prev();
+        rowSelectedCategory = $(this).closest('tr').prev();
     } else {
-        rowSelected = $(this).closest('tr');
+        rowSelectedCategory = $(this).closest('tr');
     }
 
-    const data = tableData.row(rowSelected).data();
+    const data = tableData.row(rowSelectedCategory).data();
 
     openModal(data);
 })
