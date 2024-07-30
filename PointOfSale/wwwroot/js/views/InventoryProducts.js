@@ -624,7 +624,7 @@ $("#btnSaveMasivo").on("click", function () {
     })
 })
 
-$("#btnSave").on("click", function () {
+$("#btnSave").on("click", async function () {
     const inputs = $(".input-validate").serializeArray();
     const inputs_without_value = inputs.filter((item) => item.value.trim() == "" || item.value.trim() == null)
 
@@ -668,12 +668,24 @@ $("#btnSave").on("click", function () {
 
     let vencimientos = obtenerDatosTabla();
 
-    const inputPhoto = document.getElementById('txtPhoto');
 
     const formData = new FormData();
-    formData.append('photo', inputPhoto.files[0]);
     formData.append('model', JSON.stringify(model));
     formData.append('vencimientos', JSON.stringify(vencimientos));
+
+    //const imgProduct = document.getElementById('imgProduct');
+    const inputPhoto = document.getElementById('txtPhoto');
+
+    if (inputPhoto.files && inputPhoto.files[0]) {
+        const file = inputPhoto.files[0];
+        const compressedImage = await compressImage(file, 0.7, 300, 300);
+        formData.append('photo', compressedImage, file.name);
+    }
+    //else if (imgProduct != null && imgProduct.src) {
+    //    const compressedImage = await compressImageFromImgTag(imgProduct, 0.7, 300, 300);
+    //    formData.append('photo', compressedImage, 'existingImage.jpg');
+    //}
+
 
     $("#modalData").find("div.modal-content").LoadingOverlay("show")
 
@@ -724,6 +736,55 @@ $("#btnSave").on("click", function () {
     }
 })
 
+//async function compressImageFromImgTag(imgTag, quality, maxWidth, maxHeight) {
+//    return new Promise((resolve, reject) => {
+//        const img = new Image();
+//        img.crossOrigin = 'Anonymous'; // Necesario si la imagen está en un dominio diferente
+//        img.src = imgTag.src;
+//        img.onload = () => {
+//            const canvas = document.createElement('canvas');
+//            const ctx = canvas.getContext('2d');
+
+//            const ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
+//            canvas.width = img.width * ratio;
+//            canvas.height = img.height * ratio;
+
+//            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+//            canvas.toBlob(blob => {
+//                resolve(blob);
+//            }, 'image/jpeg', quality);
+//        };
+//        img.onerror = reject;
+//    });
+//}
+
+function compressImage(file, quality, maxWidth, maxHeight) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = event => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+
+                const ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
+                canvas.width = img.width * ratio;
+                canvas.height = img.height * ratio;
+
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                canvas.toBlob(blob => {
+                    resolve(blob);
+                }, 'image/jpeg', quality);
+            };
+            img.onerror = reject;
+        };
+        reader.onerror = reject;
+    });
+}
 
 $("#tbData tbody").on("click", ".btn-edit", function () {
 

@@ -7,12 +7,10 @@ using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Reportes;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
-using PointOfSale.Model.Auditoria;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
 using System.Globalization;
 using static PointOfSale.Model.Enum;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PointOfSale.Controllers
 {
