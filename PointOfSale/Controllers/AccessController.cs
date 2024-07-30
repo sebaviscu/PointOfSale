@@ -140,9 +140,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al recuperar todos los usuarios";
                 gResponse.State = false;
-                gResponse.Message = ex.Message;
-                _logger.LogError(ex, "Error al recuperar todos los usuarios");
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Services;
 using PointOfSale.Business.Utilities;
@@ -44,9 +45,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al recuperar lista de pedidos";
                 gResponse.State = false;
-                gResponse.Message = ex.ToString();
-                _logger.LogError(ex, "Error al recuperar lista de pedidos");
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
@@ -74,9 +76,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al crear pedido";
                 gResponse.State = false;
-                gResponse.Message = ex.ToString();
-                _logger.LogError(ex, "Error al crear pedido");
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel}.", errorMessage, model.ToJson());
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }
@@ -102,9 +105,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al actualizar pedido";
                 gResponse.State = false;
-                gResponse.Message = ex.Message;
-                _logger.LogError(ex, "Error al actualizar pedido");
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel}.", errorMessage, model.ToJson());
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
@@ -124,9 +128,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al elimiar pedido";
                 gResponse.State = false;
-                gResponse.Message = ex.Message;
-                _logger.LogError(ex, "Error al borrar pedido");
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel}.", errorMessage, idPedido.ToJson());
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }
@@ -170,9 +175,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al cerrar pedido";
                 gResponse.State = false;
-                gResponse.Message = ex.Message;
-                _logger.LogError(ex, "Error cerrar pedido");
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel}.", errorMessage, model.ToJson());
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Model;
 using PointOfSale.Models;
@@ -57,8 +58,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al crear notificacion";
                 gResponse.State = false;
-                gResponse.Message = ex.Message;
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel}.", errorMessage, model.ToJson());
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }
@@ -81,9 +84,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al actualizar notificacion";
                 gResponse.State = false;
-                gResponse.Message = ex.Message;
-                _logger.LogError(ex, "Error actualizar notificacion");
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel}.", errorMessage, idNotificacion.ToJson());
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }
@@ -104,9 +108,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al limpiar todas las  notificaciones";
                 gResponse.State = false;
-                gResponse.Message = ex.Message;
-                _logger.LogError(ex, "Error al limpiar todas las notificaciones");
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 

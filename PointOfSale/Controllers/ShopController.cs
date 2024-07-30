@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using NuGet.Protocol;
 using Org.BouncyCastle.Pkcs;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Services;
@@ -90,9 +91,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al recuperar mas productos paginados para la web";
                 gResponse.State = false;
-                gResponse.Message = ex.Message;
-                _logger.LogError(ex, "Error al recuperar mas productos paginados para la web");
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage}", errorMessage);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
@@ -166,9 +168,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al actualizar una venta web";
                 gResponse.State = false;
-                gResponse.Message = ex.Message;
-                _logger.LogError(ex, "Error al actualizar una venta web");
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage}. Request: {ModelRequest}", errorMessage, model.ToJson());
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
@@ -190,9 +193,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al registrar una venta web";
                 gResponse.State = false;
-                gResponse.Message = ex.Message;
-                _logger.LogError(ex, "Error al registrar una venta web");
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage}. Request: {ModelRequest}", errorMessage, model.ToJson());
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 

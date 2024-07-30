@@ -7,6 +7,7 @@ using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
 using static PointOfSale.Model.Enum;
+using NuGet.Protocol;
 
 namespace PointOfSale.Controllers
 {
@@ -41,9 +42,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al recuperar Tiendas";
                 gResponse.State = false;
-                gResponse.Message = ex.Message;
-                _logger.LogError(ex, "Error al recuperar lista de tiendas");
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }
@@ -62,9 +64,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al recuperar una tienda";
                 gResponse.State = false;
-                gResponse.Message = ex.Message;
-                _logger.LogError(ex, "Error al recuperar una tienda");
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
@@ -102,9 +105,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al crear Tiendas";
                 gResponse.State = false;
-                gResponse.Message = ex.Message;
-                _logger.LogError(ex, "Error al crear la tienda");
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage}. Request: {ModelRequest}", errorMessage, vmTienda.ToJson());
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
@@ -155,9 +159,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al actualizar Tiendas";
                 gResponse.State = false;
-                gResponse.Message = ex.Message;
-                _logger.LogError(ex, "Error al actualizar la tienda");
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage}. Request: {ModelRequest}", errorMessage, vmTienda.ToJson());
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
@@ -179,9 +184,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al eliminar Tiendas";
                 gResponse.State = false;
-                gResponse.Message = ex.Message;
-                _logger.LogError(ex, "Error al borrar una tienda");
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage}. Request: {ModelRequest}", errorMessage, idTienda.ToJson());
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 

@@ -12,6 +12,8 @@ using PointOfSale.Utilities.Response;
 using System.Security.Claims;
 using static PointOfSale.Model.Enum;
 using Neodynamic.SDK.Web;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using NuGet.Protocol;
 
 namespace PointOfSale.Controllers
 {
@@ -77,9 +79,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al recuperar formas de ventas";
                 gResponse.State = false;
-                gResponse.Message = ex.ToString();
-                _logger.LogError(ex, "Error al recuperar formas de ventas");
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage}", errorMessage);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
@@ -104,9 +107,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al recuperar lista de productos";
                 gResponse.State = false;
-                gResponse.Message = ex.ToString();
-                _logger.LogError(ex, "Error al recuperar lista de productos");
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage} Request: {Search}", errorMessage, search);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }
@@ -127,9 +131,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al recuperar lista de clientes";
                 gResponse.State = false;
-                gResponse.Message = ex.ToString();
-                _logger.LogError(ex, "Error al recuperar lista de clientes");
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage} Request: {Search}", errorMessage, search);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
@@ -217,9 +222,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al registrar venta";
                 gResponse.State = false;
-                gResponse.Message = ex.ToString();
-                _logger.LogError(ex, "Error al registrar venta");
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage} Request: {ModelRequest}", errorMessage, model);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
@@ -252,9 +258,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al registrar No Cierre de venta";
                 gResponse.State = false;
-                gResponse.Message = ex.ToString();
-                _logger.LogError(ex, "Error RegisterNoCierreSale");
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage} Request: {ModelRequest}", errorMessage, model);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
@@ -295,9 +302,11 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al recuperar reporte de ventas";
                 gResponse.State = false;
-                gResponse.Message = ex.ToString();
-                _logger.LogError(ex, "Error al recuperar historico de ventas");
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage} Request: {ModelRequest} | SaleNumber: {SaleNumber} | StartDate: {StartDate} | EndDate: {EndDate} | Presupuestos: {Presupuestos}",
+                        errorMessage, saleNumber.ToJson(), startDate.ToJson(), endDate.ToJson(), presupuestos.ToJson());
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }
@@ -325,9 +334,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al imprimir ticket";
                 gResponse.State = false;
-                gResponse.Message = ex.ToString();
-                _logger.LogError(ex, "Error al imprimir ticket");
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage} Request: {ModelRequest}", errorMessage, idSale.ToJson());
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 
@@ -355,9 +365,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al imprimir ticket de venta web";
                 gResponse.State = false;
-                gResponse.Message = ex.ToString();
-                _logger.LogError(ex, "Error al imprimir ticket en venta web");
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage} Request: {ModelRequest}", errorMessage, idVentaWeb);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 

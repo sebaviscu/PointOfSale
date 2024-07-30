@@ -4,6 +4,7 @@ using iTextSharp.text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Packaging;
+using NuGet.Protocol;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Model;
 using PointOfSale.Model.Output;
@@ -14,23 +15,24 @@ using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
 using static PointOfSale.Model.Enum;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PointOfSale.Controllers
 {
     [Authorize]
     public class ReportsController : BaseController
     {
-        private readonly ISaleService _saleService;
         private readonly IMapper _mapper;
         private readonly IProductService _productService;
         private readonly IIvaService _ivaService;
+        private readonly ILogger<ReportsController> _logger;
 
-        public ReportsController(ISaleService saleService, IMapper mapper, IProductService productService, IIvaService ivaService)
+        public ReportsController(IMapper mapper, IProductService productService, IIvaService ivaService, ILogger<ReportsController> logger)
         {
-            _saleService = saleService;
             _mapper = mapper;
             _productService = productService;
             _ivaService = ivaService;
+            _logger = logger;
         }
         public IActionResult ProductsReport()
         {
@@ -105,8 +107,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
+                var errorMessage = "Error al recuperar fechas para iva report";
                 gResponse.State = false;
-                gResponse.Message = ex.Message;
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage}", errorMessage);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }
@@ -147,13 +151,14 @@ namespace PointOfSale.Controllers
                 gResponse.Object = list;
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
+                var errorMessage = "Error al recuperar iva report";
                 gResponse.State = false;
-                gResponse.Message = e.Message;
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel} data: {Data}", errorMessage, idTipoIva, date.ToJson());
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
-
         }
 
         private async Task<List<VMLibroIvaTotalOutput>> HandleCompra(int idTienda, DateTime start_date, DateTime end_date)
