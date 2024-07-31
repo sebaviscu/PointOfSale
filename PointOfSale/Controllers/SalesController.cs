@@ -96,12 +96,39 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProducts(string search)
         {
+            var gResponse = new GenericResponse<List<VmProductsSelect2>>();
+            try
+            {
+                ClaimsPrincipal claimuser = HttpContext.User;
+                var listaPrecioInt = Convert.ToInt32(claimuser.Claims.Where(c => c.Type == "ListaPrecios").Select(c => c.Value).SingleOrDefault());
+                var vmListProducts = _mapper.Map<List<VmProductsSelect2>>(await _saleService.GetProductsSearchAndIdLista(search.Trim(), (ListaDePrecio)listaPrecioInt));
+                return StatusCode(StatusCodes.Status200OK, vmListProducts);
+
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = "Error al recuperar lista de productos";
+                gResponse.State = false;
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage} Request: {Search}", errorMessage, search);
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+            }
+        }
+
+        /// <summary>
+        /// Devuelve productos para select2 para ver precios
+        /// </summary>
+        /// <param name="search"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetProductsVerPrecios(string search)
+        {
             var gResponse = new GenericResponse<List<VMProduct>>();
             try
             {
                 ClaimsPrincipal claimuser = HttpContext.User;
                 var listaPrecioInt = Convert.ToInt32(claimuser.Claims.Where(c => c.Type == "ListaPrecios").Select(c => c.Value).SingleOrDefault());
-                List<VMProduct> vmListProducts = _mapper.Map<List<VMProduct>>(await _saleService.GetProductsSearchAndIdLista(search.Trim(), (ListaDePrecio)listaPrecioInt));
+                var vmListProducts = _mapper.Map<List<VMProduct>>(await _saleService.GetProductsSearchAndIdLista(search.Trim(), (ListaDePrecio)listaPrecioInt));
                 return StatusCode(StatusCodes.Status200OK, vmListProducts);
 
             }

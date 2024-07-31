@@ -22,7 +22,7 @@ namespace PointOfSale.Business.Contracts
         Task<bool> GenerarVentas(int idTienda, int idUser);
         Task<Sale> GetSale(int idSale);
 
-        Task<List<Product>> GetProductsSearchAndIdLista(string search, ListaDePrecio listaPrecios);
+        Task<List<ListaPrecio>> GetProductsSearchAndIdLista(string search, ListaDePrecio listaPrecios);
         Task<Sale> Edit(int idSale, int formaPago);
 
     }

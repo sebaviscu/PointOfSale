@@ -521,7 +521,7 @@ function resetModaConsultarPreciol() {
 function funConsultarPrecio() {
     $('#cboSearchProductConsultarPrecio').select2({
         ajax: {
-            url: "/Sales/GetProducts",
+            url: "/Sales/GetProductsVerPrecios",
             dataType: 'json',
             contentType: "application/json; charset=utf-8",
             delay: 250,
@@ -535,7 +535,6 @@ function funConsultarPrecio() {
                     results: data.map((item) => ({
                         id: item.idProduct,
                         text: item.description,
-                        brand: item.brand,
                         category: item.idCategory,
                         photoBase64: item.photoBase64,
                         price: item.price,
@@ -759,8 +758,6 @@ function addFunctions(idTab) {
                         {
                             id: item.idProduct,
                             text: item.description,
-
-                            brand: item.brand,
                             category: item.idCategory,
                             photoBase64: item.photoBase64,
                             price: item.price,
@@ -856,7 +853,6 @@ function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
 
     let product = new Producto();
     product.idproduct = data.id;
-    product.brandproduct = data.brand;
     product.descriptionproduct = data.text;
     product.categoryproduct = data.category;
     product.quantity = data.quantity;
@@ -942,7 +938,6 @@ function applyForProduct(prom, totalQuantity, data, currentTab) {
 
                     let newProd = new Producto();
                     newProd.idproduct = data.id;
-                    newProd.brandproduct = data.brand;
                     newProd.descriptionproduct = data.text;
                     newProd.categoryproduct = data.category;
                     newProd.quantity = diffDividido;
@@ -1049,7 +1044,6 @@ function validateCode(userCode) {
 
 class Producto {
     idproduct = 0;
-    brandproduct = "";
     descriptionproduct = "";
     categoryproducty = "";
     quantity = 0;

@@ -139,6 +139,26 @@ namespace PointOfSale.Utilities.Automapper
                 opt => opt.MapFrom(source => Convert.ToDecimal(source.Price))
             )
             ;
+
+            CreateMap<ListaPrecio, VmProductsSelect2>()
+            .ForMember(destiny =>destiny.IdProduct, opt => opt.MapFrom(source => source.Producto != null ? source.Producto.IdProduct : 0))
+            .ForMember(destiny => destiny.Description, opt => opt.MapFrom(source => source.Producto != null ? source.Producto.Description : string.Empty))
+            .ForMember(destiny => destiny.IdCategory, opt => opt.MapFrom(source => source.Producto != null ? source.Producto.IdCategory : 0))
+            .ForMember(destiny => destiny.PhotoBase64, opt => opt.MapFrom(source => source.Producto != null ? Convert.ToBase64String(ImageHelper.ResizeImage(source.Producto.Photo, 60, 60)) : string.Empty))
+            .ForMember(destiny => destiny.TipoVenta, opt => opt.MapFrom(source => source.Producto != null ? source.Producto.TipoVenta : 0))
+            .ForMember(destiny => destiny.Price, opt => opt.MapFrom(source => source.Precio))
+            ;
+
+
+            CreateMap<ListaPrecio, VMProduct>()
+            .ForMember(destiny => destiny.IdProduct, opt => opt.MapFrom(source => source.Producto != null ? source.Producto.IdProduct : 0))
+            .ForMember(destiny => destiny.Description, opt => opt.MapFrom(source => source.Producto != null ? source.Producto.Description : string.Empty))
+            .ForMember(destiny => destiny.IdCategory, opt => opt.MapFrom(source => source.Producto != null ? source.Producto.IdCategory : 0))
+            .ForMember(destiny => destiny.PhotoBase64, opt => opt.MapFrom(source => source.Producto != null ? Convert.ToBase64String(source.Producto.Photo) : string.Empty))
+            .ForMember(destiny => destiny.TipoVenta, opt => opt.MapFrom(source => source.Producto != null ? source.Producto.TipoVenta : 0))
+            .ForMember(destiny => destiny.Price, opt => opt.MapFrom(source => source.Precio))
+            ;
+
             #endregion
             //System.Enum.GetName(typeof(TipoVenta), source.TipoVenta)
             #region TypeDocumentSale
