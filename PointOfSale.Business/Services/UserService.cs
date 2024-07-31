@@ -122,14 +122,20 @@ namespace PointOfSale.Business.Services
             }
         }
 
-
-
         public async Task<User?> GetByCredentials(string email, string password)
         {
             var query = await _repository.Query();
-            var user_found = query.SingleOrDefault(u => u.Email.ToUpper().Equals(email.ToUpper()) && u.Password.ToUpper().Equals(password.ToUpper()));
+            var user_found = query.SingleOrDefault(u => u.Email.ToUpper().Equals(email.ToUpper()));
 
-            return user_found;
+            if (user_found != null)
+            {
+                if (EncryptionHelper.DecryptString(user_found.Password).ToUpper().Equals(password))
+                {
+                    return user_found;
+                }
+            }
+
+            return null;
         }
 
         public async Task<User> GetById(int IdUser)

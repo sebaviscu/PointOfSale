@@ -43,7 +43,7 @@ $(document).ready(function () {
             return response.json();
         }).then(responseJson => {
             $("#cboTiendas").append(
-                $("<option>").val('-1').text(''))
+                $("<option>").val('-1').text(' '))
 
             if (responseJson.data.length > 0) {
                 responseJson.data.forEach((item) => {
@@ -162,15 +162,14 @@ $("#btnSave").on("click", function () {
     var rol = $("#cboRol").val();
     var tienda = $("#cboTiendas").val();
 
-    if (rol != '1' && tienda == '-1') {
+    if (rol != '1' && (tienda == '-1' || tienda == null)) {
         toastr.warning("Se debe seleccionar una tienda", "");
         return;
     }
-    else
-        if (rol == '1' && tienda != '-1') {
-            toastr.warning("No se debe seleccionar tienda para un Administrador", "");
-            return;
-        }
+    else if (rol == '1' && (tienda != '-1' && tienda != null)) {
+        toastr.warning("No se debe seleccionar tienda para un Administrador", "");
+        return;
+    }
 
     const model = structuredClone(BASIC_MODEL);
     model["idUsers"] = parseInt($("#txtId").val());
@@ -178,9 +177,11 @@ $("#btnSave").on("click", function () {
     model["email"] = $("#txtEmail").val();
     model["phone"] = $("#txtPhone").val();
     model["idRol"] = rol
-    model["password"] = $("#txtPassWord").val();
     model["isActive"] = $("#cboState").val();
     model["idTienda"] = tienda;
+
+    model["password"] = $("#txtPassWord").val();
+
     //const inputPhoto = document.getElementById('txtPhoto');
 
     const formData = new FormData();
@@ -246,8 +247,21 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
     }
 
     const data = tableData.row(rowSelectedUser).data();
+    showLoading();
 
-    openModal(data);
+    fetch(`/Admin/GetUser?idUser=${data.idUsers}`,)
+        .then(response => {
+            return response.json();
+        }).then(responseJson => {
+            removeLoading();
+            if (responseJson.state) {
+
+                openModal(responseJson.object);
+
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+        })
 })
 
 

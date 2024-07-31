@@ -10,6 +10,7 @@ using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
 using PointOfSale.Model.Auditoria;
 using PointOfSale.Models;
+using PointOfSale.Utilities;
 using PointOfSale.Utilities.Response;
 using System.Globalization;
 using System.Security.Claims;
@@ -554,6 +555,34 @@ namespace PointOfSale.Controllers
             }
         }
 
+        /// <summary>
+        /// Devuelve los usuarios para un DataTable
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetUser(int idUser)
+        {
+            var gResponse = new GenericResponse<VMUser>();
+
+            try
+            {
+                var user = _mapper.Map<VMUser>(await _userService.GetById(idUser));
+                user.Password = EncryptionHelper.DecryptString(user.Password);
+
+                gResponse.Object = user;
+                gResponse.State = true;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = "Error al recuperar un usuario";
+                gResponse.State = false;
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage}. Request: {Model}.", errorMessage, idUser.ToJson());
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromForm] IFormFile photo, [FromForm] string model)
         {
@@ -566,6 +595,7 @@ namespace PointOfSale.Controllers
                 VMUser vmUser = JsonConvert.DeserializeObject<VMUser>(model);
                 vmUser.IdTienda = user.IdTienda;
 
+                vmUser.Password = EncryptionHelper.EncryptString(vmUser.Password);
                 if (photo != null)
                 {
                     using (var ms = new MemoryStream())
@@ -608,6 +638,7 @@ namespace PointOfSale.Controllers
                 VMUser vmUser = JsonConvert.DeserializeObject<VMUser>(model);
                 vmUser.ModificationUser = user.UserName;
 
+                vmUser.Password = EncryptionHelper.EncryptString(vmUser.Password);
                 if (photo != null)
                 {
                     using (var ms = new MemoryStream())

@@ -20,10 +20,12 @@ $(document).ready(function () {
             return response.json();
         }).then(responseJson => {
 
-            if (responseJson.state > 0) {
+            if (responseJson.state) {
+                formasDePagosList = responseJson.object;
+                
                 if (responseJson.object.length > 0) {
                     responseJson.object.forEach((item) => {
-                        $("#cboTypeDocumentSale").append(
+                        $("#cboTypeDocumentSaleParcial").append(
                             $("<option>").val(item.idTypeDocumentSale).text(item.description)
                         )
                     });

@@ -5,6 +5,7 @@ using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Services;
 using PointOfSale.Model;
 using PointOfSale.Models;
+using PointOfSale.Utilities;
 using PointOfSale.Utilities.Response;
 using System.Security.Claims;
 using static PointOfSale.Model.Enum;

@@ -14,6 +14,7 @@ using static PointOfSale.Model.Enum;
 using Neodynamic.SDK.Web;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using NuGet.Protocol;
+using AFIP.Facturacion.Model;
 
 namespace PointOfSale.Controllers
 {
@@ -223,13 +224,22 @@ namespace PointOfSale.Controllers
                         var tipoVentaMult = await _typeDocumentSaleService.Get(f.FormaDePago);
 
                         // Si es necesario facturar, se debe hacer aquí
-                        // if ((int)tipoVentaMult.TipoFactura < 3)
-                        // {
-                        //     var factura = new FacturaAFIP();
-                        //     var facturacionResponse = await _afipFacturacionService.FacturarAsync(factura);
-                        // }
+                        //if ((int)tipoVentaMult.TipoFactura < 3)
+                        //{
+                        //    var factura = new FacturaAFIP();
+                        //    factura.Cabecera = new CabeceraFacturaAFIP()
+                        //    {
+                        //        CantidadRegistros = 1,
+                        //        PuntoVenta = 1,
+                        //        TipoComprobante = TipoComprobante.Factura_A
+                        //    };
+
+                        //    //var facturacionResponse = await _afipFacturacionService.FacturarAsync(factura);
+                        //}
+
                     }
                 }
+                var aa = await _afipFacturacionService.GetUltimoComprobanteAutorizadoAsync(1, TipoComprobante.Factura_A);
 
                 // Si es necesario facturar, se debe hacer aquí
                 // var tipoVenta = await _typeDocumentSaleService.Get(sale_created.IdTypeDocumentSale.Value);
