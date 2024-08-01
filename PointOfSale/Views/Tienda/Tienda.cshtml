@@ -147,14 +147,24 @@
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <label for="txtEnvioGratis">Ruta del certificado</label>
-                                            <input type="text" class="form-control form-control-sm" id="txtEnvioGratis" name="EnvioGratis">
+                                            <label for="txtRutaCertificado">Ruta del certificado</label>
+                                            @* <div class="input-group input-group-sm">
+                                            <div class="input-group-prepend">
+                                            <span>Ruta</span>
+                                            </div>
+                                            </div> *@
+                                            <input type="text" class="form-control form-control-sm" id="txtRutaCertificado" name="Ruta Certificado">
                                         </div>
                                     </div>
-                                    <div class="col-sm-12">
-                                        <div class="form-group">
-                                            <label for="txtWhatsApp">Contraseña del certificado</label>
-                                            <input type="password" class="form-control form-control-sm" id="txtWhatsApp" name="WhatsApp">
+                                    <div class="form-group col-sm-12" style="margin-bottom: 0px;">
+                                        <label for="txtContraseñaCertificado">Contraseña del certificado</label>
+                                        <div class="input-group input-group-sm">
+                                            <input type="password" class="form-control form-control-sm" id="txtContraseñaCertificado" name="Contraseña Certificado">
+                                            <div class="input-group-prepend" style="margin-left: 5px;">
+                                                <button id="togglePassword">
+                                                    <span class="mdi mdi-eye mdi-24px" id="eyeIcon"></span>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

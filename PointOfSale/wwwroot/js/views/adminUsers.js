@@ -103,6 +103,21 @@ $(document).ready(function () {
         ]
     });
 
+    var $passwordInput = $('#txtPassWord');
+    var $togglePasswordButton = $('#togglePassword');
+
+    $togglePasswordButton.on('mousedown', function () {
+        $passwordInput.attr('type', 'text');
+    });
+
+    $togglePasswordButton.on('mouseup mouseleave', function () {
+        $passwordInput.attr('type', 'password');
+    });
+
+    // Evitar que el botón reciba el foco
+    $togglePasswordButton.on('click', function (e) {
+        e.preventDefault();
+    });
 })
 
 const openModal = (model = BASIC_MODEL) => {

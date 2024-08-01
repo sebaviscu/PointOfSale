@@ -71,9 +71,43 @@ $(document).ready(function () {
         $("<option>").val('').text('')
     )
 
+
+    var $passwordInput = $('#txtContraseñaCertificado');
+    var $togglePasswordButton = $('#togglePassword');
+
+    $togglePasswordButton.on('mousedown', function () {
+        $passwordInput.attr('type', 'text');
+    });
+
+    $togglePasswordButton.on('mouseup mouseleave', function () {
+        $passwordInput.attr('type', 'password');
+    });
+
+    // Evitar que el botón reciba el foco
+    $togglePasswordButton.on('click', function (e) {
+        e.preventDefault();
+    });
+
     healthcheck();
 
+    $('#submitFile').on('click', function () {
+        var fileInput = $('#txtRutaCertificado')[0];
+        if (fileInput.files.length > 0) {
+            var file = fileInput.files[0];
+            console.log('Archivo seleccionado:', file.name);
+
+            // Si necesitas enviar el archivo al servidor:
+            var formData = new FormData();
+            formData.append('file', file);
+
+
+
+        } else {
+            alert('Por favor, selecciona un archivo.');
+        }
+    });
 })
+
 
 async function healthcheck() {
     isHealthy = await getHealthcheck();
