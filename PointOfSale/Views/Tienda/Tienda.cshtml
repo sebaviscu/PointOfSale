@@ -18,11 +18,11 @@
 
         <div class="card card-default">
             <div class="card-header d-flex align-items-center">
-                <h4 class="col-md-2">Tiendas</h4>
+                <h4 class="col-md-2">Puntos de Venta</h4>
                 <span class="offset-md-2 text-danger" id="lblErrorPrintService" style="display: none;"><i class="mdi mdi-alert mdi-24px"></i>&nbsp; El servicio de impresión no se encuentra conectado</span>
 
                 <div class="ms-auto bd-highlight">
-                    <button class="btn btn-sm btn-success" id="btnNew">Nueva Tienda</button>
+                    <button class="btn btn-sm btn-success" id="btnNew">Nuevo Punto de Venta</button>
                 </div>
             </div>
 
@@ -54,7 +54,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalGridTitle">Detalle Tiendas</h5>
+                <h5 class="modal-title" id="exampleModalGridTitle">Detalle Punto de Venta</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -88,7 +88,8 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="form-group">
-                                            <label for="cboListaPrecios">Lista de Precios <i style="color:red;" class="mdi mdi-alert" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Deberá iniciar sesion nuevamente para que impacte la nueva Lista de Precios"></i></label>
+                                            @*                                             <label for="cboListaPrecios">Lista de Precios <i style="color:red;" class="mdi mdi-alert" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Deberá iniciar sesion nuevamente para que impacte la nueva Lista de Precios"></i></label>*@
+                                            <label for="cboListaPrecios">Lista de Precio</label>
 
                                             <select class="form-control form-control-sm" id="cboListaPrecios">
                                                 <option value="1">Lista 1</option>

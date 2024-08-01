@@ -15845,7 +15845,7 @@ div.copied {
 /*  sub-menu dropdowns */
 .sidebar .sub-menu {
   list-style-type: none;
-  padding: .625rem 2.81rem .625rem 0;
+  padding: .625rem 1.81rem .625rem 0;
   margin: 0;
   position: relative;
 }

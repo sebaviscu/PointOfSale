@@ -89,23 +89,6 @@ $(document).ready(function () {
     });
 
     healthcheck();
-
-    $('#submitFile').on('click', function () {
-        var fileInput = $('#txtRutaCertificado')[0];
-        if (fileInput.files.length > 0) {
-            var file = fileInput.files[0];
-            console.log('Archivo seleccionado:', file.name);
-
-            // Si necesitas enviar el archivo al servidor:
-            var formData = new FormData();
-            formData.append('file', file);
-
-
-
-        } else {
-            alert('Por favor, selecciona un archivo.');
-        }
-    });
 })
 
 
@@ -233,23 +216,16 @@ $("#btnSave").on("click", function () {
             if (responseJson.state) {
                 $("#modalData").modal("hide");
 
-                if (responseJson.message != '') {
-                    swal({
-                        title: 'La tienda fué modificada',
-                        text: responseJson.message,
-                        showCancelButton: false,
-                        closeOnConfirm: false
-                    }, function (value) {
-
-                        document.location.href = "/";
-
-                    });
+                if (responseJson.state) {
+                    tableData.row.add(responseJson.object).draw(false);
+                    $("#modalData").modal("hide");
+                    swal("Exitoso!", "Punto de venta fué modificado", "success");
 
                 }
                 else {
                     tableData.row(rowSelectedTienda).data(responseJson.object).draw(false);
                     rowSelectedTienda = null;
-                    swal("Exitoso!", "La tienda fué modificada", "success");
+                    swal("Exitoso!", "El Punto de venta fué modificado", "success");
                 }
 
 
@@ -315,7 +291,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                     if (responseJson.state) {
 
                         tableData.row(row).remove().draw();
-                        swal("Exitoso!", "Tienda fué eliminada", "success");
+                        swal("Exitoso!", "Punto de venta fué eliminado", "success");
 
                     } else {
                         swal("Lo sentimos", responseJson.message, "error");

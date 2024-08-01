@@ -142,13 +142,7 @@ namespace PointOfSale.Controllers
                 vmTienda.ModificationUser = user.UserName;
                 Tienda edited_Tienda = await _TiendaService.Edit(_mapper.Map<Tienda>(vmTienda));
 
-                if (tiendaOld.IdListaPrecio != edited_Tienda.IdListaPrecio)
-                {
-                    await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-                    gResponse.State = true;
-                    gResponse.Message = "Como se ha cambiado la lista de precios, se debe iniciar sesion nuevamente.";
-                }
+                await UpdateClaimAsync("ListaPrecios", ((int)edited_Tienda.IdListaPrecio).ToString());
 
                 vmTienda = _mapper.Map<VMTienda>(edited_Tienda);
 
