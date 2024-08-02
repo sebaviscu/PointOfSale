@@ -25,5 +25,7 @@ namespace PointOfSale.Business.Contracts
         Task<List<ListaPrecio>> GetProductsSearchAndIdLista(string search, ListaDePrecio listaPrecios);
         Task<Sale> Edit(int idSale, int formaPago);
 
+        Task<List<Cliente>> GetClientsByFactura(string search);
+
     }
 }

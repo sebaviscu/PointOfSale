@@ -5,6 +5,7 @@ using AutoMapper;
 using static PointOfSale.Model.Enum;
 using Newtonsoft.Json.Linq;
 using PointOfSale.Model.Output;
+using System.Security.Cryptography.X509Certificates;
 
 namespace PointOfSale.Utilities.Automapper
 {
@@ -413,6 +414,7 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<Stock, VMStockSimplificado>().ReverseMap();
             CreateMap<Proveedor, VMProveedorSimplificado>().ReverseMap();
             CreateMap<Product, VMProductSimplificado>().ReverseMap();
+            CreateMap<X509Certificate2, VMX509Certificate2>().ReverseMap();
         }
     }
 }

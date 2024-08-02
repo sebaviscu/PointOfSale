@@ -80,6 +80,7 @@ public class Program
             builder.Services.AddScoped<IPedidoService, PedidoService>();
             builder.Services.AddScoped<IIvaService, IvaService>();
             builder.Services.AddScoped<IAjusteService, AjusteService>();
+            builder.Services.AddScoped<IAfipService, AfipService>();
 
             string certificatePath = @"C:\Users\sebastian.viscusso\Desktop\Seba\Certificados AFIP generados\certificado.pfx";
 

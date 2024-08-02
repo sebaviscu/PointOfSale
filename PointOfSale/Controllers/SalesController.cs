@@ -171,6 +171,31 @@ namespace PointOfSale.Controllers
 
         }
 
+        /// <summary>
+        /// Devuelve clientes para select2
+        /// </summary>
+        /// <param name="search"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetClientesByFacturar(string search)
+        {
+            var gResponse = new GenericResponse<List<VMCliente>>();
+            try
+            {
+                List<VMCliente> vmListClients = _mapper.Map<List<VMCliente>>(await _saleService.GetClientsByFactura(search));
+                vmListClients.ForEach(_ => _.CondicionIva = CondicionIva.RespInscripto);
+                return StatusCode(StatusCodes.Status200OK, vmListClients);
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = "Error al recuperar lista de clientes para facturar";
+                gResponse.State = false;
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage} Request: {Search}", errorMessage, search);
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> RegisterSale([FromBody] VMSale model)
         {

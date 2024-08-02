@@ -148,6 +148,13 @@ namespace PointOfSale.Business.Services
         }
 
 
+        public async Task<List<Cliente>> GetClientsByFactura(string search)
+        {
+            IQueryable<Cliente> query = await _repositoryCliente.Query(p =>
+           string.Concat(p.Cuil, p.Nombre, p.Direccion).Contains(search));
+
+            return query.Include(_ => _.ClienteMovimientos).ToList();
+        }
 
         public async Task<List<Cliente>> GetClients(string search)
         {

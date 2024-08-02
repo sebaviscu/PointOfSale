@@ -116,7 +116,7 @@ async function getPrintersTienda() {
     }
 }
 
-const openModal = (model = BASIC_MODEL) => {
+const openModalTienda = (model = BASIC_MODEL) => {
 
 
     $("#txtId").val(model.idTienda);
@@ -127,7 +127,12 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtEmail").val(model.email);
     $("#txtTelefono").val(model.telefono);
     $("#txtDireccion").val(model.direccion);
-    $("#txtCuit").val(model.cuit);
+
+    if (model.vMX509Certificate2 != null) {
+        $("#txtFechaIniCert").val(formatDateToDDMMYYYY(model.vMX509Certificate2.notBefore));
+        $("#txtFechaCadCert").val(formatDateToDDMMYYYY(model.vMX509Certificate2.notAfter));
+        $("#txtSubjectCert").val(model.vMX509Certificate2.cuil);
+    }
 
     $("#imgTienda").attr("src", `data:image/png;base64,${model.photoBase64}`);
 
@@ -145,8 +150,19 @@ const openModal = (model = BASIC_MODEL) => {
 
 }
 
+function formatDateToDDMMYYYY(isoDate) {
+    const date = new Date(isoDate);
+
+    // Obtener los componentes de la fecha
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+
+    // Formatear la fecha como dd/mm/yyyy
+    return `${day}/${month}/${year}`;
+}
 $("#btnNew").on("click", function () {
-    openModal()
+    openModalTienda()
 })
 
 $("#btnSave").on("click", function () {
@@ -217,13 +233,12 @@ $("#btnSave").on("click", function () {
                 $("#modalData").modal("hide");
 
                 if (responseJson.state) {
-                    tableData.row.add(responseJson.object).draw(false);
+                    
                     $("#modalData").modal("hide");
                     swal("Exitoso!", "Punto de venta fué modificado", "success");
-
+                    location.reload();
                 }
                 else {
-                    tableData.row(rowSelectedTienda).data(responseJson.object).draw(false);
                     rowSelectedTienda = null;
                     swal("Exitoso!", "El Punto de venta fué modificado", "success");
                 }
@@ -249,7 +264,21 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
 
     const data = tableData.row(rowSelectedTienda).data();
 
-    openModal(data);
+    showLoading();
+
+    fetch(`/Tienda/GetTiendoWithCertificado?idTienda=${data.idTienda}`)
+        .then(response => {
+            return response.json();
+        }).then(responseJson => {
+            removeLoading();
+            if (responseJson.state) {
+
+                openModalTienda(responseJson.object);
+
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+        })
 })
 
 

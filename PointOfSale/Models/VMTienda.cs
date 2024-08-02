@@ -16,5 +16,7 @@ namespace PointOfSale.Models
         public byte[]? Logo { get; set; }
         public string? PhotoBase64 { get; set; }
         public string? Cuit { get; set; }
+
+        public VMX509Certificate2 vMX509Certificate2 { get; set; }
     }
 }

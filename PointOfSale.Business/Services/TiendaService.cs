@@ -5,7 +5,9 @@ using PointOfSale.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace PointOfSale.Business.Services
@@ -123,5 +125,22 @@ namespace PointOfSale.Business.Services
             }
         }
 
+        public X509Certificate2 GetCertificateAfipInformation()
+        {
+            string certificatePath = @"C:\Users\sebastian.viscusso\Desktop\Seba\Certificados AFIP generados\certificado.pfx";
+            string certificatePassword = "password"; // Replace with your certificate's password
+
+            // Load the certificate
+            X509Certificate2 certificate = new X509Certificate2(certificatePath, certificatePassword);
+
+            // Display certificate information
+            Console.WriteLine("Subject: " + certificate.Subject); // SERIALNUMBER=CUIT 23365081999, CN=Test
+            Console.WriteLine("Valid From: " + certificate.NotBefore); // fecha inicio
+            Console.WriteLine("Valid To: " + certificate.NotAfter); // fecha caducidad
+
+            return certificate;
+        }
+
     }
+    
 }

@@ -64,11 +64,8 @@ $(document).ready(function () {
 
     newTab();
     healthcheck();
-
-    $('[data-bs-toggle="popover"]').popover({
-        html: true
-    });
-
+    inicializarClientesFactura();
+    
     $('#modalConsultarPrecio').on('shown.bs.modal', function () {
         if (!$('#cboSearchProductConsultarPrecio').data('select2')) {
             funConsultarPrecio();
@@ -82,6 +79,9 @@ $(document).ready(function () {
         resetModaConsultarPreciol();
     });
 
+})
+
+function inicializarClientesFactura() {
     // Inicializar el estado de los campos
     let isNuevoCliente = $('#switchNuevoCliente').is(':checked');
     toggleFields(isNuevoCliente);
@@ -90,11 +90,81 @@ $(document).ready(function () {
     $('#switchNuevoCliente').change(function () {
         let isNuevoCliente = $(this).is(':checked');
         toggleFields(isNuevoCliente);
+        resetModalClientesFactura();
     });
 
+    $('[data-bs-toggle="popover"]').popover({
+        html: true
+    });
 
-})
+    $('#modalDatosFactura').on('shown.bs.modal', function () {
+        if (!$('#cboClienteFactura').data('select2')) {
+            funClientesFactura();
+        }
+        setTimeout(function () {
+            $('#cboClienteFactura').select2('open');
+        }, 100);
+    });
 
+    $('#modalDatosFactura').on('hidden.bs.modal', function () {
+        resetModalClientesFactura();
+    });
+}
+function funClientesFactura() {
+    $('#cboClienteFactura').select2({
+        ajax: {
+            url: "/Sales/GetClientesByFacturar",
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            delay: 250,
+            data: function (params) {
+                return {
+                    search: params.term
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data.map((item) => (
+                        {
+                            id: item.idCliente,
+                            text: item.nombre,
+                            cuil: item.cuil,
+                            telefono: item.telefono,
+                            direccion: item.direccion,
+                            condicionIva: item.condicionIva,
+                            color: '',
+                            total: ''
+                        }
+                    ))
+                };
+            }
+        },
+        placeholder: 'Buscando cliente...',
+        minimumInputLength: 3,
+        templateResult: formatResultsClients,
+        allowClear: true,
+        dropdownParent: $('#modalDatosFactura .modal-content')
+    });
+
+    $('#cboClienteFactura').on('select2:select', function (e) {
+        let data = e.params.data;
+        productSelected = data;
+        $('#txtNombre').val(data.text);
+        $('#txtCuil').val(data.cuil);
+        $('#txtTelefono').val(data.telefono);
+        $('#txtDireccion').val(data.direccion);
+        $('#cboCondicionIva').val(data.condicionIva);
+    });
+}
+
+function resetModalClientesFactura() {
+    $('#cboClienteFactura').val(null).trigger('change');
+    $('#txtNombre').val('');
+    $('#txtCuil').val('');
+    $('#txtTelefono').val('');
+    $('#txtDireccion').val('');
+    $('#cboCondicionIva').val('');
+}
 function toggleFields(isNuevoCliente) {
     $('#txtNombre, #txtCuil, #cboCondicionIva, #txtTelefono, #txtDireccion').prop('disabled', !isNuevoCliente);
     $('#cboClienteFactura').prop('disabled', isNuevoCliente);

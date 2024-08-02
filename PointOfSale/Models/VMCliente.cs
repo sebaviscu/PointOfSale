@@ -1,4 +1,5 @@
 ﻿using PointOfSale.Model;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Models
 {
@@ -15,10 +16,10 @@ namespace PointOfSale.Models
         public string? Total { get; set; }
         public decimal? TotalDecimal { get; set; }
 
-        public IEnumerable<ClienteMovimiento>? ClienteMovimientos { get; set; }
+        public IEnumerable<VMClienteMovimiento>? ClienteMovimientos { get; set; }
 
         public string Color => TotalDecimal >= 0 ? "text-success" : "text-danger";
         public int IdTienda { get; set; }
-
+        public CondicionIva CondicionIva { get; set; }
     }
 }

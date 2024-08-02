@@ -8,6 +8,8 @@ using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
 using static PointOfSale.Model.Enum;
 using NuGet.Protocol;
+using System.Security.Cryptography.X509Certificates;
+using PointOfSale.Business.Services;
 
 namespace PointOfSale.Controllers
 {
@@ -43,6 +45,37 @@ namespace PointOfSale.Controllers
             catch (Exception ex)
             {
                 var errorMessage = "Error al recuperar Tiendas";
+                gResponse.State = false;
+                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+            }
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetTiendoWithCertificado(int idTienda)
+        {
+            var gResponse = new GenericResponse<VMTienda>();
+
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador]);
+
+                var tienda = _mapper.Map<VMTienda>(await _TiendaService.Get(user.IdTienda));
+
+                if (idTienda == user.IdTienda)
+                {
+                    tienda.vMX509Certificate2 = _mapper.Map<VMX509Certificate2>(_TiendaService.GetCertificateAfipInformation()); // pasar url del certificado
+                }
+
+                gResponse.Object = tienda;
+                gResponse.State = true;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = "Error al recuperar una tienda";
                 gResponse.State = false;
                 gResponse.Message = $"{errorMessage}\n {ex.Message}";
                 _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
@@ -137,7 +170,6 @@ namespace PointOfSale.Controllers
                 //}
                 //else
                 //	vmTienda.Logo = null;
-                var tiendaOld = _mapper.Map<VMTienda>(await _TiendaService.Get(vmTienda.IdTienda));
 
                 vmTienda.ModificationUser = user.UserName;
                 Tienda edited_Tienda = await _TiendaService.Edit(_mapper.Map<Tienda>(vmTienda));
