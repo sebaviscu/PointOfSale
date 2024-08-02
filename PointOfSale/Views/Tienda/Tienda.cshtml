@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Tiendas";
+    ViewData["Title"] = "Puntos de Venta";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -33,7 +33,7 @@
                             <thead>
                                 <tr>
                                     <th></th>
-                                    <th>Description</th>
+                                    <th>Nombre</th>
                                     <th>Telefono</th>
                                     <th>Direccion</th>
                                     <th>Precios</th>
@@ -88,9 +88,8 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="form-group">
-                                            @*                                             <label for="cboListaPrecios">Lista de Precios <i style="color:red;" class="mdi mdi-alert" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Deberá iniciar sesion nuevamente para que impacte la nueva Lista de Precios"></i></label>*@
+                                            @*<label for="cboListaPrecios">Lista de Precios <i style="color:red;" class="mdi mdi-alert" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Deberá iniciar sesion nuevamente para que impacte la nueva Lista de Precios"></i></label>*@
                                             <label for="cboListaPrecios">Lista de Precio</label>
-
                                             <select class="form-control form-control-sm" id="cboListaPrecios">
                                                 <option value="1">Lista 1</option>
                                                 <option value="2">Lista 2</option>
@@ -124,7 +123,7 @@
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label for="txtImpresora">Nombre Impresora de Ticket</label>
-                                            <select class="form-control form-control-sm" id="cboNombreTienda" name="Impresora Ticket"></select>
+                                            <select class="form-control form-control-sm" id="cboNombreImpresora" name="Impresora Ticket"></select>
 
                                         </div>
                                     </div>
@@ -167,6 +166,16 @@
                                                 </button>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="form-group col-sm-3">
+                                        <label for="cboCondicionIva">Condicion IVA</label>
+                                        <select class="fontDetalles form-control form-control-sm" id="cboCondicionIva">
+                                            <option value="0"></option>
+                                            <option value="1">Consumidor Final</option>
+                                            <option value="2">Exento</option>
+                                            <option value="3">Monotributista</option>
+                                            <option value="4">Resp. Inscripto</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>

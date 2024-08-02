@@ -31,8 +31,8 @@ namespace PointOfSale.Model
         public enum TypeValuesDashboard
         {
             Dia = 0,
-            Semana =1,
-            Mes= 2
+            Semana = 1,
+            Mes = 2
         }
 
         public enum DiasSemana
@@ -72,8 +72,8 @@ namespace PointOfSale.Model
         public enum ListaDePrecio
         {
             Lista_1 = 1,
-            Lista_2 = 2, 
-            Lista_3 = 3    
+            Lista_2 = 2,
+            Lista_3 = 3
         }
 
         public enum EstadoPago
@@ -97,12 +97,20 @@ namespace PointOfSale.Model
             Recibido
         }
 
-        public enum  TipoIvaReport
+        public enum TipoIvaReport
         {
             Compra,
             Venta,
             Servicios,
             Gastos
+        }
+
+        public enum CondicionIva
+        {
+            ConsumidorFinal = 1,
+            Exento = 2,
+            Monotributista = 3,
+            RespInscripto = 4
         }
     }
 }

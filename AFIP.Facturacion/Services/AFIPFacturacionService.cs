@@ -1,7 +1,7 @@
 ﻿using AFIP.Facturacion.Extensions;
 using AFIP.Facturacion.Model;
-using AFIP.Facturacion.Model.Factura;
 using AfipServiceReference;
+using PointOfSale.Model.Afip.Factura;
 using System.Threading.Tasks;
 
 namespace AFIP.Facturacion.Services
@@ -17,13 +17,13 @@ namespace AFIP.Facturacion.Services
 
         public async Task<FacturacionResponse> FacturarAsync(FacturaAFIP factura)
         {
-            var comprobante = await _wsfeClient.FECAESolicitarAsync(factura.ToFECAERequest());
+            var comprobante = await _wsfeClient.FECAESolicitarAsync(FacturaExtension.ToFECAERequest(factura));
 
-            comprobante.Body.FECAESolicitarResult.Errors.EnsureSucceededResponse();
+            comprobante.Body.FECAESolicitarResult.Errors.EnsureSucceededResponse(); // TODO: revisar porque errors no viene nunca nada
 
             return new FacturacionResponse
             {
-                FECAECabResponse = comprobante.Body.FECAESolicitarResult.FeCabResp,
+                FECAECabResponse = comprobante.Body.FECAESolicitarResult.FeCabResp, // este es el que tengo que guardar en la db
                 FECAEDetResponse = comprobante.Body.FECAESolicitarResult.FeDetResp,
             };
         }
@@ -34,6 +34,30 @@ namespace AFIP.Facturacion.Services
             result.Body.FECompUltimoAutorizadoResult.Errors.EnsureSucceededResponse();
 
             return result.Body.FECompUltimoAutorizadoResult;
+        }
+
+        public async Task<MonedaResponse> GetTiposMonedasAsync()
+        {
+            var result = await _wsfeClient.FEParamGetTiposMonedasAsync();
+            result.Body.FEParamGetTiposMonedasResult.Errors.EnsureSucceededResponse();
+
+            return result.Body.FEParamGetTiposMonedasResult;
+        }
+
+        public async Task<DocTipoResponse> GetTiposDocAsync()
+        {
+            var result = await _wsfeClient.FEParamGetTiposDocAsync();
+            result.Body.FEParamGetTiposDocResult.Errors.EnsureSucceededResponse();
+
+            return result.Body.FEParamGetTiposDocResult;
+        }
+
+        public async Task<FEPtoVentaResponse> GetPtosVentaAsync()
+        {
+            var result = await _wsfeClient.FEParamGetPtosVentaAsync();
+            result.Body.FEParamGetPtosVentaResult.Errors.EnsureSucceededResponse();
+
+            return result.Body.FEParamGetPtosVentaResult;
         }
     }
 

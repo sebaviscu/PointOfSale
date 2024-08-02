@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AFIP.Facturacion\AFIP.Facturacion.csproj" />
     <ProjectReference Include="..\PointOfSale.Data\PointOfSale.Data.csproj" />
     <ProjectReference Include="..\PointOfSale.Model\PointOfSale.Model.csproj" />
   </ItemGroup>

@@ -1,8 +1,9 @@
-﻿using System;
+﻿using AFIP.Facturacion.Model;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace AFIP.Facturacion.Model.Factura
+namespace PointOfSale.Model.Afip.Factura
 {
     /// <summary>
     /// Información del detalle del comprobante o lote de comprobantes de ingreso
@@ -43,7 +44,7 @@ namespace AFIP.Facturacion.Model.Factura
         /// <summary>
         /// Importe total del comprobante, Debe ser igual a Importe neto no gravado + Importe exento + Importe neto gravado + todos los campos de IVA al XX% + Importe de tributos
         /// </summary>        
-        public double ImporteTotal { get; }
+        public double ImporteTotal { get => ImporteNeto + ImporteOpExento + ImporteIVA + ImporteTributos; }
 
         /// <summary>
         /// Importe neto no gravado. Debe ser menor o igual a Importe total y no puede ser menor a cero. No puede ser mayor al Importe total de la operación ni menor a cero(0). Para comprobantes tipo C debe ser igual

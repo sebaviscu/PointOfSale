@@ -1,30 +1,25 @@
 ﻿using AfipServiceReference;
-using AFIP.Facturacion.Extensions;
+using PointOfSale.Model.Afip.Factura;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace AFIP.Facturacion.Model.Factura
+namespace AFIP.Facturacion.Extensions
 {
-    /// <summary>
-    /// Información del comprobante o lote de comprobantes de ingreso.Contiene los datos de FeCabReq y FeDetReq
-    /// </summary>
-    public class FacturaAFIP
+    public static class FacturaExtension
     {
-        public CabeceraFacturaAFIP Cabecera { get; set; }
-        public List<DetalleFacturaAFIP> Detalle { get; set; }
-
-        internal FECAERequest ToFECAERequest()
+        public static FECAERequest ToFECAERequest(FacturaAFIP facturaAFIP)
         => new FECAERequest
         {
             FeCabReq = new FECAECabRequest
             {
-                CantReg = Detalle.Count,
-                CbteTipo = Cabecera.TipoComprobante.Id,
-                PtoVta = Cabecera.PuntoVenta,
+                CantReg = facturaAFIP.Detalle.Count,
+                CbteTipo = facturaAFIP.Cabecera.TipoComprobante.Id,
+                PtoVta = facturaAFIP.Cabecera.PuntoVenta,
             },
-            FeDetReq = Detalle.Select(x => new FECAEDetRequest
+            FeDetReq = facturaAFIP.Detalle.Select(x => new FECAEDetRequest
             {
                 Concepto = x.Concepto,
                 DocTipo = x.TipoDocumento.Id,
@@ -45,5 +40,12 @@ namespace AFIP.Facturacion.Model.Factura
                 MonCotiz = x.CotizacionMoneda
             }).ToList(),
         };
+        public static FacturaEmitida ToFacturaEmitida(FECAECabResponse fECAECabResponse)
+            => new FacturaEmitida
+            {
+
+            };
     }
+
+
 }

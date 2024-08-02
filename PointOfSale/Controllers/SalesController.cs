@@ -1,5 +1,4 @@
-﻿using AFIP.Facturacion.Model.Factura;
-using AFIP.Facturacion.Services;
+﻿using AFIP.Facturacion.Services;
 using AutoMapper;
 using DinkToPdf;
 using DinkToPdf.Contracts;
@@ -11,10 +10,9 @@ using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
 using System.Security.Claims;
 using static PointOfSale.Model.Enum;
-using Neodynamic.SDK.Web;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using NuGet.Protocol;
 using AFIP.Facturacion.Model;
+using PointOfSale.Model.Afip.Factura;
 
 namespace PointOfSale.Controllers
 {
@@ -30,7 +28,7 @@ namespace PointOfSale.Controllers
         private readonly ITiendaService _tiendaService;
         private readonly IShopService _shopService;
         private readonly ILogger<SalesController> _logger;
-        private readonly IAFIPFacturacionService _afipFacturacionService;
+        private readonly IAfipService _afipFacturacionService;
 
         public SalesController(
             ITypeDocumentSaleService typeDocumentSaleService,
@@ -41,7 +39,7 @@ namespace PointOfSale.Controllers
             ITicketService ticketService,
             ITiendaService tiendaService,
             IShopService shopService,
-            IAFIPFacturacionService afipFacturacionService,
+            IAfipService afipFacturacionService,
             ILogger<SalesController> logger)
         {
             _typeDocumentSaleService = typeDocumentSaleService;
@@ -100,6 +98,11 @@ namespace PointOfSale.Controllers
             var gResponse = new GenericResponse<List<VmProductsSelect2>>();
             try
             {
+                //var pp = await _afipFacturacionService.GetPtosVentaAsync();
+                //var mm = await _afipFacturacionService.GetTiposMonedasAsync();
+                //var dd = await _afipFacturacionService.GetTiposDocAsync();
+                //var aa = await _afipFacturacionService.GetUltimoComprobanteAutorizadoAsync(1, TipoComprobante.Factura_A);
+
                 ClaimsPrincipal claimuser = HttpContext.User;
                 var listaPrecioInt = Convert.ToInt32(claimuser.Claims.Where(c => c.Type == "ListaPrecios").Select(c => c.Value).SingleOrDefault());
                 var vmListProducts = _mapper.Map<List<VmProductsSelect2>>(await _saleService.GetProductsSearchAndIdLista(search.Trim(), (ListaDePrecio)listaPrecioInt));
@@ -239,15 +242,27 @@ namespace PointOfSale.Controllers
 
                     }
                 }
-                var aa = await _afipFacturacionService.GetUltimoComprobanteAutorizadoAsync(1, TipoComprobante.Factura_A);
 
-                // Si es necesario facturar, se debe hacer aquí
-                // var tipoVenta = await _typeDocumentSaleService.Get(sale_created.IdTypeDocumentSale.Value);
-                // if ((int)tipoVenta.TipoFactura < 3)
-                // {
-                //     var factura = new FacturaAFIP();
-                //     var facturacionResponse = await _afipFacturacionService.FacturarAsync(factura);
-                // }
+
+
+
+
+                //var documento = Convert.ToInt32("23365081999");
+                //var documento = Convert.ToInt32("123456789");
+
+                //var resp = await _afipFacturacionService.Facturar(sale_created, documento);
+
+
+
+
+
+
+                //var tipoVenta = await _typeDocumentSaleService.Get(sale_created.IdTypeDocumentSale.Value);
+                //if ((int)tipoVenta.TipoFactura < 3)
+                //{
+                //    var factura = new FacturaAFIP();
+                //    var facturacionResponse = await _afipFacturacionService.FacturarAsync(factura);
+                //}
 
                 model = _mapper.Map<VMSale>(sale_created);
                 model.NombreImpresora = nombreImpresora;

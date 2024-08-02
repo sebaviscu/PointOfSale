@@ -67,7 +67,7 @@ $(document).ready(function () {
         ]
     });
 
-    $("#cboNombreTienda").append(
+    $("#cboNombreImpresora").append(
         $("<option>").val('').text('')
     )
 
@@ -107,7 +107,7 @@ async function getPrintersTienda() {
         let printers = await getPrinters();
 
         printers.forEach(printer => {
-            $("#cboNombreTienda").append(
+            $("#cboNombreImpresora").append(
                 $("<option>").val(printer).text(printer)
             );
         });
@@ -122,7 +122,7 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtId").val(model.idTienda);
     $("#txtNombre").val(model.nombre);
     $("#cboListaPrecios").val(model.idListaPrecio);
-    $("#cboNombreTienda").val(model.nombreImpresora);
+    $("#cboNombreImpresora").val(model.nombreImpresora);
 
     $("#txtEmail").val(model.email);
     $("#txtTelefono").val(model.telefono);
@@ -168,7 +168,7 @@ $("#btnSave").on("click", function () {
     model["telefono"] = $("#txtTelefono").val();
     model["email"] = $("#txtEmail").val();
     model["direccion"] = $("#txtDireccion").val();
-    model["nombreImpresora"] = $("#cboNombreTienda").val();
+    model["nombreImpresora"] = $("#cboNombreImpresora").val();
     model["cuit"] = $("#txtCuit").val();
 
     //const inputPhoto = document.getElementById('txtLogo');

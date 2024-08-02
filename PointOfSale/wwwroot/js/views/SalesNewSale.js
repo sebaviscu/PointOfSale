@@ -22,7 +22,7 @@ $(document).ready(function () {
 
             if (responseJson.state) {
                 formasDePagosList = responseJson.object;
-                
+
                 if (responseJson.object.length > 0) {
                     responseJson.object.forEach((item) => {
                         $("#cboTypeDocumentSaleParcial").append(
@@ -81,7 +81,31 @@ $(document).ready(function () {
     $('#modalConsultarPrecio').on('hidden.bs.modal', function () {
         resetModaConsultarPreciol();
     });
+
+    // Inicializar el estado de los campos
+    let isNuevoCliente = $('#switchNuevoCliente').is(':checked');
+    toggleFields(isNuevoCliente);
+
+    // Manejar el cambio del switch
+    $('#switchNuevoCliente').change(function () {
+        let isNuevoCliente = $(this).is(':checked');
+        toggleFields(isNuevoCliente);
+    });
+
+
 })
+
+function toggleFields(isNuevoCliente) {
+    $('#txtNombre, #txtCuil, #cboCondicionIva, #txtTelefono, #txtDireccion').prop('disabled', !isNuevoCliente);
+    $('#cboClienteFactura').prop('disabled', isNuevoCliente);
+
+    if (isNuevoCliente) {
+        $('#switchGuardarNuevoClienteDiv').css('display', 'block');
+    } else {
+        $('#switchGuardarNuevoClienteDiv').css('display', 'none');
+        $('#switchGuardarNuevoCliente').prop('checked', false);
+    }
+}
 
 async function healthcheck() {
     isHealthy = await getHealthcheck();
@@ -558,7 +582,7 @@ function funConsultarPrecio() {
         $('#txtPrecioConsultarPrecio').val(data.price);
         $('#lblProductName').text(data.text);
         $('#imgProductConsultarPrecio').attr('src', `data:image/png;base64,${data.photoBase64}`);
-       });
+    });
 }
 
 

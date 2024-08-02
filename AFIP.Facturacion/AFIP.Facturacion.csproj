@@ -40,4 +40,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PointOfSale.Model\PointOfSale.Model.csproj" />
+  </ItemGroup>
+
 </Project>

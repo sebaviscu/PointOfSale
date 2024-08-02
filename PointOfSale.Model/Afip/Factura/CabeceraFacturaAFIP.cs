@@ -1,8 +1,9 @@
-﻿using System;
+﻿using AFIP.Facturacion.Model;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace AFIP.Facturacion.Model.Factura
+namespace PointOfSale.Model.Afip.Factura
 {
     /// <summary>
     /// Información de la cabecera del comprobante o lote de comprobantes de ingreso
