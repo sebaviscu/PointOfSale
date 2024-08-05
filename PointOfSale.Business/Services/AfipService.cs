@@ -10,33 +10,49 @@ using PointOfSale.Model.Afip.Factura;
 using AFIP.Facturacion.Services;
 using PointOfSale.Business.Contracts;
 using AFIP.Facturacion.Extensions;
+using PointOfSale.Business.Utilities;
 
 namespace PointOfSale.Business.Services
 {
     public class AfipService : IAfipService
     {
         const int ptoVenta = 1;
+        const int defaultDocumento = 12345678;
 
-        private readonly IGenericRepository<Gastos> _repository;
+        private readonly IGenericRepository<FacturaEmitida> _repository;
         private readonly IAFIPFacturacionService _afipFacturacionService;
 
-        public AfipService(IGenericRepository<Gastos> repository, IAFIPFacturacionService afipFacturacionService)
+        public AfipService(IGenericRepository<FacturaEmitida> repository, IAFIPFacturacionService afipFacturacionService)
         {
             _repository = repository;
             _afipFacturacionService = afipFacturacionService;
         }
 
-        public async Task<bool> Facturar(Sale sale_created, int documento)
+        public async Task<FacturaEmitida> Facturar(Sale sale_created, int? nroDocumento, int? idCliente, string registrationUser)
         {
-            var tipoDoc = TipoComprobante.Factura_C;
+            if(sale_created.TypeDocumentSaleNavigation == null)
+            {
+                throw new Exception("El tipo de documento no existe");
+            }
+
+            if (nroDocumento == null)
+                nroDocumento = defaultDocumento;
+
+            var tipoDoc = TipoComprobante.ConvertTipoFactura(sale_created.TypeDocumentSaleNavigation.TipoFactura);
 
             var ultimoComprobanteResponse = await _afipFacturacionService.GetUltimoComprobanteAutorizadoAsync(ptoVenta, tipoDoc);
 
-            var factura = new FacturaAFIP(sale_created, tipoDoc, ultimoComprobanteResponse.CbteNro + 1, ptoVenta, documento);
+            var factura = new FacturaAFIP(sale_created, tipoDoc, ultimoComprobanteResponse.CbteNro + 1, ptoVenta, nroDocumento.Value);
             var response = await _afipFacturacionService.FacturarAsync(factura);
 
-            FacturaExtension.ToFacturaEmitida(response.FECAECabResponse);
-            return true;
+            var facturaEmitida = FacturaExtension.ToFacturaEmitida(response.FECAEDetResponse.FirstOrDefault());
+            facturaEmitida.IdSale = sale_created.IdSale;
+            facturaEmitida.IdCliente = idCliente != 0 ? idCliente : null;
+            facturaEmitida.RegistrationUser = registrationUser;
+
+            var facturaEmitidaResponse = await _repository.Add(facturaEmitida);
+            return facturaEmitidaResponse;
         }
     }
 }
+ 

@@ -47,7 +47,7 @@ namespace AFIP.Facturacion
             }
             catch (Exception ex)
             {
-                throw new Exception(ID_FNC + "***Error al firmar: " + ex.Message);
+                throw new Exception(ID_FNC + "***Error al firmar: " + ex.ToString());
             }
         }
 
@@ -67,7 +67,7 @@ namespace AFIP.Facturacion
             }
             catch (Exception ex)
             {
-                throw new Exception(ID_FNC + "***Error al leer certificado: " + ex.Message);
+                throw new Exception(ID_FNC + "***Error al leer certificado: " + ex.ToString());
             }
         }
     }

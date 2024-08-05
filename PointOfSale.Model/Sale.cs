@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PointOfSale.Model.Afip.Factura;
+using System;
 using System.Collections.Generic;
 
 namespace PointOfSale.Model
@@ -28,5 +29,7 @@ namespace PointOfSale.Model
         public ClienteMovimiento? ClienteMovimiento { get; set; }
         public int IdTienda { get; set; }
         public decimal? DescuentoRecargo { get; set; }
+        public int? IdFacturaEmitida { get; set; }
+        public virtual FacturaEmitida FacturaEmitida { get; set; }
     }
 }

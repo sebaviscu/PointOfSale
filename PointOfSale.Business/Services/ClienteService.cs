@@ -27,7 +27,7 @@ namespace PointOfSale.Business.Services
         public async Task<List<Cliente>> List(int idTienda)
         {
             IQueryable<Cliente> query = await _repository.Query(_ => _.IdTienda == idTienda);
-            return query.Include(_=>_.ClienteMovimientos).OrderBy(_ => _.Nombre).ToList();
+            return query.Include(_ => _.ClienteMovimientos).OrderBy(_ => _.Nombre).ToList();
         }
 
         public async Task<Cliente> Add(Cliente entity)
@@ -37,69 +37,52 @@ namespace PointOfSale.Business.Services
             if (Cliente_exists != null)
                 throw new TaskCanceledException("El Cliente ya existe");
 
-            try
-            {
-                entity.RegistrationDate = TimeHelper.GetArgentinaTime();
-                Cliente Cliente_created = await _repository.Add(entity);
+            entity.RegistrationDate = TimeHelper.GetArgentinaTime();
+            Cliente Cliente_created = await _repository.Add(entity);
 
-                if (Cliente_created.IdCliente == 0)
-                    throw new TaskCanceledException("Error al crear Cliente");
+            if (Cliente_created.IdCliente == 0)
+                throw new TaskCanceledException("Error al crear Cliente");
 
-                IQueryable<Cliente> query = await _repository.Query(u => u.IdCliente == Cliente_created.IdCliente);
+            IQueryable<Cliente> query = await _repository.Query(u => u.IdCliente == Cliente_created.IdCliente);
 
-                return Cliente_created;
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            return Cliente_created;
+
         }
 
         public async Task<Cliente> Edit(Cliente entity)
         {
+            IQueryable<Cliente> queryCliente = await _repository.Query(u => u.IdCliente == entity.IdCliente);
 
-            try
-            {
-                IQueryable<Cliente> queryCliente = await _repository.Query(u => u.IdCliente == entity.IdCliente);
+            Cliente Cliente_edit = queryCliente.First();
 
-                Cliente Cliente_edit = queryCliente.First();
+            Cliente_edit.Nombre = entity.Nombre;
+            Cliente_edit.Cuil = entity.Cuil;
+            Cliente_edit.Telefono = entity.Telefono;
+            Cliente_edit.Direccion = entity.Direccion;
+            Cliente_edit.Comentario = entity.Comentario;
+            Cliente_edit.CondicionIva = entity.CondicionIva;
+            Cliente_edit.IsActive = entity.IsActive;
+            Cliente_edit.ModificationDate = TimeHelper.GetArgentinaTime();
+            Cliente_edit.ModificationUser = entity.ModificationUser;
 
-                Cliente_edit.Nombre = entity.Nombre;
-                Cliente_edit.Cuil = entity.Cuil;
-                Cliente_edit.Telefono = entity.Telefono;
-                Cliente_edit.Direccion = entity.Direccion;
-                Cliente_edit.ModificationDate = TimeHelper.GetArgentinaTime();
-                Cliente_edit.ModificationUser = entity.ModificationUser;
+            bool response = await _repository.Edit(Cliente_edit);
+            if (!response)
+                throw new TaskCanceledException("No se pudo modificar Cliente");
 
-                bool response = await _repository.Edit(Cliente_edit);
-                if (!response)
-                    throw new TaskCanceledException("No se pudo modificar Cliente");
-
-                return Cliente_edit;
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            return Cliente_edit;
         }
 
         public async Task<bool> Delete(int idCliente)
         {
-            try
-            {
-                Cliente Cliente_found = await _repository.Get(u => u.IdCliente == idCliente);
+            Cliente Cliente_found = await _repository.Get(u => u.IdCliente == idCliente);
 
-                if (Cliente_found == null)
-                    throw new TaskCanceledException("Cliente no existe");
+            if (Cliente_found == null)
+                throw new TaskCanceledException("Cliente no existe");
 
-                bool response = await _repository.Delete(Cliente_found);
+            bool response = await _repository.Delete(Cliente_found);
 
-                return response;
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            return response;
+
         }
 
         public async Task<ClienteMovimiento> RegistrarMovimiento(int idCliente, decimal total, string registrationUser, int idTienda, int? idSale, TipoMovimientoCliente tipo)
@@ -126,7 +109,7 @@ namespace PointOfSale.Business.Services
         public async Task<List<ClienteMovimiento>> GetClienteByMovimientos(List<int>? idMovs, int idTienda)
         {
             IQueryable<ClienteMovimiento> query = await _clienteMovimiento.Query(u => idMovs.Contains(u.IdClienteMovimiento) && u.IdTienda == idTienda);
-            var result = query.Include(_=>_.Cliente).ToList();
+            var result = query.Include(_ => _.Cliente).ToList();
             return result;
         }
     }

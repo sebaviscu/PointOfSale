@@ -75,7 +75,7 @@ namespace PointOfSale.Controllers
             {
                 var errorMessage = "Error al recuperar turno actual";
                 gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
                 _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
@@ -111,7 +111,7 @@ namespace PointOfSale.Controllers
             {
                 var errorMessage = "Error al recuperar turno";
                 gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
                 _logger.LogError(ex, "{ErrorMessage}. Request: {ModelRequest}", errorMessage, idturno.ToJson());
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
@@ -147,7 +147,7 @@ namespace PointOfSale.Controllers
             {
                 var errorMessage = "Error al cerrar turno";
                 gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
                 _logger.LogError(ex, "{ErrorMessage}. Request: {ModelRequest}", errorMessage, modelTurno.ToJson());
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
@@ -185,7 +185,7 @@ namespace PointOfSale.Controllers
             {
                 var errorMessage = "Error al recuperar un turno";
                 gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
                 _logger.LogError(ex, "{ErrorMessage}. Request: {ModelRequest}", errorMessage, idTurno.ToJson());
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
@@ -213,7 +213,7 @@ namespace PointOfSale.Controllers
                 catch (Exception ex)
                 {
                     gResponse.State = false;
-                    gResponse.Message = ex.Message;
+                    gResponse.Message = ex.ToString();
                 }
 
                 return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -222,7 +222,7 @@ namespace PointOfSale.Controllers
             {
                 var errorMessage = "Error al actualizar turno actual";
                 gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
                 _logger.LogError(ex, "{ErrorMessage}. Request: {ModelRequest}", errorMessage, VMTurno.ToJson());
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }

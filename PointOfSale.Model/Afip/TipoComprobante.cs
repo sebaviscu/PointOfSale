@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using static PointOfSale.Model.Enum;
 
 namespace AFIP.Facturacion.Model
 {
@@ -147,5 +148,17 @@ namespace AFIP.Facturacion.Model
         }
 
         public static bool operator !=(TipoComprobante ltm, TipoComprobante rtm) => !(ltm == rtm);
+
+        public static TipoComprobante ConvertTipoFactura(TipoFactura tipoFactura)
+        {
+            switch (tipoFactura)
+            {
+                case TipoFactura.A: return Factura_A;
+                case TipoFactura.B: return Factura_B;
+                case TipoFactura.C: return Factura_C;
+                default:
+                    throw new NotSupportedException();
+            }
+        }
     }
 }

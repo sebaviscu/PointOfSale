@@ -36,6 +36,7 @@
                                     <th>Nombre</th>
                                     <th>Cuil</th>
                                     <th>Telefono</th>
+                                    <th>Estado</th>
                                     <th>Total</th>
                                     <th></th>
                                 </tr>
@@ -65,13 +66,32 @@
                     <div class="row">
                         <div class="col-sm-5">
                             <div class="form-row">
-                                <div class="form-group col-sm-6">
-                                    <label for="txtNombre">Nombre</label>
+                                <div class="form-group col-sm-9">
+                                    <label for="txtNombre">Razon Social</label>
                                     <input type="text" class="form-control form-control-sm input-validate" id="txtNombre" name="Nombre">
                                 </div>
+                                <div class="form-group col-sm-3">
+                                    <label for="cboEstado">Estado</label>
+                                    <select class="form-control form-control-sm" id="cboEstado">
+                                        <option value="1">Activo</option>
+                                        <option value="0">Inactivo</option>
+
+                                    </select>
+                                </div>
+                            </div><div class="form-row">
                                 <div class="form-group col-sm-6">
                                     <label for="txtCuil">Cuil</label>
                                     <input type="text" class="form-control form-control-sm" id="txtCuil" name="Cuil">
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="cboCondicionIva">Condicion IVA</label>
+                                    <select class="fontDetalles form-control form-control-sm" id="cboCondicionIva">
+                                        <option value="0"></option>
+                                        <option value="1">Consumidor Final</option>
+                                        <option value="2">Exento</option>
+                                        <option value="3">Monotributista</option>
+                                        <option value="4">Resp. Inscripto</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-row">
@@ -82,6 +102,12 @@
                                 <div class="form-group col-sm-6">
                                     <label for="txtDireccion">Direccion</label>
                                     <input type="text" class="form-control form-control-sm" id="txtDireccion" name="Direccion">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-12">
+                                    <label for="txtComentario">Comentario</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtComentario" name="comentario">
                                 </div>
                             </div>
                             <div class="form-row">

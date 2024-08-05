@@ -34,7 +34,7 @@ namespace PointOfSale.Data.Repository
                 var productIds = entity.DetailSales.Select(dv => dv.IdProduct).ToList();
                 var products = await _dbcontext.Products
                     .Include(p => p.IdCategoryNavigation)
-                    .Include(p => p.Proveedor)
+                    //.Include(p => p.Proveedor)
                     .Where(p => productIds.Contains(p.IdProduct))
                     .ToListAsync();
 

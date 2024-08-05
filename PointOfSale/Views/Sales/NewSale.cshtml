@@ -255,6 +255,17 @@
 
                     </div>
                 </div>
+                <div id="divClienteSeleccionado" class="text-center" style="display: none;">
+                    <div class="row col-sm-12 ms-1">
+                        <label>Cliente: </label>
+                        <div class="input-group input-group-sm">
+                            <input type="text" class="form-control form-control-sm" id="txtClienteParaFactura" disabled>
+                            <div class="input-group-prepend">
+                                <button class="btn btn-sm btn-outline-info" id="btnBuscarCliente">Seleccionar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="modal-footer d-flex bd-highlight">
@@ -352,6 +363,8 @@
                     </button>
                 </div>
             </div>
+            <input type="hidden" value="0" id="txtIdClienteFactura">
+            <input type="hidden" id="txtCuilParaFactura">
 
             <div class="modal-body">
                 <div class="row">
@@ -376,12 +389,12 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group col-sm-6">
-                                <label for="txtNombre">Razon social / Nombre</label>
+                                <label for="txtNombre">Razon social</label>
                                 <input type="text" class="form-control form-control-sm" id="txtNombre" name="Nombre">
                             </div>
                             <div class="form-group col-sm-3">
-                                <label for="txtCuil">Cuil</label>
-                                <input type="text" class="form-control form-control-sm" id="txtCuil" name="Cuil">
+                                <label for="txtCuil">CUIL / CUIT / DNI</label>
+                                <input type="number" class="form-control form-control-sm input-validate" id="txtCuil" min="0" step="1" maxlength="11" name="Cuil">
                             </div>
                             <div class="form-group col-sm-3">
                                 <label for="cboCondicionIva">Condicion IVA</label>
@@ -404,6 +417,12 @@
                                 <input type="text" class="form-control form-control-sm" id="txtDireccion" name="Direccion">
                             </div>
                         </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-12">
+                                <label for="txtComentario">Comentario</label>
+                                <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario">
+                            </div>
+                        </div>
 
 
                     </div>
@@ -413,7 +432,7 @@
             <div class="modal-footer d-flex bd-highlight">
                 <div class="bd-highlight">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal" tabindex="-1">Cerrar</button>
-                    <button type="button" class="btn btn-primary" id="btnFinalizarDatosFactura" tabindex="0">Seleccionar</button>
+                    <button type="button" class="btn btn-primary" id="btnSeleccionarClienteFactura" tabindex="0">Seleccionar</button>
                 </div>
             </div>
         </div>

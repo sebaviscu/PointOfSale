@@ -29,7 +29,7 @@ go
 --*menu child - Admin
 insert into Menu([description],idMenuParent,controller,pageAction,isActive) values
 ('Usuarios',6,'Admin','Users',1), --8
-('Tiendas',1, 'Tienda', 'Tienda', 1), --9
+('Puntos de venta',1, 'Tienda', 'Tienda', 1), --9
 ('Categorias',1,'Inventory','Categories',1), --10
 ('Productos',2,'Inventory','Products',1), --11
 ('Reporte Ventas',4,'Sales','SalesHistory',1), --12

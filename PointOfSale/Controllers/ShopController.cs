@@ -70,7 +70,7 @@ namespace PointOfSale.Controllers
             catch (Exception ex)
             {
                 gResponse.State = false;
-                gResponse.Message = ex.Message;
+                gResponse.Message = ex.ToString();
                 _logger.LogError(ex, "Error al recuperar productos paginados para la web");
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
@@ -93,7 +93,7 @@ namespace PointOfSale.Controllers
             {
                 var errorMessage = "Error al recuperar mas productos paginados para la web";
                 gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
                 _logger.LogError(ex, "{ErrorMessage}", errorMessage);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
@@ -170,7 +170,7 @@ namespace PointOfSale.Controllers
             {
                 var errorMessage = "Error al actualizar una venta web";
                 gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
                 _logger.LogError(ex, "{ErrorMessage}. Request: {ModelRequest}", errorMessage, model.ToJson());
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
@@ -195,7 +195,7 @@ namespace PointOfSale.Controllers
             {
                 var errorMessage = "Error al registrar una venta web";
                 gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
                 _logger.LogError(ex, "{ErrorMessage}. Request: {ModelRequest}", errorMessage, model.ToJson());
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }

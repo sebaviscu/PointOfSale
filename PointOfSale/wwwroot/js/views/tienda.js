@@ -36,7 +36,15 @@ $(document).ready(function () {
                 "visible": false,
                 "searchable": false
             },
-            { "data": "nombre" },
+            {
+                "data": "nombre", render: function (data, type, row) {
+                    let tiendaActualBadge = '';
+                    if (row.tiendaActual == 1) {
+                        tiendaActualBadge = '<span class="badge badge-info">Actual</span>';
+                    }
+                    return `${data} ${tiendaActualBadge}`;
+                }
+            },
             { "data": "telefono" },
             { "data": "direccion" },
             {

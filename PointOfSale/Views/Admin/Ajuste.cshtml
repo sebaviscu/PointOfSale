@@ -13,15 +13,17 @@
 
 
 }
-    <style>
-        .password-wrapper {
-            position: relative;
-        }
+<style>
+    .password-wrapper {
+        position: relative;
+    }
+
         .password-wrapper input[type="password"],
         .password-wrapper input[type="text"] {
             width: 100%;
             padding-right: 30px;
         }
+
         .password-wrapper button {
             position: absolute;
             right: 5px;
@@ -31,7 +33,7 @@
             background: none;
             cursor: pointer;
         }
-    </style>
+</style>
 
 <div class="row">
     <div class="col-sm-12">
@@ -40,6 +42,8 @@
             <div class="card-header card-header-border-bottom">
                 <div>
                     <h4>Ajustes</h4>
+                    <span class="offset-md-2 text-danger" id="lblErrorPrintService" style="display: none;"><i class="mdi mdi-alert mdi-24px"></i>&nbsp; El servicio de impresión no se encuentra conectado</span>
+
                 </div>
             </div>
             <input type="hidden" value="0" id="txtId">
@@ -53,7 +57,7 @@
                                 <div class="card-header" style="padding-top: 30px; background-color: rgba(0, 0, 0, 0.03);border-bottom: 1px solid #e5e9f2">
                                     <h4>Venta Web</h4>
                                 </div>
-                                <div class="card-body row" style="padding-top: 30px;">
+                                <div class="card-body row" style="padding: 30px;">
 
                                     <div class="row">
                                         <div class="col-sm-12">
@@ -231,34 +235,37 @@
                                 <div class="card-header" style="padding-top: 30px; background-color: rgba(0, 0, 0, 0.03);border-bottom: 1px solid #e5e9f2">
                                     <h4>Ventas</h4>
                                 </div>
-                                <div class="card-body row" style="padding-top: 30px;">
+                                <div class="card-body row" style="padding: 30px;">
 
-
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <div class="row">
-                                                <div class="col-sm-6" hidden>
-                                                    <div class="form-group">
-                                                        <label for="txtCodigoSeguridad">Codigo de Seguridad</label>
-                                                        <div class="password-wrapper">
-                                                            <input type="password" class="form-control form-control-sm" id="txtCodigoSeguridad" name="Codigo de Seguridad">
-                                                            <button id="togglePassword">
-                                                                <span class="mdi mdi-eye mdi-24px" id="eyeIcon" style="width: 20px; height: 20px;"></span>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                @* <div class="col-sm-6"> *@
-                                                <div class="">
-                                                    <div class="form-group">
-                                                        <div class="form-check form-switch">
-                                                            <input class="form-check-input" type="checkbox" role="switch" id="switchImprimirDefault">
-                                                            <label class="form-check-label" for="switchImprimirDefault">Imprimir por defecto</label>
-                                                        </div>
-                                                    </div>
+                                    <div class="row col-md-12">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label for="txtCodigoSeguridad">Codigo de Seguridad</label>
+                                                <div class="password-wrapper">
+                                                    <input type="password" class="form-control form-control-sm" id="txtCodigoSeguridad" name="Codigo de Seguridad">
+                                                    <button id="togglePassword">
+                                                        <span class="mdi mdi-eye mdi-24px" id="eyeIcon" style="width: 20px; height: 20px;"></span>
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-sm-6 text-center" style="align-content: end;">
+                                            <div class="form-group">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" role="switch" id="switchImprimirDefault">
+                                                    <label class="form-check-label" for="switchImprimirDefault">Imprimir por defecto</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row col-md-12">
+                                        <div class="col-sm-8">
+                                            <div class="form-group">
+                                                <label for="txtImpresora">Nombre Impresora de Ticket</label>
+                                                <select class="form-control form-control-sm" id="cboNombreImpresora" name="Impresora Ticket"></select>
+                                            </div>
+                                        </div>
+
                                     </div>
 
 

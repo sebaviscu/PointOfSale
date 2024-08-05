@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using PointOfSale.Model;
+using PointOfSale.Model.Afip.Factura;
 
 namespace PointOfSale.Data.DBContext
 {
@@ -44,6 +45,7 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<PedidoProducto> PedidoProducto { get; set; } = null!;
         public virtual DbSet<Ajustes> Ajustes { get; set; } = null!;
         public virtual DbSet<Stock> Stocks { get; set; } = null!;
+        public virtual DbSet<FacturaEmitida> FacturasEmitidas { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -51,6 +53,26 @@ namespace PointOfSale.Data.DBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<FacturaEmitida>(entity =>
+            {
+                entity.HasKey(e => e.IdFacturaEmitida);
+
+                entity.Property(e => e.IdFacturaEmitida)
+                      .ValueGeneratedOnAdd();
+
+                entity.ToTable("FacturasEmitidas");
+
+                entity.HasOne(d => d.Sale)
+                      .WithOne(p => p.FacturaEmitida)
+                      .HasForeignKey<FacturaEmitida>(d => d.IdSale)
+                      .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.Cliente)
+                      .WithOne(p => p.FacturaEmitida)
+                      .HasForeignKey<FacturaEmitida>(d => d.IdCliente)
+                      .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
             modelBuilder.Entity<Stock>(entity =>
             {
                 entity.HasKey(e => e.IdStock);
@@ -271,6 +293,10 @@ namespace PointOfSale.Data.DBContext
                     .HasColumnType("datetime")
                     .HasColumnName("registrationDate")
                     .HasDefaultValueSql("(getdate())");
+
+                entity.HasOne(e => e.FacturaEmitida)
+                  .WithOne(f => f.Cliente)
+                  .HasForeignKey<FacturaEmitida>(f => f.IdCliente);
             });
 
             modelBuilder.Entity<Turno>(entity =>
@@ -610,6 +636,10 @@ namespace PointOfSale.Data.DBContext
                 entity.HasOne(d => d.ClienteMovimiento)
                     .WithOne(p => p.Sale)
                     .HasForeignKey<Sale>(c => c.IdClienteMovimiento);
+
+                entity.HasOne(e => e.FacturaEmitida)
+                  .WithOne(f => f.Sale)
+                  .HasForeignKey<FacturaEmitida>(f => f.IdSale);
             });
 
             modelBuilder.Entity<TypeDocumentSale>(entity =>

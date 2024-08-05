@@ -109,7 +109,7 @@ namespace PointOfSale.Controllers
             {
                 var errorMessage = "Error al recuperar fechas para iva report";
                 gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
                 _logger.LogError(ex, "{ErrorMessage}", errorMessage);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
@@ -155,7 +155,7 @@ namespace PointOfSale.Controllers
             {
                 var errorMessage = "Error al recuperar iva report";
                 gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
                 _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel} data: {Data}", errorMessage, idTipoIva, date.ToJson());
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }

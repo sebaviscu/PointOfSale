@@ -197,6 +197,7 @@ idTurno int references Turno(idTurno) not null,
 IdTienda int not null,
 idClienteMovimiento int null,
 descuentoRecargo decimal(10,2) null,
+IdFacturaEmitida int null,
 [registrationDate] datetime default getdate()
 )
 
@@ -228,6 +229,10 @@ create table Cliente(
 	[telefono] varchar(50) null,
 	[direccion] varchar(200) null,
 	IdTienda int references Tienda(idTienda) not null,
+	[isActive] bit,
+	CondicionIva int null,
+	Comentario varchar(200) null ,
+	IdFacturaEmitida int null,
 	[registrationDate] datetime not null,
 	[modificationDate] datetime null,
 	[modificationUser] varchar(50) null
@@ -443,3 +448,21 @@ StockMinimo int not null,
 [idProducto] int references Product(idProduct) not null,
 [idTienda] int references Tienda(idTienda) not null,
 )
+
+go
+
+CREATE TABLE FacturasEmitidas (
+    IdFacturaEmitida INT IDENTITY(1,1) PRIMARY KEY,
+    CAE VARCHAR(150),
+    CAEVencimiento DATETIME,
+    FechaEmicion DATETIME,
+    NroDocumento INT,
+    TipoDocumentoId INT,
+    TipoDocumento VARCHAR(50),
+    Resultado VARCHAR(50),
+    Errores VARCHAR(max), 
+	idSale int references Sale(idSale) not null,
+	idCliente int references Cliente(idCliente) null,
+    RegistrationUser VARCHAR(200),
+    RegistrationDate DATETIME
+);

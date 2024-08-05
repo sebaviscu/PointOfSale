@@ -19,11 +19,11 @@ namespace AFIP.Facturacion.Services
         {
             var comprobante = await _wsfeClient.FECAESolicitarAsync(FacturaExtension.ToFECAERequest(factura));
 
-            comprobante.Body.FECAESolicitarResult.Errors.EnsureSucceededResponse(); // TODO: revisar porque errors no viene nunca nada
+            comprobante.Body.FECAESolicitarResult.Errors.EnsureSucceededResponse();
 
             return new FacturacionResponse
             {
-                FECAECabResponse = comprobante.Body.FECAESolicitarResult.FeCabResp, // este es el que tengo que guardar en la db
+                FECAECabResponse = comprobante.Body.FECAESolicitarResult.FeCabResp, 
                 FECAEDetResponse = comprobante.Body.FECAESolicitarResult.FeDetResp,
             };
         }

@@ -123,7 +123,7 @@ namespace AFIP.Facturacion
             }
             catch (Exception ex)
             {
-                throw new Exception(ID_FNC + "***Error GENERANDO el LoginTicketRequest : " + ex.Message + ex.StackTrace);
+                throw new Exception(ID_FNC + "***Error GENERANDO el LoginTicketRequest : " + ex.ToString() + ex.StackTrace);
             }
 
             string base64SignedCms;
@@ -152,7 +152,7 @@ namespace AFIP.Facturacion
             }
             catch (Exception ex)
             {
-                throw new Exception(ID_FNC + "***Error FIRMANDO el LoginTicketRequest : " + ex.Message);
+                throw new Exception(ID_FNC + "***Error FIRMANDO el LoginTicketRequest : " + ex.ToString());
             }
 
             string loginTicketResponse;
@@ -181,7 +181,7 @@ namespace AFIP.Facturacion
             }
             catch (Exception ex)
             {
-                throw new Exception(ID_FNC + "***Error INVOCANDO al servicio WSAA : " + ex.Message);
+                throw new Exception(ID_FNC + "***Error INVOCANDO al servicio WSAA : " + ex.ToString());
             }
 
             // PASO 4: Analizo el Login Ticket Response recibido del WSAA
@@ -198,7 +198,7 @@ namespace AFIP.Facturacion
             }
             catch (Exception ex)
             {
-                throw new Exception(ID_FNC + "***Error ANALIZANDO el LoginTicketResponse : " + ex.Message);
+                throw new Exception(ID_FNC + "***Error ANALIZANDO el LoginTicketResponse : " + ex.ToString());
             }
 
             var ticketResponse = new WsaaTicket { Sign = Sign, Token = Token, ExpirationTime = ExpirationTime };

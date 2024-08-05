@@ -2,17 +2,19 @@
 let tableDataMovimientos;
 let rowSelectedClient;
 
-const BASIC_MODEL = {
+const BASIC_MODEL_CLIENTE = {
     idCliente: 0,
     nombre: '',
     cuil: null,
     telefono: null,
     direccion: null,
+    comentario: null,
+    condicionIva: null,
+    isActive: true,
     registrationDate: null,
     modificationDate: null,
     modificationUser: null
 }
-
 
 $(document).ready(function () {
 
@@ -53,6 +55,14 @@ $(document).ready(function () {
             { "data": "nombre" },
             { "data": "cuil" },
             { "data": "telefono" },
+            {
+                "data": "isActive", render: function (data) {
+                    if (data == 1)
+                        return '<span class="badge badge-info">Activo</span>';
+                    else
+                        return '<span class="badge badge-danger">Inactivo</span>';
+                }
+            },
             { "data": "total" },
             {
                 "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
@@ -78,7 +88,7 @@ $(document).ready(function () {
     });
 })
 
-const openModal = (model = BASIC_MODEL) => {
+const openModal = (model = BASIC_MODEL_CLIENTE) => {
     $("#txtId").val(model.idCliente);
     $("#txtNombre").val(model.nombre);
     $("#txtCuil").val(model.cuil);
@@ -86,7 +96,9 @@ const openModal = (model = BASIC_MODEL) => {
     $("#txtTelefono").val(model.telefono);
     //document.getElementById('txtTotal').innerHTML = "Total: " + model.total;
     $("#txtTotal").val(model.total);
-
+    $("#txtComentario").val(model.comenario);
+    $("#cboCondicionIva").val(model.condicionIva);
+    $("#cboEstado").val(model.isActive ? 1 : 0);
 
     if (model.modificationUser == null)
         document.getElementById("divModif").style.display = 'none';
@@ -178,12 +190,15 @@ $("#btnSave").on("click", function () {
         return;
     }
 
-    const model = structuredClone(BASIC_MODEL);
+    const model = structuredClone(BASIC_MODEL_CLIENTE);
     model["nombre"] = $("#txtNombre").val();
     model["direccion"] = $("#txtDireccion").val();
     model["cuil"] = $("#txtCuil").val();
     model["telefono"] = $("#txtTelefono").val();
     model["idCliente"] = $("#txtId").val();
+    model["comentario"] = $("#txtComentario").val();
+    model["condicionIva"] = $("#cboCondicionIva").val();
+    model["isActive"] = $("#cboEstado").val() == 1 ? true : false;
 
     $("#modalData").find("div.modal-content").LoadingOverlay("show")
 

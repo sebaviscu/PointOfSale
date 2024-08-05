@@ -46,13 +46,11 @@ namespace PointOfSale.Model.Afip.Factura
                     importeIVA = total - importeNeto;
                 }
             }
-            if(tipoComprobante.Id == TipoComprobante.Factura_C.Id)
+            if(tipoComprobante.Id == TipoComprobante.Factura_C.Id || tipoComprobante.Id == TipoComprobante.Factura_B.Id)
             {
-                // si es C, tiene que ser DNI, validar que sea un dni el documento
+                // si es B o C, tiene que ser DNI
                 tipoDocumento = TipoDocumento.DNI;
-            }
-
-            if (tipoComprobante.Id == TipoComprobante.Factura_A.Id)
+            } else if (tipoComprobante.Id == TipoComprobante.Factura_A.Id)
             {
                 // si es A, tiene que ser CUIT y NroDocumento no puede ser igual al del emisor
                 tipoDocumento = TipoDocumento.CUIT;
@@ -62,7 +60,7 @@ namespace PointOfSale.Model.Afip.Factura
             {
                 Concepto = Concepto.Producto,
                 TipoDocumento = tipoDocumento,
-                NroDocumento = documento,
+                NroDocumento = documento, // Número de documento del comprador (0 consumidor final) 
                 NroComprobanteDesde = nroComprobante,
                 NroComprobanteHasta = nroComprobante,
                 FechaComprobante = sale.RegistrationDate,

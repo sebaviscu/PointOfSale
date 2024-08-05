@@ -20,6 +20,8 @@ namespace PointOfSale.Models
 
         public string Color => TotalDecimal >= 0 ? "text-success" : "text-danger";
         public int IdTienda { get; set; }
-        public CondicionIva CondicionIva { get; set; }
+        public CondicionIva? CondicionIva { get; set; }
+        public string? Comentario { get; set; }
+        public bool IsActive { get; set; }
     }
 }

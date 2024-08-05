@@ -80,7 +80,7 @@ namespace PointOfSale.Controllers
             {
                 var errorMessage = "Error al recuperar formas de ventas";
                 gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
                 _logger.LogError(ex, "{ErrorMessage}", errorMessage);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
@@ -113,7 +113,7 @@ namespace PointOfSale.Controllers
             {
                 var errorMessage = "Error al recuperar lista de productos";
                 gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
                 _logger.LogError(ex, "{ErrorMessage} Request: {Search}", errorMessage, search);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
@@ -140,7 +140,7 @@ namespace PointOfSale.Controllers
             {
                 var errorMessage = "Error al recuperar lista de productos";
                 gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
                 _logger.LogError(ex, "{ErrorMessage} Request: {Search}", errorMessage, search);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
@@ -164,7 +164,7 @@ namespace PointOfSale.Controllers
             {
                 var errorMessage = "Error al recuperar lista de clientes";
                 gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
                 _logger.LogError(ex, "{ErrorMessage} Request: {Search}", errorMessage, search);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
@@ -190,7 +190,7 @@ namespace PointOfSale.Controllers
             {
                 var errorMessage = "Error al recuperar lista de clientes para facturar";
                 gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
                 _logger.LogError(ex, "{ErrorMessage} Request: {Search}", errorMessage, search);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
@@ -268,26 +268,23 @@ namespace PointOfSale.Controllers
                     }
                 }
 
+                var tipoVenta = await _typeDocumentSaleService.Get(sale_created.IdTypeDocumentSale.Value);
+
+                if ((int)tipoVenta.TipoFactura < 3)
+                {
+                    sale_created.TypeDocumentSaleNavigation = tipoVenta;
+
+                    int? documentoAFacturar = (tipoVenta.TipoFactura == TipoFactura.A && model.IdCuilFactura.HasValue)
+                        ? model.IdCuilFactura.Value
+                        : null;
+
+                    var facturaEmitidaResponse = await _afipFacturacionService.Facturar(sale_created, documentoAFacturar, model.IdClienteFactura, user.UserName);
+                    sale_created.IdFacturaEmitida = facturaEmitidaResponse.IdFacturaEmitida;
+                    sale_created = await _saleService.Edit(sale_created);
+                }
 
 
 
-
-                //var documento = Convert.ToInt32("23365081999");
-                //var documento = Convert.ToInt32("123456789");
-
-                //var resp = await _afipFacturacionService.Facturar(sale_created, documento);
-
-
-
-
-
-
-                //var tipoVenta = await _typeDocumentSaleService.Get(sale_created.IdTypeDocumentSale.Value);
-                //if ((int)tipoVenta.TipoFactura < 3)
-                //{
-                //    var factura = new FacturaAFIP();
-                //    var facturacionResponse = await _afipFacturacionService.FacturarAsync(factura);
-                //}
 
                 model = _mapper.Map<VMSale>(sale_created);
                 model.NombreImpresora = nombreImpresora;
@@ -299,9 +296,9 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al registrar venta";
+                var errorMessage = "Error al registrar venta.";
                 gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
                 _logger.LogError(ex, "{ErrorMessage} Request: {ModelRequest}", errorMessage, model);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
@@ -337,7 +334,7 @@ namespace PointOfSale.Controllers
             {
                 var errorMessage = "Error al registrar No Cierre de venta";
                 gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
                 _logger.LogError(ex, "{ErrorMessage} Request: {ModelRequest}", errorMessage, model);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
@@ -381,7 +378,7 @@ namespace PointOfSale.Controllers
             {
                 var errorMessage = "Error al recuperar reporte de ventas";
                 gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
                 _logger.LogError(ex, "{ErrorMessage} Request: {ModelRequest} | SaleNumber: {SaleNumber} | StartDate: {StartDate} | EndDate: {EndDate} | Presupuestos: {Presupuestos}",
                         errorMessage, saleNumber.ToJson(), startDate.ToJson(), endDate.ToJson(), presupuestos.ToJson());
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
@@ -413,7 +410,7 @@ namespace PointOfSale.Controllers
             {
                 var errorMessage = "Error al imprimir ticket";
                 gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
                 _logger.LogError(ex, "{ErrorMessage} Request: {ModelRequest}", errorMessage, idSale.ToJson());
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
@@ -444,7 +441,7 @@ namespace PointOfSale.Controllers
             {
                 var errorMessage = "Error al imprimir ticket de venta web";
                 gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
                 _logger.LogError(ex, "{ErrorMessage} Request: {ModelRequest}", errorMessage, idVentaWeb);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }

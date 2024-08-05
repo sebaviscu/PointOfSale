@@ -1,8 +1,10 @@
-﻿using System;
+﻿using PointOfSale.Model.Afip.Factura;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Model
 {
@@ -18,5 +20,10 @@ namespace PointOfSale.Model
         public string? ModificationUser { get; set; }
         public IEnumerable<ClienteMovimiento>? ClienteMovimientos { get; set; }
         public int IdTienda { get; set; }
+        public CondicionIva? CondicionIva { get; set; }
+        public string? Comentario { get; set; }
+        public bool IsActive { get; set; }
+        public int? IdFacturaEmitida { get; set; }
+        public virtual FacturaEmitida FacturaEmitida { get; set; }
     }
 }

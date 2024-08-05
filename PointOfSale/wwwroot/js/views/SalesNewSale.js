@@ -1,12 +1,22 @@
-﻿var originalTab = document.getElementById('nuevaVenta');
-var AllTabsForSale = [];
-var buttonCerrarTab = '<button class="close" type="button" title="Cerrar tab">×</button>';
-var tabID = 0;
-var formaDePagoID = 0;
-var promociones = [];
-var productSelected = null;
-var formasDePagosList = [];
+﻿let originalTab = document.getElementById('nuevaVenta');
+let AllTabsForSale = [];
+let buttonCerrarTab = '<button class="close" type="button" title="Cerrar tab">×</button>';
+let tabID = 0;
+let formaDePagoID = 0;
+let promociones = [];
+let productSelected = null;
+let formasDePagosList = [];
 let isHealthy = false;
+
+const BASIC_MODEL_CLIENTE_SALE = {
+    idCliente: 0,
+    nombre: '',
+    cuil: null,
+    telefono: null,
+    direccion: null,
+    condicionIva: null,
+    isActive: true
+}
 
 const ProducstTab = {
     idTab: 0,
@@ -65,7 +75,11 @@ $(document).ready(function () {
     newTab();
     healthcheck();
     inicializarClientesFactura();
-    
+    inicializarConsultarPrecios();
+
+})
+
+function inicializarConsultarPrecios() {
     $('#modalConsultarPrecio').on('shown.bs.modal', function () {
         if (!$('#cboSearchProductConsultarPrecio').data('select2')) {
             funConsultarPrecio();
@@ -78,15 +92,10 @@ $(document).ready(function () {
     $('#modalConsultarPrecio').on('hidden.bs.modal', function () {
         resetModaConsultarPreciol();
     });
-
-})
-
+}
 function inicializarClientesFactura() {
-    // Inicializar el estado de los campos
     let isNuevoCliente = $('#switchNuevoCliente').is(':checked');
     toggleFields(isNuevoCliente);
-
-    // Manejar el cambio del switch
     $('#switchNuevoCliente').change(function () {
         let isNuevoCliente = $(this).is(':checked');
         toggleFields(isNuevoCliente);
@@ -132,6 +141,7 @@ function funClientesFactura() {
                             telefono: item.telefono,
                             direccion: item.direccion,
                             condicionIva: item.condicionIva,
+                            comentario: item.comentario,
                             color: '',
                             total: ''
                         }
@@ -154,6 +164,8 @@ function funClientesFactura() {
         $('#txtTelefono').val(data.telefono);
         $('#txtDireccion').val(data.direccion);
         $('#cboCondicionIva').val(data.condicionIva);
+        $('#txtComentario').val(data.comentario);
+        $('#txtIdClienteFactura').val(data.id);
     });
 }
 
@@ -164,9 +176,11 @@ function resetModalClientesFactura() {
     $('#txtTelefono').val('');
     $('#txtDireccion').val('');
     $('#cboCondicionIva').val('');
+    $('#txtComentario').val('');
+    $('#txtIdClienteFactura').val(0);
 }
 function toggleFields(isNuevoCliente) {
-    $('#txtNombre, #txtCuil, #cboCondicionIva, #txtTelefono, #txtDireccion').prop('disabled', !isNuevoCliente);
+    $('#txtNombre, #txtCuil, #cboCondicionIva, #txtTelefono, #txtDireccion, #txtComentario').prop('disabled', !isNuevoCliente);
     $('#cboClienteFactura').prop('disabled', isNuevoCliente);
 
     if (isNuevoCliente) {
@@ -177,6 +191,62 @@ function toggleFields(isNuevoCliente) {
     }
 }
 
+$("#btnBuscarCliente").on("click", function () {
+    $("#modalDatosFactura").modal("show");
+});
+$("#btnSeleccionarClienteFactura").on("click", function () {
+
+    const inputs = $("input.input-validate").serializeArray();
+    const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
+
+    if (inputs_without_value.length > 0) {
+        const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
+        toastr.warning(msg, "");
+        $(`input[name="${inputs_without_value[0].name}"]`).focus();
+        return;
+    }
+
+    let nuevoCliente = document.getElementById("switchNuevoCliente").checked
+    let guardarNuevouevoCliente = document.getElementById("switchGuardarNuevoCliente").checked
+
+    const model = structuredClone(BASIC_MODEL_CLIENTE_SALE);
+    model["nombre"] = $("#txtNombre").val();
+    model["direccion"] = $("#txtDireccion").val();
+    model["cuil"] = $("#txtCuil").val();
+    model["telefono"] = $("#txtTelefono").val();
+    model["condicionIva"] = $("#cboCondicionIva").val();
+    model["idCliente"] = $("#txtIdClienteFactura").val();
+
+    if (nuevoCliente) {
+
+        if (guardarNuevouevoCliente) {
+
+            fetch("/Admin/CreateCliente", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                body: JSON.stringify(model)
+            }).then(response => {
+                return response.json();
+            }).then(responseJson => {
+
+                if (responseJson.state) {
+
+                    model["idCliente"] = responseJson.object.idCliente;
+
+                } else {
+                    swal("Lo sentimos", responseJson.message, "error");
+                }
+            }).catch((error) => {
+
+            })
+        }
+    }
+    $('#txtIdClienteFactura').val(model.idCliente);
+    $('#txtCuilParaFactura').val(model.cuil);
+    $('#txtClienteParaFactura').val(`${model.nombre}  (CUIT: ${model.cuil})`);
+
+    $("#modalDatosFactura").modal("hide")
+});
 async function healthcheck() {
     isHealthy = await getHealthcheck();
 
@@ -193,6 +263,15 @@ $('#cboTypeDocumentSaleParcial').change(function () {
 
     if (formaDePago != null) {
         $("#cboFactura").val(formaDePago.tipoFactura);
+
+        if (formaDePago.tipoFactura < 3) {
+            document.getElementById("divClienteSeleccionado").style.display = '';
+        }
+        else {
+            $('#txtIdClienteFactura').text('');
+            $('#txtClienteParaFactura').val('');
+            document.getElementById("divClienteSeleccionado").style.display = 'none';
+        }
     }
 
 })
@@ -308,7 +387,7 @@ $(document).on("click", "button.btn-delete", function () {
     const currentTabId = $(this).data("idTab");
     const row = $(this).data("row");
 
-    var currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
+    let currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
 
     currentTab.products.splice(row, 1);
 
@@ -317,8 +396,13 @@ $(document).on("click", "button.btn-delete", function () {
 
 function cleanSaleParcial() {
     $('#cboTypeDocumentSaleParcial').val('');
+    $('#txtIdClienteFactura').text('');
+    $('#txtCuilParaFactura').text('');
+    $('#txtClienteParaFactura').val('');
+    document.getElementById("divClienteSeleccionado").style.display = 'none';
 
-    for (var i = 1; i < formaDePagoID + 1; i++) {
+
+    for (let i = 1; i < formaDePagoID + 1; i++) {
         const element = document.getElementById("nuevaFormaDePago" + i);
         if (element != null)
             element.remove();
@@ -330,8 +414,8 @@ function cleanSaleParcial() {
 $(document).on("click", "button.finalizarSaleParcial", function () {
     cleanSaleParcial();
 
-    var currentTabId = $(this).attr("tabId");
-    var currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
+    let currentTabId = $(this).attr("tabId");
+    let currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
 
     if (currentTab.products.length < 1) {
         toastr.warning("", "Debe ingresar productos");
@@ -413,8 +497,8 @@ $(document).on("click", "button.btnAddFormaDePago", function () {
     });
 
     $('#cboTypeDocumentSaleParcial' + formaDePagoID).change(function () {
-        var idFormaDePago = $(this).val();
-        var formaDePago = formasDePagosList.find(_ => _.idTypeDocumentSale == idFormaDePago);
+        let idFormaDePago = $(this).val();
+        let formaDePago = formasDePagosList.find(_ => _.idTypeDocumentSale == idFormaDePago);
 
         if (formaDePago != null) {
             $("#cboFactura" + formaDePagoID).val(formaDePago.tipoFactura);
@@ -455,17 +539,17 @@ function getSumaSubTotales() {
         }
     });
 
-    var totFijo = $("#txtTotalView").val();
+    let totFijo = $("#txtTotalView").val();
 
     return parseFloat(totFijo) - parseFloat(subTotal);
 }
 
 function getVentaForRegister() {
 
-    var currentTabId = getTabActiveId();
+    let currentTabId = getTabActiveId();
 
-    //var currentTabId = $("#modalDividirPago").attr("idtab");
-    var currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
+    //let currentTabId = $("#modalDividirPago").attr("idtab");
+    let currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
 
     const vmDetailSale = currentTab.products;
 
@@ -498,7 +582,9 @@ function getVentaForRegister() {
         tipoMovimiento: $("#cboCliente" + currentTabId).val() != '' ? 2 : null,
         imprimirTicket: document.querySelector('#cboImprimirTicket').checked,
         multiplesFormaDePago: formasDePago != [] ? formasDePago : null,
-        descuentorecargo: descRec != undefined ? descRec.replace('.', ',') : null
+        descuentorecargo: descRec != undefined ? descRec.replace('.', ',') : null,
+        idClienteFactura: $('#txtIdClienteFactura').val() != '' ? $('#txtIdClienteFactura').val() : null,
+        idCuilFactura: $('#txtIdCuilFactura').val() != '' ? $('#txtIdCuilFactura').val() : null
     }
 
     return sale;
@@ -522,7 +608,7 @@ $("#btnFinalizarVentaParcial").on("click", function () {
 
     $("#modalDividirPago").modal("hide")
 
-    var currentTabId = $("#modalDividirPago").attr("idtab");
+    let currentTabId = $("#modalDividirPago").attr("idtab");
 
     registrationSale(currentTabId);
 });
@@ -558,7 +644,7 @@ function registrationSale(currentTabId) {
             if ($(".tab-venta").length > 2) {
 
                 // para cerrar la ultima venta de 3
-                var firstTabID = document.getElementsByClassName("tab-venta")[0].getAttribute("data-bs-target");
+                let firstTabID = document.getElementsByClassName("tab-venta")[0].getAttribute("data-bs-target");
 
                 if ($('#btnAgregarProducto' + firstTabID[firstTabID.length - 1]).is(':disabled')) { // si no esta cerrada la venta, no se cierra
                     $(firstTabID).remove();
@@ -661,7 +747,7 @@ $('#btn-add-tab').click(function () {
 });
 
 $('#tab-list').on('click', '.close', function () {
-    var tabID = $(this).parents('button').attr('data-bs-target');
+    let tabID = $(this).parents('button').attr('data-bs-target');
     $(this).parents('li').remove();
     $(tabID).remove();
 
@@ -681,7 +767,7 @@ function newTab() {
     $('#tab-content').append($('<div class="tab-pane fade" id="tab' + tabID + '">    </div>'));
 
 
-    var clone = originalTab.cloneNode(true);
+    let clone = originalTab.cloneNode(true);
     clone.id = "nuevaVenta" + tabID;
     clone.querySelector("#cboSearchProduct").id = "cboSearchProduct" + tabID;
     clone.querySelector("#tbProduct").id = "tbProduct" + tabID;
@@ -702,7 +788,7 @@ function newTab() {
     $("#btnFinalizeSaleParcial" + tabID).attr("tabId", tabID);
     $("#cboDescRec" + tabID).attr("tabId", tabID);
 
-    var newTab = {
+    let newTab = {
         idTab: tabID,
         products: []
     }
@@ -734,7 +820,7 @@ function addFunctions(idTab) {
     });
 
     $('#tbProduct' + idTab + ' tbody').on('dblclick', 'tr', function () {
-        var rowIndex = $(this).index();
+        let rowIndex = $(this).index();
 
         let currentTab = AllTabsForSale.find(item => item.idTab == idTab);
         let productRow = currentTab.products.filter(prod => prod.row == rowIndex);
@@ -785,12 +871,12 @@ function addFunctions(idTab) {
     });
 
     $('#cboDescRec' + idTab).change(function () {
-        var currentTabId = $(this).attr("tabId");
+        let currentTabId = $(this).attr("tabId");
 
         let total = $("#txtSubTotal" + currentTabId).attr("subTotalReal");
 
         if (total != '') {
-            var descRecAplicar = $("#cboDescRec" + currentTabId).val()
+            let descRecAplicar = $("#cboDescRec" + currentTabId).val()
             let desc = parseFloat(total * (descRecAplicar / 100));
             $('#txtDescRec' + idTab).html('$ ' + desc.toFixed(2));
             $("#txtDescRec" + idTab).attr('totalDescRec', desc.toFixed(2));
@@ -834,7 +920,7 @@ function addFunctions(idTab) {
     });
 
     $('#cboCliente' + idTab).on('select2:select', function (e) {
-        var data = e.params.data;
+        let data = e.params.data;
     })
 
     $('#cboSearchProduct' + idTab).select2({
@@ -888,7 +974,7 @@ function addFunctions(idTab) {
             }
         }
         if (data.tipoVenta == 2) {
-            var peso = $("#txtPeso" + idTab).val();
+            let peso = $("#txtPeso" + idTab).val();
 
             if (peso != "") {
                 if (peso === false || isNaN(peso)) return false;
@@ -914,7 +1000,7 @@ function addFunctions(idTab) {
 }
 
 function agregarProductoEvento(idTab) {
-    var peso = parseFloat($("#txtPeso" + idTab).val());
+    let peso = parseFloat($("#txtPeso" + idTab).val());
 
     if (peso === false || peso === "" || isNaN(peso)) return false;
 
@@ -924,8 +1010,8 @@ function agregarProductoEvento(idTab) {
         return false;
     }
 
-    var quantity_product_found = 0;
-    var currentTab = AllTabsForSale.find(item => item.idTab == idTab);
+    let quantity_product_found = 0;
+    let currentTab = AllTabsForSale.find(item => item.idTab == idTab);
 
     if (currentTab.products.length !== 0) {
 
@@ -1074,7 +1160,7 @@ function calcularPrecioPorcentaje(data, prom, totalQuantity) {
 }
 
 function lastTab() {
-    var tabFirst = $('#tab-list button:last');
+    let tabFirst = $('#tab-list button:last');
     tabFirst.tab('show');
 }
 
@@ -1111,7 +1197,7 @@ function lastTab() {
 
 
 function getTabActiveId() {
-    var idTab = document.getElementsByClassName(" nav-link tab-venta active")[0].id;
+    let idTab = document.getElementsByClassName(" nav-link tab-venta active")[0].id;
 
     return idTab[idTab.length - 1];
 }

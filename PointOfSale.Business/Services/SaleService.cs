@@ -158,7 +158,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<Cliente>> GetClients(string search)
         {
-            IQueryable<Cliente> query = await _repositoryCliente.Query(p =>
+            IQueryable<Cliente> query = await _repositoryCliente.Query(p => p.IsActive && 
            string.Concat(p.Cuil, p.Nombre).Contains(search));
 
             return query.Include(_ => _.ClienteMovimientos).ToList();

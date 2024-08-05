@@ -51,7 +51,7 @@ namespace PointOfSale.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error hacer login");
-                ViewData["Message"] = $"Error: {ex.Message}.";
+                ViewData["Message"] = $"Error: {ex.ToString()}.";
                 return View();
             }
         }
@@ -124,7 +124,7 @@ namespace PointOfSale.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al ingresar al login");
-                ViewData["Message"] = $"Error: {ex.Message}.";
+                ViewData["Message"] = $"Error: {ex.ToString()}.";
                 return View();
             }
         }
@@ -143,7 +143,7 @@ namespace PointOfSale.Controllers
             {
                 var errorMessage = "Error al recuperar todos los usuarios";
                 gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.Message}";
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
                 _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
