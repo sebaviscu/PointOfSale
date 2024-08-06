@@ -39,16 +39,14 @@
     <div class="col-sm-12">
 
         <div class="card card-default">
-            <div class="card-header card-header-border-bottom">
-                <div>
-                    <h4>Ajustes</h4>
-                    <span class="offset-md-2 text-danger" id="lblErrorPrintService" style="display: none;"><i class="mdi mdi-alert mdi-24px"></i>&nbsp; El servicio de impresión no se encuentra conectado</span>
-
-                </div>
+            <div class="card-header d-flex align-items-center">
+                <h4 class="col-md-2">Ajustes</h4>
+                <span class="offset-md-2 text-danger" id="lblErrorPrintService" style="display: none;"><i class="mdi mdi-alert mdi-24px"></i>&nbsp; El servicio de impresión no se encuentra conectado</span>
             </div>
+
             <input type="hidden" value="0" id="txtId">
 
-            <div class="card-body">
+            <div class="card-body" style="padding-top: 20px;">
                 <div class="col-sm-12">
                     <div class="row">
 
@@ -259,15 +257,34 @@
                                         </div>
                                     </div>
                                     <div class="row col-md-12">
-                                        <div class="col-sm-8">
+                                        <div class="col-sm-6">
                                             <div class="form-group">
                                                 <label for="txtImpresora">Nombre Impresora de Ticket</label>
                                                 <select class="form-control form-control-sm" id="cboNombreImpresora" name="Impresora Ticket"></select>
                                             </div>
                                         </div>
-
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label for="txtNombreTiendaTicket">Nombre de Tienda en Ticket</label>
+                                                <div class="password-wrapper">
+                                                    <input type="text" class="form-control form-control-sm" id="txtNombreTiendaTicket" name="Nombre de Tienda en Ticket">
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-
+                                    <div class="row col-md-12">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label for="txtMinimoIdentificarConsumidor">Minimo Identificar Consumidor Final</label>
+                                                <div class="input-group input-group-sm">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">$</span>
+                                                    </div>
+                                                    <input type="number" step="1" min="0" class="form-control form-control-sm" id="txtMinimoIdentificarConsumidor" name="Minimo Identificar Consumidor">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                 </div>
                             </div>
@@ -312,6 +329,7 @@
     <script src="~/plugins/data-tables/jszip.min.js"></script>
     <script src="~/plugins/data-tables/buttons.html5.min.js"></script>
     <script src="~/plugins/data-tables/buttons.print.min.js"></script>
+    <script src="~/plugins/printService.js"></script>
 
     <script src="~/js/views/ajuste.js"></script>
 }

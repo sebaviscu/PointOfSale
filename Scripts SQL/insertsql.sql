@@ -46,7 +46,8 @@ insert into Menu([description],idMenuParent,controller,pageAction,isActive) valu
 ('Pedidos',2,'Pedido','Pedido',1), --23
 ('Ajustes',1,'Admin','Ajuste',1), --24
 ('Libro de IVA',4,'Reports','LibroIva',1), -- 25
-('Stock',2,'Inventory','Stock',1) -- 26
+('Stock',2,'Inventory','Stock',1), -- 26
+('Facturacion',6,'Admin','Facturacion',1) -- 27
 
 go
 
@@ -87,7 +88,8 @@ INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (1,23,1),
 (1,24,1),
 (1,25,1),
-(1,26,1)
+(1,26,1),
+(1,27,1)
 
 --*empleado
 INSERT INTO RolMenu(idRol,idMenu,isActive) values
@@ -129,13 +131,21 @@ insert into TypeDocumentSale([description],isActive, tipoFactura, web,comision) 
 ('Mercado Pago',1,0,1,0),
 ('Transferencia',1,0,1,0)
 
-
 go
 --________________________________ INSERT Ajustes ________________________________
 
-insert into Ajustes(MontoEnvioGratis,AumentoWeb,Whatsapp,Lunes,Martes,Miercoles,Jueves,Viernes,Sabado,Domingo,Feriado,Facebook,Instagram,Tiktok,
-Twitter,Youtube, direccion, telefono,nombre,codigoSeguridad) 
-values (0,20,'','','','','','','','','','','','','','','','','Mercado Don Pepe','')
+insert into Ajustes(MinimoIdentificarConsumidor,IdTienda) 
+values (200000,1)
+
+go
+
+UPDATE Tienda SET idAjustes = 1
+
+go
+
+insert into AjustesWeb(MontoEnvioGratis,AumentoWeb,Whatsapp,Lunes,Martes,Miercoles,Jueves,Viernes,Sabado,Domingo,Feriado,Facebook,Instagram,Tiktok,
+Twitter,Youtube, direccion, telefono,nombre) 
+values (0,20,'','','','','','','','','','','','','','','','','Mercado Don Pepe')
 
 go
 --________________________________ INSERT CORRELATIVE NUMBER ________________________________

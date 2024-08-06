@@ -42,7 +42,7 @@ namespace PointOfSale.Controllers
         public async Task<IActionResult> Index()
         {
             ClaimsPrincipal claimuser = HttpContext.User;
-            var ajuste = _mapper.Map<VMAjustes>(await _ajusteService.Get());
+            var ajuste = _mapper.Map<VMAjustes>(await _ajusteService.GetAjustesWeb());
             var shop = new VMShop(ajuste);
             shop.Products = _mapper.Map<List<VMProduct>>(await _productService.GetRandomProducts());
             shop.IsLogin = claimuser.Identity.IsAuthenticated;
@@ -59,7 +59,7 @@ namespace PointOfSale.Controllers
             {
                 ClaimsPrincipal claimuser = HttpContext.User;
 
-                var ajuste = _mapper.Map<VMAjustes>(await _ajusteService.Get());
+                var ajuste = _mapper.Map<VMAjustes>(await _ajusteService.GetAjustesWeb());
                 var shop = new VMShop(ajuste);
                 shop.IsLogin = claimuser.Identity.IsAuthenticated;
                 shop.Products = new List<VMProduct>();//_mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategory(0, page, pageSize));

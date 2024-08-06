@@ -7,6 +7,7 @@ let promociones = [];
 let productSelected = null;
 let formasDePagosList = [];
 let isHealthy = false;
+let ajustes = null;
 
 const BASIC_MODEL_CLIENTE_SALE = {
     idCliente: 0,
@@ -65,7 +66,9 @@ $(document).ready(function () {
             return response.json();
         }).then(responseJson => {
             if (responseJson.state) {
-                document.getElementById('cboImprimirTicket').checked = responseJson.object;
+                ajustes = responseJson.object;
+
+                document.getElementById('cboImprimirTicket').checked = ajustes.imprimirDefault;
 
             } else {
                 swal("Lo sentimos", responseJson.message, "error");
@@ -167,8 +170,49 @@ function funClientesFactura() {
         $('#txtComentario').val(data.comentario);
         $('#txtIdClienteFactura').val(data.id);
     });
+
+    $('#txtCuil').on('input', function () {
+        if ($('#cboCondicionIva').val() == '4') { // Resp. Inscripto
+            let formattedValue = formatCuil($(this).val());
+            $(this).val(formattedValue);
+        }
+    });
+
+    $('#txtCuil').on('keypress', function (e) {
+        let charCode = (e.which) ? e.which : e.keyCode;
+        if (charCode < 48 || charCode > 57) {
+            e.preventDefault();
+        }
+    });
 }
 
+$("#cboCondicionIva").on("change", function () {
+    $('#txtCuil').val('');
+});
+function formatCuil(value) {
+    value = value.replace(/\D/g, '');
+    let formattedValue = '';
+
+    if (value.length > 0) formattedValue += value.substring(0, 2);
+    if (value.length > 2) formattedValue += '-' + value.substring(2, 10);
+    if (value.length > 10) formattedValue += '-' + value.substring(10, 11);
+
+    return formattedValue;
+}
+
+function removeHyphens(value) {
+    return value.replace(/-/g, '');
+}
+
+function validateCuilCuit() {
+    let cuilValue = $('#txtCuil').val().replace(/\D/g, '');
+    return cuilValue.length == 11;
+}
+
+function validateDni() {
+    let dniValue = $('#txtCuil').val().replace(/\D/g, '');
+    return dniValue.length == 8;
+}
 function resetModalClientesFactura() {
     $('#cboClienteFactura').val(null).trigger('change');
     $('#txtNombre').val('');
@@ -203,6 +247,22 @@ $("#btnSeleccionarClienteFactura").on("click", function () {
         const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
         toastr.warning(msg, "");
         $(`input[name="${inputs_without_value[0].name}"]`).focus();
+        return;
+    }
+
+    let isValid = true;
+    let cuilInput = $('#txtCuil').val();
+
+    if ($('#cboCondicionIva').val() == '4') { // Resp. Inscripto
+        isValid = validateCuilCuit();
+        cuilInput = removeHyphens(cuilInput);
+    } else if ($('#cboCondicionIva').val() == '1') { // Consumidor Final
+        isValid = validateDni();
+    }
+
+    if (!isValid) {
+        const msg = `El campo CUIL / CUIT / DNI debe ser completado de forma corecta, dependiendo de la condicion del IVA`;
+        toastr.warning(msg, "");
         return;
     }
 
@@ -244,6 +304,7 @@ $("#btnSeleccionarClienteFactura").on("click", function () {
     $('#txtIdClienteFactura').val(model.idCliente);
     $('#txtCuilParaFactura').val(model.cuil);
     $('#txtClienteParaFactura').val(`${model.nombre}  (CUIT: ${model.cuil})`);
+    $('#btnFinalizarVentaParcial').prop('disabled', false);
 
     $("#modalDatosFactura").modal("hide")
 });
@@ -262,6 +323,9 @@ $('#cboTypeDocumentSaleParcial').change(function () {
     let formaDePago = formasDePagosList.find(_ => _.idTypeDocumentSale == idFormaDePago);
 
     if (formaDePago != null) {
+
+        $('#btnFinalizarVentaParcial').prop('disabled', formaDePago.tipoFactura == 0); // resp. inscr.
+
         $("#cboFactura").val(formaDePago.tipoFactura);
 
         if (formaDePago.tipoFactura < 3) {
@@ -396,6 +460,7 @@ $(document).on("click", "button.btn-delete", function () {
 
 function cleanSaleParcial() {
     $('#cboTypeDocumentSaleParcial').val('');
+    $('#cboFactura').val('');
     $('#txtIdClienteFactura').text('');
     $('#txtCuilParaFactura').text('');
     $('#txtClienteParaFactura').val('');

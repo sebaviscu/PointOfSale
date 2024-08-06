@@ -1,17 +1,14 @@
-﻿namespace PointOfSale.Models
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PointOfSale.Model
 {
-    public class VMAjustes
+    public class AjustesWeb
     {
-        public int IdAjuste { get; set; }
-        public string? CodigoSeguridad { get; set; }
-        public bool? ImprimirDefault { get; set; }
-        public string? NombreImpresora { get; set; }
-        public int? MinimoIdentificarConsumidor { get; set; }
-        public string? NombreTiendaTicket { get; set; }
-        public int IdTienda { get; set; }
-
-
-
+        public int IdAjusteWeb { get; set; }
         public string? Nombre { get; set; }
         public string? Direccion { get; set; }
         public decimal? MontoEnvioGratis { get; set; }
@@ -30,12 +27,6 @@
         public string? Tiktok { get; set; }
         public string? Twitter { get; set; }
         public string? Youtube { get; set; }
-
-
-
-
-
-
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }
     }

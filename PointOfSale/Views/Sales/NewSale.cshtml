@@ -390,19 +390,19 @@
                         <div class="form-row">
                             <div class="form-group col-sm-6">
                                 <label for="txtNombre">Razon social</label>
-                                <input type="text" class="form-control form-control-sm" id="txtNombre" name="Nombre">
+                                <input type="text" class="form-control form-control-sm input-validate" id="txtNombre" name="Nombre">
                             </div>
                             <div class="form-group col-sm-3">
                                 <label for="txtCuil">CUIL / CUIT / DNI</label>
-                                <input type="number" class="form-control form-control-sm input-validate" id="txtCuil" min="0" step="1" maxlength="11" name="Cuil">
+                                <input type="text" class="form-control form-control-sm input-validate" id="txtCuil"  name="Cuil">
                             </div>
                             <div class="form-group col-sm-3">
                                 <label for="cboCondicionIva">Condicion IVA</label>
-                                <select class="fontDetalles form-control form-control-sm" id="cboCondicionIva">
+                                <select class="fontDetalles form-control form-control-sm input-validate" id="cboCondicionIva">
                                     <option value="0"></option>
                                     <option value="1">Consumidor Final</option>
-                                    <option value="2">Exento</option>
-                                    <option value="3">Monotributista</option>
+@*                                     <option value="2">Exento</option>
+                                    <option value="3">Monotributista</option> *@
                                     <option value="4">Resp. Inscripto</option>
                                 </select>
                             </div>
@@ -414,7 +414,7 @@
                             </div>
                             <div class="form-group col-sm-8">
                                 <label for="txtDireccion">Direccion</label>
-                                <input type="text" class="form-control form-control-sm" id="txtDireccion" name="Direccion">
+                                <input type="text" class="form-control form-control-sm input-validate" id="txtDireccion" name="Direccion">
                             </div>
                         </div>
                         <div class="form-row">

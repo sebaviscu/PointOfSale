@@ -14,7 +14,8 @@ Direccion varchar(100) null,
 NombreImpresora varchar(50) null,
 Logo varbinary(max) null,
 idListaPrecio int not null,
-cuit varchar(20),
+cuit varchar(20) NULL,
+idAjustes int references Ajustes(idAjuste) null,
 [modificationDate] [datetime] null,
 [modificationUser] varchar(50) null,
 )
@@ -412,8 +413,8 @@ alter table [dbo].[ProveedorMovimiento] add IdPedido int references Pedidos(IdPe
 
 go
 
-create table Ajustes(
-idAjuste int primary key identity(1,1),
+create table AjustesWeb(
+idAjusteWeb int primary key identity(1,1),
 MontoEnvioGratis decimal(10,2) null,
 AumentoWeb decimal(10,2) null,
 Whatsapp varchar(50) null,
@@ -433,8 +434,19 @@ Youtube varchar(80) null,
 direccion varchar(50) null,
 telefono varchar(50) null,
 nombre varchar(50) null,
+[modificationDate] [datetime] null,
+[modificationUser] varchar(50) null
+)
+go
+
+create table Ajustes(
+idAjuste int primary key identity(1,1),
 codigoSeguridad varchar(20) null,
 ImprimirDefault bit null,
+NombreTiendaTicket varchar(200) null,
+NombreImpresora  varchar(500) null,
+MinimoIdentificarConsumidor int null,
+[idTienda] int references Tienda(idTienda) not null,
 [modificationDate] [datetime] null,
 [modificationUser] varchar(50) null
 )
@@ -451,18 +463,23 @@ StockMinimo int not null,
 
 go
 
+
 CREATE TABLE FacturasEmitidas (
     IdFacturaEmitida INT IDENTITY(1,1) PRIMARY KEY,
-    CAE VARCHAR(150),
-    CAEVencimiento DATETIME,
+    CAE VARCHAR(150) null,
+    CAEVencimiento DATETIME null,
     FechaEmicion DATETIME,
     NroDocumento INT,
     TipoDocumentoId INT,
     TipoDocumento VARCHAR(50),
+	PuntoVenta INT not null,
+	NroFactura INT null,
+	TipoFactura VARCHAR(50) not null,
     Resultado VARCHAR(50),
     Errores VARCHAR(max), 
 	idSale int references Sale(idSale) not null,
 	idCliente int references Cliente(idCliente) null,
+	IdTienda int references Tienda(IdTienda) not null,
     RegistrationUser VARCHAR(200),
     RegistrationDate DATETIME
 );

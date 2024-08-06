@@ -11,6 +11,7 @@ using AFIP.Facturacion.Services;
 using PointOfSale.Business.Contracts;
 using AFIP.Facturacion.Extensions;
 using PointOfSale.Business.Utilities;
+using Microsoft.EntityFrameworkCore;
 
 namespace PointOfSale.Business.Services
 {
@@ -41,17 +42,28 @@ namespace PointOfSale.Business.Services
             var tipoDoc = TipoComprobante.ConvertTipoFactura(sale_created.TypeDocumentSaleNavigation.TipoFactura);
 
             var ultimoComprobanteResponse = await _afipFacturacionService.GetUltimoComprobanteAutorizadoAsync(ptoVenta, tipoDoc);
+            var nroFactura = ultimoComprobanteResponse.CbteNro + 1;
 
-            var factura = new FacturaAFIP(sale_created, tipoDoc, ultimoComprobanteResponse.CbteNro + 1, ptoVenta, nroDocumento.Value);
+            var factura = new FacturaAFIP(sale_created, tipoDoc, nroFactura, ptoVenta, nroDocumento.Value);
             var response = await _afipFacturacionService.FacturarAsync(factura);
 
             var facturaEmitida = FacturaExtension.ToFacturaEmitida(response.FECAEDetResponse.FirstOrDefault());
             facturaEmitida.IdSale = sale_created.IdSale;
             facturaEmitida.IdCliente = idCliente != 0 ? idCliente : null;
             facturaEmitida.RegistrationUser = registrationUser;
+            facturaEmitida.NroFactura = string.IsNullOrEmpty(facturaEmitida.Errores) ? nroFactura : 0;
+            facturaEmitida.PuntoVenta = ptoVenta;
+            facturaEmitida.IdTienda = sale_created.IdTienda;
+            facturaEmitida.TipoFactura = tipoDoc.Description;
 
             var facturaEmitidaResponse = await _repository.Add(facturaEmitida);
             return facturaEmitidaResponse;
+        }
+
+        public async Task<List<FacturaEmitida>> GetAll(int idTienda)
+        {
+            var facturas = await _repository.Query(x => x.IdTienda == idTienda);
+            return await facturas.Include(_=>_.Sale).Include(_ => _.Sale.TypeDocumentSaleNavigation).ToListAsync();
         }
     }
 }

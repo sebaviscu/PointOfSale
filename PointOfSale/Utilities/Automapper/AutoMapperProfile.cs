@@ -6,6 +6,7 @@ using static PointOfSale.Model.Enum;
 using Newtonsoft.Json.Linq;
 using PointOfSale.Model.Output;
 using System.Security.Cryptography.X509Certificates;
+using PointOfSale.Model.Afip.Factura;
 
 namespace PointOfSale.Utilities.Automapper
 {
@@ -405,8 +406,8 @@ namespace PointOfSale.Utilities.Automapper
                                 .ForMember(user => user.ImporteSinIva, opt => opt.MapFrom(userEdit => userEdit.Total - Math.Round(userEdit.Total.Value / Convert.ToDecimal("1.21"), 2)));
 
 
-            CreateMap<Ajustes, VMAjustes>();
-            CreateMap<VMAjustes, Ajustes>();
+            CreateMap<Ajustes, VMAjustes>().ReverseMap();
+            CreateMap<AjustesWeb, VMAjustes>().ReverseMap();
 
             CreateMap<Stock, VMStock>().ReverseMap();
             CreateMap<ListaPrecio, VMListaPrecio>().ReverseMap();
@@ -414,7 +415,14 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<Stock, VMStockSimplificado>().ReverseMap();
             CreateMap<Proveedor, VMProveedorSimplificado>().ReverseMap();
             CreateMap<Product, VMProductSimplificado>().ReverseMap();
+
             CreateMap<X509Certificate2, VMX509Certificate2>().ReverseMap();
+
+            CreateMap<VMFacturaEmitida, FacturaEmitida>();
+
+            CreateMap<FacturaEmitida, VMFacturaEmitida>()
+                    .ForMember(user => user.NroFacturaString, opt => opt.MapFrom(userEdit => userEdit.NroFactura.Value != 0 ? userEdit.NroFactura.Value.ToString("D8") : string.Empty))
+                    .ForMember(user => user.PuntoVentaString, opt => opt.MapFrom(userEdit => userEdit.PuntoVenta.ToString("D4")));
         }
     }
 }

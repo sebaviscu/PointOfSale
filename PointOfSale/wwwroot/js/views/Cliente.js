@@ -86,15 +86,49 @@ $(document).ready(function () {
             }, 'pageLength'
         ]
     });
+
+    validateCuil();
 })
 
-const openModal = (model = BASIC_MODEL_CLIENTE) => {
+function validateCuil() {
+    $('#txtCuil').on('input', function () {
+        let formattedValue = formatCuil($(this).val());
+        $(this).val(formattedValue);
+    });
+
+    $('#txtCuil').on('keypress', function (e) {
+        let charCode = (e.which) ? e.which : e.keyCode;
+        if (charCode < 48 || charCode > 57) {
+            e.preventDefault();
+        }
+    });
+
+    $('#txtCuil').on('blur', function () {
+        let value = $(this).val().replace(/\D/g, '');
+        if (value.length !== 11) {
+            alert('El CUIL debe tener exactamente 11 dígitos.');
+        }
+    });
+}
+
+function formatCuil(value) {
+    value = value.replace(/\D/g, ''); // Eliminar todo lo que no sea dígito
+    let formattedValue = '';
+
+    // Formatear la cadena de acuerdo al patrón CUIL
+    if (value.length > 0) formattedValue += value.substring(0, 2);
+    if (value.length > 2) formattedValue += '-' + value.substring(2, 10);
+    if (value.length > 10) formattedValue += '-' + value.substring(10, 11);
+
+    return formattedValue;
+}
+
+const openModalCliente = (model = BASIC_MODEL_CLIENTE) => {
     $("#txtId").val(model.idCliente);
     $("#txtNombre").val(model.nombre);
-    $("#txtCuil").val(model.cuil);
+    $("#txtCuil").val(formatCuil(model.cuil));
     $("#txtDireccion").val(model.direccion);
     $("#txtTelefono").val(model.telefono);
-    //document.getElementById('txtTotal').innerHTML = "Total: " + model.total;
     $("#txtTotal").val(model.total);
     $("#txtComentario").val(model.comenario);
     $("#cboCondicionIva").val(model.condicionIva);
@@ -176,7 +210,7 @@ const openModal = (model = BASIC_MODEL_CLIENTE) => {
 }
 
 $("#btnNew").on("click", function () {
-    openModal()
+    openModalCliente()
 })
 
 $("#btnSave").on("click", function () {
@@ -193,7 +227,7 @@ $("#btnSave").on("click", function () {
     const model = structuredClone(BASIC_MODEL_CLIENTE);
     model["nombre"] = $("#txtNombre").val();
     model["direccion"] = $("#txtDireccion").val();
-    model["cuil"] = $("#txtCuil").val();
+    model["cuil"] = $("#txtCuil").val() != '' ? $("#txtCuil").val().replace(/-/g, '') : null;
     model["telefono"] = $("#txtTelefono").val();
     model["idCliente"] = $("#txtId").val();
     model["comentario"] = $("#txtComentario").val();
@@ -262,7 +296,7 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
 
     const data = tableDataClients.row(rowSelectedClient).data();
 
-    openModal(data);
+    openModalCliente(data);
 })
 
 $('#tbMovimientos tbody').on('click', 'button.btn-open-sale', function (event) {

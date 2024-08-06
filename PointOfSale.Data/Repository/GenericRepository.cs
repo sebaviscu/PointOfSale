@@ -14,7 +14,16 @@ namespace PointOfSale.Data.Repository
         private readonly POINTOFSALEContext _dbcontext;
         public GenericRepository(POINTOFSALEContext context)
         {
+            try
+            {
+
             _dbcontext = context;
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
         }
 
 

@@ -8,6 +8,7 @@ using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Services;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
+using PointOfSale.Model.Afip.Factura;
 using PointOfSale.Model.Auditoria;
 using PointOfSale.Models;
 using PointOfSale.Utilities;
@@ -33,6 +34,7 @@ namespace PointOfSale.Controllers
         private readonly IProductService _productService;
         private readonly ICategoryService _categoryService;
         private readonly IAjusteService _ajusteService;
+        private readonly IAfipService _afipService;
         private readonly ILogger<AdminController> _logger;
 
         public AdminController(
@@ -47,6 +49,7 @@ namespace PointOfSale.Controllers
             IProductService productService,
             ICategoryService categoryService,
             IAjusteService ajusteService,
+            IAfipService afipService,
             ILogger<AdminController> logger)
         {
             _dashboardService = dashboardService;
@@ -60,6 +63,7 @@ namespace PointOfSale.Controllers
             _productService = productService;
             _categoryService = categoryService;
             _ajusteService = ajusteService;
+            _afipService = afipService;
             _logger = logger;
         }
 
@@ -1544,29 +1548,39 @@ namespace PointOfSale.Controllers
             return ValidateSesionViewOrLogin();
         }
 
-        /// <summary>
-        /// Recupera ajustes para DataTable
-        /// </summary>
-        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetAjuste()
         {
-
             var gResponse = new GenericResponse<VMAjustes>();
             try
             {
-                var vmAjusteList = _mapper.Map<VMAjustes>(await _ajusteService.Get());
-                return StatusCode(StatusCodes.Status200OK, new { data = vmAjusteList });
+                var user = ValidarAutorizacion([Roles.Administrador]);
+
+                var vmAjusteWeb = _mapper.Map<VMAjustes>(await _ajusteService.GetAjustesWeb());
+
+                var vmAjuste = _mapper.Map<VMAjustes>(await _ajusteService.GetAjustes(user.IdTienda));
+
+                vmAjusteWeb.CodigoSeguridad = vmAjuste.CodigoSeguridad;
+                vmAjusteWeb.NombreImpresora = vmAjuste.NombreImpresora;
+                vmAjusteWeb.MinimoIdentificarConsumidor = vmAjuste.MinimoIdentificarConsumidor;
+                vmAjusteWeb.ImprimirDefault = vmAjuste.ImprimirDefault;
+                vmAjusteWeb.NombreTiendaTicket = vmAjuste.NombreTiendaTicket;
+                vmAjusteWeb.IdTienda = vmAjuste.IdTienda;
+
+                gResponse.Object = vmAjusteWeb;
+                gResponse.State = true;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar ajuste";
+                var errorMessage = "Error al recuperar ajuste web";
                 gResponse.State = false;
                 gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
                 _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }
+
 
         [HttpPut]
         public async Task<IActionResult> UpdateAjuste([FromBody] VMAjustes model)
@@ -1576,17 +1590,24 @@ namespace PointOfSale.Controllers
                 return View(model);
             }
 
-
             GenericResponse<VMAjustes> gResponse = new GenericResponse<VMAjustes>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
 
-
                 model.ModificationUser = user.UserName;
+                model.IdTienda = user.IdTienda;
+                var edited_AjusteWeb = await _ajusteService.EditWeb(_mapper.Map<AjustesWeb>(model));
+
                 var edited_Ajuste = await _ajusteService.Edit(_mapper.Map<Ajustes>(model));
 
-                model = _mapper.Map<VMAjustes>(edited_Ajuste);
+                model = _mapper.Map<VMAjustes>(edited_AjusteWeb);
+                model.CodigoSeguridad = edited_Ajuste.CodigoSeguridad;
+                model.NombreImpresora = edited_Ajuste.NombreImpresora;
+                model.MinimoIdentificarConsumidor = edited_Ajuste.MinimoIdentificarConsumidor;
+                model.ImprimirDefault = edited_Ajuste.ImprimirDefault;
+                model.NombreTiendaTicket = edited_Ajuste.NombreTiendaTicket;
+                model.IdTienda = edited_Ajuste.IdTienda;
 
                 gResponse.State = true;
                 gResponse.Object = model;
@@ -1600,7 +1621,6 @@ namespace PointOfSale.Controllers
                 _logger.LogError(ex, "{ErrorMessage}. Request: {Model}.", errorMessage, model.ToJson());
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
-
         }
 
         /// <summary>
@@ -1613,7 +1633,7 @@ namespace PointOfSale.Controllers
             var gResponse = new GenericResponse<string>();
             try
             {
-                var ajuste = await _ajusteService.Get();
+                var ajuste = await _ajusteService.GetAjustesWeb();
 
                 gResponse.State = true;
                 gResponse.Object = ajuste.AumentoWeb.HasValue ? ajuste.AumentoWeb.Value.ToString("F0") : string.Empty;
@@ -1627,23 +1647,25 @@ namespace PointOfSale.Controllers
                 _logger.LogError(ex, "{ErrorMessage}", errorMessage);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
-
         }
 
         /// <summary>
-        /// Recupera nombre de impresora
+        /// Recupera ajustes
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetAjustesVentas()
         {
-            var gResponse = new GenericResponse<bool?>();
+            var gResponse = new GenericResponse<VMAjustes?>();
             try
             {
-                var ajuste = await _ajusteService.Get();
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Encargado]);
+
+                var ajuste = await _ajusteService.GetAjustes(user.IdTienda);
+                var vmAjuste = _mapper.Map<VMAjustes>(ajuste);
 
                 gResponse.State = true;
-                gResponse.Object = ajuste.ImprimirDefault != null ? ajuste.ImprimirDefault : false;
+                gResponse.Object = vmAjuste;
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
@@ -1667,7 +1689,9 @@ namespace PointOfSale.Controllers
 
             try
             {
-                var ajuste = await _ajusteService.Get();
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Encargado]);
+
+                var ajuste = await _ajusteService.GetAjustes(user.IdTienda);
 
                 var codigo = ajuste.CodigoSeguridad != null ? ajuste.CodigoSeguridad : string.Empty;
 
@@ -1681,6 +1705,40 @@ namespace PointOfSale.Controllers
                 gResponse.State = false;
                 gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
                 _logger.LogError(ex, "{ErrorMessage}", errorMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+            }
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> Facturacion()
+        {
+            ValidarAutorizacion([Roles.Administrador]);
+            return ValidateSesionViewOrLogin();
+        }
+
+        /// <summary>
+        /// Retorna las facturas para DataTable
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetFacturas()
+        {
+            var gResponse = new GenericResponse<List<VMFacturaEmitida>>();
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador]);
+                var facturas = await _afipService.GetAll(user.IdTienda);
+                var vmFactura = _mapper.Map<List<VMFacturaEmitida>>(facturas);
+
+                return StatusCode(StatusCodes.Status200OK, new { data = vmFactura });
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = "Error al recuperar facturas";
+                gResponse.State = false;
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
+                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }

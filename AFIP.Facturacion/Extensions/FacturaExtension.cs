@@ -68,13 +68,13 @@ namespace AFIP.Facturacion.Extensions
 
         public static FacturaEmitida ToFacturaEmitida(FECAEDetResponse fECAECabResponse)
         {
-            if(fECAECabResponse == null)
+            if (fECAECabResponse == null)
                 return null;
 
             var facturaRecibida = new FacturaEmitida()
             {
                 CAE = fECAECabResponse.CAE,
-                CAEVencimiento = DateTime.ParseExact(fECAECabResponse.CAEFchVto, "yyyyMMdd", CultureInfo.InvariantCulture),
+                CAEVencimiento = fECAECabResponse.CAEFchVto != string.Empty ? DateTime.ParseExact(fECAECabResponse.CAEFchVto, "yyyyMMdd", CultureInfo.InvariantCulture) : null,
                 FechaEmicion = DateTime.ParseExact(fECAECabResponse.CbteFch, "yyyyMMdd", CultureInfo.InvariantCulture),
                 NroDocumento = (int)fECAECabResponse.DocNro,
                 TipoDocumentoId = fECAECabResponse.DocTipo,
@@ -85,7 +85,7 @@ namespace AFIP.Facturacion.Extensions
 
             if (fECAECabResponse.Observaciones != null && fECAECabResponse.Observaciones.Any())
             {
-                facturaRecibida.Errores = string.Join(Environment.NewLine, fECAECabResponse.Observaciones);
+                facturaRecibida.Errores = string.Join(Environment.NewLine, fECAECabResponse.Observaciones.Select(_=>_.Msg));
             }
             return facturaRecibida;
         }

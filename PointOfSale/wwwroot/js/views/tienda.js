@@ -1,13 +1,12 @@
 ﻿let tableData;
 let rowSelectedTienda;
 
-const BASIC_MODEL = {
+const BASIC_MODEL_TIENDA = {
     idTienda: 0,
     nombre: "",
     idListaPrecio: 1,
     modificationDate: null,
     modificationUser: null,
-    nombre: "",
     email: "",
     telefono: "",
     direccion: "",
@@ -96,35 +95,34 @@ $(document).ready(function () {
         e.preventDefault();
     });
 
-    healthcheck();
+    //healthcheck();
 })
 
+//async function healthcheck() {
+//    isHealthy = await getHealthcheck();
 
-async function healthcheck() {
-    isHealthy = await getHealthcheck();
+//    if (isHealthy) {
+//        document.getElementById("lblErrorPrintService").style.display = 'none';
+//    } else {
+//        document.getElementById("lblErrorPrintService").style.display = '';
+//    }
+//}
 
-    if (isHealthy) {
-        document.getElementById("lblErrorPrintService").style.display = 'none';
-    } else {
-        document.getElementById("lblErrorPrintService").style.display = '';
-    }
-}
+//async function getPrintersTienda() {
+//    try {
+//        let printers = await getPrinters();
 
-async function getPrintersTienda() {
-    try {
-        let printers = await getPrinters();
+//        printers.forEach(printer => {
+//            $("#cboNombreImpresora").append(
+//                $("<option>").val(printer).text(printer)
+//            );
+//        });
+//    } catch (error) {
+//        console.error('Error fetching printers:', error);
+//    }
+//}
 
-        printers.forEach(printer => {
-            $("#cboNombreImpresora").append(
-                $("<option>").val(printer).text(printer)
-            );
-        });
-    } catch (error) {
-        console.error('Error fetching printers:', error);
-    }
-}
-
-const openModalTienda = (model = BASIC_MODEL) => {
+const openModalTienda = (model = BASIC_MODEL_TIENDA) => {
 
 
     $("#txtId").val(model.idTienda);
@@ -184,7 +182,7 @@ $("#btnSave").on("click", function () {
         return;
     }
 
-    const model = structuredClone(BASIC_MODEL);
+    const model = structuredClone(BASIC_MODEL_TIENDA);
     model["idTienda"] = parseInt($("#txtId").val());
     model["nombre"] = $("#txtNombre").val();
     model["idListaPrecio"] = parseInt($("#cboListaPrecios").val());

@@ -44,6 +44,7 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<Pedido> Pedido { get; set; } = null!;
         public virtual DbSet<PedidoProducto> PedidoProducto { get; set; } = null!;
         public virtual DbSet<Ajustes> Ajustes { get; set; } = null!;
+        public virtual DbSet<AjustesWeb> AjustesWeb { get; set; } = null!;
         public virtual DbSet<Stock> Stocks { get; set; } = null!;
         public virtual DbSet<FacturaEmitida> FacturasEmitidas { get; set; } = null!;
 
@@ -71,6 +72,11 @@ namespace PointOfSale.Data.DBContext
                       .WithOne(p => p.FacturaEmitida)
                       .HasForeignKey<FacturaEmitida>(d => d.IdCliente)
                       .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.Tienda)
+                      .WithMany(p => p.FacturaEmitidas)
+                      .HasForeignKey(d => d.IdTienda)
+                      .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
             modelBuilder.Entity<Stock>(entity =>
@@ -90,11 +96,25 @@ namespace PointOfSale.Data.DBContext
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
+
+            modelBuilder.Entity<AjustesWeb>(entity =>
+            {
+                entity.HasKey(e => e.IdAjusteWeb);
+
+                entity.ToTable("AjustesWeb");
+
+            });
+
             modelBuilder.Entity<Ajustes>(entity =>
             {
                 entity.HasKey(e => e.IdAjuste);
 
                 entity.ToTable("Ajustes");
+
+                entity.HasOne(d => d.Tienda)
+                  .WithOne(p => p.Ajustes)
+                  .HasForeignKey<Ajustes>(d => d.IdTienda)
+                  .OnDelete(DeleteBehavior.ClientSetNull);
 
             });
 
@@ -473,6 +493,10 @@ namespace PointOfSale.Data.DBContext
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("nombre");
+
+                entity.HasOne(e => e.Ajustes)
+                  .WithOne(f => f.Tienda)
+                  .HasForeignKey<Ajustes>(f => f.IdAjuste);
             });
 
             modelBuilder.Entity<Product>(entity =>

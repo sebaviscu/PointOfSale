@@ -1,4 +1,4 @@
-﻿const BASIC_MODEL = {
+﻿const BASIC_MODEL_AJUSTE = {
     idAjuste: 0,
     modificationDate: null,
     modificationUser: null,
@@ -19,10 +19,13 @@
     tiktok: "",
     youtube: "",
     codigoSeguridad: "",
-    imprimirDefault: null
+    imprimirDefault: false,
+    nombreTiendaTicket: "",
+    nombreImpresora: "",
+    minimoIdentificarConsumidor: 0
 }
 
-
+let isHealthy = false;
 $(document).ready(function () {
     showLoading();
 
@@ -31,9 +34,9 @@ $(document).ready(function () {
             removeLoading();
             return response.json();
         }).then(responseJson => {
-            if (responseJson.data != null) {
+            if (responseJson.state) {
 
-                var model = responseJson.data;
+                let model = responseJson.object;
 
                 $("#txtId").val(model.idAjuste);
                 $("#txtNombreTienda").val(model.nombre);
@@ -56,23 +59,29 @@ $(document).ready(function () {
                 $("#txtTwitter").val(model.twitter);
                 $("#txtYouTube").val(model.youtube);
 
+
                 $("#txtCodigoSeguridad").val(model.codigoSeguridad);
+                $("#txtNombreTiendaTicket").val(model.nombreTiendaTicket);
+                $("#txtMinimoIdentificarConsumidor").val(model.minimoIdentificarConsumidor);
+                $("#cboNombreImpresora").val(model.nombreImpresora);
                 document.getElementById('switchImprimirDefault').checked = model.imprimirDefault;
 
                 if (model.modificationUser == null)
                     document.getElementById("divModif").style.display = 'none';
                 else {
                     document.getElementById("divModif").style.display = '';
-                    var dateTimeModif = new Date(model.modificationDate);
+                    let dateTimeModif = new Date(model.modificationDate);
 
                     $("#txtModificado").val(dateTimeModif.toLocaleString());
                     $("#txtModificadoUsuario").val(model.modificationUser);
                 }
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
             }
         })
 
-    var $passwordInput = $('#txtCodigoSeguridad');
-    var $togglePasswordButton = $('#togglePassword');
+    let $passwordInput = $('#txtCodigoSeguridad');
+    let $togglePasswordButton = $('#togglePassword');
 
     $togglePasswordButton.on('mousedown', function () {
         $passwordInput.attr('type', 'text');
@@ -86,17 +95,19 @@ $(document).ready(function () {
     $togglePasswordButton.on('click', function (e) {
         e.preventDefault();
     });
+
+    healthcheck();
+
 })
 
 $("#btnSave").on("click", function () {
     showLoading();
 
-    const model = structuredClone(BASIC_MODEL);
+    const model = structuredClone(BASIC_MODEL_AJUSTE);
 
     model["nombre"] = $("#txtNombreTienda").val();
     model["direccion"] = $("#txtDireccion").val();
     model["idAjuste"] = parseInt($("#txtId").val());
-    model["nombreImpresora"] = $("#txtImpresora").val();
     model["montoEnvioGratis"] = $("#txtEnvioGratis").val();
     model["aumentoWeb"] = $("#txtAumento").val();
     model["whatsapp"] = $("#txtWhatsApp").val();
@@ -116,8 +127,10 @@ $("#btnSave").on("click", function () {
 
     const checkboxSwitchImprimirDefault = document.getElementById('switchImprimirDefault');
     model["imprimirDefault"] = checkboxSwitchImprimirDefault.checked;
-
     model["codigoSeguridad"] = $("#txtCodigoSeguridad").val();
+    model["nombreTiendaTicket"] = $("#txtNombreTiendaTicket").val();
+    model["minimoIdentificarConsumidor"] = $("#txtMinimoIdentificarConsumidor").val();
+    model["nombreImpresora"] = $("#cboNombreImpresora").val();
 
     fetch("/Admin/UpdateAjuste", {
         method: "PUT",
@@ -140,3 +153,28 @@ $("#btnSave").on("click", function () {
 
 
 })
+async function healthcheck() {
+    isHealthy = await getHealthcheck();
+
+    if (isHealthy) {
+        getPrintersTienda();
+        document.getElementById("lblErrorPrintService").style.display = 'none';
+    } else {
+        document.getElementById("lblErrorPrintService").style.display = '';
+    }
+}
+
+async function getPrintersTienda() {
+    try {
+        let printers = await getPrinters();
+
+        printers.forEach(printer => {
+            $("#cboNombreImpresora").append(
+                $("<option>").val(printer).text(printer)
+            );
+        });
+
+    } catch (error) {
+        console.error('Error fetching printers:', error);
+    }
+}

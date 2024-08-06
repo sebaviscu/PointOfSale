@@ -9,7 +9,11 @@ namespace PointOfSale.Business.Contracts
 {
     public interface IAjusteService
     {
-        Task<Ajustes> Get();
+        Task<AjustesWeb> GetAjustesWeb();
+
+        Task<AjustesWeb> EditWeb(AjustesWeb entity);
+
+        Task<Ajustes> GetAjustes(int idTienda);
 
         Task<Ajustes> Edit(Ajustes entity);
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using static PointOfSale.Model.Enum;
+using PointOfSale.Model.Afip.Factura;
 
 namespace PointOfSale.Model
 {
@@ -20,8 +21,12 @@ namespace PointOfSale.Model
         public IEnumerable<Turno>? Turnos { get; set; }
         public IEnumerable<User>? Usuarios { get; set; }
         public IEnumerable<Vencimiento>? Vencimientos { get; set; }
-        public ICollection<Pedido>? Pedidos { get; set; }
-        public ICollection<Stock>? Stocks { get; set; }
+        public IEnumerable<Pedido>? Pedidos { get; set; }
+        public IEnumerable<Stock>? Stocks { get; set; }
+        public IEnumerable<FacturaEmitida>? FacturaEmitidas { get; set; }
+        public int? IdAjustes { get; set; }
+        public Ajustes? Ajustes { get; set; }
+
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }
     }
