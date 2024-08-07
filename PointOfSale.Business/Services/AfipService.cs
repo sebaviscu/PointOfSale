@@ -12,13 +12,16 @@ using PointOfSale.Business.Contracts;
 using AFIP.Facturacion.Extensions;
 using PointOfSale.Business.Utilities;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services
 {
     public class AfipService : IAfipService
     {
         const int ptoVenta = 1;
-        const int defaultDocumento = 12345678;
+        const int defaultDocumento = 0;
+        const string URL_AFIP_QR = "https://www.afip.gob.ar/fe/qr/?p=";
 
         private readonly IGenericRepository<FacturaEmitida> _repository;
         private readonly IAFIPFacturacionService _afipFacturacionService;
@@ -31,20 +34,21 @@ namespace PointOfSale.Business.Services
 
         public async Task<FacturaEmitida> Facturar(Sale sale_created, int? nroDocumento, int? idCliente, string registrationUser)
         {
-            if(sale_created.TypeDocumentSaleNavigation == null)
+            if (sale_created.TypeDocumentSaleNavigation == null)
             {
                 throw new Exception("El tipo de documento no existe");
             }
 
-            if (nroDocumento == null)
-                nroDocumento = defaultDocumento;
+            var documentoAFacturar = (sale_created.TypeDocumentSaleNavigation.TipoFactura == TipoFactura.A && nroDocumento.HasValue)
+                ? nroDocumento.Value
+                : defaultDocumento;
 
             var tipoDoc = TipoComprobante.ConvertTipoFactura(sale_created.TypeDocumentSaleNavigation.TipoFactura);
 
             var ultimoComprobanteResponse = await _afipFacturacionService.GetUltimoComprobanteAutorizadoAsync(ptoVenta, tipoDoc);
             var nroFactura = ultimoComprobanteResponse.CbteNro + 1;
 
-            var factura = new FacturaAFIP(sale_created, tipoDoc, nroFactura, ptoVenta, nroDocumento.Value);
+            var factura = new FacturaAFIP(sale_created, tipoDoc, nroFactura, ptoVenta, documentoAFacturar);
             var response = await _afipFacturacionService.FacturarAsync(factura);
 
             var facturaEmitida = FacturaExtension.ToFacturaEmitida(response.FECAEDetResponse.FirstOrDefault());
@@ -55,6 +59,9 @@ namespace PointOfSale.Business.Services
             facturaEmitida.PuntoVenta = ptoVenta;
             facturaEmitida.IdTienda = sale_created.IdTienda;
             facturaEmitida.TipoFactura = tipoDoc.Description;
+            facturaEmitida.ImporteTotal = (decimal)factura.Detalle.First().ImporteTotal;
+            facturaEmitida.ImporteNeto = (decimal)factura.Detalle.First().ImporteNeto;
+            facturaEmitida.ImporteIVA = (decimal)factura.Detalle.First().ImporteIVA;
 
             var facturaEmitidaResponse = await _repository.Add(facturaEmitida);
             return facturaEmitidaResponse;
@@ -63,8 +70,42 @@ namespace PointOfSale.Business.Services
         public async Task<List<FacturaEmitida>> GetAll(int idTienda)
         {
             var facturas = await _repository.Query(x => x.IdTienda == idTienda);
-            return await facturas.Include(_=>_.Sale).Include(_ => _.Sale.TypeDocumentSaleNavigation).ToListAsync();
+            return await facturas.Include(_ => _.Sale).Include(_ => _.Sale.TypeDocumentSaleNavigation).ToListAsync();
         }
+
+        public async Task<FacturaEmitida> GetById(int idFacturaEmitida)
+        {
+            var facturas = await _repository.Query(x => x.IdFacturaEmitida == idFacturaEmitida);
+            return facturas.Include(_ => _.Sale).Include(_ => _.Sale.TypeDocumentSaleNavigation).FirstOrDefault();
+        }
+
+        public string GenerateFacturaQR(FacturaEmitida factura)
+        {
+            var tipoComprobante = TipoComprobante.GetByDescription(factura.TipoFactura);
+
+            var facturaQR = new FacturaQR
+            {
+                ver = 1,
+                fecha = factura.FechaEmicion.ToString("yyyy-MM-dd"),
+                cuit = 23365081999, // CUIT del emisor
+                ptoVta = factura.PuntoVenta,
+                tipoCmp = tipoComprobante.Id,
+                nroCmp = factura.NroFactura.GetValueOrDefault(),
+                importe = factura.ImporteTotal.GetValueOrDefault(),
+                moneda = "PES",
+                ctz = 1,
+                tipoDocRec = factura.TipoDocumentoId,
+                nroDocRec = factura.NroDocumento,
+                tipoCodAut = "E", // EE es CAE y  A es CAEA
+                codAut = Convert.ToInt64(factura.CAE)
+            };
+
+            var json = JsonSerializer.Serialize(facturaQR);
+            var base64Json = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
+            var qrUrl = $"{URL_AFIP_QR}{base64Json}";
+
+            return qrUrl;
+        }
+
     }
 }
- 

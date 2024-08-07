@@ -21,6 +21,9 @@ namespace PointOfSale.Model.Afip.Factura
         public int? NroFactura { get; set; }
         public int PuntoVenta { get; set; }
         public string? TipoFactura { get; set; }
+        public decimal? ImporteTotal { get; set; }
+        public decimal ImporteNeto { get; set; }
+        public decimal ImporteIVA { get; set; }
 
         public int? IdSale { get; set; }
         public Sale? Sale { get; set; }

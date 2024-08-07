@@ -274,11 +274,7 @@ namespace PointOfSale.Controllers
                 {
                     sale_created.TypeDocumentSaleNavigation = tipoVenta;
 
-                    int? documentoAFacturar = (tipoVenta.TipoFactura == TipoFactura.A && model.IdCuilFactura.HasValue)
-                        ? model.IdCuilFactura.Value
-                        : null;
-
-                    var facturaEmitidaResponse = await _afipFacturacionService.Facturar(sale_created, documentoAFacturar, model.IdClienteFactura, user.UserName);
+                    var facturaEmitidaResponse = await _afipFacturacionService.Facturar(sale_created, model.IdCuilFactura, model.IdClienteFactura, user.UserName);
                     sale_created.IdFacturaEmitida = facturaEmitidaResponse.IdFacturaEmitida;
                     sale_created = await _saleService.Edit(sale_created);
                 }

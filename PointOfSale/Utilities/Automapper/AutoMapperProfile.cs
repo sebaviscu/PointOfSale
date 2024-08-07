@@ -198,7 +198,7 @@ namespace PointOfSale.Utilities.Automapper
                     opt => opt.MapFrom(source => source.DetailSales != null ? source.DetailSales.Count : 0))
                 .ForMember(destiny =>
                     destiny.DescuentoRecargo,
-                    opt => opt.MapFrom(source => source.DescuentoRecargo != null ? "$" + source.DescuentoRecargo : ""));
+                    opt => opt.MapFrom(source => source.DescuentoRecargo != null ? source.DescuentoRecargo.ToString() : ""));
 
             CreateMap<VMSale, Sale>()
                 .ForMember(destiny =>

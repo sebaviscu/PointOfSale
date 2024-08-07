@@ -49,7 +49,9 @@ namespace PointOfSale.Model.Afip.Factura
             if(tipoComprobante.Id == TipoComprobante.Factura_C.Id || tipoComprobante.Id == TipoComprobante.Factura_B.Id)
             {
                 // si es B o C, tiene que ser DNI
-                tipoDocumento = TipoDocumento.DNI;
+                // si el importe es menor a mucha plata, poner el dni en 0 y poer otros
+                tipoDocumento = documento == 0 ? TipoDocumento.DocOtro : TipoDocumento.DNI;
+
             } else if (tipoComprobante.Id == TipoComprobante.Factura_A.Id)
             {
                 // si es A, tiene que ser CUIT y NroDocumento no puede ser igual al del emisor

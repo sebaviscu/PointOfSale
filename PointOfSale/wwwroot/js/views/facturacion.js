@@ -1,8 +1,31 @@
-﻿let tableData;
+﻿let tableDataFactura;
+let rowSelectedFactura;
+
+const BASIC_MODEL_FACTURACION = {
+    idFacturaEmitida: 0,
+    cae: "",
+    caeVencimiento: "",
+    fechaEmicion: "",
+    nroDocumento: "",
+    tipoDocumento: "",
+    resultado: "",
+    errores: "",
+    registrationDate: "",
+    registrationUser: "",
+    nroFacturaString: "",
+    puntoVentaString: "",
+    tipoFactura: "",
+    importeTotal: 0,
+    importeNeto: 0,
+    importeIVA: 0,
+    qr: '',
+    sale: null,
+    cliente: null
+}
+
 $(document).ready(function () {
 
-
-    tableData = $("#tbData").DataTable({
+    tableDataFactura = $("#tbData").DataTable({
         responsive: true,
         "ajax": {
             "url": "/Admin/GetFacturas",
@@ -44,15 +67,19 @@ $(document).ready(function () {
             },
             { "data": "sale.typeDocumentSale" },
             {
-                "data": "sale.total", render: function (data, type, row) {
+                "data": "importeTotal", render: function (data, type, row) {
                     return `$ ${data}`;
                 }
             },
             { "data": "cae" },
             { "data": "caeVencimiento" },
             {
-                "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
-                    '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-trash-can"></i></button>',
+                "data": "errores", render: function (data, type, row) {
+                    return data != null ? '<span class="badge rounded-pill bg-danger">  <i class="mdi mdi-close"></i>&nbsp; ERROR </span>' : '';
+                }
+            },
+            {
+                "defaultContent": '<button class="btn btn-info btn-ver btn-sm me-2"><i class="mdi mdi-eye"></i></button>',
                 "orderable": false,
                 "searchable": false,
                 "width": "80px"
@@ -67,10 +94,82 @@ $(document).ready(function () {
                 title: '',
                 filename: 'Reporte Formas de Pago',
                 exportOptions: {
-                    columns: [1,2]
+                    columns: [1, 2]
                 }
             }, 'pageLength'
         ]
     });
 
+})
+
+const openModalFactura = (model = BASIC_MODEL_FACTURACION) => {
+
+    url_qr = null;
+
+    $("#txtId").val(model.idFacturaEmitida);
+    $("#txtFechaEmision").val(moment(model.registrationDate).format('DD/MM/YYYY HH:mm'));
+    $("#txtTipoFactura").val(model.tipoFactura);
+    $("#txtNumeroFactura").val(model.nroFacturaString);
+    $("#txtFormaPago").val(model.sale.typeDocumentSale);
+    $("#txtImporteTotal").val(model.importeTotal);
+    $("#txtImporteNeto").val(model.importeNeto);
+    $("#txtImporteIva").val(model.importeIVA);
+    $("#txtCae").val(model.cae);
+    $("#txtVencimientoCae").val(moment(model.caeVencimiento).format('DD/MM/YYYY'));
+    $("#txtRegistrationUser").val(model.registrationUser);
+    $("#txtPuntoVenta").val(model.puntoVentaString);
+    $("#txtCuil").val(`${model.tipoDocumento}: ${model.nroDocumento}`);
+    $("#btnVerVenta").attr("sale-number", model.sale.saleNumber);
+
+    if (model.errores != null) {
+        document.getElementById("divError").style.display = '';
+        $("#txtError").text(model.errores);
+    }
+    else {
+        document.getElementById("divError").style.display = 'none';
+        if (model.qr != '') {
+            url_qr = model.qr;
+        }
+    }
+
+    $("#modalData").modal("show")
+}
+var url_qr = null;
+
+$("#tbData tbody").on("click", ".btn-info", function () {
+
+    if ($(this).closest('tr').hasClass('child')) {
+        rowSelectedFactura = $(this).closest('tr').prev();
+    } else {
+        rowSelectedFactura = $(this).closest('tr');
+    }
+    const data = tableDataFactura.row(rowSelectedFactura).data();
+    showLoading();
+
+    fetch(`/Admin/GetFactura?idFacturaEmitida=${data.idFacturaEmitida}`,)
+        .then(response => {
+            return response.json();
+        }).then(responseJson => {
+            removeLoading();
+            if (responseJson.state) {
+
+                openModalFactura(responseJson.object);
+
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+        })
+})
+
+$("#btnVerVenta").on("click", function () {
+    let saleNumber = $(this).attr("sale-number");
+    let urlString = '/Sales/ReportSale?saleNumber=' + encodeURIComponent(saleNumber);
+
+    window.open(urlString, '_blank');
+})
+
+$("#bntAfip").on("click", function () {
+    if (url_qr != null) {
+        window.open(url_qr, '_blank');
+    }
 })

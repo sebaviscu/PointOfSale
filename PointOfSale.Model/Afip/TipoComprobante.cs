@@ -97,6 +97,8 @@ namespace AFIP.Facturacion.Model
 
         public static TipoComprobante GetById(int id)
             => GetAll().FirstOrDefault(x => x.Id == id);
+        public static TipoComprobante GetByDescription(string description)
+            => GetAll().FirstOrDefault(x => x.Description == description);
 
         public static implicit operator int(TipoComprobante tipoMoneda) => tipoMoneda.Id;
 

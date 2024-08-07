@@ -301,11 +301,12 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
 
 $('#tbMovimientos tbody').on('click', 'button.btn-open-sale', function (event) {
     event.preventDefault();
-    var data = tableDataMovimientos.row($(this).parents('tr')).data();
-    var saleNumber = data['sale']['saleNumber'];
-    var url = '/Sales/ReportSale?saleNumber=' + encodeURIComponent(saleNumber);
+    let data = tableDataMovimientos.row($(this).parents('tr')).data();
+    let saleNumber = data['sale']['saleNumber'];
+ 
+    let urlString = '/Sales/ReportSale?saleNumber=' + encodeURIComponent(saleNumber);
 
-    window.location.href = url;
+    window.open(urlString, '_blank');
 });
 
 

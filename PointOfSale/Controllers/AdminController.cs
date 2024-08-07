@@ -1742,5 +1742,35 @@ namespace PointOfSale.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetFactura(int idFacturaEmitida)
+        {
+            var gResponse = new GenericResponse<VMFacturaEmitida>();
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador]);
+                var factura = await _afipService.GetById(idFacturaEmitida);
+                
+                var vmFactura = _mapper.Map<VMFacturaEmitida>(factura);
+
+                if (factura.Errores ==  null)
+                {
+                    vmFactura.QR = _afipService.GenerateFacturaQR(factura);
+                }
+
+                gResponse.State = true;
+                gResponse.Object = vmFactura;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = "Error al recuperar facturas";
+                gResponse.State = false;
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
+                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+            }
+        }
     }
 }

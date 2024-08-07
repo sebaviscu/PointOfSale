@@ -20,6 +20,10 @@ namespace PointOfSale.Models
         public string? NroFacturaString { get; set; }
         public string? PuntoVentaString { get; set; }
         public string? TipoFactura { get; set; }
+        public decimal? ImporteTotal { get; set; }
+        public decimal ImporteNeto { get; set; }
+        public decimal ImporteIVA { get; set; }
+        public string? QR { get; set; }
 
         public int? IdSale { get; set; }
         public VMSale? Sale { get; set; }
