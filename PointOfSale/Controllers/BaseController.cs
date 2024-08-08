@@ -5,6 +5,7 @@ using PointOfSale.Business.Utilities;
 using System;
 using System.Security.Claims;
 using static PointOfSale.Model.Enum;
+using PointOfSale.Model;
 
 namespace PointOfSale.Controllers
 {
@@ -18,65 +19,64 @@ namespace PointOfSale.Controllers
                 return View();
         }
 
-        public (bool Resultado, string UserName, int IdTienda, ListaDePrecio IdListaPrecios) ValidarAutorizacion(Roles[] rolesPermitidos)
+        public UserAuth ValidarAutorizacion(Roles[] rolesPermitidos)
         {
-            var claimuser = HttpContext.User;
+            var claimUser = HttpContext.User;
 
-            var userRol = Convert.ToInt32(claimuser.Claims
-                .Where(c => c.Type == ClaimTypes.Role)
-                .Select(c => c.Value).SingleOrDefault());
+            var userAuth = new UserAuth
+            {
+                IdRol = GetClaimValue<int>(claimUser, ClaimTypes.Role),
+                UserName = GetClaimValue<string>(claimUser, ClaimTypes.Name),
+                IdTienda = GetClaimValue<int>(claimUser, "Tienda"),
+                IdListaPrecios = GetClaimValue<int>(claimUser, "ListaPrecios"),
+                IdUsuario = GetClaimValue<int>(claimUser, ClaimTypes.NameIdentifier),
+                IdTurno = GetClaimValue<int>(claimUser, "Turno")
+            };
 
-            if (!ValidarPermisos.IsValid(userRol, rolesPermitidos))
+            userAuth.Result = ValidarPermisos.IsValid(userAuth.IdRol, rolesPermitidos);
+
+            if (!userAuth.Result)
             {
                 throw new AccessViolationException("USUARIO CON PERMISOS INSUFICIENTES");
             }
-            var userName = claimuser.Claims
-                .Where(c => c.Type == ClaimTypes.Name)
-                .Select(c => c.Value).SingleOrDefault();
 
-            var idTienda = Convert.ToInt32(claimuser.Claims
-                .Where(c => c.Type == "Tienda")
-                .Select(c => c.Value).SingleOrDefault());
+            return userAuth;
+        }
 
-            var idListaPrecio = Convert.ToInt32(claimuser.Claims.
-                                Where(c => c.Type == "ListaPrecios")
-                                .Select(c => c.Value).SingleOrDefault());
-
-
-            return (true, userName, idTienda, (ListaDePrecio)idListaPrecio);
+        private T GetClaimValue<T>(ClaimsPrincipal user, string claimType)
+        {
+            var claim = user.Claims.FirstOrDefault(c => c.Type == claimType)?.Value;
+            if (string.IsNullOrEmpty(claim))
+            {
+                return default;
+            }
+            return (T)Convert.ChangeType(claim, typeof(T));
         }
 
         public async Task UpdateClaimAsync(string claimType, string newValue)
         {
-            // Obtener el usuario autenticado
             var user = HttpContext.User;
 
             if (user.Identity.IsAuthenticated)
             {
-                // Obtener la lista actual de claims
                 var claims = user.Claims.ToList();
 
-                // Eliminar el claim actual que deseas modificar
                 var claimToRemove = claims.FirstOrDefault(c => c.Type == claimType);
                 if (claimToRemove != null)
                 {
                     claims.Remove(claimToRemove);
                 }
 
-                // Agregar el nuevo claim con el valor actualizado
                 claims.Add(new Claim(claimType, newValue));
 
-                // Crear la nueva identidad con los claims actualizados
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                // Crear las propiedades de autenticación
                 var properties = new AuthenticationProperties
                 {
                     AllowRefresh = true,
                     IsPersistent = (HttpContext.Request.Cookies[".AspNetCore.Cookies"] != null)
                 };
 
-                // Actualizar la autenticación del usuario
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), properties);
             }
         }

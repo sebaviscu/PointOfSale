@@ -207,7 +207,9 @@ namespace PointOfSale.Controllers
                 var nombreImpresora = string.Empty;
                 var ticket = string.Empty;
 
-                RegistrationSetClaimProperties(model, user);
+                model.IdUsers = user.IdUsuario;
+                model.IdTurno = user.IdTurno;
+                model.IdTienda = user.IdTienda;
 
                 Sale sale_created = await _saleService.Register(_mapper.Map<Sale>(model));
 
@@ -247,18 +249,6 @@ namespace PointOfSale.Controllers
             var tienda = await _tiendaService.Get(idTienda);
             var ticket = _ticketService.TicketSale(saleCreated, tienda);
             return (tienda.NombreImpresora, ticket);
-        }
-
-        private void RegistrationSetClaimProperties(VMSale model, (bool Resultado, string UserName, int IdTienda, ListaDePrecio IdListaPrecios) user)
-        {
-            ClaimsPrincipal claimuser = HttpContext.User;
-
-            string idUsuario = claimuser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            string idTurno = claimuser.Claims.FirstOrDefault(c => c.Type == "Turno")?.Value;
-
-            model.IdUsers = int.Parse(idUsuario);
-            model.IdTurno = int.Parse(idTurno);
-            model.IdTienda = user.IdTienda;
         }
 
         private async Task RegistrationFacturar(VMSale model, string registrationUser, Sale sale_created)
