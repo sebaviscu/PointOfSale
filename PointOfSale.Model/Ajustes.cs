@@ -12,6 +12,7 @@ namespace PointOfSale.Model
 
         public string? CodigoSeguridad { get; set; }
         public bool? ImprimirDefault { get; set; }
+        public bool? ControlStock { get; set; }
         public string? NombreTiendaTicket { get; set; }
         public string? NombreImpresora { get; set; }
         public int? MinimoIdentificarConsumidor { get; set; }

@@ -27,41 +27,39 @@ namespace PointOfSale.Data.Repository
             _notificationRepository = notificationRepository;
         }
 
-        public async Task<Sale> Register(Sale entity)
+        public async Task<Sale> Register(Sale entity, Ajustes ajustes)
         {
-            try
-            {
-                var productIds = entity.DetailSales.Select(dv => dv.IdProduct).ToList();
-                var products = await _dbcontext.Products
-                    .Include(p => p.IdCategoryNavigation)
-                    //.Include(p => p.Proveedor)
-                    .Where(p => productIds.Contains(p.IdProduct))
-                    .ToListAsync();
+            var productIds = entity.DetailSales.Select(dv => dv.IdProduct).ToList();
+            var products = await _dbcontext.Products
+                .Include(p => p.IdCategoryNavigation)
+                //.Include(p => p.Proveedor)
+                .Where(p => productIds.Contains(p.IdProduct))
+                .ToListAsync();
 
-                foreach (DetailSale dv in entity.DetailSales)
+            foreach (DetailSale dv in entity.DetailSales)
+            {
+                var product_found = products.First(p => p.IdProduct == dv.IdProduct);
+
+                if (ajustes.ControlStock.HasValue && ajustes.ControlStock.Value)
                 {
-                    var product_found = products.First(p => p.IdProduct == dv.IdProduct);
                     await ControlStock(dv.Quantity.Value, entity.IdTienda, product_found);
-
-                    dv.TipoVenta = product_found.TipoVenta;
-                    dv.CategoryProducty = product_found.IdCategoryNavigation.Description;
                 }
 
-                if (string.IsNullOrEmpty(entity.SaleNumber)) // cuando es multiple formas de pago
-                {
-                    entity.SaleNumber = await GetLastSerialNumberSale();
-                }
-                entity.RegistrationDate = TimeHelper.GetArgentinaTime();
-
-                await _dbcontext.Sales.AddAsync(entity);
-                await _dbcontext.SaveChangesAsync();
-
-                return entity;
+                dv.TipoVenta = product_found.TipoVenta;
+                dv.CategoryProducty = product_found.IdCategoryNavigation.Description;
             }
-            catch (Exception e)
+
+            if (string.IsNullOrEmpty(entity.SaleNumber)) // cuando es multiple formas de pago
             {
-                throw;
+                entity.SaleNumber = await GetLastSerialNumberSale();
             }
+            entity.RegistrationDate = TimeHelper.GetArgentinaTime();
+
+            await _dbcontext.Sales.AddAsync(entity);
+            await _dbcontext.SaveChangesAsync();
+
+            return entity;
+
         }
 
 

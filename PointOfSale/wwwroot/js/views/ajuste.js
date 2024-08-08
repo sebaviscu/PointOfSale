@@ -20,6 +20,7 @@
     youtube: "",
     codigoSeguridad: "",
     imprimirDefault: false,
+    controlStock: false,
     nombreTiendaTicket: "",
     nombreImpresora: "",
     minimoIdentificarConsumidor: 0
@@ -65,6 +66,7 @@ $(document).ready(function () {
                 $("#txtMinimoIdentificarConsumidor").val(model.minimoIdentificarConsumidor);
                 $("#cboNombreImpresora").val(model.nombreImpresora);
                 document.getElementById('switchImprimirDefault').checked = model.imprimirDefault;
+                document.getElementById('switchControlStock').checked = model.controlStock;
 
                 if (model.modificationUser == null)
                     document.getElementById("divModif").style.display = 'none';
@@ -125,8 +127,12 @@ $("#btnSave").on("click", function () {
     model["twitter"] = $("#txtTwitter").val();
     model["youtube"] = $("#txtYouTube").val();
 
-    const checkboxSwitchImprimirDefault = document.getElementById('switchImprimirDefault');
+    let checkboxSwitchImprimirDefault = document.getElementById('switchImprimirDefault');
     model["imprimirDefault"] = checkboxSwitchImprimirDefault.checked;
+
+    let checkboxSwitchControlStock = document.getElementById('switchControlStock');
+    model["controlStock"] = checkboxSwitchControlStock.checked;
+
     model["codigoSeguridad"] = $("#txtCodigoSeguridad").val();
     model["nombreTiendaTicket"] = $("#txtNombreTiendaTicket").val();
     model["minimoIdentificarConsumidor"] = $("#txtMinimoIdentificarConsumidor").val();

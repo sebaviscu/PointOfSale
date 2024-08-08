@@ -17,6 +17,7 @@ namespace PointOfSale.Business.Services
         private readonly ITypeDocumentSaleService _rTypeNumber;
         private readonly IProductService _rProduct;
         private readonly ITurnoService _turnoService;
+        private readonly IAjusteService _ajustesService;
 
         public SaleService(
             IGenericRepository<Product> repositoryProduct,
@@ -25,7 +26,8 @@ namespace PointOfSale.Business.Services
             ITypeDocumentSaleService rTypeNumber,
             IProductService rProduct,
             ITurnoService turnoService,
-            IGenericRepository<ListaPrecio> repositoryListaPrecio)
+            IGenericRepository<ListaPrecio> repositoryListaPrecio,
+            IAjusteService ajustesService)
         {
             _repositoryProduct = repositoryProduct;
             _repositorySale = repositorySale;
@@ -34,6 +36,7 @@ namespace PointOfSale.Business.Services
             _rProduct = rProduct;
             _turnoService = turnoService;
             _repositoryListaPrecio = repositoryListaPrecio;
+            _ajustesService = ajustesService;
         }
 
         public async Task<List<Product>> GetProducts(string search)
@@ -95,7 +98,7 @@ namespace PointOfSale.Business.Services
                     (p.Producto.BarCode.Contains(search) || p.Producto.Description.Contains(search)));
             }
 
-            return  queryListaPrecio.Include(_ => _.Producto).ToList();
+            return queryListaPrecio.Include(_ => _.Producto).ToList();
         }
 
 
@@ -158,7 +161,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<Cliente>> GetClients(string search)
         {
-            IQueryable<Cliente> query = await _repositoryCliente.Query(p => p.IsActive && 
+            IQueryable<Cliente> query = await _repositoryCliente.Query(p => p.IsActive &&
            string.Concat(p.Cuil, p.Nombre).Contains(search));
 
             return query.Include(_ => _.ClienteMovimientos).ToList();
@@ -166,15 +169,9 @@ namespace PointOfSale.Business.Services
 
         public async Task<Sale> Register(Sale entity)
         {
-            try
-            {
-                var sale = await _repositorySale.Register(entity);
-                return sale;
-            }
-            catch
-            {
-                throw;
-            }
+            var ajustes = await _ajustesService.GetAjustes(entity.IdTienda);
+            var sale = await _repositorySale.Register(entity, ajustes);
+            return sale;
         }
 
         public async Task<List<Sale>> SaleHistory(string SaleNumber, string StarDate, string EndDate, string presupuestos)

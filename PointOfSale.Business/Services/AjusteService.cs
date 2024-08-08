@@ -78,6 +78,7 @@ namespace PointOfSale.Business.Services
 
             Ajustes_found.CodigoSeguridad = entity.CodigoSeguridad;
             Ajustes_found.ImprimirDefault = entity.ImprimirDefault;
+            Ajustes_found.ControlStock = entity.ControlStock;
             Ajustes_found.NombreTiendaTicket = entity.NombreTiendaTicket;
             Ajustes_found.NombreImpresora = entity.NombreImpresora;
             Ajustes_found.MinimoIdentificarConsumidor = entity.MinimoIdentificarConsumidor;

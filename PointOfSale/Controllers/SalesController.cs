@@ -207,87 +207,24 @@ namespace PointOfSale.Controllers
                 var nombreImpresora = string.Empty;
                 var ticket = string.Empty;
 
-                ClaimsPrincipal claimuser = HttpContext.User;
-
-                string idUsuario = claimuser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-                string idTurno = claimuser.Claims.FirstOrDefault(c => c.Type == "Turno")?.Value;
-
-                model.IdUsers = int.Parse(idUsuario);
-                model.IdTurno = int.Parse(idTurno);
-                model.IdTienda = user.IdTienda;
+                RegistrationSetClaimProperties(model, user);
 
                 Sale sale_created = await _saleService.Register(_mapper.Map<Sale>(model));
 
-                if (model.ImprimirTicket)
-                {
-                    var tienda = await _tiendaService.Get(user.IdTienda);
-                    ticket = _ticketService.TicketSale(sale_created, tienda);
-                    nombreImpresora = tienda.NombreImpresora;
-                }
+                await RegistrarionClient(model, user.UserName, user.IdTienda, sale_created);
 
-                if (model.ClientId.HasValue)
-                {
-                    var mov = await _clienteService.RegistrarMovimiento(model.ClientId.Value, model.Total.Value, user.UserName, user.IdTienda, sale_created.IdSale, model.TipoMovimiento.Value);
+                await RegistrationMultiplesPagos(model, sale_created);
 
-                    sale_created.IdClienteMovimiento = mov.IdClienteMovimiento;
-                    sale_created = await _saleService.Edit(sale_created);
-                }
+                await RegistrationFacturar(model, user.UserName, sale_created);
 
-                if (model.MultiplesFormaDePago != null && model.MultiplesFormaDePago.Count > 1)
-                {
-                    foreach (var f in model.MultiplesFormaDePago.Skip(1))
-                    {
-                        var s = new Sale
-                        {
-                            Total = f.Total,
-                            RegistrationDate = sale_created.RegistrationDate,
-                            IdTienda = sale_created.IdTienda,
-                            SaleNumber = sale_created.SaleNumber,
-                            IdTypeDocumentSale = f.FormaDePago,
-                            IdTurno = sale_created.IdTurno
-                        };
+                (nombreImpresora, ticket) = await RegistrationTicketPrinting(model, user.IdTienda, sale_created);
 
-                        await _saleService.Register(s);
-
-                        var tipoVentaMult = await _typeDocumentSaleService.Get(f.FormaDePago);
-
-                        // Si es necesario facturar, se debe hacer aquí
-                        //if ((int)tipoVentaMult.TipoFactura < 3)
-                        //{
-                        //    var factura = new FacturaAFIP();
-                        //    factura.Cabecera = new CabeceraFacturaAFIP()
-                        //    {
-                        //        CantidadRegistros = 1,
-                        //        PuntoVenta = 1,
-                        //        TipoComprobante = TipoComprobante.Factura_A
-                        //    };
-
-                        //    //var facturacionResponse = await _afipFacturacionService.FacturarAsync(factura);
-                        //}
-
-                    }
-                }
-
-                var tipoVenta = await _typeDocumentSaleService.Get(sale_created.IdTypeDocumentSale.Value);
-
-                if ((int)tipoVenta.TipoFactura < 3)
-                {
-                    sale_created.TypeDocumentSaleNavigation = tipoVenta;
-
-                    var facturaEmitidaResponse = await _afipFacturacionService.Facturar(sale_created, model.IdCuilFactura, model.IdClienteFactura, user.UserName);
-                    sale_created.IdFacturaEmitida = facturaEmitidaResponse.IdFacturaEmitida;
-                    sale_created = await _saleService.Edit(sale_created);
-                }
-
-
-
-
-                model = _mapper.Map<VMSale>(sale_created);
-                model.NombreImpresora = nombreImpresora;
-                model.Ticket = ticket;
+                var modelResponde = _mapper.Map<VMSale>(sale_created);
+                modelResponde.NombreImpresora = nombreImpresora;
+                modelResponde.Ticket = ticket;
 
                 gResponse.State = true;
-                gResponse.Object = model;
+                gResponse.Object = modelResponde;
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
@@ -298,7 +235,76 @@ namespace PointOfSale.Controllers
                 _logger.LogError(ex, "{ErrorMessage} Request: {ModelRequest}", errorMessage, model);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
+        }
 
+        private async Task<(string nombreImpresora, string ticket)> RegistrationTicketPrinting(VMSale model, int idTienda, Sale saleCreated)
+        {
+            if (!model.ImprimirTicket)
+            {
+                return (string.Empty, string.Empty);
+            }
+
+            var tienda = await _tiendaService.Get(idTienda);
+            var ticket = _ticketService.TicketSale(saleCreated, tienda);
+            return (tienda.NombreImpresora, ticket);
+        }
+
+        private void RegistrationSetClaimProperties(VMSale model, (bool Resultado, string UserName, int IdTienda, ListaDePrecio IdListaPrecios) user)
+        {
+            ClaimsPrincipal claimuser = HttpContext.User;
+
+            string idUsuario = claimuser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            string idTurno = claimuser.Claims.FirstOrDefault(c => c.Type == "Turno")?.Value;
+
+            model.IdUsers = int.Parse(idUsuario);
+            model.IdTurno = int.Parse(idTurno);
+            model.IdTienda = user.IdTienda;
+        }
+
+        private async Task RegistrationFacturar(VMSale model, string registrationUser, Sale sale_created)
+        {
+            var tipoVenta = await _typeDocumentSaleService.Get(sale_created.IdTypeDocumentSale.Value);
+
+            if ((int)tipoVenta.TipoFactura < 3)
+            {
+                sale_created.TypeDocumentSaleNavigation = tipoVenta;
+
+                var facturaEmitidaResponse = await _afipFacturacionService.Facturar(sale_created, model.IdCuilFactura, model.IdClienteFactura, registrationUser);
+                sale_created.IdFacturaEmitida = facturaEmitidaResponse.IdFacturaEmitida;
+                _ = await _saleService.Edit(sale_created);
+            }
+        }
+
+        private async Task RegistrationMultiplesPagos(VMSale model, Sale sale_created)
+        {
+            if (model.MultiplesFormaDePago != null && model.MultiplesFormaDePago.Count > 1)
+            {
+                foreach (var f in model.MultiplesFormaDePago.Skip(1))
+                {
+                    var s = new Sale
+                    {
+                        Total = f.Total,
+                        RegistrationDate = sale_created.RegistrationDate,
+                        IdTienda = sale_created.IdTienda,
+                        SaleNumber = sale_created.SaleNumber,
+                        IdTypeDocumentSale = f.FormaDePago,
+                        IdTurno = sale_created.IdTurno
+                    };
+
+                    await _saleService.Register(s);
+                }
+            }
+        }
+
+        private async Task RegistrarionClient(VMSale model, string registrationUser, int IdTienda, Sale sale_created)
+        {
+            if (model.ClientId.HasValue)
+            {
+                var mov = await _clienteService.RegistrarMovimiento(model.ClientId.Value, model.Total.Value, registrationUser, IdTienda, sale_created.IdSale, model.TipoMovimiento.Value);
+
+                sale_created.IdClienteMovimiento = mov.IdClienteMovimiento;
+                _ = await _saleService.Edit(sale_created);
+            }
         }
 
         [HttpPost]

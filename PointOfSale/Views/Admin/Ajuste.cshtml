@@ -233,54 +233,70 @@
                                 <div class="card-header" style="padding-top: 30px; background-color: rgba(0, 0, 0, 0.03);border-bottom: 1px solid #e5e9f2">
                                     <h4>Ventas</h4>
                                 </div>
-                                <div class="card-body row" style="padding: 30px;">
+                                <div class="card-body" style="padding: 30px;">
 
-                                    <div class="row col-md-12">
-                                        <div class="col-sm-6">
-                                            <div class="form-group">
-                                                <label for="txtCodigoSeguridad">Codigo de Seguridad</label>
-                                                <div class="password-wrapper">
-                                                    <input type="password" class="form-control form-control-sm" id="txtCodigoSeguridad" name="Codigo de Seguridad">
-                                                    <button id="togglePassword">
-                                                        <span class="mdi mdi-eye mdi-24px" id="eyeIcon" style="width: 20px; height: 20px;"></span>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6 text-center" style="align-content: end;">
-                                            <div class="form-group">
-                                                <div class="form-check form-switch">
-                                                    <input class="form-check-input" type="checkbox" role="switch" id="switchImprimirDefault">
-                                                    <label class="form-check-label" for="switchImprimirDefault">Imprimir por defecto</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row col-md-12">
-                                        <div class="col-sm-6">
-                                            <div class="form-group">
-                                                <label for="txtImpresora">Nombre Impresora de Ticket</label>
-                                                <select class="form-control form-control-sm" id="cboNombreImpresora" name="Impresora Ticket"></select>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="form-group">
-                                                <label for="txtNombreTiendaTicket">Nombre de Tienda en Ticket</label>
-                                                <div class="password-wrapper">
-                                                    <input type="text" class="form-control form-control-sm" id="txtNombreTiendaTicket" name="Nombre de Tienda en Ticket">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row col-md-12">
-                                        <div class="col-sm-6">
-                                            <div class="form-group">
-                                                <label for="txtMinimoIdentificarConsumidor">Minimo Identificar Consumidor Final</label>
-                                                <div class="input-group input-group-sm">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">$</span>
+                                    <div class="row ">
+                                        <div class="col-md-12">
+                                            <div class="row ">
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label for="txtCodigoSeguridad">Codigo de Seguridad</label>
+                                                        <div class="password-wrapper">
+                                                            <input type="password" class="form-control form-control-sm" id="txtCodigoSeguridad" name="Codigo de Seguridad">
+                                                            <button id="togglePassword">
+                                                                <span class="mdi mdi-eye mdi-24px" id="eyeIcon" style="width: 20px; height: 20px;"></span>
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                    <input type="number" step="1" min="0" class="form-control form-control-sm" id="txtMinimoIdentificarConsumidor" name="Minimo Identificar Consumidor">
+                                                </div>
+                                                <div class="col-sm-4 text-center" style="align-content: end;">
+                                                    <div class="form-group">
+                                                        <div class="form-check form-switch">
+                                                            <input class="form-check-input" type="checkbox" role="switch" id="switchImprimirDefault">
+                                                            <label class="form-check-label" for="switchImprimirDefault">Imprimir por defecto</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 text-center" style="align-content: end;">
+                                                    <div class="form-group">
+                                                        <div class="form-check form-switch">
+                                                            <input class="form-check-input" type="checkbox" role="switch" id="switchControlStock">
+                                                            <label class="form-check-label" for="switchControlStock">Control Stock</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row ">
+                                        <div class="col-md-12">
+                                            <div class="row ">
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label for="txtImpresora">Nombre Impresora de Ticket</label>
+                                                        <select class="form-control form-control-sm" id="cboNombreImpresora" name="Impresora Ticket"></select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label for="txtNombreTiendaTicket">Nombre de Tienda en Ticket</label>
+                                                        <div class="password-wrapper">
+                                                            <input type="text" class="form-control form-control-sm" id="txtNombreTiendaTicket" name="Nombre de Tienda en Ticket">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row col-md-12">
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label for="txtMinimoIdentificarConsumidor">Minimo Identificar Consumidor Final</label>
+                                                        <div class="input-group input-group-sm">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">$</span>
+                                                            </div>
+                                                            <input type="number" step="1" min="0" class="form-control form-control-sm" id="txtMinimoIdentificarConsumidor" name="Minimo Identificar Consumidor">
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

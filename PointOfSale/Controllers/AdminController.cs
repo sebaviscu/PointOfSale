@@ -1565,6 +1565,7 @@ namespace PointOfSale.Controllers
                 vmAjusteWeb.MinimoIdentificarConsumidor = vmAjuste.MinimoIdentificarConsumidor;
                 vmAjusteWeb.ImprimirDefault = vmAjuste.ImprimirDefault;
                 vmAjusteWeb.NombreTiendaTicket = vmAjuste.NombreTiendaTicket;
+                vmAjusteWeb.ControlStock = vmAjuste.ControlStock;
                 vmAjusteWeb.IdTienda = vmAjuste.IdTienda;
 
                 gResponse.Object = vmAjusteWeb;
@@ -1607,6 +1608,7 @@ namespace PointOfSale.Controllers
                 model.MinimoIdentificarConsumidor = edited_Ajuste.MinimoIdentificarConsumidor;
                 model.ImprimirDefault = edited_Ajuste.ImprimirDefault;
                 model.NombreTiendaTicket = edited_Ajuste.NombreTiendaTicket;
+                model.ControlStock = edited_Ajuste.ControlStock;
                 model.IdTienda = edited_Ajuste.IdTienda;
 
                 gResponse.State = true;
