@@ -236,10 +236,9 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al registrar venta.";
                 gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {ModelRequest}", errorMessage, model);
+                gResponse.Message = ex.ToString();
+                _logger.LogError(ex, "Error al registrar venta: {ErrorMessage} Request: {ModelRequest}", ex.ToString(), model);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
         }

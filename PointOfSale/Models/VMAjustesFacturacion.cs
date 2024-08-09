@@ -1,4 +1,4 @@
-﻿using PointOfSale.Model;
+﻿using PointOfSale.Model.Afip.Factura;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Models

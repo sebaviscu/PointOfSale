@@ -83,15 +83,9 @@ public class Program
             builder.Services.AddScoped<IAfipService, AfipService>();
             builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 
-            string certificatePath = @"C:\Users\sebastian.viscusso\Desktop\Seba\Certificados AFIP generados\certificado.pfx";
-
             builder.Services.AddAFIPConfiguration(x =>
             {
-                x.CertificatePassword = "password";
-                x.Cuit = 23365081999;
                 x.IsProdEnvironment = false;
-                x.Verbose = false;
-                x.x509CertificateFilePath = certificatePath;
             });
 
             builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));

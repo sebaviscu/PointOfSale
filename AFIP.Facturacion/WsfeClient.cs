@@ -1,6 +1,7 @@
 ﻿using AFIP.Facturacion.Configuration;
 using AfipServiceReference;
 using Microsoft.Extensions.Options;
+using PointOfSale.Model;
 using System.ServiceModel;
 using System.Threading.Tasks;
 
@@ -22,10 +23,10 @@ namespace AFIP.Facturacion
             _loginCmsClient = loginCmsClient;
         }
 
-        private async Task<FEAuthRequest> GetAuthRequestAsync()
+        private async Task<FEAuthRequest> GetAuthRequestAsync(AjustesFacturacion ajustes)
         {
-            var ticket = await _loginCmsClient.GetWsaaTicket();
-            return new FEAuthRequest { Cuit = _configuration.Value.Cuit, Sign = ticket.Sign, Token = ticket.Token };
+            var ticket = await _loginCmsClient.GetWsaaTicket(ajustes);
+            return new FEAuthRequest { Cuit = ajustes.Cuit.Value, Sign = ticket.Sign, Token = ticket.Token };
         }
 
         private ServiceSoapClient GetServiceSoapClient()
@@ -35,45 +36,20 @@ namespace AFIP.Facturacion
             return wsfeService;
         }
 
-        public async Task<FECompUltimoAutorizadoResponse> FECompUltimoAutorizadoAsync(int ptoVta, int cbteTipo)
+        public async Task<FECompUltimoAutorizadoResponse> FECompUltimoAutorizadoAsync(AjustesFacturacion ajustes, int ptoVta, int cbteTipo)
         {
             var wsfeService = GetServiceSoapClient();
-            var auth = await GetAuthRequestAsync();
+            var auth = await GetAuthRequestAsync(ajustes);
 
             return await wsfeService.FECompUltimoAutorizadoAsync(auth, ptoVta, cbteTipo);
         }
 
-        public async Task<FECAESolicitarResponse> FECAESolicitarAsync(FECAERequest feCaeReq)
+        public async Task<FECAESolicitarResponse> FECAESolicitarAsync(AjustesFacturacion ajustes ,FECAERequest feCaeReq)
         {
             var wsfeService = GetServiceSoapClient();
-            var auth = await GetAuthRequestAsync();
+            var auth = await GetAuthRequestAsync(ajustes);
 
             return await wsfeService.FECAESolicitarAsync(auth, feCaeReq);
-        }
-
-
-        public async Task<FEParamGetPtosVentaResponse> FEParamGetPtosVentaAsync()
-        {
-            var wsfeService = GetServiceSoapClient();
-            var auth = await GetAuthRequestAsync();
-
-            return await wsfeService.FEParamGetPtosVentaAsync(auth);
-        }
-
-        public async Task<FEParamGetTiposMonedasResponse> FEParamGetTiposMonedasAsync()
-        {
-            var wsfeService = GetServiceSoapClient();
-            var auth = await GetAuthRequestAsync();
-
-            return await wsfeService.FEParamGetTiposMonedasAsync(auth);
-        }
-
-        public async Task<FEParamGetTiposDocResponse> FEParamGetTiposDocAsync()
-        {
-            var wsfeService = GetServiceSoapClient();
-            var auth = await GetAuthRequestAsync();
-
-            return await wsfeService.FEParamGetTiposDocAsync(auth);
         }
     }
 }

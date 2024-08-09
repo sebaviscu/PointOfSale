@@ -270,9 +270,9 @@ $("#btnSaveAjustesFacturacion").on("click", function () {
     model["puntoVenta"] = parseInt($("#txtPuntoVentaCertificado").val());
     model["condicionIva"] = parseInt($("#cboCondicionIva").val());
     model["certificadoPassword"] = $("#txtContraseñaCertificado").val();
-    model["cuit"] = parseInt($("#txtCuilCertificado").val());
-    model["certificadoFechaInicio"] = parseInt($("#txtFechaIniCert").val());
-    model["certificadoFechaCaducidad"] = parseInt($("#txtFechaCadCert").val());
+    //model["cuit"] = parseInt($("#txtCuilCertificado").val());
+    //model["certificadoFechaInicio"] = parseInt($("#txtFechaIniCert").val());
+    //model["certificadoFechaCaducidad"] = parseInt($("#txtFechaCadCert").val());
 
     const inputCertificado = document.getElementById('fileCertificado');
 

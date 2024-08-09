@@ -1,6 +1,8 @@
 ﻿using AFIP.Facturacion.Configuration;
+using AFIP.Facturacion.Services;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using PointOfSale.Model;
 using System;
 using System.IO;
 using System.Net;
@@ -29,10 +31,9 @@ namespace AFIP.Facturacion
         public string WsaaUrlProd { get; set; } = "https://wsaa.afip.gov.ar/ws/services/LoginCms";
 
 
-        public LoginCmsClient(IOptions<AFIPConfigurationOption> configuration, Services.IFileStorageService fileStorageService)
+        public LoginCmsClient(IOptions<AFIPConfigurationOption> configuration)
         {
             _configuration = configuration;
-            _fileStorageService = fileStorageService;
         }
 
 
@@ -54,19 +55,17 @@ namespace AFIP.Facturacion
         private bool VerboseMode = true;
         private static uint GlobalUniqueID = 0; // OJO! NO ES THREAD-SAFE
         private readonly IOptions<AFIPConfigurationOption> _configuration;
-        private readonly Services.IFileStorageService _fileStorageService;
 
         private WsaaTicket _ticket;
 
 
-        public async Task<WsaaTicket> GetWsaaTicket()
+        public async Task<WsaaTicket> GetWsaaTicket(AjustesFacturacion ajustes)
         {
             if (_ticket == null || _ticket.ExpirationTime <= DateTimeNowArg.AddMinutes(1))
             {
-                _ticket = await LoginCmsAsync("wsfe",
-                _configuration.Value.x509CertificateFilePath,
-                _configuration.Value.CertificatePassword,
-                _configuration.Value.Verbose);
+                var pathCertificate = FileStorageService.ObtenerRutaCertificado(ajustes);
+
+                _ticket = await LoginCmsAsync("wsfe", pathCertificate, ajustes.CertificadoPassword, false);
             }
 
             return _ticket;

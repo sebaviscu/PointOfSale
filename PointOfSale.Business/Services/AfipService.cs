@@ -1,21 +1,15 @@
 ﻿using PointOfSale.Data.Repository;
 using PointOfSale.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using AFIP.Facturacion.Model;
 using PointOfSale.Model.Afip.Factura;
 using AFIP.Facturacion.Services;
 using PointOfSale.Business.Contracts;
 using AFIP.Facturacion.Extensions;
-using PointOfSale.Business.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using static PointOfSale.Model.Enum;
 using Microsoft.AspNetCore.Http;
-using System.Security.Cryptography.X509Certificates;
 
 namespace PointOfSale.Business.Services
 {
@@ -45,17 +39,25 @@ namespace PointOfSale.Business.Services
                 throw new Exception("El tipo de documento no existe");
             }
 
+            var ajustes = await _ajusteService.GetAjustesFacturacion(sale_created.IdTienda);
+
+            var validCert = ValidateCertificate(ajustes);
+            if (validCert != string.Empty)
+            {
+                throw new Exception(validCert);
+            }
+
             var documentoAFacturar = (sale_created.TypeDocumentSaleNavigation.TipoFactura == TipoFactura.A && nroDocumento.HasValue)
                 ? nroDocumento.Value
                 : defaultDocumento;
 
             var tipoDoc = TipoComprobante.ConvertTipoFactura(sale_created.TypeDocumentSaleNavigation.TipoFactura);
 
-            var ultimoComprobanteResponse = await _afipFacturacionService.GetUltimoComprobanteAutorizadoAsync(ptoVenta, tipoDoc);
+            var ultimoComprobanteResponse = await _afipFacturacionService.GetUltimoComprobanteAutorizadoAsync(ajustes, ptoVenta, tipoDoc);
             var nroFactura = ultimoComprobanteResponse.CbteNro + 1;
 
             var factura = new FacturaAFIP(sale_created, tipoDoc, nroFactura, ptoVenta, documentoAFacturar);
-            var response = await _afipFacturacionService.FacturarAsync(factura);
+            var response = await _afipFacturacionService.FacturarAsync(ajustes, factura);
 
             var facturaEmitida = FacturaExtension.ToFacturaEmitida(response.FECAEDetResponse.FirstOrDefault());
             facturaEmitida.IdSale = sale_created.IdSale;
@@ -120,10 +122,30 @@ namespace PointOfSale.Business.Services
             return await _fileStorageService.ReplaceCertificateAsync(file, idTienda);
         }
 
-
         public VMX509Certificate2 GetCertificateAfipInformation(string certificatePath, string certificatePassword)
         {
             return _fileStorageService.GetCertificateAfipInformation(certificatePath, certificatePassword);
+        }
+
+        public string ValidateCertificate(AjustesFacturacion? ajustes)
+        {
+            var resp = string.Empty;
+            try
+            {
+                if (ajustes == null || !ajustes.IsValid)
+                {
+                    throw new Exception("Los ajustes de facturación no existen o estan incorrectos");
+                }
+
+                var path = FileStorageService.ObtenerRutaCertificado(ajustes);
+                FileStorageService.ExistCertificate(path);
+            }
+            catch (Exception e)
+            {
+                resp = e.Message;
+            }
+
+            return resp;
         }
     }
 }

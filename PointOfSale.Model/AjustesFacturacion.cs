@@ -25,5 +25,8 @@ namespace PointOfSale.Model
 
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }
+
+        public bool IsValid => Cuit.HasValue && Cuit.Value != 0 && Cuit.Value.ToString().Length == 11 && PuntoVenta.HasValue && PuntoVenta.Value != 0 && !string.IsNullOrEmpty(CertificadoPassword) && !string.IsNullOrEmpty(CertificadoNombre);
+
     }
 }

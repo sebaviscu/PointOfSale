@@ -9,8 +9,7 @@ namespace AFIP.Facturacion.Services
     public interface IFileStorageService
     {
         Task<string> ReplaceCertificateAsync(IFormFile file, int idTienda);
-        Task<string> ObtenerCertificadoAsync(AjustesFacturacion ajustesFacturacion);
-
         VMX509Certificate2 GetCertificateAfipInformation(string certificatePath, string certificatePassword);
+
     }
 }

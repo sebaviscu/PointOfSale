@@ -1801,14 +1801,39 @@ namespace PointOfSale.Controllers
             }
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> GetValidateCertificate()
+        {
+            var gResponse = new GenericResponse<string>();
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Encargado]);
+                var ajustes = await _ajusteService.GetAjustesFacturacion(user.IdTienda);
+                var resp = _afipService.ValidateCertificate(ajustes);
+
+                gResponse.Object = resp;
+                gResponse.State = resp == string.Empty;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = "Error en el certificado";
+                gResponse.State = false;
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
+                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+            }
+        }
+
         [HttpPut]
         public async Task<IActionResult> UpdateAjustesFacturacion([FromForm] IFormFile Certificado, [FromForm] string model)
         {
 
             GenericResponse<VMAjustesFacturacion> gResponse = new GenericResponse<VMAjustesFacturacion>();
-            var vmModel = JsonConvert.DeserializeObject<VMAjustesFacturacion>(model);
             try
             {
+                var vmModel = JsonConvert.DeserializeObject<VMAjustesFacturacion>(model);
                 var user = ValidarAutorizacion([Roles.Administrador]);
 
                 if (Certificado != null)
@@ -1828,7 +1853,6 @@ namespace PointOfSale.Controllers
                     }
                 }
 
-
                 vmModel.ModificationUser = user.UserName;
                 vmModel.IdTienda = user.IdTienda;
                 var ajustes = await _ajusteService.EditFacturacion(_mapper.Map<AjustesFacturacion>(vmModel));
@@ -1840,7 +1864,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al actualizar Tiendas";
+                var errorMessage = "Error al actualizar ajustes de facturacion";
                 gResponse.State = false;
                 gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
                 _logger.LogError(ex, "{ErrorMessage}. Request: {ModelRequest}", errorMessage, model.ToJson());

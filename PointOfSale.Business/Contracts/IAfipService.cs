@@ -23,5 +23,7 @@ namespace PointOfSale.Business.Contracts
         Task<string> ReplaceCertificateAsync(IFormFile file, int idTienda);
 
         VMX509Certificate2 GetCertificateAfipInformation(string certificatePath, string certificatePassword);
+
+        string ValidateCertificate(AjustesFacturacion? ajustes);
     }
 }

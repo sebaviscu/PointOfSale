@@ -21,7 +21,7 @@ namespace PointOfSale.Model.Afip.Factura
 
             if (match.Success)
             {
-                return match.Groups[1].Value;
+                return match.Groups[1].Value.Trim();
             }
             return null;
         }
