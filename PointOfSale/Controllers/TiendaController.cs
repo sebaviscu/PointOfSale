@@ -10,6 +10,8 @@ using static PointOfSale.Model.Enum;
 using NuGet.Protocol;
 using System.Security.Cryptography.X509Certificates;
 using PointOfSale.Business.Services;
+using Newtonsoft.Json;
+using PintOfSale.FileStorageService.Servicios;
 
 namespace PointOfSale.Controllers
 {
@@ -18,12 +20,14 @@ namespace PointOfSale.Controllers
         private readonly ITiendaService _TiendaService;
         private readonly IMapper _mapper;
         private readonly ILogger<TiendaController> _logger;
+        private readonly IFileStorageService _fileStorageService;
 
-        public TiendaController(ITiendaService TiendaService, IMapper mapper, ILogger<TiendaController> logger)
+        public TiendaController(ITiendaService TiendaService, IMapper mapper, ILogger<TiendaController> logger, IFileStorageService fileStorageService)
         {
             _TiendaService = TiendaService;
             _mapper = mapper;
             _logger = logger;
+            _fileStorageService = fileStorageService;
         }
 
         public IActionResult Tienda()
@@ -47,7 +51,7 @@ namespace PointOfSale.Controllers
 
                 var vmTiendaList = _mapper.Map<List<VMTienda>>(await _TiendaService.List());
 
-                
+
                 if (idTienda != null && idTienda != 0)
                 {
                     var tiendaActual = vmTiendaList.FirstOrDefault(_ => _.IdTienda == idTienda);
@@ -79,11 +83,12 @@ namespace PointOfSale.Controllers
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
 
-                var tienda = _mapper.Map<VMTienda>(await _TiendaService.Get(user.IdTienda));
+                var tienda = _mapper.Map<VMTienda>(await _TiendaService.GetWithPassword(user.IdTienda));
 
-                if (idTienda == user.IdTienda)
+                if (idTienda == user.IdTienda && !string.IsNullOrEmpty(tienda.CertificadoPassword))
                 {
-                    tienda.vMX509Certificate2 = _mapper.Map<VMX509Certificate2>(_TiendaService.GetCertificateAfipInformation()); // pasar url del certificado
+                    var certificatePath = await _fileStorageService.ObtenerRutaCertificadoAsync(idTienda);
+                    tienda.vMX509Certificate2 = _mapper.Map<VMX509Certificate2>(_TiendaService.GetCertificateAfipInformation(certificatePath, tienda.CertificadoPassword));
                 }
 
                 gResponse.Object = tienda;
@@ -124,13 +129,26 @@ namespace PointOfSale.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTienda(/*[FromForm] IFormFile photo,*/ [FromBody] VMTienda vmTienda)
+        public async Task<IActionResult> CreateTienda([FromForm] IFormFile Certificado, [FromForm] IFormFile Logo, [FromForm] string model)
         {
 
             GenericResponse<VMTienda> gResponse = new GenericResponse<VMTienda>();
+            var vmTienda = JsonConvert.DeserializeObject<VMTienda>(model);
+
             try
             {
                 ValidarAutorizacion([Roles.Administrador]);
+
+                //if (Certificado != null)
+                //{
+                //    var certificadoPath = Path.Combine(Directory.GetCurrentDirectory(), "Certificados", Certificado.FileName);
+                //    using (var stream = new FileStream(certificadoPath, FileMode.Create))
+                //    {
+                //        await Certificado.CopyToAsync(stream);
+                //    }
+                //    // Guarda la ruta del certificado en el objeto Tienda si es necesario
+                //    //vmTienda.CertificadoPath = certificadoPath;
+                //}
 
                 //VMTienda vmTienda = JsonConvert.DeserializeObject<VMTienda>(model);
 
@@ -166,37 +184,44 @@ namespace PointOfSale.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateTienda([FromBody] VMTienda vmTienda)
+        public async Task<IActionResult> UpdateTienda([FromForm] IFormFile Certificado, [FromForm] IFormFile Logo, [FromForm] string model)
         {
 
             GenericResponse<VMTienda> gResponse = new GenericResponse<VMTienda>();
+            var vmModel = JsonConvert.DeserializeObject<VMTienda>(model);
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
 
-                //VMTienda vmTienda = JsonConvert.DeserializeObject<VMTienda>(model);
+                if (Certificado != null)
+                {
+                    var nuevoProyectoPath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).FullName, "PintOfSale.FileStorageService");
+                    var certificadoDirectory = Path.Combine(nuevoProyectoPath, "Certificados", user.IdTienda.ToString() + "_Tienda");
 
-                //if (photo != null)
+                    await _fileStorageService.ReplaceFileAsync(Certificado, certificadoDirectory);
+
+                    _ = await _TiendaService.EditCertificate(vmModel.IdTienda, Certificado.FileName);
+                }
+
+                //if (Logo != null)
                 //{
-                //	using (var ms = new MemoryStream())
-                //	{
-                //		photo.CopyTo(ms);
-                //		var fileBytes = ms.ToArray();
-                //		vmTienda.Logo = fileBytes;
-                //	}
+                //    using (var ms = new MemoryStream())
+                //    {
+                //        Logo.CopyTo(ms);
+                //        var fileBytes = ms.ToArray();
+                //        vmModel.Logo = fileBytes;
+                //    }
                 //}
                 //else
-                //	vmTienda.Logo = null;
+                //    vmModel.Logo = null;
 
-                vmTienda.ModificationUser = user.UserName;
-                Tienda edited_Tienda = await _TiendaService.Edit(_mapper.Map<Tienda>(vmTienda));
+                vmModel.ModificationUser = user.UserName;
+                Tienda edited_Tienda = await _TiendaService.Edit(_mapper.Map<Tienda>(vmModel));
 
                 await UpdateClaimAsync("ListaPrecios", ((int)edited_Tienda.IdListaPrecio).ToString());
 
-                vmTienda = _mapper.Map<VMTienda>(edited_Tienda);
-
                 gResponse.State = true;
-                gResponse.Object = vmTienda;
+                gResponse.Object = _mapper.Map<VMTienda>(edited_Tienda);
                 gResponse.Message = string.Empty;
 
             }
@@ -205,7 +230,7 @@ namespace PointOfSale.Controllers
                 var errorMessage = "Error al actualizar Tiendas";
                 gResponse.State = false;
                 gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {ModelRequest}", errorMessage, vmTienda.ToJson());
+                _logger.LogError(ex, "{ErrorMessage}. Request: {ModelRequest}", errorMessage, model.ToJson());
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
 

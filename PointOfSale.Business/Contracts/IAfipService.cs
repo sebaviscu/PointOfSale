@@ -16,6 +16,6 @@ namespace PointOfSale.Business.Contracts
 
         Task<FacturaEmitida> GetById(int idFacturaEmitida);
 
-        string GenerateFacturaQR(FacturaEmitida factura);
+        Task<string> GenerateFacturaQR(FacturaEmitida factura);
     }
 }

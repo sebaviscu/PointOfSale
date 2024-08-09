@@ -11,6 +11,7 @@ using PointOfSale.Data.Repository;
 using PointOfSale.Utilities.Automapper;
 using System.Text.Json.Serialization;
 using PointOfSale.Controllers;
+using PintOfSale.FileStorageService.Servicios;
 
 public class Program
 {
@@ -81,6 +82,7 @@ public class Program
             builder.Services.AddScoped<IIvaService, IvaService>();
             builder.Services.AddScoped<IAjusteService, AjusteService>();
             builder.Services.AddScoped<IAfipService, AfipService>();
+            builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 
             string certificatePath = @"C:\Users\sebastian.viscusso\Desktop\Seba\Certificados AFIP generados\certificado.pfx";
 

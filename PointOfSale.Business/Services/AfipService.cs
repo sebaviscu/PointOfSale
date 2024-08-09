@@ -25,11 +25,13 @@ namespace PointOfSale.Business.Services
 
         private readonly IGenericRepository<FacturaEmitida> _repository;
         private readonly IAFIPFacturacionService _afipFacturacionService;
+        private readonly ITiendaService _tiendaService;
 
-        public AfipService(IGenericRepository<FacturaEmitida> repository, IAFIPFacturacionService afipFacturacionService)
+        public AfipService(IGenericRepository<FacturaEmitida> repository, IAFIPFacturacionService afipFacturacionService, ITiendaService tiendaService)
         {
             _repository = repository;
             _afipFacturacionService = afipFacturacionService;
+            _tiendaService = tiendaService;
         }
 
         public async Task<FacturaEmitida> Facturar(Sale sale_created, int? nroDocumento, int? idCliente, string registrationUser)
@@ -79,15 +81,17 @@ namespace PointOfSale.Business.Services
             return facturas.Include(_ => _.Sale).Include(_ => _.Sale.TypeDocumentSaleNavigation).FirstOrDefault();
         }
 
-        public string GenerateFacturaQR(FacturaEmitida factura)
+        public async Task<string> GenerateFacturaQR(FacturaEmitida factura)
         {
+            var tienda = await _tiendaService.Get(factura.IdTienda);
+
             var tipoComprobante = TipoComprobante.GetByDescription(factura.TipoFactura);
 
             var facturaQR = new FacturaQR
             {
                 ver = 1,
                 fecha = factura.FechaEmicion.ToString("yyyy-MM-dd"),
-                cuit = 23365081999, // CUIT del emisor
+                cuit = tienda.Cuit.Value,
                 ptoVta = factura.PuntoVenta,
                 tipoCmp = tipoComprobante.Id,
                 nroCmp = factura.NroFactura.GetValueOrDefault(),

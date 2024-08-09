@@ -1,4 +1,5 @@
-﻿using PointOfSale.Business.Contracts;
+﻿using Microsoft.IdentityModel.Tokens;
+using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
 using System.Drawing.Printing;
@@ -8,24 +9,24 @@ namespace PointOfSale.Business.Services
     public class TicketService : ITicketService
     {
 
-        public string TicketSale(Sale sale, Tienda tienda)
+        public string TicketSale(Sale sale, Ajustes ajustes)
         {
-            return CreateTicket(tienda, sale.RegistrationDate.Value, sale.Total.Value, sale.DetailSales, sale.DescuentoRecargo);
+            return CreateTicket(ajustes, sale.RegistrationDate.Value, sale.Total.Value, sale.DetailSales, sale.DescuentoRecargo);
         }
 
-        public string TicketVentaWeb(VentaWeb sale, Tienda tienda)
+        public string TicketVentaWeb(VentaWeb sale, Ajustes ajustes)
         {
-            return CreateTicket(tienda, sale.RegistrationDate.Value, sale.Total.Value, sale.DetailSales, null);
+            return CreateTicket(ajustes, sale.RegistrationDate.Value, sale.Total.Value, sale.DetailSales, null);
         }
         public void ImprimirTiket(string impresora, string line)
         {
             PrinterModel.SendStringToPrinter(impresora, line);
         }
 
-        private string CreateTicket(Tienda tienda, DateTime registrationDate, decimal total, ICollection<DetailSale> detailSales, decimal? descuentoRecargo)
+        private string CreateTicket(Ajustes ajustes, DateTime registrationDate, decimal total, ICollection<DetailSale> detailSales, decimal? descuentoRecargo)
         {
 
-            if (string.IsNullOrEmpty(tienda.NombreImpresora))
+            if (string.IsNullOrEmpty(ajustes.NombreImpresora))
             {
                 return string.Empty;
             }
@@ -33,7 +34,7 @@ namespace PointOfSale.Business.Services
             var Ticket1 = new TicketModel();
             Ticket1.TextoIzquierda("");
 
-            Ticket1.TextoCentro(tienda.Nombre.ToUpper());
+            Ticket1.TextoCentro(ajustes.NombreTiendaTicket.ToUpper());
 
             Ticket1.LineasGuion();
             Ticket1.TextoIzquierda("No Fac: 0120102");

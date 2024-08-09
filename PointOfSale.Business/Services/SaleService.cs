@@ -17,7 +17,6 @@ namespace PointOfSale.Business.Services
         private readonly ITypeDocumentSaleService _rTypeNumber;
         private readonly IProductService _rProduct;
         private readonly ITurnoService _turnoService;
-        private readonly IAjusteService _ajustesService;
 
         public SaleService(
             IGenericRepository<Product> repositoryProduct,
@@ -26,8 +25,7 @@ namespace PointOfSale.Business.Services
             ITypeDocumentSaleService rTypeNumber,
             IProductService rProduct,
             ITurnoService turnoService,
-            IGenericRepository<ListaPrecio> repositoryListaPrecio,
-            IAjusteService ajustesService)
+            IGenericRepository<ListaPrecio> repositoryListaPrecio)
         {
             _repositoryProduct = repositoryProduct;
             _repositorySale = repositorySale;
@@ -36,7 +34,6 @@ namespace PointOfSale.Business.Services
             _rProduct = rProduct;
             _turnoService = turnoService;
             _repositoryListaPrecio = repositoryListaPrecio;
-            _ajustesService = ajustesService;
         }
 
         public async Task<List<Product>> GetProducts(string search)
@@ -167,9 +164,8 @@ namespace PointOfSale.Business.Services
             return query.Include(_ => _.ClienteMovimientos).ToList();
         }
 
-        public async Task<Sale> Register(Sale entity)
+        public async Task<Sale> Register(Sale entity, Ajustes ajustes)
         {
-            var ajustes = await _ajustesService.GetAjustes(entity.IdTienda);
             var sale = await _repositorySale.Register(entity, ajustes);
             return sale;
         }

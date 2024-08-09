@@ -1,4 +1,4 @@
-﻿let tableData;
+﻿let tableDataTienda;
 let rowSelectedTienda;
 
 const BASIC_MODEL_TIENDA = {
@@ -7,12 +7,13 @@ const BASIC_MODEL_TIENDA = {
     idListaPrecio: 1,
     modificationDate: null,
     modificationUser: null,
-    email: "",
     telefono: "",
     direccion: "",
-    nombreImpresora: "",
     logo: "",
-    cuit: ""
+    cuit: 0,
+    condicionIva: null,
+    puntoVenta: null,
+    certificadoPassword: ""
 }
 
 let isHealthy = false;
@@ -22,7 +23,7 @@ $(document).ready(function () {
     $("#facturacion").hide();
     $("#carroCompras").hide();
 
-    tableData = $("#tbData").DataTable({
+    tableDataTienda = $("#tbData").DataTable({
         responsive: true,
         "ajax": {
             "url": "/Tienda/GetTienda",
@@ -39,7 +40,7 @@ $(document).ready(function () {
                 "data": "nombre", render: function (data, type, row) {
                     let tiendaActualBadge = '';
                     if (row.tiendaActual == 1) {
-                        tiendaActualBadge = '<span class="badge badge-info">Actual</span>';
+                        tiendaActualBadge = '<span class="mdi mdi-star"></span>';
                     }
                     return `${data} ${tiendaActualBadge}`;
                 }
@@ -73,14 +74,8 @@ $(document).ready(function () {
             }, 'pageLength'
         ]
     });
-
-    $("#cboNombreImpresora").append(
-        $("<option>").val('').text('')
-    )
-
-
-    var $passwordInput = $('#txtContraseñaCertificado');
-    var $togglePasswordButton = $('#togglePassword');
+    let $passwordInput = $('#txtContraseñaCertificado');
+    let $togglePasswordButton = $('#togglePassword');
 
     $togglePasswordButton.on('mousedown', function () {
         $passwordInput.attr('type', 'text');
@@ -95,32 +90,8 @@ $(document).ready(function () {
         e.preventDefault();
     });
 
-    //healthcheck();
 })
 
-//async function healthcheck() {
-//    isHealthy = await getHealthcheck();
-
-//    if (isHealthy) {
-//        document.getElementById("lblErrorPrintService").style.display = 'none';
-//    } else {
-//        document.getElementById("lblErrorPrintService").style.display = '';
-//    }
-//}
-
-//async function getPrintersTienda() {
-//    try {
-//        let printers = await getPrinters();
-
-//        printers.forEach(printer => {
-//            $("#cboNombreImpresora").append(
-//                $("<option>").val(printer).text(printer)
-//            );
-//        });
-//    } catch (error) {
-//        console.error('Error fetching printers:', error);
-//    }
-//}
 
 const openModalTienda = (model = BASIC_MODEL_TIENDA) => {
 
@@ -128,11 +99,12 @@ const openModalTienda = (model = BASIC_MODEL_TIENDA) => {
     $("#txtId").val(model.idTienda);
     $("#txtNombre").val(model.nombre);
     $("#cboListaPrecios").val(model.idListaPrecio);
-    $("#cboNombreImpresora").val(model.nombreImpresora);
 
-    $("#txtEmail").val(model.email);
     $("#txtTelefono").val(model.telefono);
     $("#txtDireccion").val(model.direccion);
+    $("#cboCondicionIva").val(model.condicionIva);
+    $("#txtPuntoVenta").val(model.puntoVenta);
+    $("#txtContraseñaCertificado").val(model.certificadoPassword);
 
     if (model.vMX509Certificate2 != null) {
         $("#txtFechaIniCert").val(formatDateToDDMMYYYY(model.vMX509Certificate2.notBefore));
@@ -159,12 +131,10 @@ const openModalTienda = (model = BASIC_MODEL_TIENDA) => {
 function formatDateToDDMMYYYY(isoDate) {
     const date = new Date(isoDate);
 
-    // Obtener los componentes de la fecha
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const year = date.getFullYear();
 
-    // Formatear la fecha como dd/mm/yyyy
     return `${day}/${month}/${year}`;
 }
 $("#btnNew").on("click", function () {
@@ -188,26 +158,29 @@ $("#btnSave").on("click", function () {
     model["idListaPrecio"] = parseInt($("#cboListaPrecios").val());
 
     model["telefono"] = $("#txtTelefono").val();
-    model["email"] = $("#txtEmail").val();
     model["direccion"] = $("#txtDireccion").val();
-    model["nombreImpresora"] = $("#cboNombreImpresora").val();
-    model["cuit"] = $("#txtCuit").val();
+    model["puntoVenta"] = parseInt($("#txtPuntoVenta").val());
+    model["condicionIva"] = parseInt($("#cboCondicionIva").val());
+    model["cuit"] = parseInt($("#txtSubjectCert").val()); // viene del certificado
+    model["certificadoPassword"] = $("#txtContraseñaCertificado").val();
+    
+    const inputCertificado = document.getElementById('fileCertificado');
+    const inputLogo = document.getElementById('fileLogo');
 
-    //const inputPhoto = document.getElementById('txtLogo');
-    //model["photo"] = inputPhoto.files[0];
+    const formData = new FormData();
+    formData.append('Certificado', inputCertificado.files[0]);
+    formData.append('Logo', inputLogo.files[0]);
+    formData.append('model', JSON.stringify(model));
 
     $("#modalData").find("div.modal-content").LoadingOverlay("show")
 
-
-    const formData = new FormData();
-    //formData.append('photo', inputPhoto.files[0]);
-    formData.append('model', JSON.stringify(model));
+    const url = model.idTienda == 0 ? "/Tienda/CreateTienda" : "/Tienda/UpdateTienda";
+    const method = model.idTienda == 0 ? "POST" : "PUT";
 
     if (model.idTienda == 0) {
-        fetch("/Tienda/CreateTienda", {
-            method: "POST",
-            headers: { 'Content-Type': 'application/json;charset=utf-8' },
-            body: JSON.stringify(model)
+        fetch(url, {
+            method: method,
+            body: formData
         }).then(response => {
             $("#modalData").find("div.modal-content").LoadingOverlay("hide")
             return response.json();
@@ -215,7 +188,7 @@ $("#btnSave").on("click", function () {
 
             if (responseJson.state) {
 
-                tableData.row.add(responseJson.object).draw(false);
+                tableDataTienda.row.add(responseJson.object).draw(false);
                 $("#modalData").modal("hide");
                 swal("Exitoso!", "La tienda fué creada", "success");
 
@@ -227,10 +200,9 @@ $("#btnSave").on("click", function () {
         })
     } else {
 
-        fetch("/Tienda/UpdateTienda", {
-            method: "PUT",
-            headers: { 'Content-Type': 'application/json;charset=utf-8' },
-            body: JSON.stringify(model)
+        fetch(url, {
+            method: method,
+            body: formData
         }).then(response => {
             $("#modalData").find("div.modal-content").LoadingOverlay("hide")
             return response.json();
@@ -268,7 +240,7 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
         rowSelectedTienda = $(this).closest('tr');
     }
 
-    const data = tableData.row(rowSelectedTienda).data();
+    const data = tableDataTienda.row(rowSelectedTienda).data();
 
     showLoading();
 
@@ -298,7 +270,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
     } else {
         row = $(this).closest('tr');
     }
-    const data = tableData.row(row).data();
+    const data = tableDataTienda.row(row).data();
 
     swal({
         title: "¿Está seguro?",
@@ -325,7 +297,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                 }).then(responseJson => {
                     if (responseJson.state) {
 
-                        tableData.row(row).remove().draw();
+                        tableDataTienda.row(row).remove().draw();
                         swal("Exitoso!", "Punto de venta fué eliminado", "success");
 
                     } else {

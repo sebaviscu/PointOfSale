@@ -15,8 +15,11 @@ namespace PointOfSale.Models
         public string? NombreImpresora { get; set; }
         public byte[]? Logo { get; set; }
         public string? PhotoBase64 { get; set; }
-        public string? Cuit { get; set; }
+        public long? Cuit { get; set; }
         public bool? TiendaActual { get; set; }
+        public int? PuntoVenta { get; set; }
+        public CondicionIva? CondicionIva { get; set; }
+        public string? CertificadoPassword { get; set; }
 
         public VMX509Certificate2 vMX509Certificate2 { get; set; }
     }
