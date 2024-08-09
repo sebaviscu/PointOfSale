@@ -11,12 +11,8 @@ nombre varchar(150) null,
 Telefono varchar(50) null,
 Direccion varchar(100) null,
 Logo varbinary(max) null,
-cuit BIGINT NULL,
-PuntoVenta int null, 
-CondicionIva int null,
-CertificadoPassword varchar(150) null,
-CertificadoNombre varchar(150) null,
 idAjustes int references Ajustes(idAjuste) null,
+IdAjustesFacturacion int references AjustesFacturacion(IdAjustesFacturacion) null,
 [modificationDate] [datetime] null,
 [modificationUser] varchar(50) null,
 )
@@ -488,3 +484,23 @@ CREATE TABLE FacturasEmitidas (
     RegistrationUser VARCHAR(200),
     RegistrationDate DATETIME
 );
+
+go
+
+create table AjustesFacturacion(
+idAjustesFacturacion int primary key identity(1,1),
+cuit BIGINT NULL,
+PuntoVenta int null, 
+CondicionIva int null,
+CertificadoPassword varchar(250) null,
+CertificadoNombre varchar(150) null,
+CertificadoFechaInicio [datetime] null,
+CertificadoFechaCaducidad [datetime] null,
+[idTienda] int references Tienda(idTienda) not null,
+[modificationDate] [datetime] null,
+[modificationUser] varchar(50) null
+)
+
+
+
+

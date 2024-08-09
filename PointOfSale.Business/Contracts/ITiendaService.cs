@@ -10,8 +10,5 @@ namespace PointOfSale.Business.Contracts
 		Task<Tienda> Edit(Tienda entity);
 		Task<bool> Delete(int idTienda);
 		Task<Tienda> Get(int tiendaId);
-		X509Certificate2 GetCertificateAfipInformation(string certificatePath, string certificatePassword);
-		Task<Tienda> EditCertificate(int idTienda, string certificadoNombre);
-		Task<Tienda> GetWithPassword(int tiendaId);
     }
 }

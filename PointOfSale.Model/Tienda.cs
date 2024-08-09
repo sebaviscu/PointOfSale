@@ -15,11 +15,6 @@ namespace PointOfSale.Model
         public string? Telefono { get; set; }
         public string? Direccion { get; set; }
         public byte[]? Logo { get; set; }        
-        public long? Cuit { get; set; }
-        public int? PuntoVenta { get; set; }
-        public string? CertificadoPassword { get; set; }
-        public string? CertificadoNombre { get; set; }
-        public CondicionIva? CondicionIva { get; set; }
         public IEnumerable<Turno>? Turnos { get; set; }
         public IEnumerable<User>? Usuarios { get; set; }
         public IEnumerable<Vencimiento>? Vencimientos { get; set; }
@@ -28,6 +23,8 @@ namespace PointOfSale.Model
         public IEnumerable<FacturaEmitida>? FacturaEmitidas { get; set; }
         public int? IdAjustes { get; set; }
         public Ajustes? Ajustes { get; set; }
+        public int? IdAjustesFacturacion { get; set; }
+        public AjustesFacturacion? AjustesFacturacion { get; set; }
 
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }

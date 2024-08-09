@@ -44,6 +44,7 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<Pedido> Pedido { get; set; } = null!;
         public virtual DbSet<PedidoProducto> PedidoProducto { get; set; } = null!;
         public virtual DbSet<Ajustes> Ajustes { get; set; } = null!;
+        public virtual DbSet<AjustesFacturacion> AjustesFacturacion { get; set; } = null!;
         public virtual DbSet<AjustesWeb> AjustesWeb { get; set; } = null!;
         public virtual DbSet<Stock> Stocks { get; set; } = null!;
         public virtual DbSet<FacturaEmitida> FacturasEmitidas { get; set; } = null!;
@@ -114,6 +115,19 @@ namespace PointOfSale.Data.DBContext
                 entity.HasOne(d => d.Tienda)
                   .WithOne(p => p.Ajustes)
                   .HasForeignKey<Ajustes>(d => d.IdTienda)
+                  .OnDelete(DeleteBehavior.ClientSetNull);
+
+            });
+
+            modelBuilder.Entity<AjustesFacturacion>(entity =>
+            {
+                entity.HasKey(e => e.IdAjustesFacturacion);
+
+                entity.ToTable("AjustesFacturacion");
+
+                entity.HasOne(d => d.Tienda)
+                  .WithOne(p => p.AjustesFacturacion)
+                  .HasForeignKey<AjustesFacturacion>(d => d.IdTienda)
                   .OnDelete(DeleteBehavior.ClientSetNull);
 
             });
@@ -497,6 +511,10 @@ namespace PointOfSale.Data.DBContext
                 entity.HasOne(e => e.Ajustes)
                   .WithOne(f => f.Tienda)
                   .HasForeignKey<Ajustes>(f => f.IdAjuste);
+
+                entity.HasOne(e => e.AjustesFacturacion)
+                  .WithOne(f => f.Tienda)
+                  .HasForeignKey<AjustesFacturacion>(f => f.IdAjustesFacturacion);
             });
 
             modelBuilder.Entity<Product>(entity =>

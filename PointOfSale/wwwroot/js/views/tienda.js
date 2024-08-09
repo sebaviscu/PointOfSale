@@ -74,21 +74,6 @@ $(document).ready(function () {
             }, 'pageLength'
         ]
     });
-    let $passwordInput = $('#txtContraseñaCertificado');
-    let $togglePasswordButton = $('#togglePassword');
-
-    $togglePasswordButton.on('mousedown', function () {
-        $passwordInput.attr('type', 'text');
-    });
-
-    $togglePasswordButton.on('mouseup mouseleave', function () {
-        $passwordInput.attr('type', 'password');
-    });
-
-    // Evitar que el botón reciba el foco
-    $togglePasswordButton.on('click', function (e) {
-        e.preventDefault();
-    });
 
 })
 
@@ -102,15 +87,6 @@ const openModalTienda = (model = BASIC_MODEL_TIENDA) => {
 
     $("#txtTelefono").val(model.telefono);
     $("#txtDireccion").val(model.direccion);
-    $("#cboCondicionIva").val(model.condicionIva);
-    $("#txtPuntoVenta").val(model.puntoVenta);
-    $("#txtContraseñaCertificado").val(model.certificadoPassword);
-
-    if (model.vMX509Certificate2 != null) {
-        $("#txtFechaIniCert").val(formatDateToDDMMYYYY(model.vMX509Certificate2.notBefore));
-        $("#txtFechaCadCert").val(formatDateToDDMMYYYY(model.vMX509Certificate2.notAfter));
-        $("#txtSubjectCert").val(model.vMX509Certificate2.cuil);
-    }
 
     $("#imgTienda").attr("src", `data:image/png;base64,${model.photoBase64}`);
 
@@ -128,15 +104,6 @@ const openModalTienda = (model = BASIC_MODEL_TIENDA) => {
 
 }
 
-function formatDateToDDMMYYYY(isoDate) {
-    const date = new Date(isoDate);
-
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
-}
 $("#btnNew").on("click", function () {
     openModalTienda()
 })
@@ -156,19 +123,12 @@ $("#btnSave").on("click", function () {
     model["idTienda"] = parseInt($("#txtId").val());
     model["nombre"] = $("#txtNombre").val();
     model["idListaPrecio"] = parseInt($("#cboListaPrecios").val());
-
     model["telefono"] = $("#txtTelefono").val();
     model["direccion"] = $("#txtDireccion").val();
-    model["puntoVenta"] = parseInt($("#txtPuntoVenta").val());
-    model["condicionIva"] = parseInt($("#cboCondicionIva").val());
-    model["cuit"] = parseInt($("#txtSubjectCert").val()); // viene del certificado
-    model["certificadoPassword"] = $("#txtContraseñaCertificado").val();
-    
-    const inputCertificado = document.getElementById('fileCertificado');
+
     const inputLogo = document.getElementById('fileLogo');
 
     const formData = new FormData();
-    formData.append('Certificado', inputCertificado.files[0]);
     formData.append('Logo', inputLogo.files[0]);
     formData.append('model', JSON.stringify(model));
 
@@ -207,24 +167,19 @@ $("#btnSave").on("click", function () {
             $("#modalData").find("div.modal-content").LoadingOverlay("hide")
             return response.json();
         }).then(responseJson => {
+            $("#modalData").modal("hide");
+
             if (responseJson.state) {
+
                 $("#modalData").modal("hide");
-
-                if (responseJson.state) {
-                    
-                    $("#modalData").modal("hide");
-                    swal("Exitoso!", "Punto de venta fué modificado", "success");
-                    location.reload();
-                }
-                else {
-                    rowSelectedTienda = null;
-                    swal("Exitoso!", "El Punto de venta fué modificado", "success");
-                }
-
-
-            } else {
+                swal("Exitoso!", "Punto de venta fué modificado", "success");
+                location.reload();
+            }
+            else {
+                rowSelectedTienda = null;
                 swal("Lo sentimos", responseJson.message, "error");
             }
+
         }).catch((error) => {
             $("#modalData").find("div.modal-content").LoadingOverlay("hide")
         })
@@ -242,21 +197,7 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
 
     const data = tableDataTienda.row(rowSelectedTienda).data();
 
-    showLoading();
-
-    fetch(`/Tienda/GetTiendoWithCertificado?idTienda=${data.idTienda}`)
-        .then(response => {
-            return response.json();
-        }).then(responseJson => {
-            removeLoading();
-            if (responseJson.state) {
-
-                openModalTienda(responseJson.object);
-
-            } else {
-                swal("Lo sentimos", responseJson.message, "error");
-            }
-        })
+    openModalTienda(data);
 })
 
 

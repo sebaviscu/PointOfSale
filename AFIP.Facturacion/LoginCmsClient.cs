@@ -29,9 +29,10 @@ namespace AFIP.Facturacion
         public string WsaaUrlProd { get; set; } = "https://wsaa.afip.gov.ar/ws/services/LoginCms";
 
 
-        public LoginCmsClient(IOptions<AFIPConfigurationOption> configuration)
+        public LoginCmsClient(IOptions<AFIPConfigurationOption> configuration, Services.IFileStorageService fileStorageService)
         {
             _configuration = configuration;
+            _fileStorageService = fileStorageService;
         }
 
 
@@ -53,6 +54,7 @@ namespace AFIP.Facturacion
         private bool VerboseMode = true;
         private static uint GlobalUniqueID = 0; // OJO! NO ES THREAD-SAFE
         private readonly IOptions<AFIPConfigurationOption> _configuration;
+        private readonly Services.IFileStorageService _fileStorageService;
 
         private WsaaTicket _ticket;
 

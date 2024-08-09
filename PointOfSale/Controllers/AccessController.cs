@@ -124,7 +124,7 @@ namespace PointOfSale.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al ingresar al login");
-                ViewData["Message"] = $"Error: {ex.ToString()}.";
+                ViewData["Message"] = $"Error: {ex}.";
                 return View();
             }
         }

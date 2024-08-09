@@ -14,6 +14,8 @@ using PointOfSale.Business.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using static PointOfSale.Model.Enum;
+using Microsoft.AspNetCore.Http;
+using System.Security.Cryptography.X509Certificates;
 
 namespace PointOfSale.Business.Services
 {
@@ -25,13 +27,15 @@ namespace PointOfSale.Business.Services
 
         private readonly IGenericRepository<FacturaEmitida> _repository;
         private readonly IAFIPFacturacionService _afipFacturacionService;
-        private readonly ITiendaService _tiendaService;
+        private readonly IAjusteService _ajusteService;
+        private readonly IFileStorageService _fileStorageService;
 
-        public AfipService(IGenericRepository<FacturaEmitida> repository, IAFIPFacturacionService afipFacturacionService, ITiendaService tiendaService)
+        public AfipService(IGenericRepository<FacturaEmitida> repository, IAFIPFacturacionService afipFacturacionService, IAjusteService ajusteService, IFileStorageService fileStorageService)
         {
             _repository = repository;
             _afipFacturacionService = afipFacturacionService;
-            _tiendaService = tiendaService;
+            _ajusteService = ajusteService;
+            _fileStorageService = fileStorageService;
         }
 
         public async Task<FacturaEmitida> Facturar(Sale sale_created, int? nroDocumento, int? idCliente, string registrationUser)
@@ -83,7 +87,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<string> GenerateFacturaQR(FacturaEmitida factura)
         {
-            var tienda = await _tiendaService.Get(factura.IdTienda);
+            var ajustes = await _ajusteService.GetAjustesFacturacion(factura.IdTienda);
 
             var tipoComprobante = TipoComprobante.GetByDescription(factura.TipoFactura);
 
@@ -91,7 +95,7 @@ namespace PointOfSale.Business.Services
             {
                 ver = 1,
                 fecha = factura.FechaEmicion.ToString("yyyy-MM-dd"),
-                cuit = tienda.Cuit.Value,
+                cuit = ajustes.Cuit.Value,
                 ptoVta = factura.PuntoVenta,
                 tipoCmp = tipoComprobante.Id,
                 nroCmp = factura.NroFactura.GetValueOrDefault(),
@@ -111,5 +115,15 @@ namespace PointOfSale.Business.Services
             return qrUrl;
         }
 
+        public async Task<string> ReplaceCertificateAsync(IFormFile file, int idTienda)
+        {
+            return await _fileStorageService.ReplaceCertificateAsync(file, idTienda);
+        }
+
+
+        public VMX509Certificate2 GetCertificateAfipInformation(string certificatePath, string certificatePassword)
+        {
+            return _fileStorageService.GetCertificateAfipInformation(certificatePath, certificatePassword);
+        }
     }
 }

@@ -1,13 +1,17 @@
-﻿using Org.BouncyCastle.Tls;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
-namespace PointOfSale.Models
+namespace PointOfSale.Model.Afip.Factura
 {
     public class VMX509Certificate2
     {
         public string Subject { get; set; }
-        public DateTime NotBefore { get; set; }
-        public DateTime NotAfter { get; set; }
+        public DateTime FechaInicio { get; set; }
+        public DateTime FechaCaducidad { get; set; }
         public string Cuil => ExtractCUIT();
 
         string ExtractCUIT()

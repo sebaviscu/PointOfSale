@@ -143,6 +143,15 @@ UPDATE Tienda SET idAjustes = 1
 
 go
 
+insert into AjustesFacturacion(IdTienda) 
+values (1)
+
+go
+
+UPDATE Tienda SET idAjustes = 1
+
+go
+
 insert into AjustesWeb(MontoEnvioGratis,AumentoWeb,Whatsapp,Lunes,Martes,Miercoles,Jueves,Viernes,Sabado,Domingo,Feriado,Facebook,Instagram,Tiktok,
 Twitter,Youtube, direccion, telefono,nombre) 
 values (0,20,'','','','','','','','','','','','','','','','','Mercado Don Pepe')
@@ -153,4 +162,3 @@ go
 --000001
 insert into CorrelativeNumber(lastNumber,quantityDigits,management,dateUpdate) values
 (0,6,'Sale',getdate())
-

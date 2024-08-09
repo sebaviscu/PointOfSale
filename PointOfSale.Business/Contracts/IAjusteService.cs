@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,5 +17,9 @@ namespace PointOfSale.Business.Contracts
         Task<Ajustes> GetAjustes(int idTienda);
 
         Task<Ajustes> Edit(Ajustes entity);
+
+        Task<AjustesFacturacion> GetAjustesFacturacion(int idTienda);
+        Task<AjustesFacturacion> EditFacturacion(AjustesFacturacion entity);
+
     }
 }

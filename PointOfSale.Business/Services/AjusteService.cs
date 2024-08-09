@@ -5,6 +5,7 @@ using PointOfSale.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,18 +15,26 @@ namespace PointOfSale.Business.Services
     {
         private readonly IGenericRepository<AjustesWeb> _repositoryWeb;
         private readonly IGenericRepository<Ajustes> _repositoryAjustes;
+        private readonly IGenericRepository<AjustesFacturacion> _repositoryAjustesFacturacion;
 
-        public AjusteService(IGenericRepository<AjustesWeb> repository, IGenericRepository<Ajustes> repositoryAjustes)
+        public AjusteService(IGenericRepository<AjustesWeb> repository, IGenericRepository<Ajustes> repositoryAjustes, IGenericRepository<AjustesFacturacion> repositoryAjustesFacturacion)
+
         {
             _repositoryWeb = repository;
             _repositoryAjustes = repositoryAjustes;
+            _repositoryAjustesFacturacion = repositoryAjustesFacturacion;
+        }
 
+        public async Task<AjustesFacturacion> GetAjustesFacturacion(int idTienda)
+        {
+            var ajustes = await _repositoryAjustesFacturacion.First(_ => _.IdTienda == idTienda);
+            ajustes.CertificadoPassword = !string.IsNullOrEmpty(ajustes.CertificadoPassword) ? EncryptionHelper.DecryptString(ajustes.CertificadoPassword) : null;
+            return ajustes;
         }
 
         public async Task<AjustesWeb> GetAjustesWeb()
         {
             return await _repositoryWeb.First();
-
         }
 
 
@@ -68,7 +77,6 @@ namespace PointOfSale.Business.Services
             return await _repositoryAjustes.First(_ => _.IdTienda == idTienda);
         }
 
-
         public async Task<Ajustes> Edit(Ajustes entity)
         {
             Ajustes Ajustes_found = await this.GetAjustes(entity.IdTienda);
@@ -89,7 +97,28 @@ namespace PointOfSale.Business.Services
                 throw new TaskCanceledException("Ajustes no se pudo cambiar.");
 
             return Ajustes_found;
+        }
+        public async Task<AjustesFacturacion> EditFacturacion(AjustesFacturacion entity)
+        {
+            var Ajustes_found = await GetAjustesFacturacion(entity.IdTienda);
 
+            Ajustes_found.Cuit = entity.Cuit;
+            Ajustes_found.CertificadoFechaCaducidad = entity.CertificadoFechaCaducidad;
+            Ajustes_found.PuntoVenta = entity.PuntoVenta;
+            Ajustes_found.CertificadoFechaInicio = entity.CertificadoFechaInicio;
+            Ajustes_found.CertificadoNombre = entity.CertificadoNombre;
+            Ajustes_found.CondicionIva = entity.CondicionIva;
+            Ajustes_found.CertificadoPassword = !string.IsNullOrEmpty(entity.CertificadoPassword) ? EncryptionHelper.EncryptString(entity.CertificadoPassword) : null;
+
+            Ajustes_found.ModificationDate = TimeHelper.GetArgentinaTime();
+            Ajustes_found.ModificationUser = entity.ModificationUser;
+
+            bool response = await _repositoryAjustesFacturacion.Edit(Ajustes_found);
+
+            if (!response)
+                throw new TaskCanceledException("Ajustes Facturacion no se pudo cambiar.");
+
+            return Ajustes_found;
         }
     }
 }

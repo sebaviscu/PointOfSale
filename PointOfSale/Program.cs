@@ -1,4 +1,5 @@
 using AFIP.Facturacion.DependencyInjection;
+using AFIP.Facturacion.Services;
 using DinkToPdf;
 using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -10,8 +11,6 @@ using PointOfSale.Data.DBContext;
 using PointOfSale.Data.Repository;
 using PointOfSale.Utilities.Automapper;
 using System.Text.Json.Serialization;
-using PointOfSale.Controllers;
-using PintOfSale.FileStorageService.Servicios;
 
 public class Program
 {

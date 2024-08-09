@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Model;
@@ -8,10 +6,7 @@ using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
 using static PointOfSale.Model.Enum;
 using NuGet.Protocol;
-using System.Security.Cryptography.X509Certificates;
-using PointOfSale.Business.Services;
 using Newtonsoft.Json;
-using PintOfSale.FileStorageService.Servicios;
 
 namespace PointOfSale.Controllers
 {
@@ -20,14 +15,12 @@ namespace PointOfSale.Controllers
         private readonly ITiendaService _TiendaService;
         private readonly IMapper _mapper;
         private readonly ILogger<TiendaController> _logger;
-        private readonly IFileStorageService _fileStorageService;
 
-        public TiendaController(ITiendaService TiendaService, IMapper mapper, ILogger<TiendaController> logger, IFileStorageService fileStorageService)
+        public TiendaController(ITiendaService TiendaService, IMapper mapper, ILogger<TiendaController> logger)
         {
             _TiendaService = TiendaService;
             _mapper = mapper;
             _logger = logger;
-            _fileStorageService = fileStorageService;
         }
 
         public IActionResult Tienda()
@@ -73,37 +66,6 @@ namespace PointOfSale.Controllers
             }
         }
 
-
-        [HttpGet]
-        public async Task<IActionResult> GetTiendoWithCertificado(int idTienda)
-        {
-            var gResponse = new GenericResponse<VMTienda>();
-
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador]);
-
-                var tienda = _mapper.Map<VMTienda>(await _TiendaService.GetWithPassword(user.IdTienda));
-
-                if (idTienda == user.IdTienda && !string.IsNullOrEmpty(tienda.CertificadoPassword))
-                {
-                    var certificatePath = await _fileStorageService.ObtenerRutaCertificadoAsync(idTienda);
-                    tienda.vMX509Certificate2 = _mapper.Map<VMX509Certificate2>(_TiendaService.GetCertificateAfipInformation(certificatePath, tienda.CertificadoPassword));
-                }
-
-                gResponse.Object = tienda;
-                gResponse.State = true;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                var errorMessage = "Error al recuperar una tienda";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
-            }
-        }
 
         [HttpGet]
         public async Task<IActionResult> GetOneTienda()
@@ -193,15 +155,15 @@ namespace PointOfSale.Controllers
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
 
-                if (Certificado != null)
-                {
-                    var nuevoProyectoPath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).FullName, "PintOfSale.FileStorageService");
-                    var certificadoDirectory = Path.Combine(nuevoProyectoPath, "Certificados", user.IdTienda.ToString() + "_Tienda");
+                //if (Certificado != null)
+                //{
+                //    var nuevoProyectoPath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).FullName, "PintOfSale.FileStorageService");
+                //    var certificadoDirectory = Path.Combine(nuevoProyectoPath, "Certificados", user.IdTienda.ToString() + "_Tienda");
 
-                    await _fileStorageService.ReplaceFileAsync(Certificado, certificadoDirectory);
+                //    await _fileStorageService.ReplaceFileAsync(Certificado, certificadoDirectory);
 
-                    _ = await _TiendaService.EditCertificate(vmModel.IdTienda, Certificado.FileName);
-                }
+                //    _ = await _TiendaService.EditCertificate(vmModel.IdTienda, Certificado.FileName);
+                //}
 
                 //if (Logo != null)
                 //{

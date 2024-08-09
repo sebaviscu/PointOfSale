@@ -35,8 +35,6 @@ namespace PointOfSale.Business.Services
             var idLastTienda = list.Max(_ => _.IdTienda);
             entity.IdTienda = ++idLastTienda;
 
-            entity.CertificadoPassword = !string.IsNullOrEmpty(entity.CertificadoPassword) ? EncryptionHelper.EncryptString(entity.CertificadoPassword) : null;
-
             Tienda Tienda_created = await _repository.Add(entity);
             if (Tienda_created.IdTienda == 0)
                 throw new TaskCanceledException("Tienda no se pudo crear.");
@@ -53,10 +51,6 @@ namespace PointOfSale.Business.Services
             Tienda_found.Telefono = entity.Telefono;
             Tienda_found.Logo = entity.Logo;
             Tienda_found.IdListaPrecio = entity.IdListaPrecio;
-            Tienda_found.Cuit = entity.Cuit;
-            Tienda_found.PuntoVenta = entity.PuntoVenta;
-            Tienda_found.CondicionIva = entity.CondicionIva;
-            Tienda_found.CertificadoPassword = !string.IsNullOrEmpty(entity.CertificadoPassword) ? EncryptionHelper.EncryptString(entity.CertificadoPassword) : null;
 
             Tienda_found.ModificationDate = TimeHelper.GetArgentinaTime();
             Tienda_found.ModificationUser = entity.ModificationUser;
@@ -67,21 +61,6 @@ namespace PointOfSale.Business.Services
                 throw new TaskCanceledException("Tienda no se pudo cambiar.");
 
             return Tienda_found;
-        }
-
-        public async Task<Tienda> EditCertificate(int idTienda, string certificadoNombre)
-        {
-            Tienda Tienda_found = await _repository.Get(c => c.IdTienda == idTienda);
-
-            Tienda_found.CertificadoNombre = certificadoNombre;
-
-            bool response = await _repository.Edit(Tienda_found);
-
-            if (!response)
-                throw new TaskCanceledException("Certificado de Tienda no se pudo cambiar.");
-
-            return Tienda_found;
-
         }
 
         public async Task<bool> Delete(int idTienda)
@@ -104,33 +83,6 @@ namespace PointOfSale.Business.Services
                 throw new TaskCanceledException("Tienda no se pudo encontrar.");
             return Tienda_found;
         }
-
-        public async Task<Tienda> GetWithPassword(int tiendaId)
-        {
-            Tienda Tienda_found = await _repository.Get(c => c.IdTienda == tiendaId);
-
-            if (Tienda_found == null)
-                throw new TaskCanceledException("Tienda no se pudo encontrar.");
-            Tienda_found.CertificadoPassword = !string.IsNullOrEmpty(Tienda_found.CertificadoPassword) ? EncryptionHelper.DecryptString(Tienda_found.CertificadoPassword) : string.Empty;
-            return Tienda_found;
-        }
-
-        public X509Certificate2 GetCertificateAfipInformation(string certificatePath, string certificatePassword)
-        {
-            //string certificatePath = @"C:\Users\sebastian.viscusso\Desktop\Seba\Certificados AFIP generados\certificado.pfx";
-            //string certificatePassword = "password"; // Replace with your certificate's password
-
-            // Load the certificate
-            X509Certificate2 certificate = new X509Certificate2(certificatePath, certificatePassword);
-
-            // Display certificate information
-            Console.WriteLine("Subject: " + certificate.Subject); // SERIALNUMBER=CUIT 23365081999, CN=Test
-            Console.WriteLine("Valid From: " + certificate.NotBefore); // fecha inicio
-            Console.WriteLine("Valid To: " + certificate.NotAfter); // fecha caducidad
-
-            return certificate;
-        }
-
     }
 
 }

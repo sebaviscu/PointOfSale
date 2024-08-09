@@ -408,6 +408,7 @@ namespace PointOfSale.Utilities.Automapper
 
             CreateMap<Ajustes, VMAjustes>().ReverseMap();
             CreateMap<AjustesWeb, VMAjustes>().ReverseMap();
+            CreateMap<AjustesFacturacion, VMAjustesFacturacion>().ReverseMap();
 
             CreateMap<Stock, VMStock>().ReverseMap();
             CreateMap<ListaPrecio, VMListaPrecio>().ReverseMap();
@@ -415,8 +416,6 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<Stock, VMStockSimplificado>().ReverseMap();
             CreateMap<Proveedor, VMProveedorSimplificado>().ReverseMap();
             CreateMap<Product, VMProductSimplificado>().ReverseMap();
-
-            CreateMap<X509Certificate2, VMX509Certificate2>().ReverseMap();
 
             CreateMap<VMFacturaEmitida, FacturaEmitida>();
 

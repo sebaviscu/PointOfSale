@@ -14,6 +14,7 @@ using PointOfSale.Models;
 using PointOfSale.Utilities;
 using PointOfSale.Utilities.Response;
 using System.Globalization;
+using System.Runtime.ConstrainedExecution;
 using System.Security.Claims;
 using static iTextSharp.text.pdf.AcroFields;
 using static PointOfSale.Model.Enum;
@@ -1745,6 +1746,7 @@ namespace PointOfSale.Controllers
             }
         }
 
+
         [HttpGet]
         public async Task<IActionResult> GetFactura(int idFacturaEmitida)
         {
@@ -1753,10 +1755,10 @@ namespace PointOfSale.Controllers
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
                 var factura = await _afipService.GetById(idFacturaEmitida);
-                
+
                 var vmFactura = _mapper.Map<VMFacturaEmitida>(factura);
 
-                if (factura.Errores ==  null)
+                if (factura.Errores == null)
                 {
                     vmFactura.QR = await _afipService.GenerateFacturaQR(factura);
                 }
@@ -1773,6 +1775,79 @@ namespace PointOfSale.Controllers
                 _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
                 return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAjustesFacturacion()
+        {
+            var gResponse = new GenericResponse<VMAjustesFacturacion>();
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador]);
+
+                var vmAjusteWeb = _mapper.Map<VMAjustesFacturacion>(await _ajusteService.GetAjustesFacturacion(user.IdTienda));
+
+                gResponse.Object = vmAjusteWeb;
+                gResponse.State = true;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = "Error al recuperar ajuste de facturacion";
+                gResponse.State = false;
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
+                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateAjustesFacturacion([FromForm] IFormFile Certificado, [FromForm] string model)
+        {
+
+            GenericResponse<VMAjustesFacturacion> gResponse = new GenericResponse<VMAjustesFacturacion>();
+            var vmModel = JsonConvert.DeserializeObject<VMAjustesFacturacion>(model);
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador]);
+
+                if (Certificado != null)
+                {
+                    vmModel.CertificadoNombre = Certificado.FileName;
+                    var pathFile = await _afipService.ReplaceCertificateAsync(Certificado, user.IdTienda);
+
+                    if (!string.IsNullOrEmpty(vmModel.CertificadoPassword))
+                    {
+                        var cert = _afipService.GetCertificateAfipInformation(pathFile, vmModel.CertificadoPassword);
+                        if (cert != null)
+                        {
+                            vmModel.CertificadoFechaCaducidad = cert.FechaCaducidad;
+                            vmModel.CertificadoFechaInicio = cert.FechaInicio;
+                            vmModel.Cuit = Convert.ToInt64(cert.Cuil);
+                        }
+                    }
+                }
+
+
+                vmModel.ModificationUser = user.UserName;
+                vmModel.IdTienda = user.IdTienda;
+                var ajustes = await _ajusteService.EditFacturacion(_mapper.Map<AjustesFacturacion>(vmModel));
+
+                gResponse.State = true;
+                gResponse.Object = _mapper.Map<VMAjustesFacturacion>(ajustes);
+                gResponse.Message = string.Empty;
+
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = "Error al actualizar Tiendas";
+                gResponse.State = false;
+                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
+                _logger.LogError(ex, "{ErrorMessage}. Request: {ModelRequest}", errorMessage, model.ToJson());
+                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
     }
 }

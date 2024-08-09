@@ -1,8 +1,10 @@
-﻿using PointOfSale.Model;
+﻿using Microsoft.AspNetCore.Http;
+using PointOfSale.Model;
 using PointOfSale.Model.Afip.Factura;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,5 +19,9 @@ namespace PointOfSale.Business.Contracts
         Task<FacturaEmitida> GetById(int idFacturaEmitida);
 
         Task<string> GenerateFacturaQR(FacturaEmitida factura);
+
+        Task<string> ReplaceCertificateAsync(IFormFile file, int idTienda);
+
+        VMX509Certificate2 GetCertificateAfipInformation(string certificatePath, string certificatePassword);
     }
 }

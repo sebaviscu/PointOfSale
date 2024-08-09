@@ -42,7 +42,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AFIP.Facturacion\AFIP.Facturacion.csproj" />
-    <ProjectReference Include="..\PintOfSale.FileStorageService\PintOfSale.FileStorageService.csproj" />
     <ProjectReference Include="..\PointOfSale.Business\PointOfSale.Business.csproj" />
     <ProjectReference Include="..\PointOfSale.Data\PointOfSale.Data.csproj" />
     <ProjectReference Include="..\PointOfSale.Model\PointOfSale.Model.csproj" />
