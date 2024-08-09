@@ -28,7 +28,18 @@ namespace PointOfSale.Business.Services
         public async Task<AjustesFacturacion> GetAjustesFacturacion(int idTienda)
         {
             var ajustes = await _repositoryAjustesFacturacion.First(_ => _.IdTienda == idTienda);
-            ajustes.CertificadoPassword = !string.IsNullOrEmpty(ajustes.CertificadoPassword) ? EncryptionHelper.DecryptString(ajustes.CertificadoPassword) : null;
+            try
+            {
+
+                ajustes.CertificadoPassword = !string.IsNullOrEmpty(ajustes.CertificadoPassword) ? EncryptionHelper.DecryptString(ajustes.CertificadoPassword) : null;
+            }
+            catch (ArgumentException e)
+            {
+            }
+            catch (Exception)
+            {
+                throw;
+            }
             return ajustes;
         }
 
@@ -109,7 +120,7 @@ namespace PointOfSale.Business.Services
             Ajustes_found.Cuit = entity.Cuit != 0 ? entity.Cuit : Ajustes_found.Cuit;
             Ajustes_found.CertificadoFechaCaducidad = entity.CertificadoFechaCaducidad != null ? entity.CertificadoFechaCaducidad : Ajustes_found.CertificadoFechaCaducidad;
             Ajustes_found.CertificadoFechaInicio = entity.CertificadoFechaInicio != null ? entity.CertificadoFechaInicio : Ajustes_found.CertificadoFechaInicio;
-            Ajustes_found.CertificadoNombre = entity.CertificadoNombre != null ? entity.CertificadoNombre : Ajustes_found.CertificadoNombre;
+            Ajustes_found.CertificadoNombre = !string.IsNullOrEmpty(entity.CertificadoNombre) ? entity.CertificadoNombre : Ajustes_found.CertificadoNombre;
 
             Ajustes_found.ModificationDate = TimeHelper.GetArgentinaTime();
             Ajustes_found.ModificationUser = entity.ModificationUser;

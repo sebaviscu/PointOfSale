@@ -192,16 +192,13 @@
                                     </div>
                                 </div>
                                 <div class="col-md-12 row">
-                                    <div class="form-group col-sm-6" style="margin-bottom: 0px;">
-                                        <label for="txtContraseñaCertificado">Contraseña del certificado</label>
-                                        <div class="input-group input-group-sm">
-                                            <input type="password" class="form-control form-control-sm" id="txtContraseñaCertificado" name="ContraseñaCertificado">
-                                            <div class="input-group-prepend" style="margin-left: 5px;">
-                                                <button id="togglePassword">
-                                                    <span class="mdi mdi-eye mdi-24px" id="eyeIcon"></span>
-                                                </button>
-                                            </div>
-                                        </div>
+                                    <div class="form-group col-sm-3">
+                                        <label for="txtNombreArchivo">Nombre Archivo</label>
+                                        <input type="text" class="form-control form-control-sm" id="txtNombreArchivo" name="nombre archivo" disabled>
+                                    </div>
+                                    <div class="form-group col-sm-3">
+                                        <label for="txtCuilCertificado">CUIT / CUIL Cert.</label>
+                                        <input type="number" class="form-control form-control-sm" id="txtCuilCertificado" name="Cuit" disabled>
                                     </div>
                                     <div class="form-group col-sm-3">
                                         <label for="txtFechaIniCert">Inicio Cert.</label>
@@ -213,9 +210,16 @@
                                     </div>
                                 </div>
                                 <div class="col-md-12 row">
-                                    <div class="form-group col-sm-4">
-                                        <label for="txtCuilCertificado">CUIT / CUIL Cert.</label>
-                                        <input type="number" class="form-control form-control-sm" id="txtCuilCertificado" name="Cuit" disabled>
+                                    <div class="form-group col-sm-5" style="margin-bottom: 0px;">
+                                        <label for="txtContraseñaCertificado">Contraseña del certificado</label>
+                                        <div class="input-group input-group-sm">
+                                            <input type="password" class="form-control form-control-sm" id="txtContraseñaCertificado" name="ContraseñaCertificado">
+                                            <div class="input-group-prepend" style="margin-left: 5px;">
+                                                <button id="togglePassword">
+                                                    <span class="mdi mdi-eye mdi-24px" id="eyeIcon"></span>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="form-group col-sm-4">
                                         <label for="cboCondicionIva">Condicion IVA</label>
@@ -227,7 +231,7 @@
                                             <option value="4">Resp. Inscripto</option>
                                         </select>
                                     </div>
-                                    <div class="form-group col-sm-4">
+                                    <div class="form-group col-sm-3">
                                         <label for="txtPuntoVenta">Punto de Venta</label>
                                         <input type="number" step="1" min="1" class="form-control form-control-sm" id="txtPuntoVentaCertificado" name="PuntoVenta">
                                     </div>

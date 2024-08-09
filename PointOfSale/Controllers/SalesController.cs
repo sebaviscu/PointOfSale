@@ -102,11 +102,6 @@ namespace PointOfSale.Controllers
             var gResponse = new GenericResponse<List<VmProductsSelect2>>();
             try
             {
-                //var pp = await _afipFacturacionService.GetPtosVentaAsync();
-                //var mm = await _afipFacturacionService.GetTiposMonedasAsync();
-                //var dd = await _afipFacturacionService.GetTiposDocAsync();
-                //var aa = await _afipFacturacionService.GetUltimoComprobanteAutorizadoAsync(1, TipoComprobante.Factura_A);
-
                 ClaimsPrincipal claimuser = HttpContext.User;
                 var listaPrecioInt = Convert.ToInt32(claimuser.Claims.Where(c => c.Type == "ListaPrecios").Select(c => c.Value).SingleOrDefault());
                 var vmListProducts = _mapper.Map<List<VmProductsSelect2>>(await _saleService.GetProductsSearchAndIdLista(search.Trim(), (ListaDePrecio)listaPrecioInt));

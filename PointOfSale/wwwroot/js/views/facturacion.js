@@ -232,6 +232,7 @@ const openModalAjustesFacturacion = (model = BASIC_MODEL_AJUSTES_FACTURACION) =>
     $("#txtFechaIniCert").val(formatDateToDDMMYYYY(model.certificadoFechaInicio));
     $("#txtFechaCadCert").val(formatDateToDDMMYYYY(model.certificadoFechaCaducidad));
     $("#txtCuilCertificado").val(model.cuit);
+    $("#txtNombreArchivo").val(model.certificadoNombre);
 
     //if (model.vMX509Certificate2 != null) {
         //$("#txtFechaIniCert").val(formatDateToDDMMYYYY(model.vMX509Certificate2.notBefore));
@@ -270,9 +271,6 @@ $("#btnSaveAjustesFacturacion").on("click", function () {
     model["puntoVenta"] = parseInt($("#txtPuntoVentaCertificado").val());
     model["condicionIva"] = parseInt($("#cboCondicionIva").val());
     model["certificadoPassword"] = $("#txtContraseñaCertificado").val();
-    //model["cuit"] = parseInt($("#txtCuilCertificado").val());
-    //model["certificadoFechaInicio"] = parseInt($("#txtFechaIniCert").val());
-    //model["certificadoFechaCaducidad"] = parseInt($("#txtFechaCadCert").val());
 
     const inputCertificado = document.getElementById('fileCertificado');
 

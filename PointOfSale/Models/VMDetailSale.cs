@@ -1,4 +1,6 @@
-﻿namespace PointOfSale.Models
+﻿using static PointOfSale.Model.Enum;
+
+namespace PointOfSale.Models
 {
     public class VMDetailSale
     {
@@ -12,5 +14,7 @@
         public string? Promocion { get; set; }
         public int? row { get; set; }
         public string? diferenciapromocion { get; set; }
+        public TipoVenta TipoVenta { get; set; }
+
     }
 }

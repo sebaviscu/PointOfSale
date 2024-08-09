@@ -149,6 +149,7 @@ namespace PointOfSale.Utilities.Automapper
             .ForMember(destiny => destiny.PhotoBase64, opt => opt.MapFrom(source => source.Producto != null ? Convert.ToBase64String(ImageHelper.ResizeImage(source.Producto.Photo, 60, 60)) : string.Empty))
             .ForMember(destiny => destiny.TipoVenta, opt => opt.MapFrom(source => source.Producto != null ? source.Producto.TipoVenta : 0))
             .ForMember(destiny => destiny.Price, opt => opt.MapFrom(source => source.Precio))
+            .ForMember(destiny => destiny.CategoryProducty, opt => opt.MapFrom(source => source.Producto != null && source.Producto.IdCategoryNavigation != null ? source.Producto.IdCategoryNavigation.Description : string.Empty))
             ;
 
 

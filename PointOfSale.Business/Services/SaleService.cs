@@ -95,7 +95,7 @@ namespace PointOfSale.Business.Services
                     (p.Producto.BarCode.Contains(search) || p.Producto.Description.Contains(search)));
             }
 
-            return queryListaPrecio.Include(_ => _.Producto).ToList();
+            return queryListaPrecio.Include(_ => _.Producto).ThenInclude(_ => _.IdCategoryNavigation).ToList();
         }
 
 

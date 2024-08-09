@@ -1008,14 +1008,15 @@ function addFunctions(idTab) {
                             category: item.idCategory,
                             photoBase64: item.photoBase64,
                             price: item.price,
-                            tipoVenta: item.tipoVenta
+                            tipoVenta: item.tipoVenta,
+                            categoryProducty: item.categoryProducty
                         }
                     ))
                 };
             }
         },
         placeholder: 'Buscando producto...',
-        minimumInputLength: 2,
+        minimumInputLength: 3,
         templateResult: formatResults,
         allowClear: true
     });
@@ -1101,10 +1102,11 @@ function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
     let product = new Producto();
     product.idproduct = data.id;
     product.descriptionproduct = data.text;
-    product.categoryproduct = data.category;
     product.quantity = data.quantity;
     product.price = formatNumber(data.price);
     product.total = formatNumber(data.total);
+    product.tipoVenta = data.tipoVenta;
+    product.categoryProducty = data.categoryProducty;
 
     if (data.promocion) {
         product.promocion = data.promocion;
@@ -1186,7 +1188,7 @@ function applyForProduct(prom, totalQuantity, data, currentTab) {
                     let newProd = new Producto();
                     newProd.idproduct = data.id;
                     newProd.descriptionproduct = data.text;
-                    newProd.categoryproduct = data.category;
+                    newProd.categoryProducty = data.categoryProducty;
                     newProd.quantity = diffDividido;
                     newProd.price = precio.toFixed(2).toString();
                     newProd.total = (precio * diffDividido).toFixed(2).toString();
@@ -1292,10 +1294,11 @@ function validateCode(userCode) {
 class Producto {
     idproduct = 0;
     descriptionproduct = "";
-    categoryproducty = "";
     quantity = 0;
     price = 0;
     total = 0;
     promocion = null;
     diferenciapromocion = null;
+    tipoVenta = 0;
+    categoryProducty = "";
 }

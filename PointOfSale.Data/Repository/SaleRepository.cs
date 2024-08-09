@@ -29,24 +29,28 @@ namespace PointOfSale.Data.Repository
 
         public async Task<Sale> Register(Sale entity, Ajustes ajustes)
         {
-            var productIds = entity.DetailSales.Select(dv => dv.IdProduct).ToList();
-            var products = await _dbcontext.Products
-                .Include(p => p.IdCategoryNavigation)
-                //.Include(p => p.Proveedor)
-                .Where(p => productIds.Contains(p.IdProduct))
-                .ToListAsync();
 
-            foreach (DetailSale dv in entity.DetailSales)
+            // Obtener productos solo si se controla el stock
+            List<Product> products = null;
+            if (ajustes.ControlStock.HasValue && ajustes.ControlStock.Value)
             {
-                var product_found = products.First(p => p.IdProduct == dv.IdProduct);
+                var productIds = entity.DetailSales.Select(dv => dv.IdProduct).Distinct().ToList();
+                products = await _dbcontext.Products
+                                           .Where(p => productIds.Contains(p.IdProduct))
+                                           .ToListAsync();
+            }
 
-                if (ajustes.ControlStock.HasValue && ajustes.ControlStock.Value)
+            // Parallel execution for stock control
+            if (products != null)
+            {
+                var stockTasks = entity.DetailSales.Select(dv =>
                 {
-                    await ControlStock(dv.Quantity.Value, entity.IdTienda, product_found);
-                }
+                    var product = products.First(p => p.IdProduct == dv.IdProduct);
+                    return ControlStock(dv.Quantity.Value, entity.IdTienda, product);
+                }).ToList();
 
-                dv.TipoVenta = product_found.TipoVenta;
-                dv.CategoryProducty = product_found.IdCategoryNavigation.Description;
+                // Await all stock control tasks concurrently
+                await Task.WhenAll(stockTasks);
             }
 
             if (string.IsNullOrEmpty(entity.SaleNumber)) // cuando es multiple formas de pago
@@ -59,7 +63,6 @@ namespace PointOfSale.Data.Repository
             await _dbcontext.SaveChangesAsync();
 
             return entity;
-
         }
 
 
@@ -85,18 +88,26 @@ namespace PointOfSale.Data.Repository
 
         public async Task<string> GetLastSerialNumberSale()
         {
-            CorrelativeNumber correlative = _dbcontext.CorrelativeNumbers.Where(n => n.Management == "Sale").First();
+            var correlative = await _dbcontext.CorrelativeNumbers
+                                              .Where(n => n.Management == "Sale")
+                                              .FirstOrDefaultAsync();
+            if (correlative == null)
+            {
+                throw new Exception("No se encontró el número correlativo para la gestión 'Sale'.");
+            }
 
-            correlative.LastNumber = correlative.LastNumber + 1;
-            correlative.DateUpdate = TimeHelper.GetArgentinaTime();
+            lock (correlative)
+            {
+                correlative.LastNumber += 1;
+                correlative.DateUpdate = TimeHelper.GetArgentinaTime();
+            }
 
             _dbcontext.CorrelativeNumbers.Update(correlative);
-            await _dbcontext.SaveChangesAsync();
 
+            string ceros = new string('0', correlative.QuantityDigits.Value);
+            string saleNumber = (ceros + correlative.LastNumber.ToString())
+                                 .Substring(ceros.Length + correlative.LastNumber.ToString().Length - correlative.QuantityDigits.Value);
 
-            string ceros = string.Concat(Enumerable.Repeat("0", correlative.QuantityDigits.Value));
-            string saleNumber = ceros + correlative.LastNumber.ToString();
-            saleNumber = saleNumber.Substring(saleNumber.Length - correlative.QuantityDigits.Value, correlative.QuantityDigits.Value);
             return saleNumber;
         }
 
