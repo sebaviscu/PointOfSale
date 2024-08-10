@@ -3,13 +3,6 @@ using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services
@@ -35,56 +28,48 @@ namespace PointOfSale.Business.Services
             _gastosRepository = gastosRepository;
         }
 
-        public async Task<GraficoVentasConComparacion> GetSales(TypeValuesDashboard typeValues, int idTienda, DateTime dateStart)
+        public async Task<GraficoVentasConComparacion> GetSales(TypeValuesDashboard typeValues, int idTienda, DateTime dateStart, bool visionGlobal)
         {
             var resultados = new GraficoVentasConComparacion();
             var dateCompare = TimeHelper.GetArgentinaTime();
 
-            try
+            switch (typeValues)
             {
-                switch (typeValues)
-                {
-                    case TypeValuesDashboard.Dia:
-                        dateCompare = new DateTime(dateStart.Year, dateStart.Month, dateStart.Day, 0, 0, 0);
-                        var resp = await GetSalesHour(dateStart, dateCompare, idTienda);
-                        resultados.VentasActualesHour = resp.Ventas;
-                        resultados.CantidadClientes = resp.CantidadVentas;
-                        resultados.VentasComparacionHour = await GetComparationHour(dateStart, dateCompare, idTienda);
-                        break;
+                case TypeValuesDashboard.Dia:
+                    dateCompare = new DateTime(dateStart.Year, dateStart.Month, dateStart.Day, 0, 0, 0);
+                    var resp = await GetSalesHour(dateStart, dateCompare, idTienda, visionGlobal);
+                    resultados.VentasActualesHour = resp.Ventas;
+                    resultados.CantidadClientes = resp.CantidadVentas;
+                    resultados.VentasComparacionHour = await GetComparationHour(dateStart, dateCompare, idTienda, visionGlobal);
+                    break;
 
-                    case TypeValuesDashboard.Semana:
-                        var numberWeek = (int)dateStart.Date.DayOfWeek == 0 ? 7 : (int)dateStart.Date.DayOfWeek;
-                        dateStart = dateStart.AddDays(-numberWeek + 1);
-                        dateCompare = dateStart.AddDays(-7);
-                        var resp2 = await GetSalesActuales(dateStart, dateStart.AddDays(7), idTienda);
-                        resultados.VentasActuales = resp2.Ventas;
-                        resultados.CantidadClientes = resp2.CantidadVentas;
-                        resultados.VentasComparacion = await GetComparation(dateStart, dateCompare, idTienda);
+                case TypeValuesDashboard.Semana:
+                    var numberWeek = (int)dateStart.Date.DayOfWeek == 0 ? 7 : (int)dateStart.Date.DayOfWeek;
+                    dateStart = dateStart.AddDays(-numberWeek + 1);
+                    dateCompare = dateStart.AddDays(-7);
+                    var resp2 = await GetSalesActuales(dateStart, dateStart.AddDays(7), idTienda, visionGlobal);
+                    resultados.VentasActuales = resp2.Ventas;
+                    resultados.CantidadClientes = resp2.CantidadVentas;
+                    resultados.VentasComparacion = await GetComparation(dateStart, dateCompare, idTienda, visionGlobal);
 
-                        break;
+                    break;
 
-                    case TypeValuesDashboard.Mes:
-                        dateStart = dateStart.AddDays((-dateStart.Date.Day) + 1);
-                        dateCompare = dateStart.AddMonths(-1);
-                        var resp3 = await GetSalesActuales(dateStart, dateStart.AddMonths(1), idTienda);
-                        resultados.VentasActuales = resp3.Ventas;
-                        resultados.CantidadClientes = resp3.CantidadVentas;
-                        resultados.VentasComparacion = await GetComparation(dateStart, dateCompare, idTienda);
+                case TypeValuesDashboard.Mes:
+                    dateStart = dateStart.AddDays((-dateStart.Date.Day) + 1);
+                    dateCompare = dateStart.AddMonths(-1);
+                    var resp3 = await GetSalesActuales(dateStart, dateStart.AddMonths(1), idTienda, visionGlobal);
+                    resultados.VentasActuales = resp3.Ventas;
+                    resultados.CantidadClientes = resp3.CantidadVentas;
+                    resultados.VentasComparacion = await GetComparation(dateStart, dateCompare, idTienda, visionGlobal);
 
-                        break;
-                }
-
-
-                return resultados;
-
+                    break;
             }
-            catch
-            {
-                throw;
-            }
+
+
+            return resultados;
         }
 
-        public async Task<Dictionary<string, decimal>> GetMovimientosProveedoresByTienda(TypeValuesDashboard typeValues, int idTienda, DateTime dateStart)
+        public async Task<Dictionary<string, decimal>> GetMovimientosProveedoresByTienda(TypeValuesDashboard typeValues, int idTienda, DateTime dateStart, bool visionGlobal)
         {
             FechasParaQuery(typeValues, dateStart, out DateTime end, out DateTime start);
 
@@ -104,7 +89,7 @@ namespace PointOfSale.Business.Services
             return resultado;
         }
 
-        public async Task<Dictionary<string, decimal>> GetSalesByTypoVenta(TypeValuesDashboard typeValues, int idTienda, DateTime dateStart)
+        public async Task<Dictionary<string, decimal>> GetSalesByTypoVenta(TypeValuesDashboard typeValues, int idTienda, DateTime dateStart, bool visionGlobal)
         {
             FechasParaQuery(typeValues, dateStart, out DateTime end, out DateTime start);
 
@@ -126,7 +111,7 @@ namespace PointOfSale.Business.Services
         }
 
 
-        private async Task<(Dictionary<DateTime, decimal> Ventas, int CantidadVentas)> GetSalesActuales(DateTime start, DateTime end, int idTienda)
+        private async Task<(Dictionary<DateTime, decimal> Ventas, int CantidadVentas)> GetSalesActuales(DateTime start, DateTime end, int idTienda, bool visionGlobal)
         {
             var query = await _repositorySale.Query();
 
@@ -151,7 +136,7 @@ namespace PointOfSale.Business.Services
             return (resp, cantVentas);
         }
 
-        private async Task<(Dictionary<int, decimal> Ventas, int CantidadVentas)> GetSalesHour(DateTime end, DateTime start, int idTienda)
+        private async Task<(Dictionary<int, decimal> Ventas, int CantidadVentas)> GetSalesHour(DateTime end, DateTime start, int idTienda, bool visionGlobal)
         {
             var resultados = new GraficoVentasConComparacion();
 
@@ -176,7 +161,7 @@ namespace PointOfSale.Business.Services
             return (resp, cantVentas);
         }
 
-        private async Task<Dictionary<DateTime, decimal>> GetComparation(DateTime start, DateTime dateCompare, int idTienda)
+        private async Task<Dictionary<DateTime, decimal>> GetComparation(DateTime start, DateTime dateCompare, int idTienda, bool visionGlobal)
         {
             var query = await _repositorySale.Query();
 
@@ -196,7 +181,7 @@ namespace PointOfSale.Business.Services
                 .ToDictionary(keySelector: r => r.date, elementSelector: r => r.total);
         }
 
-        private async Task<Dictionary<int, decimal>> GetComparationHour(DateTime start, DateTime dateCompare, int idTienda)
+        private async Task<Dictionary<int, decimal>> GetComparationHour(DateTime start, DateTime dateCompare, int idTienda, bool visionGlobal)
         {
             var resultados = new GraficoVentasConComparacion();
 
@@ -218,7 +203,7 @@ namespace PointOfSale.Business.Services
                 .ToDictionary(keySelector: r => r.date, elementSelector: r => r.total);
         }
 
-        public async Task<Dictionary<string, string?>> ProductsTopByCategory(TypeValuesDashboard typeValues, string category, int idTienda, DateTime dateStart)
+        public async Task<Dictionary<string, string?>> ProductsTopByCategory(TypeValuesDashboard typeValues, string category, int idTienda, DateTime dateStart, bool visionGlobal)
         {
             FechasParaQuery(typeValues, dateStart, out DateTime end, out DateTime start);
 
@@ -276,7 +261,7 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task<Dictionary<string, decimal>> GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard typeValues, int turno, int idTienda, DateTime dateStart)
+        public async Task<Dictionary<string, decimal>> GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard typeValues, int turno, int idTienda, DateTime dateStart, bool visionGlobal)
         {
             FechasParaQuery(typeValues, dateStart, out DateTime end, out DateTime start);
 
@@ -298,7 +283,7 @@ namespace PointOfSale.Business.Services
         }
 
 
-        public async Task<Dictionary<string, decimal>> GetSalesByTypoVentaByTurno(TypeValuesDashboard typeValues, int turno, int idTienda)
+        public async Task<Dictionary<string, decimal>> GetSalesByTypoVentaByTurno(TypeValuesDashboard typeValues, int turno, int idTienda, bool visionGlobal)
         {
             IQueryable<Sale> query = await _repositorySale.Query();
 
@@ -315,7 +300,7 @@ namespace PointOfSale.Business.Services
             return resultado;
         }
 
-        public async Task<Dictionary<string, decimal>> GetGastos(TypeValuesDashboard typeValues, int idTienda, DateTime dateStart)
+        public async Task<Dictionary<string, decimal>> GetGastos(TypeValuesDashboard typeValues, int idTienda, DateTime dateStart, bool visionGlobal)
         {
             FechasParaQuery(typeValues, dateStart, out DateTime end, out DateTime start);
 
@@ -334,7 +319,7 @@ namespace PointOfSale.Business.Services
 
             return resultado;
         }
-        public async Task<Dictionary<string, decimal>> GetGastosSueldos(TypeValuesDashboard typeValues, int idTienda, DateTime dateStart)
+        public async Task<Dictionary<string, decimal>> GetGastosSueldos(TypeValuesDashboard typeValues, int idTienda, DateTime dateStart, bool visionGlobal)
         {
             FechasParaQuery(typeValues, dateStart, out DateTime end, out DateTime start);
 

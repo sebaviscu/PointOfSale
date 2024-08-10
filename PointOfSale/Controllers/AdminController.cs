@@ -81,7 +81,7 @@ namespace PointOfSale.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetSummary(TypeValuesDashboard typeValues, string dateFilter)
+        public async Task<IActionResult> GetSummary(TypeValuesDashboard typeValues, string dateFilter, bool visionGlobal)
         {
             GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
 
@@ -155,7 +155,7 @@ namespace PointOfSale.Controllers
                 List<VMSalesWeek> listSales = new List<VMSalesWeek>();
                 List<VMSalesWeek> listSalesComparacion = new List<VMSalesWeek>();
 
-                var resultados = await _dashboardService.GetSales(typeValues, user.IdTienda, dateActual);
+                var resultados = await _dashboardService.GetSales(typeValues, user.IdTienda, dateActual, visionGlobal);
 
                 switch (typeValues)
                 {
@@ -189,15 +189,11 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar los datos de dashboard";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. TypeValues: {TypeValues}. DateFilter: {DateFilter}", errorMessage, typeValues.ToJson(), dateFilter.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar los datos de dashboard", _logger, model: null, ("TypeValues", typeValues), ("DateFilter", dateFilter));
             }
         }
 
-        public async Task<IActionResult> GetGastosSueldos(TypeValuesDashboard typeValues, string dateFilter)
+        public async Task<IActionResult> GetGastosSueldos(TypeValuesDashboard typeValues, string dateFilter, bool visionGlobal)
         {
 
             GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
@@ -209,7 +205,7 @@ namespace PointOfSale.Controllers
                 var dateActual = SetDate(typeValues, dateFilter);
 
                 var gastosSueldosList = new List<VMVentasPorTipoDeVenta>();
-                foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetGastosSueldos(typeValues, user.IdTienda, dateActual))
+                foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetGastosSueldos(typeValues, user.IdTienda, dateActual, visionGlobal))
                 {
                     gastosSueldosList.Add(new VMVentasPorTipoDeVenta()
                     {
@@ -230,16 +226,12 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar los datos de sueldos";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. TypeValues: {TypeValues}. DateFilter: {DateFilter}", errorMessage, typeValues.ToJson(), dateFilter.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar los datos de sueldos", _logger, model: null, ("TypeValues", typeValues), ("DateFilter", dateFilter));
             }
 
         }
 
-        public async Task<IActionResult> GetSalesByTypoVentaByGrafico(TypeValuesDashboard typeValues, string dateFilter)
+        public async Task<IActionResult> GetSalesByTypoVentaByGrafico(TypeValuesDashboard typeValues, string dateFilter, bool visionGlobal)
         {
 
             GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
@@ -251,7 +243,7 @@ namespace PointOfSale.Controllers
                 var dateActual = SetDate(typeValues, dateFilter);
                 var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
 
-                foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetSalesByTypoVenta(typeValues, user.IdTienda, dateActual))
+                foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetSalesByTypoVenta(typeValues, user.IdTienda, dateActual, visionGlobal))
                 {
                     VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
                     {
@@ -269,16 +261,12 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar los datos de ventas por forma de pago";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. TypeValues: {TypeValues}. DateFilter: {DateFilter}", errorMessage, typeValues.ToJson(), dateFilter.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar los datos de ventas por forma de pago", _logger, model: null, ("TypeValues", typeValues), ("DateFilter", dateFilter));
             }
 
         }
 
-        public async Task<IActionResult> GetGastos(TypeValuesDashboard typeValues, string dateFilter)
+        public async Task<IActionResult> GetGastos(TypeValuesDashboard typeValues, string dateFilter, bool visionGlobal)
         {
 
             GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
@@ -289,7 +277,7 @@ namespace PointOfSale.Controllers
 
                 var dateActual = SetDate(typeValues, dateFilter);
                 var gastosParticualresList = new List<VMVentasPorTipoDeVenta>();
-                foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetGastos(typeValues, user.IdTienda, dateActual))
+                foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetGastos(typeValues, user.IdTienda, dateActual, visionGlobal))
                 {
                     gastosParticualresList.Add(new VMVentasPorTipoDeVenta()
                     {
@@ -310,16 +298,12 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar los datos de gastos";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. TypeValues: {TypeValues}. DateFilter: {DateFilter}", errorMessage, typeValues.ToJson(), dateFilter.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar los datos de gastos", _logger, model: null, ("TypeValues", typeValues), ("DateFilter", dateFilter));
             }
 
         }
 
-        public async Task<IActionResult> GetMovimientosProveedoresByTienda(TypeValuesDashboard typeValues, string dateFilter)
+        public async Task<IActionResult> GetMovimientosProveedoresByTienda(TypeValuesDashboard typeValues, string dateFilter, bool visionGlobal)
         {
 
             GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
@@ -330,7 +314,7 @@ namespace PointOfSale.Controllers
 
                 var dateActual = SetDate(typeValues, dateFilter);
                 var gastosProveedores = new List<VMVentasPorTipoDeVenta>();
-                var movimientosProv = await _dashboardService.GetMovimientosProveedoresByTienda(typeValues, user.IdTienda, dateActual);
+                var movimientosProv = await _dashboardService.GetMovimientosProveedoresByTienda(typeValues, user.IdTienda, dateActual, visionGlobal);
                 var gastosProvTotales = movimientosProv.Sum(_ => _.Value);
 
                 foreach (var item in movimientosProv)
@@ -353,11 +337,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar los datos de pagos de proveedores";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. TypeValues: {TypeValues}. DateFilter: {DateFilter}", errorMessage, typeValues.ToJson(), dateFilter.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar los datos de pagos de proveedores", _logger, model: null, ("TypeValues", typeValues), ("DateFilter", dateFilter));
             }
 
         }
@@ -395,7 +375,7 @@ namespace PointOfSale.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetSalesByTypoVenta(TypeValuesDashboard typeValues, string idCategoria, string dateFilter)
+        public async Task<IActionResult> GetSalesByTypoVenta(TypeValuesDashboard typeValues, string idCategoria, string dateFilter, bool visionGlobal)
         {
             var gResponse = new GenericResponse<List<VMProductsWeek>>();
 
@@ -415,7 +395,7 @@ namespace PointOfSale.Controllers
                     dateActual = new DateTime(Convert.ToInt32(dateSplit[2]), Convert.ToInt32(dateSplit[1]), Convert.ToInt32(dateSplit[0]), 0, 0, 0);
                 }
 
-                foreach (KeyValuePair<string, string?> item in await _dashboardService.ProductsTopByCategory(typeValues, idCategoria, tiendaId, dateActual))
+                foreach (KeyValuePair<string, string?> item in await _dashboardService.ProductsTopByCategory(typeValues, idCategoria, tiendaId, dateActual, visionGlobal))
                 {
                     var prod = prods.FirstOrDefault(_ => _.Description == item.Key);
                     if (prod != null)
@@ -435,11 +415,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar el top ventas de dashboard";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. TypeValues: {TypeValues}. DateFilter: {DateFilter}. IdCategoria: {IdCategoria}", errorMessage, typeValues.ToJson(), dateFilter.ToJson(), idCategoria.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar el top ventas de dashboard", _logger, model: null, ("TypeValues", typeValues), ("DateFilter", dateFilter), ("IdCategoria", idCategoria));
             }
 
         }
@@ -533,11 +509,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar roles";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar roles", _logger);
             }
         }
 
@@ -580,11 +552,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar un usuario";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {Model}.", errorMessage, idUser.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar un usuario", _logger, idUser.ToJson());
             }
         }
 
@@ -622,11 +590,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al crear usuarios";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {Model}.", errorMessage, model.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al crear usuarios", _logger, model.ToJson());
             }
 
         }
@@ -662,11 +626,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al actualizar usuarios";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {Model}.", errorMessage, model.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al actualizar usuarios", _logger, model.ToJson());
             }
 
         }
@@ -685,11 +645,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al borrar usuarios";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {Model}.", errorMessage, IdUser.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al borrar usuarios", _logger, IdUser.ToJson());
             }
 
         }
@@ -712,14 +668,6 @@ namespace PointOfSale.Controllers
             return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetTipoVentaWeb()
-        //{
-        //    List<VMTypeDocumentSale> listUsers = _mapper.Map<List<VMTypeDocumentSale>>(await _typeDocumentSaleService.ListWeb());
-        //    return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
-        //}
-
-
         [HttpPost]
         public async Task<IActionResult> CreateTipoVenta([FromBody] VMTypeDocumentSale model)
         {
@@ -736,11 +684,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al crear forma de pago";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {Model}.", errorMessage, model.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al crear forma de pago", _logger, model.ToJson());
             }
 
         }
@@ -762,11 +706,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al actualizar forma de pago";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {Model}.", errorMessage, model.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al actualizar forma de pago", _logger, model.ToJson());
             }
 
         }
@@ -785,11 +725,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al eliminar forma de pago";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {Model}.", errorMessage, idTypeDocumentSale.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al eliminar forma de pago", _logger, idTypeDocumentSale.ToJson());
             }
         }
 
@@ -816,11 +752,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al crear clientes";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al crear clientes", _logger);
             }
 
         }
@@ -848,11 +780,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar movimientos de clientes";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar movimientos de clientes", _logger);
             }
         }
 
@@ -878,11 +806,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al crear cliente";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {Model}.", errorMessage, model.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al crear cliente", _logger, model.ToJson());
             }
 
         }
@@ -909,11 +833,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al actualizar cliente";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {Model}.", errorMessage, model.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al actualizar cliente", _logger, model.ToJson());
             }
 
         }
@@ -937,11 +857,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al eliminar cliente";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {Model}.", errorMessage, idCliente.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al eliminar cliente", _logger, idCliente.ToJson());
             }
 
         }
@@ -967,11 +883,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar proveedores";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar proveedores", _logger);
             }
         }
 
@@ -1014,11 +926,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar proveedores con productos para pedido";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar proveedores con productos para pedido", _logger);
             }
 
         }
@@ -1042,11 +950,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al crear proveedor";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {Model}.", errorMessage, model.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al crear proveedor", _logger, model.ToJson());
             }
 
         }
@@ -1077,11 +981,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al crear pago a proveedor";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {Model}.", errorMessage, model.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al crear pago a proveedor", _logger, model.ToJson());
             }
 
         }
@@ -1109,11 +1009,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar movimientos de proveedor";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {Model}.", errorMessage, idProveedor.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar movimientos de proveedor", _logger, idProveedor.ToJson());
             }
 
         }
@@ -1136,11 +1032,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar pagos a proveedores";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar pagos a proveedores", _logger);
             }
         }
 
@@ -1160,11 +1052,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar pagos a proveedores para tabla dinamica";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar pagos a proveedores para tabla dinamica", _logger);
             }
         }
 
@@ -1193,11 +1081,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al actualizar proveedor";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {Model}.", errorMessage, vmUser.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al actualizar proveedor", _logger, vmUser.ToJson());
             }
 
         }
@@ -1221,11 +1105,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al eliminar proveedor";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {Model}.", errorMessage, idProveedor.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al eliminar proveedor", _logger, idProveedor.ToJson());
             }
 
         }
@@ -1252,11 +1132,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al cambiar estrado de pago de pago de proveedor";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {Model}.", errorMessage, idMovimiento.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al cambiar estrado de pago de pago de proveedor", _logger, idMovimiento.ToJson());
             }
 
         }
@@ -1285,11 +1161,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al actualizar pago de proveedor";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {Model}.", errorMessage, vmUser.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al actualizar pago de proveedor", _logger, vmUser.ToJson());
             }
 
         }
@@ -1312,11 +1184,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al eliminar pago de proveedor";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {Model}.", errorMessage, idPagoProveedor.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al eliminar pago de proveedor", _logger, idPagoProveedor.ToJson());
             }
 
         }
@@ -1349,11 +1217,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar promociones";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar promociones", _logger);
             }
 
         }
@@ -1401,11 +1265,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar promociones activas";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar promociones activas", _logger);
             }
         }
 
@@ -1436,11 +1296,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al crear promocion";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {Model}.", errorMessage, model.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al crear promocion", _logger, model.ToJson());
             }
 
         }
@@ -1470,11 +1326,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al actualizar promocion";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {Model}.", errorMessage, vmUser.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al actualizar promocion", _logger, vmUser.ToJson());
             }
 
         }
@@ -1498,11 +1350,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al eliminar promocion";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {Model}.", errorMessage, idPromocion.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al eliminar promocion", _logger, idPromocion.ToJson());
             }
 
         }
@@ -1533,11 +1381,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al cambiar estado de promocion";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {Model}.", errorMessage, idPromocion.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al cambiar estado de promocion", _logger, idPromocion.ToJson());
             }
 
         }
@@ -1575,11 +1419,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar ajuste web";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar ajuste web", _logger);
             }
         }
 
@@ -1618,11 +1458,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al actualizar ajuste";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {Model}.", errorMessage, model.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar ajuste", _logger, model.ToJson());
             }
         }
 
@@ -1644,11 +1480,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar aumento web";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar aumento web", _logger);
             }
         }
 
@@ -1673,11 +1505,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar nombre de impresora";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar ajustes", _logger);
             }
         }
 
@@ -1704,11 +1532,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al validar codigo de seguridad";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al validar codigo de seguridad", _logger, encryptedCode.ToJson());
             }
         }
 
@@ -1738,11 +1562,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar facturas";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar facturas", _logger);
             }
         }
 
@@ -1769,11 +1589,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar facturas";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar facturas", _logger, idFacturaEmitida.ToJson());
             }
         }
 
@@ -1793,11 +1609,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar ajuste de facturacion";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar ajuste de facturacion", _logger);
             }
         }
 

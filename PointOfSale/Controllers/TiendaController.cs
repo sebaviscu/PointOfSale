@@ -66,25 +66,6 @@ namespace PointOfSale.Controllers
         }
 
 
-        [HttpGet]
-        public async Task<IActionResult> GetOneTienda()
-        {
-            var gResponse = new GenericResponse<VMTienda>();
-
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador]);
-
-                var tienda = _mapper.Map<VMTienda>(await _TiendaService.Get(user.IdTienda));
-                return StatusCode(StatusCodes.Status200OK, new { data = tienda });
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al recuperar Tiendas", _logger);
-            }
-
-        }
-
         [HttpPost]
         public async Task<IActionResult> CreateTienda([FromForm] IFormFile Logo, [FromForm] string model)
         {

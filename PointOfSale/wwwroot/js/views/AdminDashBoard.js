@@ -7,6 +7,7 @@ let charGastosSueldos;
 let charGastosProveedor;
 let charGastos;
 let charTipoVentas;
+let visionGlobal = false;
 
 let gastoTotal = 0;
 let proveedorTotal = 0;
@@ -40,6 +41,16 @@ const BASIC_MODEL_PAGO_PROVEEDOR = {
 }
 
 $(document).ready(function () {
+
+    fetch("/Tienda/GetTienda")
+        .then(response => {
+            return response.json();
+        }).then(responseJson => {
+
+            document.getElementById("divSwitchVisionGlobal").style.display = responseJson.data != null && responseJson.data.length > 1 ? '' : 'none';
+
+        })
+
     fetch("/Gastos/GetTipoDeGasto")
         .then(response => {
             return response.json();
@@ -119,6 +130,10 @@ $(document).ready(function () {
     changeChart(1);
 })
 
+$('#switchVisionGlobal').change(function () {
+    visionGlobal = $(this).is(':checked')
+    changeChart(typeValuesGlobal);
+});
 
 $("#btnSearch").click(function () {
 
@@ -127,23 +142,21 @@ $("#btnSearch").click(function () {
         return;
     }
 
-    let dayDate = $("#txtDay").val();
-
-    changeChart(typeValuesGlobal, dayDate);
+    changeChart(typeValuesGlobal);
 })
 
 $('#cboCategory').change(function () {
     SetTopSeler(typeValuesGlobal, $(this).val());
 })
 
-function changeChart(typeValues, dateFilter) {
+function changeChart(typeValues) {
 
     dateFilter = $("#txtDay").val();
 
     typeValuesGlobal = typeValues;
     LoadingText("show");
 
-    fetch(`/Admin/GetSummary?typeValues=${typeValues}&dateFilter=${dateFilter}`, {
+    fetch(`/Admin/GetSummary?typeValues=${typeValues}&dateFilter=${dateFilter}&visionGlobal=${visionGlobal}`, {
         method: "GET"
     })
         .then(response => {
@@ -159,9 +172,7 @@ function changeChart(typeValues, dateFilter) {
                 saleTotal = d.totalSales;
                 setGastosGanancia();
 
-                //$("#txtTotalGastos").text(d.gastosTotales)
                 $("#txtCantidadClientes").text(d.cantidadClientes)
-                //$("#txtGanancia").text(d.ganancia)
                 $("#idTextFilter").text(d.textoFiltroDiaSemanaMes)
 
                 SetGraficoVentas(d);
@@ -176,6 +187,12 @@ function changeChart(typeValues, dateFilter) {
     SetGraficoGastos(typeValues, dateFilter);
     SetGraficoGastosProveedor(typeValues, dateFilter);
     SetGraficoGastosSueldos(typeValues, dateFilter);
+
+    document.getElementById("divGraficosGlobales").style.display = visionGlobal ? '' : 'none';
+    if (visionGlobal) {
+
+        // mostrar graficos nuevos globales
+    }
 }
 
 function LoadingText(text) {
@@ -296,7 +313,7 @@ function SetTopSeler(typeValues, idCategory) {
     $("#chartTopSeller").LoadingOverlay("show")
     let dateFilter = $("#txtDay").val();
 
-    fetch(`/Admin/GetSalesByTypoVenta?typeValues=${typeValues}&idCategoria=${idCategory}&dateFilter=${dateFilter}`, {
+    fetch(`/Admin/GetSalesByTypoVenta?typeValues=${typeValues}&idCategoria=${idCategory}&dateFilter=${dateFilter}&visionGlobal=${visionGlobal}`, {
         method: "GET"
     })
         .then(response => {
@@ -329,7 +346,7 @@ function SetGraficoGastosSueldos(typeValues, dateFilter) {
     $("#charGastosSueldos").LoadingOverlay("show")
     $("#gastosSueldosTexto").LoadingOverlay("show")
 
-    fetch(`/Admin/GetGastosSueldos?typeValues=${typeValues}&dateFilter=${dateFilter}`, {
+    fetch(`/Admin/GetGastosSueldos?typeValues=${typeValues}&dateFilter=${dateFilter}&visionGlobal=${visionGlobal}`, {
         method: "GET"
     })
         .then(response => {
@@ -400,7 +417,7 @@ function SetGraficoGastosProveedor(typeValues, dateFilter) {
     $("#charGastosProveedor").LoadingOverlay("show")
     $("#gastosProvvedoresTexto").LoadingOverlay("show")
 
-    fetch(`/Admin/GetMovimientosProveedoresByTienda?typeValues=${typeValues}&dateFilter=${dateFilter}`, {
+    fetch(`/Admin/GetMovimientosProveedoresByTienda?typeValues=${typeValues}&dateFilter=${dateFilter}&visionGlobal=${visionGlobal}`, {
         method: "GET"
     })
         .then(response => {
@@ -474,7 +491,7 @@ function SetGraficoGastos(typeValues, dateFilter) {
     $("#charGastos").LoadingOverlay("show")
     $("#gastoTexto").LoadingOverlay("show")
 
-    fetch(`/Admin/GetGastos?typeValues=${typeValues}&dateFilter=${dateFilter}`, {
+    fetch(`/Admin/GetGastos?typeValues=${typeValues}&dateFilter=${dateFilter}&visionGlobal=${visionGlobal}`, {
         method: "GET"
     })
         .then(response => {
@@ -548,7 +565,7 @@ function SetTipoVentas(typeValues, dateFilter) {
 
     $("#charTipoVentas").LoadingOverlay("show")
 
-    fetch(`/Admin/GetSalesByTypoVentaByGrafico?typeValues=${typeValues}&dateFilter=${dateFilter}`, {
+    fetch(`/Admin/GetSalesByTypoVentaByGrafico?typeValues=${typeValues}&dateFilter=${dateFilter}&visionGlobal=${visionGlobal}`, {
         method: "GET"
     })
         .then(response => {
