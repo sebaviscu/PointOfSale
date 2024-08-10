@@ -57,7 +57,7 @@ namespace PointOfSale.Controllers
 
                 var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
                 var dateActual = TimeHelper.GetArgentinaTime();
-                foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, tiendaId, dateActual))
+                foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, tiendaId, dateActual, false))
                 {
                     VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
                     {
@@ -95,7 +95,7 @@ namespace PointOfSale.Controllers
 
                 var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
                 var dateActual = TimeHelper.GetArgentinaTime();
-                foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, tiendaId, dateActual))
+                foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, tiendaId, dateActual, false))
                 {
                     VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
                     {
@@ -167,7 +167,7 @@ namespace PointOfSale.Controllers
                 var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurno(idTurno));
 
                 var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
-                foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurno(TypeValuesDashboard.Dia, vmTurnp.IdTurno, tiendaId))
+                foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurno(TypeValuesDashboard.Dia, vmTurnp.IdTurno, tiendaId, false))
                 {
                     VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
                     {

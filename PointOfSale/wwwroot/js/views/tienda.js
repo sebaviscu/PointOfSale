@@ -40,7 +40,7 @@ $(document).ready(function () {
                 "data": "nombre", render: function (data, type, row) {
                     let tiendaActualBadge = '';
                     if (row.tiendaActual == 1) {
-                        tiendaActualBadge = '<span class="mdi mdi-star"></span>';
+                        tiendaActualBadge = '<span class="mdi mdi-star"  data-bs-toggle="tooltip" data-bs-placement="bottom" title="Actual"></span>';
                     }
                     return `${data} ${tiendaActualBadge}`;
                 }
