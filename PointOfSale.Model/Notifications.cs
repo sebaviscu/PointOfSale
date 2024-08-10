@@ -41,6 +41,14 @@ namespace PointOfSale.Model
             Accion = "/Inventory/Stock";
             Rols = $"{(int)Roles.Administrador},{(int)Roles.Encargado}";
         }
+        public Notifications(AjustesFacturacion ajustes)
+        {
+            Descripcion = $"Está proxima la fecha de caducidad ({ajustes.CertificadoFechaCaducidad.Value.ToShortDateString()}) del certificado ({ajustes.CertificadoNombre}) de AFIP.";
+            IsActive = true;
+            RegistrationDate = TimeHelper.GetArgentinaTime();
+            Accion = "";
+            Rols = $"{(int)Roles.Administrador},{(int)Roles.Encargado}";
+        }
 
         public int IdNotifications { get; set; }
         public string? Descripcion { get; set; }

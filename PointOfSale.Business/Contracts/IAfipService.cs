@@ -25,5 +25,7 @@ namespace PointOfSale.Business.Contracts
         VMX509Certificate2 GetCertificateAfipInformation(string certificatePath, string certificatePassword);
 
         string ValidateCertificate(AjustesFacturacion? ajustes);
+
+        Task CheckVencimientoCertificado(int idTienda);
     }
 }

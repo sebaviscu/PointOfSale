@@ -23,13 +23,15 @@ namespace PointOfSale.Business.Services
         private readonly IAFIPFacturacionService _afipFacturacionService;
         private readonly IAjusteService _ajusteService;
         private readonly IFileStorageService _fileStorageService;
+        private readonly INotificationService _notificationRepository;
 
-        public AfipService(IGenericRepository<FacturaEmitida> repository, IAFIPFacturacionService afipFacturacionService, IAjusteService ajusteService, IFileStorageService fileStorageService)
+        public AfipService(IGenericRepository<FacturaEmitida> repository, IAFIPFacturacionService afipFacturacionService, IAjusteService ajusteService, IFileStorageService fileStorageService, INotificationService notificationRepository)
         {
             _repository = repository;
             _afipFacturacionService = afipFacturacionService;
             _ajusteService = ajusteService;
             _fileStorageService = fileStorageService;
+            _notificationRepository = notificationRepository;
         }
 
         public async Task<FacturaEmitida> Facturar(Sale sale_created, int? nroDocumento, int? idCliente, string registrationUser)
@@ -146,6 +148,20 @@ namespace PointOfSale.Business.Services
             }
 
             return resp;
+        }
+
+        public async Task CheckVencimientoCertificado(int idTienda)
+        {
+            var ajustes = await _ajusteService.GetAjustesFacturacion(idTienda);
+            if (ajustes != null)
+            {
+                if (ajustes.CertificadoFechaCaducidad.HasValue && ajustes.CertificadoFechaCaducidad.Value.Date <= DateTime.Now.Date.AddDays(15))
+                {
+                    var notific = new Notifications(ajustes);
+                    await _notificationRepository.Save(notific);
+
+                }
+            }
         }
     }
 }

@@ -20,8 +20,9 @@ namespace PointOfSale.Controllers
         private readonly ISaleService _saleService;
         private readonly IProductService _productService;
         private readonly ILogger<AccessController> _logger;
+        private readonly IAfipService _afipService;
 
-        public AccessController(IUserService userService, ITurnoService turnoService, ITiendaService tiendaService, ISaleService saleService, IProductService productService, ILogger<AccessController> logger)
+        public AccessController(IUserService userService, ITurnoService turnoService, ITiendaService tiendaService, ISaleService saleService, IProductService productService, ILogger<AccessController> logger, IAfipService afipService)
         {
             _userService = userService;
             _turnoService = turnoService;
@@ -29,6 +30,7 @@ namespace PointOfSale.Controllers
             _saleService = saleService;
             _productService = productService;
             _logger = logger;
+            _afipService = afipService;
         }
 
         public IActionResult Login()
@@ -92,7 +94,10 @@ namespace PointOfSale.Controllers
                 listaPrecio = (int)tiendas.FirstOrDefault(_ => _.IdTienda == idTienda).IdListaPrecio.Value;
                 await _turnoService.CheckTurnosViejos(idTienda);
                 var turno = await _turnoService.GetTurno(idTienda, user_found.Name);
+
                 await _productService.ActivarNotificacionVencimientos(idTienda);
+
+                await _afipService.CheckVencimientoCertificado(idTienda);
 
                 List<Claim> claims = new List<Claim>()
                 {

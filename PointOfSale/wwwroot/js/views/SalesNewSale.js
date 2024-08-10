@@ -515,6 +515,7 @@ $(document).on("click", "button.finalizarSaleParcial", function () {
     else {
 
         let total = $("#txtTotal" + currentTabId).attr("totalReal");
+        calcularMinimoIdentificarConsumidor(total);
 
         $("#txtTotalView").val(total);
         $("#txtTotalParcial").val(total);
@@ -590,6 +591,18 @@ function calcularSuma() {
     }
 
     return subTotal;
+}
+
+function calcularMinimoIdentificarConsumidor(totFijo) {
+
+    if (ajustes.minimoIdentificarConsumidor != '' && parseFloat(totFijo) > parseFloat(ajustes.minimoIdentificarConsumidor)) {
+        $("#txtMinimoIdentificarConsumidor").html("El total supera el minimo para identificar al consumidor. Debe ingresar el CUIL / CUIT / DNI si va a facturarlo.");
+
+        $("#txtMinimoIdentificarConsumidor").show();
+    }
+    else {
+        $("#txtMinimoIdentificarConsumidor").hide();
+    }
 }
 
 function getSumaSubTotales() {

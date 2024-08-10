@@ -3,19 +3,26 @@
     $("#limpiarNotificaciones").on("click", function () {
 
 
-        fetch("/Notification/LimpiarTodoNotificacion", {
+
+
+        fetch(`/Notification/LimpiarTodoNotificacion`, {
             method: "PUT",
             headers: { 'Content-Type': 'application/json;charset=utf-8' }
-        }).then(responseJson => {
-            if (responseJson.state) {
-                $(".dropdown-menu .dropdown-header").remove();
-                $("#listaNotificaciones").remove();
-
-            } else {
-                swal("Lo sentimos", responseJson.message, "error");
-            }
-        }).catch((error) => {
         })
+            .then(response => {
+                return response.json();
+            }).then(responseJson => {
+                if (responseJson.state) {
+                    $(".dropdown-menu .dropdown-header").remove();
+                    $("#listaNotificaciones").remove();
+
+                } else {
+                    swal("Lo sentimos", responseJson.message, "error");
+                }
+
+            }).catch((error) => {
+                $("#modalDataTurno").find("div.modal-content").LoadingOverlay("hide")
+            })
     })
 
 

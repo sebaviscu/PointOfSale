@@ -103,7 +103,6 @@ namespace PointOfSale.Controllers
                 var result = await _notificationService.LimpiarTodo(user.UserName);
 
                 gResponse.State = true;
-                gResponse.State = result;
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)

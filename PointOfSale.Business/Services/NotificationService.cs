@@ -61,7 +61,7 @@ namespace PointOfSale.Business.Services
                 var resp = await _repository.Edit(Notifications_found);
                 if (!resp)
                     throw new TaskCanceledException("La Notificacion " + Notifications_found.IdNotifications + " no se pudo modificar.");
-                return false;
+
             }
 
             return true;
