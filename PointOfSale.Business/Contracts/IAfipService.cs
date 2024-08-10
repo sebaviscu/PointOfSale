@@ -20,7 +20,7 @@ namespace PointOfSale.Business.Contracts
 
         Task<string> GenerateFacturaQR(FacturaEmitida factura);
 
-        Task<string> ReplaceCertificateAsync(IFormFile file, int idTienda);
+        Task<string> ReplaceCertificateAsync(IFormFile file, int idTienda, string? oldCertificate);
 
         VMX509Certificate2 GetCertificateAfipInformation(string certificatePath, string certificatePassword);
 

@@ -508,13 +508,21 @@ namespace PointOfSale.Data.DBContext
                     .IsUnicode(false)
                     .HasColumnName("nombre");
 
-                entity.HasOne(e => e.Ajustes)
-                  .WithOne(f => f.Tienda)
-                  .HasForeignKey<Ajustes>(f => f.IdAjuste);
+                entity.HasOne(t => t.Ajustes)
+                    .WithOne(_ => _.Tienda)
+                    .HasForeignKey<Tienda>(t => t.IdAjustes)
+                    .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasOne(e => e.AjustesFacturacion)
-                  .WithOne(f => f.Tienda)
-                  .HasForeignKey<AjustesFacturacion>(f => f.IdAjustesFacturacion);
+                entity.HasOne(t => t.AjustesFacturacion)
+                    .WithOne(_ => _.Tienda)
+                    .HasForeignKey<Tienda>(t => t.IdAjustesFacturacion)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                modelBuilder.Entity<Tienda>()
+                    .HasMany(t => t.Turnos)
+                    .WithOne(turno => turno.Tienda)
+                    .HasForeignKey(turno => turno.IdTienda)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Product>(entity =>

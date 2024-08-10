@@ -132,5 +132,21 @@ namespace PointOfSale.Business.Services
 
             return Ajustes_found;
         }
+
+        public async Task CreateAjsutes(int idTienda)
+        {
+            var ajustes = new Ajustes
+            {
+                IdTienda = idTienda,
+                MinimoIdentificarConsumidor = 300000
+
+            };
+            var ajustesFacturacion = new AjustesFacturacion()
+            {
+                IdTienda = idTienda
+            };
+            await _repositoryAjustes.Add(ajustes);
+            await _repositoryAjustesFacturacion.Add(ajustesFacturacion);
+        }
     }
 }

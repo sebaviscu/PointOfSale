@@ -1818,11 +1818,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error en el certificado";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error en el certificado", _logger);
             }
         }
 
@@ -1838,9 +1834,11 @@ namespace PointOfSale.Controllers
 
                 if (Certificado != null)
                 {
-                    vmModel.CertificadoNombre = Certificado.FileName;
-                    var pathFile = await _afipService.ReplaceCertificateAsync(Certificado, user.IdTienda);
+                    var oldAjustes = await _ajusteService.GetAjustesFacturacion(user.IdTienda);
 
+                    var pathFile = await _afipService.ReplaceCertificateAsync(Certificado, user.IdTienda, oldAjustes.CertificadoNombre);
+
+                    vmModel.CertificadoNombre = Certificado.FileName;
                     if (!string.IsNullOrEmpty(vmModel.CertificadoPassword))
                     {
                         var cert = _afipService.GetCertificateAfipInformation(pathFile, vmModel.CertificadoPassword);
@@ -1864,11 +1862,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al actualizar ajustes de facturacion";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {ModelRequest}", errorMessage, model.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al actualizar ajustes de facturación", _logger, model);
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);

@@ -6,6 +6,8 @@ using System;
 using System.Security.Claims;
 using static PointOfSale.Model.Enum;
 using PointOfSale.Model;
+using NuGet.Protocol;
+using PointOfSale.Utilities.Response;
 
 namespace PointOfSale.Controllers
 {
@@ -79,6 +81,19 @@ namespace PointOfSale.Controllers
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), properties);
             }
+        }
+
+        protected IActionResult HandleException(Exception ex, string errorMessage, ILogger<object> _logger, object model = null)
+        {
+            var gResponse = new GenericResponse<object>
+            {
+                State = false,
+                Message = $"{errorMessage}\n {ex.InnerException?.ToString() ?? ex.Message}"
+            };
+
+            _logger.LogError(ex, "{ErrorMessage}. Request: {ModelRequest}", errorMessage, model?.ToJson());
+
+            return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
         }
     }
 }

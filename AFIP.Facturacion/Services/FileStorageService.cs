@@ -21,11 +21,11 @@ namespace AFIP.Facturacion.Services
         {
 
         }
-        public async Task<string> ReplaceCertificateAsync(IFormFile file, int idTienda)
+        public async Task<string> ReplaceCertificateAsync(IFormFile file, int idTienda, string? oldCertificateName)
         {
             var filePath = Path.Combine(pathProyect, "Certificados", idTienda.ToString() + "_Tienda");
 
-            await DeleteFileIfExistsAsync(filePath);
+            await DeleteFileIfExistsAsync(filePath, oldCertificateName);
 
             var newFilePath = await SaveFileAsync(file, filePath);
 
@@ -48,8 +48,17 @@ namespace AFIP.Facturacion.Services
             return filePath;
         }
 
-        private async Task DeleteFileIfExistsAsync(string filePath)
+        private async Task DeleteFileIfExistsAsync(string filePath, string? oldCertificateName)
         {
+            if (!string.IsNullOrEmpty(oldCertificateName))
+            {
+                var pathOldCertificate = Path.Combine(filePath, oldCertificateName);
+                if (File.Exists(pathOldCertificate))
+                {
+                    File.Delete(pathOldCertificate);
+                }
+            }
+
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);

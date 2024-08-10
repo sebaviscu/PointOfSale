@@ -19,16 +19,18 @@ IdAjustesFacturacion int references AjustesFacturacion(IdAjustesFacturacion) nul
 
 go
 
-create table Turno(
-	[idTurno] int primary key identity(1,1),
-	[fechaInicio] datetime not null,
-	[fechaFin] datetime null,
-	[descripcion] varchar(150) null,
-	[idTienda] int references Tienda(idTienda) not null,
-	[registrationDate] datetime not null,
-	[registrationUser] varchar(50) not null,
-	[modificationUser] varchar(50) null
-)
+CREATE TABLE Turno (
+idTurno INT PRIMARY KEY IDENTITY(1,1),
+fechaInicio DATETIME NOT NULL,
+fechaFin DATETIME NULL,
+descripcion VARCHAR(150) NULL,
+idTienda INT NOT NULL,
+registrationDate DATETIME NOT NULL,
+registrationUser VARCHAR(50) NOT NULL,
+modificationUser VARCHAR(50) NULL,
+CONSTRAINT FK_Turno_Tienda FOREIGN KEY (idTienda)
+REFERENCES Tienda(idTienda) ON DELETE CASCADE
+);
 
 go
 
@@ -436,18 +438,21 @@ nombre varchar(50) null,
 )
 go
 
-create table Ajustes(
-idAjuste int primary key identity(1,1),
-codigoSeguridad varchar(20) null,
-ImprimirDefault bit null,
-NombreTiendaTicket varchar(200) null,
-NombreImpresora  varchar(500) null,
-MinimoIdentificarConsumidor int null,
-ControlStock bit null,
-[idTienda] int references Tienda(idTienda) not null,
-[modificationDate] [datetime] null,
-[modificationUser] varchar(50) null
-)
+CREATE TABLE Ajustes (
+idAjuste INT PRIMARY KEY IDENTITY(1,1),
+codigoSeguridad VARCHAR(20) NULL,
+ImprimirDefault BIT NULL,
+NombreTiendaTicket VARCHAR(200) NULL,
+NombreImpresora VARCHAR(500) NULL,
+MinimoIdentificarConsumidor BIGINT NULL,
+ControlStock BIT NULL,
+idTienda INT NOT NULL,
+modificationDate DATETIME NULL,
+modificationUser VARCHAR(50) NULL,
+CONSTRAINT FK_Ajustes_Tienda FOREIGN KEY (idTienda)
+    REFERENCES Tienda(idTienda)
+    ON DELETE CASCADE
+);
 
 go
 
@@ -487,20 +492,32 @@ CREATE TABLE FacturasEmitidas (
 
 go
 
-create table AjustesFacturacion(
-idAjustesFacturacion int primary key identity(1,1),
+CREATE TABLE AjustesFacturacion (
+idAjustesFacturacion INT PRIMARY KEY IDENTITY(1,1),
 cuit BIGINT NULL,
-PuntoVenta int null, 
-CondicionIva int null,
-CertificadoPassword varchar(250) null,
-CertificadoNombre varchar(150) null,
-CertificadoFechaInicio [datetime] null,
-CertificadoFechaCaducidad [datetime] null,
-[idTienda] int references Tienda(idTienda) not null,
-[modificationDate] [datetime] null,
-[modificationUser] varchar(50) null
-)
+PuntoVenta INT NULL, 
+CondicionIva INT NULL,
+CertificadoPassword VARCHAR(250) NULL,
+CertificadoNombre VARCHAR(150) NULL,
+CertificadoFechaInicio DATETIME NULL,
+CertificadoFechaCaducidad DATETIME NULL,
+idTienda INT NOT NULL,
+modificationDate DATETIME NULL,
+modificationUser VARCHAR(50) NULL,
+CONSTRAINT FK_AjustesFacturacion_Tienda FOREIGN KEY (idTienda)
+    REFERENCES Tienda(idTienda)
+    ON DELETE CASCADE
+);
 
 
+select * from turno
 
+EXEC sp_fkeys @fktable_name = 'turno';
 
+ALTER TABLE Turno
+DROP CONSTRAINT FK__Turno__idTienda__267ABA7A;
+
+ALTER TABLE Turno
+ADD CONSTRAINT FK_Turno_Tienda
+FOREIGN KEY (idTienda) REFERENCES Tienda(idTienda)
+ON DELETE CASCADE;

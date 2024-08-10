@@ -117,9 +117,9 @@ namespace PointOfSale.Business.Services
             return qrUrl;
         }
 
-        public async Task<string> ReplaceCertificateAsync(IFormFile file, int idTienda)
+        public async Task<string> ReplaceCertificateAsync(IFormFile file, int idTienda, string? oldCertificateName)
         {
-            return await _fileStorageService.ReplaceCertificateAsync(file, idTienda);
+            return await _fileStorageService.ReplaceCertificateAsync(file, idTienda, oldCertificateName);
         }
 
         public VMX509Certificate2 GetCertificateAfipInformation(string certificatePath, string certificatePassword)

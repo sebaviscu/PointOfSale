@@ -304,6 +304,10 @@ $("#btnSaveAjustesFacturacion").on("click", function () {
 })
 
 function formatDateToDDMMYYYY(isoDate) {
+    if(isoDate == null){
+        return "";
+    }
+
     const date = new Date(isoDate);
 
     const day = date.getDate().toString().padStart(2, '0');

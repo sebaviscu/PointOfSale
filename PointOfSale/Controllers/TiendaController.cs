@@ -7,6 +7,7 @@ using PointOfSale.Utilities.Response;
 using static PointOfSale.Model.Enum;
 using NuGet.Protocol;
 using Newtonsoft.Json;
+using PointOfSale.Business.Services;
 
 namespace PointOfSale.Controllers
 {
@@ -15,12 +16,14 @@ namespace PointOfSale.Controllers
         private readonly ITiendaService _TiendaService;
         private readonly IMapper _mapper;
         private readonly ILogger<TiendaController> _logger;
+        private readonly IAjusteService _ajusteService;
 
-        public TiendaController(ITiendaService TiendaService, IMapper mapper, ILogger<TiendaController> logger)
+        public TiendaController(ITiendaService TiendaService, IMapper mapper, ILogger<TiendaController> logger, IAjusteService ajusteService)
         {
             _TiendaService = TiendaService;
             _mapper = mapper;
             _logger = logger;
+            _ajusteService = ajusteService;
         }
 
         public IActionResult Tienda()
@@ -58,11 +61,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar Tiendas";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar Tiendas", _logger);
             }
         }
 
@@ -81,17 +80,13 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar una tienda";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar Tiendas", _logger);
             }
 
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTienda([FromForm] IFormFile Certificado, [FromForm] IFormFile Logo, [FromForm] string model)
+        public async Task<IActionResult> CreateTienda([FromForm] IFormFile Logo, [FromForm] string model)
         {
 
             GenericResponse<VMTienda> gResponse = new GenericResponse<VMTienda>();
@@ -100,17 +95,6 @@ namespace PointOfSale.Controllers
             try
             {
                 ValidarAutorizacion([Roles.Administrador]);
-
-                //if (Certificado != null)
-                //{
-                //    var certificadoPath = Path.Combine(Directory.GetCurrentDirectory(), "Certificados", Certificado.FileName);
-                //    using (var stream = new FileStream(certificadoPath, FileMode.Create))
-                //    {
-                //        await Certificado.CopyToAsync(stream);
-                //    }
-                //    // Guarda la ruta del certificado en el objeto Tienda si es necesario
-                //    //vmTienda.CertificadoPath = certificadoPath;
-                //}
 
                 //VMTienda vmTienda = JsonConvert.DeserializeObject<VMTienda>(model);
 
@@ -127,6 +111,7 @@ namespace PointOfSale.Controllers
                 vmTienda.Logo = null;
 
                 Tienda Tienda_created = await _TiendaService.Add(_mapper.Map<Tienda>(vmTienda));
+                await _ajusteService.CreateAjsutes(Tienda_created.IdTienda);
 
                 vmTienda = _mapper.Map<VMTienda>(Tienda_created);
 
@@ -135,18 +120,14 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al crear Tiendas";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {ModelRequest}", errorMessage, vmTienda.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al crear Tiendas", _logger, vmTienda.ToJson());
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateTienda([FromForm] IFormFile Certificado, [FromForm] IFormFile Logo, [FromForm] string model)
+        public async Task<IActionResult> UpdateTienda([FromForm] IFormFile Logo, [FromForm] string model)
         {
 
             GenericResponse<VMTienda> gResponse = new GenericResponse<VMTienda>();
@@ -154,16 +135,6 @@ namespace PointOfSale.Controllers
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
-
-                //if (Certificado != null)
-                //{
-                //    var nuevoProyectoPath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).FullName, "PintOfSale.FileStorageService");
-                //    var certificadoDirectory = Path.Combine(nuevoProyectoPath, "Certificados", user.IdTienda.ToString() + "_Tienda");
-
-                //    await _fileStorageService.ReplaceFileAsync(Certificado, certificadoDirectory);
-
-                //    _ = await _TiendaService.EditCertificate(vmModel.IdTienda, Certificado.FileName);
-                //}
 
                 //if (Logo != null)
                 //{
@@ -189,11 +160,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al actualizar Tiendas";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {ModelRequest}", errorMessage, model.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al actualizar Tiendas", _logger, model.ToJson());
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -214,11 +181,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al eliminar Tiendas";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {ModelRequest}", errorMessage, idTienda.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al eliminar Tienda", _logger, idTienda.ToJson());
             }
 
         }
