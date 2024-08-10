@@ -28,6 +28,7 @@ namespace PointOfSale.Model
         public int? IdClienteMovimiento { get; set; }
         public ClienteMovimiento? ClienteMovimiento { get; set; }
         public int IdTienda { get; set; }
+        public Tienda Tienda { get; set; }
         public decimal? DescuentoRecargo { get; set; }
         public int? IdFacturaEmitida { get; set; }
         public virtual FacturaEmitida FacturaEmitida { get; set; }

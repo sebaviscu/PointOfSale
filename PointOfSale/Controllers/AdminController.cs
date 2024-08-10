@@ -263,12 +263,10 @@ namespace PointOfSale.Controllers
             {
                 return HandleException(ex, "Error al recuperar los datos de ventas por forma de pago", _logger, model: null, ("TypeValues", typeValues), ("DateFilter", dateFilter));
             }
-
         }
 
         public async Task<IActionResult> GetGastos(TypeValuesDashboard typeValues, string dateFilter, bool visionGlobal)
         {
-
             GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
 
             try
@@ -300,10 +298,9 @@ namespace PointOfSale.Controllers
             {
                 return HandleException(ex, "Error al recuperar los datos de gastos", _logger, model: null, ("TypeValues", typeValues), ("DateFilter", dateFilter));
             }
-
         }
 
-        public async Task<IActionResult> GetMovimientosProveedoresByTienda(TypeValuesDashboard typeValues, string dateFilter, bool visionGlobal)
+        public async Task<IActionResult> GetMovimientosProveedores(TypeValuesDashboard typeValues, string dateFilter, bool visionGlobal)
         {
 
             GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
@@ -314,7 +311,7 @@ namespace PointOfSale.Controllers
 
                 var dateActual = SetDate(typeValues, dateFilter);
                 var gastosProveedores = new List<VMVentasPorTipoDeVenta>();
-                var movimientosProv = await _dashboardService.GetMovimientosProveedoresByTienda(typeValues, user.IdTienda, dateActual, visionGlobal);
+                var movimientosProv = await _dashboardService.GetMovimientosProveedores(typeValues, user.IdTienda, dateActual, visionGlobal);
                 var gastosProvTotales = movimientosProv.Sum(_ => _.Value);
 
                 foreach (var item in movimientosProv)
@@ -418,6 +415,110 @@ namespace PointOfSale.Controllers
                 return HandleException(ex, "Error al recuperar el top ventas de dashboard", _logger, model: null, ("TypeValues", typeValues), ("DateFilter", dateFilter), ("IdCategoria", idCategoria));
             }
 
+        }
+
+        public async Task<IActionResult> GetGastosByTienda(TypeValuesDashboard typeValues, string dateFilter)
+        {
+            GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
+
+            try
+            {
+                ValidarAutorizacion([Roles.Administrador]);
+
+                var dateActual = SetDate(typeValues, dateFilter);
+                var gastosParticualresList = new List<VMVentasPorTipoDeVenta>();
+                foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetGastosByTienda(typeValues, dateActual))
+                {
+                    gastosParticualresList.Add(new VMVentasPorTipoDeVenta()
+                    {
+                        Descripcion = item.Key,
+                        Total = item.Value
+                    });
+                };
+                var totGastosParticualres = gastosParticualresList.Sum(_ => _.Total);
+
+                var vmDashboard = new VMDashBoard();
+                vmDashboard.GastosPorTipo = gastosParticualresList;
+                vmDashboard.GastosTexto = totGastosParticualres.ToString("F0");
+
+
+                gResponse.State = true;
+                gResponse.Object = vmDashboard;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al recuperar los datos de gastos venta global", _logger, model: null, ("TypeValues", typeValues), ("DateFilter", dateFilter));
+            }
+        }
+
+        public async Task<IActionResult> GetMovimientosProveedoresByTienda(TypeValuesDashboard typeValues, string dateFilter)
+        {
+            GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
+
+            try
+            {
+                ValidarAutorizacion([Roles.Administrador]);
+
+                var dateActual = SetDate(typeValues, dateFilter);
+                var gastosParticualresList = new List<VMVentasPorTipoDeVenta>();
+                foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetMovimientosProveedoresByTienda(typeValues, dateActual))
+                {
+                    gastosParticualresList.Add(new VMVentasPorTipoDeVenta()
+                    {
+                        Descripcion = item.Key,
+                        Total = item.Value
+                    });
+                };
+                var totGastosParticualres = gastosParticualresList.Sum(_ => _.Total);
+
+                var vmDashboard = new VMDashBoard();
+                vmDashboard.GastosPorTipo = gastosParticualresList;
+                vmDashboard.GastosTexto = totGastosParticualres.ToString("F0");
+
+
+                gResponse.State = true;
+                gResponse.Object = vmDashboard;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al recuperar los datos de proveedores en venta global", _logger, model: null, ("TypeValues", typeValues), ("DateFilter", dateFilter));
+            }
+        }
+        public async Task<IActionResult> GetSalesByTypoVentaByTienda(TypeValuesDashboard typeValues, string dateFilter)
+        {
+            GenericResponse<VMDashBoard> gResponse = new GenericResponse<VMDashBoard>();
+
+            try
+            {
+                ValidarAutorizacion([Roles.Administrador]);
+
+                var dateActual = SetDate(typeValues, dateFilter);
+                var gastosParticualresList = new List<VMVentasPorTipoDeVenta>();
+                foreach (KeyValuePair<string, decimal> item in await _dashboardService.GetSalesByTypoVentaByTienda(typeValues, dateActual))
+                {
+                    gastosParticualresList.Add(new VMVentasPorTipoDeVenta()
+                    {
+                        Descripcion = item.Key,
+                        Total = item.Value
+                    });
+                };
+                var totGastosParticualres = gastosParticualresList.Sum(_ => _.Total);
+
+                var vmDashboard = new VMDashBoard();
+                vmDashboard.GastosPorTipo = gastosParticualresList;
+                vmDashboard.GastosTexto = totGastosParticualres.ToString("F0");
+
+
+                gResponse.State = true;
+                gResponse.Object = vmDashboard;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al recuperar los datos de ventas en venta global", _logger, model: null, ("TypeValues", typeValues), ("DateFilter", dateFilter));
+            }
         }
 
         private static List<VMSalesWeek> GetSalesComparacionWeek(DateTime fechaInicio, Dictionary<DateTime, decimal> resultados, bool semanaCompleta)

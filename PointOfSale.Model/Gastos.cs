@@ -26,6 +26,7 @@ namespace PointOfSale.Model
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }
         public int IdTienda { get; set; }
+        public Tienda? Tienda { get; set; }
         public EstadoPago? EstadoPago { get; set; }
         public bool FacturaPendiente { get; set; }
 

@@ -255,6 +255,10 @@ namespace PointOfSale.Data.DBContext
                     .HasColumnType("datetime")
                     .HasColumnName("registrationDate")
                     .HasDefaultValueSql("(getdate())");
+
+                entity.HasOne(d => d.Tienda)
+                    .WithMany(p => p.Gastos)
+                    .HasForeignKey(d => d.IdTienda);
             });
 
             modelBuilder.Entity<Promocion>(entity =>
@@ -283,6 +287,11 @@ namespace PointOfSale.Data.DBContext
                     .HasColumnType("datetime")
                     .HasColumnName("registrationDate")
                     .HasDefaultValueSql("(getdate())");
+
+
+                entity.HasOne(d => d.Tienda)
+                    .WithMany(p => p.ProveedorMovimientos)
+                    .HasForeignKey(d => d.idTienda);
             });
 
             modelBuilder.Entity<Proveedor>(entity =>
@@ -690,6 +699,10 @@ namespace PointOfSale.Data.DBContext
                 entity.HasOne(e => e.FacturaEmitida)
                   .WithOne(f => f.Sale)
                   .HasForeignKey<FacturaEmitida>(f => f.IdSale);
+
+                entity.HasOne(d => d.Tienda)
+                    .WithMany(p => p.Sales)
+                    .HasForeignKey(d => d.IdTienda);
             });
 
             modelBuilder.Entity<TypeDocumentSale>(entity =>

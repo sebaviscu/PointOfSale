@@ -7,6 +7,10 @@ let charGastosSueldos;
 let charGastosProveedor;
 let charGastos;
 let charTipoVentas;
+
+let chartVentasGlobal;
+let charGastosProveedorGlobal;
+let charGastosGlobal;
 let visionGlobal = false;
 
 let gastoTotal = 0;
@@ -180,8 +184,6 @@ function changeChart(typeValues) {
             }
         });
 
-
-
     SetTopSeler(typeValuesGlobal, $('#cboCategory').val());
     SetTipoVentas(typeValues, dateFilter);
     SetGraficoGastos(typeValues, dateFilter);
@@ -189,9 +191,11 @@ function changeChart(typeValues) {
     SetGraficoGastosSueldos(typeValues, dateFilter);
 
     document.getElementById("divGraficosGlobales").style.display = visionGlobal ? '' : 'none';
-    if (visionGlobal) {
 
-        // mostrar graficos nuevos globales
+    if (visionGlobal) {
+        SetVentasByTiendas(typeValues, dateFilter)
+        SetProveedoresByTiendas(typeValues, dateFilter);
+        SetGastosByTiendas(typeValues, dateFilter);
     }
 }
 
@@ -417,7 +421,7 @@ function SetGraficoGastosProveedor(typeValues, dateFilter) {
     $("#charGastosProveedor").LoadingOverlay("show")
     $("#gastosProvvedoresTexto").LoadingOverlay("show")
 
-    fetch(`/Admin/GetMovimientosProveedoresByTienda?typeValues=${typeValues}&dateFilter=${dateFilter}&visionGlobal=${visionGlobal}`, {
+    fetch(`/Admin/GetMovimientosProveedores?typeValues=${typeValues}&dateFilter=${dateFilter}&visionGlobal=${visionGlobal}`, {
         method: "GET"
     })
         .then(response => {
@@ -624,6 +628,210 @@ function SetTipoVentas(typeValues, dateFilter) {
             }
         });
 }
+
+function SetVentasByTiendas(typeValues, dateFilter) {
+
+    $("#charTipoVentasGlobal").LoadingOverlay("show")
+
+    fetch(`/Admin/GetSalesByTypoVentaByTienda?typeValues=${typeValues}&dateFilter=${dateFilter}`, {
+        method: "GET"
+    })
+        .then(response => {
+            $("#charTipoVentasGlobal").LoadingOverlay("hide")
+            return response.json();
+        }).then(responseJson => {
+
+            if (responseJson.state) {
+
+                let respuesta = responseJson.object;
+
+                let tipoVentas = respuesta.gastosPorTipo;
+
+                let options = {
+                    series: tipoVentas.map((item) => { return item.total }),
+                    chart: {
+                        type: 'pie',
+                    },
+                    labels: tipoVentas.map((item) => { return item.descripcion }),
+                    responsive: [{
+                        breakpoint: 480,
+                        options: {
+                            chart: {
+                                width: '100%'
+                            }
+                        }
+                    }],
+                    theme: {
+                        palette: 'palette7'
+                    },
+                    title: {
+                        text: "Ventas",
+                        align: 'left',
+                        margin: 10,
+                        offsetX: 0,
+                        offsetY: 0,
+                        floating: false,
+                        style: {
+                            fontSize: '14px',
+                            fontWeight: 'bold',
+                            fontFamily: undefined,
+                            color: '#263238'
+                        },
+                    }
+                };
+
+                if (!chartVentasGlobal) {
+                    chartVentasGlobal = new ApexCharts(document.querySelector("#charTipoVentasGlobal"), options);
+                    chartVentasGlobal.render();
+                } else {
+                    chartVentasGlobal.updateOptions({
+                        series: tipoVentas.map((item) => { return item.total }),
+                        labels: tipoVentas.map((item) => { return item.descripcion })
+                    });
+                }
+
+            }
+            else {
+                swal("Lo sentimos", "Se ha producido un error: " + responseJson.message, "error");
+            }
+        });
+}
+
+function SetProveedoresByTiendas(typeValues, dateFilter) {
+
+    $("#charGastosProveedorGlobal").LoadingOverlay("show")
+
+    fetch(`/Admin/GetMovimientosProveedoresByTienda?typeValues=${typeValues}&dateFilter=${dateFilter}`, {
+        method: "GET"
+    })
+        .then(response => {
+            $("#charGastosProveedorGlobal").LoadingOverlay("hide")
+            return response.json();
+        }).then(responseJson => {
+
+            if (responseJson.state) {
+                let respuesta = responseJson.object;
+
+                let tipoVentas = respuesta.gastosPorTipo;
+
+                let options = {
+                    series: tipoVentas.map((item) => { return item.total }),
+                    chart: {
+                        type: 'pie',
+                    },
+                    labels: tipoVentas.map((item) => { return item.descripcion }),
+                    responsive: [{
+                        breakpoint: 480,
+                        options: {
+                            chart: {
+                                width: '100%'
+                            }
+                        }
+                    }],
+                    theme: {
+                        palette: 'palette7'
+                    },
+                    title: {
+                        text: "Proveedores",
+                        align: 'left',
+                        margin: 10,
+                        offsetX: 0,
+                        offsetY: 0,
+                        floating: false,
+                        style: {
+                            fontSize: '14px',
+                            fontWeight: 'bold',
+                            fontFamily: undefined,
+                            color: '#263238'
+                        },
+                    }
+                };
+
+                if (!charGastosProveedorGlobal) {
+                    charGastosProveedorGlobal = new ApexCharts(document.querySelector("#charGastosProveedorGlobal"), options);
+                    charGastosProveedorGlobal.render();
+                } else {
+                    charGastosProveedorGlobal.updateOptions({
+                        series: tipoVentas.map((item) => { return item.total }),
+                        labels: tipoVentas.map((item) => { return item.descripcion })
+                    });
+                }
+
+            }
+            else {
+                swal("Lo sentimos", "Se ha producido un error: " + responseJson.message, "error");
+            }
+        });
+}
+
+
+function SetGastosByTiendas(typeValues, dateFilter) {
+
+    $("#charGastosGlobal").LoadingOverlay("show")
+
+    fetch(`/Admin/GetGastosByTienda?typeValues=${typeValues}&dateFilter=${dateFilter}`, {
+        method: "GET"
+    })
+        .then(response => {
+            $("#charGastosGlobal").LoadingOverlay("hide")
+            return response.json();
+        }).then(responseJson => {
+
+            if (responseJson.state) {
+                let respuesta = responseJson.object;
+
+                let tipoVentas = respuesta.gastosPorTipo;
+
+                let options = {
+                    series: tipoVentas.map((item) => { return item.total }),
+                    chart: {
+                        type: 'pie',
+                    },
+                    labels: tipoVentas.map((item) => { return item.descripcion }),
+                    responsive: [{
+                        breakpoint: 480,
+                        options: {
+                            chart: {
+                                width: '100%'
+                            }
+                        }
+                    }],
+                    theme: {
+                        palette: 'palette7'
+                    },
+                    title: {
+                        text: "Gastos Particulares",
+                        align: 'left',
+                        margin: 10,
+                        offsetX: 0,
+                        offsetY: 0,
+                        floating: false,
+                        style: {
+                            fontSize: '14px',
+                            fontWeight: 'bold',
+                            fontFamily: undefined,
+                            color: '#263238'
+                        },
+                    }
+                };
+
+                if (!charGastosGlobal) {
+                    charGastosGlobal = new ApexCharts(document.querySelector("#charGastosGlobal"), options);
+                    charGastosGlobal.render();
+                } else {
+                    charGastosGlobal.updateOptions({
+                        series: tipoVentas.map((item) => { return item.total }),
+                        labels: tipoVentas.map((item) => { return item.descripcion })
+                    });
+                }
+
+            }
+            else {
+                swal("Lo sentimos", "Se ha producido un error: " + responseJson.message, "error");
+            }
+        });
+}
+
 
 $('#cboTipoDeGastoEnGasto').change(function () {
     let idTipoGasro = $(this).val();
