@@ -18,7 +18,7 @@ namespace PointOfSale.Business.Contracts
 
         Task<FacturaEmitida> GetById(int idFacturaEmitida);
 
-        Task<string> GenerateFacturaQR(FacturaEmitida factura);
+        Task<string> GenerateLinkAfipFactura(FacturaEmitida factura);
 
         Task<string> ReplaceCertificateAsync(IFormFile file, int idTienda, string? oldCertificate);
 
@@ -27,5 +27,7 @@ namespace PointOfSale.Business.Contracts
         string ValidateCertificate(AjustesFacturacion? ajustes);
 
         Task CheckVencimientoCertificado(int idTienda);
+
+        Task<FacturaEmitida> GetBySaleId(int idSale);
     }
 }

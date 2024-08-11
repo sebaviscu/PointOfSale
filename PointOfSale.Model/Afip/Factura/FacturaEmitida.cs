@@ -25,6 +25,8 @@ namespace PointOfSale.Model.Afip.Factura
         public decimal ImporteNeto { get; set; }
         public decimal ImporteIVA { get; set; }
 
+        public string NumeroFacturaString => NroFactura.HasValue && NroFactura.Value != 0 && PuntoVenta != 0 ? $"{PuntoVenta.ToString("D4")}-{NroFactura.Value.ToString("D8")}" : "";
+
         public int? IdSale { get; set; }
         public Sale? Sale { get; set; }
 

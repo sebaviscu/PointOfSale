@@ -133,7 +133,7 @@ const openModalFactura = (model = BASIC_MODEL_FACTURACION) => {
 
     url_qr = null;
 
-    $("#txtId").val(model.idFacturaEmitida);
+    $("#txtIdFacturacion").val(model.idFacturaEmitida);
     $("#txtFechaEmision").val(moment(model.registrationDate).format('DD/MM/YYYY HH:mm'));
     $("#txtTipoFactura").val(model.tipoFactura);
     $("#txtNumeroFactura").val(model.nroFacturaString);

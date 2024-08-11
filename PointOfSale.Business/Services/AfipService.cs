@@ -89,7 +89,13 @@ namespace PointOfSale.Business.Services
             return facturas.Include(_ => _.Sale).Include(_ => _.Sale.TypeDocumentSaleNavigation).FirstOrDefault();
         }
 
-        public async Task<string> GenerateFacturaQR(FacturaEmitida factura)
+        public async Task<FacturaEmitida> GetBySaleId(int idSale)
+        {
+            var facturas = await _repository.Query(x => x.IdSale == idSale);
+            return facturas.FirstOrDefault();
+        }
+
+        public async Task<string> GenerateLinkAfipFactura(FacturaEmitida factura)
         {
             var ajustes = await _ajusteService.GetAjustesFacturacion(factura.IdTienda);
 

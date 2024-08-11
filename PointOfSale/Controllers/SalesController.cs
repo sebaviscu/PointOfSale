@@ -14,6 +14,8 @@ using NuGet.Protocol;
 using AFIP.Facturacion.Model;
 using PointOfSale.Model.Afip.Factura;
 using PointOfSale.Model.Auditoria;
+using Org.BouncyCastle.Crypto;
+using PointOfSale.Business.Utilities;
 
 namespace PointOfSale.Controllers
 {
@@ -203,7 +205,6 @@ namespace PointOfSale.Controllers
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
-                var ticket = string.Empty;
 
                 model.IdUsers = user.IdUsuario;
                 model.IdTurno = user.IdTurno;
@@ -217,13 +218,14 @@ namespace PointOfSale.Controllers
 
                 await RegistrationMultiplesPagos(model, sale_created, ajustes);
 
-                await RegistrationFacturar(model, user.UserName, sale_created);
+                var facturaEmitida = await RegistrationFacturar(model, user.UserName, sale_created);
 
-                ticket = await RegistrationTicketPrinting(model, ajustes, sale_created);
+                var ticket = await RegistrationTicketPrinting(model.ImprimirTicket, ajustes, sale_created, facturaEmitida);
 
                 var modelResponde = _mapper.Map<VMSale>(sale_created);
                 modelResponde.NombreImpresora = ajustes.NombreImpresora;
-                modelResponde.Ticket = ticket;
+                modelResponde.Ticket = ticket.Ticket ?? string.Empty;
+                modelResponde.urlQr = ticket.urlQr ?? string.Empty;
 
                 gResponse.State = true;
                 gResponse.Object = modelResponde;
@@ -238,29 +240,32 @@ namespace PointOfSale.Controllers
             }
         }
 
-        private async Task<string> RegistrationTicketPrinting(VMSale model, Ajustes ajustes, Sale saleCreated)
+        private async Task<TicketModel> RegistrationTicketPrinting(bool imprimirTicket, Ajustes ajustes, Sale saleCreated, FacturaEmitida? facturaEmitida)
         {
-            if (!model.ImprimirTicket)
+            if (!imprimirTicket)
             {
-                return string.Empty;
+                return null;
             }
 
-            var ticket = _ticketService.TicketSale(saleCreated, ajustes);
+            var ticket = await _ticketService.TicketSale(saleCreated, ajustes, facturaEmitida);
             return ticket;
         }
 
-        private async Task RegistrationFacturar(VMSale model, string registrationUser, Sale sale_created)
+        private async Task<FacturaEmitida?> RegistrationFacturar(VMSale model, string registrationUser, Sale sale_created)
         {
             var tipoVenta = await _typeDocumentSaleService.Get(sale_created.IdTypeDocumentSale.Value);
+            FacturaEmitida facturaEmitida = null;
 
             if ((int)tipoVenta.TipoFactura < 3)
             {
                 sale_created.TypeDocumentSaleNavigation = tipoVenta;
 
-                var facturaEmitidaResponse = await _afipFacturacionService.Facturar(sale_created, model.IdCuilFactura, model.IdClienteFactura, registrationUser);
-                sale_created.IdFacturaEmitida = facturaEmitidaResponse.IdFacturaEmitida;
+                facturaEmitida = await _afipFacturacionService.Facturar(sale_created, model.IdCuilFactura, model.IdClienteFactura, registrationUser);
+                sale_created.IdFacturaEmitida = facturaEmitida.IdFacturaEmitida;
                 _ = await _saleService.Edit(sale_created);
             }
+
+            return facturaEmitida;
         }
 
         private async Task RegistrationMultiplesPagos(VMSale model, Sale sale_created, Ajustes ajustes)
@@ -385,13 +390,15 @@ namespace PointOfSale.Controllers
 
                 var ajustes = await _ajustesService.GetAjustes(user.IdTienda);
                 var sale = await _saleService.GetSale(idSale);
-                var ticket = _ticketService.TicketSale(sale, ajustes);
+                var facturaEmitida = await _afipFacturacionService.GetBySaleId(idSale);
+                var ticket = await _ticketService.TicketSale(sale, ajustes, facturaEmitida);
 
                 var model = new VMSale();
 
 
                 model.NombreImpresora = ajustes.NombreImpresora;
-                model.Ticket = ticket;
+                model.Ticket = ticket.Ticket ?? string.Empty;
+                model.urlQr = ticket.urlQr ?? string.Empty;
 
                 gResponse.State = true;
                 gResponse.Object = model;
@@ -418,13 +425,15 @@ namespace PointOfSale.Controllers
 
                 var ajustes = await _ajustesService.GetAjustes(user.IdTienda);
                 var ventaWeb = await _shopService.Get(idVentaWeb);
-                var ticket = _ticketService.TicketVentaWeb(ventaWeb, ajustes);
+                //var facturaEmitida = await _afipFacturacionService.GetBySaleId(idSale);
+                var ticket = await _ticketService.TicketVentaWeb(ventaWeb, ajustes, null);
 
 
                 var model = new VMSale();
 
                 model.NombreImpresora = ajustes.NombreImpresora;
-                model.Ticket = ticket;
+                model.Ticket = ticket.Ticket ?? string.Empty;
+                model.urlQr = ticket.urlQr ?? string.Empty;
 
                 gResponse.State = true;
                 gResponse.Object = model;

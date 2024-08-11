@@ -239,13 +239,13 @@ $("#printTicket").click(function () {
 
             if (isHealthy && responseJson.object.nombreImpresora != '') {
 
-                printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora);
+                printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora, responseJson.object.urlQr);
 
                 swal("Exitoso!", "Ticket impreso!", "success");
             }
 
         } else {
-            swal("Lo sentimos", "La venta no fué registrada. Error: " + responseJson.message, "error");
+            swal("Lo sentimos", "Error al generar el ticket " + responseJson.message, "error");
         }
     })
 

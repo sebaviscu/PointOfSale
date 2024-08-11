@@ -1,10 +1,12 @@
-﻿using PointOfSale.Model;
+﻿using PointOfSale.Business.Utilities;
+using PointOfSale.Model;
+using PointOfSale.Model.Afip.Factura;
 
 namespace PointOfSale.Business.Contracts
 {
     public interface ITicketService
     {
-        string TicketSale(Sale sale, Ajustes ajustes);
-        string TicketVentaWeb(VentaWeb sale, Ajustes ajustes);
+        Task<TicketModel> TicketSale(Sale sale, Ajustes ajustes, FacturaEmitida? facturaEmitida);
+        Task<TicketModel> TicketVentaWeb(VentaWeb sale, Ajustes ajustes, FacturaEmitida? facturaEmitida);
     }
 }

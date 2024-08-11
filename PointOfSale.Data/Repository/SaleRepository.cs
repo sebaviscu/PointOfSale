@@ -38,19 +38,19 @@ namespace PointOfSale.Data.Repository
                 products = await _dbcontext.Products
                                            .Where(p => productIds.Contains(p.IdProduct))
                                            .ToListAsync();
-            }
 
-            // Parallel execution for stock control
-            if (products != null)
-            {
-                var stockTasks = entity.DetailSales.Select(dv =>
+                // Parallel execution for stock control
+                if (products != null)
                 {
-                    var product = products.First(p => p.IdProduct == dv.IdProduct);
-                    return ControlStock(dv.Quantity.Value, entity.IdTienda, product);
-                }).ToList();
+                    var stockTasks = entity.DetailSales.Select(dv =>
+                    {
+                        var product = products.First(p => p.IdProduct == dv.IdProduct);
+                        return ControlStock(dv.Quantity.Value, entity.IdTienda, product);
+                    }).ToList();
 
-                // Await all stock control tasks concurrently
-                await Task.WhenAll(stockTasks);
+                    // Await all stock control tasks concurrently
+                    await Task.WhenAll(stockTasks);
+                }
             }
 
             if (string.IsNullOrEmpty(entity.SaleNumber)) // cuando es multiple formas de pago

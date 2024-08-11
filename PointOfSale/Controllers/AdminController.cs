@@ -1681,7 +1681,7 @@ namespace PointOfSale.Controllers
 
                 if (factura.Errores == null)
                 {
-                    vmFactura.QR = await _afipService.GenerateFacturaQR(factura);
+                    vmFactura.QR = await _afipService.GenerateLinkAfipFactura(factura);
                 }
 
                 gResponse.State = true;

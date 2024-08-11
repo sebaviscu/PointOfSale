@@ -31,5 +31,6 @@ namespace PointOfSale.Models
         public string? DescuentoRecargo { get; set; }
         public string? NombreImpresora { get; set; }
         public string? Ticket { get; set; }
+        public string? urlQr { get; set; }
     }
 }

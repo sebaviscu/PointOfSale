@@ -1,43 +1,56 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using PointOfSale.Business.Contracts;
+﻿using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
-using System.Drawing.Printing;
+using PointOfSale.Model.Afip.Factura;
 
 namespace PointOfSale.Business.Services
 {
     public class TicketService : ITicketService
     {
+        private readonly IAfipService _afipService;
 
-        public string TicketSale(Sale sale, Ajustes ajustes)
+        public TicketService(IAfipService afipService)
         {
-            return CreateTicket(ajustes, sale.RegistrationDate.Value, sale.Total.Value, sale.DetailSales, sale.DescuentoRecargo);
+            _afipService = afipService;
         }
 
-        public string TicketVentaWeb(VentaWeb sale, Ajustes ajustes)
+        public async Task<TicketModel> TicketSale(Sale sale, Ajustes ajustes, FacturaEmitida? facturaEmitida)
         {
-            return CreateTicket(ajustes, sale.RegistrationDate.Value, sale.Total.Value, sale.DetailSales, null);
+            return await CreateTicket(ajustes, sale.RegistrationDate.Value, sale.Total.Value, sale.DetailSales, sale.DescuentoRecargo, facturaEmitida);
+        }
+
+        public async Task<TicketModel> TicketVentaWeb(VentaWeb sale, Ajustes ajustes, FacturaEmitida? facturaEmitida)
+        {
+            return await CreateTicket(ajustes, sale.RegistrationDate.Value, sale.Total.Value, sale.DetailSales, null, facturaEmitida);
         }
         public void ImprimirTiket(string impresora, string line)
         {
             PrinterModel.SendStringToPrinter(impresora, line);
         }
 
-        private string CreateTicket(Ajustes ajustes, DateTime registrationDate, decimal total, ICollection<DetailSale> detailSales, decimal? descuentoRecargo)
+        private async Task<TicketModel> CreateTicket(Ajustes ajustes, DateTime registrationDate, decimal total, ICollection<DetailSale> detailSales, decimal? descuentoRecargo, FacturaEmitida? facturaEmitida)
         {
 
             if (string.IsNullOrEmpty(ajustes.NombreImpresora))
             {
-                return string.Empty;
+                return null;
             }
+            var isFactura = facturaEmitida != null && string.IsNullOrEmpty(facturaEmitida.Errores);
 
             var Ticket1 = new TicketModel();
+
             Ticket1.TextoIzquierda("");
 
             Ticket1.TextoCentro(ajustes.NombreTiendaTicket.ToUpper());
 
             Ticket1.LineasGuion();
-            Ticket1.TextoIzquierda("No Fac: 0120102");
+
+            if (isFactura)
+            {
+                Ticket1.TextoIzquierda($"{facturaEmitida.TipoFactura}     No Vta:{facturaEmitida.Sale.SaleNumber}");
+                Ticket1.TextoIzquierda($"No Fac: {facturaEmitida.NumeroFacturaString}");
+            }
+
             Ticket1.TextoIzquierda("Fecha: " + registrationDate.ToShortDateString() + " " + registrationDate.ToShortTimeString());
             Ticket1.LineasGuion();
             Ticket1.TextoIzquierda("");
@@ -71,10 +84,18 @@ namespace PointOfSale.Business.Services
 
             Ticket1.TextoIzquierda(" ");
             Ticket1.TextoAgradecimiento("¡Gracias por su compra!");
-            Ticket1.TextoIzquierda(" ");
-            Ticket1.TextoIzquierda(" ");
+            //Ticket1.TextoIzquierda(" ");
 
-            return Ticket1.Lineas.ToString();
+
+            if (isFactura)
+            {
+                // Generar y agregar el QR
+                Ticket1.AgregarCAEInfo(facturaEmitida.CAE, facturaEmitida.CAEVencimiento.Value.ToShortDateString());
+                var linkAfip = await _afipService.GenerateLinkAfipFactura(facturaEmitida);
+                Ticket1.urlQr = QrHelper.GenerarQR(linkAfip, facturaEmitida.IdSale.ToString());
+            }
+
+            return Ticket1;
         }
     }
 }

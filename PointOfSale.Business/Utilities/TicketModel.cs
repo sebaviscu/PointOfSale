@@ -8,9 +8,21 @@ namespace PointOfSale.Business.Utilities
 {
     public class TicketModel
     {
-        static StringBuilder line = new StringBuilder();
-
         readonly int MAX = 34;
+
+        public TicketModel()
+        {
+            line = new StringBuilder();
+            urlQr = string.Empty;
+        }
+
+        static StringBuilder line = new StringBuilder();
+        public string urlQr;
+
+        public string Ticket
+        {
+            get { return Lineas.ToString(); }
+        }
 
         public StringBuilder Lineas
         {
@@ -70,7 +82,7 @@ namespace PointOfSale.Business.Utilities
         public void TextoCentro(string par1)
         {
             var parte1 = string.Empty;
-            var ticket = string.Empty; 
+            var ticket = string.Empty;
             var cort = 0;
 
             var m = par1.Length;
@@ -142,6 +154,28 @@ namespace PointOfSale.Business.Utilities
         {
             // Verificar si el número tiene decimales
             return numero % 1 == 0 ? Math.Truncate(numero).ToString() : numero.ToString();
+        }
+
+        public void AgregarCAEInfo(string cae, string caeVencimiento)
+        {
+            var texto = $"CAE:{cae} Vto:{caeVencimiento}";
+
+            if(texto.Length > MAX + 2)
+            {
+                texto = texto.Substring(0, MAX + 2);
+            }
+
+            var totalPadding = (MAX + 2) - texto.Length;
+            var leftPadding = totalPadding / 2;
+
+            var lineaCentrada = new string(' ', leftPadding) + texto;
+
+            line.AppendLine(lineaCentrada);
+        }
+
+        public void AgregarQR(string qrCode)
+        {
+            line.AppendLine(qrCode);
         }
     }
 }
