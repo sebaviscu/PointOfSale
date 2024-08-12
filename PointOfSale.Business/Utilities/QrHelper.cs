@@ -4,6 +4,7 @@ using ZXing.QrCode;
 using ZXing;
 using ZXing.Windows.Compatibility;
 using System.Drawing.Imaging;
+using static QRCoder.PayloadGenerator;
 
 namespace PointOfSale.Business.Utilities
 {
@@ -34,6 +35,21 @@ namespace PointOfSale.Business.Utilities
             }
 
             return imagePath;
+        }
+
+        public static void DeleteImgQr(string urlQr)
+        {
+            try
+            {
+                if (File.Exists(urlQr))
+                {
+                    File.Delete(urlQr);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }

@@ -84,11 +84,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar formas de ventas";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar formas de ventas", _logger);
             }
 
         }
@@ -112,11 +108,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar lista de productos";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {Search}", errorMessage, search);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar lista de productos", _logger, search.ToJson());
             }
         }
 
@@ -139,11 +131,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar lista de productos";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {Search}", errorMessage, search);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar lista de productos", _logger, search.ToJson());
             }
         }
 
@@ -163,11 +151,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar lista de clientes";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {Search}", errorMessage, search);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar lista de clientes", _logger, search.ToJson());
             }
 
         }
@@ -189,11 +173,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar lista de clientes para facturar";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {Search}", errorMessage, search);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar lista de clientes para facturar", _logger, search.ToJson());
             }
         }
 
@@ -233,10 +213,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                gResponse.State = false;
-                gResponse.Message = ex.ToString();
-                _logger.LogError(ex, "Error al registrar venta: {ErrorMessage} Request: {ModelRequest}", ex.ToString(), model);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al registrar la venta", _logger, model.ToJson());
             }
         }
 
@@ -327,11 +304,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al registrar No Cierre de venta";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {ModelRequest}", errorMessage, model);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al registrar No Cierre de venta", _logger, model.ToJson());
             }
 
         }
@@ -371,12 +344,8 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar reporte de ventas";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {ModelRequest} | SaleNumber: {SaleNumber} | StartDate: {StartDate} | EndDate: {EndDate} | Presupuestos: {Presupuestos}",
-                        errorMessage, saleNumber.ToJson(), startDate.ToJson(), endDate.ToJson(), presupuestos.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar reporte de ventas", _logger, null, 
+                    ("SaleNumber", saleNumber.ToJson()), ("StartDate",startDate.ToJson()), ("EndDate", endDate.ToJson()), ("Presupuestos", presupuestos.ToJson()));
             }
         }
 
@@ -407,11 +376,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al imprimir ticket";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {ModelRequest}", errorMessage, idSale.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al imprimir ticket", _logger, idSale.ToJson());
             }
 
         }
@@ -442,11 +407,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al imprimir ticket de venta web";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {ModelRequest}", errorMessage, idVentaWeb);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al imprimir ticket de venta web", _logger, idVentaWeb.ToJson());
             }
 
         }
@@ -481,5 +442,24 @@ namespace PointOfSale.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
+
+        public async Task<IActionResult> DeleteImgQr(string urlQr)
+        {
+            var gResponse = new GenericResponse<bool>();
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Empleado]);
+
+                QrHelper.DeleteImgQr(urlQr);
+
+                gResponse.State = true;
+
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al eliminra imagen qr.", _logger, urlQr.ToJson());
+            }
+        }
     }
 }

@@ -47,11 +47,11 @@ namespace PointOfSale.Business.Services
 
             if (isFactura)
             {
-                Ticket1.TextoIzquierda($"{facturaEmitida.TipoFactura}     No Vta:{facturaEmitida.Sale.SaleNumber}");
+                Ticket1.TextoIzquierda($"{facturaEmitida.TipoFactura}");
                 Ticket1.TextoIzquierda($"No Fac: {facturaEmitida.NumeroFacturaString}");
             }
 
-            Ticket1.TextoIzquierda("Fecha: " + registrationDate.ToShortDateString() + " " + registrationDate.ToShortTimeString());
+            Ticket1.TextoIzquierda("Fecha: " + registrationDate.ToShortDateString() + "  Hora: " + registrationDate.ToShortTimeString());
             Ticket1.LineasGuion();
             Ticket1.TextoIzquierda("");
 
