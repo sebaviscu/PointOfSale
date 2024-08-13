@@ -17,7 +17,10 @@
             <div class="mb-2 ms-2 row">
                 Tienda: &nbsp;
                 <small class="pt-1">@ViewData["tienda"] &nbsp; &nbsp;</small>
-                @* <button class="btn btn-sm btn-success" id="btnReload"><span class="mdi mdi-reload mdi-18px"></span></button> *@
+                @if (Convert.ToInt32(@ViewData["cantTiendas"]) > 1)
+                {
+                    <button class="btn btn-sm btn-success" id="btnChangePV"><span class="mdi mdi-reload"></span></button>
+                }
 
             </div>
             <div class="mb-2 ms-2 row">

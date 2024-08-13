@@ -203,7 +203,7 @@ namespace PointOfSale.Controllers
 
                 var modelResponde = _mapper.Map<VMSale>(sale_created);
 
-                if (!model.ImprimirTicket && !string.IsNullOrEmpty(model.NombreImpresora))
+                if (!model.ImprimirTicket && !string.IsNullOrEmpty(ajustes.NombreImpresora))
                 {
                     var ticket = await RegistrationTicketPrinting(model.ImprimirTicket, ajustes, sale_created, facturaEmitida);
                     modelResponde.NombreImpresora = ajustes.NombreImpresora;
@@ -241,7 +241,7 @@ namespace PointOfSale.Controllers
             {
                 sale_created.TypeDocumentSaleNavigation = tipoVenta;
 
-                facturaEmitida = await _afipFacturacionService.Facturar(sale_created, model.IdCuilFactura, model.IdClienteFactura, sale_created.RegistrationUser);
+                facturaEmitida = await _afipFacturacionService.Facturar(sale_created, model.CuilFactura, model.IdClienteFactura, sale_created.RegistrationUser);
                 sale_created.IdFacturaEmitida = facturaEmitida.IdFacturaEmitida;
                 _ = await _saleService.Edit(sale_created);
             }

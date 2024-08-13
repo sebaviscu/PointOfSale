@@ -40,10 +40,10 @@
                         <form asp-controller="Access" asp-action="Login" method="post">
                             <div class="row">
                                 <div class="form-group col-md-12 mb-4">
-                                    <input type="text" class="form-control input-lg" asp-for="Email" placeholder="Usuario">
+                                    <input type="text" class="form-control input-lg" asp-for="Email" placeholder="Usuario" value="@Model.Email">
                                 </div>
                                 <div class="form-group col-md-12">
-                                    <input type="password" class="form-control input-lg" asp-for="PassWord" placeholder="Password">
+                                    <input type="password" class="form-control input-lg" asp-for="PassWord" placeholder="Password" value="@Model.PassWord">
                                 </div>
                                 @if (Model != null && Model.IsAdmin)
                                 {

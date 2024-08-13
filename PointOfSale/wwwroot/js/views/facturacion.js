@@ -87,7 +87,11 @@ $(document).ready(function () {
             { "data": "caeVencimiento" },
             {
                 "data": "errores", render: function (data, type, row) {
-                    return data != null ? '<span class="badge rounded-pill bg-danger">  <i class="mdi mdi-close"></i>&nbsp; ERROR </span>' : '';
+                    return data != null ?
+                        row.resultado != 'A' ?
+                            '<span class="badge rounded-pill bg-danger"> ERROR </span>' :
+                            '<span class="badge rounded-pill bg-info"> Obs </span>' :
+                        '';
                 }
             },
             {

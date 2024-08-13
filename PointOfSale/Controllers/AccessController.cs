@@ -47,7 +47,7 @@ namespace PointOfSale.Controllers
                         return RedirectToAction("NewSale", "Sales");
 
                 }
-                return View();
+                return View(new VMUserLogin());
 
             }
             catch (Exception ex)
@@ -85,6 +85,8 @@ namespace PointOfSale.Controllers
                     if (model.TiendaId == null && user_found.IdRol == 1)
                     {
                         model.IsAdmin = true;
+                        model.PassWord = model.PassWord;
+                        model.Email = model.Email;
                         return View(model);
                     }
 

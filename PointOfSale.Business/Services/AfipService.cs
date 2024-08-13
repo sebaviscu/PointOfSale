@@ -34,7 +34,7 @@ namespace PointOfSale.Business.Services
             _notificationRepository = notificationRepository;
         }
 
-        public async Task<FacturaEmitida> Facturar(Sale sale_created, int? nroDocumento, int? idCliente, string registrationUser)
+        public async Task<FacturaEmitida> Facturar(Sale sale_created, long? nroDocumento, int? idCliente, string registrationUser)
         {
             if (sale_created.TypeDocumentSaleNavigation == null)
             {

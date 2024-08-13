@@ -19,7 +19,7 @@ namespace PointOfSale.Model.Afip.Factura
         {
         }
 
-        public FacturaAFIP(Sale sale, TipoComprobante tipoComprobante, int nroComprobante, int ptoVenta, int documento)
+        public FacturaAFIP(Sale sale, TipoComprobante tipoComprobante, int nroComprobante, int ptoVenta, long documento)
         {
             Cabecera = new CabeceraFacturaAFIP()
             {

@@ -48,6 +48,53 @@
                 })
         }
     })
+
+    $("#btnChangePV").on("click", function () {
+
+        fetch("/Tienda/GetTienda")
+            .then(response => {
+                return response.json();
+            }).then(responseJson => {
+
+                if (responseJson.data.length > 0) {
+                    $("#modalCambioTienda").modal("show");
+                    let idActual = 0;
+                    responseJson.data.forEach((item) => {
+                        let actual = '';
+                        if (item.tiendaActual) {
+                            idActual = item.idTienda;
+                            actual = ' (Actual)';
+                        }
+                        $("#cboTiendas").append(
+                            $("<option>").val(item.idTienda).text(item.nombre + ' ' + actual)
+                        )
+                    });
+                    $("#cboTiendas").val(idActual);
+                }
+            })
+    })
+
+    $("#btnCambiarTienda").on("click", function () {
+
+        //$("#modalCambioTienda").modal("hide");
+        $("#modalCambioTienda").LoadingOverlay("show")
+
+        var idTienda = $("#cboTiendas").val();
+        fetch(`/Tienda/ChangeTienda?idTienda=${idTienda}`, {
+            method: "DELETE"
+        }).then(response => {
+            return response.json();
+        }).then(responseJson => {
+            if (responseJson.state) {
+                location.reload()
+
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+        })
+            .catch((error) => {
+            })
+    })
 });
 
 function cerrarTurno() {

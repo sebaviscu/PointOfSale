@@ -166,5 +166,28 @@ namespace PointOfSale.Controllers
             }
 
         }
+
+
+
+        [HttpDelete]
+        public async Task<IActionResult> ChangeTienda(string idTienda)
+        {
+
+            GenericResponse<string> gResponse = new GenericResponse<string>();
+            try
+            {
+                ValidarAutorizacion([Roles.Administrador]);
+
+                await UpdateClaimAsync("Tienda", idTienda);
+
+                gResponse.State = true;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al cambiar el Punto de Venta", _logger, idTienda.ToJson());
+            }
+
+        }
     }
 }

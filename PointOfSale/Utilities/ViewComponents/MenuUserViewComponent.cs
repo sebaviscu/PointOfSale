@@ -31,6 +31,7 @@ namespace PointOfSale.Utilities.ViewComponents
             string tiendaName = string.Empty;
             string listaPrecios = string.Empty;
             string turno = string.Empty;
+            int cantTiendas = 0;
 
             if (claimuser.Identity.IsAuthenticated)
             {
@@ -46,9 +47,6 @@ namespace PointOfSale.Utilities.ViewComponents
 
                 rolUser = user_found.IdRolNavigation.Description;
 
-                //if (user_found.Photo != null)
-                //    photoUser = Convert.ToBase64String(user_found.Photo);
-
                 emailUser = ((ClaimsIdentity)claimuser.Identity).FindFirst("Email").Value;
                 listaPrecios = ((ClaimsIdentity)claimuser.Identity).FindFirst("ListaPrecios").Value;
 
@@ -60,6 +58,9 @@ namespace PointOfSale.Utilities.ViewComponents
 
                 var tienda = await _tiendaService.Get(Convert.ToInt32(tiendaId));
                 tiendaName = tienda.Nombre;
+
+                var lTiendas = await _tiendaService.List();
+                cantTiendas = lTiendas.Count();
             }
 
             ViewData["userName"] = userName;
@@ -69,6 +70,9 @@ namespace PointOfSale.Utilities.ViewComponents
             ViewData["tienda"] = tiendaName;
             ViewData["turno"] = turno;
             ViewData["listaPrecios"] = listaPrecios;
+
+
+            ViewData["cantTiendas"] = cantTiendas;
 
             return View();
         }

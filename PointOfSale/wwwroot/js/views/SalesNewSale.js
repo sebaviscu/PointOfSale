@@ -164,6 +164,7 @@ function funClientesFactura() {
         productSelected = data;
         $('#txtNombre').val(data.text);
         $('#txtCuil').val(data.cuil);
+        $('#txtIdCuilFactura').val(data.cuil);
         $('#txtTelefono').val(data.telefono);
         $('#txtDireccion').val(data.direccion);
         $('#cboCondicionIva').val(data.condicionIva);
@@ -336,8 +337,11 @@ $('#cboTypeDocumentSaleParcial').change(function () {
             $('#txtClienteParaFactura').val('');
             document.getElementById("divClienteSeleccionado").style.display = 'none';
         }
-    }
 
+        //if (formaDePago.tipoFactura == 1 || formaDePago.tipoFactura == 2) {
+        //    let a = ajustes.minimoIdentificarConsumidor;
+        //}
+    }
 })
 
 function formatResults(data) {
@@ -661,8 +665,8 @@ function getVentaForRegister() {
         imprimirTicket: document.querySelector('#cboImprimirTicket').checked,
         multiplesFormaDePago: formasDePago != [] ? formasDePago : null,
         descuentorecargo: descRec != undefined ? descRec.replace('.', ',') : null,
-        idClienteFactura: $('#txtIdClienteFactura').val() != '' ? $('#txtIdClienteFactura').val() : null,
-        idCuilFactura: $('#txtIdCuilFactura').val() != '' ? $('#txtIdCuilFactura').val() : null
+        idClienteFactura: $('#txtIdClienteFactura').val() != '' ? parseInt($('#txtIdClienteFactura').val()) : null,
+        cuilFactura: $('#txtIdCuilFactura').val() != '' ? parseInt($('#txtIdCuilFactura').val()) : null
     }
 
     return sale;
@@ -731,8 +735,8 @@ function registrationSale(currentTabId) {
             }
             disableAfterVenta(currentTabId);
 
-            if (isHealthy && sale.imprimirTicket && responseJson.object.nombreImpresora != '') {
-                printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora);
+            if (isHealthy && sale.imprimirTicket && responseJson.object.nombreImpresora != null && responseJson.object.nombreImpresora != '' && responseJson.object.ticket != null && responseJson.object.ticket != '') {
+                printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora, responseJson.object.urlQr);
             }
 
             newTab();
