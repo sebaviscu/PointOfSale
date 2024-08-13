@@ -8,27 +8,29 @@ namespace PointOfSale.Business.Services
     public class TicketService : ITicketService
     {
         private readonly IAfipService _afipService;
+        private readonly IAjusteService _ajusteService;
 
-        public TicketService(IAfipService afipService)
+        public TicketService(IAfipService afipService, IAjusteService ajusteService)
         {
             _afipService = afipService;
+            _ajusteService = ajusteService;
         }
 
         public async Task<TicketModel> TicketSale(Sale sale, Ajustes ajustes, FacturaEmitida? facturaEmitida)
         {
-            return await CreateTicket(ajustes, sale.RegistrationDate.Value, sale.Total.Value, sale.DetailSales, sale.DescuentoRecargo, facturaEmitida);
+            return await CreateTicket(ajustes, sale.RegistrationDate.Value, sale.Total.Value, sale.DetailSales, sale.IdTienda, sale.DescuentoRecargo, facturaEmitida);
         }
 
         public async Task<TicketModel> TicketVentaWeb(VentaWeb sale, Ajustes ajustes, FacturaEmitida? facturaEmitida)
         {
-            return await CreateTicket(ajustes, sale.RegistrationDate.Value, sale.Total.Value, sale.DetailSales, null, facturaEmitida);
+            return await CreateTicket(ajustes, sale.RegistrationDate.Value, sale.Total.Value, sale.DetailSales, sale.IdTienda.Value, null, facturaEmitida);
         }
         public void ImprimirTiket(string impresora, string line)
         {
             PrinterModel.SendStringToPrinter(impresora, line);
         }
 
-        private async Task<TicketModel> CreateTicket(Ajustes ajustes, DateTime registrationDate, decimal total, ICollection<DetailSale> detailSales, decimal? descuentoRecargo, FacturaEmitida? facturaEmitida)
+        private async Task<TicketModel> CreateTicket(Ajustes ajustes, DateTime registrationDate, decimal total, ICollection<DetailSale> detailSales, int idTienda, decimal? descuentoRecargo, FacturaEmitida? facturaEmitida)
         {
 
             if (string.IsNullOrEmpty(ajustes.NombreImpresora))
@@ -47,11 +49,10 @@ namespace PointOfSale.Business.Services
 
             if (isFactura)
             {
-                Ticket1.TextoIzquierda($"{facturaEmitida.TipoFactura}");
-                Ticket1.TextoIzquierda($"No Fac: {facturaEmitida.NumeroFacturaString}");
+                await DatosFactura(idTienda, facturaEmitida, Ticket1);
             }
 
-            Ticket1.TextoIzquierda("Fecha: " + registrationDate.ToShortDateString() + "  Hora: " + registrationDate.ToShortTimeString());
+            Ticket1.TextoBetween("Fecha: " + registrationDate.ToShortDateString(), "Hora: " + registrationDate.ToShortTimeString());
             Ticket1.LineasGuion();
             Ticket1.TextoIzquierda("");
 
@@ -60,7 +61,8 @@ namespace PointOfSale.Business.Services
                 Ticket1.AgregaArticulo(d.DescriptionProduct.ToUpper(),
                    d.Price.Value,
                    d.Quantity.Value,
-                   d.Total.Value);
+                   d.Total.Value,
+                   21m);
             }
 
             Ticket1.TextoIzquierda(" ");
@@ -90,12 +92,33 @@ namespace PointOfSale.Business.Services
             if (isFactura)
             {
                 // Generar y agregar el QR
-                Ticket1.AgregarCAEInfo(facturaEmitida.CAE, facturaEmitida.CAEVencimiento.Value.ToShortDateString());
+                Ticket1.TextoBetween($"CAE:{facturaEmitida.CAE}", $"Vto:{facturaEmitida.CAEVencimiento.Value.ToShortDateString()}");
                 var linkAfip = await _afipService.GenerateLinkAfipFactura(facturaEmitida);
-                Ticket1.urlQr = QrHelper.GenerarQR(linkAfip, facturaEmitida.IdSale.ToString());
+                Ticket1.qrImage = QrHelper.GenerarQR(linkAfip, facturaEmitida.IdSale.ToString());
             }
 
             return Ticket1;
+        }
+
+        private async Task DatosFactura(int idTienda, FacturaEmitida? facturaEmitida, TicketModel Ticket1)
+        {
+            var ajustesFactura = await _ajusteService.GetAjustesFacturacion(idTienda);
+            Ticket1.TextoIzquierda($"{ajustesFactura.NombreTitular}");
+            Ticket1.TextoIzquierda($"{ajustesFactura.CuitString}");
+
+            if (facturaEmitida.TipoFactura == "Factura A")
+            {
+                Ticket1.TextoIzquierda($"IIBB: {ajustesFactura.IngresosBurutosNro}");
+                Ticket1.TextoIzquierda($"Inicio actividad: {ajustesFactura.FechaInicioActividad}");
+                Ticket1.TextoIzquierda($"{ajustesFactura.DireccionFacturacion}");
+            }
+
+            Ticket1.TextoIzquierda($"{ajustesFactura.CondicionIva.ToString()}");
+
+            Ticket1.LineasGuion();
+
+            Ticket1.TextoIzquierda($"{facturaEmitida.TipoFactura}");
+            Ticket1.TextoIzquierda($"No Fac: {facturaEmitida.NumeroFacturaString}");
         }
     }
 }

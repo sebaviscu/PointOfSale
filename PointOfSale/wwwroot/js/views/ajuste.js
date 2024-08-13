@@ -23,8 +23,26 @@
     controlStock: false,
     nombreTiendaTicket: "",
     nombreImpresora: "",
-    minimoIdentificarConsumidor: 0
+    minimoIdentificarConsumidor: 0,
+    facturaElectronica: false
 }
+
+const BASIC_MODEL_AJUSTES_FACTURACION = {
+    idAjustesFacturacion: 0,
+    logo: "",
+    cuit: 0,
+    condicionIva: null,
+    puntoVenta: 0,
+    certificadoFechaInicio: null,
+    certificadoFechaCaducidad: null,
+    certificadoPassword: "",
+    certificadoNombre: "",
+    nombreTitular: "",
+    ingresosBurutosNro: "",
+    direccionFacturacion: "",
+    nombreTitular: null
+}
+
 
 let isHealthy = false;
 $(document).ready(function () {
@@ -67,6 +85,7 @@ $(document).ready(function () {
                 $("#cboNombreImpresora").val(model.nombreImpresora);
                 document.getElementById('switchImprimirDefault').checked = model.imprimirDefault;
                 document.getElementById('switchControlStock').checked = model.controlStock;
+                document.getElementById('switchFacturaElectronica').checked = model.facturaElectronica;
 
                 if (model.modificationUser == null)
                     document.getElementById("divModif").style.display = 'none';
@@ -82,25 +101,57 @@ $(document).ready(function () {
             }
         })
 
-    let $passwordInput = $('#txtCodigoSeguridad');
-    let $togglePasswordButton = $('#togglePassword');
+    fetch(`/Admin/GetAjustesFacturacion`)
+        .then(response => {
+            return response.json();
+        }).then(responseJson => {
+            if (responseJson.state) {
 
-    $togglePasswordButton.on('mousedown', function () {
-        $passwordInput.attr('type', 'text');
-    });
+                openModalAjustesFacturacion(responseJson.object);
 
-    $togglePasswordButton.on('mouseup mouseleave', function () {
-        $passwordInput.attr('type', 'password');
-    });
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+        })
 
-    // Evitar que el botón reciba el foco
-    $togglePasswordButton.on('click', function (e) {
-        e.preventDefault();
-    });
+    setupPasswordToggle($('#txtCodigoSeguridad'), $('#togglePassword'));
+    setupPasswordToggle($('#txtContraseñaCertificado'), $('#togglePasswordCert'));
 
     healthcheck();
 
 })
+
+
+const openModalAjustesFacturacion = (model = BASIC_MODEL_AJUSTES_FACTURACION) => {
+
+
+    $("#txtIdAjustesFacturacion").val(model.idAjustesFacturacion);
+
+    $("#cboCondicionIva").val(model.condicionIva);
+    $("#txtPuntoVentaCertificado").val(model.puntoVenta);
+    $("#txtContraseñaCertificado").val(model.certificadoPassword);
+
+    $("#txtFechaIniCert").val(formatDateToDDMMYYYY(model.certificadoFechaInicio));
+    $("#txtFechaCadCert").val(formatDateToDDMMYYYY(model.certificadoFechaCaducidad));
+    $("#txtCuilCertificado").val(model.cuit);
+    $("#txtNombreArchivo").val(model.certificadoNombre);
+
+    $("#txtNombreTitular").val(model.nombreTitular);
+    $("#txtIIBB").val(model.ingresosBurutosNro);
+    $("#txtDireccionFacturacion").val(model.direccionFacturacion);
+
+    var fecha = model.fechaInicioActividad.split('T')[0];
+    $("#txtInicioActividad").val(fecha);
+
+    // un boton para cragar datos del certificado
+    //if (model.vMX509Certificate2 != null) {
+    //$("#txtFechaIniCert").val(formatDateToDDMMYYYY(model.vMX509Certificate2.notBefore));
+    //$("#txtFechaCadCert").val(formatDateToDDMMYYYY(model.vMX509Certificate2.notAfter));
+    //$("#txtCuil").val(model.vMX509Certificate2.cuil);
+    //}
+
+    $("#modalDataAjustesFscturacion").modal("show")
+}
 
 $("#btnSave").on("click", function () {
     showLoading();
@@ -133,15 +184,35 @@ $("#btnSave").on("click", function () {
     let checkboxSwitchControlStock = document.getElementById('switchControlStock');
     model["controlStock"] = checkboxSwitchControlStock.checked;
 
+    let checkboxSwitchFacturaElectronica = document.getElementById('switchFacturaElectronica');
+    model["facturaElectronica"] = checkboxSwitchFacturaElectronica.checked;
+
     model["codigoSeguridad"] = $("#txtCodigoSeguridad").val();
     model["nombreTiendaTicket"] = $("#txtNombreTiendaTicket").val();
     model["minimoIdentificarConsumidor"] = $("#txtMinimoIdentificarConsumidor").val();
     model["nombreImpresora"] = $("#cboNombreImpresora").val();
 
+    const modelFacturacion = structuredClone(BASIC_MODEL_AJUSTES_FACTURACION);
+    modelFacturacion["idAjustesFacturacion"] = parseInt($("#txtIdAjustesFacturacion").val());
+
+    modelFacturacion["puntoVenta"] = parseInt($("#txtPuntoVentaCertificado").val());
+    modelFacturacion["condicionIva"] = parseInt($("#cboCondicionIva").val());
+    modelFacturacion["nombreTitular"] = $("#txtNombreTitular").val();
+    modelFacturacion["ingresosBurutosNro"] = $("#txtIIBB").val();
+    modelFacturacion["direccionFacturacion"] = $("#txtDireccionFacturacion").val();
+    modelFacturacion["fechaInicioActividad"] = $("#txtInicioActividad").val();
+    modelFacturacion["certificadoPassword"] = $("#txtContraseñaCertificado").val();
+
+    const inputCertificado = document.getElementById('fileCertificado');
+
+    const formData = new FormData();
+    formData.append('modelFacturacion', JSON.stringify(modelFacturacion));
+    formData.append('modelAjustes', JSON.stringify(model));
+    formData.append('Certificado', inputCertificado.files[0]);
+
     fetch("/Admin/UpdateAjuste", {
         method: "PUT",
-        headers: { 'Content-Type': 'application/json;charset=utf-8' },
-        body: JSON.stringify(model)
+        body: formData
     }).then(response => {
         removeLoading();
         return response.json();
@@ -183,4 +254,18 @@ async function getPrintersTienda() {
     } catch (error) {
         console.error('Error fetching printers:', error);
     }
+}
+
+function formatDateToDDMMYYYY(isoDate) {
+    if (isoDate == null) {
+        return "";
+    }
+
+    const date = new Date(isoDate);
+
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
 }

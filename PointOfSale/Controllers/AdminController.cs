@@ -1513,6 +1513,7 @@ namespace PointOfSale.Controllers
                 vmAjusteWeb.NombreTiendaTicket = vmAjuste.NombreTiendaTicket;
                 vmAjusteWeb.ControlStock = vmAjuste.ControlStock;
                 vmAjusteWeb.IdTienda = vmAjuste.IdTienda;
+                vmAjusteWeb.FacturaElectronica = vmAjuste.FacturaElectronica;
 
                 gResponse.Object = vmAjusteWeb;
                 gResponse.State = true;
@@ -1526,40 +1527,52 @@ namespace PointOfSale.Controllers
 
 
         [HttpPut]
-        public async Task<IActionResult> UpdateAjuste([FromBody] VMAjustes model)
+        public async Task<IActionResult> UpdateAjuste([FromForm] IFormFile Certificado, [FromForm] string modelFacturacion, [FromForm] string modelAjustes)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
             GenericResponse<VMAjustes> gResponse = new GenericResponse<VMAjustes>();
             try
             {
+                var model = JsonConvert.DeserializeObject<VMAjustes>(modelAjustes);
+                var vmModelFacturacion = JsonConvert.DeserializeObject<VMAjustesFacturacion>(modelFacturacion);
+
                 var user = ValidarAutorizacion([Roles.Administrador]);
 
                 model.ModificationUser = user.UserName;
                 model.IdTienda = user.IdTienda;
+                vmModelFacturacion.ModificationUser = user.UserName;
+                vmModelFacturacion.IdTienda = user.IdTienda;
+
                 var edited_AjusteWeb = await _ajusteService.EditWeb(_mapper.Map<AjustesWeb>(model));
 
                 var edited_Ajuste = await _ajusteService.Edit(_mapper.Map<Ajustes>(model));
 
-                model = _mapper.Map<VMAjustes>(edited_AjusteWeb);
-                model.CodigoSeguridad = edited_Ajuste.CodigoSeguridad;
-                model.NombreImpresora = edited_Ajuste.NombreImpresora;
-                model.MinimoIdentificarConsumidor = edited_Ajuste.MinimoIdentificarConsumidor;
-                model.ImprimirDefault = edited_Ajuste.ImprimirDefault;
-                model.NombreTiendaTicket = edited_Ajuste.NombreTiendaTicket;
-                model.ControlStock = edited_Ajuste.ControlStock;
-                model.IdTienda = edited_Ajuste.IdTienda;
+                if (Certificado != null)
+                {
+                    var oldAjustes = await _ajusteService.GetAjustesFacturacion(user.IdTienda);
+
+                    var pathFile = await _afipService.ReplaceCertificateAsync(Certificado, user.IdTienda, oldAjustes.CertificadoNombre);
+
+                    vmModelFacturacion.CertificadoNombre = Certificado.FileName;
+                    if (!string.IsNullOrEmpty(vmModelFacturacion.CertificadoPassword))
+                    {
+                        var cert = _afipService.GetCertificateAfipInformation(pathFile, vmModelFacturacion.CertificadoPassword);
+                        if (cert != null)
+                        {
+                            vmModelFacturacion.CertificadoFechaCaducidad = cert.FechaCaducidad;
+                            vmModelFacturacion.CertificadoFechaInicio = cert.FechaInicio;
+                            vmModelFacturacion.Cuit = Convert.ToInt64(cert.Cuil);
+                        }
+                    }
+                }
+
+                var ajustesFact = await _ajusteService.EditFacturacion(_mapper.Map<AjustesFacturacion>(vmModelFacturacion));
 
                 gResponse.State = true;
-                gResponse.Object = model;
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al recuperar ajuste", _logger, model.ToJson());
+                return HandleException(ex, "Error al recuperar ajustes", _logger, model: null, ("ModelFacturacion", modelFacturacion), ("ModelAjustes", modelAjustes));
             }
         }
 

@@ -6,6 +6,12 @@ namespace PointOfSale.Models
     public class VMAjustesFacturacion
     {
         public int IdAjustesFacturacion { get; set; }
+
+        public string? IngresosBurutosNro { get; set; }
+        public string? NombreTitular { get; set; }
+        public string? DireccionFacturacion { get; set; }
+        public DateTime? FechaInicioActividad { get; set; }
+
         public long? Cuit { get; set; }
         public int? PuntoVenta { get; set; }
         public CondicionIva? CondicionIva { get; set; }

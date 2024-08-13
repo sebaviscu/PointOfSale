@@ -20,6 +20,7 @@ namespace PointOfSale.Model
         public decimal? Total { get; set; }
         public decimal? TotalSinComision => Total * 1 - ((TypeDocumentSaleNavigation != null ? TypeDocumentSaleNavigation.Comision : 0) / 100);
         public DateTime? RegistrationDate { get; set; }
+        public string RegistrationUser { get; set; }
         public virtual TypeDocumentSale? TypeDocumentSaleNavigation { get; set; }
         public virtual User? IdUsersNavigation { get; set; }
         public virtual ICollection<DetailSale> DetailSales { get; set; }

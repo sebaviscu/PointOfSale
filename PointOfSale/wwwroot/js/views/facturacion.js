@@ -23,17 +23,17 @@ const BASIC_MODEL_FACTURACION = {
     cliente: null
 }
 
-const BASIC_MODEL_AJUSTES_FACTURACION = {
-    idAjustesFacturacion: 0,
-    logo: "",
-    cuit: 0,
-    condicionIva: null,
-    puntoVenta: 0,
-    certificadoFechaInicio: null,
-    certificadoFechaCaducidad: null,
-    certificadoPassword: "",
-    certificadoNombre: ""
-}
+//const BASIC_MODEL_AJUSTES_FACTURACION = {
+//    idAjustesFacturacion: 0,
+//    logo: "",
+//    cuit: 0,
+//    condicionIva: null,
+//    puntoVenta: 0,
+//    certificadoFechaInicio: null,
+//    certificadoFechaCaducidad: null,
+//    certificadoPassword: "",
+//    certificadoNombre: ""
+//}
 
 $(document).ready(function () {
 
@@ -50,7 +50,7 @@ $(document).ready(function () {
                 "render": function (data, type, row) {
                     if (type === 'display' || type === 'filter') {
                         return data ? moment(data).format('DD/MM/YYYY HH:mm') : '';
-                    } BASIC_MODEL_AJUSTES_FACTURACION
+                    }
                     return data;
                 }
             },
@@ -110,22 +110,6 @@ $(document).ready(function () {
                 }
             }, 'pageLength'
         ]
-    });
-
-    let $passwordInput = $('#txtContraseñaCertificado');
-    let $togglePasswordButton = $('#togglePassword');
-
-    $togglePasswordButton.on('mousedown', function () {
-        $passwordInput.attr('type', 'text');
-    });
-
-    $togglePasswordButton.on('mouseup mouseleave', function () {
-        $passwordInput.attr('type', 'password');
-    });
-
-    // Evitar que el botón reciba el foco
-    $togglePasswordButton.on('click', function (e) {
-        e.preventDefault();
     });
 })
 
@@ -219,100 +203,3 @@ $("#btnConfiguracion").on("click", function () {
             }
         })
 })
-
-const openModalAjustesFacturacion = (model = BASIC_MODEL_AJUSTES_FACTURACION) => {
-
-
-    $("#txtIdAjustesFacturacion").val(model.idAjustesFacturacion);
-
-    $("#cboCondicionIva").val(model.condicionIva);
-    $("#txtPuntoVentaCertificado").val(model.puntoVenta);
-    $("#txtContraseñaCertificado").val(model.certificadoPassword);
-
-    $("#txtFechaIniCert").val(formatDateToDDMMYYYY(model.certificadoFechaInicio));
-    $("#txtFechaCadCert").val(formatDateToDDMMYYYY(model.certificadoFechaCaducidad));
-    $("#txtCuilCertificado").val(model.cuit);
-    $("#txtNombreArchivo").val(model.certificadoNombre);
-
-    //if (model.vMX509Certificate2 != null) {
-        //$("#txtFechaIniCert").val(formatDateToDDMMYYYY(model.vMX509Certificate2.notBefore));
-        //$("#txtFechaCadCert").val(formatDateToDDMMYYYY(model.vMX509Certificate2.notAfter));
-        //$("#txtCuil").val(model.vMX509Certificate2.cuil);
-    //}
-
-    if (model.modificationUser === null)
-        document.getElementById("divModif").style.display = 'none';
-    else {
-        document.getElementById("divModif").style.display = '';
-        let dateTimeModif = new Date(model.modificationDate);
-
-        $("#txtModificado").val(dateTimeModif.toLocaleString());
-        $("#txtModificadoUsuario").val(model.modificationUser);
-    }
-
-    $("#modalDataAjustesFscturacion").modal("show")
-}
-
-
-$("#btnSaveAjustesFacturacion").on("click", function () {
-    const inputs = $("input.input-validate").serializeArray();
-    const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
-
-    if (inputs_without_value.length > 0) {
-        const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
-        toastr.warning(msg, "");
-        $(`input[name="${inputs_without_value[0].name}"]`).focus();
-        return;
-    }
-
-    const model = structuredClone(BASIC_MODEL_AJUSTES_FACTURACION);
-    model["idAjustesFacturacion"] = parseInt($("#txtIdAjustesFacturacion").val());
-
-    model["puntoVenta"] = parseInt($("#txtPuntoVentaCertificado").val());
-    model["condicionIva"] = parseInt($("#cboCondicionIva").val());
-    model["certificadoPassword"] = $("#txtContraseñaCertificado").val();
-
-    const inputCertificado = document.getElementById('fileCertificado');
-
-    const formData = new FormData();
-    formData.append('Certificado', inputCertificado.files[0]);
-    formData.append('model', JSON.stringify(model));
-
-    $("#modalDataAjustesFscturacion").find("div.modal-content").LoadingOverlay("show")
-
-    fetch("/Admin/UpdateAjustesFacturacion", {
-        method: "PUT",
-        body: formData
-    }).then(response => {
-        $("#modalDataAjustesFscturacion").find("div.modal-content").LoadingOverlay("hide")
-        return response.json();
-    }).then(responseJson => {
-        $("#modalDataAjustesFscturacion").modal("hide");
-
-        if (responseJson.state) {
-
-            $("#modalDataAjustesFscturacion").modal("hide");
-            swal("Exitoso!", "Los Ajustes de Facturacion fueron modificado", "success");
-        }
-        else {
-            swal("Lo sentimos", responseJson.message, "error");
-        }
-    }).catch((error) => {
-        $("#modalDataAjustesFscturacion").find("div.modal-content").LoadingOverlay("hide")
-    })
-
-})
-
-function formatDateToDDMMYYYY(isoDate) {
-    if(isoDate == null){
-        return "";
-    }
-
-    const date = new Date(isoDate);
-
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
-}

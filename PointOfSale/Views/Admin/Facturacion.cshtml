@@ -21,9 +21,6 @@
                 <div class="">
                     <h4>Facturacion</h4>
                 </div>
-                <div class="ms-auto bd-highlight">
-                    <button class="btn btn-success btn-sm" id="btnConfiguracion"><i class="mdi mdi-brightness-5"></i>&nbsp; Configuracion</button>
-                </div>
             </div>
 
             <div class="card-body">
@@ -158,108 +155,6 @@
         </div>
     </div>
 </div>
-
-
-<!-- Grid Modal Ajustes Facturacion -->
-<div class="modal fade" id="modalDataAjustesFscturacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalGridTitle">Detalle Punto de Venta</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="formTienda" enctype="multipart/form-data">
-                    <div class="row">
-
-                        <input type="hidden" value="0" id="txtIdAjustesFacturacion">
-                        <div class="col-md-12">
-
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="form-group">
-                                        <label for="fileCertificado">Certificado</label>
-                                        <div class="input-group input-group-sm">
-                                            <input type="file" class="form-control form-control-sm" id="fileCertificado" name="Ruta Certificado" accept=".pfx">
-@*                                             <div class="input-group-prepend" style="margin-left: 5px;">
-                                                <button id="btnCargarCertificado" class="btn btn-outline-success btn-sm">
-                                                    <span class="mdi mdi-reload">&nbsp; Cargar</span>
-                                                </button>
-                                            </div> *@
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-12 row">
-                                    <div class="form-group col-sm-3">
-                                        <label for="txtNombreArchivo">Nombre Archivo</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtNombreArchivo" name="nombre archivo" disabled>
-                                    </div>
-                                    <div class="form-group col-sm-3">
-                                        <label for="txtCuilCertificado">CUIT / CUIL Cert.</label>
-                                        <input type="number" class="form-control form-control-sm" id="txtCuilCertificado" name="Cuit" disabled>
-                                    </div>
-                                    <div class="form-group col-sm-3">
-                                        <label for="txtFechaIniCert">Inicio Cert.</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtFechaIniCert" name="FechaIniCert" disabled>
-                                    </div>
-                                    <div class="form-group col-sm-3">
-                                        <label for="txtFechaCadCert">Caducidad Cert.</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtFechaCadCert" name="FechaCadCert" disabled>
-                                    </div>
-                                </div>
-                                <div class="col-md-12 row">
-                                    <div class="form-group col-sm-5" style="margin-bottom: 0px;">
-                                        <label for="txtContraseñaCertificado">Contraseña del certificado</label>
-                                        <div class="input-group input-group-sm">
-                                            <input type="password" class="form-control form-control-sm" id="txtContraseñaCertificado" name="ContraseñaCertificado">
-                                            <div class="input-group-prepend" style="margin-left: 5px;">
-                                                <button id="togglePassword">
-                                                    <span class="mdi mdi-eye mdi-24px" id="eyeIcon"></span>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-sm-4">
-                                        <label for="cboCondicionIva">Condicion IVA</label>
-                                        <select class="fontDetalles form-control form-control-sm" id="cboCondicionIva">
-                                            <option value="0"></option>
-                                            <option value="1">Consumidor Final</option>
-                                            <option value="2">Exento</option>
-                                            <option value="3">Monotributista</option>
-                                            <option value="4">Resp. Inscripto</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-sm-3">
-                                        <label for="txtPuntoVenta">Punto de Venta</label>
-                                        <input type="number" step="1" min="1" class="form-control form-control-sm" id="txtPuntoVentaCertificado" name="PuntoVenta">
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                        <div class="tab-pane container form-row" id="divModif">
-                            <div class=" form-group col-sm-6">
-                                <label for="txtModificado">Fecha Modificado</label>
-                                <input type="text" class="form-control form-control-sm" id="txtModificado" name="fechaModificado" readonly>
-                            </div>
-                            <div class="form-group col-sm-6">
-                                <label for="txtModificadoUsuario">Por:</label>
-                                <input type="text" class="form-control form-control-sm" id="txtModificadoUsuario" name="usuarioModificado" readonly>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" id="btnSaveAjustesFacturacion">Guardar Cambios</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 
 
 @section Scripts {

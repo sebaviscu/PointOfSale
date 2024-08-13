@@ -13,11 +13,11 @@ namespace PointOfSale.Business.Utilities
         public TicketModel()
         {
             line = new StringBuilder();
-            urlQr = string.Empty;
+            qrImage = string.Empty;
         }
 
         static StringBuilder line = new StringBuilder();
-        public string urlQr;
+        public string qrImage;
 
         public string Ticket
         {
@@ -100,6 +100,25 @@ namespace PointOfSale.Business.Utilities
             line.AppendLine(text);
 
         }
+        public void TextoBetween(string par1, string par2)
+        {
+            int mitadMax = MAX / 2;
+
+            string parte1 = CortarTextoMax(par1, mitadMax);
+            string parte2 = CortarTextoMax(par2, mitadMax);
+
+            int espaciosEntre = MAX - (parte1.Length + parte2.Length);
+            if (espaciosEntre < 0) espaciosEntre = 0;
+
+            string text = $"{parte1}{new string(' ', espaciosEntre)}{parte2}";
+            line.AppendLine(text);
+        }
+
+        private string CortarTextoMax(string texto, int maxLen)
+        {
+            // Devuelve el texto cortado al tamaño máximo permitido (maxLen)
+            return texto.Length > maxLen ? texto.Substring(0, maxLen) : texto;
+        }
 
         public void AgregaTotales(string par1, double total)
         {
@@ -126,7 +145,7 @@ namespace PointOfSale.Business.Utilities
 
         }
 
-        public void AgregaArticulo(string articulo, decimal precio, decimal cant, decimal subtotalDecimal)
+        public void AgregaArticulo(string articulo, decimal precio, decimal cant, decimal subtotalDecimal, decimal? iva)
         {
             string elementos = string.Empty;
             var nroEspacios = 0;
@@ -143,6 +162,11 @@ namespace PointOfSale.Business.Utilities
             var subtotal = MostrarNumeroConDecimales(subtotalDecimal);
             elementos += $" {cantString} x ${precioString}";
 
+            if (iva != null && iva > 0)
+            {
+                elementos += $" ({iva}%)";
+            }
+
             //colocar el subtotal a la dercha
             nroEspacios = ((MAX - subtotal.Length) - elementos.Length) - 2;
 
@@ -154,23 +178,6 @@ namespace PointOfSale.Business.Utilities
         {
             // Verificar si el número tiene decimales
             return numero % 1 == 0 ? Math.Truncate(numero).ToString() : numero.ToString();
-        }
-
-        public void AgregarCAEInfo(string cae, string caeVencimiento)
-        {
-            var texto = $"CAE:{cae} Vto:{caeVencimiento}";
-
-            if(texto.Length > MAX + 2)
-            {
-                texto = texto.Substring(0, MAX + 2);
-            }
-
-            var totalPadding = (MAX + 2) - texto.Length;
-            var leftPadding = totalPadding / 2;
-
-            var lineaCentrada = new string(' ', leftPadding) + texto;
-
-            line.AppendLine(lineaCentrada);
         }
 
         public void AgregarQR(string qrCode)

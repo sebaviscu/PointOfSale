@@ -251,21 +251,3 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
             }
         });
 })
-
-$("#clickGeneral").on("click", function () {
-    $("#general").show();
-    $("#facturacion").hide();
-    $("#carroCompras").hide();
-})
-
-$("#clickFacturacion").on("click", function () {
-    $("#general").hide();
-    $("#facturacion").show();
-    $("#carroCompras").hide();
-})
-
-$("#clickWeb").on("click", function () {
-    $("#general").hide();
-    $("#facturacion").hide();
-    $("#carroCompras").show();
-})

@@ -198,7 +198,8 @@ IdTienda int not null,
 idClienteMovimiento int null,
 descuentoRecargo decimal(10,2) null,
 IdFacturaEmitida int null,
-[registrationDate] datetime default getdate()
+[registrationDate] datetime default getdate(),
+[registrationUser] varchar(50) not null
 )
 
 go
@@ -446,6 +447,7 @@ NombreTiendaTicket VARCHAR(200) NULL,
 NombreImpresora VARCHAR(500) NULL,
 MinimoIdentificarConsumidor BIGINT NULL,
 ControlStock BIT NULL,
+FacturaElectronica BIT NULL,
 idTienda INT NOT NULL,
 modificationDate DATETIME NULL,
 modificationUser VARCHAR(50) NULL,
@@ -501,6 +503,10 @@ CertificadoPassword VARCHAR(250) NULL,
 CertificadoNombre VARCHAR(150) NULL,
 CertificadoFechaInicio DATETIME NULL,
 CertificadoFechaCaducidad DATETIME NULL,
+IngresosBurutosNro VARCHAR(50) NULL,
+DireccionFacturacion VARCHAR(200) NULL,
+FechaInicioActividad DATETIME NULL,
+NombreTitular VARCHAR(70) NULL,
 idTienda INT NOT NULL,
 modificationDate DATETIME NULL,
 modificationUser VARCHAR(50) NULL,
@@ -510,14 +516,14 @@ CONSTRAINT FK_AjustesFacturacion_Tienda FOREIGN KEY (idTienda)
 );
 
 
-select * from turno
+--select * from turno
 
-EXEC sp_fkeys @fktable_name = 'turno';
+--EXEC sp_fkeys @fktable_name = 'turno';
 
-ALTER TABLE Turno
-DROP CONSTRAINT FK__Turno__idTienda__267ABA7A;
+--ALTER TABLE Turno
+--DROP CONSTRAINT FK__Turno__idTienda__267ABA7A;
 
-ALTER TABLE Turno
-ADD CONSTRAINT FK_Turno_Tienda
-FOREIGN KEY (idTienda) REFERENCES Tienda(idTienda)
-ON DELETE CASCADE;
+--ALTER TABLE Turno
+--ADD CONSTRAINT FK_Turno_Tienda
+--FOREIGN KEY (idTienda) REFERENCES Tienda(idTienda)
+--ON DELETE CASCADE;

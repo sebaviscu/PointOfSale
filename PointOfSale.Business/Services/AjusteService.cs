@@ -97,6 +97,7 @@ namespace PointOfSale.Business.Services
 
             Ajustes_found.CodigoSeguridad = entity.CodigoSeguridad;
             Ajustes_found.ImprimirDefault = entity.ImprimirDefault;
+            Ajustes_found.FacturaElectronica = entity.FacturaElectronica;
             Ajustes_found.ControlStock = entity.ControlStock;
             Ajustes_found.NombreTiendaTicket = entity.NombreTiendaTicket;
             Ajustes_found.NombreImpresora = entity.NombreImpresora;
@@ -115,6 +116,10 @@ namespace PointOfSale.Business.Services
 
             Ajustes_found.PuntoVenta = entity.PuntoVenta;
             Ajustes_found.CondicionIva = entity.CondicionIva;
+            Ajustes_found.NombreTitular = entity.NombreTitular;
+            Ajustes_found.IngresosBurutosNro = entity.IngresosBurutosNro;
+            Ajustes_found.FechaInicioActividad = entity.FechaInicioActividad;
+            Ajustes_found.DireccionFacturacion = entity.DireccionFacturacion;
             Ajustes_found.CertificadoPassword = !string.IsNullOrEmpty(entity.CertificadoPassword) ? EncryptionHelper.EncryptString(entity.CertificadoPassword) : null;
 
             Ajustes_found.Cuit = entity.Cuit != 0 ? entity.Cuit : Ajustes_found.Cuit;

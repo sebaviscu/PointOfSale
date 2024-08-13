@@ -226,3 +226,18 @@ function removeLoading() {
     document.body.removeChild(document.getElementById("divLoadingFrame"));
     document.body.removeChild(document.getElementById("styleLoadingWindow"));
 };
+
+function setupPasswordToggle($passwordInput, $toggleButton) {
+    $toggleButton.on('mousedown', function () {
+        $passwordInput.attr('type', 'text');
+    });
+
+    $toggleButton.on('mouseup mouseleave', function () {
+        $passwordInput.attr('type', 'password');
+    });
+
+    // Evitar que el botón reciba el foco
+    $toggleButton.on('click', function (e) {
+        e.preventDefault();
+    });
+}

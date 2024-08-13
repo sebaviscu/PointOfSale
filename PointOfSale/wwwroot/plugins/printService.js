@@ -34,14 +34,14 @@ async function getPrinters() {
     }
 }
 
-async function printTicket(text, printerName, urlQr) {
+async function printTicket(text, printerName, qrImage) {
     try {
         const response = await fetch(urlPrintService + '/imprimir', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ nombreImpresora: printerName, text: text, qrPath: urlQr })
+            body: JSON.stringify({ nombreImpresora: printerName, text: text, qrImage: qrImage })
         });
         if (!response.ok) {
             throw new Error(`Network response was not ok: ${response.statusText}`);
@@ -49,8 +49,6 @@ async function printTicket(text, printerName, urlQr) {
         const data = await response.json();
         if (data.success) {
             console.log('Documento enviado a la impresora con éxito');
-            console.log('Elimina imagen qr: ' + urlQr);
-            deleteImgQr(urlQr);
         } else {
             console.error('Error al enviar el documento a la impresora:', data.error);
         }
@@ -58,20 +56,4 @@ async function printTicket(text, printerName, urlQr) {
         alert(`Error al enviar el documento a la impresora: ${error}`);
         console.error('Error:', error);
     }
-}
-
-function deleteImgQr(urlQr) {
-    fetch(`/Sales/DeleteImgQr?urlQr=${urlQr}`, {
-        method: "DELETE"
-    }).then(response => {
-        $(".showSweetAlert").LoadingOverlay("hide")
-        return response.json();
-    }).then(responseJson => {
-        if (!responseJson.state) {
-            swal("Lo sentimos", responseJson.message, "error");
-        }
-    })
-        .catch((error) => {
-            $(".showSweetAlert").LoadingOverlay("hide")
-        })
 }

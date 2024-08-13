@@ -16,6 +16,7 @@ namespace PointOfSale.Models
         public decimal? Total { get; set; }
         public decimal? TotalDecimal { get; set; }
         public string? RegistrationDate { get; set; }
+        public string? RegistrationUser { get; set; }
         public virtual ICollection<VMDetailSale>? DetailSales { get; set; }
         public int? IdTurno { get; set; }
         public int? ClientId { get; set; }
@@ -32,5 +33,6 @@ namespace PointOfSale.Models
         public string? NombreImpresora { get; set; }
         public string? Ticket { get; set; }
         public string? urlQr { get; set; }
+
     }
 }

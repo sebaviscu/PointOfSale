@@ -189,6 +189,7 @@ namespace PointOfSale.Controllers
                 model.IdUsers = user.IdUsuario;
                 model.IdTurno = user.IdTurno;
                 model.IdTienda = user.IdTienda;
+                model.RegistrationUser = user.UserName;
 
                 var ajustes = await _ajustesService.GetAjustes(user.IdTienda);
 
@@ -198,14 +199,17 @@ namespace PointOfSale.Controllers
 
                 await RegistrationMultiplesPagos(model, sale_created, ajustes);
 
-                var facturaEmitida = await RegistrationFacturar(model, user.UserName, sale_created);
-
-                var ticket = await RegistrationTicketPrinting(model.ImprimirTicket, ajustes, sale_created, facturaEmitida);
+                var facturaEmitida = await RegistrationFacturar(model, sale_created, ajustes);
 
                 var modelResponde = _mapper.Map<VMSale>(sale_created);
-                modelResponde.NombreImpresora = ajustes.NombreImpresora;
-                modelResponde.Ticket = ticket.Ticket ?? string.Empty;
-                modelResponde.urlQr = ticket.urlQr ?? string.Empty;
+
+                if (!model.ImprimirTicket && !string.IsNullOrEmpty(model.NombreImpresora))
+                {
+                    var ticket = await RegistrationTicketPrinting(model.ImprimirTicket, ajustes, sale_created, facturaEmitida);
+                    modelResponde.NombreImpresora = ajustes.NombreImpresora;
+                    modelResponde.Ticket = ticket.Ticket ?? string.Empty;
+                    modelResponde.urlQr = ticket.qrImage ?? string.Empty;
+                }
 
                 gResponse.State = true;
                 gResponse.Object = modelResponde;
@@ -219,17 +223,17 @@ namespace PointOfSale.Controllers
 
         private async Task<TicketModel> RegistrationTicketPrinting(bool imprimirTicket, Ajustes ajustes, Sale saleCreated, FacturaEmitida? facturaEmitida)
         {
-            if (!imprimirTicket)
-            {
-                return null;
-            }
-
             var ticket = await _ticketService.TicketSale(saleCreated, ajustes, facturaEmitida);
             return ticket;
         }
 
-        private async Task<FacturaEmitida?> RegistrationFacturar(VMSale model, string registrationUser, Sale sale_created)
+        private async Task<FacturaEmitida?> RegistrationFacturar(VMSale model, Sale sale_created, Ajustes ajustes)
         {
+            if (!ajustes.FacturaElectronica.HasValue || (ajustes.FacturaElectronica.HasValue && !ajustes.FacturaElectronica.Value))
+            {
+                return null;
+            }
+
             var tipoVenta = await _typeDocumentSaleService.Get(sale_created.IdTypeDocumentSale.Value);
             FacturaEmitida facturaEmitida = null;
 
@@ -237,7 +241,7 @@ namespace PointOfSale.Controllers
             {
                 sale_created.TypeDocumentSaleNavigation = tipoVenta;
 
-                facturaEmitida = await _afipFacturacionService.Facturar(sale_created, model.IdCuilFactura, model.IdClienteFactura, registrationUser);
+                facturaEmitida = await _afipFacturacionService.Facturar(sale_created, model.IdCuilFactura, model.IdClienteFactura, sale_created.RegistrationUser);
                 sale_created.IdFacturaEmitida = facturaEmitida.IdFacturaEmitida;
                 _ = await _saleService.Edit(sale_created);
             }
@@ -344,8 +348,8 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al recuperar reporte de ventas", _logger, null, 
-                    ("SaleNumber", saleNumber.ToJson()), ("StartDate",startDate.ToJson()), ("EndDate", endDate.ToJson()), ("Presupuestos", presupuestos.ToJson()));
+                return HandleException(ex, "Error al recuperar reporte de ventas", _logger, null,
+                    ("SaleNumber", saleNumber.ToJson()), ("StartDate", startDate.ToJson()), ("EndDate", endDate.ToJson()), ("Presupuestos", presupuestos.ToJson()));
             }
         }
 
@@ -367,7 +371,7 @@ namespace PointOfSale.Controllers
 
                 model.NombreImpresora = ajustes.NombreImpresora;
                 model.Ticket = ticket.Ticket ?? string.Empty;
-                model.urlQr = ticket.urlQr ?? string.Empty;
+                model.urlQr = ticket.qrImage ?? string.Empty;
 
                 gResponse.State = true;
                 gResponse.Object = model;
@@ -398,7 +402,7 @@ namespace PointOfSale.Controllers
 
                 model.NombreImpresora = ajustes.NombreImpresora;
                 model.Ticket = ticket.Ticket ?? string.Empty;
-                model.urlQr = ticket.urlQr ?? string.Empty;
+                model.urlQr = ticket.qrImage ?? string.Empty;
 
                 gResponse.State = true;
                 gResponse.Object = model;
@@ -440,26 +444,6 @@ namespace PointOfSale.Controllers
             var sale = await _saleService.Edit(idSale, formaPago);
 
             return StatusCode(StatusCodes.Status200OK);
-        }
-
-
-        public async Task<IActionResult> DeleteImgQr(string urlQr)
-        {
-            var gResponse = new GenericResponse<bool>();
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Empleado]);
-
-                QrHelper.DeleteImgQr(urlQr);
-
-                gResponse.State = true;
-
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al eliminra imagen qr.", _logger, urlQr.ToJson());
-            }
         }
     }
 }
