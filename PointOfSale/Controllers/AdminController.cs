@@ -1692,7 +1692,7 @@ namespace PointOfSale.Controllers
 
                 var vmFactura = _mapper.Map<VMFacturaEmitida>(factura);
 
-                if (factura.Errores == null)
+                if (factura.Observaciones == null)
                 {
                     vmFactura.QR = await _afipService.GenerateLinkAfipFactura(factura);
                 }

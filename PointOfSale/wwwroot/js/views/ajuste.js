@@ -154,9 +154,23 @@ const openModalAjustesFacturacion = (model = BASIC_MODEL_AJUSTES_FACTURACION) =>
 }
 
 $("#btnSave").on("click", function () {
-    showLoading();
 
     const model = structuredClone(BASIC_MODEL_AJUSTE);
+
+    let checkboxSwitchFacturaElectronica = document.getElementById('switchFacturaElectronica');
+    model["facturaElectronica"] = checkboxSwitchFacturaElectronica.checked;
+
+    if (model.facturaElectronica) {
+
+        const inputs = $("input.input-validate-facturacion").serializeArray();
+        const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
+
+        if (inputs_without_value.length > 0) {
+            const msg = `Si selecciona FACTURA ELECTRONICA, debe completar todos los campos de la sección Facturacion.`;
+            toastr.warning(msg, "");
+            return;
+        }
+    }
 
     model["nombre"] = $("#txtNombreTienda").val();
     model["direccion"] = $("#txtDireccion").val();
@@ -184,8 +198,6 @@ $("#btnSave").on("click", function () {
     let checkboxSwitchControlStock = document.getElementById('switchControlStock');
     model["controlStock"] = checkboxSwitchControlStock.checked;
 
-    let checkboxSwitchFacturaElectronica = document.getElementById('switchFacturaElectronica');
-    model["facturaElectronica"] = checkboxSwitchFacturaElectronica.checked;
 
     model["codigoSeguridad"] = $("#txtCodigoSeguridad").val();
     model["nombreTiendaTicket"] = $("#txtNombreTiendaTicket").val();
@@ -209,6 +221,8 @@ $("#btnSave").on("click", function () {
     formData.append('modelFacturacion', JSON.stringify(modelFacturacion));
     formData.append('modelAjustes', JSON.stringify(model));
     formData.append('Certificado', inputCertificado.files[0]);
+
+    showLoading();
 
     fetch("/Admin/UpdateAjuste", {
         method: "PUT",

@@ -481,7 +481,7 @@ CREATE TABLE FacturasEmitidas (
 	NroFactura INT null,
 	TipoFactura VARCHAR(50) not null,
     Resultado VARCHAR(50),
-    Errores VARCHAR(max), 
+    Observaciones VARCHAR(max), 
 	ImporteTotal decimal(10,2) not null,
 	ImporteNeto decimal(10,2) not null,
 	ImporteIva decimal(10,2) not null,
@@ -527,3 +527,6 @@ CONSTRAINT FK_AjustesFacturacion_Tienda FOREIGN KEY (idTienda)
 --ADD CONSTRAINT FK_Turno_Tienda
 --FOREIGN KEY (idTienda) REFERENCES Tienda(idTienda)
 --ON DELETE CASCADE;
+
+
+select * from sale

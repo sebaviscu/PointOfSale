@@ -37,7 +37,7 @@ namespace PointOfSale.Business.Services
             {
                 return null;
             }
-            var isFactura = facturaEmitida != null && string.IsNullOrEmpty(facturaEmitida.Errores);
+            var isFactura = facturaEmitida != null && string.IsNullOrEmpty(facturaEmitida.Observaciones);
 
             var Ticket1 = new TicketModel();
 

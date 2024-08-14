@@ -1,5 +1,6 @@
 ﻿let tableDataFactura;
 let rowSelectedFactura;
+let url_qr = null;
 
 const BASIC_MODEL_FACTURACION = {
     idFacturaEmitida: 0,
@@ -9,7 +10,7 @@ const BASIC_MODEL_FACTURACION = {
     nroDocumento: "",
     tipoDocumento: "",
     resultado: "",
-    errores: "",
+    observaciones: "",
     registrationDate: "",
     registrationUser: "",
     nroFacturaString: "",
@@ -86,7 +87,7 @@ $(document).ready(function () {
             { "data": "cae" },
             { "data": "caeVencimiento" },
             {
-                "data": "errores", render: function (data, type, row) {
+                "data": "observaciones", render: function (data, type, row) {
                     return data != null ?
                         row.resultado != 'A' ?
                             '<span class="badge rounded-pill bg-danger"> ERROR </span>' :
@@ -95,7 +96,7 @@ $(document).ready(function () {
                 }
             },
             {
-                "defaultContent": '<button class="btn btn-info btn-ver btn-sm me-2"><i class="mdi mdi-eye"></i></button>',
+                "defaultContent": '<button class="btn btn-primary btn-ver btn-sm me-2"><i class="mdi mdi-eye"></i></button>',
                 "orderable": false,
                 "searchable": false,
                 "width": "80px"
@@ -136,22 +137,40 @@ const openModalFactura = (model = BASIC_MODEL_FACTURACION) => {
     $("#txtCuil").val(`${model.tipoDocumento}: ${model.nroDocumento}`);
     $("#btnVerVenta").attr("sale-number", model.sale.saleNumber);
 
-    if (model.errores != null) {
-        document.getElementById("divError").style.display = '';
-        $("#txtError").text(model.errores);
-    }
-    else {
-        document.getElementById("divError").style.display = 'none';
+    if (model.observaciones != null) {
+        const divError = document.getElementById("divError");
+        divError.style.display = '';
+
+        if (model.resultado === "A") {
+            divError.className = "alert alert-warning d-flex align-items-center";
+            document.getElementById("alertTitle").textContent = "ALERTA: ";
+        } else {
+            divError.className = "alert alert-danger d-flex align-items-center";
+            document.getElementById("alertTitle").textContent = "ERROR: ";
+        }
+
+        $("#txtError").text(model.observaciones);
+        divError.classList.add('d-flex');
+    } else {
+        $("#txtError").text('');
+        document.getElementById("alertTitle").textContent = "";
+
+        const divError = document.getElementById("divError");
+        divError.classList.remove('d-flex');
+        divError.style.display = 'none';
+
         if (model.qr != '') {
             url_qr = model.qr;
         }
     }
 
+
+
+
     $("#modalData").modal("show")
 }
-let url_qr = null;
 
-$("#tbData tbody").on("click", ".btn-info", function () {
+$("#tbData tbody").on("click", ".btn-ver", function () {
 
     if ($(this).closest('tr').hasClass('child')) {
         rowSelectedFactura = $(this).closest('tr').prev();

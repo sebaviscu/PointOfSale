@@ -65,7 +65,7 @@ namespace PointOfSale.Business.Services
             facturaEmitida.IdSale = sale_created.IdSale;
             facturaEmitida.IdCliente = idCliente != 0 ? idCliente : null;
             facturaEmitida.RegistrationUser = registrationUser;
-            facturaEmitida.NroFactura = string.IsNullOrEmpty(facturaEmitida.Errores) ? nroFactura : 0;
+            facturaEmitida.NroFactura = string.IsNullOrEmpty(facturaEmitida.Observaciones) ? nroFactura : 0;
             facturaEmitida.PuntoVenta = ptoVenta;
             facturaEmitida.IdTienda = sale_created.IdTienda;
             facturaEmitida.TipoFactura = tipoDoc.Description;

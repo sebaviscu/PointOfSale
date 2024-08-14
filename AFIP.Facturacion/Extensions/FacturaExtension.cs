@@ -85,7 +85,7 @@ namespace AFIP.Facturacion.Extensions
 
             if (fECAECabResponse.Observaciones != null && fECAECabResponse.Observaciones.Any())
             {
-                facturaRecibida.Errores = string.Join(Environment.NewLine, fECAECabResponse.Observaciones.Select(_=>_.Msg));
+                facturaRecibida.Observaciones = string.Join(Environment.NewLine, fECAECabResponse.Observaciones.Select(_=>_.Msg));
             }
 
             return facturaRecibida;

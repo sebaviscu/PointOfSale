@@ -12,7 +12,7 @@ namespace PointOfSale.Models
         public int TipoDocumentoId { get; set; }
         public string? TipoDocumento { get; set; }
         public string? Resultado { get; set; }
-        public string? Errores { get; set; }
+        public string? Observaciones { get; set; }
         public DateTime RegistrationDate { get; set; }
         public string? RegistrationUser { get; set; }
         public int NroFactura { get; set; }
