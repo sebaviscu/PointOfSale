@@ -1605,13 +1605,13 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAjustesVentas()
         {
-            var gResponse = new GenericResponse<VMAjustes?>();
+            var gResponse = new GenericResponse<VMAjustesSale?>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Encargado]);
 
                 var ajuste = await _ajusteService.GetAjustes(user.IdTienda);
-                var vmAjuste = _mapper.Map<VMAjustes>(ajuste);
+                var vmAjuste = _mapper.Map<VMAjustesSale>(ajuste);
 
                 gResponse.State = true;
                 gResponse.Object = vmAjuste;
@@ -1626,10 +1626,6 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> ValidateSecurityCode(string encryptedCode)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(encryptedCode);
-            }
             var gResponse = new GenericResponse<bool>();
 
             try

@@ -482,15 +482,19 @@ function showProducts_Prices(idTab, currentTab) {
     $("#lblCantidadProductos" + idTab).html("Cantidad de Articulos: <strong> " + currentTab.products.length + "</strong>");
 }
 
-$(document).on("click", "button.btn-delete", function () {
+$(document).on("click", "button.btn-delete", async function () {
+
+    if (!(await validateCode())) { return false; }
+
     const currentTabId = $(this).data("idTab");
-    const row = $(this).data("row");
+        const row = $(this).data("row");
 
-    let currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
+        let currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
 
-    currentTab.products.splice(row, 1);
+        currentTab.products.splice(row, 1);
 
-    showProducts_Prices(currentTabId, currentTab);
+        showProducts_Prices(currentTabId, currentTab);
+
 })
 
 function cleanSaleParcial() {
@@ -795,7 +799,7 @@ function disableAfterVenta(tabID) {
     $('#btnImprimirTicket' + tabID).prop('hidden', false);
 }
 
-document.onkeyup = function (e) {
+document.onkeyup = async function (e) {
     if (e.altKey && e.which == 78) { // alt + N
         newTab();
         return false;
@@ -864,7 +868,9 @@ $('#btn-add-tab').click(function () {
     newTab();
 });
 
-$('#tab-list').on('click', '.close', function () {
+$('#tab-list').on('click', '.close',async function () {
+    if (!(await validateCode())) { return false; }
+
     let tabID = $(this).parents('button').attr('data-bs-target');
     $(this).parents('li').remove();
     $(tabID).remove();
@@ -937,7 +943,7 @@ function addFunctions(idTab) {
         });
     });
 
-    $('#tbProduct' + idTab + ' tbody').on('dblclick', 'tr', function () {
+    $('#tbProduct' + idTab + ' tbody').on('dblclick', 'tr', async function () {
         let rowIndex = $(this).index();
 
         let currentTab = AllTabsForSale.find(item => item.idTab == idTab);
@@ -950,8 +956,10 @@ function addFunctions(idTab) {
             showCancelButton: true,
             closeOnConfirm: false,
             inputPlaceholder: "ingrese el nuevo precio"
-        }, function (value) {
+        },async function (value) {
 
+            if (!(await validateCode())) { return false; }
+            
             if (value === false) return false;
 
             if (value === "") {
@@ -1322,26 +1330,37 @@ function getTabActiveId() {
     return idTab[idTab.length - 1];
 }
 
-function validateCode(userCode) {
-
-    fetch(`/Admin/ValidateSecurityCode?encryptedCode=${userCode}`, {
-        method: 'POST'
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (responseJson.state) {
-                if (data.valid) {
-                } else {
-                    alert('Código inválido');
-                }
-            } else {
-                swal("Lo sentimos", responseJson.message, "error");
+async function validateCode() {
+    return new Promise((resolve, reject) => {
+        swal({
+            title: 'Codigo de Seguridad',
+            type: "input",
+            showCancelButton: true,
+            closeOnConfirm: true,
+            inputPlaceholder: "password..."
+        }, function (value) {
+            if (value === false) {
+                resolve(false);
+                return;
             }
-        })
-        .catch(error => {
-            console.error('Error en la validación:', error);
-            alert('Error en la validación');
+
+            fetch(`/Admin/ValidateSecurityCode?encryptedCode=${value}`, {
+                method: 'POST'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.state) {
+                        resolve(data.object);
+                    } else {
+                        resolve(false);
+                    }
+                    swal.close();
+                })
+                .catch(error => {
+                    reject(false);
+                });
         });
+    });
 }
 
 class Producto {
