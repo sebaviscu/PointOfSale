@@ -170,6 +170,11 @@ namespace PointOfSale.Business.Services
             return sale;
         }
 
+        public async Task<string> GetLastSerialNumberSale()
+        {
+            return await _repositorySale.GetLastSerialNumberSale();
+        }
+
         public async Task<List<Sale>> SaleHistory(string SaleNumber, string StarDate, string EndDate, string presupuestos)
         {
             IQueryable<Sale> query = await _repositorySale.Query();

@@ -302,10 +302,13 @@ $("#btnSeleccionarClienteFactura").on("click", function () {
             })
         }
     }
-    $('#txtIdClienteFactura').val(model.idCliente);
-    $('#txtCuilParaFactura').val(model.cuil);
+
     $('#txtClienteParaFactura').val(`${model.nombre}  (CUIT: ${model.cuil})`);
+    $('#txtClienteParaFactura').attr('cuil', model.cuil);
+    $('#txtClienteParaFactura').attr('idCliente', model.idCliente);
+
     $('#btnFinalizarVentaParcial').prop('disabled', false);
+    $("#txtMinimoIdentificarConsumidor").toggle(false);
 
     $("#modalDatosFactura").modal("hide")
 });
@@ -321,28 +324,56 @@ async function healthcheck() {
 
 $('#cboTypeDocumentSaleParcial').change(function () {
     let idFormaDePago = $(this).val();
+    changeCboTypeDocumentSaleParcial('', idFormaDePago);
+})
+
+function changeCboTypeDocumentSaleParcial(idLineaFormaPago, idFormaDePago) {
     let formaDePago = formasDePagosList.find(_ => _.idTypeDocumentSale == idFormaDePago);
 
     if (formaDePago != null) {
-
-        $('#btnFinalizarVentaParcial').prop('disabled', formaDePago.tipoFactura == 0); // resp. inscr.
-
-        $("#cboFactura").val(formaDePago.tipoFactura);
-
-        if (formaDePago.tipoFactura < 3) {
-            document.getElementById("divClienteSeleccionado").style.display = '';
-        }
-        else {
-            $('#txtIdClienteFactura').text('');
-            $('#txtClienteParaFactura').val('');
-            document.getElementById("divClienteSeleccionado").style.display = 'none';
-        }
-
-        //if (formaDePago.tipoFactura == 1 || formaDePago.tipoFactura == 2) {
-        //    let a = ajustes.minimoIdentificarConsumidor;
-        //}
+        $("#cboFactura" + idLineaFormaPago).val(formaDePago.tipoFactura);
+        $("#cboFactura" + idLineaFormaPago).trigger('change');
     }
+}
+
+
+$('#cboFactura').change(function () {
+
+    validateTipoFacturaAndMonto('');
 })
+
+$('#txtTotalParcial').change(function () {
+
+    validateTipoFacturaAndMonto('');
+})
+
+function validateTipoFacturaAndMonto(idLineaFormaPago) {
+
+    let formaPagoId = $('#cboFactura' + idLineaFormaPago).val();
+    let monto = $('#txtTotalParcial' + idLineaFormaPago).val();
+
+    if (formaPagoId == 0) {
+        // Caso A
+        updateUIFormaDePago(true, false, true);
+    } else if (formaPagoId == 1 || formaPagoId == 2) {
+        // Casos B y C
+        if (parseFloat(monto) > parseFloat(ajustes.minimoIdentificarConsumidor)) {
+            updateUIFormaDePago(true, true, true);
+        } else {
+            updateUIFormaDePago(false, false, false);
+        }
+    } else {
+        // Otros casos
+        updateUIFormaDePago(false, false, false);
+    }
+
+    $('#btnFinalizarVentaParcial').prop('disabled', $('#cboTypeDocumentSaleParcial' + idLineaFormaPago).val() == null ? true : false);
+}
+function updateUIFormaDePago(disableButton, showMinimo, showCliente) {
+    $('#btnFinalizarVentaParcial').prop('disabled', disableButton);
+    $("#txtMinimoIdentificarConsumidor").toggle(showMinimo);
+    document.getElementById("divClienteSeleccionado").style.display = showCliente ? '' : 'none';
+}
 
 function formatResults(data) {
 
@@ -465,9 +496,9 @@ $(document).on("click", "button.btn-delete", function () {
 function cleanSaleParcial() {
     $('#cboTypeDocumentSaleParcial').val('');
     $('#cboFactura').val('');
-    $('#txtIdClienteFactura').text('');
-    $('#txtCuilParaFactura').text('');
-    $('#txtClienteParaFactura').val('');
+
+    $('#txtClienteParaFactura').attr('cuil', '');
+    $('#txtClienteParaFactura').attr('idCliente', '');
     document.getElementById("divClienteSeleccionado").style.display = 'none';
 
 
@@ -566,14 +597,19 @@ $(document).on("click", "button.btnAddFormaDePago", function () {
         calcularSuma();
     });
 
+    $('#cboFactura' + formaDePagoID).change(function () {
+
+        validateTipoFacturaAndMonto('');
+    })
+
+    $('#txtTotalParcial' + formaDePagoID).change(function () {
+
+        validateTipoFacturaAndMonto('');
+    })
+
     $('#cboTypeDocumentSaleParcial' + formaDePagoID).change(function () {
         let idFormaDePago = $(this).val();
-        let formaDePago = formasDePagosList.find(_ => _.idTypeDocumentSale == idFormaDePago);
-
-        if (formaDePago != null) {
-            $("#cboFactura" + formaDePagoID).val(formaDePago.tipoFactura);
-        }
-
+        changeCboTypeDocumentSaleParcial(formaDePagoID, idFormaDePago);
     })
 
     return false;
@@ -582,20 +618,19 @@ $(document).on("click", "button.btnAddFormaDePago", function () {
 
 function calcularSuma() {
     let subTotal = getSumaSubTotales();
-    if (subTotal !== 0) {
-        if (subTotal > 0)
-            $("#txtSumaSubtotales").html("FALTA <strong>$ " + subTotal + "</strong>");
-        else
-            $("#txtSumaSubtotales").html("SOBRA <strong>$ " + subTotal + "</strong>");
 
-        $("#txtSumaSubtotales").show();
-    }
-    else {
+    if (subTotal !== 0) {
+        const texto = subTotal > 0 ? "FALTA" : "SOBRA";
+        let subTotalText = Math.abs(subTotal);
+
+        $("#txtSumaSubtotales").html(`${texto} <strong>$ ${subTotalText}</strong>`).show();
+    } else {
         $("#txtSumaSubtotales").hide();
     }
 
     return subTotal;
 }
+
 
 function calcularMinimoIdentificarConsumidor(totFijo) {
 
@@ -630,7 +665,6 @@ function getVentaForRegister() {
 
     let currentTabId = getTabActiveId();
 
-    //let currentTabId = $("#modalDividirPago").attr("idtab");
     let currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
 
     const vmDetailSale = currentTab.products;
@@ -655,18 +689,20 @@ function getVentaForRegister() {
         total = $("#txtSubTotal" + currentTabId).attr("subTotalReal");
     }
 
+    let cuilParaFactura = $('#txtClienteParaFactura').attr('cuil');
+    let idClienteParaFactura = $('#txtClienteParaFactura').attr('idCliente');
 
     const sale = {
         idTypeDocumentSale: $("#cboTypeDocumentSaleParcial").val(),
         clientId: $("#cboCliente" + currentTabId).val() != '' ? $("#cboCliente" + currentTabId).val() : null,
-        total: parseFloat(total).toFixed(2), //total.replace('.', ','), //total.toString(),
+        total: parseFloat(total).toFixed(2),
         detailSales: vmDetailSale,
         tipoMovimiento: $("#cboCliente" + currentTabId).val() != '' ? 2 : null,
         imprimirTicket: document.querySelector('#cboImprimirTicket').checked,
         multiplesFormaDePago: formasDePago != [] ? formasDePago : null,
         descuentorecargo: descRec != undefined ? descRec.replace('.', ',') : null,
-        idClienteFactura: $('#txtIdClienteFactura').val() != '' ? parseInt($('#txtIdClienteFactura').val()) : null,
-        cuilFactura: $('#txtIdCuilFactura').val() != '' ? parseInt($('#txtIdCuilFactura').val()) : null
+        idClienteFactura: idClienteParaFactura != '' ? parseInt(idClienteParaFactura) : null,
+        cuilFactura: cuilParaFactura != '' ? cuilParaFactura : null
     }
 
     return sale;

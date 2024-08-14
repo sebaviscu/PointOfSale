@@ -16,7 +16,7 @@ namespace PointOfSale.Business.Services
     public class AfipService : IAfipService
     {
         const int ptoVenta = 1;
-        const int defaultDocumento = 0;
+        const long defaultDocumento = 0;
         const string URL_AFIP_QR = "https://www.afip.gob.ar/fe/qr/?p=";
 
         private readonly IGenericRepository<FacturaEmitida> _repository;
@@ -34,7 +34,7 @@ namespace PointOfSale.Business.Services
             _notificationRepository = notificationRepository;
         }
 
-        public async Task<FacturaEmitida> Facturar(Sale sale_created, long? nroDocumento, int? idCliente, string registrationUser)
+        public async Task<FacturaEmitida> Facturar(Sale sale_created, string? nroDocumento, int? idCliente, string registrationUser)
         {
             if (sale_created.TypeDocumentSaleNavigation == null)
             {
@@ -49,8 +49,8 @@ namespace PointOfSale.Business.Services
                 throw new Exception(validCert);
             }
 
-            var documentoAFacturar = (sale_created.TypeDocumentSaleNavigation.TipoFactura == TipoFactura.A && nroDocumento.HasValue)
-                ? nroDocumento.Value
+            var documentoAFacturar = (sale_created.TypeDocumentSaleNavigation.TipoFactura == TipoFactura.A && nroDocumento != null)
+                ? Convert.ToInt64(nroDocumento)
                 : defaultDocumento;
 
             var tipoDoc = TipoComprobante.ConvertTipoFactura(sale_created.TypeDocumentSaleNavigation.TipoFactura);

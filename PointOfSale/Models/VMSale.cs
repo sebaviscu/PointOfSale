@@ -28,7 +28,7 @@ namespace PointOfSale.Models
         public bool ImprimirTicket { get; set; }
         public List<VMMultiplesFormaPago>? MultiplesFormaDePago { get; set; }
         public int? IdClienteFactura { get; set; }
-        public long? CuilFactura { get; set; }
+        public string? CuilFactura { get; set; }
         public string? DescuentoRecargo { get; set; }
         public string? NombreImpresora { get; set; }
         public string? Ticket { get; set; }

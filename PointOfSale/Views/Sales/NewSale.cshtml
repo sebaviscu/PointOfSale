@@ -225,7 +225,7 @@
                                     </div>
                                     <div class="form-group col-sm-2" style="padding-top:10px">
                                         <label for="cboFactura">Factura</label>
-                                        <select class="form-control form-control-sm" id="cboFactura" tabindex="0" disabled>
+                                        <select class="form-control form-control-sm cboFactura" id="cboFactura" tabindex="0">
                                             <option value="-1"></option>
                                             <option value="0">A</option>
                                             <option value="1">B</option>
@@ -252,7 +252,7 @@
                     </div>
                 </div>
                 <div>
-                    <span id="txtMinimoIdentificarConsumidor" class="text-danger" style="display: none;"></span>
+                    <span id="txtMinimoIdentificarConsumidor" class="text-danger" style="display: none;">El total supera el minimo para identificar al consumidor. Debe ingresar el CUIL / CUIT / DNI si va a facturarlo.</span>
                 </div>
                 <div id="divClienteSeleccionado" class="text-center" style="display: none;">
                     <div class="row col-sm-12 ms-1">
@@ -363,8 +363,6 @@
                 </div>
             </div>
             <input type="hidden" value="0" id="txtIdClienteFactura">
-            <input type="hidden" id="txtCuilParaFactura">
-
             <div class="modal-body">
                 <div class="row">
                     <div class="col-sm-12">

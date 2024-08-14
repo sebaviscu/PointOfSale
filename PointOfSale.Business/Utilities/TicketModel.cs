@@ -179,10 +179,5 @@ namespace PointOfSale.Business.Utilities
             // Verificar si el número tiene decimales
             return numero % 1 == 0 ? Math.Truncate(numero).ToString() : numero.ToString();
         }
-
-        public void AgregarQR(string qrCode)
-        {
-            line.AppendLine(qrCode);
-        }
     }
 }
