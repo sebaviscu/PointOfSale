@@ -2,6 +2,18 @@
     idAjuste: 0,
     modificationDate: null,
     modificationUser: null,
+    codigoSeguridad: "",
+    imprimirDefault: false,
+    controlStock: false,
+    nombreTiendaTicket: "",
+    nombreImpresora: "",
+    minimoIdentificarConsumidor: 0,
+    facturaElectronica: false,
+    controlEmpleado: false
+}
+
+const BASIC_MODEL_AJUSTE_WEB = {
+    idAjusteWeb: 0,
     montoEnvioGratis: 0,
     aumentoWeb: 0,
     whatsapp: "",
@@ -17,15 +29,9 @@
     instagram: "",
     twitter: "",
     tiktok: "",
-    youtube: "",
-    codigoSeguridad: "",
-    imprimirDefault: false,
-    controlStock: false,
-    nombreTiendaTicket: "",
-    nombreImpresora: "",
-    minimoIdentificarConsumidor: 0,
-    facturaElectronica: false
+    youtube: ""
 }
+
 
 const BASIC_MODEL_AJUSTES_FACTURACION = {
     idAjustesFacturacion: 0,
@@ -39,8 +45,7 @@ const BASIC_MODEL_AJUSTES_FACTURACION = {
     certificadoNombre: "",
     nombreTitular: "",
     ingresosBurutosNro: "",
-    direccionFacturacion: "",
-    nombreTitular: null
+    direccionFacturacion: ""
 }
 
 
@@ -50,7 +55,6 @@ $(document).ready(function () {
 
     fetch("/Admin/GetAjuste")
         .then(response => {
-            removeLoading();
             return response.json();
         }).then(responseJson => {
             if (responseJson.state) {
@@ -58,9 +62,40 @@ $(document).ready(function () {
                 let model = responseJson.object;
 
                 $("#txtId").val(model.idAjuste);
+
+                $("#txtCodigoSeguridad").val(model.codigoSeguridad);
+                $("#txtNombreTiendaTicket").val(model.nombreTiendaTicket);
+                $("#txtMinimoIdentificarConsumidor").val(model.minimoIdentificarConsumidor);
+                $("#cboNombreImpresora").val(model.nombreImpresora);
+                document.getElementById('switchImprimirDefault').checked = model.imprimirDefault;
+                document.getElementById('switchControlStock').checked = model.controlStock;
+                document.getElementById('switchFacturaElectronica').checked = model.facturaElectronica;
+                document.getElementById('switchControlEmpleado').checked = model.controlEmpleado;
+
+                if (model.modificationUser == null)
+                    document.getElementById("divModif").style.display = 'none';
+                else {
+                    document.getElementById("divModif").style.display = '';
+                    let dateTimeModif = new Date(model.modificationDate);
+
+                    $("#txtModificado").val(dateTimeModif.toLocaleString());
+                    $("#txtModificadoUsuario").val(model.modificationUser);
+                }
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+        })
+
+    fetch("/Admin/GetAjusteWeb")
+        .then(response => {
+            return response.json();
+        }).then(responseJson => {
+            if (responseJson.state) {
+
+                let model = responseJson.object;
+
                 $("#txtNombreTienda").val(model.nombre);
                 $("#txtDireccion").val(model.direccion);
-
                 $("#txtEnvioGratis").val(model.montoEnvioGratis);
                 $("#txtAumento").val(model.aumentoWeb);
                 $("#txtWhatsApp").val(model.whatsapp);
@@ -78,24 +113,6 @@ $(document).ready(function () {
                 $("#txtTwitter").val(model.twitter);
                 $("#txtYouTube").val(model.youtube);
 
-
-                $("#txtCodigoSeguridad").val(model.codigoSeguridad);
-                $("#txtNombreTiendaTicket").val(model.nombreTiendaTicket);
-                $("#txtMinimoIdentificarConsumidor").val(model.minimoIdentificarConsumidor);
-                $("#cboNombreImpresora").val(model.nombreImpresora);
-                document.getElementById('switchImprimirDefault').checked = model.imprimirDefault;
-                document.getElementById('switchControlStock').checked = model.controlStock;
-                document.getElementById('switchFacturaElectronica').checked = model.facturaElectronica;
-
-                if (model.modificationUser == null)
-                    document.getElementById("divModif").style.display = 'none';
-                else {
-                    document.getElementById("divModif").style.display = '';
-                    let dateTimeModif = new Date(model.modificationDate);
-
-                    $("#txtModificado").val(dateTimeModif.toLocaleString());
-                    $("#txtModificadoUsuario").val(model.modificationUser);
-                }
             } else {
                 swal("Lo sentimos", responseJson.message, "error");
             }
@@ -106,9 +123,26 @@ $(document).ready(function () {
             return response.json();
         }).then(responseJson => {
             if (responseJson.state) {
+                let model = responseJson.object;
 
-                openModalAjustesFacturacion(responseJson.object);
+                $("#txtIdAjustesFacturacion").val(model.idAjustesFacturacion);
 
+                $("#cboCondicionIva").val(model.condicionIva);
+                $("#txtPuntoVentaCertificado").val(model.puntoVenta);
+                $("#txtContraseñaCertificado").val(model.certificadoPassword);
+
+                $("#txtFechaIniCert").val(formatDateToDDMMYYYY(model.certificadoFechaInicio));
+                $("#txtFechaCadCert").val(formatDateToDDMMYYYY(model.certificadoFechaCaducidad));
+                $("#txtCuilCertificado").val(model.cuit);
+                $("#txtNombreArchivo").val(model.certificadoNombre);
+
+                $("#txtNombreTitular").val(model.nombreTitular);
+                $("#txtIIBB").val(model.ingresosBurutosNro);
+                $("#txtDireccionFacturacion").val(model.direccionFacturacion);
+
+                let fecha = model.fechaInicioActividad.split('T')[0];
+                $("#txtInicioActividad").val(fecha);
+                removeLoading();
             } else {
                 swal("Lo sentimos", responseJson.message, "error");
             }
@@ -122,45 +156,61 @@ $(document).ready(function () {
 })
 
 
-const openModalAjustesFacturacion = (model = BASIC_MODEL_AJUSTES_FACTURACION) => {
 
+$("#btnCargarCertificado").on("click", function () {
 
-    $("#txtIdAjustesFacturacion").val(model.idAjustesFacturacion);
+    let password = $("#txtContraseñaCertificado").val();
 
-    $("#cboCondicionIva").val(model.condicionIva);
-    $("#txtPuntoVentaCertificado").val(model.puntoVenta);
-    $("#txtContraseñaCertificado").val(model.certificadoPassword);
+    if (password.trim() == "") {
+        const msg = `Debe completar la contraseña para poder cargar la informacion del certificado.`;
+        toastr.warning(msg, "");
+        return;
+    }
 
-    $("#txtFechaIniCert").val(formatDateToDDMMYYYY(model.certificadoFechaInicio));
-    $("#txtFechaCadCert").val(formatDateToDDMMYYYY(model.certificadoFechaCaducidad));
-    $("#txtCuilCertificado").val(model.cuit);
-    $("#txtNombreArchivo").val(model.certificadoNombre);
+    const inputCertificado = document.getElementById('fileCertificado');
 
-    $("#txtNombreTitular").val(model.nombreTitular);
-    $("#txtIIBB").val(model.ingresosBurutosNro);
-    $("#txtDireccionFacturacion").val(model.direccionFacturacion);
+    if (inputCertificado.files.length == 0) {
+        const msg = `Debe buscar un certificado.`;
+        toastr.warning(msg, "");
+        return;
+    }
 
-    var fecha = model.fechaInicioActividad.split('T')[0];
-    $("#txtInicioActividad").val(fecha);
+    const formData = new FormData();
+    formData.append('Certificado', inputCertificado.files[0]);
+    formData.append('password', password);
 
-    // un boton para cragar datos del certificado
-    //if (model.vMX509Certificate2 != null) {
-    //$("#txtFechaIniCert").val(formatDateToDDMMYYYY(model.vMX509Certificate2.notBefore));
-    //$("#txtFechaCadCert").val(formatDateToDDMMYYYY(model.vMX509Certificate2.notAfter));
-    //$("#txtCuil").val(model.vMX509Certificate2.cuil);
-    //}
+    showLoading();
 
-    $("#modalDataAjustesFscturacion").modal("show")
-}
+    fetch("/Admin/UpdateCertificateInformation", {
+        method: "PUT",
+        body: formData
+    }).then(response => {
+        removeLoading();
+        return response.json();
+    }).then(responseJson => {
+        if (responseJson.state) {
+            let model = responseJson.object;
+
+            $("#txtFechaIniCert").val(formatDateToDDMMYYYY(model.certificadoFechaInicio));
+            $("#txtFechaCadCert").val(formatDateToDDMMYYYY(model.certificadoFechaCaducidad));
+            $("#txtCuilCertificado").val(model.cuit);
+            $("#txtNombreArchivo").val(model.certificadoNombre);
+
+            swal("Exitoso!", "Certificado cargado", "success");
+        } else {
+            swal("Lo sentimos", responseJson.message, "error");
+        }
+    }).catch((error) => {
+    })
+
+})
 
 $("#btnSave").on("click", function () {
 
-    const model = structuredClone(BASIC_MODEL_AJUSTE);
 
     let checkboxSwitchFacturaElectronica = document.getElementById('switchFacturaElectronica');
-    model["facturaElectronica"] = checkboxSwitchFacturaElectronica.checked;
 
-    if (model.facturaElectronica) {
+    if (checkboxSwitchFacturaElectronica.checked) {
 
         const inputs = $("input.input-validate-facturacion").serializeArray();
         const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
@@ -172,25 +222,29 @@ $("#btnSave").on("click", function () {
         }
     }
 
-    model["nombre"] = $("#txtNombreTienda").val();
-    model["direccion"] = $("#txtDireccion").val();
+    const modelWeb = structuredClone(BASIC_MODEL_AJUSTE_WEB);
+    modelWeb["montoEnvioGratis"] = $("#txtEnvioGratis").val();
+    modelWeb["aumentoWeb"] = $("#txtAumento").val();
+    modelWeb["whatsapp"] = $("#txtWhatsApp").val();
+    modelWeb["lunes"] = $("#txtLunes").val();
+    modelWeb["martes"] = $("#txtMartes").val();
+    modelWeb["miercoles"] = $("#txtMiercoles").val();
+    modelWeb["jueves"] = $("#txtJueves").val();
+    modelWeb["viernes"] = $("#txtViernes").val();
+    modelWeb["sabado"] = $("#txtSabado").val();
+    modelWeb["domingo"] = $("#txtDomingo").val();
+    modelWeb["feriado"] = $("#txtFeriados").val();
+    modelWeb["facebook"] = $("#txtFacebook").val();
+    modelWeb["instagram"] = $("#txtInstagram").val();
+    modelWeb["tiktok"] = $("#txtTikTok").val();
+    modelWeb["twitter"] = $("#txtTwitter").val();
+    modelWeb["youtube"] = $("#txtYouTube").val();
+    modelWeb["nombre"] = $("#txtNombreTienda").val();
+    modelWeb["direccion"] = $("#txtDireccion").val();
+
+
+    const model = structuredClone(BASIC_MODEL_AJUSTE);
     model["idAjuste"] = parseInt($("#txtId").val());
-    model["montoEnvioGratis"] = $("#txtEnvioGratis").val();
-    model["aumentoWeb"] = $("#txtAumento").val();
-    model["whatsapp"] = $("#txtWhatsApp").val();
-    model["lunes"] = $("#txtLunes").val();
-    model["martes"] = $("#txtMartes").val();
-    model["miercoles"] = $("#txtMiercoles").val();
-    model["jueves"] = $("#txtJueves").val();
-    model["viernes"] = $("#txtViernes").val();
-    model["sabado"] = $("#txtSabado").val();
-    model["domingo"] = $("#txtDomingo").val();
-    model["feriado"] = $("#txtFeriados").val();
-    model["facebook"] = $("#txtFacebook").val();
-    model["instagram"] = $("#txtInstagram").val();
-    model["tiktok"] = $("#txtTikTok").val();
-    model["twitter"] = $("#txtTwitter").val();
-    model["youtube"] = $("#txtYouTube").val();
 
     let checkboxSwitchImprimirDefault = document.getElementById('switchImprimirDefault');
     model["imprimirDefault"] = checkboxSwitchImprimirDefault.checked;
@@ -198,6 +252,10 @@ $("#btnSave").on("click", function () {
     let checkboxSwitchControlStock = document.getElementById('switchControlStock');
     model["controlStock"] = checkboxSwitchControlStock.checked;
 
+    let checkboxSwitchControlEmpleados = document.getElementById('switchControlEmpleado');
+    model["controlEmpleado"] = checkboxSwitchControlEmpleados.checked;
+
+    model["facturaElectronica"] = checkboxSwitchFacturaElectronica.checked;
 
     model["codigoSeguridad"] = $("#txtCodigoSeguridad").val();
     model["nombreTiendaTicket"] = $("#txtNombreTiendaTicket").val();
@@ -218,6 +276,7 @@ $("#btnSave").on("click", function () {
     const inputCertificado = document.getElementById('fileCertificado');
 
     const formData = new FormData();
+    formData.append('modelWeb', JSON.stringify(modelWeb));
     formData.append('modelFacturacion', JSON.stringify(modelFacturacion));
     formData.append('modelAjustes', JSON.stringify(model));
     formData.append('Certificado', inputCertificado.files[0]);

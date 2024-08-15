@@ -102,6 +102,7 @@ namespace PointOfSale.Business.Services
             Ajustes_found.NombreTiendaTicket = entity.NombreTiendaTicket;
             Ajustes_found.NombreImpresora = entity.NombreImpresora;
             Ajustes_found.MinimoIdentificarConsumidor = entity.MinimoIdentificarConsumidor;
+            Ajustes_found.ControlEmpleado = entity.ControlEmpleado;
 
             bool response = await _repositoryAjustes.Edit(Ajustes_found);
 
@@ -121,6 +122,23 @@ namespace PointOfSale.Business.Services
             Ajustes_found.FechaInicioActividad = entity.FechaInicioActividad;
             Ajustes_found.DireccionFacturacion = entity.DireccionFacturacion;
             Ajustes_found.CertificadoPassword = !string.IsNullOrEmpty(entity.CertificadoPassword) ? EncryptionHelper.EncryptString(entity.CertificadoPassword) : null;
+
+            await UpdateCertificateInfo(entity);
+
+            Ajustes_found.ModificationDate = TimeHelper.GetArgentinaTime();
+            Ajustes_found.ModificationUser = entity.ModificationUser;
+
+            bool response = await _repositoryAjustesFacturacion.Edit(Ajustes_found);
+
+            if (!response)
+                throw new TaskCanceledException("Ajustes Facturacion no se pudo cambiar.");
+
+            return Ajustes_found;
+        }
+
+        public async Task<AjustesFacturacion>  UpdateCertificateInfo(AjustesFacturacion entity)
+        {
+            var Ajustes_found = await GetAjustesFacturacion(entity.IdTienda);
 
             Ajustes_found.Cuit = entity.Cuit != 0 ? entity.Cuit : Ajustes_found.Cuit;
             Ajustes_found.CertificadoFechaCaducidad = entity.CertificadoFechaCaducidad != null ? entity.CertificadoFechaCaducidad : Ajustes_found.CertificadoFechaCaducidad;

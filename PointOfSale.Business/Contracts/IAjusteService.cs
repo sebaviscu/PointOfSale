@@ -22,6 +22,8 @@ namespace PointOfSale.Business.Contracts
         Task<AjustesFacturacion> EditFacturacion(AjustesFacturacion entity);
 
         Task CreateAjsutes(int idTienda);
+        
+        Task<AjustesFacturacion> UpdateCertificateInfo(AjustesFacturacion entity);
 
     }
 }

@@ -86,13 +86,15 @@ namespace PointOfSale.Business.Services
 
             Ticket1.TextoIzquierda(" ");
             Ticket1.TextoAgradecimiento("¡Gracias por su compra!");
-            //Ticket1.TextoIzquierda(" ");
+            Ticket1.TextoIzquierda(" ");
 
 
             if (isFactura)
             {
                 // Generar y agregar el QR
-                Ticket1.TextoBetween($"CAE:{facturaEmitida.CAE}", $"Vto:{facturaEmitida.CAEVencimiento.Value.ToShortDateString()}");
+                Ticket1.TextoIzquierda($"CAE: {facturaEmitida.CAE}");
+                Ticket1.TextoIzquierda($"Vto: {facturaEmitida.CAEVencimiento.Value.ToShortDateString()}");
+
                 var linkAfip = await _afipService.GenerateLinkAfipFactura(facturaEmitida);
                 Ticket1.qrImage = QrHelper.GenerarQR(linkAfip, facturaEmitida.IdSale.ToString());
             }

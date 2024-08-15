@@ -19,8 +19,8 @@ namespace PointOfSale.Business.Utilities
                 {
                     DisableECI = true,
                     CharacterSet = "UTF-8",
-                    Width = 70,  // Ajustar tamaño según necesidad
-                    Height = 70
+                    Width = 90,  // Ajustar tamaño según necesidad
+                    Height = 90
                 };
 
                 BarcodeWriter writer = new BarcodeWriter

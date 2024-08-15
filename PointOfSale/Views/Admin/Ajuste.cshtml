@@ -68,7 +68,7 @@
                         <div class="row ">
                             <div class="col-md-12">
                                 <div class="row ">
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-4">
                                         <div class="form-group">
                                             <label for="txtCodigoSeguridad">Codigo de Seguridad</label>
                                             <div class="password-wrapper">
@@ -79,7 +79,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-3 text-center" style="align-content: end;">
+                                    <div class="col-sm-2 text-center" style="align-content: end;">
                                         <div class="form-group">
                                             <div class="form-check form-switch">
                                                 <input class="form-check-input" type="checkbox" role="switch" id="switchImprimirDefault">
@@ -87,7 +87,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-3 text-center" style="align-content: end;">
+                                    <div class="col-sm-2 text-center" style="align-content: end;">
                                         <div class="form-group">
                                             <div class="form-check form-switch">
                                                 <input class="form-check-input" type="checkbox" role="switch" id="switchControlStock">
@@ -95,11 +95,18 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-3 text-center" style="align-content: end;">
+                                    <div class="col-sm-2 text-center" style="align-content: end;">
                                         <div class="form-group">
                                             <div class="form-check form-switch">
                                                 <input class="form-check-input" type="checkbox" role="switch" id="switchFacturaElectronica">
                                                 <label class="form-check-label" for="switchFacturaElectronica">Factura Electronica</label>
+                                            </div>
+                                        </div>
+                                    </div><div class="col-sm-2 text-center" style="align-content: end;">
+                                        <div class="form-group">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" role="switch" id="switchControlEmpleado">
+                                                <label class="form-check-label" for="switchControlEmpleado">Control Empleados</label>
                                             </div>
                                         </div>
                                     </div>
@@ -327,6 +334,9 @@
                                             <label for="fileCertificado">Certificado</label>
                                             <div class="input-group input-group-sm">
                                                 <input type="file" class="form-control form-control-sm" id="fileCertificado" name="Ruta Certificado" accept=".pfx">
+                                                <div class="input-group-prepend">
+                                                    <button class="btn btn-info" id="btnCargarCertificado">Cargar</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

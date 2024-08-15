@@ -59,8 +59,12 @@ namespace PointOfSale.Utilities.ViewComponents
                 var tienda = await _tiendaService.Get(Convert.ToInt32(tiendaId));
                 tiendaName = tienda.Nombre;
 
-                var lTiendas = await _tiendaService.List();
-                cantTiendas = lTiendas.Count();
+                if (user_found.IsAdmin)
+                {
+                    var lTiendas = await _tiendaService.List();
+                    cantTiendas = lTiendas.Count();
+                }
+
             }
 
             ViewData["userName"] = userName;

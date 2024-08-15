@@ -1331,6 +1331,8 @@ function getTabActiveId() {
 }
 
 async function validateCode() {
+    if (!ajustes.needControl) return true;
+
     return new Promise((resolve, reject) => {
         swal({
             title: 'Codigo de Seguridad',

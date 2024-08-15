@@ -8,7 +8,8 @@ namespace PointOfSale.Business.Utilities
 {
     public class TicketModel
     {
-        readonly int MAX = 34;
+        readonly int MAX = 26;
+        readonly int Margin = 2; // Margen variable global
 
         public TicketModel()
         {
@@ -19,165 +20,97 @@ namespace PointOfSale.Business.Utilities
         static StringBuilder line = new StringBuilder();
         public string qrImage;
 
-        public string Ticket
-        {
-            get { return Lineas.ToString(); }
-        }
+        public string Ticket => Lineas.ToString();
 
-        public StringBuilder Lineas
-        {
-            get { return line; }
-        }
+        public StringBuilder Lineas => line;
 
         public void TextoAgradecimiento(string text)
         {
-            var ticket = string.Empty;
-            var parte1 = string.Empty;
-            var cort = 0;
-
-            var m = text.Length;
-            if (m > MAX)
-            {
-                cort = m - MAX;
-                text = text.Remove(MAX, cort);
-            }
-            else { parte1 = text; }
-            m = (int)(MAX - parte1.Length) / 2;
-
-            ticket += new string(' ', m);
-
-            var texto = ticket += parte1 + "\n";
-            line.AppendLine(texto);
+            string texto = FormatearTextoCentro(text);
+            AppendLineWithMargin(texto);
         }
 
-        public void LineasGuion()
-        {
-            string LineaGuion = new string('-', MAX);
-            line.AppendLine(LineaGuion);
-        }
-        public void LineasTotal()
-        {
-            string LineaGuion = new string('=', MAX);
-            line.AppendLine(LineaGuion);
-        }
+        public void LineasGuion() => AppendLineWithMargin(new string('-', MAX));
 
-        public void TextoIzquierda(string par1)
+        public void LineasTotal() => AppendLineWithMargin(new string('=', MAX));
+
+        public void TextoIzquierda(string text)
         {
-            var parte1 = string.Empty;
-            var ticket = string.Empty;
-            var cort = 0;
-
-            var m = par1.Length;
-            if (m > MAX)
-            {
-                cort = m - MAX;
-                parte1 = par1.Remove(MAX, cort);
-            }
-            else { parte1 = par1; }
-            var text = ticket = parte1;
-            line.AppendLine(text);
-
+            string texto = CortarTextoMax(text, MAX - Margin);
+            AppendLineWithMargin(texto);
         }
 
-        public void TextoCentro(string par1)
+        public void TextoCentro(string text)
         {
-            var parte1 = string.Empty;
-            var ticket = string.Empty;
-            var cort = 0;
-
-            var m = par1.Length;
-            if (m > MAX)
-            {
-                cort = m - MAX;
-                parte1 = par1.Remove(MAX, cort);
-            }
-            else { parte1 = par1; }
-            m = (int)(MAX - parte1.Length) / 2;
-
-            ticket += new string(' ', m);
-
-            var text = ticket += parte1 + "\n";
-            line.AppendLine(text);
-
-        }
-        public void TextoBetween(string par1, string par2)
-        {
-            int mitadMax = MAX / 2;
-
-            string parte1 = CortarTextoMax(par1, mitadMax);
-            string parte2 = CortarTextoMax(par2, mitadMax);
-
-            int espaciosEntre = MAX - (parte1.Length + parte2.Length);
-            if (espaciosEntre < 0) espaciosEntre = 0;
-
-            string text = $"{parte1}{new string(' ', espaciosEntre)}{parte2}";
-            line.AppendLine(text);
+            string texto = FormatearTextoCentro(text);
+            AppendLineWithMargin(texto);
         }
 
-        private string CortarTextoMax(string texto, int maxLen)
+        public void TextoBetween(string text1, string text2)
         {
-            // Devuelve el texto cortado al tamaño máximo permitido (maxLen)
-            return texto.Length > maxLen ? texto.Substring(0, maxLen) : texto;
+            string textoFormateado = FormatearTextoBetween(text1, text2);
+            AppendLineWithMargin(textoFormateado);
         }
 
-        public void AgregaTotales(string par1, double total)
+        public void AgregaTotales(string text, double total)
         {
-            var ticket = string.Empty;
-            var parte1 = string.Empty;
-            var parte2 = string.Empty;
-            var cort = 0;
-
-            var m = par1.Length;
-            if (m > 25)
-            {
-                cort = m - 25;
-                parte1 = par1.Remove(25, cort);
-            }
-            else { parte1 = par1; }
-            ticket = parte1;
-            parte2 = "$" + total.ToString();
-            m = MAX - (parte1.Length + parte2.Length);
-
-            ticket += new string(' ', m);
-
-            var text = ticket += parte2;
-            line.AppendLine(text);
-
+            string totalString = $"${total}";
+            string textoFormateado = FormatearTextoBetween(text, totalString);
+            AppendLineWithMargin(textoFormateado);
         }
 
         public void AgregaArticulo(string articulo, decimal precio, decimal cant, decimal subtotalDecimal, decimal? iva)
         {
-            string elementos = string.Empty;
-            var nroEspacios = 0;
+            string articuloCortado = CortarTextoMax(articulo, MAX - 5) + (articulo.Length > MAX - 5 ? "..." : "");
+            AppendLineWithMargin(articuloCortado);
 
-            if (articulo.Length > MAX)
-            {
-                articulo = articulo.Substring(0, MAX - 5) + "...";
-            }
-
-            line.AppendLine(articulo);
-
-            var precioString = MostrarNumeroConDecimales(precio);
-            var cantString = MostrarNumeroConDecimales(cant);
-            var subtotal = MostrarNumeroConDecimales(subtotalDecimal);
-            elementos += $" {cantString} x ${precioString}";
-
+            string elementos = $" {MostrarNumeroConDecimales(cant)} x ${MostrarNumeroConDecimales(precio)}";
             if (iva != null && iva > 0)
             {
                 elementos += $" ({iva}%)";
             }
 
-            //colocar el subtotal a la dercha
-            nroEspacios = ((MAX - subtotal.Length) - elementos.Length) - 2;
+            string subtotal = $"${MostrarNumeroConDecimales(subtotalDecimal)}";
+            int nroEspacios = MAX - elementos.Length - subtotal.Length - Margin;
 
-            elementos += new string(' ', nroEspacios) + "$" + subtotal;
-            line.AppendLine(elementos);
+            string lineaArticulo = elementos + new string(' ', nroEspacios) + subtotal;
+            AppendLineWithMargin(lineaArticulo);
+        }
+
+        private string FormatearTextoCentro(string text)
+        {
+            text = CortarTextoMax(text, MAX - 2 * Margin);
+            int espacioIzq = (MAX - text.Length) / 2;
+            return new string(' ', espacioIzq) + text;
+        }
+
+        private string FormatearTextoBetween(string text1, string text2)
+        {
+            text1 = CortarTextoMax(text1, MAX / 2 - Margin);
+            text2 = CortarTextoMax(text2, MAX / 2 - Margin);
+
+            int espaciosEntre = MAX - text1.Length - text2.Length - Margin;
+            return text1 + new string(' ', espaciosEntre) + text2;
+        }
+
+        private string CortarTextoMax(string texto, int maxLen)
+        {
+            return texto.Length > maxLen ? texto.Substring(0, maxLen) : texto;
+        }
+
+        private void AppendLineWithMargin(string text)
+        {
+            // Aplica el margen al principio de cada línea
+            string textoConMargen = new string(' ', Margin / 2) + text;
+            line.AppendLine(textoConMargen);
         }
 
         static string MostrarNumeroConDecimales(decimal numero)
         {
-            // Verificar si el número tiene decimales
             return numero % 1 == 0 ? Math.Truncate(numero).ToString() : numero.ToString();
         }
     }
+
+
+
 }

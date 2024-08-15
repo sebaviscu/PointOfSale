@@ -1495,25 +1495,14 @@ namespace PointOfSale.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAjuste()
+        public async Task<IActionResult> GetAjusteWeb()
         {
-            var gResponse = new GenericResponse<VMAjustes>();
+            var gResponse = new GenericResponse<VMAjustesWeb>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
 
-                var vmAjusteWeb = _mapper.Map<VMAjustes>(await _ajusteService.GetAjustesWeb());
-
-                var vmAjuste = _mapper.Map<VMAjustes>(await _ajusteService.GetAjustes(user.IdTienda));
-
-                vmAjusteWeb.CodigoSeguridad = vmAjuste.CodigoSeguridad;
-                vmAjusteWeb.NombreImpresora = vmAjuste.NombreImpresora;
-                vmAjusteWeb.MinimoIdentificarConsumidor = vmAjuste.MinimoIdentificarConsumidor;
-                vmAjusteWeb.ImprimirDefault = vmAjuste.ImprimirDefault;
-                vmAjusteWeb.NombreTiendaTicket = vmAjuste.NombreTiendaTicket;
-                vmAjusteWeb.ControlStock = vmAjuste.ControlStock;
-                vmAjusteWeb.IdTienda = vmAjuste.IdTienda;
-                vmAjusteWeb.FacturaElectronica = vmAjuste.FacturaElectronica;
+                var vmAjusteWeb = _mapper.Map<VMAjustesWeb>(await _ajusteService.GetAjustesWeb());
 
                 gResponse.Object = vmAjusteWeb;
                 gResponse.State = true;
@@ -1525,14 +1514,34 @@ namespace PointOfSale.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAjuste()
+        {
+            var gResponse = new GenericResponse<VMAjustes>();
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador]);
+
+                var vmAjuste = _mapper.Map<VMAjustes>(await _ajusteService.GetAjustes(user.IdTienda));
+
+                gResponse.Object = vmAjuste;
+                gResponse.State = true;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al recuperar ajuste", _logger);
+            }
+        }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateAjuste([FromForm] IFormFile Certificado, [FromForm] string modelFacturacion, [FromForm] string modelAjustes)
+        public async Task<IActionResult> UpdateAjuste([FromForm] IFormFile Certificado, [FromForm] string modelFacturacion, [FromForm] string modelAjustes, [FromForm] string ModelWeb)
         {
             GenericResponse<VMAjustes> gResponse = new GenericResponse<VMAjustes>();
             try
             {
                 var model = JsonConvert.DeserializeObject<VMAjustes>(modelAjustes);
+                var modelWeb = JsonConvert.DeserializeObject<VMAjustesWeb>(ModelWeb);
                 var vmModelFacturacion = JsonConvert.DeserializeObject<VMAjustesFacturacion>(modelFacturacion);
 
                 var user = ValidarAutorizacion([Roles.Administrador]);
@@ -1542,7 +1551,10 @@ namespace PointOfSale.Controllers
                 vmModelFacturacion.ModificationUser = user.UserName;
                 vmModelFacturacion.IdTienda = user.IdTienda;
 
-                var edited_AjusteWeb = await _ajusteService.EditWeb(_mapper.Map<AjustesWeb>(model));
+                modelWeb.ModificationUser = user.UserName;
+                modelWeb.IdTienda = user.IdTienda;
+
+                var edited_AjusteWeb = await _ajusteService.EditWeb(_mapper.Map<AjustesWeb>(modelWeb));
 
                 var edited_Ajuste = await _ajusteService.Edit(_mapper.Map<Ajustes>(model));
 
@@ -1612,6 +1624,10 @@ namespace PointOfSale.Controllers
 
                 var ajuste = await _ajusteService.GetAjustes(user.IdTienda);
                 var vmAjuste = _mapper.Map<VMAjustesSale>(ajuste);
+
+                vmAjuste.NeedControl = user.IdRol == (int)Roles.Administrador
+                    ? false
+                    : ajuste.ControlEmpleado ?? false;
 
                 gResponse.State = true;
                 gResponse.Object = vmAjuste;
@@ -1789,5 +1805,60 @@ namespace PointOfSale.Controllers
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
         }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateCertificateInformation([FromForm] IFormFile Certificado, [FromForm] string password)
+        {
+
+            GenericResponse<VMAjustesFacturacion> gResponse = new GenericResponse<VMAjustesFacturacion>();
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador]);
+                var vmModel = new VMAjustesFacturacion();
+
+                if (Certificado != null)
+                {
+
+                    var filePath = Path.Combine(Path.GetTempPath(), Certificado.FileName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await Certificado.CopyToAsync(stream);
+                    }
+
+                    vmModel.CertificadoNombre = Certificado.FileName;
+                    if (!string.IsNullOrEmpty(password))
+                    {
+                        var cert = _afipService.GetCertificateAfipInformation(filePath, password);
+                        if (cert != null)
+                        {
+                            vmModel.CertificadoFechaCaducidad = cert.FechaCaducidad;
+                            vmModel.CertificadoFechaInicio = cert.FechaInicio;
+                            vmModel.Cuit = Convert.ToInt64(cert.Cuil);
+                        }
+                    }
+
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        System.IO.File.Delete(filePath);
+                    }
+                }
+
+                //vmModel.ModificationUser = user.UserName;
+                //vmModel.IdTienda = user.IdTienda;
+                //var ajustes = await _ajusteService.UpdateCertificateInfo(_mapper.Map<AjustesFacturacion>(vmModel));
+
+                gResponse.State = true;
+                gResponse.Object = _mapper.Map<VMAjustesFacturacion>(vmModel);
+                gResponse.Message = string.Empty;
+
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al recuperar informacion del certificado.", _logger);
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
     }
 }
+

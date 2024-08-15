@@ -72,7 +72,19 @@ $(document).ready(function () {
                 "searchable": false
             },
             { "data": "registrationDate" },
-            { "data": "tipoFactura" },
+            {
+                "data": "tipoFactura",
+                render: function (data, type, row) {
+                    // Asegurando el orden correcto de las operaciones y evitando posibles errores
+                    let badge = '';
+                    if (row.observaciones != null) {
+                        badge = row.resultado != 'A' ?
+                            ' <span class="badge rounded-pill bg-danger"> ERROR </span>' :
+                            ' <span class="badge rounded-pill bg-info"> Obs </span>';
+                    }
+                    return data + ' ' + badge;
+                }
+            },
             {
                 "data": "nroFacturaString", render: function (data, type, row) {
                     return data != '' ? `${row.puntoVentaString}-${data} ` : '';
@@ -86,15 +98,6 @@ $(document).ready(function () {
             },
             { "data": "cae" },
             { "data": "caeVencimiento" },
-            {
-                "data": "observaciones", render: function (data, type, row) {
-                    return data != null ?
-                        row.resultado != 'A' ?
-                            '<span class="badge rounded-pill bg-danger"> ERROR </span>' :
-                            '<span class="badge rounded-pill bg-info"> Obs </span>' :
-                        '';
-                }
-            },
             {
                 "defaultContent": '<button class="btn btn-primary btn-ver btn-sm me-2"><i class="mdi mdi-eye"></i></button>',
                 "orderable": false,

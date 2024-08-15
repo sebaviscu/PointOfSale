@@ -529,4 +529,7 @@ CONSTRAINT FK_AjustesFacturacion_Tienda FOREIGN KEY (idTienda)
 --ON DELETE CASCADE;
 
 
-select * from sale
+select * from ajustes
+
+alter table ajustes
+add ControlEmpleado BIT NULL

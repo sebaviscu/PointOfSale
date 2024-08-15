@@ -1,20 +1,9 @@
 ﻿namespace PointOfSale.Models
 {
-    public class VMAjustes
+    public class VMAjustesWeb
     {
-        public int IdAjuste { get; set; }
-        public string? CodigoSeguridad { get; set; }
-        public bool? ImprimirDefault { get; set; }
-        public bool? FacturaElectronica { get; set; }
-        public bool? ControlStock { get; set; }
-        public bool? ControlEmpleado { get; set; }
-        public string? NombreImpresora { get; set; }
-        public long? MinimoIdentificarConsumidor { get; set; }
-        public string? NombreTiendaTicket { get; set; }
+        public int idAjusteWeb { get; set; }
         public int IdTienda { get; set; }
-
-
-
         public string? Nombre { get; set; }
         public string? Direccion { get; set; }
         public decimal? MontoEnvioGratis { get; set; }
