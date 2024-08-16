@@ -227,7 +227,7 @@ $("#tbsale tbody").on("click", ".btn-info", function () {
 let idSale;
 
 $("#printTicket").click(function () {
-
+    showLoading();
     fetch(`/Sales/PrintTicket?idSale=${idSale}`, {
     }).then(response => {
 
@@ -239,9 +239,10 @@ $("#printTicket").click(function () {
 
             if (isHealthy && responseJson.object.nombreImpresora != '') {
 
-                printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora, responseJson.object.urlQr);
+                printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora, responseJson.object.imagesTicket);
 
                 swal("Exitoso!", "Ticket impreso!", "success");
+                removeLoading();
             }
 
         } else {

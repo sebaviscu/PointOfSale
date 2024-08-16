@@ -776,7 +776,7 @@ function registrationSale(currentTabId) {
             disableAfterVenta(currentTabId);
 
             if (isHealthy && sale.imprimirTicket && responseJson.object.nombreImpresora != null && responseJson.object.nombreImpresora != '' && responseJson.object.ticket != null && responseJson.object.ticket != '') {
-                printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora, responseJson.object.urlQr);
+                printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora, responseJson.object.imagesTicket);
             }
 
             newTab();

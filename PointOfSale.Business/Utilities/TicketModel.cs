@@ -1,4 +1,5 @@
-﻿using System;
+﻿using iTextSharp.text.pdf.parser;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,11 +15,15 @@ namespace PointOfSale.Business.Utilities
         public TicketModel()
         {
             line = new StringBuilder();
-            qrImage = string.Empty;
+            ImagesTicket = new List<Images>();
         }
 
+        #region Propiedades
         static StringBuilder line = new StringBuilder();
-        public string qrImage;
+
+        public List<Images> ImagesTicket { get; set; }
+
+        #endregion
 
         public string Ticket => Lineas.ToString();
 
@@ -38,6 +43,12 @@ namespace PointOfSale.Business.Utilities
         {
             string texto = CortarTextoMax(text, MAX - Margin);
             AppendLineWithMargin(texto);
+        }
+        public void InsertarImagen(string flag, string imageBase64)
+        {
+            line.AppendLine("");
+            line.AppendLine($"[[{flag}]]");
+            ImagesTicket.Add(new Images(imageBase64, flag));
         }
 
         public void TextoCentro(string text)
@@ -112,5 +123,15 @@ namespace PointOfSale.Business.Utilities
     }
 
 
+    public class Images
+    {
+        public Images(string imageBase64, string flag)
+        {
+            ImageBase64 = imageBase64;
+            Flag = $"[[{flag}]]";
+        }
 
+        public string ImageBase64 { get; set; }
+        public string Flag { get; set; }
+    }
 }

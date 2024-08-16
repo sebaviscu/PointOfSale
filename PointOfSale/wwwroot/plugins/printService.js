@@ -34,14 +34,14 @@ async function getPrinters() {
     }
 }
 
-async function printTicket(text, printerName, qrImage) {
+async function printTicket(text, printerName, imagesTicket) {
     try {
         const response = await fetch(urlPrintService + '/imprimir', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ nombreImpresora: printerName, text: text, qrImage: qrImage })
+            body: JSON.stringify({ nombreImpresora: printerName, text: text, images: imagesTicket })
         });
         if (!response.ok) {
             throw new Error(`Network response was not ok: ${response.statusText}`);

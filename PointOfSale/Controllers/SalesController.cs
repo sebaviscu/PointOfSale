@@ -208,7 +208,7 @@ namespace PointOfSale.Controllers
                     var ticket = await RegistrationTicketPrinting(model.ImprimirTicket, ajustes, sale_created, facturaEmitida);
                     modelResponde.NombreImpresora = ajustes.NombreImpresora;
                     modelResponde.Ticket = ticket.Ticket ?? string.Empty;
-                    modelResponde.urlQr = ticket.qrImage ?? string.Empty;
+                    modelResponde.ImagesTicket = ticket.ImagesTicket;
                 }
 
                 gResponse.State = true;
@@ -371,7 +371,7 @@ namespace PointOfSale.Controllers
 
                 model.NombreImpresora = ajustes.NombreImpresora;
                 model.Ticket = ticket.Ticket ?? string.Empty;
-                model.urlQr = ticket.qrImage ?? string.Empty;
+                model.ImagesTicket = ticket.ImagesTicket;
 
                 gResponse.State = true;
                 gResponse.Object = model;
@@ -402,7 +402,7 @@ namespace PointOfSale.Controllers
 
                 model.NombreImpresora = ajustes.NombreImpresora;
                 model.Ticket = ticket.Ticket ?? string.Empty;
-                model.urlQr = ticket.qrImage ?? string.Empty;
+                model.ImagesTicket = ticket.ImagesTicket;
 
                 gResponse.State = true;
                 gResponse.Object = model;

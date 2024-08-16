@@ -138,7 +138,8 @@ $("#printTicket").click(function () {
 
                 if (response.object.nombreImpresora != '') {
 
-                    printTicket(response.object.nombreImpresora, responseJson.object.ticket);
+                    printTicket(response.object.ticket, response.object.nombreImpresora, response.object.imagesTicket);
+
 
                     swal("Exitoso!", "Ticket impreso!", "success");
                 }

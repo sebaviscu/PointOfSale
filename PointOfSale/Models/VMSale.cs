@@ -1,4 +1,5 @@
-﻿using PointOfSale.Model;
+﻿using PointOfSale.Business.Utilities;
+using PointOfSale.Model;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Models
@@ -33,6 +34,7 @@ namespace PointOfSale.Models
         public string? NombreImpresora { get; set; }
         public string? Ticket { get; set; }
         public string? urlQr { get; set; }
+        public List<Images> ImagesTicket { get; set; }
 
     }
 }
