@@ -742,7 +742,7 @@ function registrationSale(currentTabId) {
 
     let sale = getVentaForRegister();
 
-    fetch("/Sales/RegisterSale_2", {
+    fetch("/Sales/RegisterSale", {
         method: "POST",
         headers: { 'Content-Type': 'application/json;charset=utf-8' },
         body: JSON.stringify(sale)

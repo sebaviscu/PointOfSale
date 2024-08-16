@@ -174,7 +174,7 @@ namespace PointOfSale.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RegisterSale_2([FromBody] VMSale model)
+        public async Task<IActionResult> RegisterSale([FromBody] VMSale model)
          {
 
             var gResponse = new GenericResponse<VMSaleResult>();
@@ -237,51 +237,6 @@ namespace PointOfSale.Controllers
                         modelResponde.Ticket += ticket.Ticket;
                         modelResponde.ImagesTicket.AddRange(ticket.ImagesTicket);
                     }
-                }
-
-                gResponse.State = true;
-                gResponse.Object = modelResponde;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al registrar la venta", _logger, model.ToJson());
-            }
-        }
-
-
-        [HttpPost]
-        public async Task<IActionResult> RegisterSale([FromBody] VMSale model)
-        {
-
-            var gResponse = new GenericResponse<VMSale>();
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
-
-                model.IdUsers = user.IdUsuario;
-                model.IdTurno = user.IdTurno;
-                model.IdTienda = user.IdTienda;
-                model.RegistrationUser = user.UserName;
-
-                var ajustes = await _ajustesService.GetAjustes(user.IdTienda);
-
-                Sale sale_created = await _saleService.Register(_mapper.Map<Sale>(model), ajustes);
-
-                await RegistrarionClient(model, user.UserName, user.IdTienda, sale_created);
-
-                await RegistrationMultiplesPagos(model, sale_created, ajustes);
-
-                var facturaEmitida = await RegistrationFacturar(model, sale_created, ajustes);
-
-                var modelResponde = _mapper.Map<VMSale>(sale_created);
-
-                if (!model.ImprimirTicket && !string.IsNullOrEmpty(ajustes.NombreImpresora))
-                {
-                    var ticket = await RegistrationTicketPrinting(ajustes, sale_created, facturaEmitida);
-                    modelResponde.NombreImpresora = ajustes.NombreImpresora;
-                    modelResponde.Ticket = ticket.Ticket ?? string.Empty;
-                    modelResponde.ImagesTicket = ticket.ImagesTicket;
                 }
 
                 gResponse.State = true;

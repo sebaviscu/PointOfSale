@@ -53,10 +53,6 @@ namespace PointOfSale.Data.Repository
                 }
             }
 
-            if (string.IsNullOrEmpty(entity.SaleNumber)) // cuando es multiple formas de pago
-            {
-                entity.SaleNumber = await GetLastSerialNumberSale();
-            }
             entity.RegistrationDate = TimeHelper.GetArgentinaTime();
 
             await _dbcontext.Sales.AddAsync(entity);
