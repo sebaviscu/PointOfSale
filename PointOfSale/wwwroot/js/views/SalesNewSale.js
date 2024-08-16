@@ -616,6 +616,8 @@ $(document).on("click", "button.btnAddFormaDePago", function () {
         changeCboTypeDocumentSaleParcial(formaDePagoID, idFormaDePago);
     })
 
+    $("#cboTypeDocumentSaleParcial" + formaDePagoID).trigger('change');
+
     return false;
 
 })
@@ -740,7 +742,7 @@ function registrationSale(currentTabId) {
 
     let sale = getVentaForRegister();
 
-    fetch("/Sales/RegisterSale", {
+    fetch("/Sales/RegisterSale_2", {
         method: "POST",
         headers: { 'Content-Type': 'application/json;charset=utf-8' },
         body: JSON.stringify(sale)

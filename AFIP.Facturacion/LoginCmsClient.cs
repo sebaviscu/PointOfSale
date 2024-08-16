@@ -93,7 +93,7 @@ namespace AFIP.Facturacion
             {
                 var ticketJson = File.ReadAllText(ticketCacheFile);
                 var ticket = JsonConvert.DeserializeObject<WsaaTicket>(ticketJson);
-                if (DateTime.UtcNow <= ticket.ExpirationTime)
+                if (DateTimeNowArg <= ticket.ExpirationTime)
                     return ticket;
             }
 

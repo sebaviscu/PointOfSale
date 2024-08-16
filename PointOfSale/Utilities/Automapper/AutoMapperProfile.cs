@@ -12,6 +12,8 @@ namespace PointOfSale.Utilities.Automapper
 {
     public class AutoMapperProfile : Profile
     {
+        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
+
         public AutoMapperProfile()
         {
 
@@ -348,9 +350,9 @@ namespace PointOfSale.Utilities.Automapper
 
             CreateMap<Vencimiento, VMVencimiento>()
                 .ForMember(user => user.Estado, opt => opt.MapFrom(userEdit =>
-                userEdit.FechaVencimiento.Date <= DateTime.UtcNow.Date ?
+                userEdit.FechaVencimiento.Date <= DateTimeNowArg.Date ?
                     EstadoVencimiento.Vencido :
-                userEdit.FechaVencimiento.Date > DateTime.UtcNow.Date && userEdit.FechaVencimiento.Date < DateTime.UtcNow.AddDays(7).Date ?
+                userEdit.FechaVencimiento.Date > DateTime.UtcNow.Date && userEdit.FechaVencimiento.Date < DateTimeNowArg.AddDays(7).Date ?
                     EstadoVencimiento.ProximoVencimiento :
                     EstadoVencimiento.Apto))
                 .ForMember(user => user.Producto, opt => opt.MapFrom(userEdit => userEdit.Producto != null ? userEdit.Producto.Description : string.Empty))

@@ -52,9 +52,12 @@ namespace PointOfSale.Business.Services
                 await DatosFactura(idTienda, facturaEmitida, Ticket1);
             }
 
-            Ticket1.TextoBetween("Fecha: " + registrationDate.ToShortDateString(), "Hora: " + registrationDate.ToShortTimeString());
+            Ticket1.TextoIzquierda($"Fecha: {registrationDate.ToShortDateString()}");
+            Ticket1.TextoIzquierda($"Hora: {registrationDate.ToShortTimeString()}");
             Ticket1.LineasGuion();
             Ticket1.TextoIzquierda("");
+
+            IsMultiplesFormasPago(detailSales, total);
 
             foreach (var d in detailSales)
             {
@@ -69,14 +72,10 @@ namespace PointOfSale.Business.Services
 
             if (descuentoRecargo != null && descuentoRecargo != 0)
             {
-                if (descuentoRecargo > 0)
-                {
-                    Ticket1.TextoIzquierda(" Regargo: $" + descuentoRecargo);
-                }
-                else
-                {
-                    Ticket1.TextoIzquierda(" Descuento: $" + (descuentoRecargo * -1));
-                }
+                string label = descuentoRecargo > 0 ? "Recargo" : "Descuento";
+                decimal amount = Math.Abs(descuentoRecargo.Value);
+
+                Ticket1.TextoIzquierda($" {label}: ${amount}");
                 Ticket1.TextoIzquierda(" ");
             }
 
@@ -97,7 +96,7 @@ namespace PointOfSale.Business.Services
                 // Generar y agregar el QR
                 var linkAfip = await _afipService.GenerateLinkAfipFactura(facturaEmitida);
                 var qrBase64 = QrHelper.GenerarQR(linkAfip, facturaEmitida.IdSale.ToString());
-                Ticket1.InsertarImagen("qrImageFactura", qrBase64);
+                Ticket1.InsertarImagen($"F_{facturaEmitida.CAE}", qrBase64);
             }
 
             return Ticket1;
@@ -122,6 +121,41 @@ namespace PointOfSale.Business.Services
 
             Ticket1.TextoIzquierda($"{facturaEmitida.TipoFactura}");
             Ticket1.TextoIzquierda($"No Fac: {facturaEmitida.NumeroFacturaString}");
+        }
+
+        private void IsMultiplesFormasPago(ICollection<DetailSale> detailSales, decimal total)
+        {
+            if (detailSales.Count == 0)
+            {
+                var d = new DetailSale()
+                {
+                    DescriptionProduct = "Productos",
+                    Price = total,
+                    Quantity = 1,
+                    Total = total
+                };
+                detailSales.Add(d);
+            }
+
+            var totDetailsSale = detailSales.Sum(_ => _.Total);
+
+            if (totDetailsSale != total)
+            {
+                var d = new DetailSale()
+                {
+                    DescriptionProduct = "Otros",
+                    Price = total - totDetailsSale,
+                    Quantity = 1,
+                    Total = total - totDetailsSale
+                };
+                detailSales.Add(d);
+            }
+        }
+
+        private decimal RecalcularTotalPorMultiplesFormasPago(ICollection<DetailSale> detailSales, decimal total)
+        {
+            var totDetailsSale = detailSales.Sum(_ => _.Total);
+            return total - totDetailsSale.Value;
         }
     }
 }

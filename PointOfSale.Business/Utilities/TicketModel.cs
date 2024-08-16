@@ -82,7 +82,7 @@ namespace PointOfSale.Business.Utilities
             }
 
             string subtotal = $"${MostrarNumeroConDecimales(subtotalDecimal)}";
-            int nroEspacios = MAX - elementos.Length - subtotal.Length - Margin;
+            int nroEspacios = MAX - elementos.Length - subtotal.Length;
 
             string lineaArticulo = elementos + new string(' ', nroEspacios) + subtotal;
             AppendLineWithMargin(lineaArticulo);
