@@ -2,7 +2,6 @@
 {
     public class VMSalesWeek
     {
-        //public string? Date { get; set; }
         public decimal Total { get; set; }
     }
 }

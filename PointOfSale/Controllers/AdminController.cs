@@ -160,8 +160,7 @@ namespace PointOfSale.Controllers
                 switch (typeValues)
                 {
                     case TypeValuesDashboard.Dia:
-                        listSales = resultados.VentasActualesHour.Select(v => new VMSalesWeek { Total = v.Value }).ToList();
-                        listSalesComparacion = resultados.VentasComparacionHour.Select(v => new VMSalesWeek { Total = v.Value }).ToList();
+                        ProcesarVentasHoy(resultados.VentasActualesHour, resultados.VentasComparacionHour, out listSales, out listSalesComparacion, out ejeX);
                         break;
 
                     case TypeValuesDashboard.Semana:
@@ -192,6 +191,38 @@ namespace PointOfSale.Controllers
                 return HandleException(ex, "Error al recuperar los datos de dashboard", _logger, model: null, ("TypeValues", typeValues), ("DateFilter", dateFilter));
             }
         }
+
+        private void ProcesarVentasHoy(Dictionary<int, decimal> ventasHoy, Dictionary<int, decimal> ventasAyer, out List<VMSalesWeek> ventasHoyArray, out List<VMSalesWeek> ventasAyerArray, out string[] ejeX)
+        {
+            var horasHoy = ventasHoy.Select(v => v.Key).ToList();
+            var horasAyer = ventasAyer.Select(v => v.Key).ToList();
+            var todasLasHoras = horasHoy.Union(horasAyer).Distinct().OrderBy(h => h).ToList();
+
+            int horaMinima = todasLasHoras.Min();
+            int horaMaxima = todasLasHoras.Max();
+
+            var horasConsecutivas = Enumerable.Range(horaMinima, horaMaxima - horaMinima + 1).ToList();
+
+            var ventasHoyList = new List<VMSalesWeek>();
+            var ventasAyerList = new List<VMSalesWeek>();
+
+            ejeX = horasConsecutivas.Select(h => h.ToString()).ToArray();
+
+            foreach (var hora in horasConsecutivas)
+            {
+                // Ventas de hoy para esta hora
+                var ventaHoy = ventasHoy.ContainsKey(hora) ? ventasHoy[hora] : 0;
+                ventasHoyList.Add(new VMSalesWeek { Total = ventaHoy });
+
+                // Ventas de ayer para esta hora
+                var ventaAyer = ventasAyer.ContainsKey(hora) ? ventasAyer[hora] : 0;
+                ventasAyerList.Add(new VMSalesWeek { Total = ventaAyer });
+            }
+
+            ventasHoyArray = ventasHoyList;
+            ventasAyerArray = ventasAyerList;
+        }
+
 
         public async Task<IActionResult> GetGastosSueldos(TypeValuesDashboard typeValues, string dateFilter, bool visionGlobal)
         {
