@@ -151,11 +151,5 @@ namespace PointOfSale.Business.Services
                 detailSales.Add(d);
             }
         }
-
-        private decimal RecalcularTotalPorMultiplesFormasPago(ICollection<DetailSale> detailSales, decimal total)
-        {
-            var totDetailsSale = detailSales.Sum(_ => _.Total);
-            return total - totDetailsSale.Value;
-        }
     }
 }
