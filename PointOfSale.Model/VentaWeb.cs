@@ -25,6 +25,7 @@ namespace PointOfSale.Model
         public DateTime? RegistrationDate { get; set; }
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }
+        public int? IdSale { get; set; }
 
         public bool? IsEdit { get; set; }
         public string? EditText { get; set; }

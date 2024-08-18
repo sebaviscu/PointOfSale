@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-// REFERENCIAS
+﻿
 using PointOfSale.Data.DBContext;
-using PointOfSale.Data.Repository;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 using PointOfSale.Model;
 using PointOfSale.Business.Utilities;
+using Microsoft.Win32;
 
 namespace PointOfSale.Data.Repository
 {
@@ -141,7 +134,7 @@ namespace PointOfSale.Data.Repository
             return SaleGenerated;
         }
 
-        public async Task<Sale> CreatSaleFromVentaWeb(VentaWeb entity, Turno turno)
+        public async Task<Sale> CreatSaleFromVentaWeb(VentaWeb entity, Turno turno, Ajustes ajustes)
         {
             var sale = new Sale();
             sale.Total = entity.Total;
@@ -151,17 +144,11 @@ namespace PointOfSale.Data.Repository
             sale.IdTypeDocumentSale = entity.IdFormaDePago;
             sale.IdTurno = turno.IdTurno;
             sale.DetailSales = entity.DetailSales;
+            sale.RegistrationUser = entity.ModificationUser;
 
-            foreach (DetailSale dv in entity.DetailSales)
-            {
-                Product product_found = _dbcontext.Products.Include(_ => _.Proveedor).Where(p => p.IdProduct == dv.IdProduct).First();
+            var saleCreated = await Register(sale, ajustes);
 
-                await ControlStock(dv.Quantity.Value, entity.IdTienda.Value, product_found);
-            }
-
-            await _dbcontext.Sales.AddAsync(sale);
-
-            return sale;
+            return saleCreated;
         }
     }
 }

@@ -3,6 +3,9 @@ using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
+using PointOfSale.Model.Afip.Factura;
+using PointOfSale.Model.Auditoria;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services
 {
@@ -15,8 +18,10 @@ namespace PointOfSale.Business.Services
         private readonly ITurnoService _turnoService;
         private readonly ISaleRepository _saleRepository;
         private readonly INotificationService _notificationService;
-
-        public ShopService(ITiendaService tiendaService, IProductService productService, IGenericRepository<VentaWeb> repository, ITurnoService turnoService, ISaleRepository saleRepository, INotificationService notificationService, IGenericRepository<DetailSale> repositoryDetailsSale)
+        private readonly IAjusteService _ajusteService;
+        private readonly ITypeDocumentSaleService _typeDocumentSaleService;
+        private readonly IAfipService _afipService;
+        public ShopService(ITiendaService tiendaService, IProductService productService, IGenericRepository<VentaWeb> repository, ITurnoService turnoService, ISaleRepository saleRepository, INotificationService notificationService, IGenericRepository<DetailSale> repositoryDetailsSale, IAjusteService ajusteService, ITypeDocumentSaleService typeDocumentSaleService, IAfipService afipService)
         {
             _tiendaService = tiendaService;
             _productService = productService;
@@ -25,6 +30,9 @@ namespace PointOfSale.Business.Services
             _saleRepository = saleRepository;
             _notificationService = notificationService;
             _repositoryDetailsSale = repositoryDetailsSale;
+            _ajusteService = ajusteService;
+            _typeDocumentSaleService = typeDocumentSaleService;
+            _afipService = afipService;
         }
 
         public async Task<List<VentaWeb>> List()
@@ -36,61 +44,79 @@ namespace PointOfSale.Business.Services
 
         public async Task<VentaWeb> Update(VentaWeb entity)
         {
-            try
+            IQueryable<VentaWeb> query = await _repository.Query(c => c.IdVentaWeb == entity.IdVentaWeb);
+            var VentaWeb_found = query.Include(_ => _.DetailSales).Include(_ => _.FormaDePago).First();
+
+            if (VentaWeb_found.Estado == Model.Enum.EstadoVentaWeb.Finalizada)
             {
-
-                IQueryable<VentaWeb> query = await _repository.Query(c => c.IdVentaWeb == entity.IdVentaWeb);
-                var VentaWeb_found = query.Include(_ => _.DetailSales).Include(_ => _.FormaDePago).First();
-
-                if (VentaWeb_found.Estado == Model.Enum.EstadoVentaWeb.Finalizada)
-                {
-                    throw new TaskCanceledException("No es posible modificar una Venta Web finalizada.");
-                }
-
-                bool hasChanges = HasChanges(VentaWeb_found, entity);
-
-
-                VentaWeb_found.IsEdit = hasChanges;
-                if (hasChanges)
-                {
-                    VentaWeb_found.SetEditVentaWeb(entity.ModificationUser, TimeHelper.GetArgentinaTime());
-
-                    VentaWeb_found.Comentario = entity.Comentario;
-                    VentaWeb_found.Nombre = entity.Nombre;
-                    VentaWeb_found.Direccion = entity.Direccion;
-                    VentaWeb_found.Telefono = entity.Telefono;
-                    VentaWeb_found.IdFormaDePago = entity.IdFormaDePago; 
-                    VentaWeb_found.Total = entity.Total;
-                    UpdateDetailSales(VentaWeb_found, entity.DetailSales.ToList());
-                }
-
-                VentaWeb_found.Estado = entity.Estado;
-                VentaWeb_found.IdTienda = entity.IdTienda;
-                VentaWeb_found.ModificationDate = TimeHelper.GetArgentinaTime();
-                VentaWeb_found.ModificationUser = entity.ModificationUser;
-
-                if (entity.Estado == Model.Enum.EstadoVentaWeb.Finalizada && VentaWeb_found.IdTienda.HasValue)
-                {
-                    var turno = await _turnoService.GetTurnoActual(VentaWeb_found.IdTienda.Value);
-                    await _saleRepository.CreatSaleFromVentaWeb(VentaWeb_found, turno);
-                }
-
-                bool response = await _repository.Edit(VentaWeb_found);
-
-                if (!response)
-                    throw new TaskCanceledException("Venta Web no se pudo cambiar.");
-
-                return VentaWeb_found;
+                throw new TaskCanceledException("No es posible modificar una Venta Web finalizada.");
             }
-            catch
+
+            bool hasChanges = HasChanges(VentaWeb_found, entity);
+
+
+            VentaWeb_found.IsEdit = hasChanges;
+            if (hasChanges)
             {
-                throw;
+                VentaWeb_found.SetEditVentaWeb(entity.ModificationUser, TimeHelper.GetArgentinaTime());
+
+                VentaWeb_found.Comentario = entity.Comentario;
+                VentaWeb_found.Nombre = entity.Nombre;
+                VentaWeb_found.Direccion = entity.Direccion;
+                VentaWeb_found.Telefono = entity.Telefono;
+                VentaWeb_found.IdFormaDePago = entity.IdFormaDePago;
+                VentaWeb_found.Total = entity.Total;
+                UpdateDetailSales(VentaWeb_found, entity.DetailSales.ToList());
+            }
+
+            VentaWeb_found.Estado = entity.Estado;
+            VentaWeb_found.IdTienda = entity.IdTienda;
+            VentaWeb_found.ModificationDate = TimeHelper.GetArgentinaTime();
+            VentaWeb_found.ModificationUser = entity.ModificationUser;
+
+            if (entity.Estado == EstadoVentaWeb.Finalizada && entity.IdTienda.HasValue)
+            {
+                var ajustes = await _ajusteService.GetAjustes(VentaWeb_found.IdTienda.Value);
+
+                var turno = await _turnoService.GetTurnoActual(VentaWeb_found.IdTienda.Value);
+                var sale = await _saleRepository.CreatSaleFromVentaWeb(VentaWeb_found, turno, ajustes);
+                VentaWeb_found.IdSale = sale.IdSale;
+            }
+
+            bool response = await _repository.Edit(VentaWeb_found);
+
+            if (!response)
+                throw new TaskCanceledException("Venta Web no se pudo cambiar.");
+
+            return VentaWeb_found;
+
+        }
+
+        public async Task FacturarVentaWeb(VentaWeb VentaWeb_found, string cuil, int? idCliente)
+        {
+            var ajustes = await _ajusteService.GetAjustes(VentaWeb_found.IdTienda.Value);
+            var sale = await _saleRepository.Get(_ => _.IdSale == VentaWeb_found.IdSale);
+
+            if (ajustes.FacturaElectronica.HasValue && ajustes.FacturaElectronica.Value)
+            {
+                var tipoVenta = await _typeDocumentSaleService.Get(sale.IdTypeDocumentSale.Value);
+                FacturaEmitida facturaEmitida = null;
+
+                if ((int)tipoVenta.TipoFactura < 3)
+                {
+                    sale.TypeDocumentSaleNavigation = tipoVenta;
+
+                    facturaEmitida = await _afipService.Facturar(sale, cuil, idCliente, sale.RegistrationUser);
+                    sale.IdFacturaEmitida = facturaEmitida.IdFacturaEmitida;
+                    _ = await _saleRepository.Edit(sale);
+                }
             }
         }
+
         private bool HasChanges(VentaWeb original, VentaWeb updated)
         {
             // Verificar cambios en los campos de VentaWeb
-            bool ventaWebChanged = 
+            bool ventaWebChanged =
                                    original.Comentario != updated.Comentario ||
                                    original.Nombre != updated.Nombre ||
                                    original.Direccion != updated.Direccion ||

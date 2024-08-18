@@ -49,11 +49,17 @@ namespace PointOfSale.Business.Services
                 throw new Exception(validCert);
             }
 
-            var documentoAFacturar = (sale_created.TypeDocumentSaleNavigation.TipoFactura == TipoFactura.A && nroDocumento != null)
+            var tipoFactura = sale_created.TypeDocumentSaleNavigation.TipoFactura;
+            if (tipoFactura == TipoFactura.A && nroDocumento == null)
+            {
+                throw new Exception("La Factura A tiene que tener un número de documento");
+            }
+
+            var documentoAFacturar = ((tipoFactura == TipoFactura.A || tipoFactura == TipoFactura.B) && nroDocumento != null)
                 ? Convert.ToInt64(nroDocumento)
                 : defaultDocumento;
 
-            var tipoDoc = TipoComprobante.ConvertTipoFactura(sale_created.TypeDocumentSaleNavigation.TipoFactura);
+            var tipoDoc = TipoComprobante.ConvertTipoFactura(tipoFactura);
 
             var ultimoComprobanteResponse = await _afipFacturacionService.GetUltimoComprobanteAutorizadoAsync(ajustes, ptoVenta, tipoDoc);
             var nroFactura = ultimoComprobanteResponse.CbteNro + 1;

@@ -1,8 +1,10 @@
-﻿let tableData;
+﻿let tableDataVentaWeb;
 let rowSelectedVentaWeb;
-var productSelected = null;
+let productSelectedVentaWeb = null;
+let isHealthy = false;
+let formasDePagosListVentaWeb = [];
 
-const BASIC_MODEL = {
+const BASIC_MODEL_VENTA_WEB = {
     idVentaWeb: 0,
     description: "",
     nombre: "",
@@ -20,7 +22,9 @@ const BASIC_MODEL = {
     isEdit: null,
     editUser: null,
     editText: null,
-    editDate: null
+    editDate: null,
+    idClienteFactura: null,
+    cuilFactura: null
 }
 
 
@@ -30,8 +34,28 @@ $(document).ready(function () {
         trigger: 'focus' // Se activará cuando se haga clic y desaparecerá cuando se haga clic fuera
     });
 
+    fetch("/Sales/ListTypeDocumentSale")
+        .then(response => {
+            return response.json();
+        }).then(responseJson => {
 
-    tableData = $("#tbData").DataTable({
+            if (responseJson.state) {
+                formasDePagosListVentaWeb = responseJson.object;
+
+                if (responseJson.object.length > 0) {
+                    responseJson.object.forEach((item) => {
+                        $("#cboTypeDocumentSale").append(
+                            $("<option>").val(item.idTypeDocumentSale).text(item.description)
+                        )
+                    });
+                }
+            }
+            else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+        });
+
+    tableDataVentaWeb = $("#tbData").DataTable({
         responsive: true,
         "ajax": {
             "url": "/Shop/GetVentasWeb",
@@ -124,35 +148,43 @@ $(document).ready(function () {
             }
 
         });
+
+    healthcheck();
+
 })
 
 
 $("#printTicket").click(function () {
-    let idVentaWeb = parseInt($("#txtId").val());
 
-    fetch(`/Sales/PrintTicketVentaWeb?idVentaWeb=${idVentaWeb}`)
-        .then(response => {
+    if (isHealthy) {
+        let idVentaWeb = parseInt($("#txtId").val());
 
-            if (response.state) {
-                $("#modalData").modal("hide");
+        fetch(`/Sales/PrintTicketVentaWeb?idVentaWeb=${idVentaWeb}`)
+            .then(response => {
 
-                if (response.object.nombreImpresora != '') {
+                if (response.state) {
+                    $("#modalData").modal("hide");
 
-                    printTicket(response.object.ticket, response.object.nombreImpresora, response.object.imagesTicket);
+                    if (response.object.nombreImpresora != '') {
+
+                        printTicket(response.object.ticket, response.object.nombreImpresora, response.object.imagesTicket);
 
 
-                    swal("Exitoso!", "Ticket impreso!", "success");
+                        swal("Exitoso!", "Ticket impreso!", "success");
+                    }
+
+                } else {
+                    swal("Lo sentimos", "No se ha podido imprimir el ticket. Error: " + response.message, "error");
                 }
-
-            } else {
-                swal("Lo sentimos", "La venta no fué registrada. Error: " + response.message, "error");
-            }
-        })
+            })
+    }
 
 })
 
-const openModal = (model = BASIC_MODEL) => {
+const openModalEditVentaWeb = (model = BASIC_MODEL_VENTA_WEB) => {
     $('#modalData').modal('show');
+
+    $("#btnSave").text("Guardar Cambios");
 
     document.getElementById("divSearchproducts").style.display = 'none';
 
@@ -215,7 +247,7 @@ const openModal = (model = BASIC_MODEL) => {
 
     $('#cboSearchProduct').on('select2:select', function (e) {
         let data = e.params.data;
-        productSelected = data;
+        productSelectedVentaWeb = data;
 
         if (data.tipoVenta == 2) {
             var peso = $("#txtPeso").val();
@@ -226,8 +258,8 @@ const openModal = (model = BASIC_MODEL) => {
 
             peso = peso == "" ? 1 : parseFloat(peso);
 
-            let precio = Number.parseFloat(productSelected.price);
-            addNewProduct(0, productSelected.text, peso, "U", precio, precio * peso, productSelected.id);
+            let precio = Number.parseFloat(productSelectedVentaWeb.price);
+            addNewProduct(0, productSelectedVentaWeb.text, peso, "U", precio, precio * peso, productSelectedVentaWeb.id);
 
             $('#txtPeso').val('');
             const element = document.getElementById("txtPeso");
@@ -267,11 +299,11 @@ function functionAddProducto() {
 
     if (peso === false || peso === "" || isNaN(peso)) return false;
 
-    if (productSelected === null) {
+    if (productSelectedVentaWeb === null) {
         return false;
     }
-    let precio = Number.parseFloat(productSelected.price);
-    addNewProduct(0, productSelected.text, peso, "Kg", precio, precio * peso, productSelected.id);
+    let precio = Number.parseFloat(productSelectedVentaWeb.price);
+    addNewProduct(0, productSelectedVentaWeb.text, peso, "Kg", precio, precio * peso, productSelectedVentaWeb.id);
 
     updateTotal();
     $('#cboSearchProduct').val("").trigger('change');
@@ -329,7 +361,36 @@ function updateTotal() {
 
 $("#btnSave").on("click", function () {
 
-    const model = structuredClone(BASIC_MODEL);
+    let estadoVenta = parseInt($("#cboState").val());
+    if (estadoVenta == 1) { // finalizar
+        $("#modalData").modal("hide");
+        $('#modalPago').modal('show');
+
+        $('#txtClienteParaFactura').attr('cuil', '');
+        $('#txtClienteParaFactura').attr('idCliente', '');
+
+        let total = parseFloat($("#txtTotal").val());
+        $("#txtTotalFinalizarVenta").val(total);
+
+        let formaPago = parseInt($("#txtFormaPago").val());
+        $("#cboTypeDocumentSale").val(formaPago);
+
+        $("#cboTypeDocumentSale").trigger('change');
+
+        return;
+    }
+
+    editarVentaWeb();
+})
+
+$("#btnFinalizarVenta").on("click", function () {
+
+    editarVentaWeb();
+})
+
+async function editarVentaWeb() {
+
+    const model = structuredClone(BASIC_MODEL_VENTA_WEB);
     model["idTienda"] = parseInt($("#cboTienda").val());
     model["idVentaWeb"] = parseInt($("#txtId").val());
     model["estado"] = parseInt($("#cboState").val());
@@ -340,6 +401,12 @@ $("#btnSave").on("click", function () {
     model["idFormaDePago"] = parseInt($("#txtFormaPago").val());
     model["total"] = parseFloat($("#txtTotal").val());
     model["comentario"] = $("#txtComentario").val();
+
+    let cuilParaFactura = $('#txtClienteParaFactura').attr('cuil');
+    let idClienteParaFactura = $('#txtClienteParaFactura').attr('idCliente');
+    model["cuilFactura"] = cuilParaFactura != '' ? cuilParaFactura : null;
+    model["idClienteFactura"] = idClienteParaFactura != '' ? parseInt(idClienteParaFactura) : null;
+
 
     if (isNaN(model.idTienda)) {
         $('#cboTienda').focus();
@@ -366,28 +433,27 @@ $("#btnSave").on("click", function () {
             quantity: parseFloat($row.find("td").eq(2).text().split(' / ')[0]),
             tipoVenta: $row.find("td").eq(2).text().split(' / ')[1] == "Kg" ? 1 : 2,
             tipoVentaString: $row.find("td").eq(2).text().split(' / ')[1],
-            total: parseFloat($row.find("td").eq(4).text().replace('$', '').trim()),
+            total: parseFloat($row.find("td").eq(4).text().replace('$', '').trim())
         };
         products.push(product);
     });
 
     model["detailSales"] = products;
 
-
-
-    $("#modalData").find("div.modal-content").LoadingOverlay("show")
+    showLoading();
 
     fetch("/Shop/UpdateVentaWeb", {
         method: "PUT",
         headers: { 'Content-Type': 'application/json;charset=utf-8' },
         body: JSON.stringify(model)
     }).then(response => {
-        $("#modalData").find("div.modal-content").LoadingOverlay("hide")
+        removeLoading();
         return response.json();
     }).then(responseJson => {
+
         if (responseJson.state) {
 
-            tableData.row(rowSelectedVentaWeb).data(responseJson.object).draw(false);
+            tableDataVentaWeb.row(rowSelectedVentaWeb).data(responseJson.object).draw(false);
             rowSelectedVentaWeb = null;
             $("#modalData").modal("hide");
             swal("Exitoso!", "La Venta Web fué modificada", "success");
@@ -397,9 +463,9 @@ $("#btnSave").on("click", function () {
             swal("Lo sentimos", responseJson.message, "error");
         }
     }).catch((error) => {
-        $("#modalData").find("div.modal-content").LoadingOverlay("hide")
+        removeLoading();
     })
-})
+}
 
 $("#tbData tbody").on("click", ".btn-edit", function () {
 
@@ -409,9 +475,9 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
         rowSelectedVentaWeb = $(this).closest('tr');
     }
 
-    const data = tableData.row(rowSelectedVentaWeb).data();
+    const data = tableDataVentaWeb.row(rowSelectedVentaWeb).data();
 
-    openModal(data);
+    openModalEditVentaWeb(data);
 })
 
 function select2Modal() {
@@ -453,7 +519,7 @@ function select2Modal() {
         if (data.loading)
             return data.text;
 
-        var container = $(
+        let container = $(
             `<table width="90%">
                 <tr>
                     <td style="width:60px">
@@ -470,3 +536,41 @@ function select2Modal() {
         return container;
     }
 }
+
+async function healthcheck() {
+    isHealthy = await getHealthcheck();
+
+    if (isHealthy) {
+        document.getElementById("lblErrorPrintService").style.display = 'none';
+    } else {
+        document.getElementById("lblErrorPrintService").style.display = '';
+        document.querySelector('#printTicket').disabled = true;
+    }
+}
+
+$("#cboState").on("change", function () {
+    let val = $(this).val();
+
+    if (val == "1") {
+        $("#btnSave").text("Finalizar Venta");
+    } else {
+        $("#btnSave").text("Guardar Cambios");
+    }
+});
+
+$('#cboTypeDocumentSale').change(function () {
+    let idFormaDePago = $(this).val();
+
+    let formaDePago = formasDePagosListVentaWeb.find(_ => _.idTypeDocumentSale == idFormaDePago);
+
+    if (formaDePago != null) {
+        $("#cboFactura").val(formaDePago.tipoFactura);
+        $("#cboFactura").trigger('change');
+    }
+})
+
+$("#btnBuscarCliente").on("click", function () {
+    $("#modalDatosFactura").modal("show");
+    inicializarClientesFactura();
+});
+

@@ -161,6 +161,12 @@ namespace PointOfSale.Controllers
 
                 VentaWeb edited_VemntaWeb = await _shopService.Update(_mapper.Map<VentaWeb>(model));
 
+                if (model.Estado == EstadoVentaWeb.Finalizada && model.IdTienda.HasValue)
+                {
+                    await _shopService.FacturarVentaWeb(edited_VemntaWeb, model.CuilFactura, model.IdClienteFactura);
+                }
+
+
                 model = _mapper.Map<VMVentaWeb>(edited_VemntaWeb);
 
                 gResponse.State = true;

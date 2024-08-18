@@ -40,7 +40,7 @@ namespace PointOfSale.Business.Services
                     var resp = await GetSalesHour(dateStart, dateCompare, idTienda, visionGlobal);
                     resultados.VentasActualesHour = resp.Ventas;
                     resultados.CantidadClientes = resp.CantidadVentas;
-                    resultados.VentasComparacionHour = await GetComparationHour(dateStart, dateCompare, idTienda, visionGlobal);
+                    resultados.VentasComparacionHour = await GetComparationHour(dateStart, dateCompare.AddDays(-1), idTienda, visionGlobal);
                     break;
 
                 case TypeValuesDashboard.Semana:

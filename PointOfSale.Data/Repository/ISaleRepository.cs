@@ -12,7 +12,7 @@ namespace PointOfSale.Data.Repository
         Task<Sale> Register(Sale entity, Ajustes ajustes);
         Task<VentaWeb> RegisterWeb(VentaWeb entity);
         Task<string> GetLastSerialNumberSale();
-        Task<Sale> CreatSaleFromVentaWeb(VentaWeb entity, Turno turno);
+        Task<Sale> CreatSaleFromVentaWeb(VentaWeb entity, Turno turno, Ajustes ajustes);
 
     }
 }

@@ -428,6 +428,8 @@ namespace PointOfSale.Controllers
 
                 var ajustes = await _ajustesService.GetAjustes(user.IdTienda);
                 var ventaWeb = await _shopService.Get(idVentaWeb);
+                if(!ventaWeb.IdTienda.HasValue)
+                    ventaWeb.IdTienda = user.IdTienda;
                 //var facturaEmitida = await _afipFacturacionService.GetBySaleId(idSale);
                 var ticket = await _ticketService.TicketVentaWeb(ventaWeb, ajustes, null);
 

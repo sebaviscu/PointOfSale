@@ -112,6 +112,9 @@ function validateCuil() {
 }
 
 function formatCuil(value) {
+    if (value == null)
+        return '';
+
     value = value.replace(/\D/g, ''); // Eliminar todo lo que no sea dígito
     let formattedValue = '';
 

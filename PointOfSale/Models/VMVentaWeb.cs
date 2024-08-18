@@ -26,5 +26,8 @@ namespace PointOfSale.Models
         public bool? IsEdit { get; set; }
         public string? EditText { get; set; }
 
+        public int? IdClienteFactura { get; set; }
+        public string? CuilFactura { get; set; }
+
     }
 }

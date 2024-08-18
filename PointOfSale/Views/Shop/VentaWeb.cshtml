@@ -22,10 +22,10 @@
     <div class="col-md-12">
 
         <div class="card card-default">
-            <div class="card-header card-header-border-bottom">
-                <div class="row col-md 3">
-                    <h4>Ventas Web</h4>
-                </div>
+
+            <div class="card-header d-flex align-items-center">
+                <h4 class="col-md-2">Ventas Web</h4>
+                <span class="offset-md-2 text-danger" id="lblErrorPrintService" style="display: none;"><i class="mdi mdi-alert mdi-24px"></i>&nbsp; El servicio de impresión no se encuentra conectado</span>
             </div>
 
             <div class="card-body">
@@ -189,6 +189,86 @@
     </div>
 </div>
 
+<!-- Modal Dividir pago-->
+<div class="modal fade" id="modalPago" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-between">
+                <div class="p-2 bd-highlight">
+                    <h5 class="modal-title">Finalizar</h5>
+                </div>
+                <div class="p-2 bd-highlight">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal-body">
+                <div class="row" id="rowDividirPago">
+                    <div class="col-sm-12" id="formaDePagoPanel">
+                        <div class="form-row" style="padding:0px 12px 4px 12px;">
+                            <div class="form-group col-sm-5" style="padding-top:10px">
+                                <label for="cboTypeDocumentSale">Forma de Pago</label>
+                                <select class="form-control form-control-sm cboFormaDePago" id="cboTypeDocumentSale" tabindex="0">
+                                </select>
+                            </div>
+                            <div class="form-group col-sm-2" style="padding-top:10px">
+                                <label for="cboFactura">Factura</label>
+                                <select class="form-control form-control-sm cboFactura" id="cboFactura" tabindex="0">
+                                    <option value="-1"></option>
+                                    <option value="0">A</option>
+                                    <option value="1">B</option>
+                                    <option value="2">C</option>
+                                    <option value="3">X</option>
+                                    <option value="4">Presu</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-sm-4" style="padding-top:10px">
+                                <label for="txtTotalParcial">Total</label>
+                                <div class="input-group input-group-sm">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                    <input type="number" min="0" class="form-control form-control-sm text-end inputSubtotal" tabindex="-1" aria-label="Small" aria-describedby="inputGroupTotal" id="txtTotalFinalizarVenta">
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+                <div>
+                    <span id="txtMinimoIdentificarConsumidor" class="text-danger" style="display: none;">El total supera el minimo para identificar al consumidor. Debe ingresar el CUIL / CUIT / DNI si va a facturarlo.</span>
+                </div>
+                <div id="divClienteSeleccionado" class="text-center" @* style="display: none;" *@>
+                    <div class="row col-sm-12 ms-1">
+                        <label>Cliente: </label>
+                        <div class="input-group input-group-sm">
+                            <input type="text" class="form-control form-control-sm" id="txtClienteParaFactura" disabled>
+                            <div class="input-group-prepend">
+                                <button class="btn btn-sm btn-outline-info" id="btnBuscarCliente">Seleccionar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer d-flex bd-highlight">
+                <div class="me-auto p-2 bd-highlight">
+                    <label class="form-label">
+                        <input type="checkbox" id="cboImprimirTicket" tabindex="-1" checked>
+                        Imprimir Ticket
+                    </label>
+                </div>
+                <div class="bd-highlight">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" tabindex="-1">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="btnFinalizarVenta" tabindex="0">Finalizar venta</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
@@ -203,6 +283,7 @@
     <script src="~/plugins/data-tables/buttons.print.min.js"></script>
     <script src="~/plugins/select2/js/select2.js"></script>
     <script src="~/plugins/moment.js"></script>
+    <script src="~/plugins/printService.js"></script>
 
     <script src="~/js/views/ventaWeb.js"></script>
 }
