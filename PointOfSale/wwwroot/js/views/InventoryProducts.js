@@ -871,7 +871,7 @@ function calcularPrecio() {
     let iva = $("#txtIva").val();
     let costo = $("#txtCosto").val();
 
-    iva = iva === '' ? 0 : parseFloat(iva);
+    iva = iva == '' || iva == null ? 0 : parseFloat(iva);
 
     if (costo !== '') {
         costo = parseFloat(costo) * (1 + (iva / 100));
