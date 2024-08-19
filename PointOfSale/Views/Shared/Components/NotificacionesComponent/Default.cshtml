@@ -20,7 +20,7 @@
         <ul class="dropdown-menu dropdown-menu-right" style="width: fit-content;border-color: lightgray;">
             @foreach (var n in Model)
             {
-                <li class="dropdown-header" style="padding: 5px;width: max-content;margin: 0;">
+                <li class="dropdown-header" style="padding: 0px;width: max-content;margin: 0;">
                     <div class="d-inline-block">
                         <a class="notificacion" id="@n.IdNotifications" accion="@n.Accion" href="#">
                             @n.Descripcion
@@ -32,7 +32,7 @@
             }
             @if (ViewData["userRol"] != null && (Convert.ToInt32(ViewData["userRol"]) == 1))
             {
-                <li style="padding: 5px;width: max-content;margin: 0;">
+                <li style="padding: 0px;width: max-content;margin: 0;">
                     <a id="limpiarNotificaciones" href="#">
                         <i class="mdi mdi-delete"></i>Limpiar todo
                     </a>

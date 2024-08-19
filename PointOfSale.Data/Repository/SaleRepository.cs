@@ -75,10 +75,10 @@ namespace PointOfSale.Data.Repository
             }
         }
 
-        public async Task<string> GetLastSerialNumberSale()
+        public async Task<string> GetLastSerialNumberSale(int idTienda)
         {
             var correlative = await _dbcontext.CorrelativeNumbers
-                                              .Where(n => n.Management == "Sale")
+                                              .Where(n => n.Management == "Sale" && n.IdTienda == idTienda)
                                               .FirstOrDefaultAsync();
             if (correlative == null)
             {
@@ -98,6 +98,25 @@ namespace PointOfSale.Data.Repository
                                  .Substring(ceros.Length + correlative.LastNumber.ToString().Length - correlative.QuantityDigits.Value);
 
             return saleNumber;
+        }
+
+
+        public async Task<CorrelativeNumber> CreateSerialNumberSale(int idTienda)
+        {
+            var c = new CorrelativeNumber()
+            {
+                LastNumber = 0,
+                IdTienda = idTienda,
+                QuantityDigits = 6,
+                Management = "Sale",
+                DateUpdate = TimeHelper.GetArgentinaTime()
+            };
+            
+            await _dbcontext.CorrelativeNumbers.AddAsync(c);
+            await _dbcontext.SaveChangesAsync();
+
+          
+            return c;
         }
 
         public async Task<VentaWeb> RegisterWeb(VentaWeb entity)
@@ -140,11 +159,12 @@ namespace PointOfSale.Data.Repository
             sale.Total = entity.Total;
             sale.RegistrationDate = entity.RegistrationDate;
             sale.IdTienda = entity.IdTienda.Value;
-            sale.SaleNumber = await GetLastSerialNumberSale();
+            sale.SaleNumber = await GetLastSerialNumberSale(entity.IdTienda.Value);
             sale.IdTypeDocumentSale = entity.IdFormaDePago;
             sale.IdTurno = turno.IdTurno;
             sale.DetailSales = entity.DetailSales;
             sale.RegistrationUser = entity.ModificationUser;
+            sale.DescuentoRecargo = 0;
 
             var saleCreated = await Register(sale, ajustes);
 

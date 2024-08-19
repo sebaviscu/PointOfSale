@@ -31,7 +31,7 @@ const BASIC_MODEL_VENTA_WEB = {
 $(document).ready(function () {
     $('[data-toggle="popover"]').popover({
         html: true,
-        trigger: 'focus' // Se activará cuando se haga clic y desaparecerá cuando se haga clic fuera
+        trigger: 'focus'
     });
 
     fetch("/Sales/ListTypeDocumentSale")

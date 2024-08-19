@@ -170,9 +170,9 @@ namespace PointOfSale.Business.Services
             return sale;
         }
 
-        public async Task<string> GetLastSerialNumberSale()
+        public async Task<string> GetLastSerialNumberSale(int idTienda)
         {
-            return await _repositorySale.GetLastSerialNumberSale();
+            return await _repositorySale.GetLastSerialNumberSale(idTienda);
         }
 
         public async Task<List<Sale>> SaleHistory(string SaleNumber, string StarDate, string EndDate, string presupuestos)
@@ -419,6 +419,10 @@ namespace PointOfSale.Business.Services
             }
         }
 
+        public async Task<CorrelativeNumber> CreateSerialNumberSale(int idTienda)
+        {
+            return await _repositorySale.CreateSerialNumberSale(idTienda);
+        }
     }
 
 }

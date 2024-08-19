@@ -26,7 +26,9 @@ namespace PointOfSale.Business.Contracts
         Task<Sale> Edit(int idSale, int formaPago);
 
         Task<List<Cliente>> GetClientsByFactura(string search);
-        Task<string> GetLastSerialNumberSale();
+        Task<string> GetLastSerialNumberSale(int idTienda);
+
+        Task<CorrelativeNumber> CreateSerialNumberSale(int idTienda);
 
     }
 }

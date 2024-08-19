@@ -17,13 +17,15 @@ namespace PointOfSale.Controllers
         private readonly IMapper _mapper;
         private readonly ILogger<TiendaController> _logger;
         private readonly IAjusteService _ajusteService;
+        private readonly ISaleService _saleService;
 
-        public TiendaController(ITiendaService TiendaService, IMapper mapper, ILogger<TiendaController> logger, IAjusteService ajusteService)
+        public TiendaController(ITiendaService TiendaService, IMapper mapper, ILogger<TiendaController> logger, IAjusteService ajusteService, ISaleService saleService)
         {
             _TiendaService = TiendaService;
             _mapper = mapper;
             _logger = logger;
             _ajusteService = ajusteService;
+            _saleService = saleService;
         }
 
         public IActionResult Tienda()
@@ -93,6 +95,7 @@ namespace PointOfSale.Controllers
 
                 Tienda Tienda_created = await _TiendaService.Add(_mapper.Map<Tienda>(vmTienda));
                 await _ajusteService.CreateAjsutes(Tienda_created.IdTienda);
+                await _saleService.CreateSerialNumberSale(Tienda_created.IdTienda);
 
                 vmTienda = _mapper.Map<VMTienda>(Tienda_created);
 

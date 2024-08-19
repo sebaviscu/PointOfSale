@@ -13,6 +13,7 @@ Direccion varchar(100) null,
 Logo varbinary(max) null,
 idAjustes int references Ajustes(idAjuste) null,
 IdAjustesFacturacion int references AjustesFacturacion(IdAjustesFacturacion) null,
+IdCorrelativeNumber int references CorrelativeNumber(IdCorrelativeNumber) null,
 [modificationDate] [datetime] null,
 [modificationUser] varchar(50) null,
 )
@@ -148,11 +149,18 @@ create table CorrelativeNumber(
 [lastNumber] int,
 [quantityDigits] int,
 [management] varchar(100),
+idTienda INT null,
 [dateUpdate] datetime
+CONSTRAINT FK_CorrelativeNumber_Tienda FOREIGN KEY (idTienda)
+    REFERENCES Tienda(idTienda)
+    ON DELETE CASCADE,
 )
+
 
 go
 
+alter table CorrelativeNumber
+add IdTienda int default 1
 
 create table TypeDocumentSale(
 [idTypeDocumentSale] int primary key identity(1,1),

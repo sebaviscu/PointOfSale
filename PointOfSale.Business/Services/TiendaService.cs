@@ -1,4 +1,5 @@
-﻿using PointOfSale.Business.Contracts;
+﻿using Microsoft.EntityFrameworkCore;
+using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
@@ -16,9 +17,18 @@ namespace PointOfSale.Business.Services
     public class TiendaService : ITiendaService
     {
         private readonly IGenericRepository<Tienda> _repository;
-        public TiendaService(IGenericRepository<Tienda> repository)
+        private readonly IGenericRepository<CorrelativeNumber> _correlativeNumber;
+        private readonly IGenericRepository<Ajustes> _ajustes;
+        private readonly IGenericRepository<AjustesFacturacion> _ajustesFacturacion;
+        private readonly IGenericRepository<Turno> _turno;
+
+        public TiendaService(IGenericRepository<Tienda> repository, IGenericRepository<CorrelativeNumber> correlativeNumber, IGenericRepository<Ajustes> ajustes, IGenericRepository<AjustesFacturacion> ajustesFacturacion, IGenericRepository<Turno> turno)
         {
             _repository = repository;
+            _correlativeNumber = correlativeNumber;
+            _ajustes = ajustes;
+            _ajustesFacturacion = ajustesFacturacion;
+            _turno = turno;
         }
 
         public async Task<List<Tienda>> List()
@@ -30,10 +40,6 @@ namespace PointOfSale.Business.Services
 
         public async Task<Tienda> Add(Tienda entity)
         {
-            var list = await List();
-
-            var idLastTienda = list.Max(_ => _.IdTienda);
-            entity.IdTienda = ++idLastTienda;
 
             Tienda Tienda_created = await _repository.Add(entity);
             if (Tienda_created.IdTienda == 0)
@@ -65,14 +71,39 @@ namespace PointOfSale.Business.Services
 
         public async Task<bool> Delete(int idTienda)
         {
-            Tienda Tienda_found = await _repository.Get(c => c.IdTienda == idTienda);
+            // Incluir la entidad relacionada CorrelativeNumber
+            var tienda = await _repository.First(t => t.IdTienda == idTienda);
 
-            if (Tienda_found == null)
-                throw new TaskCanceledException("The Tienda no existe");
+            if (tienda == null)
+            {
+                throw new TaskCanceledException("La Tienda no existe");
+            }
 
-            bool response = await _repository.Delete(Tienda_found);
+            var c = await _correlativeNumber.First(_ => _.IdTienda == idTienda);
+            if (c != null)
+            {
+                await _correlativeNumber.Delete(c);
+            }
 
-            return response;
+            var a = await _ajustes.First(_ => _.IdTienda == idTienda);
+            if (a != null)
+            {
+                await _ajustes.Delete(a);
+            }
+
+            var f = await _ajustesFacturacion.First(_ => _.IdTienda == idTienda);
+            if (f != null)
+            {
+                await _ajustesFacturacion.Delete(f);
+            }
+
+            var t = await _turno.Query(_ => _.IdTienda == idTienda);
+            foreach (var item in t)
+            {
+                await _turno.Delete(item);
+            }
+
+            return await _repository.Delete(tienda);
         }
 
         public async Task<Tienda> Get(int tiendaId)

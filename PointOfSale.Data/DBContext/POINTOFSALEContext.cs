@@ -403,6 +403,11 @@ namespace PointOfSale.Data.DBContext
                     .IsUnicode(false)
                     .HasColumnName("management");
 
+                entity.HasOne(d => d.Tienda)
+                      .WithOne(p => p.CorrelativeNumber)
+                      .HasForeignKey<CorrelativeNumber>(d => d.IdTienda)
+                      .OnDelete(DeleteBehavior.Cascade);
+
                 entity.Property(e => e.QuantityDigits).HasColumnName("quantityDigits");
             });
 
@@ -510,10 +515,11 @@ namespace PointOfSale.Data.DBContext
                 entity.ToTable("Tienda");
 
                 entity.Property(e => e.IdTienda)
-                    .HasColumnName("idTienda");
+                    .HasColumnName("idTienda")
+                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Nombre)
-                    .HasMaxLength(50)
+                    .HasMaxLength(150)
                     .IsUnicode(false)
                     .HasColumnName("nombre");
 
@@ -525,6 +531,12 @@ namespace PointOfSale.Data.DBContext
                 entity.HasOne(t => t.AjustesFacturacion)
                     .WithOne(_ => _.Tienda)
                     .HasForeignKey<Tienda>(t => t.IdAjustesFacturacion)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+
+                entity.HasOne(t => t.CorrelativeNumber)
+                    .WithOne(cn => cn.Tienda)
+                    .HasForeignKey<CorrelativeNumber>(cn => cn.IdTienda)
                     .OnDelete(DeleteBehavior.Cascade);
 
                 modelBuilder.Entity<Tienda>()

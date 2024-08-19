@@ -10,5 +10,7 @@ namespace PointOfSale.Model
         public int? QuantityDigits { get; set; }
         public string? Management { get; set; }
         public DateTime? DateUpdate { get; set; }
+        public int IdTienda { get; set; }
+        public Tienda Tienda { get; set; }
     }
 }

@@ -31,6 +31,9 @@ namespace PointOfSale.Model
 
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }
+
+        public int? IdCorrelativeNumber { get; set; }
+        public CorrelativeNumber? CorrelativeNumber { get; set; }
     }
 }
 	

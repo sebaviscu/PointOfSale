@@ -160,5 +160,9 @@ go
 --________________________________ INSERT CORRELATIVE NUMBER ________________________________
 
 --000001
-insert into CorrelativeNumber(lastNumber,quantityDigits,management,dateUpdate) values
-(0,6,'Sale',getdate())
+insert into CorrelativeNumber(lastNumber,quantityDigits,management, idTienda, dateUpdate) values
+(0,6,'Sale',1,getdate())
+
+go
+
+UPDATE Tienda SET idCorrelativeNumber = 1

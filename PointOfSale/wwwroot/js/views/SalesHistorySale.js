@@ -198,7 +198,7 @@ $("#tbsale tbody").on("click", ".btn-info", function () {
     let d = $(this).data("sale")
     $("#txtRegistrationDate").val(d.registrationDate)
     $("#txtSaleNumber").val(d.saleNumber)
-    $("#txtRegisterUser").val(d.users)
+    $("#txtRegisterUser").val(d.registrationUser)
     $("#txtDocumentType").val(d.typeDocumentSale)
     $("#txtClientName").val(d.clientName)
     $("#txtTotal").val(d.total)

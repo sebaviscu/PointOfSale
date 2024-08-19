@@ -16,7 +16,7 @@ using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Controllers
 {
-    public class ShopController : Controller
+    public class ShopController : BaseController
     {
         private readonly IProductService _productService;
         private readonly IMapper _mapper;
@@ -152,12 +152,9 @@ namespace PointOfSale.Controllers
 
             try
             {
-                ClaimsPrincipal claimuser = HttpContext.User;
-                var userName = claimuser.Claims
-                        .Where(c => c.Type == ClaimTypes.Name)
-                        .Select(c => c.Value).SingleOrDefault();
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
 
-                model.ModificationUser = userName;
+                model.ModificationUser = user.UserName;
 
                 VentaWeb edited_VemntaWeb = await _shopService.Update(_mapper.Map<VentaWeb>(model));
 

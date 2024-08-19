@@ -188,7 +188,7 @@ namespace PointOfSale.Controllers
                 model.RegistrationUser = user.UserName;
 
                 var ajustesTask = _ajustesService.GetAjustes(user.IdTienda);
-                var lastNumberTask = _saleService.GetLastSerialNumberSale();
+                var lastNumberTask = _saleService.GetLastSerialNumberSale(user.IdTienda);
 
                 await Task.WhenAll(ajustesTask, lastNumberTask);
 
