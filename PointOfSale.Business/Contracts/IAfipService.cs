@@ -12,7 +12,7 @@ namespace PointOfSale.Business.Contracts
 {
     public interface IAfipService
     {
-        Task<FacturaEmitida> Facturar(Sale sale_created, string? nroDocumento, int? idCliente, string registrationUser);
+        //Task<FacturaEmitida> Facturar(Sale sale_created, string? nroDocumento, int? idCliente, string registrationUser);
 
         Task<List<FacturaEmitida>> GetAll(int idTienda);
 
@@ -29,5 +29,7 @@ namespace PointOfSale.Business.Contracts
         Task CheckVencimientoCertificado(int idTienda);
 
         Task<FacturaEmitida> GetBySaleId(int idSale);
+
+        Task<FacturaEmitida?> FacturarVenta(Sale sale, Ajustes ajustes, string cuil, int? idCliente);
     }
 }

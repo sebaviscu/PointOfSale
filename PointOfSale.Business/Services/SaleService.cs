@@ -423,6 +423,7 @@ namespace PointOfSale.Business.Services
         {
             return await _repositorySale.CreateSerialNumberSale(idTienda);
         }
+
     }
 
 }

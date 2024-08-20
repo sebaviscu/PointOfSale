@@ -24,7 +24,8 @@ const BASIC_MODEL_VENTA_WEB = {
     editText: null,
     editDate: null,
     idClienteFactura: null,
-    cuilFactura: null
+    cuilFactura: null,
+    imprimirTicket: false
 }
 
 
@@ -155,17 +156,22 @@ $(document).ready(function () {
 
 
 $("#printTicket").click(function () {
+    showLoading();
 
     if (isHealthy) {
         let idVentaWeb = parseInt($("#txtId").val());
 
-        fetch(`/Sales/PrintTicketVentaWeb?idVentaWeb=${idVentaWeb}`)
+        fetch(`/Shop/PrintTicketVentaWeb?idVentaWeb=${idVentaWeb}`)
+            .then(response => {
+                removeLoading();
+                return response.json();
+            })
             .then(response => {
 
                 if (response.state) {
                     $("#modalData").modal("hide");
 
-                    if (response.object.nombreImpresora != '') {
+                    if (isHealthy && response.object.nombreImpresora != '' && response.object.ticket != '') {
 
                         printTicket(response.object.ticket, response.object.nombreImpresora, response.object.imagesTicket);
 
@@ -210,7 +216,7 @@ const openModalEditVentaWeb = (model = BASIC_MODEL_VENTA_WEB) => {
 
         $('#popoverEdit').attr('data-bs-content', model.editText);
 
-        var popover = new bootstrap.Popover(document.getElementById('popoverEdit'), {
+        let popover = new bootstrap.Popover(document.getElementById('popoverEdit'), {
             html: true
         });
         popover.setContent({
@@ -392,27 +398,32 @@ async function editarVentaWeb() {
 
     const model = structuredClone(BASIC_MODEL_VENTA_WEB);
     model["idTienda"] = parseInt($("#cboTienda").val());
-    model["idVentaWeb"] = parseInt($("#txtId").val());
-    model["estado"] = parseInt($("#cboState").val());
-
-    model["nombre"] = $("#txtNombre").val();
-    model["telefono"] = $("#txtTelefono").val();
-    model["direccion"] = $("#txtDireccion").val();
-    model["idFormaDePago"] = parseInt($("#txtFormaPago").val());
-    model["total"] = parseFloat($("#txtTotal").val());
-    model["comentario"] = $("#txtComentario").val();
-
-    let cuilParaFactura = $('#txtClienteParaFactura').attr('cuil');
-    let idClienteParaFactura = $('#txtClienteParaFactura').attr('idCliente');
-    model["cuilFactura"] = cuilParaFactura != '' ? cuilParaFactura : null;
-    model["idClienteFactura"] = idClienteParaFactura != '' ? parseInt(idClienteParaFactura) : null;
-
 
     if (isNaN(model.idTienda)) {
         $('#cboTienda').focus();
         toastr.warning(`Debe seleccionar una Tienda`, "");
         return;
     }
+
+    model["idVentaWeb"] = parseInt($("#txtId").val());
+
+    let estadoVenta = parseInt($("#cboState").val());
+    model["estado"] = estadoVenta;
+
+    model["idFormaDePago"] = estadoVenta == 1 ? $("#cboTypeDocumentSale").val() : parseInt($("#txtFormaPago").val());
+    model["imprimirTicket"] = document.querySelector('#cboImprimirTicket').checked;
+    model["total"] = parseFloat($("#txtTotal").val());
+    model["comentario"] = $("#txtComentario").val();
+    model["nombre"] = $("#txtNombre").val();
+    model["telefono"] = $("#txtTelefono").val();
+    model["direccion"] = $("#txtDireccion").val();
+
+
+    let cuilParaFactura = $('#txtClienteParaFactura').attr('cuil');
+    let idClienteParaFactura = $('#txtClienteParaFactura').attr('idCliente');
+    model["cuilFactura"] = cuilParaFactura != '' ? cuilParaFactura : null;
+    model["idClienteFactura"] = idClienteParaFactura != '' ? parseInt(idClienteParaFactura) : null;
+
 
     let products = [];
 
@@ -456,8 +467,13 @@ async function editarVentaWeb() {
             tableDataVentaWeb.row(rowSelectedVentaWeb).data(responseJson.object).draw(false);
             rowSelectedVentaWeb = null;
             $("#modalData").modal("hide");
-            swal("Exitoso!", "La Venta Web fué modificada", "success");
-            location.reload()
+            if (isHealthy && responseJson.object.nombreImpresora != '' && estadoVenta == 1 && responseJson.object.ticket != '') {
+                printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora, responseJson.object.imagesTicket);
+
+            } else {
+
+                swal("Exitoso!", "La Venta Web fué modificada", "success");
+            }
 
         } else {
             swal("Lo sentimos", responseJson.message, "error");

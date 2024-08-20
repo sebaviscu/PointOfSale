@@ -155,7 +155,7 @@ CONSTRAINT FK_CorrelativeNumber_Tienda FOREIGN KEY (idTienda)
     REFERENCES Tienda(idTienda)
     ON DELETE CASCADE,
 )
-
+select * from AjustesFacturacion
 
 go
 

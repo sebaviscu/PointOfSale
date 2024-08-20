@@ -166,3 +166,5 @@ insert into CorrelativeNumber(lastNumber,quantityDigits,management, idTienda, da
 go
 
 UPDATE Tienda SET idCorrelativeNumber = 1
+
+select * from Tienda

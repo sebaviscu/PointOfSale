@@ -92,27 +92,6 @@ namespace PointOfSale.Business.Services
 
         }
 
-        public async Task FacturarVentaWeb(VentaWeb VentaWeb_found, string cuil, int? idCliente)
-        {
-            var ajustes = await _ajusteService.GetAjustes(VentaWeb_found.IdTienda.Value);
-            var sale = await _saleRepository.Get(_ => _.IdSale == VentaWeb_found.IdSale);
-
-            if (ajustes.FacturaElectronica.HasValue && ajustes.FacturaElectronica.Value)
-            {
-                var tipoVenta = await _typeDocumentSaleService.Get(sale.IdTypeDocumentSale.Value);
-                FacturaEmitida facturaEmitida = null;
-
-                if ((int)tipoVenta.TipoFactura < 3)
-                {
-                    sale.TypeDocumentSaleNavigation = tipoVenta;
-
-                    facturaEmitida = await _afipService.Facturar(sale, cuil, idCliente, sale.RegistrationUser);
-                    sale.IdFacturaEmitida = facturaEmitida.IdFacturaEmitida;
-                    _ = await _saleRepository.Edit(sale);
-                }
-            }
-        }
-
         private bool HasChanges(VentaWeb original, VentaWeb updated)
         {
             // Verificar cambios en los campos de VentaWeb

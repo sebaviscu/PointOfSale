@@ -1,4 +1,5 @@
 ﻿using PointOfSale.Model;
+using PointOfSale.Model.Afip.Factura;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +15,6 @@ namespace PointOfSale.Business.Contracts
         Task<VentaWeb> Update(VentaWeb entity);
         Task<VentaWeb> Get(int idVentaWeb);
         Task<VentaWeb> RegisterWeb(VentaWeb entity);
-
-        Task FacturarVentaWeb(VentaWeb VentaWeb_found, string cuil, int? idCliente);
 
     }
 }

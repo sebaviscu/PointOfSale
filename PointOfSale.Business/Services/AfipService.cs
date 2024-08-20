@@ -24,17 +24,27 @@ namespace PointOfSale.Business.Services
         private readonly IAjusteService _ajusteService;
         private readonly IFileStorageService _fileStorageService;
         private readonly INotificationService _notificationRepository;
+        private readonly ISaleRepository _saleRepository;
+        private readonly ITypeDocumentSaleService _typeDocumentSaleService;
 
-        public AfipService(IGenericRepository<FacturaEmitida> repository, IAFIPFacturacionService afipFacturacionService, IAjusteService ajusteService, IFileStorageService fileStorageService, INotificationService notificationRepository)
+        public AfipService(IGenericRepository<FacturaEmitida> repository, 
+            IAFIPFacturacionService afipFacturacionService, 
+            IAjusteService ajusteService, 
+            IFileStorageService fileStorageService, 
+            INotificationService notificationRepository,
+            ISaleRepository saleRepository,
+            ITypeDocumentSaleService typeDocumentSaleService)
         {
             _repository = repository;
             _afipFacturacionService = afipFacturacionService;
             _ajusteService = ajusteService;
             _fileStorageService = fileStorageService;
             _notificationRepository = notificationRepository;
+            _saleRepository = saleRepository;
+            _typeDocumentSaleService = typeDocumentSaleService;
         }
 
-        public async Task<FacturaEmitida> Facturar(Sale sale_created, string? nroDocumento, int? idCliente, string registrationUser)
+        private async Task<FacturaEmitida> Facturar(Sale sale_created, string? nroDocumento, int? idCliente, string registrationUser)
         {
             if (sale_created.TypeDocumentSaleNavigation == null)
             {
@@ -174,6 +184,31 @@ namespace PointOfSale.Business.Services
 
                 }
             }
+        }
+
+        public async Task<FacturaEmitida?> FacturarVenta(Sale sale, Ajustes ajustes, string cuil, int? idCliente)
+        {
+            if (!ajustes.FacturaElectronica.HasValue || (ajustes.FacturaElectronica.HasValue && !ajustes.FacturaElectronica.Value))
+            {
+                return null;
+            }
+
+            FacturaEmitida facturaEmitida = null;
+
+            if (ajustes.FacturaElectronica.HasValue && ajustes.FacturaElectronica.Value)
+            {
+                var tipoVenta = await _typeDocumentSaleService.Get(sale.IdTypeDocumentSale.Value);
+
+                if ((int)tipoVenta.TipoFactura < 3)
+                {
+                    sale.TypeDocumentSaleNavigation = tipoVenta;
+
+                    facturaEmitida = await Facturar(sale, cuil, idCliente, sale.RegistrationUser);
+                    sale.IdFacturaEmitida = facturaEmitida.IdFacturaEmitida;
+                    _ = await _saleRepository.Edit(sale);
+                }
+            }
+            return facturaEmitida;
         }
     }
 }

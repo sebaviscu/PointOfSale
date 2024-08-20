@@ -7,6 +7,6 @@ namespace PointOfSale.Business.Contracts
     public interface ITicketService
     {
         Task<TicketModel> TicketSale(Sale sale, Ajustes ajustes, FacturaEmitida? facturaEmitida);
-        Task<TicketModel> TicketVentaWeb(VentaWeb sale, Ajustes ajustes, FacturaEmitida? facturaEmitida);
+        Task<TicketModel> TicketSale(VentaWeb sale, Ajustes ajustes);
     }
 }

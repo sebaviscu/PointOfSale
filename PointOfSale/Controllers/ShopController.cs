@@ -8,7 +8,9 @@ using NuGet.Protocol;
 using Org.BouncyCastle.Pkcs;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Services;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
+using PointOfSale.Model.Afip.Factura;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
 using System.Security.Claims;
@@ -26,7 +28,21 @@ namespace PointOfSale.Controllers
         private readonly IAjusteService _ajusteService;
         private readonly IRazorViewEngine _razorViewEngine;
         private readonly ILogger<ShopController> _logger;
-        public ShopController(IProductService productService, IMapper mapper, IShopService shopService, ICategoryService categoryService, ITypeDocumentSaleService typeDocumentSaleService, IAjusteService ajusteService, IRazorViewEngine razorViewEngine, ILogger<ShopController> logger)
+        private readonly ITicketService _ticketService;
+        private readonly IAfipService _afipService;
+        private readonly ISaleService _saleService;
+
+        public ShopController(IProductService productService,
+            IMapper mapper,
+            IShopService shopService,
+            ICategoryService categoryService,
+            ITypeDocumentSaleService typeDocumentSaleService,
+            IAjusteService ajusteService,
+            IRazorViewEngine razorViewEngine,
+            ILogger<ShopController> logger,
+            ITicketService ticketService,
+            IAfipService afipService,
+            ISaleService saleService)
         {
             _productService = productService;
             _mapper = mapper;
@@ -34,9 +50,11 @@ namespace PointOfSale.Controllers
             _categoryService = categoryService;
             _typeDocumentSaleService = typeDocumentSaleService;
             _ajusteService = ajusteService;
-
+            _ticketService = ticketService;
+            _afipService = afipService;
             _razorViewEngine = razorViewEngine;
             _logger = logger;
+            _saleService = saleService;
         }
 
         public async Task<IActionResult> Index()
@@ -157,14 +175,19 @@ namespace PointOfSale.Controllers
                 model.ModificationUser = user.UserName;
 
                 VentaWeb edited_VemntaWeb = await _shopService.Update(_mapper.Map<VentaWeb>(model));
-
+                model = _mapper.Map<VMVentaWeb>(edited_VemntaWeb);
                 if (model.Estado == EstadoVentaWeb.Finalizada && model.IdTienda.HasValue)
                 {
-                    await _shopService.FacturarVentaWeb(edited_VemntaWeb, model.CuilFactura, model.IdClienteFactura);
+                    var ajustes = await _ajusteService.GetAjustes(model.IdTienda.Value);
+                    var sale = await _saleService.GetSale(edited_VemntaWeb.IdSale.Value);
+
+                    var facturaEmitida = await _afipService.FacturarVenta(sale, ajustes, model.CuilFactura, model.IdClienteFactura);
+
+                    var ticket = await _ticketService.TicketSale(sale, ajustes, facturaEmitida);
+                    model.Ticket = ticket.Ticket;
+                    model.ImagesTicket.AddRange(ticket.ImagesTicket);
+                    model.NombreImpresora = model.ImprimirTicket && !string.IsNullOrEmpty(ajustes.NombreImpresora) ? ajustes.NombreImpresora : null;
                 }
-
-
-                model = _mapper.Map<VMVentaWeb>(edited_VemntaWeb);
 
                 gResponse.State = true;
                 gResponse.Object = model;
@@ -179,6 +202,55 @@ namespace PointOfSale.Controllers
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+        public async Task<IActionResult> PrintTicketVentaWeb(int idVentaWeb)
+        {
+            GenericResponse<VMSaleResult> gResponse = new GenericResponse<VMSaleResult>();
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Empleado]);
+
+                var ajustes = await _ajusteService.GetAjustes(user.IdTienda);
+
+                if(string.IsNullOrEmpty(ajustes.NombreImpresora))
+                {
+                    return HandleException(null, "No existe impresora registrada.", _logger, idVentaWeb.ToJson());
+                }
+
+                var ventaWeb = await _shopService.Get(idVentaWeb);
+                if (!ventaWeb.IdTienda.HasValue)
+                    ventaWeb.IdTienda = user.IdTienda;
+
+                TicketModel ticket;
+                if (ventaWeb.IdSale.HasValue)
+                {
+                    var sale = await _saleService.GetSale(ventaWeb.IdSale.Value);
+                    var facturaEmitida = await _afipService.GetBySaleId(ventaWeb.IdSale.Value);
+                    ticket = await _ticketService.TicketSale(sale, ajustes, facturaEmitida);
+                }
+                else
+                {
+                    ticket = await _ticketService.TicketSale(ventaWeb, ajustes);
+                }
+
+
+                var model = new VMSaleResult();
+
+                model.NombreImpresora = ajustes.NombreImpresora;
+                model.Ticket = ticket.Ticket ?? string.Empty;
+                model.ImagesTicket = ticket.ImagesTicket;
+
+                gResponse.State = true;
+                gResponse.Object = model;
+
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al imprimir ticket de venta web.", _logger, idVentaWeb.ToJson());
+            }
+
         }
 
         [HttpPost]

@@ -21,9 +21,9 @@ namespace PointOfSale.Business.Services
             return await CreateTicket(ajustes, sale.RegistrationDate.Value, sale.Total.Value, sale.DetailSales, sale.IdTienda, sale.DescuentoRecargo, facturaEmitida);
         }
 
-        public async Task<TicketModel> TicketVentaWeb(VentaWeb sale, Ajustes ajustes, FacturaEmitida? facturaEmitida)
+        public async Task<TicketModel> TicketSale(VentaWeb sale, Ajustes ajustes)
         {
-            return await CreateTicket(ajustes, sale.RegistrationDate.Value, sale.Total.Value, sale.DetailSales, sale.IdTienda.Value, null, facturaEmitida);
+            return await CreateTicket(ajustes, sale.RegistrationDate.Value, sale.Total.Value, sale.DetailSales, sale.IdTienda.Value, null, null);
         }
         public void ImprimirTiket(string impresora, string line)
         {

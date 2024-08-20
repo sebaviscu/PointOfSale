@@ -83,32 +83,38 @@ namespace PointOfSale.Controllers
             }
         }
 
-        protected IActionResult HandleException(Exception ex, string errorMessage, ILogger<object> _logger, object model = null, params (string Key, object Value)[] additionalData)
+        protected IActionResult HandleException(Exception? ex, string errorMessage, ILogger<object> _logger, object model = null, params (string Key, object Value)[] additionalData)
         {
             var gResponse = new GenericResponse<object>
             {
                 State = false,
-                Message = $"{errorMessage}\n {ex.InnerException?.ToString() ?? ex.Message}"
+                Message = ex == null ? errorMessage : $"{errorMessage}\n {ex.InnerException?.Message ?? ex.Message}"
             };
 
             // Preparar los parámetros adicionales para el log
             var logParams = new List<object> { errorMessage };
+
             if (model != null)
             {
                 logParams.Add("ModelRequest");
                 logParams.Add(model.ToJson());
             }
 
-            foreach (var data in additionalData)
+            if (additionalData != null)
             {
-                logParams.Add(data.Key);
-                logParams.Add(data.Value?.ToJson());
+                foreach (var data in additionalData)
+                {
+                    logParams.Add(data.Key);
+                    logParams.Add(data.Value?.ToJson() ?? "null");
+                }
             }
 
             // Registrar el log con los parámetros adicionales
-            _logger.LogError(ex, "{ErrorMessage}. " + string.Join(". ", additionalData.Select(d => $"{d.Key}: {{{d.Key}}}")), logParams.ToArray());
+            var logTemplate = "{ErrorMessage}. " + string.Join(". ", additionalData.Select(d => $"{d.Key}: {{{d.Key}}}"));
+            _logger.LogError(ex, logTemplate, logParams.ToArray());
 
             return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
         }
+
     }
 }

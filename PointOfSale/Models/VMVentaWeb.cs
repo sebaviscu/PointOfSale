@@ -1,10 +1,17 @@
-﻿using PointOfSale.Model;
+﻿using PointOfSale.Business.Utilities;
+using PointOfSale.Model;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Models
 {
     public class VMVentaWeb
     {
+        public VMVentaWeb()
+        {
+            ImagesTicket = new List<Images>();
+            Ticket = string.Empty;
+        }
+
         public int IdVentaWeb { get; set; }
         public string? Nombre { get; set; }
         public string? Telefono { get; set; }
@@ -28,6 +35,12 @@ namespace PointOfSale.Models
 
         public int? IdClienteFactura { get; set; }
         public string? CuilFactura { get; set; }
+
+        public string? NombreImpresora { get; set; }
+        public string? Ticket { get; set; }
+        public List<Images> ImagesTicket { get; set; }
+
+        public bool ImprimirTicket { get; set; }
 
     }
 }

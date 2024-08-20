@@ -24,7 +24,6 @@ namespace PointOfSale.Controllers
         private readonly IConverter _converter;
         private readonly IClienteService _clienteService;
         private readonly ITicketService _ticketService;
-        private readonly ITiendaService _tiendaService;
         private readonly IShopService _shopService;
         private readonly ILogger<SalesController> _logger;
         private readonly IAfipService _afipFacturacionService;
@@ -37,7 +36,6 @@ namespace PointOfSale.Controllers
             IConverter converter,
             IClienteService clienteService,
             ITicketService ticketService,
-            ITiendaService tiendaService,
             IShopService shopService,
             IAfipService afipFacturacionService,
             ILogger<SalesController> logger,
@@ -49,7 +47,6 @@ namespace PointOfSale.Controllers
             _converter = converter;
             _clienteService = clienteService;
             _ticketService = ticketService;
-            _tiendaService = tiendaService;
             _shopService = shopService;
             _afipFacturacionService = afipFacturacionService;
             _logger = logger;
@@ -261,18 +258,7 @@ namespace PointOfSale.Controllers
             {
                 return null;
             }
-
-            var tipoVenta = await _typeDocumentSaleService.Get(sale_created.IdTypeDocumentSale.Value);
-            FacturaEmitida facturaEmitida = null;
-
-            if ((int)tipoVenta.TipoFactura < 3)
-            {
-                sale_created.TypeDocumentSaleNavigation = tipoVenta;
-
-                facturaEmitida = await _afipFacturacionService.Facturar(sale_created, model.CuilFactura, model.IdClienteFactura, sale_created.RegistrationUser);
-                sale_created.IdFacturaEmitida = facturaEmitida.IdFacturaEmitida;
-                _ = await _saleService.Edit(sale_created);
-            }
+            var facturaEmitida = await _afipFacturacionService.FacturarVenta(sale_created, ajustes, model.CuilFactura, model.IdClienteFactura);
 
             return facturaEmitida;
         }
@@ -415,39 +401,6 @@ namespace PointOfSale.Controllers
             catch (Exception ex)
             {
                 return HandleException(ex, "Error al imprimir ticket", _logger, idSale.ToJson());
-            }
-
-        }
-
-        public async Task<IActionResult> PrintTicketVentaWeb(int idVentaWeb)
-        {
-            GenericResponse<VMSale> gResponse = new GenericResponse<VMSale>();
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Empleado]);
-
-                var ajustes = await _ajustesService.GetAjustes(user.IdTienda);
-                var ventaWeb = await _shopService.Get(idVentaWeb);
-                if(!ventaWeb.IdTienda.HasValue)
-                    ventaWeb.IdTienda = user.IdTienda;
-                //var facturaEmitida = await _afipFacturacionService.GetBySaleId(idSale);
-                var ticket = await _ticketService.TicketVentaWeb(ventaWeb, ajustes, null);
-
-
-                var model = new VMSale();
-
-                model.NombreImpresora = ajustes.NombreImpresora;
-                model.Ticket = ticket.Ticket ?? string.Empty;
-                model.ImagesTicket = ticket.ImagesTicket;
-
-                gResponse.State = true;
-                gResponse.Object = model;
-
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al imprimir ticket de venta web", _logger, idVentaWeb.ToJson());
             }
 
         }
