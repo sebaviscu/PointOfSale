@@ -4,7 +4,7 @@
 }
 
 
-@section StylesPOS{
+@section StylesPOS {
     <link href="~/plugins/jquery-ui/jquery-ui.css" rel="stylesheet">
 }
 <div id="txtSaleNumberByClient" style="display:none">
@@ -63,8 +63,13 @@
                 <button class="btn btn-success" type="button" id="btnSearch"><i class="fas fa-search"></i> Buscar</button>
             </div>
         </div>
-        <div class="d-flex justify-content-center  search-date">
-            <a href="#" onclick="setToday()">Hoy</a>
+        <div class="d-flex justify-content-center search-date mt-3">
+            <button class="btn btn-primary btn-sm mx-2" onclick="setToday()" title="Seleccionar hoy">
+                <i class="mdi mdi-calendar"></i> Hoy
+            </button>
+            <button class="btn btn-primary btn-sm mx-2" onclick="turnoActual()" title="Seleccionar turno actual">
+                <i class="mdi mdi-clock"></i> Turno Actual
+            </button>
         </div>
 
         <div class="row">
@@ -231,11 +236,11 @@
 </div>
 
 
-@section Scripts{
+@section Scripts {
 
     <script src="~/plugins/jquery-ui/jquery-ui.js"></script>
 
     <script src="~/plugins/printService.js"></script>
     <script src="~/js/views/layout.js"></script>
     <script src="~/js/views/SalesHistorySale.js"></script>
- }
+}

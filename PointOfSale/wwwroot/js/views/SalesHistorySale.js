@@ -1,6 +1,7 @@
-﻿let rowSelectedHistoric;
+﻿let idSale;
+let rowSelectedHistoric;
 
-const SEARCH_VIEW = {
+let SEARCH_VIEW = {
 
     searchDate: () => {
 
@@ -108,66 +109,15 @@ $("#btnSearch").click(function () {
     let endDate = $("#txtEndDate").val().trim();
     //let presupuestos = document.getElementById("switchPresupuestos").checked
     let presu = $('.filtro-presupuesto:checked').attr('id');
-
-
-    $(".card-body").find("div.row").LoadingOverlay("show")
+    showLoading();
 
     fetch(`/Sales/History?saleNumber=${saleNumber}&startDate=${startDate}&endDate=${endDate}&presupuestos=${presu}`)
         .then(response => {
-            $(".card-body").find("div.row").LoadingOverlay("hide")
             return response.json();
         }).then(responseJson => {
-            $("#tbsale tbody").html("");
-            if (responseJson.length > 0) {
 
-                let total = 0;
-
-                var uniqs = responseJson.reduce((acc, val) => {
-                    acc[val.saleNumber] = acc[val.saleNumber] === undefined ? 1 : acc[val.saleNumber] += 1;
-                    return acc;
-                }, {});
-
-                responseJson.forEach((sale) => {
-
-                    total = total + parseFloat(sale.totalDecimal);
-
-                    var changePresu = false;
-                    if (sale.typeDocumentSale == "Presupuesto") {
-                        changePresu = true;
-                        sale.typeDocumentSale = sale.typeDocumentSale + " ";
-                    }
-
-                    $("#tbsale tbody").append(
-                        $("<tr>").append(
-                            $("<td>").append(
-                                $("<span>").text(sale.registrationDate),
-                                sale.isWeb ? $("<i>")
-                                    .addClass("mdi mdi-web ms-3")
-                                    .attr("title", "Venta Web")
-                                    .tooltip()
-                                    : null
-                            ),
-                            $("<td>").text(sale.saleNumber),
-                            $("<td>").text(sale.typeDocumentSale)
-                                .append(changePresu != "" ?
-                                    $("<button>").addClass("btn btn-success btn-sm btn-pago").append(
-                                        $("<i>").addClass("mdi mdi-cash-usd")
-                                    ).data("sale", sale) : "")
-                            ,
-                            $("<td>").text(sale.cantidadProductos),
-                            $("<td>").text("$ " + sale.total),
-                            $("<td>").append(
-                                $("<button>").addClass("btn btn-info btn-sm").append(
-                                    $("<i>").addClass("mdi mdi-eye")
-                                ).data("sale", sale))
-                        )
-                    );
-
-
-                });
-                $("#lblCantidadVentas").html("Cantidad de Ventas: <strong> " + Object.keys(uniqs).length + ".</strong>");
-                $("#lbltotal").html("Total: <strong>$ " + total + ".</strong>");
-            }
+            removeLoading();
+            createTable(responseJson);
         })
 })
 
@@ -233,7 +183,6 @@ $("#tbsale tbody").on("click", ".btn-info", function () {
     $("#modalData").modal("show");
 })
 
-let idSale;
 
 $("#printTicket").click(function () {
     showLoading();
@@ -262,6 +211,61 @@ $("#printTicket").click(function () {
 })
 
 
+function createTable(responseJson) {
+    $("#tbsale tbody").html("");
+
+    if (responseJson.length > 0) {
+
+        let total = 0;
+
+        var uniqs = responseJson.reduce((acc, val) => {
+            acc[val.saleNumber] = acc[val.saleNumber] === undefined ? 1 : acc[val.saleNumber] += 1;
+            return acc;
+        }, {});
+
+        responseJson.forEach((sale) => {
+
+            total = total + parseFloat(sale.totalDecimal);
+
+            var changePresu = false;
+            if (sale.typeDocumentSale == "Presupuesto") {
+                changePresu = true;
+                sale.typeDocumentSale = sale.typeDocumentSale + " ";
+            }
+
+            $("#tbsale tbody").append(
+                $("<tr>").append(
+                    $("<td>").append(
+                        $("<span>").text(sale.registrationDate),
+                        sale.isWeb ? $("<i>")
+                            .addClass("mdi mdi-web ms-3")
+                            .attr("title", "Venta Web")
+                            .tooltip()
+                            : null
+                    ),
+                    $("<td>").text(sale.saleNumber),
+                    $("<td>").text(sale.typeDocumentSale)
+                        .append(changePresu != "" ?
+                            $("<button>").addClass("btn btn-success btn-sm btn-pago").append(
+                                $("<i>").addClass("mdi mdi-cash-usd")
+                            ).data("sale", sale) : ""),
+
+                    $("<td>").text(sale.cantidadProductos),
+                    $("<td>").text("$ " + sale.total),
+                    $("<td>").append(
+                        $("<button>").addClass("btn btn-info btn-sm").append(
+                            $("<i>").addClass("mdi mdi-eye")
+                        ).data("sale", sale))
+                )
+            );
+
+
+        });
+        $("#lblCantidadVentas").html("Cantidad de Ventas: <strong> " + Object.keys(uniqs).length + ".</strong>");
+        $("#lbltotal").html("Total: <strong>$ " + total + ".</strong>");
+    }
+}
+
 function setToday() {
     let date = new Date();
 
@@ -273,4 +277,19 @@ function setToday() {
     $('#txtStartDate, #txtEndDate').datepicker('setDate', today);
 
     $("#btnSearch").click();
+}
+
+function turnoActual() {
+    showLoading();
+
+    fetch(`/Sales/HistoryTurnoActual`)
+        .then(response => {
+            $(".card-body").find("div.row").LoadingOverlay("hide")
+            return response.json();
+        }).then(responseJson => {
+
+            removeLoading();
+            createTable(responseJson);
+        })
+
 }

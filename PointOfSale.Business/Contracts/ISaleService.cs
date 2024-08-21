@@ -30,5 +30,7 @@ namespace PointOfSale.Business.Contracts
 
         Task<CorrelativeNumber> CreateSerialNumberSale(int idTienda);
 
+        Task<List<Sale>> HistoryTurnoActual(int idTurno);
+
     }
 }

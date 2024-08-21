@@ -229,6 +229,19 @@ namespace PointOfSale.Business.Services
             return await result.ToListAsync(); // Usar ToListAsync para evitar bloquear el hilo
         }
 
+        public async Task<List<Sale>> HistoryTurnoActual(int idTurno)
+        {
+            IQueryable<Sale> query = await _repositorySale.Query();
+
+            var result = query.Where(v => v.IdTurno == idTurno)
+            .OrderByDescending(_ => _.IdSale)
+            .Include(tdv => tdv.TypeDocumentSaleNavigation)
+            .Include(u => u.IdUsersNavigation)
+            .Include(dv => dv.DetailSales);
+
+
+            return await result.ToListAsync();
+        }
 
         public async Task<Sale> Detail(string SaleNumber)
         {

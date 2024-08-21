@@ -354,6 +354,37 @@ namespace PointOfSale.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> HistoryTurnoActual()
+        {
+            var gResponse = new GenericResponse<List<VMSale>>();
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Empleado]);
+
+                List<VMSale> vmHistorySale = _mapper.Map<List<VMSale>>(await _saleService.HistoryTurnoActual(user.IdTurno));
+
+                if (vmHistorySale.Any(_ => _.IdClienteMovimiento != null))
+                {
+                    var movslist = vmHistorySale.Where(_ => _.IdClienteMovimiento != null).ToList();
+                    var idMov = movslist.Select(_ => _.IdClienteMovimiento.Value).ToList();
+                    var movs = await _clienteService.GetClienteByMovimientos(idMov, user.IdTienda);
+
+                    foreach (var m in movslist)
+                    {
+                        var cliente = movs.FirstOrDefault(_ => _.IdClienteMovimiento == m.IdClienteMovimiento).Cliente;
+                        m.ClientName = cliente.Nombre;
+                    }
+                }
+
+                return StatusCode(StatusCodes.Status200OK, vmHistorySale);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al recuperar reporte de ventas por turno", _logger, null);
+            }
+        }
+
         public async Task<IActionResult> PrintMultiplesTickets([FromQuery] List<int> idSales)
         {
             GenericResponse<VMSale> gResponse = new GenericResponse<VMSale>();

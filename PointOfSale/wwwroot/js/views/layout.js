@@ -1,4 +1,4 @@
-﻿const BASIC_MODEL_CLIENTE_SALE = {
+﻿let BASIC_MODEL_CLIENTE_SALE = {
     idCliente: 0,
     nombre: '',
     cuil: null,
