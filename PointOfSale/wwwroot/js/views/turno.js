@@ -1,7 +1,7 @@
 ﻿let tableData;
 let rowSelectedTurno;
 
-const BASIC_MODEL = {
+const BASIC_MODEL_TURNO = {
     idturno: 0,
     descripcion: "",
     fecha: "",
@@ -81,7 +81,7 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
 })
 
 
-const openModal = (model = BASIC_MODEL) => {
+const openModal = (model = BASIC_MODEL_TURNO) => {
     $("#txtId").val(model.idTurno);
     $("#txtDescripcion").val(model.descripcion);
     $("#txtFecha").val(model.fecha);
@@ -122,7 +122,7 @@ const openModal = (model = BASIC_MODEL) => {
 
 $("#btnSave").on("click", function () {
 
-    const model = structuredClone(BASIC_MODEL);
+    const model = structuredClone(BASIC_MODEL_TURNO);
     model["idTurno"] = parseInt($("#txtId").val());
     model["descripcion"] = $("#txtDescripcion").val();
 

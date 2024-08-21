@@ -2,7 +2,7 @@ let proveedoresListPedido = [];
 let tableData;
 let rowSelectedPedido;
 
-const BASIC_MODEL = {
+const BASIC_MODEL_PEDIDO_WEB = {
     idPedido: 0,
     importeEstimado: 0,
     estado: 1,
@@ -206,7 +206,7 @@ function calcularTotalProductosRecibidos() {
     calcularIva();
 }
 
-const openModal = (model = BASIC_MODEL) => {
+const openModal = (model = BASIC_MODEL_PEDIDO_WEB) => {
     $('#btnVolver').click();
 
     $("#txtIdPedido").val(model.idPedido);
@@ -395,7 +395,7 @@ $("#btnSave").on("click", function () {
     $("#modalData").find("div.modal-content").LoadingOverlay("show")
 
     calcularTotalCosto();
-    const model = structuredClone(BASIC_MODEL);
+    const model = structuredClone(BASIC_MODEL_PEDIDO_WEB);
     model["idPedido"] = parseInt($("#txtIdPedido").val());
     model["importeEstimado"] = parseFloat($("#txtImporteEstimado").val());
     model["comentario"] = $("#txtComentario").val();
@@ -535,7 +535,7 @@ $("#tbData tbody").on("click", ".btn-recibir", function () {
     openModalRecibido(data);
 })
 
-const openModalRecibido = (model = BASIC_MODEL) => {
+const openModalRecibido = (model = BASIC_MODEL_PEDIDO_WEB) => {
 
     $("#txtIdPedidoRecibido").val(model.idPedido);
     //$("#txtImporteRecibido").val(model.importeEstimado);

@@ -1005,7 +1005,7 @@ namespace PointOfSale.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetProveedores()
+        public async Task<IActionResult> GetProveedores(bool visionGlobal)
         {
             var gResponse = new GenericResponse<List<VMProveedor>>();
             try
@@ -1151,7 +1151,7 @@ namespace PointOfSale.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetAllMovimientoProveedor()
+        public async Task<IActionResult> GetAllMovimientoProveedor(bool visionGlobal)
         {
 
             var gResponse = new GenericResponse<List<VMProveedorMovimiento>>();
@@ -1159,7 +1159,9 @@ namespace PointOfSale.Controllers
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
 
-                var listUsers = _mapper.Map<List<VMProveedorMovimiento>>(await _proveedorService.ListMovimientosProveedorForTablaDinamica(user.IdTienda));
+                var idtienda = visionGlobal ? 0 : user.IdTienda;
+
+                var listUsers = _mapper.Map<List<VMProveedorMovimiento>>(await _proveedorService.ListMovimientosProveedorForTablaDinamica(idtienda));
                 return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
             }
             catch (Exception ex)
@@ -1169,15 +1171,16 @@ namespace PointOfSale.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProveedorTablaDinamica()
+        public async Task<IActionResult> GetProveedorTablaDinamica(bool visionGlobal)
         {
 
             var gResponse = new GenericResponse<List<VMMovimientoProveedoresTablaDinamica>>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
+                var idtienda = visionGlobal ? 0 : user.IdTienda;
 
-                var listUsers = _mapper.Map<List<VMMovimientoProveedoresTablaDinamica>>(await _proveedorService.ListMovimientosProveedorForTablaDinamica(user.IdTienda));
+                var listUsers = _mapper.Map<List<VMMovimientoProveedoresTablaDinamica>>(await _proveedorService.ListMovimientosProveedorForTablaDinamica(idtienda));
                 gResponse.State = true;
                 gResponse.Object = listUsers;
                 return StatusCode(StatusCodes.Status200OK, gResponse);

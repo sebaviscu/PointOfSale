@@ -1,7 +1,7 @@
 ﻿let tableData;
 let rowSelectedCategory;
 
-const BASIC_MODEL = {
+const BASIC_MODEL_CATEGORIA = {
     idCategory: 0,
     description:"",
     isActive: 1,
@@ -59,7 +59,7 @@ $(document).ready(function () {
     });
 })
 
-const openModal = (model = BASIC_MODEL) => {
+const openModal = (model = BASIC_MODEL_CATEGORIA) => {
     $("#txtId").val(model.idCategory);
     $("#txtDescription").val(model.description);
     $("#cboState").val(model.isActive);
@@ -93,7 +93,7 @@ $("#btnSave").on("click", function () {
         return;
     }
 
-    const model = structuredClone(BASIC_MODEL);
+    const model = structuredClone(BASIC_MODEL_CATEGORIA);
     model["idCategory"] = parseInt($("#txtId").val());
     model["description"] = $("#txtDescription").val();
     model["isActive"] = $("#cboState").val();

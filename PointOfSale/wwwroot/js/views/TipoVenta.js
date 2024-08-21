@@ -1,7 +1,7 @@
 ﻿let tableData;
 let rowSelectedFormaPago;
 
-const BASIC_MODEL = {
+const BASIC_MODEL_TIPO_VENTA = {
     idTypeDocumentSale: 0,
     description: "",
     isActive: 1,
@@ -74,7 +74,7 @@ $(document).ready(function () {
     });
 })
 
-const openModal = (model = BASIC_MODEL) => {
+const openModal = (model = BASIC_MODEL_TIPO_VENTA) => {
     $("#txtId").val(model.idTypeDocumentSale);
     $("#txtNombre").val(model.description);
     $("#cboState").val(model.isActive ? 1 : 0);
@@ -103,7 +103,7 @@ $("#btnSave").on("click", function () {
         return;
     }
 
-    const model = structuredClone(BASIC_MODEL);
+    const model = structuredClone(BASIC_MODEL_TIPO_VENTA);
     model["idTypeDocumentSale"] = parseInt($("#txtId").val());
     model["description"] = $("#txtNombre").val();
     model["isActive"] = $("#cboState").val() === '1' ? true : false;

@@ -2,15 +2,6 @@
 let tableDataStock;
 let rowSelectedStock;
 
-const BASIC_MODEL = {
-    idCategory: 0,
-    description: "",
-    isActive: 1,
-    modificationDate: null,
-    modificationUser: null
-}
-
-
 $(document).ready(function () {
 
     cargarTablaVencimientos();

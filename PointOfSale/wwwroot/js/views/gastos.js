@@ -5,7 +5,7 @@ const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun",
     "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
 ];
 
-const BASIC_MODEL = {
+const BASIC_MODEL_GASTO = {
     idGastos: 0,
     idTipoGasto: 0,
     importe: 0,
@@ -64,6 +64,25 @@ $(document).ready(function () {
 
         })
 
+    fetch("/Tienda/GetTienda")
+        .then(response => {
+            return response.json();
+        }).then(responseJson => {
+
+            document.getElementById("divSwitchVisionGlobalGastos").style.display = responseJson.data != null && responseJson.data.length > 1 ? '' : 'none';
+
+        })
+
+    
+    cargarTablaGastos(false);
+    cargarTablaDinamicaGastos(false);
+    removeLoading();
+})
+
+function cargarTablaGastos(isGlobal) {
+
+    let url = `/Gastos/GetGastos?visionGlobal=${isGlobal}`;
+
     tableData = $("#tbData").DataTable({
         responsive: true,
         "rowCallback": function (row, data) {
@@ -72,7 +91,7 @@ $(document).ready(function () {
             }
         },
         "ajax": {
-            "url": "/Gastos/GetGastos",
+            "url": url,
             "type": "GET",
             "datatype": "json"
         },
@@ -119,10 +138,7 @@ $(document).ready(function () {
             }, 'pageLength'
         ]
     });
-
-    cargarTablaDinamica();
-    removeLoading();
-})
+}
 
 const openModalTipoDeGasto = (model = BASIC_MODEL_TIPO_DE_GASTOS) => {
     $("#txtIdTipoGastos").val(model.IdTipoGastos);
@@ -132,6 +148,12 @@ const openModalTipoDeGasto = (model = BASIC_MODEL_TIPO_DE_GASTOS) => {
     $("#modalDataTipoDeGasto").modal("show")
 }
 
+$('#SwitchVisionGlobalGastos').change(function () {
+    let visionGlobal = $(this).is(':checked')
+    cargarTablaDinamicaGastos(visionGlobal);
+    cargarTablaGastos(visionGlobal);
+
+});
 
 $("#btnNewTipoDeGasto").on("click", function () {
     openModalTipoDeGasto()
@@ -181,7 +203,7 @@ $("#btnSaveTipoDeGastos").on("click", function () {
     }
 })
 
-const openModal = (model = BASIC_MODEL) => {
+const openModal = (model = BASIC_MODEL_GASTO) => {
     $("#txtIdGastos").val(model.idGastos);
     $("#cboTipoDeGastoEnGasto").val(model.idTipoGasto);
     $("#txtImporte").val(model.importe);
@@ -229,7 +251,7 @@ $("#btnSave").on("click", function () {
         return;
     }
 
-    const model = structuredClone(BASIC_MODEL);
+    const model = structuredClone(BASIC_MODEL_GASTO);
     model["idGastos"] = parseInt($("#txtIdGastos").val());
     model["idTipoGasto"] = $("#cboTipoDeGastoEnGasto").val();
     model["importe"] = $("#txtImporte").val();
@@ -401,10 +423,14 @@ $('#txtImporte').keyup(function () {
     calcularIva();
 });
 
-function cargarTablaDinamica() {
-    fetch(`/Gastos/GetGastosTablaDinamica`, {
+function cargarTablaDinamicaGastos(isGlobal) {
+    let url = `/Gastos/GetGastosTablaDinamica?visionGlobal=${isGlobal}`;
+    $("#wdr-component").LoadingOverlay("show")
+
+    fetch(url, {
         method: "GET"
     }).then(response => {
+        $("#wdr-component").LoadingOverlay("hide")
         return response.ok || response.status == 500 ? response.json() : Promise.reject(response);
     }).then(responseJson => {
         if (responseJson.error !== undefined) {

@@ -266,7 +266,7 @@ function finalizarVenta() {
         var terminal = document.getElementById("cboFormaPago");
         var selectedText = terminal.options[terminal.selectedIndex].text;
 
-        const model = structuredClone(BASIC_MODEL);
+        const model = structuredClone(BASIC_MODEL_SHOP);
         model["nombre"] = $("#txtNombre").val();
         model["telefono"] = $("#txtTelefono").val();
         model["direccion"] = $("#txtDireccion").val();
@@ -342,7 +342,7 @@ function finalizarVenta() {
     }
 }
 
-const BASIC_MODEL = {
+const BASIC_MODEL_SHOP = {
     nombre: '',
     telefono: '',
     direccion: '',

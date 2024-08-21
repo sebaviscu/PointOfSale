@@ -8,7 +8,7 @@ const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun",
     "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
 ];
 
-const BASIC_MODEL = {
+const BASIC_MODEL_PROVEEDOR = {
     idProveedor: 0,
     nombre: '',
     cuil: null,
@@ -86,8 +86,17 @@ $(document).ready(function () {
         ]
     });
 
-    cargarTablaGastos();
-    cargarTablaDinamica();
+    fetch("/Tienda/GetTienda")
+        .then(response => {
+            return response.json();
+        }).then(responseJson => {
+
+            document.getElementById("divSwitchVisionGlobalProveedores").style.display = responseJson.data != null && responseJson.data.length > 1 ? '' : 'none';
+
+        })
+
+    cargarTablaGastos(false);
+    cargarTablaDinamica(false);
 
     fetch("/Admin/GetProveedores")
         .then(response => {
@@ -113,7 +122,7 @@ $(document).ready(function () {
         } else {
             row = $(this).closest('tr');
         }
-        var data;
+        let data;
 
         if (tableDataMovimientos == undefined)
             data = tableDataGastos.row(row).data();
@@ -163,14 +172,19 @@ $(document).ready(function () {
     removeLoading();
 })
 
+$('#switchVisionGlobalProveedores').change(function () {
+    let visionGlobal = $(this).is(':checked')
+    cargarTablaGastosProveedores(visionGlobal);
+    cargarTablaDinamicaProveedores(visionGlobal);
+});
 
 $("#btnNuevoGasto").on("click", function () {
     $("#modalPago").modal("show")
 })
 
 $('#cboProveedor').change(function () {
-    var idProv = $(this).val();
-    var proveedor = proveedoresList.find(_ => _.idProveedor == idProv);
+    let idProv = $(this).val();
+    let proveedor = proveedoresList.find(_ => _.idProveedor == idProv);
 
     if (proveedor != null) {
         $("#txtCuilPago").val(proveedor.cuil);
@@ -186,7 +200,7 @@ $('#cboProveedor').change(function () {
     }
 })
 
-const openModal = (model = BASIC_MODEL) => {
+const openModal = (model = BASIC_MODEL_PROVEEDOR) => {
     $("#txtId").val(model.idProveedor);
     $("#txtNombre").val(model.nombre);
     $("#txtCuil").val(model.cuil);
@@ -205,7 +219,7 @@ const openModal = (model = BASIC_MODEL) => {
         document.getElementById("divModif").style.display = 'none';
     else {
         document.getElementById("divModif").style.display = '';
-        var dateTimeModif = new Date(model.modificationDate);
+        let dateTimeModif = new Date(model.modificationDate);
 
         $("#txtModificado").val(dateTimeModif.toLocaleString());
         $("#txtModificadoUsuario").val(model.modificationUser);
@@ -214,7 +228,7 @@ const openModal = (model = BASIC_MODEL) => {
     if (tableDataMovimientos != null)
         tableDataMovimientos.destroy();
 
-    var url = "/Admin/GetMovimientoProveedor?idProveedor=" + model.idProveedor;
+    let url = "/Admin/GetMovimientoProveedor?idProveedor=" + model.idProveedor;
 
     tableDataMovimientos = $("#tbMovimientos").DataTable({
         responsive: true,
@@ -279,7 +293,7 @@ $("#btnSave").on("click", function () {
     }
 
 
-    const model = structuredClone(BASIC_MODEL);
+    const model = structuredClone(BASIC_MODEL_PROVEEDOR);
     model["idProveedor"] = $("#txtId").val();
     model["nombre"] = $("#txtNombre").val();
     model["direccion"] = $("#txtDireccion").val();
@@ -492,7 +506,14 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
 })
 
 
-function cargarTablaGastos() {
+function cargarTablaGastosProveedores(isGlobal) {
+
+    let url = `/Admin/GetAllMovimientoProveedor?visionGlobal=${isGlobal}`;
+
+    if ($.fn.DataTable.isDataTable('#tbDataGastos')) {
+        $('#tbDataGastos').DataTable().clear().destroy();  // Destruye la instancia existente
+    }
+
     tableDataGastos = $("#tbDataGastos").DataTable({
         responsive: true,
         pageLength: 10,
@@ -502,7 +523,7 @@ function cargarTablaGastos() {
             }
         },
         "ajax": {
-            "url": "/Admin/GetAllMovimientoProveedor",
+            "url": url,
             "type": "GET",
             "datatype": "json"
         },
@@ -643,7 +664,7 @@ const openModalPago = (model = BASIC_MODEL_PAGO) => {
         document.getElementById("divModif").style.display = 'none';
     else {
         document.getElementById("divModif").style.display = '';
-        var dateTimeModif = new Date(model.modificationDate);
+        let dateTimeModif = new Date(model.modificationDate);
 
         $("#txtModificado").val(dateTimeModif.toLocaleString());
         $("#txtModificadoUsuario").val(model.modificationUser);
@@ -652,13 +673,13 @@ const openModalPago = (model = BASIC_MODEL_PAGO) => {
     $("#modalPago").modal("show")
 }
 function calcularIva() {
-    var importeText = $('#txtImporte').val();
-    var importe = parseFloat(importeText == '' ? 0 : importeText);
-    var iva = parseFloat($('#txtIva').val());
+    let importeText = $('#txtImporte').val();
+    let importe = parseFloat(importeText == '' ? 0 : importeText);
+    let iva = parseFloat($('#txtIva').val());
 
     if (!isNaN(importe) && !isNaN(iva)) {
-        var importeSinIva = importe / (1 + (iva / 100));
-        var importeIva = importe - importeSinIva;
+        let importeSinIva = importe / (1 + (iva / 100));
+        let importeIva = importe - importeSinIva;
 
         $('#txtImporteSinIva').val(importeSinIva.toFixed(2));
         $('#txtImporteIva').val(importeIva.toFixed(2));
@@ -674,10 +695,15 @@ $('#txtImporte').keyup(function () {
 });
 
 
-function cargarTablaDinamica() {
-    fetch(`/Admin/GetProveedorTablaDinamica`, {
+function cargarTablaDinamicaProveedores(isGlobal) {
+
+    let url = `/Admin/GetProveedorTablaDinamica?visionGlobal=${isGlobal}`;
+    $("#wdr-component").LoadingOverlay("show")
+
+    fetch(url, {
         method: "GET"
     }).then(response => {
+        $("#wdr-component").LoadingOverlay("hide")
         return response.json();
     }).then(responseJson => {
 
@@ -685,11 +711,15 @@ function cargarTablaDinamica() {
 
             if (responseJson.object != []) {
 
-                var today = new Date();
-                var month = "fecha.Month." + monthNames[today.getMonth()];
-                var year = "fecha.Year." + today.getFullYear();
+                let today = new Date();
+                let month = "fecha.Month." + monthNames[today.getMonth()];
+                let year = "fecha.Year." + today.getFullYear();
 
-                var pivot = new WebDataRocks({
+                if (window.pivot) {
+                    window.pivot.dispose();
+                }
+
+                window.pivot = new WebDataRocks({
                     container: "#wdr-component",
                     toolbar: true,
                     report: {

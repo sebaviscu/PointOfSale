@@ -225,7 +225,12 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<ProveedorMovimiento>> ListMovimientosProveedorForTablaDinamica(int idTienda)
         {
-            IQueryable<ProveedorMovimiento> query = await _proveedorMovimiento.Query(u =>u.idTienda == idTienda);
+            IQueryable<ProveedorMovimiento> query = await _proveedorMovimiento.Query();
+
+            if(idTienda != 0)
+            {
+                query = await _proveedorMovimiento.Query(u => u.idTienda == idTienda);
+            }
 
             return query.Include(_=>_.Proveedor).OrderByDescending(_ => _.RegistrationUser).ToList();
         }

@@ -1,7 +1,7 @@
 ﻿let tableData;
 let rowSelectedPromocion;
 
-const BASIC_MODEL = {
+const BASIC_MODEL_PROMOCION = {
     idPromocion: 0,
     nombre: '',
     idProducto: null,
@@ -234,7 +234,7 @@ $(document).on('select2:open', () => {
 });
 
 
-const openModal = (model = BASIC_MODEL) => {
+const openModal = (model = BASIC_MODEL_PROMOCION) => {
     if (model.idPromocion != 0) {
         //$("#cboProducto").select2().val(model.idProducto).trigger("change");
         //$("#cboCategoria").select2().val(model.idCategory).trigger("change");
@@ -303,7 +303,7 @@ $("#btnSave").on("click", function () {
         return;
     }
 
-    const model = structuredClone(BASIC_MODEL);
+    const model = structuredClone(BASIC_MODEL_PROMOCION);
     model["idPromocion"] = $("#txtId").val();
     model["nombre"] = $("#txtNombre").val();
     model["isActive"] = $("#cboState").val() === '1' ? true : false;

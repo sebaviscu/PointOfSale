@@ -25,10 +25,14 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<Gastos>> List(int idTienda)
         {
+            IQueryable<Gastos> query = await _repository.Query();
 
-            IQueryable<Gastos> query = await _repository.Query(_=>_.IdTienda == idTienda);
-            var resp =  query.Include(_=>_.TipoDeGasto).Include(_ => _.User).OrderBy(_ => _.TipoDeGasto.Descripcion).ToList();
-            return resp;
+            if (idTienda != 0)
+            {
+                query = await _repository.Query(u => u.IdTienda == idTienda);
+            }
+
+            return query.Include(_ => _.TipoDeGasto).Include(_ => _.User).OrderBy(_ => _.TipoDeGasto.Descripcion).ToList();
         }
 
         public async Task<Gastos> Add(Gastos entity)
@@ -143,8 +147,14 @@ namespace PointOfSale.Business.Services
         }
         public async Task<List<Gastos>> ListGastosForTablaDinamica(int idTienda)
         {
-            IQueryable<Gastos> query = await _repository.Query(u => u.IdTienda == idTienda);
-            return query.Include(_ => _.TipoDeGasto).Include(_=>_.User).ToList();
+            IQueryable<Gastos> query = await _repository.Query();
+
+            if (idTienda != 0)
+            {
+                query = await _repository.Query(u => u.IdTienda == idTienda);
+            }
+
+            return query.Include(_ => _.TipoDeGasto).Include(_ => _.User).ToList();
         }
     }
 }

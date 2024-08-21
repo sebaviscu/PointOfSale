@@ -36,14 +36,15 @@ namespace PointOfSale.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetGastos()
+        public async Task<IActionResult> GetGastos(bool visionGlobal)
         {
             var gResponse = new GenericResponse<List<VMGastos>>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
+                var idtienda = visionGlobal ? 0 : user.IdTienda;
 
-                List<VMGastos> vmGastosList = _mapper.Map<List<VMGastos>>(await _GastosService.List(user.IdTienda));
+                List<VMGastos> vmGastosList = _mapper.Map<List<VMGastos>>(await _GastosService.List(idtienda));
                 return StatusCode(StatusCodes.Status200OK, new { data = vmGastosList });
             }
             catch (Exception ex)
@@ -211,12 +212,14 @@ namespace PointOfSale.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetGastosTablaDinamica()
+        public async Task<IActionResult> GetGastosTablaDinamica(bool visionGlobal)
         {
             var gResponse = new GenericResponse<List<VMGastosTablaDinamica>>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
+                var idtienda = visionGlobal ? 0 : user.IdTienda;
+
                 var listUsers = _mapper.Map<List<VMGastosTablaDinamica>>(await _GastosService.ListGastosForTablaDinamica(user.IdTienda));
 
                 gResponse.Object = listUsers.OrderByDescending(_ => _.RegistrationUser).ThenByDescending(_ => _.Gasto).ThenByDescending(_ => _.Tipo_Gasto).ToList();

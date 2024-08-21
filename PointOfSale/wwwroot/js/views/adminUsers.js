@@ -1,7 +1,7 @@
 ﻿let tableDataUsers;
 let rowSelectedUser;
 
-const BASIC_MODEL = {
+const BASIC_MODEL_USER = {
     idUsers: 0,
     name: "",
     email: "",
@@ -120,7 +120,7 @@ $(document).ready(function () {
     });
 })
 
-const openModal = (model = BASIC_MODEL) => {
+const openModal = (model = BASIC_MODEL_USER) => {
     var rol = model.idRol == 0 ? $("#cboRol option:first").val() : model.idRol;
     var tienda = model.idTienda == 0 ? $("#cboTiendas option:first").val() : model.idTienda;
     $("#txtId").val(model.idUsers);
@@ -186,7 +186,7 @@ $("#btnSave").on("click", function () {
         return;
     }
 
-    const model = structuredClone(BASIC_MODEL);
+    const model = structuredClone(BASIC_MODEL_USER);
     model["idUsers"] = parseInt($("#txtId").val());
     model["name"] = $("#txtName").val();
     model["email"] = $("#txtEmail").val();

@@ -6,7 +6,7 @@ let tienda;
 let aumentoWeb = 0;
 let cantProductosImportar = 0;
 
-const BASIC_MODEL = {
+const BASIC_MODEL_PRODUCTOS = {
     idProduct: 0,
     barCode: "",
     description: "",
@@ -266,7 +266,7 @@ function editAll() {
     $("#modalDataMasivo").modal("show")
 }
 
-const openModal = (model = BASIC_MODEL) => {
+const openModal = (model = BASIC_MODEL_PRODUCTOS) => {
 
     $("#txtId").val(model.idProduct);
     $("#txtBarCode").val(model.barCode);
@@ -641,7 +641,7 @@ $("#btnSave").on("click", async function () {
         return;
     }
 
-    const model = structuredClone(BASIC_MODEL);
+    const model = structuredClone(BASIC_MODEL_PRODUCTOS);
     model["idProduct"] = parseInt($("#txtId").val());
     model["barCode"] = $("#txtBarCode").val();
     model["description"] = $("#txtDescription").val();
