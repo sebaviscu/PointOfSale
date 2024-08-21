@@ -265,13 +265,13 @@ $(document).on("click", "button.btn-delete", async function () {
     if (!(await validateCode())) { return false; }
 
     const currentTabId = $(this).data("idTab");
-        const row = $(this).data("row");
+    const row = $(this).data("row");
 
-        let currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
+    let currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
 
-        currentTab.products.splice(row, 1);
+    currentTab.products.splice(row, 1);
 
-        showProducts_Prices(currentTabId, currentTab);
+    showProducts_Prices(currentTabId, currentTab);
 
 })
 
@@ -537,7 +537,13 @@ function registrationSale(currentTabId) {
                 nuevaVentaSpan.textContent = responseJson.object.saleNumber;
             }
 
-            $("#btnImprimirTicket" + currentTabId).attr("idSale", responseJson.object.idSale);
+            if (responseJson.object.idSale != null) {
+                $("#btnImprimirTicket" + currentTabId).attr("idSale", responseJson.object.idSale);
+            }
+            else {
+                let newIdSaleMultiple = responseJson.object.idSaleMultiple.slice(0, -1);  // Elimina el último carácter
+                $("#btnImprimirTicket" + currentTabId).attr("idSalesMultiple", newIdSaleMultiple);
+            }
 
 
             AllTabsForSale = AllTabsForSale.filter(p => p.idTab != currentTabId);
@@ -648,7 +654,7 @@ $('#btn-add-tab').click(function () {
     newTab();
 });
 
-$('#tab-list').on('click', '.close',async function () {
+$('#tab-list').on('click', '.close', async function () {
     if (!(await validateCode())) { return false; }
 
     let tabID = $(this).parents('button').attr('data-bs-target');
@@ -709,18 +715,50 @@ function addFunctions(idTab) {
 
     $('#btnImprimirTicket' + idTab).on("click", function () {
         let idSale = $("#btnImprimirTicket" + idTab).attr("idsale");
+        showLoading();
+        if (idSale != null) {
 
-        fetch(`/Sales/PrintTicket?idSale=${idSale}`
-        ).then(response => {
+            fetch(`/Sales/PrintTicket?idSale=${idSale}`
+            ).then(response => {
 
-            return response.json();
-        }).then(response => {
-            $("#modalData").modal("hide");
-            printTicket(response.object.ticket, response.object.nombreImpresora);
+                return response.json();
+            }).then(response => {
+                removeLoading();
+                if (isHealthy &&
+                    response.object.nombreImpresora != null &&
+                    response.object.nombreImpresora != '' &&
+                    response.object.ticket != null &&
+                    response.object.ticket != '') {
+                    printTicket(response.object.ticket, response.object.nombreImpresora);
+                }
 
-            swal("Exitoso!", "Ticket impreso!", "success");
+                swal("Exitoso!", "Ticket impreso!", "success");
 
-        });
+            });
+        }
+        else {
+            let idSalesMultiples = $("#btnImprimirTicket" + idTab).attr("idSalesMultiple");
+            let saleNumbersArray = idSalesMultiples.split(",").map(Number);
+
+            let queryString = saleNumbersArray.map(id => `idSales=${id}`).join("&");
+
+            fetch(`/Sales/PrintMultiplesTickets?${queryString}`)
+                .then(response => {
+                    return response.json();
+                }).then(response => {
+                    removeLoading();
+                    if (isHealthy &&
+                        response.object.nombreImpresora != null &&
+                        response.object.nombreImpresora != '' &&
+                        response.object.ticket != null &&
+                        response.object.ticket != '') {
+                        printTicket(response.object.ticket, response.object.nombreImpresora);
+                    }
+
+                    swal("Exitoso!", "Ticket impreso!", "success");
+
+                });
+        }
     });
 
     $('#tbProduct' + idTab + ' tbody').on('dblclick', 'tr', async function () {
@@ -736,10 +774,10 @@ function addFunctions(idTab) {
             showCancelButton: true,
             closeOnConfirm: false,
             inputPlaceholder: "ingrese el nuevo precio"
-        },async function (value) {
+        }, async function (value) {
 
             if (!(await validateCode())) { return false; }
-            
+
             if (value === false) return false;
 
             if (value === "") {

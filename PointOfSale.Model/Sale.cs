@@ -33,5 +33,6 @@ namespace PointOfSale.Model
         public decimal? DescuentoRecargo { get; set; }
         public int? IdFacturaEmitida { get; set; }
         public virtual FacturaEmitida FacturaEmitida { get; set; }
+        public bool? IsWeb { get; set; }
     }
 }

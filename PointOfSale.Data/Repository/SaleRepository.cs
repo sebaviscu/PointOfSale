@@ -165,6 +165,7 @@ namespace PointOfSale.Data.Repository
             sale.DetailSales = entity.DetailSales;
             sale.RegistrationUser = entity.ModificationUser;
             sale.DescuentoRecargo = 0;
+            sale.IsWeb = true;
 
             var saleCreated = await Register(sale, ajustes);
 

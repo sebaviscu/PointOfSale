@@ -139,7 +139,14 @@ $("#btnSearch").click(function () {
 
                     $("#tbsale tbody").append(
                         $("<tr>").append(
-                            $("<td>").text(sale.registrationDate),
+                            $("<td>").append(
+                                $("<span>").text(sale.registrationDate),
+                                sale.isWeb ? $("<i>")
+                                    .addClass("mdi mdi-web ms-3")
+                                    .attr("title", "Venta Web")
+                                    .tooltip()
+                                    : null
+                            ),
                             $("<td>").text(sale.saleNumber),
                             $("<td>").text(sale.typeDocumentSale)
                                 .append(changePresu != "" ?
@@ -154,7 +161,9 @@ $("#btnSearch").click(function () {
                                     $("<i>").addClass("mdi mdi-eye")
                                 ).data("sale", sale))
                         )
-                    )
+                    );
+
+
                 });
                 $("#lblCantidadVentas").html("Cantidad de Ventas: <strong> " + Object.keys(uniqs).length + ".</strong>");
                 $("#lbltotal").html("Total: <strong>$ " + total + ".</strong>");

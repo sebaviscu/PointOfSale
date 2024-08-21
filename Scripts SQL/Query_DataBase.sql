@@ -207,6 +207,7 @@ IdTienda int not null,
 idClienteMovimiento int null,
 descuentoRecargo decimal(10,2) null,
 IdFacturaEmitida int null,
+isWeb bit null,
 [registrationDate] datetime default getdate(),
 [registrationUser] varchar(50) not null
 )

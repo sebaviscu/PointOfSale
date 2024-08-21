@@ -310,6 +310,7 @@ namespace PointOfSale.Business.Services
             sale.IdTienda = idTienda;
             sale.IdTurno = turno.IdTurno;
             sale.IdUsers = idUser;
+            sale.IsWeb = false;
 
             var catProdVenta = random.Next(0, 4);
 
@@ -395,7 +396,6 @@ namespace PointOfSale.Business.Services
 
             return query.Include(dv => dv.DetailSales).FirstOrDefault();
         }
-
 
         public async Task<Sale> Edit(int idSale, int formaPago)
         {

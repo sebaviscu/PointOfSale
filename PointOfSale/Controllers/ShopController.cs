@@ -183,10 +183,13 @@ namespace PointOfSale.Controllers
 
                     var facturaEmitida = await _afipService.FacturarVenta(sale, ajustes, model.CuilFactura, model.IdClienteFactura);
 
-                    var ticket = await _ticketService.TicketSale(sale, ajustes, facturaEmitida);
-                    model.Ticket = ticket.Ticket;
-                    model.ImagesTicket.AddRange(ticket.ImagesTicket);
-                    model.NombreImpresora = model.ImprimirTicket && !string.IsNullOrEmpty(ajustes.NombreImpresora) ? ajustes.NombreImpresora : null;
+                    if (model.ImprimirTicket)
+                    {
+                        var ticket = await _ticketService.TicketSale(sale, ajustes, facturaEmitida);
+                        model.Ticket = ticket.Ticket;
+                        model.ImagesTicket.AddRange(ticket.ImagesTicket);
+                        model.NombreImpresora = model.ImprimirTicket && !string.IsNullOrEmpty(ajustes.NombreImpresora) ? ajustes.NombreImpresora : null;
+                    }
                 }
 
                 gResponse.State = true;
@@ -213,7 +216,7 @@ namespace PointOfSale.Controllers
 
                 var ajustes = await _ajusteService.GetAjustes(user.IdTienda);
 
-                if(string.IsNullOrEmpty(ajustes.NombreImpresora))
+                if (string.IsNullOrEmpty(ajustes.NombreImpresora))
                 {
                     return HandleException(null, "No existe impresora registrada.", _logger, idVentaWeb.ToJson());
                 }

@@ -172,7 +172,7 @@ namespace PointOfSale.Controllers
 
         [HttpPost]
         public async Task<IActionResult> RegisterSale([FromBody] VMSale model)
-         {
+        {
 
             var gResponse = new GenericResponse<VMSaleResult>();
             try
@@ -210,7 +210,8 @@ namespace PointOfSale.Controllers
                         IdTurno = user.IdTurno,
                         IdTienda = user.IdTienda,
                         RegistrationUser = user.UserName,
-                        SaleNumber = lastNumber
+                        SaleNumber = lastNumber,
+                        IsWeb = false
                     };
 
                     if (!paso)
@@ -226,13 +227,20 @@ namespace PointOfSale.Controllers
                     var facturaEmitida = await RegistrationFacturar(model, sale_created, ajustes);
 
                     // si es multiple, no se podra reimprimir el ticket ya que se necesita el idSale y en este caso, hay muchos, ver que podemos hacer
-                    //var modelResponde = _mapper.Map<VMSale>(sale_created);
-                    modelResponde.IdSale = sale_created.IdSale;
                     if (model.ImprimirTicket && !string.IsNullOrEmpty(ajustes.NombreImpresora))
                     {
                         var ticket = await RegistrationTicketPrinting(ajustes, sale_created, facturaEmitida);
                         modelResponde.Ticket += ticket.Ticket;
                         modelResponde.ImagesTicket.AddRange(ticket.ImagesTicket);
+                    }
+
+                    if (model.MultiplesFormaDePago.Count == 1)
+                    {
+                        modelResponde.IdSale = sale_created.IdSale;
+                    }
+                    else
+                    {
+                        modelResponde.IdSaleMultiple += $"{sale_created.IdSale},";
                     }
                 }
 
@@ -261,27 +269,6 @@ namespace PointOfSale.Controllers
             var facturaEmitida = await _afipFacturacionService.FacturarVenta(sale_created, ajustes, model.CuilFactura, model.IdClienteFactura);
 
             return facturaEmitida;
-        }
-
-        private async Task RegistrationMultiplesPagos(VMSale model, Sale sale_created, Ajustes ajustes)
-        {
-            if (model.MultiplesFormaDePago != null && model.MultiplesFormaDePago.Count > 1)
-            {
-                foreach (var f in model.MultiplesFormaDePago.Skip(1))
-                {
-                    var s = new Sale
-                    {
-                        Total = f.Total,
-                        RegistrationDate = sale_created.RegistrationDate,
-                        IdTienda = sale_created.IdTienda,
-                        SaleNumber = sale_created.SaleNumber,
-                        IdTypeDocumentSale = f.FormaDePago,
-                        IdTurno = sale_created.IdTurno
-                    };
-
-                    await _saleService.Register(s, ajustes);
-                }
-            }
         }
 
         private async Task RegistrarionClient(VMSale model, string registrationUser, int IdTienda, Sale sale_created)
@@ -367,13 +354,47 @@ namespace PointOfSale.Controllers
             }
         }
 
+        public async Task<IActionResult> PrintMultiplesTickets([FromQuery] List<int> idSales)
+        {
+            GenericResponse<VMSale> gResponse = new GenericResponse<VMSale>();
+
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Empleado]);
+                var model = new VMSale();
+                model.ImagesTicket = new List<Images>();
+                var ajustes = await _ajustesService.GetAjustes(user.IdTienda);
+
+                model.NombreImpresora = ajustes.NombreImpresora;
+                foreach (var item in idSales)
+                {
+                    var sale = await _saleService.GetSale(item);
+                    var facturaEmitida = await _afipFacturacionService.GetBySaleId(item);
+                    var ticket = await _ticketService.TicketSale(sale, ajustes, facturaEmitida);
+
+                    model.Ticket += ticket.Ticket ?? string.Empty;
+                    model.ImagesTicket.AddRange(ticket.ImagesTicket);
+                }
+
+                gResponse.State = true;
+                gResponse.Object = model;
+
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al imprimir tickets de venta multiple", _logger, idSales.ToJson());
+            }
+
+        }
+
         public async Task<IActionResult> PrintTicket(int idSale)
         {
             GenericResponse<VMSale> gResponse = new GenericResponse<VMSale>();
 
             try
             {
-                if(idSale == 0)
+                if (idSale == 0)
                 {
                     gResponse.State = false;
                     gResponse.Message = "Es una venta con multiples formas de pago, no se pued eimprimir ticket.";
