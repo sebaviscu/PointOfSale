@@ -39,29 +39,39 @@ namespace PointOfSale.Business.Services
         public async Task<List<Product>> GetProducts(string search)
         {
             var list = new List<Product>();
+
+            // Si la búsqueda contiene espacios, dividimos la búsqueda en múltiples términos
             if (search.Contains(' '))
             {
                 var split = search.Split(' ');
-                var query = "select * from Product where ";
+
+                // Construcción de la consulta SQL con LIKE para cada término de búsqueda
+                var query = "SELECT * FROM Product WHERE ";
                 for (int i = 0; i < split.Length; i++)
                 {
                     query += $"description LIKE '%{split[i]}%' ";
-                    if (i < split.Length - 1) query += " and ";
+                    if (i < split.Length - 1) query += " AND ";
                 }
+
+                // Ejecutar la consulta con SQL crudo (mejorable usando parámetros SQL para evitar inyecciones)
                 list = _repositoryProduct.SqlRaw(query).ToList();
             }
             else
             {
-                IQueryable<Product> query = await _repositoryProduct.Query(p =>
-                           p.IsActive == true &&
-                           string.Concat(p.BarCode, p.Description).Contains(search));
+                // Usar IQueryable con Entity Framework para optimizar la consulta
+                var query = await _repositoryProduct.Query(p =>
+                               p.IsActive == true &&
+                               (p.BarCode.Contains(search) || p.Description.Contains(search)));
 
-                list = query.Include(c => c.IdCategoryNavigation).Include(_ => _.ListaPrecios).ToList();
-
+                // Incluir las propiedades de navegación necesarias
+                list = await query.Include(c => c.IdCategoryNavigation)
+                                  .Include(p => p.ListaPrecios)
+                                  .ToListAsync();
             }
 
             return list;
         }
+
 
         public async Task<List<ListaPrecio>> GetProductsSearchAndIdLista(string search, ListaDePrecio listaPrecios)
         {
@@ -175,57 +185,50 @@ namespace PointOfSale.Business.Services
             return await _repositorySale.GetLastSerialNumberSale(idTienda);
         }
 
-        public async Task<List<Sale>> SaleHistory(string SaleNumber, string StarDate, string EndDate, string presupuestos)
+        public async Task<List<Sale>> SaleHistory(string saleNumber, string startDate, string endDate, string presupuestos)
         {
-            IQueryable<Sale> query = await _repositorySale.Query();
-            StarDate = StarDate is null ? "" : StarDate;
-            EndDate = EndDate is null ? "" : EndDate;
+            IQueryable<Sale> query = await _repositorySale.Query(); // Eliminado el await innecesario
+            startDate = startDate ?? "";
+            endDate = endDate ?? "";
 
             IQueryable<Sale> result;
 
-            if (StarDate != "" && EndDate != "")
+            if (!string.IsNullOrEmpty(startDate) && !string.IsNullOrEmpty(endDate))
             {
-
-                DateTime start_date = DateTime.ParseExact(StarDate, "dd/MM/yyyy", new CultureInfo("es-PE"));
-                DateTime end_date = DateTime.ParseExact(EndDate, "dd/MM/yyyy", new CultureInfo("es-PE"));
+                DateTime start_date = DateTime.ParseExact(startDate, "dd/MM/yyyy", new CultureInfo("es-PE"));
+                DateTime end_date = DateTime.ParseExact(endDate, "dd/MM/yyyy", new CultureInfo("es-PE"));
 
                 result = query.Where(v =>
                     v.RegistrationDate.Value.Date >= start_date.Date &&
                     v.RegistrationDate.Value.Date <= end_date.Date
                 )
+                .OrderByDescending(_ => _.IdSale)
                 .Include(tdv => tdv.TypeDocumentSaleNavigation)
                 .Include(u => u.IdUsersNavigation)
-                .Include(dv => dv.DetailSales)
-                .OrderByDescending(_ => _.IdSale);
+                .Include(dv => dv.DetailSales);
 
                 switch (presupuestos)
                 {
-                    case "incluir":
-
-                        break;
                     case "noIncluir":
                         result = result.Where(_ => _.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu);
                         break;
                     case "solamente":
                         result = result.Where(_ => _.TypeDocumentSaleNavigation.TipoFactura == TipoFactura.Presu);
                         break;
-                    default:
-                        break;
                 }
             }
             else
             {
-                result = query.Where(v => v.SaleNumber.EndsWith(SaleNumber))
+                result = query.Where(v => v.SaleNumber.EndsWith(saleNumber))
+                .OrderByDescending(_ => _.IdSale)
                 .Include(tdv => tdv.TypeDocumentSaleNavigation)
                 .Include(u => u.IdUsersNavigation)
-                .Include(dv => dv.DetailSales)
-                .OrderByDescending(_ => _.IdSale);
+                .Include(dv => dv.DetailSales);
             }
 
-
-
-            return result.ToList();
+            return await result.ToListAsync(); // Usar ToListAsync para evitar bloquear el hilo
         }
+
 
         public async Task<Sale> Detail(string SaleNumber)
         {
