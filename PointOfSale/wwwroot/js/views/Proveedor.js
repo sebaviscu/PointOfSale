@@ -1,4 +1,4 @@
-﻿let tableData;
+﻿let tableDataProveedor;
 let rowSelectedProveedor;
 let tableDataMovimientos;
 let tableDataGastos;
@@ -44,7 +44,7 @@ $(document).ready(function () {
 
     showLoading();
 
-    tableData = $("#tbData").DataTable({
+    tableDataProveedor = $("#tbData").DataTable({
         responsive: true,
         "ajax": {
             "url": "/Admin/GetProveedores",
@@ -200,7 +200,7 @@ $('#cboProveedor').change(function () {
     }
 })
 
-const openModal = (model = BASIC_MODEL_PROVEEDOR) => {
+const openModalProveedor = (model = BASIC_MODEL_PROVEEDOR) => {
     $("#txtId").val(model.idProveedor);
     $("#txtNombre").val(model.nombre);
     $("#txtCuil").val(model.cuil);
@@ -278,7 +278,7 @@ const openModal = (model = BASIC_MODEL_PROVEEDOR) => {
 }
 
 $("#btnNew").on("click", function () {
-    openModal()
+    openModalProveedor()
 })
 
 $("#btnSave").on("click", function () {
@@ -322,7 +322,7 @@ $("#btnSave").on("click", function () {
 
             if (responseJson.state) {
 
-                tableData.row.add(responseJson.object).draw(false);
+                tableDataProveedor.row.add(responseJson.object).draw(false);
                 $("#modalData").modal("hide");
                 swal("Exitoso!", "Proveedor fué creada", "success");
 
@@ -344,7 +344,7 @@ $("#btnSave").on("click", function () {
         }).then(responseJson => {
             if (responseJson.state) {
 
-                tableData.row(rowSelectedProveedor).data(responseJson.object).draw(false);
+                tableDataProveedor.row(rowSelectedProveedor).data(responseJson.object).draw(false);
                 rowSelectedProveedor = null;
                 $("#modalData").modal("hide");
                 swal("Exitoso!", "Proveedor fué modificada", "success");
@@ -448,12 +448,10 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
         rowSelectedProveedor = $(this).closest('tr');
     }
 
-    const data = tableData.row(rowSelectedProveedor).data();
+    const data = tableDataProveedor.row(rowSelectedProveedor).data();
 
-    openModal(data);
+    openModalProveedor(data);
 })
-
-
 
 $("#tbData tbody").on("click", ".btn-delete", function () {
 
@@ -464,7 +462,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
     } else {
         row = $(this).closest('tr');
     }
-    const data = tableData.row(row).data();
+    const data = tableDataProveedor.row(row).data();
 
     swal({
         title: "¿Está seguro?",
@@ -491,7 +489,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                 }).then(responseJson => {
                     if (responseJson.state) {
 
-                        tableData.row(row).remove().draw();
+                        tableDataProveedor.row(row).remove().draw();
                         swal("Exitoso!", "Proveedor  fué eliminada", "success");
 
                     } else {

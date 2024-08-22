@@ -1,4 +1,4 @@
-﻿let tableData;
+﻿let tableDataCategory;
 let rowSelectedCategory;
 
 const BASIC_MODEL_CATEGORIA = {
@@ -13,7 +13,7 @@ const BASIC_MODEL_CATEGORIA = {
 $(document).ready(function () {
 
 
-    tableData = $("#tbData").DataTable({
+    tableDataCategory = $("#tbData").DataTable({
         responsive: true,
         "ajax": {
             "url": "/Inventory/GetCategories",
@@ -59,7 +59,7 @@ $(document).ready(function () {
     });
 })
 
-const openModal = (model = BASIC_MODEL_CATEGORIA) => {
+const openModalCategory = (model = BASIC_MODEL_CATEGORIA) => {
     $("#txtId").val(model.idCategory);
     $("#txtDescription").val(model.description);
     $("#cboState").val(model.isActive);
@@ -79,7 +79,7 @@ const openModal = (model = BASIC_MODEL_CATEGORIA) => {
 }
 
 $("#btnNew").on("click", function () {
-    openModal()
+    openModalCategory()
 })
 
 $("#btnSave").on("click", function () {
@@ -114,7 +114,7 @@ $("#btnSave").on("click", function () {
 
             if (responseJson.state) {
 
-                tableData.row.add(responseJson.object).draw(false);
+                tableDataCategory.row.add(responseJson.object).draw(false);
                 $("#modalData").modal("hide");
                 swal("Exitoso!", "La categoria fué creada", "success");
 
@@ -136,7 +136,7 @@ $("#btnSave").on("click", function () {
         }).then(responseJson => {
             if (responseJson.state) {
 
-                tableData.row(rowSelectedCategory).data(responseJson.object).draw(false);
+                tableDataCategory.row(rowSelectedCategory).data(responseJson.object).draw(false);
                 rowSelectedCategory = null;
                 $("#modalData").modal("hide");
                 swal("Exitoso!", "La categoria fué modificada", "success");
@@ -159,9 +159,9 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
         rowSelectedCategory = $(this).closest('tr');
     }
 
-    const data = tableData.row(rowSelectedCategory).data();
+    const data = tableDataCategory.row(rowSelectedCategory).data();
 
-    openModal(data);
+    openModalCategory(data);
 })
 
 
@@ -175,7 +175,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
     } else {
         row = $(this).closest('tr');
     }
-    const data = tableData.row(row).data();
+    const data = tableDataCategory.row(row).data();
 
     swal({
         title: "¿Está seguro?",
@@ -202,7 +202,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                 }).then(responseJson => {
                     if (responseJson.state) {
 
-                        tableData.row(row).remove().draw();
+                        tableDataCategory.row(row).remove().draw();
                         swal("Exitoso!", "Categoria fué eliminada", "success");
 
                     } else {

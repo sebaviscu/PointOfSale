@@ -54,7 +54,7 @@ $(document).ready(function () {
             }
         })
 
-    tableData = $("#tbData").DataTable({
+    tableDataUsers = $("#tbData").DataTable({
         responsive: true,
         "ajax": {
             "url": "/Admin/GetUsers",
@@ -103,8 +103,8 @@ $(document).ready(function () {
         ]
     });
 
-    var $passwordInput = $('#txtPassWord');
-    var $togglePasswordButton = $('#togglePassword');
+    let $passwordInput = $('#txtPassWord');
+    let $togglePasswordButton = $('#togglePassword');
 
     $togglePasswordButton.on('mousedown', function () {
         $passwordInput.attr('type', 'text');
@@ -120,9 +120,9 @@ $(document).ready(function () {
     });
 })
 
-const openModal = (model = BASIC_MODEL_USER) => {
-    var rol = model.idRol == 0 ? $("#cboRol option:first").val() : model.idRol;
-    var tienda = model.idTienda == 0 ? $("#cboTiendas option:first").val() : model.idTienda;
+const openModalUser = (model = BASIC_MODEL_USER) => {
+    let rol = model.idRol == 0 ? $("#cboRol option:first").val() : model.idRol;
+    let tienda = model.idTienda == 0 ? $("#cboTiendas option:first").val() : model.idTienda;
     $("#txtId").val(model.idUsers);
     $("#txtName").val(model.name);
     $("#txtEmail").val(model.email);
@@ -134,14 +134,14 @@ const openModal = (model = BASIC_MODEL_USER) => {
     //$("#txtPhoto").val("");
     //$("#imgUser").attr("src", `data:image/png;base64,${model.photoBase64}`);
 
-    var rol = $('#cboRol').val();
+    let rol = $('#cboRol').val();
     $("#cboTiendas").prop("disabled", rol == '1');
 
     if (model.modificationUser == null)
         document.getElementById("divModif").style.display = 'none';
     else {
         document.getElementById("divModif").style.display = '';
-        var dateTimeModif = new Date(model.modificationDate);
+        let dateTimeModif = new Date(model.modificationDate);
 
         $("#txtModificado").val(dateTimeModif.toLocaleString());
         $("#txtModificadoUsuario").val(model.modificationUser);
@@ -152,11 +152,11 @@ const openModal = (model = BASIC_MODEL_USER) => {
 }
 
 $("#btnNewUser").on("click", function () {
-    openModal()
+    openModalUser()
 })
 
 $('#cboRol').change(function () {
-    var rol = $(this).val();
+    let rol = $(this).val();
 
     $("#cboTiendas").val(rol == '1' ? '' : null);
     $("#cboTiendas").prop("disabled", rol == '1');
@@ -174,8 +174,8 @@ $("#btnSave").on("click", function () {
         return;
     }
 
-    var rol = $("#cboRol").val();
-    var tienda = $("#cboTiendas").val();
+    let rol = $("#cboRol").val();
+    let tienda = $("#cboTiendas").val();
 
     if (rol != '1' && (tienda == '-1' || tienda == null)) {
         toastr.warning("Se debe seleccionar una tienda", "");
@@ -217,7 +217,7 @@ $("#btnSave").on("click", function () {
 
             if (responseJson.state) {
 
-                tableData.row.add(responseJson.object).draw(false);
+                tableDataUsers.row.add(responseJson.object).draw(false);
                 $("#modalData").modal("hide");
                 swal("Exitoso!", "El usuario fué creado", "success");
 
@@ -238,7 +238,7 @@ $("#btnSave").on("click", function () {
         }).then(responseJson => {
             if (responseJson.state) {
 
-                tableData.row(rowSelectedUser).data(responseJson.object).draw(false);
+                tableDataUsers.row(rowSelectedUser).data(responseJson.object).draw(false);
                 rowSelectedUser = null;
                 $("#modalData").modal("hide");
                 swal("Exitoso!", "El usuario fué modificado", "success");
@@ -261,7 +261,7 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
         rowSelectedUser = $(this).closest('tr');
     }
 
-    const data = tableData.row(rowSelectedUser).data();
+    const data = tableDataUsers.row(rowSelectedUser).data();
     showLoading();
 
     fetch(`/Admin/GetUser?idUser=${data.idUsers}`,)
@@ -271,7 +271,7 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
             removeLoading();
             if (responseJson.state) {
 
-                openModal(responseJson.object);
+                openModalUser(responseJson.object);
 
             } else {
                 swal("Lo sentimos", responseJson.message, "error");
@@ -290,7 +290,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
     } else {
         row = $(this).closest('tr');
     }
-    const data = tableData.row(row).data();
+    const data = tableDataUsers.row(row).data();
 
     swal({
         title: "¿Estas seguro?",
@@ -317,7 +317,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                 }).then(responseJson => {
                     if (responseJson.state) {
 
-                        tableData.row(row).remove().draw();
+                        tableDataUsers.row(row).remove().draw();
                         swal("Exitoso!", "El usuario fué eliminado", "success");
 
                     } else {

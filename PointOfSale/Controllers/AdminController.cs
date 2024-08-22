@@ -838,7 +838,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al actualizar forma de pago", _logger, model;
+                return HandleException(ex, "Error al actualizar forma de pago", _logger, model);
             }
 
         }

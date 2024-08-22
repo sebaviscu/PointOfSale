@@ -1,4 +1,4 @@
-﻿let tableData;
+﻿let tableDataPromociones;
 let rowSelectedPromocion;
 
 const BASIC_MODEL_PROMOCION = {
@@ -101,7 +101,7 @@ $(document).ready(function () {
         dropdownParent: $('#modalData .modal-content')
     });
 
-    tableData = $("#tbData").DataTable({
+    tableDataPromociones = $("#tbData").DataTable({
         responsive: true,
         "ajax": {
             "url": "/Admin/GetPromociones",
@@ -156,10 +156,10 @@ $(document).ready(function () {
         } else {
             row = $(this).closest('tr');
         }
-        var data = tableData.row(row).data();
+        var data = tableDataPromociones.row(row).data();
 
         if (data == undefined) {
-            data = tableData.row(row).data();
+            data = tableDataPromociones.row(row).data();
         }
 
         swal({
@@ -226,7 +226,7 @@ function formatResults(data) {
 
 
 $("#btnNew").on("click", function () {
-    openModal()
+    openModalPromocion()
 })
 
 $(document).on('select2:open', () => {
@@ -234,7 +234,7 @@ $(document).on('select2:open', () => {
 });
 
 
-const openModal = (model = BASIC_MODEL_PROMOCION) => {
+const openModalPromocion = (model = BASIC_MODEL_PROMOCION) => {
     if (model.idPromocion != 0) {
         //$("#cboProducto").select2().val(model.idProducto).trigger("change");
         //$("#cboCategoria").select2().val(model.idCategory).trigger("change");
@@ -329,7 +329,7 @@ $("#btnSave").on("click", function () {
 
             if (responseJson.state) {
 
-                tableData.row.add(responseJson.object).draw(false);
+                tableDataPromociones.row.add(responseJson.object).draw(false);
                 $("#modalData").modal("hide");
                 swal("Exitoso!", "Promociones fué creada", "success");
 
@@ -351,7 +351,7 @@ $("#btnSave").on("click", function () {
         }).then(responseJson => {
             if (responseJson.state) {
 
-                tableData.row(rowSelectedPromocion).data(responseJson.object).draw(false);
+                tableDataPromociones.row(rowSelectedPromocion).data(responseJson.object).draw(false);
                 rowSelectedPromocion = null;
                 $("#modalData").modal("hide");
                 swal("Exitoso!", "Promociones fué modificada", "success");
@@ -373,9 +373,9 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
         rowSelectedPromocion = $(this).closest('tr');
     }
 
-    const data = tableData.row(rowSelectedPromocion).data();
+    const data = tableDataPromociones.row(rowSelectedPromocion).data();
 
-    openModal(data);
+    openModalPromocion(data);
 })
 
 $("#tbData tbody").on("click", ".btn-delete", function () {
@@ -387,7 +387,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
     } else {
         row = $(this).closest('tr');
     }
-    const data = tableData.row(row).data();
+    const data = tableDataPromociones.row(row).data();
 
     swal({
         title: "¿Está seguro?",
@@ -414,7 +414,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                 }).then(responseJson => {
                     if (responseJson.state) {
 
-                        tableData.row(row).remove().draw();
+                        tableDataPromociones.row(row).remove().draw();
                         swal("Exitoso!", "Promociones  fué eliminada", "success");
 
                     } else {

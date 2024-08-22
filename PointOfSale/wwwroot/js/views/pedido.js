@@ -1,5 +1,5 @@
 let proveedoresListPedido = [];
-let tableData;
+let tableDataPedido;
 let rowSelectedPedido;
 
 const BASIC_MODEL_PEDIDO_WEB = {
@@ -56,7 +56,7 @@ $(document).ready(function () {
 
         })
 
-    tableData = $("#tbData").DataTable({
+    tableDataPedido = $("#tbData").DataTable({
         responsive: true,
         "ajax": {
             "url": "/Pedido/GetPedidos",
@@ -206,7 +206,7 @@ function calcularTotalProductosRecibidos() {
     calcularIva();
 }
 
-const openModal = (model = BASIC_MODEL_PEDIDO_WEB) => {
+const openModalPedido = (model = BASIC_MODEL_PEDIDO_WEB) => {
     $('#btnVolver').click();
 
     $("#txtIdPedido").val(model.idPedido);
@@ -264,7 +264,7 @@ const openModal = (model = BASIC_MODEL_PEDIDO_WEB) => {
 }
 
 $("#btnNew").on("click", function () {
-    openModal()
+    openModalPedido()
     $("#cboEstado").val(1);
 })
 
@@ -277,10 +277,10 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
         rowSelectedPedido = $(this).closest('tr');
     }
 
-    const data = tableData.row(rowSelectedPedido).data();
+    const data = tableDataPedido.row(rowSelectedPedido).data();
 
 
-    openModal(data);
+    openModalPedido(data);
     calcularTotalCosto();
 })
 
@@ -430,7 +430,7 @@ $("#btnSave").on("click", function () {
         }).then(responseJson => {
 
             if (responseJson.state) {
-                tableData.row.add(responseJson.object).draw(false);
+                tableDataPedido.row.add(responseJson.object).draw(false);
                 $("#modalData").modal("hide");
                 swal("Exitoso!", "Pedido fue creado", "success");
 
@@ -476,7 +476,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
     } else {
         row = $(this).closest('tr');
     }
-    const data = tableData.row(row).data();
+    const data = tableDataPedido.row(row).data();
 
     if (data.estado == 1) {
 
@@ -505,7 +505,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                     }).then(responseJson => {
                         if (responseJson.state) {
 
-                            tableData.row(row).remove().draw();
+                            tableDataPedido.row(row).remove().draw();
                             swal("Exitoso!", "El pedido  fue eliminada", "success");
 
                         } else {
@@ -529,7 +529,7 @@ $("#tbData tbody").on("click", ".btn-recibir", function () {
         rowSelectedPedido = $(this).closest('tr');
     }
 
-    const data = tableData.row(rowSelectedPedido).data();
+    const data = tableDataPedido.row(rowSelectedPedido).data();
 
 
     openModalRecibido(data);

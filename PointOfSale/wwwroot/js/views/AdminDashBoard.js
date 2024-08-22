@@ -20,7 +20,7 @@ let saleTotal = 0;
 let prueba_ver_si_lo_agarra = 0;
 
 
-const BASIC_MODEL_GASTO = {
+const BASIC_MODEL_GASTO_DASHBOARD = {
     idGastos: 0,
     idTipoGasto: 0,
     importe: 0,
@@ -31,7 +31,7 @@ const BASIC_MODEL_GASTO = {
     estadoPago: 0,
 }
 
-const BASIC_MODEL_PAGO_PROVEEDOR = {
+const BASIC_MODEL_PAGO_PROVEEDOR_DASHBOARD = {
     idProveedor: 0,
     tipoFactura: null,
     nroFactura: null,
@@ -928,7 +928,7 @@ $("#btnSavePagoProveedor").on("click", function () {
             return;
         }
 
-        model = structuredClone(BASIC_MODEL_GASTO);
+        model = structuredClone(BASIC_MODEL_GASTO_DASHBOARD);
         model["idGastos"] = 0;
         model["idTipoGasto"] = $("#cboTipoDeGastoEnGasto").val();
         model["importe"] = $("#txtImporte").val();
@@ -960,7 +960,7 @@ $("#btnSavePagoProveedor").on("click", function () {
             return;
         }
 
-        model = structuredClone(BASIC_MODEL_PAGO_PROVEEDOR);
+        model = structuredClone(BASIC_MODEL_PAGO_PROVEEDOR_DASHBOARD);
         model["idProveedor"] = parseInt($("#cboProveedor").val());
         model["tipoFactura"] = $("#cboTipoFactura").val();
         model["nroFactura"] = $("#txtNroFactura").val();

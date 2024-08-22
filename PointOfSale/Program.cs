@@ -51,8 +51,16 @@ public class Program
 
             builder.Services.AddDbContext<POINTOFSALEContext>(options =>
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("SQL_Publich"));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("SQL_Publich"), sqlServerOptionsAction: sqlOptions =>
+                {
+                    sqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 5, // Número máximo de reintentos
+                        maxRetryDelay: TimeSpan.FromSeconds(10), // Tiempo máximo de espera entre reintentos
+                        errorNumbersToAdd: null // Especifica números de error adicionales para los que se realizará un reintento
+                    );
+                });
             });
+
 
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 

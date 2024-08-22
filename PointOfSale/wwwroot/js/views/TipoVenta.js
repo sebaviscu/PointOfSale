@@ -1,4 +1,4 @@
-﻿let tableData;
+﻿let tableDataTipoVenta;
 let rowSelectedFormaPago;
 
 const BASIC_MODEL_TIPO_VENTA = {
@@ -13,7 +13,7 @@ const BASIC_MODEL_TIPO_VENTA = {
 $(document).ready(function () {
 
 
-    tableData = $("#tbData").DataTable({
+    tableDataTipoVenta = $("#tbData").DataTable({
         responsive: true,
         "ajax": {
             "url": "/Admin/GetTipoVenta",
@@ -74,7 +74,7 @@ $(document).ready(function () {
     });
 })
 
-const openModal = (model = BASIC_MODEL_TIPO_VENTA) => {
+const openModalTipoVenta = (model = BASIC_MODEL_TIPO_VENTA) => {
     $("#txtId").val(model.idTypeDocumentSale);
     $("#txtNombre").val(model.description);
     $("#cboState").val(model.isActive ? 1 : 0);
@@ -89,7 +89,7 @@ const openModal = (model = BASIC_MODEL_TIPO_VENTA) => {
 }
 
 $("#btnNew").on("click", function () {
-    openModal()
+    openModalTipoVenta()
 })
 
 $("#btnSave").on("click", function () {
@@ -126,7 +126,7 @@ $("#btnSave").on("click", function () {
 
             if (responseJson.state) {
 
-                tableData.row.add(responseJson.object).draw(false);
+                tableDataTipoVenta.row.add(responseJson.object).draw(false);
                 $("#modalData").modal("hide");
                 swal("Exitoso!", "Tipo de Venta fué creada", "success");
 
@@ -148,7 +148,7 @@ $("#btnSave").on("click", function () {
         }).then(responseJson => {
             if (responseJson.state) {
 
-                tableData.row(rowSelectedFormaPago).data(responseJson.object).draw(false);
+                tableDataTipoVenta.row(rowSelectedFormaPago).data(responseJson.object).draw(false);
                 rowSelectedFormaPago = null;
                 $("#modalData").modal("hide");
                 swal("Exitoso!", "Tipo de Venta fué modificada", "success");
@@ -171,9 +171,9 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
         rowSelectedFormaPago = $(this).closest('tr');
     }
 
-    const data = tableData.row(rowSelectedFormaPago).data();
+    const data = tableDataTipoVenta.row(rowSelectedFormaPago).data();
 
-    openModal(data);
+    openModalTipoVenta(data);
 })
 
 
@@ -187,7 +187,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
     } else {
         row = $(this).closest('tr');
     }
-    const data = tableData.row(row).data();
+    const data = tableDataTipoVenta.row(row).data();
 
     swal({
         title: "¿Está seguro?",
@@ -214,7 +214,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                 }).then(responseJson => {
                     if (responseJson.state) {
 
-                        tableData.row(row).remove().draw();
+                        tableDataTipoVenta.row(row).remove().draw();
                         swal("Exitoso!", "Tipo de Venta  fué eliminada", "success");
 
                     } else {

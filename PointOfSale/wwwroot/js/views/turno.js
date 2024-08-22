@@ -1,4 +1,4 @@
-﻿let tableData;
+﻿let tableDataTurno;
 let rowSelectedTurno;
 
 const BASIC_MODEL_TURNO = {
@@ -13,7 +13,7 @@ const BASIC_MODEL_TURNO = {
 $(document).ready(function () {
 
 
-    tableData = $("#tbData").DataTable({
+    tableDataTurno = $("#tbData").DataTable({
         responsive: true,
         "ajax": {
             "url": "/turno/GetTurnos",
@@ -75,13 +75,13 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
         rowSelectedTurno = $(this).closest('tr');
     }
 
-    const data = tableData.row(rowSelectedTurno).data();
+    const data = tableDataTurno.row(rowSelectedTurno).data();
 
-    openModal(data);
+    openModalTurno(data);
 })
 
 
-const openModal = (model = BASIC_MODEL_TURNO) => {
+const openModalTurno = (model = BASIC_MODEL_TURNO) => {
     $("#txtId").val(model.idTurno);
     $("#txtDescripcion").val(model.descripcion);
     $("#txtFecha").val(model.fecha);
@@ -136,7 +136,7 @@ $("#btnSave").on("click", function () {
     }).then(responseJson => {
         if (responseJson.state) {
 
-            tableData.row(rowSelectedTurno).data(responseJson.object).draw(false);
+            tableDataTurno.row(rowSelectedTurno).data(responseJson.object).draw(false);
             rowSelectedTurno = null;
             $("#modalData").modal("hide");
             swal("Exitoso!", "Turno fué modificada", "success");

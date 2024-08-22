@@ -1,12 +1,4 @@
-﻿let BASIC_MODEL_CLIENTE_SALE = {
-    idCliente: 0,
-    nombre: '',
-    cuil: null,
-    telefono: null,
-    direccion: null,
-    condicionIva: null,
-    isActive: true
-}
+﻿
 
 $(document).ready(function () {
 
@@ -481,6 +473,16 @@ async function seleccionaCliente() {
 
         let nuevoCliente = document.getElementById("switchNuevoCliente").checked
         let guardarNuevouevoCliente = document.getElementById("switchGuardarNuevoCliente").checked
+
+        let BASIC_MODEL_CLIENTE_SALE = {
+            idCliente: 0,
+            nombre: '',
+            cuil: null,
+            telefono: null,
+            direccion: null,
+            condicionIva: null,
+            isActive: true
+        }
 
         const model = structuredClone(BASIC_MODEL_CLIENTE_SALE);
         model["nombre"] = $("#txtNombreCliente").val();

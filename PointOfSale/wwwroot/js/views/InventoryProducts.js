@@ -1,8 +1,7 @@
-﻿let tableData;
+﻿let tableDataProduct;
 let rowSelectedProduct;
 let edicionMasiva = false;
 let aProductos = [];
-let tienda;
 let aumentoWeb = 0;
 let cantProductosImportar = 0;
 
@@ -60,7 +59,7 @@ $(document).ready(function () {
     showLoading();
 
     $(document).ready(function () {
-        tableData = $("#tbData").DataTable({
+        tableDataProduct = $("#tbData").DataTable({
             pageLength: 50,
             responsive: true,
             "ajax": {
@@ -255,7 +254,7 @@ function editAll() {
     }
     cont.appendChild(ul);
 
-    let productos = tableData.ajax.json().data;
+    let productos = tableDataProduct.ajax.json().data;
 
     let idsProductos = aProductos.map(item => parseInt(item[0]));
 
@@ -266,7 +265,7 @@ function editAll() {
     $("#modalDataMasivo").modal("show")
 }
 
-const openModal = (model = BASIC_MODEL_PRODUCTOS) => {
+const openModalProduct = (model = BASIC_MODEL_PRODUCTOS) => {
 
     $("#txtId").val(model.idProduct);
     $("#txtBarCode").val(model.barCode);
@@ -564,7 +563,7 @@ $("#btnCargarImportar").on("click", function () {
 })
 
 $("#btnNewProduct").on("click", function () {
-    openModal()
+    openModalProduct()
 })
 
 $("#btnSaveMasivo").on("click", function () {
@@ -701,7 +700,7 @@ $("#btnSave").on("click", async function () {
 
             if (responseJson.state) {
 
-                tableData.row.add(responseJson.object).draw(false);
+                tableDataProduct.row.add(responseJson.object).draw(false);
                 $("#modalData").modal("hide");
                 swal("Exitoso!", "El producto fué creado", "success");
 
@@ -722,7 +721,7 @@ $("#btnSave").on("click", async function () {
         }).then(responseJson => {
             if (responseJson.state) {
 
-                tableData.row(rowSelectedProduct).data(responseJson.object).draw(false);
+                tableDataProduct.row(rowSelectedProduct).data(responseJson.object).draw(false);
                 rowSelectedProduct = null;
                 $("#modalData").modal("hide");
                 swal("Exitoso!", "El producto fué modificado", "success");
@@ -795,7 +794,7 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
     }
     showLoading();
 
-    const data = tableData.row(rowSelectedProduct).data();
+    const data = tableDataProduct.row(rowSelectedProduct).data();
 
     fetch(`/Inventory/GetProduct?IdProduct=${data.idProduct}`,)
         .then(response => {
@@ -804,7 +803,7 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
             removeLoading();
             if (responseJson.state) {
 
-                openModal(responseJson.object);
+                openModalProduct(responseJson.object);
 
             } else {
                 swal("Lo sentimos", responseJson.message, "error");
@@ -823,7 +822,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
     } else {
         row = $(this).closest('tr');
     }
-    const data = tableData.row(row).data();
+    const data = tableDataProduct.row(row).data();
 
     swal({
         title: "¿Está seguro?",
@@ -850,7 +849,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                 }).then(responseJson => {
                     if (responseJson.state) {
 
-                        tableData.row(row).remove().draw();
+                        tableDataProduct.row(row).remove().draw();
                         swal("Exitoso!", "El producto fué eliminado", "success");
 
                     } else {

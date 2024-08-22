@@ -1,5 +1,4 @@
-﻿let tableData;
-let tableDataStock;
+﻿let tableDataStock;
 let rowSelectedStock;
 
 $(document).ready(function () {
@@ -111,7 +110,7 @@ function cargarTablaVencimientos() {
 }
 
 function filtrarTabla() {
-    var valorSeleccionado = $('.filtro-vencimientos:checked').val();
+    let valorSeleccionado = $('.filtro-vencimientos:checked').val();
 
     // Ocultar todas las filas
     $('#tbDataVencimientos tbody tr').hide();

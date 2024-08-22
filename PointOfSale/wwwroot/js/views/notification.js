@@ -1,7 +1,7 @@
 ﻿$(document).ready(function () {
 
 
-    tableData = $("#tbData").DataTable({
+    $("#tbData").DataTable({
         responsive: true,
         "ajax": {
             "url": "/Notification/GetNotificaciones",

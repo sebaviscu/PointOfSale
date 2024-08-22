@@ -1,4 +1,4 @@
-﻿let tableData;
+﻿let tableDataReportProds;
 
 $(document).ready(function () {
 
@@ -42,8 +42,8 @@ $("#btnSearch").click(function () {
     let endDate = $("#txtEndDate").val().trim();
     let idCategory = $('#cboCategory').val();
 
-    if (tableData != undefined)
-        tableData.destroy();
+    if (tableDataReportProds != undefined)
+        tableDataReportProds.destroy();
 
     var options = {
         "processing": true,
@@ -89,7 +89,7 @@ $("#btnSearch").click(function () {
     };
 
 
-    tableData = $('#tbdata').DataTable(options);
+    tableDataReportProds = $('#tbdata').DataTable(options);
 })
 
 function setToday() {

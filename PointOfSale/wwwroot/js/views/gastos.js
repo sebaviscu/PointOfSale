@@ -1,4 +1,4 @@
-﻿let tableData;
+﻿let tableDataGastos;
 let rowSelectedGastos;
 let tipoGastosList = [];
 const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun",
@@ -83,7 +83,7 @@ function cargarTablaGastos(isGlobal) {
 
     let url = `/Gastos/GetGastos?visionGlobal=${isGlobal}`;
 
-    tableData = $("#tbData").DataTable({
+    tableDataGastos = $("#tbData").DataTable({
         responsive: true,
         "rowCallback": function (row, data) {
             if (data.facturaPendiente == 1) {
@@ -203,7 +203,7 @@ $("#btnSaveTipoDeGastos").on("click", function () {
     }
 })
 
-const openModal = (model = BASIC_MODEL_GASTO) => {
+const openModalNuevoGasto = (model = BASIC_MODEL_GASTO) => {
     $("#txtIdGastos").val(model.idGastos);
     $("#cboTipoDeGastoEnGasto").val(model.idTipoGasto);
     $("#txtImporte").val(model.importe);
@@ -231,7 +231,7 @@ const openModal = (model = BASIC_MODEL_GASTO) => {
 }
 
 $("#btnNew").on("click", function () {
-    openModal()
+    openModalNuevoGasto()
 })
 
 $("#btnSave").on("click", function () {
@@ -322,9 +322,9 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
         rowSelectedGastos = $(this).closest('tr');
     }
 
-    const data = tableData.row(rowSelectedGastos).data();
+    const data = tableDataGastos.row(rowSelectedGastos).data();
 
-    openModal(data);
+    openModalNuevoGasto(data);
 })
 
 
@@ -337,7 +337,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
     } else {
         row = $(this).closest('tr');
     }
-    const data = tableData.row(row).data();
+    const data = tableDataGastos.row(row).data();
 
     swal({
         title: "¿Está seguro?",
@@ -363,7 +363,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                     return response.json();
                 }).then(responseJson => {
                     if (responseJson.state) {
-                        tableData.row(row).remove().draw();
+                        tableDataGastos.row(row).remove().draw();
                         swal("Exitoso!", "El gasto  fue eliminada", "success");
                     } else {
                         swal("Lo sentimos", responseJson.message, "error");

@@ -3,7 +3,7 @@ const pageSize = 12;
 let isLoading = false;
 let hasMoreProducts = true;
 let debounceTimeout;
-var productos = [];
+let productos = [];
 
 $(window).scroll(function () {
     if ($(window).scrollTop() + $(window).height() >= $(document).height() - 50 && hasMoreProducts && !isLoading) {
@@ -114,8 +114,8 @@ function loadMoreProducts() {
 }
 
 function searchToggle(obj) {
-    var container = $(obj).closest('.search-wrapper');
-    var text = document.getElementById("input-search").value;
+    let container = $(obj).closest('.search-wrapper');
+    let text = document.getElementById("input-search").value;
 
     if (!container.hasClass('active')) {
         container.addClass('active');
@@ -202,7 +202,7 @@ function clean() {
     $("#btnTrash").hide();
     productos = [];
 
-    var elementosInput = document.querySelectorAll('.input-producto');
+    let elementosInput = document.querySelectorAll('.input-producto');
 
     elementosInput.forEach(function (elemento) {
         elemento.value = 0;
@@ -219,7 +219,7 @@ function resumenVenta() {
             sum += value.total;
         });
 
-        var tableData = productos.map(value => {
+        let tableDataShoopShoop = productos.map(value => {
             return (
                 `<tr>
                        <td class="table-products" style="border-right-color: #ffffff00;"><span class="text-muted">$ ${Number.parseFloat(value.price).toFixed(2)} x ${value.quantity} ${value.tipoVenta}</span>. - ${value.DescriptionProduct}</td>
@@ -228,13 +228,13 @@ function resumenVenta() {
             );
         }).join('');
 
-        tableData = tableData.concat(`<tr>
+        tableDataShoop = tableDataShoop.concat(`<tr>
                        <td class="table-products" style="font-size: 14px; border-right-color: #ffffff00;"><strong>TOTAL</strong></td>
                        <td class="table-products" style="font-size: 14px; text-align: right;"><strong>$ ${Number.parseFloat(sum).toFixed(2)}</strong></td>
                     </tr>`);
 
         const tableBody = document.querySelector("#tableProductos");
-        tableBody.innerHTML = tableData;
+        tableBody.innerHTML = tableDataShoop;
 
         $("#modalData").modal("show")
     }
@@ -263,25 +263,25 @@ function finalizarVenta() {
 
     if (productos.length > 0) {
 
-        var terminal = document.getElementById("cboFormaPago");
-        var selectedText = terminal.options[terminal.selectedIndex].text;
+        let terminal = document.getElementById("cboFormaPago");
+        let selectedText = terminal.options[terminal.selectedIndex].text;
 
-        const model = structuredClone(BASIC_MODEL_SHOP);
+        let model = structuredClone(BASIC_MODEL_SHOP);
         model["nombre"] = $("#txtNombre").val();
         model["telefono"] = $("#txtTelefono").val();
         model["direccion"] = $("#txtDireccion").val();
         model["metodoPago"] = $("#cboFormaPago").val();
         model["comentario"] = $("#txtComentario").val();
 
-        var inputPhone = document.getElementById("txtPhone");
-        var phone = inputPhone.attributes.phoneNumber.value;
+        let inputPhone = document.getElementById("txtPhone");
+        let phone = inputPhone.attributes.phoneNumber.value;
 
         let sum = 0;
         productos.forEach(value => {
             sum += value.total;
         });
 
-        var textWA = `*NUEVO PEDIDO*%0A`;
+        let textWA = `*NUEVO PEDIDO*%0A`;
 
         textWA = textWA.concat(`
 %0A· *Nombre*: ${model.nombre}
@@ -354,12 +354,12 @@ const BASIC_MODEL_SHOP = {
 
 function setValue(event, mult) {
 
-    var idProd = $(event).attr('idProduct');
-    var inputProd = document.getElementById("prod-" + idProd)
-    var priceProd = document.getElementById("price-" + idProd)
-    var descProd = document.getElementById("desc-" + idProd)
+    let idProd = $(event).attr('idProduct');
+    let inputProd = document.getElementById("prod-" + idProd)
+    let priceProd = document.getElementById("price-" + idProd)
+    let descProd = document.getElementById("desc-" + idProd)
 
-    var value = parseFloat(inputProd.value);
+    let value = parseFloat(inputProd.value);
 
     if (mult === -1 && value === 0) {
         return;
@@ -385,7 +385,7 @@ function setValue(event, mult) {
         }
     }
     else {
-        var prod = {
+        let prod = {
             idProduct: idProd,
             quantity: value,
             price: parseFloat(priceProd.attributes.precio.value),
@@ -397,7 +397,7 @@ function setValue(event, mult) {
         productos.push(prod);
     }
     let total = 0;
-    var textArea = document.getElementById("text-area-products");
+    let textArea = document.getElementById("text-area-products");
     textArea.textContent = '';
 
     let productsToDisplay = productos.slice(-5);
@@ -427,7 +427,7 @@ function otrasFunciones() {
 
     "use strict";
 
-    var isMobile = {
+    let isMobile = {
         Android: function () {
             return navigator.userAgent.match(/Android/i);
         },
@@ -449,7 +449,7 @@ function otrasFunciones() {
     };
 
 
-    var fullHeight = function () {
+    let fullHeight = function () {
 
         $('.js-fullheight').css('height', $(window).height());
         $(window).resize(function () {
@@ -460,7 +460,7 @@ function otrasFunciones() {
     fullHeight();
 
     // loader
-    var loader = function () {
+    let loader = function () {
         setTimeout(function () {
             if ($('#ftco-loader').length > 0) {
                 $('#ftco-loader').removeClass('show');
@@ -469,8 +469,8 @@ function otrasFunciones() {
     };
     loader();
 
-    var contentWayPoint = function () {
-        var i = 0;
+    let contentWayPoint = function () {
+        let i = 0;
         $('.ftco-animate').waypoint(function (direction) {
 
             if (direction === 'down' && !$(this.element).hasClass('ftco-animated')) {
@@ -481,9 +481,9 @@ function otrasFunciones() {
                 setTimeout(function () {
 
                     $('body .ftco-animate.item-animate').each(function (k) {
-                        var el = $(this);
+                        let el = $(this);
                         setTimeout(function () {
-                            var effect = el.data('animate-effect');
+                            let effect = el.data('animate-effect');
                             if (effect === 'fadeIn') {
                                 el.addClass('fadeIn ftco-animated');
                             } else if (effect === 'fadeInLeft') {
@@ -536,7 +536,7 @@ function otrasFunciones() {
         fixedContentPos: false
     });
 
-    var goHere = function () {
+    let goHere = function () {
 
         $('.mouse-icon').on('click', function (event) {
 
