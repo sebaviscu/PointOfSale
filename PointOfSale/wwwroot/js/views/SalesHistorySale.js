@@ -24,7 +24,7 @@ let SEARCH_VIEW = {
 
 }
 
-let isHealthy = false;
+let isHealthySaleHistory = false;
 
 $(document).ready(function () {
     SEARCH_VIEW["searchDate"]();
@@ -66,9 +66,9 @@ $(document).ready(function () {
 })
 
 async function healthcheck() {
-    isHealthy = await getHealthcheck();
+    isHealthySaleHistory = await getHealthcheck();
 
-    if (isHealthy) {
+    if (isHealthySaleHistory) {
         document.getElementById("lblErrorPrintService").style.display = 'none';
     } else {
         document.getElementById("lblErrorPrintService").style.display = '';
@@ -195,7 +195,7 @@ $("#printTicket").click(function () {
         if (responseJson.state) {
             $("#modalData").modal("hide");
 
-            if (isHealthy && responseJson.object.nombreImpresora != '') {
+            if (isHealthySaleHistory && responseJson.object.nombreImpresora != '') {
 
                 printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora, responseJson.object.imagesTicket);
 

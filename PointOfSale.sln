@@ -18,8 +18,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AFIP.Facturacion", "AFIP.Facturacion\AFIP.Facturacion.csproj", "{65CE55FE-1735-46E9-8104-FB5CE2D0FFD4}"
 EndProject
-Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "GulpMinificar", "GulpMinificar\GulpMinificar.njsproj", "{0EB5B3EE-3A00-4DE8-BA3B-A3C224DDA1FF}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,10 +44,6 @@ Global
 		{65CE55FE-1735-46E9-8104-FB5CE2D0FFD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{65CE55FE-1735-46E9-8104-FB5CE2D0FFD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{65CE55FE-1735-46E9-8104-FB5CE2D0FFD4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0EB5B3EE-3A00-4DE8-BA3B-A3C224DDA1FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0EB5B3EE-3A00-4DE8-BA3B-A3C224DDA1FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0EB5B3EE-3A00-4DE8-BA3B-A3C224DDA1FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0EB5B3EE-3A00-4DE8-BA3B-A3C224DDA1FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

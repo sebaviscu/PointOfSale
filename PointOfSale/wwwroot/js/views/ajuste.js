@@ -49,7 +49,7 @@ const BASIC_MODEL_AJUSTES_FACTURACION = {
 }
 
 
-let isHealthy = false;
+let isHealthyAjustes = false;
 $(document).ready(function () {
     showLoading();
 
@@ -307,9 +307,9 @@ $("#btnSave").on("click", function () {
 
 })
 async function healthcheck() {
-    isHealthy = await getHealthcheck();
+    isHealthyAjustes = await getHealthcheck();
 
-    if (isHealthy) {
+    if (isHealthyAjustes) {
         getPrintersTienda();
         document.getElementById("lblErrorPrintService").style.display = 'none';
     } else {

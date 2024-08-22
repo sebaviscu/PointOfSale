@@ -49,6 +49,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\js\dist\" />
+    <Folder Include="wwwroot\js\dist\" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>

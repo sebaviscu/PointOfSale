@@ -20,9 +20,9 @@ gulp.task('scripts', function () {
 });
 
 // Tarea para observar cambios en los archivos JS y TS
-//gulp.task('watch', function () {
-//    gulp.watch(jsPath, gulp.series('scripts'));
-//});
+gulp.task('watch', function () {
+    gulp.watch(jsPath, gulp.series('scripts'));
+});
 
 // Tarea por defecto
 gulp.task('default', gulp.series('scripts', 'watch'));

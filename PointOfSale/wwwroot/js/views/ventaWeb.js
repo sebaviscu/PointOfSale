@@ -1,7 +1,7 @@
 ﻿let tableDataVentaWeb;
 let rowSelectedVentaWeb;
 let productSelectedVentaWeb = null;
-let isHealthy = false;
+let isHealthySaleWeb = false;
 let formasDePagosListVentaWeb = [];
 
 const BASIC_MODEL_VENTA_WEB = {
@@ -158,7 +158,7 @@ $(document).ready(function () {
 $("#printTicket").click(function () {
     showLoading();
 
-    if (isHealthy) {
+    if (isHealthySaleWeb) {
         let idVentaWeb = parseInt($("#txtId").val());
 
         fetch(`/Shop/PrintTicketVentaWeb?idVentaWeb=${idVentaWeb}`)
@@ -171,7 +171,7 @@ $("#printTicket").click(function () {
                 if (response.state) {
                     $("#modalData").modal("hide");
 
-                    if (isHealthy && response.object.nombreImpresora != '' && response.object.ticket != '') {
+                    if (isHealthySaleWeb && response.object.nombreImpresora != '' && response.object.ticket != '') {
 
                         printTicket(response.object.ticket, response.object.nombreImpresora, response.object.imagesTicket);
 
@@ -467,7 +467,7 @@ async function editarVentaWeb() {
             tableDataVentaWeb.row(rowSelectedVentaWeb).data(responseJson.object).draw(false);
             rowSelectedVentaWeb = null;
             $("#modalData").modal("hide");
-            if (isHealthy && responseJson.object.nombreImpresora != '' && estadoVenta == 1 && responseJson.object.ticket != '') {
+            if (isHealthySaleWeb && responseJson.object.nombreImpresora != '' && estadoVenta == 1 && responseJson.object.ticket != '') {
                 printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora, responseJson.object.imagesTicket);
 
             } else {
@@ -554,9 +554,9 @@ function select2Modal() {
 }
 
 async function healthcheck() {
-    isHealthy = await getHealthcheck();
+    isHealthySaleWeb = await getHealthcheck();
 
-    if (isHealthy) {
+    if (isHealthySaleWeb) {
         document.getElementById("lblErrorPrintService").style.display = 'none';
     } else {
         document.getElementById("lblErrorPrintService").style.display = '';

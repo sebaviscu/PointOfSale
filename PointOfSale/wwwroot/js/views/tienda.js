@@ -16,8 +16,6 @@ const BASIC_MODEL_TIENDA = {
     certificadoPassword: ""
 }
 
-let isHealthy = false;
-
 $(document).ready(function () {
     $("#general").show();
     $("#facturacion").hide();

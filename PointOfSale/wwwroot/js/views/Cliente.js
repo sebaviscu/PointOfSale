@@ -1,5 +1,5 @@
 ﻿let tableDataClients;
-let tableDataMovimientos;
+let tableDataMovimientosClientes;
 let rowSelectedClient;
 
 const BASIC_MODEL_CLIENTE = {
@@ -147,12 +147,12 @@ const openModalCliente = (model = BASIC_MODEL_CLIENTE) => {
         $("#txtModificadoUsuario").val(model.modificationUser);
     }
 
-    if (tableDataMovimientos != null)
-        tableDataMovimientos.destroy();
+    if (tableDataMovimientosClientes != null)
+        tableDataMovimientosClientes.destroy();
 
     var url = '/Admin/GetMovimientoCliente?idCliente=' + model.idCliente;
 
-    tableDataMovimientos = $("#tbMovimientos").DataTable({
+    tableDataMovimientosClientes = $("#tbMovimientos").DataTable({
         responsive: true,
         pageLength: 5,
         "ajax": {
@@ -304,7 +304,7 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
 
 $('#tbMovimientos tbody').on('click', 'button.btn-open-sale', function (event) {
     event.preventDefault();
-    let data = tableDataMovimientos.row($(this).parents('tr')).data();
+    let data = tableDataMovimientosClientes.row($(this).parents('tr')).data();
     let saleNumber = data['sale']['saleNumber'];
  
     let urlString = '/Sales/ReportSale?saleNumber=' + encodeURIComponent(saleNumber);

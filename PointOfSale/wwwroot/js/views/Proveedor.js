@@ -1,10 +1,10 @@
 ﻿let tableDataProveedor;
 let rowSelectedProveedor;
 let tableDataMovimientos;
-let tableDataGastos;
+let tableDataProveedores;
 let proveedoresList;
 
-const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun",
+const monthNamesProveedores = ["Ene", "Feb", "Mar", "Abr", "May", "Jun",
     "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
 ];
 
@@ -125,7 +125,7 @@ $(document).ready(function () {
         let data;
 
         if (tableDataMovimientos == undefined)
-            data = tableDataGastos.row(row).data();
+            data = tableDataProveedores.row(row).data();
         else
             data = tableDataMovimientos.row(row).data();
 
@@ -403,7 +403,7 @@ $("#btnSavePago").on("click", function () {
         }).then(responseJson => {
 
             if (responseJson.state) {
-                tableDataGastos.row.add(responseJson.object).draw(false);
+                tableDataProveedores.row.add(responseJson.object).draw(false);
 
                 $("#modalPago").modal("hide");
                 swal("Exitoso!", "Pago a proveedor fué creada", "success");
@@ -426,7 +426,7 @@ $("#btnSavePago").on("click", function () {
             return response.json();
         }).then(responseJson => {
             if (responseJson.state) {
-                tableDataGastos.row(rowSelectedProveedor).data(responseJson.object).draw(false);
+                tableDataProveedores.row(rowSelectedProveedor).data(responseJson.object).draw(false);
                 rowSelectedProveedor = null;
                 $("#modalPago").modal("hide");
                 swal("Exitoso!", "Pago a proveedor fué modificada", "success");
@@ -512,7 +512,7 @@ function cargarTablaGastosProveedores(isGlobal) {
         $('#tbDataGastos').DataTable().clear().destroy();  // Destruye la instancia existente
     }
 
-    tableDataGastos = $("#tbDataGastos").DataTable({
+    tableDataProveedores = $("#tbDataGastos").DataTable({
         responsive: true,
         pageLength: 10,
         "rowCallback": function (row, data) {
@@ -583,7 +583,7 @@ $("#tbDataGastos tbody").on("click", ".btn-edit-pago", function () {
         rowSelectedProveedor = $(this).closest('tr');
     }
 
-    const data = tableDataGastos.row(rowSelectedProveedor).data();
+    const data = tableDataProveedores.row(rowSelectedProveedor).data();
 
     openModalPago(data);
 })
@@ -598,7 +598,7 @@ $("#tbDataGastos tbody").on("click", ".btn-delete-pago", function () {
     } else {
         row = $(this).closest('tr');
     }
-    const data = tableDataGastos.row(row).data();
+    const data = tableDataProveedores.row(row).data();
 
     swal({
         title: "¿Está seguro?",
@@ -625,7 +625,7 @@ $("#tbDataGastos tbody").on("click", ".btn-delete-pago", function () {
                 }).then(responseJson => {
                     if (responseJson.state) {
 
-                        tableDataGastos.row(row).remove().draw();
+                        tableDataProveedores.row(row).remove().draw();
                         swal("Exitoso!", "El pago a producto fué eliminado", "success");
 
                     } else {
@@ -710,7 +710,7 @@ function cargarTablaDinamicaProveedores(isGlobal) {
             if (responseJson.object != []) {
 
                 let today = new Date();
-                let month = "fecha.Month." + monthNames[today.getMonth()];
+                let month = "fecha.Month." + monthNamesProveedores[today.getMonth()];
                 let year = "fecha.Year." + today.getFullYear();
 
                 if (window.pivot) {

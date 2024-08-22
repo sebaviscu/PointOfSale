@@ -6,7 +6,7 @@ let formaDePagoID = 0;
 let promociones = [];
 let productSelected = null;
 let formasDePagosList = [];
-let isHealthy = false;
+let isHealthySale = false;
 let ajustes = null;
 
 const ProducstTab = {
@@ -91,9 +91,9 @@ $("#btnBuscarCliente").on("click", function () {
 });
 
 async function healthcheck() {
-    isHealthy = await getHealthcheck();
+    isHealthySale = await getHealthcheck();
 
-    if (isHealthy) {
+    if (isHealthySale) {
         document.getElementById("lblErrorPrintService").style.display = 'none';
     } else {
         document.getElementById("lblErrorPrintService").style.display = '';
@@ -561,7 +561,7 @@ function registrationSale(currentTabId) {
             }
             disableAfterVenta(currentTabId);
 
-            if (isHealthy && sale.imprimirTicket && responseJson.object.nombreImpresora != null && responseJson.object.nombreImpresora != '' && responseJson.object.ticket != null && responseJson.object.ticket != '') {
+            if (isHealthySale && sale.imprimirTicket && responseJson.object.nombreImpresora != null && responseJson.object.nombreImpresora != '' && responseJson.object.ticket != null && responseJson.object.ticket != '') {
                 printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora, responseJson.object.imagesTicket);
             }
 
@@ -724,7 +724,7 @@ function addFunctions(idTab) {
                 return response.json();
             }).then(response => {
                 removeLoading();
-                if (isHealthy &&
+                if (isHealthySale &&
                     response.object.nombreImpresora != null &&
                     response.object.nombreImpresora != '' &&
                     response.object.ticket != null &&
@@ -747,7 +747,7 @@ function addFunctions(idTab) {
                     return response.json();
                 }).then(response => {
                     removeLoading();
-                    if (isHealthy &&
+                    if (isHealthySale &&
                         response.object.nombreImpresora != null &&
                         response.object.nombreImpresora != '' &&
                         response.object.ticket != null &&
