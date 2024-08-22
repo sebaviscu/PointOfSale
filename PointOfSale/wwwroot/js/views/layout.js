@@ -390,7 +390,7 @@ function funClientesFactura() {
         let data = e.params.data;
         $('#txtNombreCliente').val(data.text);
         $('#txtCuilCliente').val(data.cuil);
-        $('#txtIdCuilFacturaCliente').val(data.cuil);
+        //$('#txtIdCuilFacturaCliente').val(data.cuil);
         $('#txtTelefonoCliente').val(data.telefono);
         $('#txtDireccionCliente').val(data.direccion);
         $('#cboCondicionIvaCliente').val(data.condicionIva);

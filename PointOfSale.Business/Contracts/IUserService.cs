@@ -19,5 +19,7 @@ namespace PointOfSale.Business.Contracts
         Task<User> GetByIdWithRol(int IdUser);
 
         Task<List<User>> GetAllUsers();
+
+        Task<bool> CheckFirstLogin(string email, string password);
     }
 }

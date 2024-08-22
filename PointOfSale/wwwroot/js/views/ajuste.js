@@ -140,8 +140,11 @@ $(document).ready(function () {
                 $("#txtIIBB").val(model.ingresosBurutosNro);
                 $("#txtDireccionFacturacion").val(model.direccionFacturacion);
 
-                let fecha = model.fechaInicioActividad.split('T')[0];
-                $("#txtInicioActividad").val(fecha);
+                if (model.fechaInicioActividad != null) {
+                    let fecha = model.fechaInicioActividad.split('T')[0];
+                    $("#txtInicioActividad").val(fecha);
+                }
+
                 removeLoading();
             } else {
                 swal("Lo sentimos", responseJson.message, "error");

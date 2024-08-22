@@ -10,10 +10,8 @@ idTienda int primary key identity(1,1),
 nombre varchar(150) null,
 Telefono varchar(50) null,
 Direccion varchar(100) null,
+idListaPrecio int null
 Logo varbinary(max) null,
-idAjustes int references Ajustes(idAjuste) null,
-IdAjustesFacturacion int references AjustesFacturacion(IdAjustesFacturacion) null,
-IdCorrelativeNumber int references CorrelativeNumber(IdCorrelativeNumber) null,
 [modificationDate] [datetime] null,
 [modificationUser] varchar(50) null,
 )
@@ -57,7 +55,6 @@ create table Rol(
 [registrationDate] datetime default getdate()
 )
 
-select * from rol
  go
  
  create table RolMenu(
@@ -155,12 +152,8 @@ CONSTRAINT FK_CorrelativeNumber_Tienda FOREIGN KEY (idTienda)
     REFERENCES Tienda(idTienda)
     ON DELETE CASCADE,
 )
-select * from AjustesFacturacion
 
 go
-
-alter table CorrelativeNumber
-add IdTienda int default 1
 
 create table TypeDocumentSale(
 [idTypeDocumentSale] int primary key identity(1,1),
@@ -170,26 +163,6 @@ web bit null,
 tipoFactura int not null,
 comision decimal(10,2) not null,
 [registrationDate] datetime default getdate()
-)
-
-go
-
-create table VentaWeb(
-idVentaWeb int primary key identity(1,1),
-Nombre varchar(100) null,
-Telefono varchar(50) null,
-Direccion varchar(100) null,
-Comentario varchar(200) null,
-[idFormaDePago] int references TypeDocumentSale(idTypeDocumentSale),
-[Total] decimal(10,2) not null,
-IdTienda int null,
-estado int not null,
-isEdit bit null,
-editText varchar(max) null,
-idSale int references Sale(idSale) null,
-[registrationDate] datetime not null,
-[modificationDate] datetime null,
-[modificationUser] varchar(50) null,
 )
 
 go
@@ -214,6 +187,25 @@ isWeb bit null,
 
 go
 
+create table VentaWeb(
+idVentaWeb int primary key identity(1,1),
+Nombre varchar(100) null,
+Telefono varchar(50) null,
+Direccion varchar(100) null,
+Comentario varchar(200) null,
+[idFormaDePago] int references TypeDocumentSale(idTypeDocumentSale),
+[Total] decimal(10,2) not null,
+IdTienda int null,
+estado int not null,
+isEdit bit null,
+editText varchar(max) null,
+idSale int references Sale(idSale) null,
+[registrationDate] datetime not null,
+[modificationDate] datetime null,
+[modificationUser] varchar(50) null,
+)
+
+go
 
 create table DetailSale(
 [idDetailSale] int primary key identity(1,1),
@@ -459,12 +451,42 @@ MinimoIdentificarConsumidor BIGINT NULL,
 ControlStock BIT NULL,
 FacturaElectronica BIT NULL,
 idTienda INT NOT NULL,
+ControlEmpleado BIT NULL,
 modificationDate DATETIME NULL,
 modificationUser VARCHAR(50) NULL,
 CONSTRAINT FK_Ajustes_Tienda FOREIGN KEY (idTienda)
     REFERENCES Tienda(idTienda)
     ON DELETE CASCADE
 );
+
+go
+
+CREATE TABLE AjustesFacturacion (
+idAjustesFacturacion INT PRIMARY KEY IDENTITY(1,1),
+cuit BIGINT NULL,
+PuntoVenta INT NULL, 
+CondicionIva INT NULL,
+CertificadoPassword VARCHAR(250) NULL,
+CertificadoNombre VARCHAR(150) NULL,
+CertificadoFechaInicio DATETIME NULL,
+CertificadoFechaCaducidad DATETIME NULL,
+IngresosBurutosNro VARCHAR(50) NULL,
+DireccionFacturacion VARCHAR(200) NULL,
+FechaInicioActividad DATETIME NULL,
+NombreTitular VARCHAR(70) NULL,
+idTienda INT NOT NULL,
+modificationDate DATETIME NULL,
+modificationUser VARCHAR(50) NULL,
+CONSTRAINT FK_AjustesFacturacion_Tienda FOREIGN KEY (idTienda)
+    REFERENCES Tienda(idTienda)
+    ON DELETE CASCADE
+);
+
+go
+
+alter table Tienda add idAjustes int references Ajustes(idAjuste) null;
+alter table Tienda add IdAjustesFacturacion int references AjustesFacturacion(IdAjustesFacturacion) null;
+alter table Tienda add IdCorrelativeNumber int references CorrelativeNumber(IdCorrelativeNumber) null;
 
 go
 
@@ -500,29 +522,6 @@ CREATE TABLE FacturasEmitidas (
 	IdTienda int references Tienda(IdTienda) not null,
     RegistrationUser VARCHAR(200),
     RegistrationDate DATETIME
-);
-
-go
-
-CREATE TABLE AjustesFacturacion (
-idAjustesFacturacion INT PRIMARY KEY IDENTITY(1,1),
-cuit BIGINT NULL,
-PuntoVenta INT NULL, 
-CondicionIva INT NULL,
-CertificadoPassword VARCHAR(250) NULL,
-CertificadoNombre VARCHAR(150) NULL,
-CertificadoFechaInicio DATETIME NULL,
-CertificadoFechaCaducidad DATETIME NULL,
-IngresosBurutosNro VARCHAR(50) NULL,
-DireccionFacturacion VARCHAR(200) NULL,
-FechaInicioActividad DATETIME NULL,
-NombreTitular VARCHAR(70) NULL,
-idTienda INT NOT NULL,
-modificationDate DATETIME NULL,
-modificationUser VARCHAR(50) NULL,
-CONSTRAINT FK_AjustesFacturacion_Tienda FOREIGN KEY (idTienda)
-    REFERENCES Tienda(idTienda)
-    ON DELETE CASCADE
 );
 
 go
@@ -608,6 +607,3 @@ go
 --FOREIGN KEY (idTienda) REFERENCES Tienda(idTienda)
 --ON DELETE CASCADE;
 
-
---alter table ajustes
---add ControlEmpleado BIT NULL

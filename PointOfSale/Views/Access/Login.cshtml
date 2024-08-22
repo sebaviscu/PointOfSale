@@ -35,42 +35,65 @@
                     </div>
 
                     <div class="card-body p-5">
-                        <h4 class="text-dark mb-5">Login</h4>
 
-                        <form asp-controller="Access" asp-action="Login" method="post">
-                            <div class="row">
-                                <div class="form-group col-md-12 mb-4">
-                                    <input type="text" class="form-control input-lg" asp-for="Email" placeholder="Usuario" value="@Model.Email">
-                                </div>
-                                <div class="form-group col-md-12">
-                                    <input type="password" class="form-control input-lg" asp-for="PassWord" placeholder="Password" value="@Model.PassWord">
-                                </div>
-                                @if (Model != null && Model.IsAdmin)
-                                {
-                                    <div class="input-group input-group-sm mb-3 col-md-12">
-                                        <div class="input-group-prepend">
-                                            <label class="input-group-text" for="cboTiendas">Punto de Venta</label>
-                                        </div>
-                                        <select class="form-control" id="cboTiendas" asp-for="TiendaId"></select>
+                        @if (Model != null && Model.FirstLogin)
+                        {
+                            <h4 class="text-dark mb-5">Actualizar primer usuario</h4>
+                            <form asp-controller="Access" asp-action="ChangeFirsUser" method="post">
+                                <div class="row">
+                                    <div class="form-group col-md-12 mb-4">
+                                        <input type="text" class="form-control input-lg" asp-for="Name" placeholder="Nombre" value="">
                                     </div>
-                                }
-                                <div class="col-md-12">
-                                    <div class="d-flex my-2 justify-content-between">
-                                        <div class="d-inline-block me-3">
-                                            <label class="control control-checkbox">
-                                                Mantener sesion abierta.
-                                                <input type="checkbox" asp-for="KeepLoggedIn" checked="checked" />
-                                                <div class="control-indicator"></div>
-                                            </label>
-                                        </div>
+                                    <div class="form-group col-md-12 mb-4">
+                                        <input type="text" class="form-control input-lg" asp-for="Email" placeholder="Nuevo Usuario" value="admin">
                                     </div>
-                                    <button type="submit" class="btn btn-lg btn-primary w-100 mb-4">Ingresar</button>
+                                    <div class="form-group col-md-12">
+                                        <input type="password" class="form-control input-lg" asp-for="PassWord" placeholder="Nuevo Password" value="">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-lg btn-primary w-100 mb-4">Cambiar</button>
+                                    </div>
                                 </div>
-                            </div>
-                            <div>
-                                <span class="text-danger">@ViewData["Message"]</span>
-                            </div>
-                        </form>
+                            </form>
+                        }
+                        else
+                        {
+                            <h4 class="text-dark mb-5">Login</h4>
+                            <form asp-controller="Access" asp-action="Login" method="post">
+                                <div class="row">
+                                    <div class="form-group col-md-12 mb-4">
+                                        <input type="text" class="form-control input-lg" asp-for="Email" placeholder="Usuario" value="@Model.Email">
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <input type="password" class="form-control input-lg" asp-for="PassWord" placeholder="Password" value="@Model.PassWord">
+                                    </div>
+                                    @if (Model != null && Model.IsAdmin)
+                                    {
+                                        <div class="input-group input-group-sm mb-3 col-md-12">
+                                            <div class="input-group-prepend">
+                                                <label class="input-group-text" for="cboTiendas">Punto de Venta</label>
+                                            </div>
+                                            <select class="form-control" id="cboTiendas" asp-for="TiendaId"></select>
+                                        </div>
+                                    }
+                                    <div class="col-md-12">
+                                        <div class="d-flex my-2 justify-content-between">
+                                            <div class="d-inline-block me-3">
+                                                <label class="control control-checkbox">
+                                                    Mantener sesion abierta.
+                                                    <input type="checkbox" asp-for="KeepLoggedIn" checked="checked" />
+                                                    <div class="control-indicator"></div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-lg btn-primary w-100 mb-4">Ingresar</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="text-danger">@ViewData["Message"]</span>
+                                </div>
+                            </form>
+                        }
 
                     </div>
                 </div>

@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Services;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
+using PointOfSale.Model.Auditoria;
 using PointOfSale.Models;
 using PointOfSale.Utilities;
 using PointOfSale.Utilities.Response;
@@ -54,7 +56,7 @@ namespace PointOfSale.Controllers
             {
                 _logger.LogError(ex, "Error hacer login");
                 ViewData["Message"] = $"Error: {ex.ToString()}.";
-                return View();
+                return View(new VMUserLogin());
             }
         }
 
@@ -63,12 +65,18 @@ namespace PointOfSale.Controllers
         {
             try
             {
+                var result = await _userService.CheckFirstLogin(model.Email, model.PassWord);
+                if (result)
+                {
+                    return View(new VMUserLogin() { FirstLogin = true });
+                }
+
                 var user_found = await _userService.GetByCredentials(model.Email, model.PassWord);
 
                 if (user_found == null)
                 {
                     ViewData["Message"] = "Usuario no encontrado";
-                    return View();
+                    return View(new VMUserLogin());
                 }
 
                 int idTienda;
@@ -134,6 +142,24 @@ namespace PointOfSale.Controllers
                 ViewData["Message"] = $"Error: {ex.Message}";
                 return View(new VMUserLogin());
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangeFirsUser(VMUserLogin model)
+        {
+            var user_list = await _userService.List();
+            var user_found = user_list.Single();
+
+            user_found.Email = model.Email;
+            user_found.Name = model.Name;
+            user_found.Password = EncryptionHelper.EncryptString(model.PassWord);
+
+            var user_edit = await _userService.Edit(user_found);
+
+            model.IsAdmin = true;
+            model.PassWord = model.PassWord;
+            model.Email = model.Email;
+            return View(model);
         }
 
         [HttpGet]

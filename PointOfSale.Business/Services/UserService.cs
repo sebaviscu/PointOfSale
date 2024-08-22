@@ -129,13 +129,30 @@ namespace PointOfSale.Business.Services
 
             if (user_found != null)
             {
-                if (EncryptionHelper.DecryptString(user_found.Password).ToUpper().Equals(password))
+                var passwordDescrypt = EncryptionHelper.DecryptString(user_found.Password);
+                if (passwordDescrypt == password)
                 {
                     return user_found;
                 }
             }
 
             return null;
+        }
+
+        public async Task<bool> CheckFirstLogin(string email, string password)
+        {
+            var query = await _repository.Query();
+            var user_found = query.SingleOrDefault(u => u.Email.ToUpper().Equals(email.ToUpper()));
+
+            if (user_found != null && user_found.Email == "admin" && user_found.Name == "admin" && string.IsNullOrEmpty(password))
+            {
+                var cantUsers = await _repository.Query();
+
+                if (cantUsers.ToList().Count == 1)
+                    return true;
+            }
+
+            return false;
         }
 
         public async Task<User> GetById(int IdUser)

@@ -1,6 +1,5 @@
 go
-
-insert into Tienda (nombre, idListaPrecio) values('Mercado Don Pepe', 0)
+insert into Tienda (nombre, idListaPrecio) values('Mercado Don Pepe', 1)
 go
 
 insert into rol([description],isActive) values
@@ -10,8 +9,8 @@ insert into rol([description],isActive) values
 
 go
 
-insert into Users(name,email,phone,idRol,[password],photo,isActive) values
-('admin','admin','909090',1,'123',null,1)
+insert into Users(name,email,idRol,[password],isActive) values
+('admin','admin',1,'',1)
 
 go
 
@@ -134,37 +133,52 @@ insert into TypeDocumentSale([description],isActive, tipoFactura, web,comision) 
 go
 --________________________________ INSERT Ajustes ________________________________
 
-insert into Ajustes(MinimoIdentificarConsumidor,IdTienda) 
-values (200000,1)
+DECLARE @NuevoIdAjuste INT;
+
+INSERT INTO Ajustes (MinimoIdentificarConsumidor, IdTienda)
+VALUES (500000, 1);
+
+SET @NuevoIdAjuste = SCOPE_IDENTITY();
+
+UPDATE Tienda 
+SET idAjustes = @NuevoIdAjuste
 
 go
 
-UPDATE Tienda SET idAjustes = 1
+DECLARE @NuevoIdAjusteFacturacion INT;
 
-go
+INSERT INTO AjustesFacturacion (IdTienda)
+VALUES (1);
 
-insert into AjustesFacturacion(IdTienda) 
-values (1)
+SET @NuevoIdAjusteFacturacion = SCOPE_IDENTITY();
 
-go
+UPDATE Tienda 
+SET idAjustesFacturacion = @NuevoIdAjusteFacturacion
+WHERE IdTienda = 1; 
 
-UPDATE Tienda SET idAjustes = 1
+GO
+
 
 go
 
 insert into AjustesWeb(MontoEnvioGratis,AumentoWeb,Whatsapp,Lunes,Martes,Miercoles,Jueves,Viernes,Sabado,Domingo,Feriado,Facebook,Instagram,Tiktok,
 Twitter,Youtube, direccion, telefono,nombre) 
-values (0,20,'','','','','','','','','','','','','','','','','Mercado Don Pepe')
+values (0,0,'','','','','','','','','','','','','','','','','Mercado Don Pepe')
 
 go
 --________________________________ INSERT CORRELATIVE NUMBER ________________________________
 
 --000001
-insert into CorrelativeNumber(lastNumber,quantityDigits,management, idTienda, dateUpdate) values
-(0,6,'Sale',1,getdate())
+DECLARE @NuevoIdCorrelativeNumber INT;
 
-go
+INSERT INTO CorrelativeNumber (lastNumber, quantityDigits, management, idTienda, dateUpdate)
+VALUES (0, 6, 'Sale', 1, GETDATE());
 
-UPDATE Tienda SET idCorrelativeNumber = 1
+SET @NuevoIdCorrelativeNumber = SCOPE_IDENTITY();
+
+UPDATE Tienda 
+SET idCorrelativeNumber = @NuevoIdCorrelativeNumber
+
+GO
 
 select * from Tienda
