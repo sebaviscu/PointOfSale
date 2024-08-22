@@ -134,7 +134,7 @@ const openModalUser = (model = BASIC_MODEL_USER) => {
     //$("#txtPhoto").val("");
     //$("#imgUser").attr("src", `data:image/png;base64,${model.photoBase64}`);
 
-    let rol = $('#cboRol').val();
+    //let rol = $('#cboRol').val();
     $("#cboTiendas").prop("disabled", rol == '1');
 
     if (model.modificationUser == null)

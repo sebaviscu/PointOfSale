@@ -147,6 +147,13 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> ChangeFirsUser(VMUserLogin model)
         {
+
+            if (model.Email.ToLower() == "admin")
+            {
+                ViewData["Message"] = "Usuario no puede ser 'admin'";
+                return View(new VMUserLogin());
+            }
+
             var user_list = await _userService.List();
             var user_found = user_list.Single();
 

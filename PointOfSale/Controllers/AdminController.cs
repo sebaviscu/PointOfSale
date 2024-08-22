@@ -698,8 +698,13 @@ namespace PointOfSale.Controllers
                 var user = ValidarAutorizacion([Roles.Administrador]);
 
                 VMUser vmUser = JsonConvert.DeserializeObject<VMUser>(model);
-                vmUser.IdTienda = user.IdTienda;
 
+                if (vmUser.Email.ToLower() == "admin")
+                {
+                    throw new Exception("El usuario no puede ser 'admin'");
+                }
+
+                vmUser.IdTienda = user.IdTienda;
                 vmUser.Password = EncryptionHelper.EncryptString(vmUser.Password);
                 if (photo != null)
                 {
@@ -737,8 +742,13 @@ namespace PointOfSale.Controllers
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
                 VMUser vmUser = JsonConvert.DeserializeObject<VMUser>(model);
-                vmUser.ModificationUser = user.UserName;
 
+                if (vmUser.Email.ToLower() == "admin")
+                {
+                    throw new Exception("El usuario no puede ser 'admin'");
+                }
+
+                vmUser.ModificationUser = user.UserName;
                 vmUser.Password = EncryptionHelper.EncryptString(vmUser.Password);
                 if (photo != null)
                 {
