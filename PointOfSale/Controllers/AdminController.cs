@@ -684,7 +684,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al recuperar un usuario", _logger, idUser.ToJson());
+                return HandleException(ex, "Error al recuperar un usuario", _logger, idUser);
             }
         }
 
@@ -722,7 +722,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al crear usuarios", _logger, model.ToJson());
+                return HandleException(ex, "Error al crear usuarios", _logger, model);
             }
 
         }
@@ -758,7 +758,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al actualizar usuarios", _logger, model.ToJson());
+                return HandleException(ex, "Error al actualizar usuarios", _logger, model);
             }
 
         }
@@ -777,7 +777,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al borrar usuarios", _logger, IdUser.ToJson());
+                return HandleException(ex, "Error al borrar usuarios", _logger, IdUser);
             }
 
         }
@@ -816,7 +816,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al crear forma de pago", _logger, model.ToJson());
+                return HandleException(ex, "Error al crear forma de pago", _logger, model);
             }
 
         }
@@ -838,7 +838,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al actualizar forma de pago", _logger, model.ToJson());
+                return HandleException(ex, "Error al actualizar forma de pago", _logger, model;
             }
 
         }
@@ -857,7 +857,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al eliminar forma de pago", _logger, idTypeDocumentSale.ToJson());
+                return HandleException(ex, "Error al eliminar forma de pago", _logger, idTypeDocumentSale);
             }
         }
 
@@ -938,7 +938,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al crear cliente", _logger, model.ToJson());
+                return HandleException(ex, "Error al crear cliente", _logger, model);
             }
 
         }
@@ -965,7 +965,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al actualizar cliente", _logger, model.ToJson());
+                return HandleException(ex, "Error al actualizar cliente", _logger, model);
             }
 
         }
@@ -989,7 +989,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al eliminar cliente", _logger, idCliente.ToJson());
+                return HandleException(ex, "Error al eliminar cliente", _logger, idCliente);
             }
 
         }
@@ -1082,7 +1082,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al crear proveedor", _logger, model.ToJson());
+                return HandleException(ex, "Error al crear proveedor", _logger, model);
             }
 
         }
@@ -1113,7 +1113,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al crear pago a proveedor", _logger, model.ToJson());
+                return HandleException(ex, "Error al crear pago a proveedor", _logger, model);
             }
 
         }
@@ -1141,7 +1141,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al recuperar movimientos de proveedor", _logger, idProveedor.ToJson());
+                return HandleException(ex, "Error al recuperar movimientos de proveedor", _logger, idProveedor);
             }
 
         }
@@ -1216,7 +1216,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al actualizar proveedor", _logger, vmUser.ToJson());
+                return HandleException(ex, "Error al actualizar proveedor", _logger, vmUser);
             }
 
         }
@@ -1240,7 +1240,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al eliminar proveedor", _logger, idProveedor.ToJson());
+                return HandleException(ex, "Error al eliminar proveedor", _logger, idProveedor);
             }
 
         }
@@ -1296,7 +1296,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al actualizar pago de proveedor", _logger, vmUser.ToJson());
+                return HandleException(ex, "Error al actualizar pago de proveedor", _logger, vmUser);
             }
 
         }
@@ -1319,7 +1319,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al eliminar pago de proveedor", _logger, idPagoProveedor.ToJson());
+                return HandleException(ex, "Error al eliminar pago de proveedor", _logger, idPagoProveedor);
             }
 
         }
@@ -1431,7 +1431,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al crear promocion", _logger, model.ToJson());
+                return HandleException(ex, "Error al crear promocion", _logger, model);
             }
 
         }
@@ -1461,7 +1461,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al actualizar promocion", _logger, vmUser.ToJson());
+                return HandleException(ex, "Error al actualizar promocion", _logger, vmUser);
             }
 
         }
@@ -1485,7 +1485,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al eliminar promocion", _logger, idPromocion.ToJson());
+                return HandleException(ex, "Error al eliminar promocion", _logger, idPromocion);
             }
 
         }
@@ -1516,7 +1516,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al cambiar estado de promocion", _logger, idPromocion.ToJson());
+                return HandleException(ex, "Error al cambiar estado de promocion", _logger, idPromocion);
             }
 
         }
@@ -1692,7 +1692,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al validar codigo de seguridad", _logger, encryptedCode.ToJson());
+                return HandleException(ex, "Error al validar codigo de seguridad", _logger, encryptedCode);
             }
         }
 
@@ -1749,7 +1749,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al recuperar facturas", _logger, idFacturaEmitida.ToJson());
+                return HandleException(ex, "Error al recuperar facturas", _logger, idFacturaEmitida);
             }
         }
 

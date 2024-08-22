@@ -45,11 +45,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar lista de pedidos";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar lista de pedidos.", _logger, null);
             }
 
         }
@@ -76,11 +72,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al crear pedido";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel}.", errorMessage, model.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al crear pedido.", _logger, model);
             }
         }
 
@@ -105,11 +97,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al actualizar pedido";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel}.", errorMessage, model.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al actualizar pedido.", _logger, model);
             }
 
         }
@@ -128,11 +116,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al elimiar pedido";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel}.", errorMessage, idPedido.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al eliminar pedido.", _logger, idPedido);
             }
         }
 
@@ -175,11 +159,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al cerrar pedido";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel}.", errorMessage, model.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al cerrar pedido.", _logger, model);
             }
 
         }

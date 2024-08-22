@@ -75,7 +75,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al crear gastos.", _logger, model.ToJson());
+                return HandleException(ex, "Error al crear gastos.", _logger, model);
             }
 
         }
@@ -101,7 +101,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al actualizar gastos.", _logger, model.ToJson());
+                return HandleException(ex, "Error al actualizar gastos.", _logger, model);
             }
         }
 
@@ -119,7 +119,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al eliminar gastos.", _logger, idGastos.ToJson());
+                return HandleException(ex, "Error al eliminar gastos.", _logger, idGastos);
             }
         }
 
@@ -162,7 +162,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al crear tipo de gastos.", _logger, model.ToJson());
+                return HandleException(ex, "Error al crear tipo de gastos.", _logger, model);
             }
         }
 
@@ -206,7 +206,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al eliminar tipo de gastos.", _logger, idTipoGastos.ToJson());
+                return HandleException(ex, "Error al eliminar tipo de gastos.", _logger, idTipoGastos);
             }
         }
 

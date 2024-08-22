@@ -58,11 +58,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al crear notificacion";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel}.", errorMessage, model.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al crear notificacion.", _logger, model);
             }
         }
 
@@ -84,11 +80,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al actualizar notificacion";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel}.", errorMessage, idNotificacion.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al actualizar notificacion.", _logger, idNotificacion);
             }
         }
 
@@ -107,11 +99,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al limpiar todas las  notificaciones";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al  limpiar todas las  notificaciones.", _logger, null);
             }
 
         }

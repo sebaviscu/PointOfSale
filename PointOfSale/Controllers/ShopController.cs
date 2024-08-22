@@ -87,10 +87,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                gResponse.State = false;
-                gResponse.Message = ex.ToString();
-                _logger.LogError(ex, "Error al recuperar productos paginados para la web");
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar productos paginados para la web.", _logger, null);
             }
         }
 
@@ -109,11 +106,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar mas productos paginados para la web";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar mas productos paginados para la web", _logger, null);
             }
 
         }
@@ -197,11 +190,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al actualizar una venta web";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {ModelRequest}", errorMessage, model.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al actualizar una venta web.", _logger, model);
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -218,7 +207,7 @@ namespace PointOfSale.Controllers
 
                 if (string.IsNullOrEmpty(ajustes.NombreImpresora))
                 {
-                    return HandleException(null, "No existe impresora registrada.", _logger, idVentaWeb.ToJson());
+                    return HandleException(null, "No existe impresora registrada.", _logger, idVentaWeb);
                 }
 
                 var ventaWeb = await _shopService.Get(idVentaWeb);
@@ -251,7 +240,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al imprimir ticket de venta web.", _logger, idVentaWeb.ToJson());
+                return HandleException(ex, "Error al imprimir ticket de venta web.", _logger, idVentaWeb);
             }
 
         }
@@ -268,17 +257,13 @@ namespace PointOfSale.Controllers
 
                 gResponse.State = true;
                 gResponse.Object = model;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al registrar una venta web";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}. Request: {ModelRequest}", errorMessage, model.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al registrar una venta web.", _logger, model);
             }
 
-            return StatusCode(StatusCodes.Status200OK, gResponse);
         }
 
     }

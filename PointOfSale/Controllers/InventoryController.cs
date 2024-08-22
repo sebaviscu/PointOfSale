@@ -11,6 +11,7 @@ using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
 using System.Globalization;
 using static PointOfSale.Model.Enum;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PointOfSale.Controllers
 {
@@ -80,11 +81,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al crear categoria.";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel}", errorMessage, model.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al crear categoria.", _logger, model);
             }
 
         }
@@ -109,11 +106,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al actualizar categoria.";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel}", errorMessage, model.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al actualizar categoria.", _logger, model);
             }
         }
 
@@ -132,11 +125,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al borrar categoria.";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel}", errorMessage, idCategory.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al borrar categoria.", _logger, idCategory);
             }
         }
 
@@ -157,11 +146,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar lista de stock.";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al lista de stock.", _logger, null);
             }
         }
 
@@ -186,11 +171,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar lista de productos.";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al lista de producto.", _logger, null);
             }
         }
 
@@ -224,11 +205,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar producto.";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel}", errorMessage, idProduct.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar producto.", _logger, idProduct);
             }
         }
 
@@ -299,11 +276,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al crear producto.";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel}. Vencimientos: {Vencimientos}", errorMessage, model.ToJson(), vencimientos.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al crear producto.", _logger, model: null, ("model", model), ("vencimientos", vencimientos));
             }
 
         }
@@ -375,11 +348,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al editar producto.";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel}. Vencimientos: {Vencimientos}", errorMessage, model.ToJson(), vencimientos.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al editar producto.", _logger, model: null, ("model", model), ("vencimientos", vencimientos));
             }
         }
 
@@ -406,11 +375,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error en edicion masiva de productos.";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel}.", errorMessage, data.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error en edicion masiva de productos.", _logger, data);
             }
         }
 
@@ -428,11 +393,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error en edicion masiva de productos por tabla.";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel}.", errorMessage, data.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error en edicion masiva de productos por tabla.", _logger, data);
             }
 
         }
@@ -451,11 +412,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al borrar producto.";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel}.", errorMessage, IdProduct.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al borrar producto.", _logger, IdProduct);
             }
 
         }
@@ -490,11 +447,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al imprimir lista de precios de productos";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel}.", errorMessage, model.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al imprimir lista de precios de productos.", _logger, model);
             }
         }
 
@@ -512,39 +465,10 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al recuperar lista de vencimientos";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage}.", errorMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al recuperar lista de vencimientos.", _logger, null);
             }
 
         }
-
-        //[HttpGet]
-        //public async Task<IActionResult> CargarProductosAsync(string path)
-        //{
-
-        //    GenericResponse<List<VMProduct>> gResponse = new GenericResponse<List<VMProduct>>();
-        //    try
-        //    {
-        //        ValidarAutorizacion([Roles.Administrador]);
-        //        var (exito, products) = await _excelService.ImportarProductoAsync(path);
-
-        //        var vmProduct = _mapper.Map<List<VMProduct>>(products);
-
-        //        gResponse.State = exito;
-        //        gResponse.Object = vmProduct;
-
-        //        return StatusCode(StatusCodes.Status200OK, gResponse);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        gResponse.State = false;
-        //        gResponse.Message = ex.ToString();
-        //        return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
-        //    }
-        //}
 
         [HttpGet]
         public async Task<IActionResult> ImportarProductos(string path)
@@ -577,11 +501,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al importar productos.";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel}.", errorMessage, path.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al importar productos.", _logger, path);
             }
         }
 
@@ -600,11 +520,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error al eliminar vencimientos";
-                gResponse.State = false;
-                gResponse.Message = $"{errorMessage}\n {ex.ToString()}";
-                _logger.LogError(ex, "{ErrorMessage} Request: {RequestModel}.", errorMessage, idVencimiento.ToJson());
-                return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
+                return HandleException(ex, "Error al eliminar vencimientos.", _logger, idVencimiento);
             }
         }
 

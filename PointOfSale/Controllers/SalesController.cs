@@ -101,7 +101,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al recuperar lista de productos", _logger, search.ToJson());
+                return HandleException(ex, "Error al recuperar lista de productos", _logger, search);
             }
         }
 
@@ -124,7 +124,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al recuperar lista de productos", _logger, search.ToJson());
+                return HandleException(ex, "Error al recuperar lista de productos", _logger, search);
             }
         }
 
@@ -144,7 +144,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al recuperar lista de clientes", _logger, search.ToJson());
+                return HandleException(ex, "Error al recuperar lista de clientes", _logger, search);
             }
 
         }
@@ -166,7 +166,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al recuperar lista de clientes para facturar", _logger, search.ToJson());
+                return HandleException(ex, "Error al recuperar lista de clientes para facturar", _logger, search);
             }
         }
 
@@ -250,7 +250,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al registrar la venta", _logger, model.ToJson());
+                return HandleException(ex, "Error al registrar la venta", _logger, model);
             }
         }
 
@@ -309,7 +309,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al registrar No Cierre de venta", _logger, model.ToJson());
+                return HandleException(ex, "Error al registrar No Cierre de venta", _logger, model);
             }
 
         }
@@ -350,7 +350,7 @@ namespace PointOfSale.Controllers
             catch (Exception ex)
             {
                 return HandleException(ex, "Error al recuperar reporte de ventas", _logger, null,
-                    ("SaleNumber", saleNumber.ToJson()), ("StartDate", startDate.ToJson()), ("EndDate", endDate.ToJson()), ("Presupuestos", presupuestos.ToJson()));
+                    ("SaleNumber", saleNumber), ("StartDate", startDate), ("EndDate", endDate), ("Presupuestos", presupuestos));
             }
         }
 
@@ -414,7 +414,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al imprimir tickets de venta multiple", _logger, idSales.ToJson());
+                return HandleException(ex, "Error al imprimir tickets de venta multiple", _logger, idSales);
             }
 
         }
@@ -452,7 +452,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al imprimir ticket", _logger, idSale.ToJson());
+                return HandleException(ex, "Error al imprimir ticket", _logger, idSale);
             }
 
         }
