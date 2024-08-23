@@ -74,6 +74,7 @@ namespace PointOfSale.Business.Services
             Ajustes_found.Domingo = entity.Domingo;
             Ajustes_found.Feriado = entity.Feriado;
             Ajustes_found.MontoEnvioGratis = entity.MontoEnvioGratis;
+            Ajustes_found.HabilitarWeb = entity.HabilitarWeb;
 
             bool response = await _repositoryWeb.Edit(Ajustes_found);
 

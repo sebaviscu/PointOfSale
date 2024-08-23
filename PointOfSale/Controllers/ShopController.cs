@@ -2,15 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using NuGet.Protocol;
-using Org.BouncyCastle.Pkcs;
 using PointOfSale.Business.Contracts;
-using PointOfSale.Business.Services;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
-using PointOfSale.Model.Afip.Factura;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
 using System.Security.Claims;
@@ -60,7 +55,13 @@ namespace PointOfSale.Controllers
         public async Task<IActionResult> Index()
         {
             ClaimsPrincipal claimuser = HttpContext.User;
-            var ajuste = _mapper.Map<VMAjustes>(await _ajusteService.GetAjustesWeb());
+            var ajuste = _mapper.Map<VMAjustesWeb>(await _ajusteService.GetAjustesWeb());
+
+            if(ajuste.HabilitarWeb.HasValue && !ajuste.HabilitarWeb.Value)
+            {
+                return View("ErrorWeb");
+            }
+
             var shop = new VMShop(ajuste);
             shop.Products = _mapper.Map<List<VMProduct>>(await _productService.GetRandomProducts());
             shop.IsLogin = claimuser.Identity.IsAuthenticated;
@@ -77,7 +78,13 @@ namespace PointOfSale.Controllers
             {
                 ClaimsPrincipal claimuser = HttpContext.User;
 
-                var ajuste = _mapper.Map<VMAjustes>(await _ajusteService.GetAjustesWeb());
+                var ajuste = _mapper.Map<VMAjustesWeb>(await _ajusteService.GetAjustesWeb());
+
+                if (ajuste.HabilitarWeb.HasValue && !ajuste.HabilitarWeb.Value)
+                {
+                    return View("ErrorWeb");
+                }
+
                 var shop = new VMShop(ajuste);
                 shop.IsLogin = claimuser.Identity.IsAuthenticated;
                 shop.Products = new List<VMProduct>();//_mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategory(0, page, pageSize));

@@ -7,7 +7,7 @@ namespace PointOfSale.Models
     public class VMShop
     {
 
-        public VMShop(VMAjustes? ajustes)
+        public VMShop(VMAjustesWeb? ajustes)
         {
             if (ajustes != null)
             {
@@ -55,6 +55,6 @@ namespace PointOfSale.Models
 
         public List<VMTypeDocumentSale> FormasDePago { get; set; }
 
-        public VMAjustes Ajustes { get; set; }
+        public VMAjustesWeb Ajustes { get; set; }
     }
 }

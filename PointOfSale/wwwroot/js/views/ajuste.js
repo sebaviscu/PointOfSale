@@ -29,7 +29,8 @@ const BASIC_MODEL_AJUSTE_WEB = {
     instagram: "",
     twitter: "",
     tiktok: "",
-    youtube: ""
+    youtube: "",
+    habilitarWeb: true
 }
 
 
@@ -112,6 +113,8 @@ $(document).ready(function () {
                 $("#txtTikTok").val(model.tiktok);
                 $("#txtTwitter").val(model.twitter);
                 $("#txtYouTube").val(model.youtube);
+
+                document.getElementById('switchHabilitarWeb').checked = model.habilitarWeb;
 
             } else {
                 swal("Lo sentimos", responseJson.message, "error");
@@ -245,6 +248,8 @@ $("#btnSave").on("click", function () {
     modelWeb["nombre"] = $("#txtNombreTienda").val();
     modelWeb["direccion"] = $("#txtDireccion").val();
 
+    let checkboxSwitchHabilitarWeb = document.getElementById('switchHabilitarWeb');
+    modelWeb["habilitarWeb"] = checkboxSwitchHabilitarWeb.checked;
 
     const model = structuredClone(BASIC_MODEL_AJUSTE);
     model["idAjuste"] = parseInt($("#txtId").val());
