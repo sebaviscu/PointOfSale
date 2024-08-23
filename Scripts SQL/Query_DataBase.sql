@@ -607,3 +607,8 @@ go
 --FOREIGN KEY (idTienda) REFERENCES Tienda(idTienda)
 --ON DELETE CASCADE;
 
+
+--select * from users
+
+--update users
+--set password = '', email='admin', name ='admin'
