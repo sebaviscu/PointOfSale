@@ -762,10 +762,14 @@ function addFunctions(idTab) {
     });
 
     $('#tbProduct' + idTab + ' tbody').on('dblclick', 'tr', async function () {
+        
+        if (!(await validateCode())) { return false; }
+
         let rowIndex = $(this).index();
 
         let currentTab = AllTabsForSale.find(item => item.idTab == idTab);
         let productRow = currentTab.products.filter(prod => prod.row == rowIndex);
+
 
         swal({
             title: 'Cambio de precio',
@@ -776,7 +780,6 @@ function addFunctions(idTab) {
             inputPlaceholder: "ingrese el nuevo precio"
         }, async function (value) {
 
-            if (!(await validateCode())) { return false; }
 
             if (value === false) return false;
 
