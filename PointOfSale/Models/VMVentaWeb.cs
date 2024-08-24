@@ -13,6 +13,7 @@ namespace PointOfSale.Models
         }
 
         public int IdVentaWeb { get; set; }
+        public string? SaleNumber { get; set; }
         public string? Nombre { get; set; }
         public string? Telefono { get; set; }
         public string? Direccion { get; set; }

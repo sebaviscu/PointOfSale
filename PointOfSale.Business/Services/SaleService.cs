@@ -182,7 +182,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<string> GetLastSerialNumberSale(int idTienda)
         {
-            return await _repositorySale.GetLastSerialNumberSale(idTienda);
+            return await _repositorySale.GetLastSerialNumberSale(idTienda, "Sale");
         }
 
         public async Task<List<Sale>> SaleHistory(string saleNumber, string startDate, string endDate, string presupuestos)

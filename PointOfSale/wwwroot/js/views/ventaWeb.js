@@ -65,7 +65,7 @@ $(document).ready(function () {
         },
         "columnDefs": [
             {
-                "targets": [1],
+                "targets": [2],
                 "render": function (data, type, row) {
                     if (type === 'display' || type === 'filter') {
                         return data ? moment(data).format('DD/MM/YYYY HH:mm') : '';
@@ -80,6 +80,7 @@ $(document).ready(function () {
                 "visible": false,
                 "searchable": false
             },
+            { "data": "saleNumber" },
             { "data": "registrationDate" },
             { "data": "nombre" },
             { "data": "direccion" },

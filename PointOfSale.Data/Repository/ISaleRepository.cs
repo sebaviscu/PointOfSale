@@ -11,7 +11,7 @@ namespace PointOfSale.Data.Repository
     {
         Task<Sale> Register(Sale entity, Ajustes ajustes);
         Task<VentaWeb> RegisterWeb(VentaWeb entity);
-        Task<string> GetLastSerialNumberSale(int idTienda);
+        Task<string> GetLastSerialNumberSale(int? idTienda, string management);
         Task<Sale> CreatSaleFromVentaWeb(VentaWeb entity, Turno turno, Ajustes ajustes);
 
         Task<CorrelativeNumber> CreateSerialNumberSale(int idTienda);

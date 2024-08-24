@@ -160,19 +160,11 @@ namespace PointOfSale.Business.Services
 
         public async Task<VentaWeb> RegisterWeb(VentaWeb entity)
         {
-            try
-            {
-                //var tienda = await _tiendaService.List();
-                //entity.IdTienda = tienda.First().IdTienda;
-                entity.IdTienda = null;
-                var sale = await _saleRepository.RegisterWeb(entity);
-                _ = _notificationService.Save(new Notifications(sale));
-                return sale;
-            }
-            catch
-            {
-                throw;
-            }
+            entity.IdTienda = null;
+            entity.SaleNumber = await _saleRepository.GetLastSerialNumberSale(null, "SaleWeb");
+            var sale = await _saleRepository.RegisterWeb(entity);
+            _ = _notificationService.Save(new Notifications(sale));
+            return sale;
         }
     }
 }

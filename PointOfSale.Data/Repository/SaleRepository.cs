@@ -75,14 +75,21 @@ namespace PointOfSale.Data.Repository
             }
         }
 
-        public async Task<string> GetLastSerialNumberSale(int idTienda)
+        public async Task<string> GetLastSerialNumberSale(int? idTienda, string management)
         {
-            var correlative = await _dbcontext.CorrelativeNumbers
-                                              .Where(n => n.Management == "Sale" && n.IdTienda == idTienda)
-                                              .FirstOrDefaultAsync();
+            var query = _dbcontext.CorrelativeNumbers
+                                              .Where(n => n.Management == management);
+
+            if(idTienda != null)
+            {
+                query = query.Where(n => n.IdTienda == idTienda);
+            }
+
+            var correlative = await query.FirstOrDefaultAsync();
+
             if (correlative == null)
             {
-                throw new Exception("No se encontró el número correlativo para la gestión 'Sale'.");
+                throw new Exception($"No se encontró el número correlativo para la gestión '{management}'.");
             }
 
             lock (correlative)
@@ -159,7 +166,7 @@ namespace PointOfSale.Data.Repository
             sale.Total = entity.Total;
             sale.RegistrationDate = entity.RegistrationDate;
             sale.IdTienda = entity.IdTienda.Value;
-            sale.SaleNumber = await GetLastSerialNumberSale(entity.IdTienda.Value);
+            sale.SaleNumber = await GetLastSerialNumberSale(entity.IdTienda.Value, "Sale");
             sale.IdTypeDocumentSale = entity.IdFormaDePago;
             sale.IdTurno = turno.IdTurno;
             sale.DetailSales = entity.DetailSales;

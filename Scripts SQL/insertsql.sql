@@ -181,4 +181,7 @@ SET idCorrelativeNumber = @NuevoIdCorrelativeNumber
 
 GO
 
-select * from Tienda
+INSERT INTO CorrelativeNumber (lastNumber, quantityDigits, management, dateUpdate)
+VALUES (0, 6, 'SaleWeb', GETDATE());
+
+GO
