@@ -1,5 +1,5 @@
 go
-insert into Tienda (nombre, idListaPrecio) values('Mercado Don Pepe', 1)
+insert into Tienda (nombre, idListaPrecio) values('Mercado', 1)
 go
 
 insert into rol([description],isActive) values
@@ -163,7 +163,7 @@ go
 
 insert into AjustesWeb(MontoEnvioGratis,AumentoWeb,Whatsapp,Lunes,Martes,Miercoles,Jueves,Viernes,Sabado,Domingo,Feriado,Facebook,Instagram,Tiktok,
 Twitter,Youtube, direccion, telefono,nombre) 
-values (0,0,'','','','','','','','','','','','','','','','','Mercado Don Pepe')
+values (0,0,'','','','','','','','','','','','','','','','','Mercado')
 
 go
 --________________________________ INSERT CORRELATIVE NUMBER ________________________________

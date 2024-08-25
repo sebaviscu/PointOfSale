@@ -23,6 +23,7 @@ namespace PointOfSale.Business.Services
         private readonly IGenericRepository<ListaPrecio> _repositoryListaPrecios;
         private readonly IGenericRepository<DetailSale> _repositoryDetailSale;
         private readonly IGenericRepository<Vencimiento> _repositoryVencimientos;
+        private readonly IGenericRepository<CodigoBarras> _repositoryCodigosBarras;
         private readonly INotificationService _notificationService;
         private readonly IGenericRepository<Stock> _repositoryStock;
 
@@ -32,7 +33,8 @@ namespace PointOfSale.Business.Services
             IGenericRepository<Vencimiento> repositoryVencimientos,
             INotificationService notificationService,
             IGenericRepository<Stock> repositoryStock,
-            IGenericRepository<Notifications> notificationRepository)
+            IGenericRepository<Notifications> notificationRepository,
+            IGenericRepository<CodigoBarras> repositoryCodigosBarras)
         {
             _repository = repository;
             _repositoryListaPrecios = repositoryListaPrecios;
@@ -41,19 +43,20 @@ namespace PointOfSale.Business.Services
             _notificationService = notificationService;
             _repositoryStock = repositoryStock;
             _notificationRepository = notificationRepository;
+            _repositoryCodigosBarras = repositoryCodigosBarras;
         }
 
         public async Task<Product> Get(int idProducto)
         {
             IQueryable<Product> queryProduct = await _repository.Query(u => u.IdProduct == idProducto);
-            return queryProduct.Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).First();
+            return queryProduct.Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).Include(_ => _.CodigoBarras).First();
         }
 
         public async Task<List<Product>> List()
         {
             IQueryable<Product> query = await _repository.Query();
-            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).OrderBy(_ => _.Description).ToList();
-            //return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).OrderBy(_ => _.Description).Take(3).ToList();
+            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).Include(_ => _.CodigoBarras).OrderBy(_ => _.Description).ToList();
+            //return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).Include(_ => _.CodigoBarras).OrderBy(_ => _.Description).Take(3).ToList();
         }
 
         public async Task<List<Product>> ListActive()
@@ -65,12 +68,12 @@ namespace PointOfSale.Business.Services
         public async Task<List<Stock>> ListStock(int idTienda)
         {
             IQueryable<Stock> query = await _repositoryStock.Query();
-            return await query.Include(_=> _.Producto).Where(_=>_.IdTienda == idTienda).ToListAsync();
+            return await query.Include(_ => _.Producto).Where(_ => _.IdTienda == idTienda).ToListAsync();
         }
 
         public async Task<Stock?> GetStockByIdProductIdTienda(int idProducto, int idTienda)
         {
-            IQueryable<Stock> queryProduct = await _repositoryStock.Query(u => u.IdProducto== idProducto && u.IdTienda == idTienda);
+            IQueryable<Stock> queryProduct = await _repositoryStock.Query(u => u.IdProducto == idProducto && u.IdTienda == idTienda);
             return queryProduct.FirstOrDefault();
         }
 
@@ -107,54 +110,52 @@ namespace PointOfSale.Business.Services
         }
 
 
-        public async Task<Product> Add(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos, Stock? stock)
+        public async Task<Product> Add(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos, Stock? stock, List<CodigoBarras>? codigoBarras)
         {
-            Product product_exists = await _repository.Get(p => p.BarCode != string.Empty && p.BarCode == entity.BarCode);
+            if (codigoBarras != null)
+            {
+                var product_exists = await _repository.QuerySimple()
+                    .Include(p => p.CodigoBarras)
+                    .Where(p => p.CodigoBarras != null)
+                    .ToListAsync();
 
-            if (product_exists != null)
-                throw new TaskCanceledException("El barcode ya existe");
+                if (product_exists.Any(p => p.CodigoBarras.Any(pb => codigoBarras.Any(eb => eb.Codigo == pb.Codigo))))
+                {
+                    throw new TaskCanceledException("El codigo de barras ya existe");
+                }
+            }
 
             if (entity.Photo.Length == 0)
             {
                 entity.Photo = GetDefaultImage();
             }
-            try
+
+            Product product_created = await _repository.Add(entity);
+
+            if (product_created.IdProduct == 0)
+                throw new TaskCanceledException("Error al crear el producto");
+
+            if (stock != null)
             {
-                Product product_created = await _repository.Add(entity);
-
-                if (product_created.IdProduct == 0)
-                    throw new TaskCanceledException("Error al crear producto");
-
-                if (stock != null)
-                {
-                    stock.IdProducto = product_created.IdProduct;
-                    _ = await _repositoryStock.Add(stock);
-                }
-
-                listaPrecios[0].IdProducto = product_created.IdProduct;
-                listaPrecios[1].IdProducto = product_created.IdProduct;
-                listaPrecios[2].IdProducto = product_created.IdProduct;
-
-                _ = await _repositoryListaPrecios.Add(listaPrecios[0]);
-                _ = await _repositoryListaPrecios.Add(listaPrecios[1]);
-                _ = await _repositoryListaPrecios.Add(listaPrecios[2]);
-
-                foreach (var v in vencimientos)
-                {
-                    v.IdProducto = product_created.IdProduct;
-                }
-
-                await EditOrCreateVencimientos(vencimientos);
-
-                IQueryable<Product> query = await _repository.Query(p => p.IdProduct == product_created.IdProduct);
-                product_created = query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).First();
-
-                return product_created;
+                stock.IdProducto = product_created.IdProduct;
+                _ = await _repositoryStock.Add(stock);
             }
-            catch (Exception ex)
-            {
-                throw;
-            }
+
+            listaPrecios[0].IdProducto = product_created.IdProduct;
+            listaPrecios[1].IdProducto = product_created.IdProduct;
+            listaPrecios[2].IdProducto = product_created.IdProduct;
+
+            _ = await _repositoryListaPrecios.Add(listaPrecios[0]);
+            _ = await _repositoryListaPrecios.Add(listaPrecios[1]);
+            _ = await _repositoryListaPrecios.Add(listaPrecios[2]);
+
+            await EditOrCreateVencimientos(vencimientos, product_created.IdProduct);
+            await EditOrCreateCodBarras(codigoBarras, product_created.IdProduct);
+
+            IQueryable<Product> query = await _repository.Query(p => p.IdProduct == product_created.IdProduct);
+            product_created = query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).First();
+
+            return product_created;
         }
 
         /// <summary>
@@ -165,10 +166,15 @@ namespace PointOfSale.Business.Services
         /// <exception cref="TaskCanceledException"></exception>
         public async Task<Product> Add(Product entity)
         {
-            Product product_exists = await _repository.Get(p => p.BarCode != string.Empty && p.BarCode == entity.BarCode);
+            var product_exists = await _repository.QuerySimple()
+                .Include(p => p.CodigoBarras)
+                .Where(p => p.CodigoBarras != null)
+                .ToListAsync();
 
-            if (product_exists != null)
-                throw new TaskCanceledException("El barcode ya existe");
+            if (product_exists.Any(p => p.CodigoBarras.Any(pb => entity.CodigoBarras.Any(eb => eb.Codigo == pb.Codigo))))
+            {
+                throw new TaskCanceledException("El codigo de barras ya existe");
+            }
 
             if (entity.Photo.Length == 0)
             {
@@ -190,23 +196,29 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task<Product> Edit(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos, Stock? stock)
+        public async Task<Product> Edit(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos, Stock? stock, List<CodigoBarras>? codigoBarras)
         {
-            Product product_exists = await _repository.Get(p => (p.BarCode != string.Empty && p.BarCode == entity.BarCode) && p.IdProduct != entity.IdProduct);
+            if (codigoBarras != null)
+            {
+                var product_exists = await _repository.QuerySimple()
+                    .Include(p => p.CodigoBarras)
+                    .Where(p => p.CodigoBarras != null)
+                    .ToListAsync();
 
-            if (product_exists != null)
-                throw new TaskCanceledException("El barcode ya existe");
+                if (product_exists.Any(p => p.CodigoBarras.Any(pb => codigoBarras.Any(eb => eb.Codigo == pb.Codigo))))
+                {
+                    throw new TaskCanceledException("El codigo de barras ya existe");
+                }
+            }
 
             try
             {
                 IQueryable<Product> queryProduct1 = await _repository.Query(u => u.IdProduct == entity.IdProduct);
                 Product product_edit = queryProduct1.Include(_ => _.ListaPrecios).First();
 
-                product_edit.BarCode = entity.BarCode;
                 product_edit.Description = entity.Description;
                 product_edit.IdCategory = entity.IdCategory;
-                //product_edit.Quantity = entity.Quantity < product_edit.Quantity ? product_edit.Quantity : entity.Quantity;
-                //product_edit.Minimo = entity.Minimo;
+
                 product_edit.Price = entity.Price;
                 product_edit.CostPrice = entity.CostPrice;
                 product_edit.PriceWeb = entity.PriceWeb;
@@ -226,25 +238,24 @@ namespace PointOfSale.Business.Services
                 product_edit.TipoVenta = entity.TipoVenta;
                 product_edit.Comentario = entity.Comentario;
                 product_edit.Iva = entity.Iva;
+                product_edit.FormatoWeb = entity.FormatoWeb;
+                product_edit.PrecioFormatoWeb = entity.PrecioFormatoWeb;
 
                 bool response = await _repository.Edit(product_edit);
                 if (!response)
                     throw new TaskCanceledException("El producto no pudo modificarse");
 
-                foreach (var v in vencimientos.Where(_ => _.IdVencimiento == 0)) // TODO creo que no es mas necesario.
-                {
-                    v.IdProducto = product_edit.IdProduct;
-                }
 
                 await EditListaPrecios(product_edit.ListaPrecios.ToList(), listaPrecios);
-                await EditOrCreateVencimientos(vencimientos);
+                await EditOrCreateVencimientos(vencimientos, product_edit.IdProduct);
+                await EditOrCreateCodBarras(codigoBarras, product_edit.IdProduct);
 
                 if (stock != null)
                     await EditStock(stock);
 
                 IQueryable<Product> queryProduct = await _repository.Query(u => u.IdProduct == entity.IdProduct);
 
-                Product product_edited = queryProduct.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).First();
+                Product product_edited = queryProduct.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).Include(_ => _.CodigoBarras).First();
 
                 return product_edited;
             }
@@ -306,31 +317,45 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task EditOrCreateVencimientos(List<Vencimiento> listaVencimientos)
+        public async Task EditOrCreateCodBarras(List<CodigoBarras> codigoBarras, int idProducto)
         {
-            try
+            foreach (var v in codigoBarras)
             {
-                foreach (var v in listaVencimientos)
+                if (v.IdCodigoBarras == 0)
                 {
-                    if (v.IdVencimiento == 0)
-                    {
-                        await _repositoryVencimientos.Add(v);
-                    }
-                    else
-                    {
-                        var oVen = await _repositoryVencimientos.Get(_ => _.IdVencimiento == v.IdVencimiento);
-                        oVen.FechaVencimiento = v.FechaVencimiento;
-                        oVen.FechaElaboracion = v.FechaElaboracion;
-                        oVen.Lote = v.Lote;
-                        oVen.Notificar = v.Notificar;
-                        await _repositoryVencimientos.Edit(oVen);
+                    v.IdProducto = idProducto;
+                    await _repositoryCodigosBarras.Add(v);
+                }
+                else
+                {
+                    var cb = await _repositoryCodigosBarras.Get(_ => _.IdCodigoBarras == v.IdCodigoBarras);
+                    cb.Codigo = v.Codigo;
+                    cb.Descripcion = v.Descripcion;
+                    await _repositoryCodigosBarras.Edit(cb);
 
-                    }
                 }
             }
-            catch (Exception e)
+        }
+
+        public async Task EditOrCreateVencimientos(List<Vencimiento> listaVencimientos, int idProducto)
+        {
+            foreach (var v in listaVencimientos)
             {
-                throw;
+                if (v.IdVencimiento == 0)
+                {
+                    v.IdProducto = idProducto;
+                    await _repositoryVencimientos.Add(v);
+                }
+                else
+                {
+                    var oVen = await _repositoryVencimientos.Get(_ => _.IdVencimiento == v.IdVencimiento);
+                    oVen.FechaVencimiento = v.FechaVencimiento;
+                    oVen.FechaElaboracion = v.FechaElaboracion;
+                    oVen.Lote = v.Lote;
+                    oVen.Notificar = v.Notificar;
+                    await _repositoryVencimientos.Edit(oVen);
+
+                }
             }
         }
 
@@ -496,7 +521,7 @@ namespace PointOfSale.Business.Services
                p.Producto.IsActive == true &&
                listIds.Contains(p.IdProducto));
 
-            return queryProducts.Include(c => c.Producto).OrderBy(_ => _.Producto.Description).ToList().Select(_ => _.Producto).ToList();
+            return queryProducts.Include(c => c.Producto).Include(c => c.Producto.CodigoBarras).OrderBy(_ => _.Producto.Description).ToList().Select(_ => _.Producto).ToList();
         }
 
 
@@ -646,6 +671,18 @@ namespace PointOfSale.Business.Services
                 throw new TaskCanceledException("El Vencimiento no existe");
 
             bool response = await _repositoryVencimientos.Delete(vencimiento_found);
+
+            return response;
+        }
+        public async Task<bool> DeleteCodigoBarras(int idCodigoBarras)
+        {
+            IQueryable<CodigoBarras> query = await _repositoryCodigosBarras.Query(p => p.IdCodigoBarras == idCodigoBarras);
+            var codBarras_found = query.FirstOrDefault();
+
+            if (codBarras_found == null)
+                throw new TaskCanceledException("El Vencimiento no existe");
+
+            bool response = await _repositoryCodigosBarras.Delete(codBarras_found);
 
             return response;
         }

@@ -9,6 +9,7 @@ namespace PointOfSale.Model
         public Sale()
         {
             DetailSales = new HashSet<DetailSale>();
+            IsDelete = false;
         }
 
         public int IdSale { get; set; }
@@ -21,6 +22,7 @@ namespace PointOfSale.Model
         public decimal? TotalSinComision => Total * 1 - ((TypeDocumentSaleNavigation != null ? TypeDocumentSaleNavigation.Comision : 0) / 100);
         public DateTime? RegistrationDate { get; set; }
         public string RegistrationUser { get; set; }
+
         public virtual TypeDocumentSale? TypeDocumentSaleNavigation { get; set; }
         public virtual User? IdUsersNavigation { get; set; }
         public virtual ICollection<DetailSale> DetailSales { get; set; }
@@ -34,5 +36,7 @@ namespace PointOfSale.Model
         public int? IdFacturaEmitida { get; set; }
         public virtual FacturaEmitida FacturaEmitida { get; set; }
         public bool? IsWeb { get; set; }
+        public string? Observaciones { get; set; }
+        public bool IsDelete { get; set; }
     }
 }

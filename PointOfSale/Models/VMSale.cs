@@ -36,6 +36,8 @@ namespace PointOfSale.Models
         public string? urlQr { get; set; }
         public List<Images> ImagesTicket { get; set; }
         public bool? IsWeb { get; set; }
+        public string? Observaciones { get; set; }
+        public bool IsDelete { get; set; }
 
 
     }

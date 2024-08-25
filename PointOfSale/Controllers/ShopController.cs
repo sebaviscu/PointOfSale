@@ -158,8 +158,16 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetVentasWeb()
         {
+            try
+            {
             List<VMVentaWeb> vmCategoryList = _mapper.Map<List<VMVentaWeb>>(await _shopService.List());
             return StatusCode(StatusCodes.Status200OK, new { data = vmCategoryList });
+            }
+            catch (Exception e)
+            {
+                return HandleException(e, "Error al recuperar lista de ventas web", _logger);
+            }
+
         }
 
 

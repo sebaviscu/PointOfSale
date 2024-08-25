@@ -22,6 +22,10 @@ namespace PointOfSale.Model
         public string? Comentario { get; set; }
         public TipoVenta TipoVenta { get; set; }
         public decimal? Iva {  get; set; }
+
+        public decimal? PrecioFormatoWeb { get; set; }
+        public int? FormatoWeb { get; set; }
+
         public virtual Category? IdCategoryNavigation { get; set; }
         public int? IdProveedor { get; set; }
         public Proveedor? Proveedor { get; set; }
@@ -30,6 +34,7 @@ namespace PointOfSale.Model
         public List<Vencimiento>? Vencimientos { get; set; }
         public virtual ICollection<PedidoProducto>? PedidoProductos { get; set; }
         public virtual ICollection<Stock>? Stocks { get; set; }
+        public virtual ICollection<CodigoBarras>? CodigoBarras { get; set; }
 
     }
 }

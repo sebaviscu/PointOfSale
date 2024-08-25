@@ -104,6 +104,7 @@ namespace PointOfSale.Business.Services
                 .Where(
                 vd => vd.RegistrationDate.Value.Date >= start.Date && vd.RegistrationDate.Value.Date < end.Date
                 && vd.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
+                && !vd.IsDelete
                 && vd.IdClienteMovimiento == null);
 
             if (!visionGlobal)
@@ -130,6 +131,7 @@ namespace PointOfSale.Business.Services
                             v.RegistrationDate.Value.Date >= start.Date
                             && v.RegistrationDate.Value.Date < end.Date
                             && v.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
+                            && !v.IsDelete
                             && v.IdClienteMovimiento == null);
 
             if (!visionGlobal)
@@ -159,6 +161,7 @@ namespace PointOfSale.Business.Services
                 .Where(v =>
                             v.RegistrationDate.Value.Date >= start && v.RegistrationDate.Value.Date <= end
                             && v.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
+                            && !v.IsDelete
                             && v.IdClienteMovimiento == null);
 
             if (!visionGlobal)
@@ -187,6 +190,7 @@ namespace PointOfSale.Business.Services
                             v.RegistrationDate.Value.Date < start.Date
                             && v.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
                             && v.RegistrationDate.Value.Date >= dateCompare.Date
+                            && !v.IsDelete
                             && v.IdClienteMovimiento == null);
 
             if (!visionGlobal)
@@ -211,6 +215,7 @@ namespace PointOfSale.Business.Services
                             v.RegistrationDate.Value.Date < start.Date
                             && v.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
                             && v.RegistrationDate.Value.Date >= dateCompare.Date
+                            && !v.IsDelete
                             && v.IdClienteMovimiento == null);
 
             if (!visionGlobal)
@@ -282,6 +287,7 @@ namespace PointOfSale.Business.Services
                 .Where(vd => vd.RegistrationDate.Value.Date >= start.Date && vd.RegistrationDate.Value.Date < end.Date
                         && vd.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
                         && vd.IdClienteMovimiento == null
+                        && !vd.IsDelete
                         && vd.IdTurno == turno);
 
             if (!visionGlobal)
@@ -306,6 +312,7 @@ namespace PointOfSale.Business.Services
                 .Where(vd => vd.IdClienteMovimiento == null
                         && vd.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
                         && vd.IdTurno == turno
+                        && !vd.IsDelete
                         && vd.IdTienda == idTienda)
                 .GroupBy(v => v.TypeDocumentSaleNavigation.Description).OrderByDescending(g => g.Sum(_ => _.Total))
                 .Select(dv => new { descripcion = dv.Key, total = dv.Sum(_ => _.Total.Value) })
@@ -403,6 +410,7 @@ namespace PointOfSale.Business.Services
                 .Where(
                 vd => vd.RegistrationDate.Value.Date >= start.Date && vd.RegistrationDate.Value.Date < end.Date
                 && vd.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
+                && !vd.IsDelete
                 && vd.IdClienteMovimiento == null);
 
             Dictionary<string, decimal> resultado = query

@@ -79,8 +79,6 @@
                                     <th>Categoria</th>
                                     <th>Proveedor</th>
                                     <th>Precio (1)</th>
-                                    <th>Precio (2)</th>
-                                    <th>Web</th>
                                     <th>Fecha Modific.</th>
                                     <th>Estado</th>
                                     <th></th>
@@ -122,8 +120,9 @@
                                     </select>
                                 </div>
                                 <div class="form-group col-sm-3">
-                                    <label for="txBarCode">BarCode</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtBarCode" name="BarCode">
+                                    <label for="cboProveedor">Proveedor</label>
+                                    <select class="form-control form-control-sm" id="cboProveedor">
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-row">
@@ -148,12 +147,7 @@
                                 <div class="form-group col-sm-1" style="align-content: center;">
                                     <button type="button" id="btnCalcularTodo" class="btn btn-secondary btn-sm" onclick="calcularPrecio()">Calcular</button>
                                 </div>
-                                <div class="form-group col-sm-3">
-                                    <label for="cboProveedor">Proveedor</label>
-                                    <select class="form-control form-control-sm" id="cboProveedor">
-                                    </select>
-                                </div>
-                                <div class="form-group col-sm-2">
+                                <div class="offset-sm-1 form-group col-sm-2">
                                     <label for="cboTipoVenta">Tipo Venta</label>
                                     <select class="form-control form-control-sm  input-validate" id="cboTipoVenta" style="background-color: beige">
                                         <option value="1">Kg</option>
@@ -182,8 +176,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-6 row" style="margin-bottom: 0px;">
-                            <div class="col-md-6">
+                        <div class="col-sm-3 row" style="margin-bottom: 0px;">
+                            <div class="col-md-12">
                                 <div class="form-row" style="margin-bottom: -20px;">
                                     <div class="form-group col-sm-5">
                                         <label for="txtProfit2">Ganancia %</label>
@@ -232,133 +226,211 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
 
-                                <div class="card shadow">
-                                    <div class="card-header py-2">
-                                        <h4>Venta Web</h4>
-                                    </div>
-                                    <div class="card-body row">
-                                        <div class="col-md-12">
-                                            <div class="form-row">
-                                                <div class="col-sm-5">
-                                                    <label for="txtAumento">Aumento</label>
-                                                    <input class="form-control form-control-sm" id="txtAumento" name="Aumento" disabled>
-                                                </div>
-                                                <div class="col-sm-7">
-                                                    <label for="PriceWeb">Precio Web</label>
-                                                    <div class="input-group input-group-sm">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text">$</span>
-                                                        </div>
-                                                        <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtPriceWeb" name="PriceWeb">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group col-sm-12">
-                                            <label for="txtAumento">Comentario</label>
-                                            <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-row" id="divModif">
-                                    <div class="form-group col-sm-6">
-                                        <label for="txtModificado">Fecha Modificado</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtModificado" name="fechaModificado" readonly>
-                                    </div>
-                                    <div class="form-group col-sm-6">
-                                        <label for="txtModificadoUsuario">Por:</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtModificadoUsuario" name="usuarioModificado" readonly>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
-                        <div class="form-group col-sm-6">
-                            <div class="col-md-12">
-                                <div class="form-row">
-                                    <div class="form-group col-sm-3">
-                                        <label for="txtQuantity">Stock Actual</label>
-                                        <input type="number" min="0" class="form-control form-control-sm" id="txtQuantity" name="Quantity">
-                                    </div>
-                                    <div class="form-group col-sm-3">
-                                        <label for="txtMinimo">Stock Minimo</label>
-                                        <input type="number" class="form-control form-control-sm" min="0" id="txtMinimo" name="stock minimo">
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="col-sm-9">
 
-                            <div class="col-md-12">
-                                <div class="card shadow">
-                                    <div class="card-header py-2">
-                                        <div class="col-md-12">
-                                            <div class="row">
-                                                <h4>Vencimientos</h4>
-                                                <button class="btn accordion-button btn-success btn-sm" style="margin-left:10px" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                                    +
-                                                </button>
+
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link active" id="simple-tab-0" data-bs-toggle="tab" href="#simple-tabpanel-0" role="tab" aria-controls="simple-tabpanel-0" aria-selected="false">Web</a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link" id="simple-tab-3" data-bs-toggle="tab" href="#simple-tabpanel-3" role="tab" aria-controls="simple-tabpanel-3" aria-selected="true">Cod. Barras</a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link" id="simple-tab-1" data-bs-toggle="tab" href="#simple-tabpanel-1" role="tab" aria-controls="simple-tabpanel-1" aria-selected="false">Stock y Vntos.</a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link" id="simple-tab-1" data-bs-toggle="tab" href="#simple-tabpanel-2" role="tab" aria-controls="simple-tabpanel-2" aria-selected="false">Sub Categorias</a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content pt-4" id="tab-content">
+                                <div class="tab-pane" id="simple-tabpanel-3" role="tabpanel" aria-labelledby="simple-tab-3">
+                                    <div class="col-md-12">
+                                        <div class="row">
+
+                                            <div class="col-md-6">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <table id="tbCodigoBarras" class="table table-sm table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Codigo de barras</th>
+                                                                    <th>Descripcion</th>
+                                                                    <th></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <div class="form-row row" style="margin-bottom: -14px;">
+                                                    <div class="form-group col-sm-6">
+                                                        <label for="txtCodBarrasAgregar">Codigo</label>
+                                                        <input type="number" min="0" step="1" class="form-control form-control-sm" id="txtCodBarrasAgregar" name="codigo de barras">
+                                                    </div>
+                                                    <div class="form-group col-sm-4">
+                                                        <label for="txtCodBarrasDescripcion">Descripcion</label>
+                                                        <input type="text" maxlength="50" class="form-control form-control-sm" id="txtCodBarrasDescripcion" name="descripcion producto">
+                                                    </div>
+                                                    <div class="col-sm-2" style="align-self: center;">
+                                                        <button class="btn btn-success btn-sm" id="btnAddCodBarras">Agregar</button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card-body row">
-                                        <div class="col-md-12">
-                                            <div class="card-body" style="padding: 0px;">
 
-                                                <div class="col-md-12">
-                                                    <div class="row">
-                                                        <div class="col-sm-12">
-                                                            <table id="tbVencimientos" class="table table-sm table-striped">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th>Vencimiento</th>
-                                                                        <th>Elaborado</th>
-                                                                        <th>Lote</th>
-                                                                        <th>Notif.</th>
-                                                                        <th></th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
+                                </div>
+
+
+                                <div class="tab-pane active" id="simple-tabpanel-0" role="tabpanel" aria-labelledby="simple-tab-0">
+
+
+                                    <div class="col-md-12">
+                                        <div class="form-row">
+                                            <div class="col-sm-2">
+                                                <label for="txtAumento">Aumento</label>
+                                                <input class="form-control form-control-sm" id="txtAumento" name="Aumento" disabled>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label for="PriceWeb">Precio Web</label>
+                                                <div class="input-group input-group-sm">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">$</span>
+                                                    </div>
+                                                    <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtPriceWeb" name="PriceWeb">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label for="txtAumento">Formato Venta</label>
+                                                <select class="form-control form-control-sm" id="cboFormatoVenta">
+                                                    <option class="formato-peso" value="100">100 gr</option>
+                                                    <option class="formato-peso" value="200">200 gr</option>
+                                                    <option class="formato-peso" value="250">250 gr</option>
+                                                    <option class="formato-peso" value="500">500 gr</option>
+                                                    <option class="formato-peso" value="700">750 gr</option>
+                                                    <option class="formato-peso" value="1000">1 kg</option>
+                                                    <option class="formato-unidad" value="1">Unidad</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label for="txtPriceFormatoWeb">Precio por Formato</label>
+                                                <div class="input-group input-group-sm">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">$</span>
+                                                    </div>
+                                                    <input type="text" class="form-control form-control-sm" id="txtPriceFormatoWeb" name="PriceWeb">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="txtAumento">Comentario</label>
+                                        <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario">
+                                    </div>
+
+
+
+                                </div>
+                                <div class="tab-pane" id="simple-tabpanel-1" role="tabpanel" aria-labelledby="simple-tab-1">
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="col-md-12">
+                                                <div class="form-row">
+                                                    <div class="form-group col-sm-5" style="margin-bottom: 0px;">
+                                                        <label for="txtQuantity">Stock Actual</label>
+                                                        <input type="number" min="0" class="form-control form-control-sm" id="txtQuantity" name="Quantity">
+                                                    </div>
+                                                    <div class="form-group col-sm-5" style="margin-bottom: 0px;">
+                                                        <label for="txtMinimo">Stock Minimo</label>
+                                                        <input type="number" class="form-control form-control-sm" min="0" id="txtMinimo" name="stock minimo">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <hr>
+                                            <div class="col-md-12">
+                                                <div class="form-row row">
+                                                    <div class="form-group col-sm-4">
+                                                        <label for="fVencimiento">Vencimiento</label>
+                                                        <input type="text" class="form-control form-control-sm" id="txtfVencimiento" name="vencimiento">
+                                                    </div>
+                                                    <div class="form-group col-sm-4">
+                                                        <label for="fElaborado">Elaborado</label>
+                                                        <input type="text" class="form-control form-control-sm" id="txtfElaborado" name="elaborado">
+                                                    </div>
+                                                    <div class="form-group col-sm-3">
+                                                        <label for="lote">Lote</label>
+                                                        <input type="text" class="form-control form-control-sm" id="txtLote" name="lote">
+                                                    </div>
+                                                    <div class="col-sm-1" style="align-self: center;">
+                                                        <button class="btn btn-success btn-sm" id="btnAddVencimiento">Agregar</button>
                                                     </div>
                                                 </div>
 
-                                                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                                                    <div class="form-group col-sm-12">
+                                            </div>
+                                        </div>
 
-                                                        <div class="accordion-body">
-                                                            <div class="form-row row" style="margin-bottom: -14px;">
-                                                                <div class="form-group col-sm-3">
-                                                                    <label for="fVencimiento">Vencimiento</label>
-                                                                    <input type="text" class="form-control form-control-sm" id="txtfVencimiento" name="vencimiento">
-                                                                </div>
-                                                                <div class="form-group col-sm-3">
-                                                                    <label for="fElaborado">Elaborado</label>
-                                                                    <input type="text" class="form-control form-control-sm" id="txtfElaborado" name="elaborado">
-                                                                </div>
-                                                                <div class="form-group col-sm-3">
-                                                                    <label for="lote">Lote</label>
-                                                                    <input type="text" class="form-control form-control-sm" id="txtLote" name="lote">
-                                                                </div>
-                                                                <div class="col-sm-3" style="align-self: center;">
-                                                                    <button class="btn btn-success btn-sm" id="btnAddVencimiento">Agregar</button>
-                                                                </div>
+                                        <div class="col-md-6">
+                                            <div class="">
+                                                <div class="card-body" style="padding: 0px;">
+                                                    <div class="col-md-12">
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <table id="tbVencimientos" class="table table-sm table-striped">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Vencimiento</th>
+                                                                            <th>Elaborado</th>
+                                                                            <th>Lote</th>
+                                                                            <th>Notif.</th>
+                                                                            <th></th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                    </tbody>
+                                                                </table>
                                                             </div>
-
                                                         </div>
                                                     </div>
+
                                                 </div>
                                             </div>
                                         </div>
-
                                     </div>
+
+
+                                </div>
+                                <div class="tab-pane" id="simple-tabpanel-2" role="tabpanel" aria-labelledby="simple-tab-2">
+
+                                    sub categorias
+
                                 </div>
                             </div>
 
+
                         </div>
+                        <div class="col-md-4" style="margin-top: -20px;">
+                            <div class="form-row" id="divModif">
+                                <div class="form-group col-sm-6">
+                                    <label for="txtModificado">Fecha Modificado</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtModificado" name="fechaModificado" readonly>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="txtModificadoUsuario">Por:</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtModificadoUsuario" name="usuarioModificado" readonly>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </form>
 

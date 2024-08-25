@@ -211,7 +211,8 @@ namespace PointOfSale.Controllers
                         IdTienda = user.IdTienda,
                         RegistrationUser = user.UserName,
                         SaleNumber = lastNumber,
-                        IsWeb = false
+                        IsWeb = false,
+                        Observaciones = model.Observaciones
                     };
 
                     if (!paso)
@@ -485,6 +486,25 @@ namespace PointOfSale.Controllers
             var sale = await _saleService.Edit(idSale, formaPago);
 
             return StatusCode(StatusCodes.Status200OK);
+        }
+
+        public async Task<IActionResult> AnularSale(int idSale)
+        {
+            GenericResponse<VMSale> gResponse = new GenericResponse<VMSale>();
+
+            try
+            {
+                ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
+                _ = await _saleService.AnularSale(idSale);
+                
+                gResponse.State = true;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al querer borrar la venta", _logger, idSale);
+            }
         }
     }
 }

@@ -151,7 +151,7 @@ namespace PointOfSale.Business.Reportes
                 BorderWidthTop = 0.1f,
                 BorderColorLeft = BaseColor.WHITE,
                 BorderWidthLeft = 0.1f,
-                PaddingBottom = 10 
+                PaddingBottom = 10
             };
 
             if (fechaModif && codBarras)
@@ -168,17 +168,23 @@ namespace PointOfSale.Business.Reportes
             PdfPCell EtiquetaBarCode;
             if (codBarras)
             {
-                EtiquetaBarCode = new PdfPCell(new Phrase(p.BarCode, fcodyfecha))
+                var codBar = p.CodigoBarras.FirstOrDefault();
+                if (codBar != null)
                 {
-                    Colspan = 4,
-                    HorizontalAlignment = 0,
-                    VerticalAlignment = Element.ALIGN_MIDDLE,
-                    PaddingBottom = 4,
-                    BorderColorTop = BaseColor.WHITE,
-                    //BorderWidthTop = 0.1f,
-                    BorderColorRight = BaseColor.WHITE,
-                    BorderWidthRight = 0.1f
-                };
+                    EtiquetaBarCode = new PdfPCell(new Phrase(codBar.Codigo, fcodyfecha))
+                    {
+                        Colspan = 4,
+                        HorizontalAlignment = 0,
+                        VerticalAlignment = Element.ALIGN_MIDDLE,
+                        PaddingBottom = 4,
+                        BorderColorTop = BaseColor.WHITE,
+                        //BorderWidthTop = 0.1f,
+                        BorderColorRight = BaseColor.WHITE,
+                        BorderWidthRight = 0.1f
+                    };
+                }
+                else
+                    EtiquetaBarCode = new PdfPCell(new Phrase("", fcodyfecha));
             }
             else
             {

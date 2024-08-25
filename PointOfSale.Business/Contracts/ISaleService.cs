@@ -10,7 +10,7 @@ namespace PointOfSale.Business.Contracts
 {
     public interface ISaleService
     {
-        Task<List<Product>> GetProducts(string search);
+        //Task<List<Product>> GetProducts(string search);
 
         Task<List<Cliente>> GetClients(string search);
         Task<Sale> Register(Sale entity, Ajustes ajustes);
@@ -31,6 +31,8 @@ namespace PointOfSale.Business.Contracts
         Task<CorrelativeNumber> CreateSerialNumberSale(int idTienda);
 
         Task<List<Sale>> HistoryTurnoActual(int idTurno);
+
+        Task<Sale> AnularSale(int idSale);
 
     }
 }

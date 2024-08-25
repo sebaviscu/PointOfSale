@@ -162,6 +162,17 @@ $("#tbsale tbody").on("click", ".btn-info", function () {
     $("#txtClientName").val(d.clientName)
     $("#txtTotal").val(d.total)
     $("#txtDescRec").val(d.descuentoRecargo)
+
+    const divObs = document.getElementById("divObs");
+    if (d.observaciones) {
+        $("#txtObservaciones").val(d.observaciones);
+        divObs.style.display = '';
+    } else {
+        divObs.style.display = 'none';
+    }
+
+    document.getElementById("btnAnular").style.display = d.isDelete ? 'none' : '';
+
     idSale = d.idSale;
 
     $("#tbProducts tbody").html("")
@@ -241,6 +252,11 @@ function createTable(responseJson) {
                             .addClass("mdi mdi-web ms-3")
                             .attr("title", "Venta Web")
                             .tooltip()
+                            : 
+                            sale.isDelete ? $("<i>")
+                            .addClass("mdi mdi-cancel ms-3 text-danger")
+                            .attr("title", "Anulada")
+                            .tooltip()
                             : null
                     ),
                     $("<td>").text(sale.saleNumber),
@@ -293,3 +309,44 @@ function turnoActual() {
         })
 
 }
+
+
+$("#btnAnular").on("click", function (event) {
+    event.preventDefault();
+    swal({
+        title: "¿Está seguro?",
+        text: `Anular la venta`,
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonClass: "btn-danger",
+        confirmButtonText: "Si, eliminar",
+        cancelButtonText: "No, cancelar",
+        closeOnConfirm: false,
+        closeOnCancel: true
+    },
+        function (respuesta) {
+
+            if (respuesta) {
+
+                $(".showSweetAlert").LoadingOverlay("show")
+
+                fetch(`/Sales/AnularSale?idSale=${idSale}`, {
+                    method: "DELETE"
+                }).then(response => {
+                    $(".showSweetAlert").LoadingOverlay("hide")
+                    return response.json();
+                }).then(responseJson => {
+                    if (responseJson.state) {
+
+                        swal("Exitoso!", "La venta fué anulada", "success");
+
+                    } else {
+                        swal("Lo sentimos", responseJson.message, "error");
+                    }
+                })
+                    .catch((error) => {
+                        $(".showSweetAlert").LoadingOverlay("hide")
+                    })
+            }
+        });
+})

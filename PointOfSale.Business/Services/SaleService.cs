@@ -36,47 +36,45 @@ namespace PointOfSale.Business.Services
             _repositoryListaPrecio = repositoryListaPrecio;
         }
 
-        public async Task<List<Product>> GetProducts(string search)
-        {
-            var list = new List<Product>();
+        //public async Task<List<Product>> GetProducts(string search)
+        //{
+        //    var list = new List<Product>();
 
-            // Si la búsqueda contiene espacios, dividimos la búsqueda en múltiples términos
-            if (search.Contains(' '))
-            {
-                var split = search.Split(' ');
+        //    // Si la búsqueda contiene espacios, dividimos la búsqueda en múltiples términos
+        //    if (search.Contains(' '))
+        //    {
+        //        var split = search.Split(' ');
 
-                // Construcción de la consulta SQL con LIKE para cada término de búsqueda
-                var query = "SELECT * FROM Product WHERE ";
-                for (int i = 0; i < split.Length; i++)
-                {
-                    query += $"description LIKE '%{split[i]}%' ";
-                    if (i < split.Length - 1) query += " AND ";
-                }
+        //        // Construcción de la consulta SQL con LIKE para cada término de búsqueda
+        //        var query = "SELECT * FROM Product WHERE ";
+        //        for (int i = 0; i < split.Length; i++)
+        //        {
+        //            query += $"description LIKE '%{split[i]}%' ";
+        //            if (i < split.Length - 1) query += " AND ";
+        //        }
 
-                // Ejecutar la consulta con SQL crudo (mejorable usando parámetros SQL para evitar inyecciones)
-                list = _repositoryProduct.SqlRaw(query).ToList();
-            }
-            else
-            {
-                // Usar IQueryable con Entity Framework para optimizar la consulta
-                var query = await _repositoryProduct.Query(p =>
-                               p.IsActive == true &&
-                               (p.BarCode.Contains(search) || p.Description.Contains(search)));
+        //        // Ejecutar la consulta con SQL crudo (mejorable usando parámetros SQL para evitar inyecciones)
+        //        list = _repositoryProduct.SqlRaw(query).ToList();
+        //    }
+        //    else
+        //    {
+        //        // Usar IQueryable con Entity Framework para optimizar la consulta
+        //        var query = await _repositoryProduct.Query(p =>
+        //                       p.IsActive == true &&
+        //                       (p.BarCode.Contains(search) || p.Description.Contains(search)));
 
-                // Incluir las propiedades de navegación necesarias
-                list = await query.Include(c => c.IdCategoryNavigation)
-                                  .Include(p => p.ListaPrecios)
-                                  .ToListAsync();
-            }
+        //        // Incluir las propiedades de navegación necesarias
+        //        list = await query.Include(c => c.IdCategoryNavigation)
+        //                          .Include(p => p.ListaPrecios)
+        //                          .ToListAsync();
+        //    }
 
-            return list;
-        }
+        //    return list;
+        //}
 
 
         public async Task<List<ListaPrecio>> GetProductsSearchAndIdLista(string search, ListaDePrecio listaPrecios)
         {
-            var list = new List<Product>();
-            IQueryable<Product> queryProducts;
             IQueryable<ListaPrecio> queryListaPrecio;
 
             if (search.Contains(' '))
@@ -88,7 +86,8 @@ namespace PointOfSale.Business.Services
                 {
                     var temp = term;
                     predicate = predicate.And(p => p.Description.Contains(temp));
-                }
+                }   
+
                 var idsProdsQuery = await _repositoryProduct.Query(predicate);
                 var idsProds = idsProdsQuery.Select(p => p.IdProduct).ToList();
 
@@ -102,59 +101,16 @@ namespace PointOfSale.Business.Services
                 queryListaPrecio = await _repositoryListaPrecio.Query(p =>
                     p.Lista == listaPrecios &&
                     p.Producto.IsActive == true &&
-                    (p.Producto.BarCode.Contains(search) || p.Producto.Description.Contains(search)));
+                    (p.Producto.CodigoBarras.Any(cb => cb.Codigo.Equals(search)) ||
+                     p.Producto.Description.Contains(search)));
             }
 
-            return queryListaPrecio.Include(_ => _.Producto).ThenInclude(_ => _.IdCategoryNavigation).ToList();
-        }
-
-
-        public async Task<List<Product>> GetProductsSearchAndIdLista2(string search, ListaDePrecio listaPrecios)
-        {
-            var list = new List<Product>();
-            IQueryable<Product> queryProducts;
-
-            if (search.Contains(' '))
-            {
-                var split = search.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
-                // Construir la expresión de búsqueda dinámica
-                var predicate = PredicateBuilder.True<Product>();
-                foreach (var term in split)
-                {
-                    var temp = term; // Necesario para evitar problemas con la clausura de variables
-                    predicate = predicate.And(p => p.Description.Contains(temp));
-                }
-
-                queryProducts = await _repositoryProduct.Query(predicate);
-            }
-            else
-            {
-                queryProducts = await _repositoryProduct.Query(p =>
-                    p.IsActive == true &&
-                    (p.BarCode.Contains(search) || p.Description.Contains(search)));
-            }
-
-            // Obtener los Ids de productos resultantes de la búsqueda
-            var productIds = await queryProducts.Select(p => p.IdProduct).ToListAsync();
-
-            // Obtener las listas de precios para los productos resultantes
-            var listaPreciosQuery = await _repositoryListaPrecio.Query(p =>
-                p.Lista == listaPrecios &&
-                productIds.Contains(p.IdProducto));
-
-            var listaPrecios2 = await listaPreciosQuery
-                .Include(p => p.Producto)
-                .ToListAsync();
-
-            // Filtrar productos con ListaPrecios igual a 1
-            list = listaPreciosQuery
-                .Where(lp => lp.Lista == listaPrecios)
-                .Select(lp => lp.Producto)
-                .Distinct()
-                .ToList();
-
-            return list;
+            return await queryListaPrecio
+                 .Include(_ => _.Producto)
+                 .ThenInclude(_ => _.IdCategoryNavigation)
+                 .Include(_ => _.Producto)
+                 .ThenInclude(p => p.CodigoBarras)
+                 .ToListAsync();
         }
 
 
@@ -256,23 +212,30 @@ namespace PointOfSale.Business.Services
 
         public async Task<Sale> Edit(Sale entity)
         {
-            try
-            {
-                Sale sale_found = await _repositorySale.Get(c => c.IdSale == entity.IdSale);
+            Sale sale_found = await _repositorySale.Get(c => c.IdSale == entity.IdSale);
 
-                sale_found.IdClienteMovimiento = entity.IdClienteMovimiento;
+            sale_found.IdClienteMovimiento = entity.IdClienteMovimiento;
 
-                bool response = await _repositorySale.Edit(entity);
+            bool response = await _repositorySale.Edit(entity);
 
-                if (!response)
-                    throw new TaskCanceledException("Venta no se pudo cambiar.");
+            if (!response)
+                throw new TaskCanceledException("Venta no se pudo cambiar.");
 
-                return sale_found;
-            }
-            catch
-            {
-                throw;
-            }
+            return sale_found;
+        }
+
+        public async Task<Sale> AnularSale(int idSale)
+        {
+            Sale sale_found = await _repositorySale.Get(c => c.IdSale == idSale);
+
+            sale_found.IsDelete = true;
+
+            bool response = await _repositorySale.Edit(sale_found);
+
+            if (!response)
+                throw new TaskCanceledException("Venta no se pudo eliminar.");
+
+            return sale_found;
         }
 
         public async Task<bool> GenerarVentas(int idTienda, int idUser)

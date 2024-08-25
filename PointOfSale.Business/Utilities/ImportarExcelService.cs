@@ -44,7 +44,12 @@ namespace PointOfSale.Business.Utilities
                         product.IdProduct = 0;
                         product.IsActive = true;
 
-                        product.BarCode = reader.GetValue(0)?.ToString();
+                        var codBarras = reader.GetValue(0)?.ToString();
+                        if(!string.IsNullOrEmpty(codBarras))
+                        {
+                            product.CodigoBarras = new List<CodigoBarras>() { new CodigoBarras(codBarras) };
+                        }
+
                         product.Description = reader.GetValue(1)?.ToString();
                         product.TipoVenta = reader.GetValue(2)?.ToString() == "Kg" ? Model.Enum.TipoVenta.Kg : Model.Enum.TipoVenta.U;
 

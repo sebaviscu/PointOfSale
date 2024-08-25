@@ -159,15 +159,7 @@ namespace PointOfSale.Controllers
             {
                 var productosQuery = await _productService.List();
 
-                var d = _mapper.Map<List<VMProductSimplificado>>(productosQuery);
-                // Asignar Photo a null y mapear a VMProduct en una sola operación
-                //var vmProductList = productosQuery.Select(producto =>
-                //{
-                //    producto.Photo = null;
-                //    return _mapper.Map<VMProduct>(producto);
-                //}).ToList();
-
-                return Ok(new { data = d });
+                return Ok(new { data = _mapper.Map<List<VMProductSimplificado>>(productosQuery) });
             }
             catch (Exception ex)
             {
@@ -210,7 +202,7 @@ namespace PointOfSale.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProduct([FromForm] IFormFile photo, [FromForm] string model, [FromForm] string vencimientos)
+        public async Task<IActionResult> CreateProduct([FromForm] IFormFile photo, [FromForm] string model, [FromForm] string vencimientos, [FromForm] string codBarras)
         {
 
             GenericResponse<VMProduct> gResponse = new GenericResponse<VMProduct>();
@@ -226,6 +218,7 @@ namespace PointOfSale.Controllers
 
                 var vmProduct = JsonConvert.DeserializeObject<VMProduct>(model);
                 var vmListVencimientos = JsonConvert.DeserializeObject<List<VMVencimiento>>(vencimientos, settings);
+                var vmCodBarras = JsonConvert.DeserializeObject<List<VMCodigoBarras>>(codBarras);
 
 
                 var listPrecios = new List<ListaPrecio>()
@@ -259,14 +252,10 @@ namespace PointOfSale.Controllers
                 Stock stock = null;
                 if (vmProduct.Quantity.HasValue && vmProduct.Quantity.Value > 0 && vmProduct.Minimo.HasValue && vmProduct.Minimo.Value >= 0)
                 {
-                    stock = new Stock(
-                    vmProduct.Quantity.Value,
-                    (int)vmProduct.Minimo.Value,
-                    0,
-                    user.IdTienda);
+                    stock = new Stock(vmProduct.Quantity.Value, (int)vmProduct.Minimo.Value, 0, user.IdTienda);
                 }
 
-                Product product_created = await _productService.Add(prod, listPrecios, _mapper.Map<List<Vencimiento>>(vmListVencimientos), stock);
+                Product product_created = await _productService.Add(prod, listPrecios, _mapper.Map<List<Vencimiento>>(vmListVencimientos), stock, _mapper.Map<List<CodigoBarras>>(vmCodBarras));
 
                 vmProduct = _mapper.Map<VMProduct>(product_created);
 
@@ -282,7 +271,7 @@ namespace PointOfSale.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> EditProduct([FromForm] IFormFile photo, [FromForm] string model, [FromForm] string vencimientos)
+        public async Task<IActionResult> EditProduct([FromForm] IFormFile photo, [FromForm] string model, [FromForm] string vencimientos, [FromForm] string codBarras)
         {
 
             GenericResponse<VMProduct> gResponse = new GenericResponse<VMProduct>();
@@ -298,6 +287,7 @@ namespace PointOfSale.Controllers
 
                 VMProduct vmProduct = JsonConvert.DeserializeObject<VMProduct>(model);
                 var vmListVencimientos = JsonConvert.DeserializeObject<List<VMVencimiento>>(vencimientos, settings);
+                var vmCodBarras = JsonConvert.DeserializeObject<List<VMCodigoBarras>>(codBarras);
 
                 vmProduct.ModificationUser = user.UserName;
 
@@ -331,14 +321,10 @@ namespace PointOfSale.Controllers
                 Stock stock = null;
                 if (vmProduct.Quantity.HasValue && vmProduct.Quantity.Value > 0 && vmProduct.Minimo.HasValue && vmProduct.Minimo.Value >= 0)
                 {
-                    stock = new Stock(
-                    vmProduct.Quantity.Value,
-                    (int)vmProduct.Minimo.Value,
-                    vmProduct.IdProduct,
-                    user.IdTienda);
+                    stock = new Stock(vmProduct.Quantity.Value, (int)vmProduct.Minimo.Value, vmProduct.IdProduct, user.IdTienda);
                 }
 
-                Product product_edited = await _productService.Edit(_mapper.Map<Product>(vmProduct), listPrecios, _mapper.Map<List<Vencimiento>>(vmListVencimientos), stock);
+                Product product_edited = await _productService.Edit(_mapper.Map<Product>(vmProduct), listPrecios, _mapper.Map<List<Vencimiento>>(vmListVencimientos), stock, _mapper.Map<List<CodigoBarras>>(vmCodBarras));
 
                 vmProduct = _mapper.Map<VMProduct>(product_edited);
 
@@ -417,12 +403,12 @@ namespace PointOfSale.Controllers
 
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetProductsSearch(string search)
-        {
-            List<VMProduct> vmListProducts = _mapper.Map<List<VMProduct>>(await _saleService.GetProducts(search.Trim()));
-            return StatusCode(StatusCodes.Status200OK, vmListProducts);
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> GetProductsSearch(string search)
+        //{
+        //    List<VMProduct> vmListProducts = _mapper.Map<List<VMProduct>>(await _saleService.GetProducts(search.Trim()));
+        //    return StatusCode(StatusCodes.Status200OK, vmListProducts);
+        //}
 
 
         [HttpGet]
@@ -521,6 +507,24 @@ namespace PointOfSale.Controllers
             catch (Exception ex)
             {
                 return HandleException(ex, "Error al eliminar vencimientos.", _logger, idVencimiento);
+            }
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteCodigoBarras(int idCodigoBarras)
+        {
+
+            GenericResponse<string> gResponse = new GenericResponse<string>();
+            try
+            {
+                ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
+                gResponse.State = await _productService.DeleteCodigoBarras(idCodigoBarras);
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al eliminar codigo de barras.", _logger, idCodigoBarras);
             }
         }
 

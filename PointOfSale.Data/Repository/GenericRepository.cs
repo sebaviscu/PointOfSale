@@ -54,6 +54,43 @@ namespace PointOfSale.Data.Repository
                 throw;
             }
         }
+        public async Task<TEntity> AddAsync(TEntity entity)
+        {
+            try
+            {
+                _dbcontext.Set<TEntity>().AddAsync(entity);
+                return entity;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> EditAsync(TEntity entity)
+        {
+            try
+            {
+                _dbcontext.Update(entity);
+                return true;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        public async Task<bool> SaveChangesAsync()
+        {
+            try
+            {
+                await _dbcontext.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
         public async Task<bool> Edit(TEntity entity)
         {
@@ -113,5 +150,9 @@ namespace PointOfSale.Data.Repository
             return queryentity.FirstOrDefault();
         }
 
+        public IQueryable<TEntity> QuerySimple()
+        {
+            return _dbcontext.Set<TEntity>();
+        }
     }
 }

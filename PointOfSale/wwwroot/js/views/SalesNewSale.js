@@ -486,7 +486,8 @@ function getVentaForRegister() {
         multiplesFormaDePago: formasDePago != [] ? formasDePago : null,
         descuentorecargo: descRec != undefined ? descRec.replace('.', ',') : null,
         idClienteFactura: idClienteParaFactura != '' ? parseInt(idClienteParaFactura) : null,
-        cuilFactura: cuilParaFactura != '' ? cuilParaFactura : null
+        cuilFactura: cuilParaFactura != '' ? cuilParaFactura : null,
+        observaciones: $("#txtObservaciones" + currentTabId).val()
     }
 
     return sale;
@@ -580,6 +581,7 @@ function disableAfterVenta(tabID) {
     $('#txtPeso' + tabID).prop('disabled', true);
     $('#cboCliente' + tabID).prop('disabled', true);
     $('.delete-item-' + tabID).prop('disabled', true)
+    $('#txtObservaciones' + tabID).prop('disabled', true);
     $('#btnFinalizeSaleParcial' + tabID).prop('disabled', true);
     $('#btnFinalizeSaleParcial' + tabID).hide()
     $('#btnImprimirTicket' + tabID).prop('hidden', false);
@@ -683,6 +685,7 @@ function newTab() {
     clone.querySelector("#tbProduct").id = "tbProduct" + tabID;
     clone.querySelector("#txtTotal").id = "txtTotal" + tabID;
     clone.querySelector("#btnFinalizeSaleParcial").id = "btnFinalizeSaleParcial" + tabID;
+    clone.querySelector("#txtObservaciones").id = "txtObservaciones" + tabID;
     clone.querySelector("#cboCliente").id = "cboCliente" + tabID;
     clone.querySelector("#txtPeso").id = "txtPeso" + tabID;
     clone.querySelector("#btnAgregarProducto").id = "btnAgregarProducto" + tabID;

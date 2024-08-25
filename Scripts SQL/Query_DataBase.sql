@@ -10,7 +10,7 @@ idTienda int primary key identity(1,1),
 nombre varchar(150) null,
 Telefono varchar(50) null,
 Direccion varchar(100) null,
-idListaPrecio int null
+idListaPrecio int null,
 Logo varbinary(max) null,
 [modificationDate] [datetime] null,
 [modificationUser] varchar(50) null,
@@ -115,18 +115,15 @@ create table Proveedor(
 )
 
 go 
-
 create table Product(
 [idProduct] int primary key identity(1,1),
-[barCode] varchar(50),
-[brand] varchar(50),
 [description] varchar(100),
-[quantity] decimal(10,2),
-[minimo] decimal(10,2),
 [price] decimal(10,2),
 [photo] varbinary(max),
 [isActive] bit,
 priceWeb decimal(10,2) null,
+precioFormatoWeb decimal(10,2) null,
+formatoWeb int null,
 porcentajeProfit int null,
 costPrice decimal(10,2) null,
 tipoVenta int not null,
@@ -181,6 +178,8 @@ idClienteMovimiento int null,
 descuentoRecargo decimal(10,2) null,
 IdFacturaEmitida int null,
 isWeb bit null,
+isDelete bit not null,
+Observaciones varchar(400),
 [registrationDate] datetime default getdate(),
 [registrationUser] varchar(50) not null
 )
@@ -189,6 +188,7 @@ go
 
 create table VentaWeb(
 idVentaWeb int primary key identity(1,1),
+[saleNumber] varchar(6),
 Nombre varchar(100) null,
 Telefono varchar(50) null,
 Direccion varchar(100) null,
@@ -204,7 +204,9 @@ idSale int references Sale(idSale) null,
 [modificationDate] datetime null,
 [modificationUser] varchar(50) null,
 )
-
+alter table ventaweb
+add 
+[saleNumber] varchar(6)
 go
 
 create table DetailSale(
@@ -527,6 +529,13 @@ CREATE TABLE FacturasEmitidas (
 );
 
 go
+
+CREATE TABLE CodigoBarras (
+    IdCodigoBarras INT IDENTITY(1,1) PRIMARY KEY,
+    Codigo VARCHAR(50) not null,
+    Descripcion VARCHAR(50) null,
+	[idProducto] int references Product(idProduct) not null
+);
 
 
 --select * from turno

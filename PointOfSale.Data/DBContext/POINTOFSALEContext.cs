@@ -48,6 +48,7 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<AjustesWeb> AjustesWeb { get; set; } = null!;
         public virtual DbSet<Stock> Stocks { get; set; } = null!;
         public virtual DbSet<FacturaEmitida> FacturasEmitidas { get; set; } = null!;
+        public virtual DbSet<CodigoBarras> CodigoBarras { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -55,6 +56,18 @@ namespace PointOfSale.Data.DBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<CodigoBarras>(entity =>
+            {
+                entity.HasKey(e => e.IdCodigoBarras);
+
+                entity.ToTable("CodigoBarras");
+
+                entity.HasOne(d => d.Product)
+                    .WithMany(p => p.CodigoBarras)
+                    .HasForeignKey(d => d.IdProducto);
+            });
+
             modelBuilder.Entity<FacturaEmitida>(entity =>
             {
                 entity.HasKey(e => e.IdFacturaEmitida);
@@ -555,11 +568,6 @@ namespace PointOfSale.Data.DBContext
 
                 entity.Property(e => e.IdProduct).HasColumnName("idProduct");
 
-                entity.Property(e => e.BarCode)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("barCode");
-
                 entity.Property(e => e.Description)
                     .HasMaxLength(100)
                     .IsUnicode(false)
@@ -596,6 +604,11 @@ namespace PointOfSale.Data.DBContext
                     .WithMany(p => p.Products)
                     .HasForeignKey(d => d.IdProveedor)
                     .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasMany(t => t.CodigoBarras)
+                    .WithOne(turno => turno.Product)
+                    .HasForeignKey(turno => turno.IdProducto)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Rol>(entity =>

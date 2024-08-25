@@ -7,7 +7,6 @@ namespace PointOfSale.Models
     {
         public int IdProduct { get; set; }
         public string? BarCode { get; set; }
-        public string? Brand { get; set; }
         public string? Description { get; set; }
         public int? IdCategory { get; set; }
         public string? NameCategory { get; set; }
@@ -39,10 +38,13 @@ namespace PointOfSale.Models
         public int? PorcentajeProfit3 { get; set; }
         public List<VMVencimiento>? Vencimientos { get; set; }
         public List<VMListaPrecio>? ListaPrecios { get; set; }
+        public virtual ICollection<VMCodigoBarras>? CodigoBarras { get; set; }
         public VMProveedor? Proveedor { get; set; }
         public virtual VMCategory? IdCategoryNavigation { get; set; }
 
         public virtual ICollection<Stock>? Stocks { get; set; }
+        public decimal? PrecioFormatoWeb { get; set; }
+        public int? FormatoWeb { get; set; }
 
     }
 }

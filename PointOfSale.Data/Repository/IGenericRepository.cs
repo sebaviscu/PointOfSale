@@ -18,5 +18,10 @@ namespace PointOfSale.Data.Repository
         IQueryable<TEntity> SqlRaw(string query);
         Task<TEntity?> First(Expression<Func<TEntity, bool>> filter = null);
         Task<bool> Delete(List<TEntity> entity);
+
+        Task<TEntity> AddAsync(TEntity entity);
+        Task<bool> EditAsync(TEntity entity);
+        Task<bool> SaveChangesAsync();
+        IQueryable<TEntity> QuerySimple();
     }
 }

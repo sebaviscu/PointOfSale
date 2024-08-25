@@ -16,7 +16,7 @@ const BASIC_MODEL_PRODUCTOS = {
     photo: "",
     modificationDate: null,
     modificationUser: null,
-    priceWeb: "",
+    priceWeb: 0,
     porcentajeProfit: 0,
     costPrice: "",
     tipoVenta: "",
@@ -28,7 +28,9 @@ const BASIC_MODEL_PRODUCTOS = {
     porcentajeProfit2: 0,
     porcentajeProfit3: 0,
     vencimientos: [],
-    iva: 0
+    iva: 0,
+    codigoBarras: [],
+    formatoWeb: ''
 }
 
 const BASIC_MASSIVE_EDIT = {
@@ -55,6 +57,12 @@ const BASIC_vencimientos = {
     registrationUser: false
 }
 
+const BASIC_CodBarras = {
+    idCodigoBarras: 0,
+    codigo: "",
+    descripcion: ""
+}
+
 $(document).ready(function () {
     showLoading();
 
@@ -70,7 +78,7 @@ $(document).ready(function () {
             rowId: 'idProduct',
             "columnDefs": [
                 {
-                    "targets": [8],
+                    "targets": [6],
                     "render": function (data, type, row) {
                         if (type === 'display' || type === 'filter') {
                             return data ? moment(data).format('DD/MM/YYYY HH:mm') : '';
@@ -104,18 +112,6 @@ $(document).ready(function () {
                     "data": "listaPrecios",
                     "render": function (data, type, row) {
                         return data && data.length > 0 ? `$ ${data[0].precio}` : '';
-                    }
-                },
-                {
-                    "data": "listaPrecios",
-                    "render": function (data, type, row) {
-                        return data && data.length > 1 ? `$ ${data[1].precio}` : '';
-                    }
-                },
-                {
-                    "data": "priceWeb",
-                    "render": function (data, type, row) {
-                        return `$ ${data}`;
                     }
                 },
                 { "data": "modificationDate" },
@@ -206,6 +202,42 @@ $(document).ready(function () {
     removeLoading();
 })
 
+$('#cboTipoVenta').change(function () {
+    let selectedValue = $(this).val();
+
+    // Ocultar todas las opciones primero
+    $('#cboFormatoVenta option').hide();
+
+    if (selectedValue == "1") { // Si se selecciona "Kg"
+        $('#cboFormatoVenta .formato-peso').show();
+        if ($('#cboFormatoVenta').val() == null || $('#cboFormatoVenta').val() == '1')
+            $('#cboFormatoVenta').val('1000');
+
+    } else if (selectedValue == "2") { // Si se selecciona "Unidad"
+        $('#cboFormatoVenta .formato-unidad').show();
+        $('#cboFormatoVenta').val('1');
+    }
+    $('#cboFormatoVenta').trigger('change');
+
+});
+
+$('#cboFormatoVenta').change(function () {
+    calcularPrecioFormatoVenta();
+});
+$('#txtPriceWeb').change(function () {
+    calcularPrecioFormatoVenta();
+});
+
+function calcularPrecioFormatoVenta() {
+    let val = parseFloat($('#cboFormatoVenta').val() != null ? $('#cboFormatoVenta').val() : 0);
+    if (val == 1) val = 1000;
+
+    let precioWeb = parseFloat($('#txtPriceWeb').val() != '' ? $('#txtPriceWeb').val() : 0);
+
+    let result = val * precioWeb / 1000;
+    $('#txtPriceFormatoWeb').val(result)
+}
+
 $("#chkSelectAll").on("click", function () {
     let estado = document.querySelector('#chkSelectAll').checked;
 
@@ -268,7 +300,6 @@ function editAll() {
 const openModalProduct = (model = BASIC_MODEL_PRODUCTOS) => {
 
     $("#txtId").val(model.idProduct);
-    $("#txtBarCode").val(model.barCode);
     $("#txtDescription").val(model.description);
     $("#cboCategory").val(model.idCategory == 0 ? $("#cboCategory option:first").val() : model.idCategory);
     $("#txtQuantity").val(model.quantity);
@@ -287,6 +318,8 @@ const openModalProduct = (model = BASIC_MODEL_PRODUCTOS) => {
     $("#txtProfit2").val(model.porcentajeProfit2);
     $("#txtPrice3").val(model.precio3.replace(/,/g, '.'));
     $("#txtProfit3").val(model.porcentajeProfit3);
+    $("#cboFormatoVenta").val(model.formatoWeb);
+    $("#txtPriceFormatoWeb").val(model.precioFormatoWeb);
 
     if (model.photoBase64 != null) {
         $("#imgProduct").attr("src", `data:image/png;base64,${model.photoBase64}`);
@@ -315,12 +348,24 @@ const openModalProduct = (model = BASIC_MODEL_PRODUCTOS) => {
         top3Vencimientos.forEach((v) => {
             addVencimientoTable(v);
         });
+    }
 
+    $("#tbCodigoBarras tbody").html("");
+    if (model.codigoBarras && model.codigoBarras.length > 0) {
+
+        model.codigoBarras.sort((a, b) => b.idVencimiento - a.idVencimiento);
+
+        //const codbarrasMaps = model.codigoBarras.slice(0, 3);
+
+        model.codigoBarras.forEach((v) => {
+            addCodigosBarrasTable(v);
+        });
     }
 
     $("#txtfVencimiento").val('');
     $("#txtfElaborado").val('');
     $("#txtLote").val('');
+    $('#cboTipoVenta').trigger('change');
 
     $("#modalData").modal("show")
 }
@@ -361,6 +406,72 @@ function addVencimientoTable(data) {
     )
 }
 
+function addCodigosBarrasTable(data) {
+
+    $("#tbCodigoBarras tbody").append(
+        $("<tr>").append(
+            $("<td>").text(data.codigo),
+            $("<td>").text(data.descripcion),
+            $("<td>").append(
+                $("<button>").addClass("btn btn-danger btn-sm btn-delete-codbarras").append(
+                    $("<i>").addClass("mdi mdi-trash-can")
+                ).data("codBarras", data))
+        )
+    )
+}
+
+$("#tbCodigoBarras tbody").on("click", ".btn-delete-codbarras", function (event) {
+    event.preventDefault();
+
+    let v = $(this).data("codBarras")
+    let btn = $(this);
+
+    swal({
+        title: "¿Desea eliminar el Codigo de Barras? ",
+        text: "",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonClass: "btn-danger",
+        confirmButtonText: "Si, eliminar",
+        cancelButtonText: "No, cancelar",
+        closeOnConfirm: false,
+        closeOnCancel: true
+    },
+        function (respuesta) {
+
+
+            if (respuesta) {
+
+                if (v.idCodigoBarras == 0) {
+                    btn.closest("tr").remove();
+                }
+                else {
+                    $(".showSweetAlert").LoadingOverlay("show")
+
+                    fetch(`/Inventory/DeleteCodigoBarras?idCodigoBarras=${v.idCodigoBarras}`, {
+                        method: "DELETE"
+                    }).then(response => {
+                        $(".showSweetAlert").LoadingOverlay("hide")
+                        return response.json();
+                    }).then(responseJson => {
+                        if (responseJson.state) {
+
+                            btn.closest("tr").remove();
+                            swal("Eliminado", "El Codigo de Barras ha sido eliminado", "success");
+
+                        } else {
+                            swal("Lo sentimos", responseJson.message, "error");
+                        }
+                    })
+                        .catch((error) => {
+                            $(".showSweetAlert").LoadingOverlay("hide")
+                        })
+                }
+            }
+
+        });
+
+})
 
 $("#tbVencimientos tbody").on("click", ".btn-delete-vencimiento", function (event) {
     event.preventDefault();
@@ -415,7 +526,7 @@ $("#tbVencimientos tbody").on("click", ".btn-delete-vencimiento", function (even
 
 })
 
-function obtenerDatosTabla() {
+function obtenerDatosTablaVencimientos() {
     let datos = [];
     $("#tbVencimientos tbody tr").each(function () {
         let fila = {};
@@ -431,6 +542,19 @@ function obtenerDatosTabla() {
             datos.push(fila);
         }
 
+    });
+    return datos;
+}
+function obtenerDatosTablaCodigoBarras(idProducto) {
+    let datos = [];
+    $("#tbCodigoBarras tbody tr").each(function () {
+        let fila = {};
+        fila.codigo = $(this).find("td:eq(0)").text();
+        fila.descripcion = $(this).find("td:eq(1)").text();
+        fila.idCodigoBarras = $(this).find("button").data("codBarras").idCodigoBarras;
+        fila.idProducto = idProducto;
+
+        datos.push(fila);
     });
     return datos;
 }
@@ -451,6 +575,18 @@ $("#btnAddVencimiento").on("click", function () {
     return false;
 })
 
+$("#btnAddCodBarras").on("click", function () {
+    const model = structuredClone(BASIC_CodBarras);
+    model["codigo"] = $("#txtCodBarrasAgregar").val();
+    model["descripcion"] = $("#txtCodBarrasDescripcion").val();
+
+    addCodigosBarrasTable(model);
+
+    $("#txtCodBarrasAgregar").val('');
+    $("#txtCodBarrasDescripcion").val('');
+
+    return false;
+})
 
 $("#tbVencimientos tbody").on("click", ".btn-danger", function () {
 
@@ -642,7 +778,6 @@ $("#btnSave").on("click", async function () {
 
     const model = structuredClone(BASIC_MODEL_PRODUCTOS);
     model["idProduct"] = parseInt($("#txtId").val());
-    model["barCode"] = $("#txtBarCode").val();
     model["description"] = $("#txtDescription").val();
     model["idCategory"] = $("#cboCategory").val();
     model["quantity"] = $("#txtQuantity").val();
@@ -656,6 +791,8 @@ $("#btnSave").on("click", async function () {
     model["idProveedor"] = $("#cboProveedor").val();
     model["comentario"] = $("#txtComentario").val();
     model["iva"] = $("#txtIva").val();
+    model["formatoWeb"] = $("#cboFormatoVenta").val();
+    model["precioFormatoWeb"] = $("#txtPriceFormatoWeb").val();
 
     model["priceWeb"] = $("#txtPriceWeb").val() != '' && $("#txtPriceWeb").val() != undefined ? $("#txtPriceWeb").val().replace(/\./g, ',') : $("#txtPrice").val().replace(/\./g, ',')
 
@@ -665,14 +802,15 @@ $("#btnSave").on("click", async function () {
     model["precio3"] = $("#txtPrice3").val() != '' ? $("#txtPrice3").val().replace(/\./g, ',') : $("#txtPrice").val().replace(/\./g, ',');
     model["porcentajeProfit3"] = $("#txtProfit3").val() != '' ? $("#txtProfit3").val().replace(/\./g, ',') : $("#txtProfit").val().replace(/\./g, ',');
 
-    let vencimientos = obtenerDatosTabla();
+    let vencimientos = obtenerDatosTablaVencimientos();
 
+    let codBarras = obtenerDatosTablaCodigoBarras(model.idProduct);
 
     const formData = new FormData();
     formData.append('model', JSON.stringify(model));
     formData.append('vencimientos', JSON.stringify(vencimientos));
+    formData.append('codBarras', JSON.stringify(codBarras));
 
-    //const imgProduct = document.getElementById('imgProduct');
     const inputPhoto = document.getElementById('txtPhoto');
 
     if (inputPhoto.files && inputPhoto.files[0]) {
@@ -680,11 +818,6 @@ $("#btnSave").on("click", async function () {
         const compressedImage = await compressImage(file, 0.7, 300, 300);
         formData.append('photo', compressedImage, file.name);
     }
-    //else if (imgProduct != null && imgProduct.src) {
-    //    const compressedImage = await compressImageFromImgTag(imgProduct, 0.7, 300, 300);
-    //    formData.append('photo', compressedImage, 'existingImage.jpg');
-    //}
-
 
     $("#modalData").find("div.modal-content").LoadingOverlay("show")
 
@@ -878,6 +1011,11 @@ function calcularPrecio() {
         ids.forEach(id => {
             let profit = $("#txtProfit" + id).val();
 
+            if (profit == '0' && $("#txtProfit").val() != '0') {
+                profit = $("#txtProfit").val();
+                $("#txtProfit" + id).val(profit)
+            }
+
             if (profit !== '') {
                 let precio = costo * (1 + (parseFloat(profit) / 100));
                 $("#txtPrice" + id).val(precio.toFixed(2));
@@ -892,6 +1030,8 @@ function calcularPrecio() {
         let precioFinal = parseFloat(precio) * (1 + (parseFloat(aumento) / 100));
         $("#txtPriceWeb").val(precioFinal);
     }
+
+    calcularPrecioFormatoVenta();
 }
 
 function calcularPrecioMasivo() {
