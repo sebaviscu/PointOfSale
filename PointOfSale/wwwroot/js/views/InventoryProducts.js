@@ -189,8 +189,8 @@ $(document).ready(function () {
 
             if (responseJson.state) {
 
-                $("#txtAumento").val(responseJson.object + ' %');
-                $("#txtAumentoMasivo").val(responseJson.object + ' %');
+                $("#txtAumento").val(responseJson.object);
+                $("#txtAumentoMasivo").val(responseJson.object);
                 aumentoWeb = responseJson.object;
             } else {
                 swal("Lo sentimos", responseJson.message, "error");
@@ -235,7 +235,7 @@ function calcularPrecioFormatoVenta() {
     let precioWeb = parseFloat($('#txtPriceWeb').val() != '' ? $('#txtPriceWeb').val() : 0);
 
     let result = val * precioWeb / 1000;
-    $('#txtPriceFormatoWeb').val(result)
+    $('#txtPriceFormatoWeb').val(parseFloat(result).toFixed(2).replace('.', ','));
 }
 
 $("#chkSelectAll").on("click", function () {
@@ -305,7 +305,7 @@ const openModalProduct = (model = BASIC_MODEL_PRODUCTOS) => {
     $("#txtQuantity").val(model.quantity);
     $("#txtMinimo").val(model.minimo);
     $("#txtPrice").val(model.price != 0 ? model.price.replace(/,/g, '.') : '');
-    $("#txtPriceWeb").val(model.priceWeb);
+    $("#txtPriceWeb").val(model.priceWeb.replace(/,/g, '.'));
     $("#txtProfit").val(model.porcentajeProfit);
     $("#txtCosto").val(model.costPrice);
     $("#cboTipoVenta").val(model.tipoVenta);
@@ -319,7 +319,7 @@ const openModalProduct = (model = BASIC_MODEL_PRODUCTOS) => {
     $("#txtPrice3").val(model.precio3.replace(/,/g, '.'));
     $("#txtProfit3").val(model.porcentajeProfit3);
     $("#cboFormatoVenta").val(model.formatoWeb);
-    $("#txtPriceFormatoWeb").val(model.precioFormatoWeb);
+    $("#txtPriceFormatoWeb").val(model.precioFormatoWeb.replace(/,/g, '.'));
 
     if (model.photoBase64 != null) {
         $("#imgProduct").attr("src", `data:image/png;base64,${model.photoBase64}`);
@@ -792,7 +792,8 @@ $("#btnSave").on("click", async function () {
     model["comentario"] = $("#txtComentario").val();
     model["iva"] = $("#txtIva").val();
     model["formatoWeb"] = $("#cboFormatoVenta").val();
-    model["precioFormatoWeb"] = $("#txtPriceFormatoWeb").val();
+
+    model["precioFormatoWeb"] = $("#txtPriceFormatoWeb").val() != '' ? $("#txtPriceFormatoWeb").val().replace(/\./g, ',') : $("#txtPrice").val().replace(/\./g, ',');
 
     model["priceWeb"] = $("#txtPriceWeb").val() != '' && $("#txtPriceWeb").val() != undefined ? $("#txtPriceWeb").val().replace(/\./g, ',') : $("#txtPrice").val().replace(/\./g, ',')
 

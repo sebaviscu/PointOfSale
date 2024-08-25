@@ -91,7 +91,7 @@
         <div class="container text-center">
             <div id="dvCategoryResults" style="margin-right:10px;margin-left: 10px;">
 
-                <div class="row">
+                @* <div class="row">
                     @foreach (var prod in Model.Products.OrderBy(_ => _.Description))
                     {
                         <div class="col-md-2 ftco-animate product-list mb-3" category-prod="@prod.IdCategory" description-prd="@prod.Description">
@@ -127,7 +127,7 @@
                         </div>
                     }
                 </div>
-
+ *@
                 @*                 @{
                 Html.RenderPartial("PVProducts", Model.Products);
                 } *@

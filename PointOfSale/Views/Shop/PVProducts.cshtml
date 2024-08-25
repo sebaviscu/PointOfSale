@@ -55,9 +55,13 @@
                     <div class="d-flex product-pricing">
                         <div class="pricing">
                             @{
-                                var precio = prod.PriceWeb != null ? prod.PriceWeb.ToString() : prod.Price;
+                                var precio = prod.PrecioFormatoWeb != null && Convert.ToDecimal(prod.PrecioFormatoWeb) > 0 ? prod.PrecioFormatoWeb : prod.Price;
+
+                                var tipoVenta = prod.FormatoWeb != null && prod.FormatoWeb == 1 ? "U" :
+                                prod.FormatoWeb == 1000 ? "Kg" :
+                                $"{prod.FormatoWeb}gr";
                             }
-                            <p class="price"><span class="price-sale" id="price-@prod.IdProduct" precio="@precio">$@precio</span><small> / @prod.TipoVenta</small></p>
+                            <p class="price"><span class="price-sale" id="price-@prod.IdProduct" precio="@precio">$@precio</span><small> / @tipoVenta</small></p>
                             <small>@prod.Comentario</small>
                         </div>
                     </div>

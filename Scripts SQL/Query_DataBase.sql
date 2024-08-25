@@ -555,3 +555,4 @@ CREATE TABLE CodigoBarras (
 
 --update users
 --set password = '', email='admin', name ='admin'
+

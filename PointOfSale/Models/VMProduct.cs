@@ -18,7 +18,7 @@ namespace PointOfSale.Models
         public int? IsActive { get; set; }
 		public string? ModificationUser { get; set; }
         public DateTime? ModificationDate { get; set; }
-        public decimal? PriceWeb { get; set; }
+        public string? PriceWeb { get; set; }
         public int? PorcentajeProfit { get; set; }
         public decimal? CostPrice { get; set; }
         public TipoVenta TipoVenta { get; set; }
@@ -43,7 +43,7 @@ namespace PointOfSale.Models
         public virtual VMCategory? IdCategoryNavigation { get; set; }
 
         public virtual ICollection<Stock>? Stocks { get; set; }
-        public decimal? PrecioFormatoWeb { get; set; }
+        public string? PrecioFormatoWeb { get; set; }
         public int? FormatoWeb { get; set; }
 
     }

@@ -198,19 +198,6 @@ namespace PointOfSale.Business.Services
 
         public async Task<Product> Edit(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos, Stock? stock, List<CodigoBarras>? codigoBarras)
         {
-            if (codigoBarras != null)
-            {
-                var product_exists = await _repository.QuerySimple()
-                    .Include(p => p.CodigoBarras)
-                    .Where(p => p.CodigoBarras != null)
-                    .ToListAsync();
-
-                if (product_exists.Any(p => p.CodigoBarras.Any(pb => codigoBarras.Any(eb => eb.Codigo == pb.Codigo))))
-                {
-                    throw new TaskCanceledException("El codigo de barras ya existe");
-                }
-            }
-
             try
             {
                 IQueryable<Product> queryProduct1 = await _repository.Query(u => u.IdProduct == entity.IdProduct);
@@ -328,6 +315,13 @@ namespace PointOfSale.Business.Services
                 }
                 else
                 {
+                    var cod_exist = await _repositoryCodigosBarras.Get(_ => _.Codigo == v.Codigo && _.IdProducto != idProducto);
+                    if (cod_exist != null)
+                    {
+                        var prod = await _repository.Get(_ => _.IdProduct == cod_exist.IdProducto);
+                        throw new Exception($"El codigo de barras ingresado ya existe en otro producto {prod.Description}.");
+                    }
+
                     var cb = await _repositoryCodigosBarras.Get(_ => _.IdCodigoBarras == v.IdCodigoBarras);
                     cb.Codigo = v.Codigo;
                     cb.Descripcion = v.Descripcion;
