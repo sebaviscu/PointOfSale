@@ -88,14 +88,14 @@ namespace PointOfSale.Controllers
         /// <param name="search"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetProducts(string search)
+        public async Task<IActionResult> GetProducts(string search, int listaPrecios)
         {
             var gResponse = new GenericResponse<List<VmProductsSelect2>>();
             try
             {
                 ClaimsPrincipal claimuser = HttpContext.User;
-                var listaPrecioInt = Convert.ToInt32(claimuser.Claims.Where(c => c.Type == "ListaPrecios").Select(c => c.Value).SingleOrDefault());
-                var vmListProducts = _mapper.Map<List<VmProductsSelect2>>(await _saleService.GetProductsSearchAndIdLista(search.Trim(), (ListaDePrecio)listaPrecioInt));
+                //var listaPrecioInt = Convert.ToInt32(claimuser.Claims.Where(c => c.Type == "ListaPrecios").Select(c => c.Value).SingleOrDefault());
+                var vmListProducts = _mapper.Map<List<VmProductsSelect2>>(await _saleService.GetProductsSearchAndIdLista(search.Trim(), (ListaDePrecio)listaPrecios));
                 return StatusCode(StatusCodes.Status200OK, vmListProducts);
 
             }

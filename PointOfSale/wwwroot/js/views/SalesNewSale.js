@@ -8,6 +8,7 @@ let productSelected = null;
 let formasDePagosList = [];
 let isHealthySale = false;
 let ajustes = null;
+let selectedRowtbProduct = null;
 
 const ProducstTab = {
     idTab: 0,
@@ -15,6 +16,7 @@ const ProducstTab = {
 }
 
 $(document).ready(function () {
+    showLoading();
 
     fetch("/Sales/ListTypeDocumentSale")
         .then(response => {
@@ -53,11 +55,13 @@ $(document).ready(function () {
 
     fetch("/Admin/GetAjustesVentas")
         .then(response => {
+            removeLoading();
             return response.json();
         }).then(responseJson => {
             if (responseJson.state) {
                 ajustes = responseJson.object;
 
+                $('#cboListaPrecios1').val(ajustes.listaPrecios);
                 document.getElementById('cboImprimirTicket').checked = ajustes.imprimirDefault;
 
             } else {
@@ -237,7 +241,7 @@ function showProducts_Prices(idTab, currentTab) {
                     ).data("idproduct", item.idproduct).data("idTab", idTab).data("row", row)
                 ),
                 $("<td>").text(item.descriptionproduct),
-                $("<td>").text(item.quantity),
+                $("<td>").text(item.quantity).addClass("cantidad"),
                 $("<td>").text("$ " + item.price),
                 $("<td>").text("$ " + item.total),
                 $("<td>").append(item.promocion != null ?
@@ -257,7 +261,9 @@ function showProducts_Prices(idTab, currentTab) {
     $('#txtSubTotal' + idTab).html('$ ' + formatNumber(subTotal));
     $("#txtSubTotal" + idTab).attr("subTotalReal", parseFloat(total).toFixed(2));
 
+
     $("#lblCantidadProductos" + idTab).html("Cantidad de Articulos: <strong> " + currentTab.products.length + "</strong>");
+    $('#cboListaPrecios' + idTab).prop('disabled', currentTab.products.length > 0);
 }
 
 $(document).on("click", "button.btn-delete", async function () {
@@ -510,6 +516,7 @@ $("#btnFinalizarVentaParcial").on("click", function () {
     }
 
     $("#modalDividirPago").modal("hide")
+    document.getElementById('cboImprimirTicket').checked = ajustes.imprimirDefault;
 
     let currentTabId = $("#modalDividirPago").attr("idtab");
 
@@ -624,7 +631,7 @@ function funConsultarPrecio() {
             },
             processResults: function (data) {
                 return {
-                    results: data.map((item) => ({
+                    results: data.map((item) => ({º
                         id: item.idProduct,
                         text: item.description,
                         category: item.idCategory,
@@ -690,6 +697,10 @@ function newTab() {
     clone.querySelector("#txtPeso").id = "txtPeso" + tabID;
     clone.querySelector("#btnAgregarProducto").id = "btnAgregarProducto" + tabID;
     clone.querySelector("#lblCantidadProductos").id = "lblCantidadProductos" + tabID;
+    clone.querySelector("#cboListaPrecios").id = "cboListaPrecios" + tabID;
+    clone.querySelector("#btnMasCantidad").id = "btnMasCantidad" + tabID;
+    clone.querySelector("#btnMenosCantidad").id = "btnMenosCantidad" + tabID;
+
     clone.querySelector("#cboDescRec").id = "cboDescRec" + tabID;
     clone.querySelector("#txtSubTotal").id = "txtSubTotal" + tabID;
     clone.querySelector("#txtPromociones").id = "txtPromociones" + tabID;
@@ -697,6 +708,9 @@ function newTab() {
     clone.querySelector("#btnImprimirTicket").id = "btnImprimirTicket" + tabID;
 
     $('#tab' + tabID).append(clone);
+
+    if (ajustes != null)
+        $('#cboListaPrecios' + tabID).val(ajustes.listaPrecios);
 
     $("#btnFinalizeSaleParcial" + tabID).attr("tabId", tabID);
     $("#cboDescRec" + tabID).attr("tabId", tabID);
@@ -714,7 +728,25 @@ function newTab() {
     $('#cboSearchProduct' + tabID).select2('open');
 }
 
+
 function addFunctions(idTab) {
+
+    $('#tbProduct' + idTab + ' tbody').on('click', 'tr', function () {
+
+        if (selectedRowtbProduct) {
+            selectedRowtbProduct.removeClass('selectedRow');
+        }
+        selectedRowtbProduct = $(this);
+        selectedRowtbProduct.addClass('selectedRow');
+    });
+
+    $('#btnMasCantidad' + idTab).on('click', function () {
+        adjustQuantity(idTab, 1);
+    });
+
+    $('#btnMenosCantidad' + idTab).on('click', function () {
+        adjustQuantity(idTab, -1);
+    });
 
     $('#btnImprimirTicket' + idTab).on("click", function () {
         let idSale = $("#btnImprimirTicket" + idTab).attr("idsale");
@@ -765,7 +797,7 @@ function addFunctions(idTab) {
     });
 
     $('#tbProduct' + idTab + ' tbody').on('dblclick', 'tr', async function () {
-        
+
         if (!(await validateCode())) { return false; }
 
         let rowIndex = $(this).index();
@@ -881,7 +913,8 @@ function addFunctions(idTab) {
             delay: 250,
             data: function (params) {
                 return {
-                    search: params.term
+                    search: params.term,
+                    listaPrecios: $('#cboListaPrecios' + idTab).val()
                 };
             },
             processResults: function (data) {
@@ -948,6 +981,28 @@ function addFunctions(idTab) {
         agregarProductoEvento(idTab);
     })
 
+}
+
+function adjustQuantity(idTab, increment) {
+    if (selectedRowtbProduct) {
+        let cantidadCell = selectedRowtbProduct.find('.cantidad');
+        let cantidad = parseFloat(cantidadCell.text());
+        let newCantidad = cantidad + increment;
+
+        if (newCantidad > 0) {
+            cantidadCell.text(newCantidad);
+
+            let row = selectedRowtbProduct.find('.btn-delete').data('row');
+
+            let currentTab = AllTabsForSale.find(item => item.idTab == idTab);
+            let productRow = currentTab.products.filter(prod => prod.row == row);
+
+            productRow[0].quantity = newCantidad;
+            productRow[0].total = (parseFloat(productRow[0].price) * newCantidad).toFixed(2);
+
+            showProducts_Prices(idTab, currentTab);
+        }
+    }
 }
 
 function agregarProductoEvento(idTab) {

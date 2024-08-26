@@ -1673,6 +1673,19 @@ namespace PointOfSale.Controllers
                     ? false
                     : ajuste.ControlEmpleado ?? false;
 
+                switch(user.IdListaPrecios)
+                {
+                    case 1:
+                        vmAjuste.ListaPrecios = ListaDePrecio.Lista_1;
+                        break;
+                    case 2:
+                        vmAjuste.ListaPrecios = ListaDePrecio.Lista_2;
+                        break;
+                    case 3:
+                        vmAjuste.ListaPrecios = ListaDePrecio.Lista_3;
+                        break;
+                }
+                
                 gResponse.State = true;
                 gResponse.Object = vmAjuste;
                 return StatusCode(StatusCodes.Status200OK, gResponse);

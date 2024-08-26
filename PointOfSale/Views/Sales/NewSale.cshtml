@@ -16,6 +16,16 @@
             font-size: 18px;
         }
 
+        .selectedRow {
+            background-color: dodgerblue !important;
+            color: white !important; /* Cambia el color del texto para asegurar su visibilidad */
+        }
+
+        /* Estilo específico para las filas grises cuando están seleccionadas */
+        .table-striped tbody tr:nth-of-type(odd).selectedRow {
+            background-color: dodgerblue !important;
+            color: white !important;
+        }
 
         #btnFinalizarVentaParcial:focus {
             outline: 4px solid aqua;
@@ -88,7 +98,20 @@
                                         </table>
                                     </div>
                                 </div>
-                                <label id="lblCantidadProductos" class="fontDetalles"></label>
+
+                                <div class="d-flex justify-content-between" style="padding: 15px 10px 0px 10px;">
+                                    <label id="lblCantidadProductos" class="fontDetalles"></label>
+                                    <div class="ms-auto d-flex justify-content-end align-items-center">
+                                        <select class="form-control form-control-sm" id="cboListaPrecios">
+                                            <option value="1">Lista 1</option>
+                                            <option value="2">Lista 2</option>
+                                            <option value="3">Lista 3</option>
+                                        </select>
+                                        <button class="btn btn-success btn-sm w-100 ms-3" id="btnMasCantidad">+&nbsp;Cantidad</button>
+                                        <button class="btn btn-danger btn-sm w-100 ms-3" style="margin-top:0;" id="btnMenosCantidad">-&nbsp;Cantidad</button>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>

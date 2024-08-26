@@ -30,7 +30,8 @@ const BASIC_MODEL_PRODUCTOS = {
     vencimientos: [],
     iva: 0,
     codigoBarras: [],
-    formatoWeb: ''
+    formatoWeb: '',
+    precioFormatoWeb: 0
 }
 
 const BASIC_MASSIVE_EDIT = {
@@ -305,7 +306,7 @@ const openModalProduct = (model = BASIC_MODEL_PRODUCTOS) => {
     $("#txtQuantity").val(model.quantity);
     $("#txtMinimo").val(model.minimo);
     $("#txtPrice").val(model.price != 0 ? model.price.replace(/,/g, '.') : '');
-    $("#txtPriceWeb").val(model.priceWeb.replace(/,/g, '.'));
+    $("#txtPriceWeb").val(model.priceWeb != 0 ? model.priceWeb.replace(/,/g, '.') : '');
     $("#txtProfit").val(model.porcentajeProfit);
     $("#txtCosto").val(model.costPrice);
     $("#cboTipoVenta").val(model.tipoVenta);
@@ -319,7 +320,7 @@ const openModalProduct = (model = BASIC_MODEL_PRODUCTOS) => {
     $("#txtPrice3").val(model.precio3.replace(/,/g, '.'));
     $("#txtProfit3").val(model.porcentajeProfit3);
     $("#cboFormatoVenta").val(model.formatoWeb);
-    $("#txtPriceFormatoWeb").val(model.precioFormatoWeb.replace(/,/g, '.'));
+    $("#txtPriceFormatoWeb").val(model.precioFormatoWeb != 0 ?model.precioFormatoWeb.replace(/,/g, '.') : '');
 
     if (model.photoBase64 != null) {
         $("#imgProduct").attr("src", `data:image/png;base64,${model.photoBase64}`);
