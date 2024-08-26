@@ -150,7 +150,10 @@ namespace PointOfSale.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Tabla de productos
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetProducts()
         {

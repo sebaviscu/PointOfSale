@@ -73,6 +73,22 @@ $(document).ready(function () {
     healthcheck();
     inicializarConsultarPrecios();
 
+
+    $('.sub-menu a.sidenav-item-link, .has-sub a.sidenav-item-link').on('click', function (event) {
+        if (ventaAbierta()) {
+            event.preventDefault(); // Prevenir la navegación
+                swal({
+                    title: '',
+                    text: 'No es posible dejar una venta abierta\n\n',
+                    icon: 'question',
+                    showCancelButton: false,
+                    confirmButtonText: 'Aceptar'
+                }, function (value) {
+                });
+        } else {
+            window.location.href = $(this).attr('href');
+        }
+    });
 })
 
 function inicializarConsultarPrecios() {
@@ -631,7 +647,7 @@ function funConsultarPrecio() {
             },
             processResults: function (data) {
                 return {
-                    results: data.map((item) => ({º
+                    results: data.map((item) => ({
                         id: item.idProduct,
                         text: item.description,
                         category: item.idCategory,
@@ -1202,6 +1218,9 @@ function lastTab() {
 //    });
 //}
 
+function ventaAbierta() {
+    return AllTabsForSale[0].products.length > 0;
+}
 
 function getTabActiveId() {
     let idTab = document.getElementsByClassName(" nav-link tab-venta active")[0].id;

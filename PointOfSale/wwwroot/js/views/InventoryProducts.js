@@ -435,7 +435,7 @@ $("#tbCodigoBarras tbody").on("click", ".btn-delete-codbarras", function (event)
         confirmButtonClass: "btn-danger",
         confirmButtonText: "Si, eliminar",
         cancelButtonText: "No, cancelar",
-        closeOnConfirm: false,
+        closeOnConfirm: true,
         closeOnCancel: true
     },
         function (respuesta) {
@@ -468,6 +468,7 @@ $("#tbCodigoBarras tbody").on("click", ".btn-delete-codbarras", function (event)
                             $(".showSweetAlert").LoadingOverlay("hide")
                         })
                 }
+                swal.close();
             }
 
         });
@@ -488,7 +489,7 @@ $("#tbVencimientos tbody").on("click", ".btn-delete-vencimiento", function (even
         confirmButtonClass: "btn-danger",
         confirmButtonText: "Si, eliminar vencimiento",
         cancelButtonText: "No, cancelar",
-        closeOnConfirm: false,
+        closeOnConfirm: true,
         closeOnCancel: true
     },
         function (respuesta) {
@@ -616,7 +617,7 @@ $("#btnImportar").on("click", function () {
         confirmButtonClass: "btn-danger",
         confirmButtonText: "Si, IMPORTAR",
         cancelButtonText: "No, cancelar",
-        closeOnConfirm: false,
+        closeOnConfirm: true,
         closeOnCancel: true
     },
         function (respuesta) {
@@ -645,6 +646,7 @@ $("#btnImportar").on("click", function () {
                     })
 
 
+                swal.close();
             }
         });
 
@@ -994,6 +996,8 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                     .catch((error) => {
                         $(".showSweetAlert").LoadingOverlay("hide")
                     })
+
+                swal.close();
             }
         });
 })

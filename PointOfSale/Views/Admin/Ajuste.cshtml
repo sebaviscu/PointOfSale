@@ -80,6 +80,14 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-sm-2 text-center" style="align-content: end;">
+                                        <div class="form-group">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" role="switch" id="switchControlEmpleado">
+                                                <label class="form-check-label" for="switchControlEmpleado">Control Empleados</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Habilita / Deshabilita solicitar codigo de seguridad a los empleados"></span>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="col-sm-3 text-center" style="align-content: end;">
                                         <div class="form-group">
                                             <div class="form-check form-switch">
@@ -93,21 +101,6 @@
                                             <div class="form-check form-switch">
                                                 <input class="form-check-input" type="checkbox" role="switch" id="switchControlStock">
                                                 <label class="form-check-label" for="switchControlStock">Control Stock</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2 text-center" style="align-content: end;">
-                                        <div class="form-group">
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" role="switch" id="switchFacturaElectronica">
-                                                <label class="form-check-label" for="switchFacturaElectronica">Factura Electronica</label>
-                                            </div>
-                                        </div>
-                                    </div><div class="col-sm-2 text-center" style="align-content: end;">
-                                        <div class="form-group">
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" role="switch" id="switchControlEmpleado">
-                                                <label class="form-check-label" for="switchControlEmpleado">Control Empleados</label>
                                             </div>
                                         </div>
                                     </div>
@@ -132,19 +125,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label for="txtMinimoIdentificarConsumidor">Minimo Identificar Consumidor Final</label>
-                                            <div class="input-group input-group-sm">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text">$</span>
-                                                </div>
-                                                <input type="number" step="1" min="0" class="form-control form-control-sm" id="txtMinimoIdentificarConsumidor" name="Minimo Identificar Consumidor">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+
                             </div>
                         </div>
 
@@ -155,15 +136,15 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="row">
-                                    <div class="col-sm-2" style="align-content: center;">
+                                    <div class="col-sm-3 text-left" style="align-content: end;">
                                         <div class="form-group">
                                             <div class="form-check form-switch">
                                                 <input class="form-check-input" type="checkbox" role="switch" id="switchHabilitarWeb">
-                                                <label class="form-check-label" for="switchHabilitarWeb">Habilitar Web</label>
+                                                <label class="form-check-label" for="switchHabilitarWeb" style="font-size: large;">Habilitar Web</label>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="offset-md-1 col-sm-4">
+                                    <div class="col-sm-4">
                                         <div class="form-group">
                                             <label for="txtNombreTienda">Nombre Tienda</label>
                                             <input type="text" class="form-control form-control-sm" id="txtNombreTienda" name="Nombre Tienda">
@@ -182,11 +163,11 @@
                                 <div class="row">
                                     <div class="col-sm-5">
                                         <div class="form-group">
-                                            <label for="txtWhatsApp">WhatsApp pedidos</label>
+                                            <label for="txtWhatsApp">WhatsApp pedidos</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Numero de WhatsApp donde llegaran los pedidos web"></span>
                                             <input type="text" class="form-control form-control-sm" id="txtWhatsApp" name="WhatsApp">
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                         <div class="form-group">
                                             <label for="txtEnvioGratis">Min. envios gratis</label>
                                             <div class="input-group input-group-sm">
@@ -197,9 +178,9 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-2">
                                         <div class="form-group">
-                                            <label for="txtAumento">Aumento</label>
+                                            <label for="txtAumento">Aumento</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Porcentaje que se le aplicará al precio de los productos para mostrar en la web"></span>
                                             <div class="input-group input-group-sm">
                                                 <input type="number" class="form-control form-control-sm" id="txtAumento" name="Aumento">
                                                 <div class="input-group-prepend">
@@ -338,13 +319,23 @@
                             <div class="col-md-12">
 
                                 <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="form-group">
-                                            <label for="fileCertificado">Certificado</label>
-                                            <div class="input-group input-group-sm">
-                                                <input type="file" class="form-control form-control-sm" id="fileCertificado" name="Ruta Certificado" accept=".pfx">
-                                                <div class="input-group-prepend">
-                                                    <button class="btn btn-info" id="btnCargarCertificado">Cargar</button>
+                                    <div class="col-md-12 row">
+                                        <div class="col-sm-3 text-left" style="align-content: end;">
+                                            <div class="form-group">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" role="switch" id="switchFacturaElectronica">
+                                                    <label class="form-check-label" for="switchFacturaElectronica" style="font-size: large;">Factura Electronica</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <div class="form-group">
+                                                <label for="fileCertificado">Certificado</label>
+                                                <div class="input-group input-group-sm">
+                                                    <input type="file" class="form-control form-control-sm" id="fileCertificado" name="Ruta Certificado" accept=".pfx">
+                                                    <div class="input-group-prepend">
+                                                        <button class="btn btn-info" id="btnCargarCertificado">Cargar</button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -368,7 +359,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12 row">
-                                        <div class="form-group col-sm-5" style="margin-bottom: 0px;">
+                                        <div class="form-group col-sm-4" style="margin-bottom: 0px;">
                                             <label for="txtContraseñaCertificado">Contraseña del certificado</label>
                                             <div class="input-group input-group-sm">
                                                 <input type="password" class="form-control form-control-sm input-validate-facturacion" id="txtContraseñaCertificado" name="ContraseñaCertificado">
@@ -379,7 +370,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="form-group col-sm-4">
+                                        <div class="form-group col-sm-3">
                                             <label for="cboCondicionIva">Condicion IVA</label>
                                             <select class="fontDetalles form-control form-control-sm" id="cboCondicionIva" style="background-color: beige">
                                                 <option value="0"></option>
@@ -389,9 +380,20 @@
                                                 <option value="4">Resp. Inscripto</option>
                                             </select>
                                         </div>
-                                        <div class="form-group col-sm-3">
+                                        <div class="form-group col-sm-2">
                                             <label for="txtPuntoVenta">Punto de Venta</label>
                                             <input type="number" step="1" min="1" class="form-control form-control-sm input-validate-facturacion" id="txtPuntoVentaCertificado" name="PuntoVenta">
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label for="txtMinimoIdentificarConsumidor">Minimo Identif. Consumidor Final</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Importe de una venta, del cual, superandolo, es necesario identificar al consumidor final"></span>
+                                                <div class="input-group input-group-sm">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">$</span>
+                                                    </div>
+                                                    <input type="number" step="1" min="0" class="form-control form-control-sm input-validate-facturacion" id="txtMinimoIdentificarConsumidor" name="Minimo Identificar Consumidor">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-12 row">

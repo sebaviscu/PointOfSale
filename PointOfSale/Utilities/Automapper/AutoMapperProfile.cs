@@ -423,7 +423,30 @@ namespace PointOfSale.Utilities.Automapper
 
             CreateMap<Stock, VMStockSimplificado>().ReverseMap();
             CreateMap<Proveedor, VMProveedorSimplificado>().ReverseMap();
-            CreateMap<Product, VMProductSimplificado>().ReverseMap();
+
+
+            CreateMap<Product, VMProductSimplificado>()
+            .ForMember(destiny =>
+                destiny.Price,
+                opt => opt.MapFrom(source => source.ListaPrecios.Any() && source.ListaPrecios.Count > 0 ? source.ListaPrecios[0].Precio.ToString() : "0"))
+            .ForMember(destiny =>
+                destiny.PorcentajeProfit,
+                opt => opt.MapFrom(source => source.ListaPrecios.Any() && source.ListaPrecios.Count > 0 ? source.ListaPrecios[0].PorcentajeProfit : 0))
+            .ForMember(destiny =>
+                destiny.Precio2,
+                opt => opt.MapFrom(source => source.ListaPrecios.Any() && source.ListaPrecios.Count > 1 ? source.ListaPrecios[1].Precio.ToString() : "0"))
+            .ForMember(destiny =>
+                destiny.PorcentajeProfit2,
+                opt => opt.MapFrom(source => source.ListaPrecios.Any() && source.ListaPrecios.Count > 1 ? source.ListaPrecios[1].PorcentajeProfit : 0))
+            .ForMember(destiny =>
+                destiny.Precio3,
+                opt => opt.MapFrom(source => source.ListaPrecios.Any() && source.ListaPrecios.Count > 1 ? source.ListaPrecios[2].Precio.ToString() : "0"))
+            .ForMember(destiny =>
+                destiny.PorcentajeProfit3,
+                opt => opt.MapFrom(source => source.ListaPrecios.Any() && source.ListaPrecios.Count > 1 ? source.ListaPrecios[2].PorcentajeProfit : 0));
+
+
+            CreateMap<VMProductSimplificado, Product>();
 
             CreateMap<VMCodigoBarras, CodigoBarras>().ReverseMap();
 
