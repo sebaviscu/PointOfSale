@@ -1,9 +1,5 @@
 
-create database POINTOFSALE
 
-go
-
-use POINTOFSALE
 
 create table Tienda(
 idTienda int primary key identity(1,1),
@@ -204,9 +200,8 @@ idSale int references Sale(idSale) null,
 [modificationDate] datetime null,
 [modificationUser] varchar(50) null,
 )
-alter table ventaweb
-add 
-[saleNumber] varchar(6)
+
+
 go
 
 create table DetailSale(
