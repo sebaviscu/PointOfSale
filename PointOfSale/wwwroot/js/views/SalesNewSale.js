@@ -9,6 +9,7 @@ let formasDePagosList = [];
 let isHealthySale = false;
 let ajustes = null;
 let selectedRowtbProduct = null;
+let lastSearchTerm = '';
 
 const ProducstTab = {
     idTab: 0,
@@ -77,14 +78,14 @@ $(document).ready(function () {
     $('.sub-menu a.sidenav-item-link, .has-sub a.sidenav-item-link').on('click', function (event) {
         if (ventaAbierta()) {
             event.preventDefault(); // Prevenir la navegación
-                swal({
-                    title: '',
-                    text: 'No es posible dejar una venta abierta\n\n',
-                    icon: 'question',
-                    showCancelButton: false,
-                    confirmButtonText: 'Aceptar'
-                }, function (value) {
-                });
+            swal({
+                title: '',
+                text: 'No es posible dejar una venta abierta\n\n',
+                icon: 'question',
+                showCancelButton: false,
+                confirmButtonText: 'Aceptar'
+            }, function (value) {
+            });
         } else {
             window.location.href = $(this).attr('href');
         }
@@ -928,6 +929,8 @@ function addFunctions(idTab) {
             contentType: "application/json; charset=utf-8",
             delay: 250,
             data: function (params) {
+                lastSearchTerm = params.term; // Guardar el término de búsqueda
+
                 return {
                     search: params.term,
                     listaPrecios: $('#cboListaPrecios' + idTab).val()
@@ -956,6 +959,7 @@ function addFunctions(idTab) {
     });
 
     $('#cboSearchProduct' + idTab).on('select2:select', function (e) {
+        let searchTerm = lastSearchTerm; // Obtener el término de búsqueda guardado
         let data = e.params.data;
         productSelected = data;
         let quantity_product_found = 0;
@@ -973,7 +977,7 @@ function addFunctions(idTab) {
                 currentTab.products.splice(product_found[0].row, 1);
             }
         }
-        if (data.tipoVenta == 2) {
+        if (data.tipoVenta == 2 && isBarcode(searchTerm)) {
             let peso = $("#txtPeso" + idTab).val();
 
             if (peso != "") {
@@ -997,6 +1001,11 @@ function addFunctions(idTab) {
         agregarProductoEvento(idTab);
     })
 
+}
+
+function isBarcode(term) {
+    const isNumeric = /^\d+$/.test(term);
+    return isNumeric && term.length >= 6 && term.length <= 18;
 }
 
 function adjustQuantity(idTab, increment) {
@@ -1026,10 +1035,14 @@ function agregarProductoEvento(idTab) {
 
     if (peso === false || peso === "" || isNaN(peso)) return false;
 
-    //let data = $("#cboSearchProduct" + idTab).select2('data')[0];
-
     if (productSelected === null) {
         return false;
+    }
+
+    if (productSelected.tipoVenta == 2 && !Number.isInteger(peso)) {
+        toastr.warning('No se puede agregar DECIMALES a este producto', "");
+        $("#txtPeso" + idTab).val('')
+        return;
     }
 
     let quantity_product_found = 0;
