@@ -3,6 +3,7 @@
     "gulp-typescript": "^6.0.0-alpha.1"
   },
   "dependencies": {
-    "crypto-js": "^4.2.0"
+    "crypto-js": "^4.2.0",
+    "moment-timezone": "^0.5.45"
   }
 }

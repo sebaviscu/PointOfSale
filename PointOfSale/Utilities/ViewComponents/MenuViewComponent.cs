@@ -10,16 +10,18 @@ namespace PointOfSale.Utilities.ViewComponents
     {
         private readonly IMenuService _menuService;
         private readonly IMapper _mapper;
-        public MenuViewComponent(IMenuService menuService, IMapper mapper)
+        private readonly ITurnoService _turnoService;
+
+        public MenuViewComponent(IMenuService menuService, IMapper mapper, ITurnoService turnoService)
         {
             _menuService = menuService;
             _mapper = mapper;
+            _turnoService = turnoService;
         }
         public async Task<IViewComponentResult> InvokeAsync()
         {
-
             ClaimsPrincipal claimuser = HttpContext.User;
-            List<VMMenu> listaMenus;
+            var menuView = new MenuView();
 
             if (claimuser.Identity.IsAuthenticated)
             {
@@ -27,14 +29,19 @@ namespace PointOfSale.Utilities.ViewComponents
                     .Where(c => c.Type == ClaimTypes.NameIdentifier)
                     .Select(c => c.Value).SingleOrDefault();
 
-                listaMenus = _mapper.Map<List<VMMenu>>(await _menuService.GetMenus(int.Parse(idUser)));
+                menuView.Menus = _mapper.Map<List<VMMenu>>(await _menuService.GetMenus(int.Parse(idUser)));
             }
             else
             {
-                listaMenus = new List<VMMenu>() { };
+                menuView.Menus = new List<VMMenu>() { };
             }
 
-            return View(listaMenus);
+            var idTienda = ((ClaimsIdentity)claimuser.Identity).FindFirst("Tienda").Value;
+            var turno = await _turnoService.GetTurnoActualConVentas(Convert.ToInt32(idTienda));
+
+            menuView.TurnoAbierto = turno != null;
+
+            return View(menuView);
         }
     }
 }

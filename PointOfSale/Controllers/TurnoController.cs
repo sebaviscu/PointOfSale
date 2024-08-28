@@ -12,6 +12,7 @@ using System.Security.Claims;
 using static PointOfSale.Model.Enum;
 using PointOfSale.Business.Utilities;
 using NuGet.Protocol;
+using PointOfSale.Model.Auditoria;
 
 namespace PointOfSale.Controllers
 {
@@ -44,31 +45,60 @@ namespace PointOfSale.Controllers
             return StatusCode(StatusCodes.Status200OK, new { data = VMTurnoList });
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> CheckTurnoAbierto()
+        {
+            var gResponse = new GenericResponse<bool>();
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Empleado]);
+
+                var turno = await _turnoService.GetTurnoActual(user.IdTienda);
+
+                gResponse.State = true;
+                gResponse.Object = turno != null;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al chequear turno abierto.", _logger, null);
+            }
+
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetTurnoActual()
         {
             var gResponse = new GenericResponse<VMTurno>();
             try
             {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Empleado]);
 
-                var tiendaId = Convert.ToInt32(((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value);
+                var turno = await _turnoService.GetTurnoActualConVentas(user.IdTienda);
+                VMTurno vmTurnp = null;
 
-                var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurnoActualConVentas(tiendaId));
-
-                var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
-                var dateActual = TimeHelper.GetArgentinaTime();
-                foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, tiendaId, dateActual, false))
+                if (turno != null)
                 {
-                    VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
+                    vmTurnp = _mapper.Map<VMTurno>(turno);
+                    var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
+                    var dateActual = TimeHelper.GetArgentinaTime();
+
+                    var ventas = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, user.IdTienda, dateActual, false);
+                    foreach (KeyValuePair<string, decimal> item in ventas.OrderBy(_ => _.Key))
                     {
-                        Descripcion = item.Key,
-                        Total = item.Value
-                    });
+                        VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
+                        {
+                            Descripcion = item.Key,
+                            Total = item.Value
+                        });
+                    }
+                    vmTurnp.VentasPorTipoVenta = VentasPorTipoVenta;
+
                 }
-                vmTurnp.VentasPorTipoVenta = VentasPorTipoVenta;
+                gResponse.Object = vmTurnp;
 
                 gResponse.State = true;
-                gResponse.Object = vmTurnp;
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
@@ -84,14 +114,13 @@ namespace PointOfSale.Controllers
             var gResponse = new GenericResponse<VMTurno>();
             try
             {
-                ValidarAutorizacion([Roles.Administrador]);
-                var tiendaId = Convert.ToInt32(((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value);
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Empleado]);
 
                 var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurno(idturno));
 
                 var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
                 var dateActual = TimeHelper.GetArgentinaTime();
-                foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, tiendaId, dateActual, false))
+                foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, user.IdTienda, dateActual, false))
                 {
                     VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
                     {
@@ -111,27 +140,56 @@ namespace PointOfSale.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CerrarTurno([FromBody] VMSaveTurno modelTurno)
+        public async Task<IActionResult> AbrirTurno([FromBody] VMSaveTurno modelTurno)
+        {
+            var gResponse = new GenericResponse<VMTurno>();
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
+                var model = new VMTurno()
+                {
+                    RegistrationUser = user.UserName,
+                    RegistrationDate = TimeHelper.GetArgentinaTime(),
+                    ObservacionesApertura = modelTurno.ObservacionesApertura,
+                    TotalInicioCaja = modelTurno.TotalInicioCaja,
+                    FechaInicio = TimeHelper.GetArgentinaTime(),
+                    IdTienda = user.IdTienda
+                };
+
+
+                var nuevoTurno = await _turnoService.Add(_mapper.Map<Turno>(model));
+
+                gResponse.State = true;
+                gResponse.Object = _mapper.Map<VMTurno>(nuevoTurno);
+
+                UpdateClaimAsync("Turno", nuevoTurno.IdTurno.ToString());
+
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al cerrar turno.", _logger, modelTurno);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CerrarTurno([FromBody] VMTurno modelTurno)
         {
             var gResponse = new GenericResponse<VMTurno>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
 
-                var model = _mapper.Map<VMTurno>(await _turnoService.GetTurnoActual(user.IdTienda));
+                modelTurno.ObservacionesCierre = modelTurno.ObservacionesCierre;
+                modelTurno.ModificationUser = user.UserName;
+                modelTurno.FechaFin = TimeHelper.GetArgentinaTime();
 
-
-                model.ModificationUser = user.UserName;
-                var tiendaId = ((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value;
-                model.Descripcion = modelTurno.Descripcion;
-                var turno_cerrar = await _turnoService.CloseTurno(user.IdTienda, _mapper.Map<Turno>(model));
-
-                var nuevoTurno = await _turnoService.AbrirTurno(Convert.ToInt32(tiendaId), user.UserName);
+                var nuevoTurno = await _turnoService.Edit(_mapper.Map<Turno>(modelTurno));
 
                 gResponse.State = true;
                 gResponse.Object = _mapper.Map<VMTurno>(nuevoTurno);
 
-                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                UpdateClaimAsync("Turno", null);
 
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
@@ -149,13 +207,12 @@ namespace PointOfSale.Controllers
 
             try
             {
-                ValidarAutorizacion([Roles.Administrador]);
-                var tiendaId = Convert.ToInt32(((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value);
+                var user = ValidarAutorizacion([Roles.Administrador]);
 
                 var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurno(idTurno));
 
                 var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
-                foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurno(TypeValuesDashboard.Dia, vmTurnp.IdTurno, tiendaId, false))
+                foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurno(TypeValuesDashboard.Dia, vmTurnp.IdTurno, user.IdTienda, false))
                 {
                     VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
                     {

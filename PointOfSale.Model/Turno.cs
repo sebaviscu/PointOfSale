@@ -1,5 +1,4 @@
-﻿using PointOfSale.Business.Utilities;
-using System;
+﻿using PointOfSale.Business.Utilities;using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,7 +23,6 @@ namespace PointOfSale.Model
         public int IdTurno { get; set; }
         public DateTime FechaInicio { get; set; }
         public DateTime? FechaFin { get; set; }
-        public string? Descripcion { get; set; }
         public int IdTienda { get; set; }
         public Tienda? Tienda { get; set; }
         public DateTime RegistrationDate { get; set; }
@@ -32,6 +30,10 @@ namespace PointOfSale.Model
         public string? ModificationUser { get; set; }
 
 		public virtual ICollection<Sale> Sales { get; set; }
+
+        public string? ObservacionesApertura { get; set; }
+        public string? ObservacionesCierre { get; set; }
+        public decimal TotalInicioCaja { get; set; }
 
 	}
 }

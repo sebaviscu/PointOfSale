@@ -65,6 +65,11 @@ $(document).ready(function () {
                 $('#cboListaPrecios1').val(ajustes.listaPrecios);
                 document.getElementById('cboImprimirTicket').checked = ajustes.imprimirDefault;
 
+                if (!ajustes.existeTurno) {
+                    $('#cboSearchProduct1').select2('close');
+                    openModalDataAbrirTurno();
+                }
+
             } else {
                 swal("Lo sentimos", responseJson.message, "error");
             }

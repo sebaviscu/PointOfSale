@@ -1,5 +1,5 @@
 ﻿@using PointOfSale.Models;
-@model List<VMMenu>;
+@model MenuView;
 @{
     Layout = null;
 }
@@ -9,7 +9,7 @@
     int correlative = 1;
 }
 
-@foreach (var menu in Model)
+@foreach (var menu in Model.Menus)
 {
     @if (menu.Icon != null && menu.Controller != null)
     {
@@ -24,14 +24,14 @@
     {
         <li class="has-sub">
             <a class="sidenav-item-link" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="@($"#{menucollapse}{correlative}")"
-       aria-expanded="false" aria-controls="dashboard">
+               aria-expanded="false" aria-controls="dashboard">
                 <i class="@menu.Icon"></i>
                 <span class="nav-text">@menu.Description</span> <b class="caret"></b>
             </a>
             <ul class="collapse " id="@($"{menucollapse}{correlative}")" data-bs-parent="#sidebar-menu">
                 <div class="sub-menu">
 
-                    @foreach (var submenu in menu.SubMenus.OrderBy(_=>_.Description))
+                    @foreach (var submenu in menu.SubMenus.OrderBy(_ => _.Description))
                     {
                     <li class="">
                         <a class="sidenav-item-link" href="@($"/{submenu.Controller}/{submenu.PageAction}")">
@@ -47,7 +47,14 @@
     correlative = correlative + 1;
 
 }
+<br />
+<br />
+@{
+    var buttonClass = Model.TurnoAbierto ? "btn-outline-success" : "btn-outline-danger";
+    var buttonText = Model.TurnoAbierto ? "Cerrar Turno" : "Abrir Turno";
+}
 
+<button class="btn @buttonClass" id="btnAbrirCerrarTurno" style="margin-left:3px; margin-right:3px">@buttonText</button>
 
 
 

@@ -54,9 +54,13 @@ namespace PointOfSale.Utilities.ViewComponents
                     emailUser = ((ClaimsIdentity)claimuser.Identity).FindFirst("Email").Value;
                     listaPrecios = ((ClaimsIdentity)claimuser.Identity).FindFirst("ListaPrecios").Value;
 
-                    var turnoId = ((ClaimsIdentity)claimuser.Identity).FindFirst("Turno").Value;
-                    var turnoObjet = await _turnoService.GetTurno(Convert.ToInt32(turnoId));
-                    turno = turnoObjet.FechaInicio.ToString();
+                    var turnoId = ((ClaimsIdentity)claimuser.Identity).FindFirst("Turno");
+                    if (turnoId !=  null && !string.IsNullOrEmpty(turnoId.Value))
+                    {
+                        var turnoObjet = await _turnoService.GetTurno(Convert.ToInt32(turnoId.Value));
+                        turno = turnoObjet.FechaInicio.ToString();
+
+                    }
 
                     var tiendaId = ((ClaimsIdentity)claimuser.Identity).FindFirst("Tienda").Value;
 

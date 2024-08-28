@@ -112,5 +112,6 @@ namespace PointOfSale.Model
             Monotributista = 3,
             RespInscripto = 4
         }
+
     }
 }

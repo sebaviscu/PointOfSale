@@ -2,10 +2,13 @@
 
 $(document).ready(function () {
 
+    $('#modalDataAbrirTurno').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
+
+
     $("#limpiarNotificaciones").on("click", function () {
-
-
-
 
         fetch(`/Notification/LimpiarTodoNotificacion`, {
             method: "PUT",
@@ -23,7 +26,6 @@ $(document).ready(function () {
                 }
 
             }).catch((error) => {
-                $("#modalDataTurno").find("div.modal-content").LoadingOverlay("hide")
             })
     })
 
@@ -46,7 +48,6 @@ $(document).ready(function () {
                     }
 
                 }).catch((error) => {
-                    $("#modalDataTurno").find("div.modal-content").LoadingOverlay("hide")
                 })
         }
     })
@@ -99,7 +100,8 @@ $(document).ready(function () {
     })
 });
 
-function cerrarTurno() {
+$("#btnAbrirCerrarTurno").on("click", function () {
+
     fetch(`/Turno/GetTurnoActual`, {
         method: "GET"
     })
@@ -110,21 +112,256 @@ function cerrarTurno() {
 
             if (responseJson.state) {
 
-                var resp = responseJson.object;
+                if (responseJson.object == null) {
+                    openModalDataAbrirTurno();
+                }
+                else {
+                    $("#txtIdTurnoLayout").val(responseJson.object.idTurno);
 
-                var dateTimeModif = new Date(resp.fechaInicio);
-                $("#txtInicioTurno").val(dateTimeModif.toLocaleString());
-                $("#contMetodosPagoLayout").empty();
+                    let fechaInicio = moment(responseJson.object.fechaInicio);
+                    let fechaFin = responseJson.object.FechaFin != null
+                        ? moment(responseJson.object.FechaFin)
+                        : moment().tz('America/Argentina/Buenos_Aires');
 
-                let list = document.getElementById("contMetodosPagoLayout");
-                for (i = 0; i < resp.ventasPorTipoVenta.length; ++i) {
-                    let li = document.createElement('li');
-                    li.innerText = resp.ventasPorTipoVenta[i].descripcion + ": $ " + resp.ventasPorTipoVenta[i].total;
-                    console.log(resp.ventasPorTipoVenta[i].descripcion + ": $ " + resp.ventasPorTipoVenta[i].total);
-                    list.appendChild(li);
+                    if (fechaInicio.isValid()) {
+                        let fechaFormatted = fechaInicio.format('DD/MM/YYYY');
+                        let horaInicioFormatted = fechaInicio.format('HH:mm:ss');
+
+                        $("#txtInicioTurnoCierre").val(fechaFormatted);
+                        $("#txtHoraInicioTurnoCierre").val(horaInicioFormatted);
+                    }
+
+                    if (fechaFin.isValid()) {
+                        let horaFinFormatted = fechaFin.format('HH:mm:ss');
+
+                        $("#txtCierraTurnoCierre").val(horaFinFormatted);
+                    }
+
+                    if (responseJson.object.observacionesApertura != '') {
+                        $("#txtObservacionesApertura").val(responseJson.object.observacionesApertura);
+                        $('#divObservacionesApertura').css('display', '');
+                    }
+                    else {
+                        $('#divObservacionesApertura').css('display', 'none');
+                    }
+                    $("#modalDataCerrarTurno").modal("show");
+
+                    renderVentasPorTipoVenta(responseJson.object.ventasPorTipoVenta, responseJson.object.totalInicioCaja);
+
                 }
 
-                $("#modalDataTurno").modal("show")
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+        })
+        .catch((error) => {
+            $("div.container-fluid").LoadingOverlay("hide")
+        });
+})
+
+function horaActual() {
+    let dateTimeModifHoy = new Date();
+
+    let options = {
+        timeZone: 'America/Argentina/Buenos_Aires',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    };
+
+    let formatter = new Intl.DateTimeFormat('es-AR', options);
+    let dateTimeArgentina = formatter.format(dateTimeModifHoy);
+
+    return dateTimeArgentina;
+}
+
+function openModalDataAbrirTurno() {
+    let dateTimeArgentina = moment().tz('America/Argentina/Buenos_Aires');
+
+    // Mostrar el modal
+    $("#modalDataAbrirTurno").modal("show");
+
+    // Esperar hasta que el modal esté completamente mostrado
+    $('#modalDataAbrirTurno').on('shown.bs.modal', function () {
+        $("#txtInicioTurnoAbrir").val(dateTimeArgentina.format('DD/MM/YYYY'));
+        $("#txtHoraInicioTurnoAbrir").val(dateTimeArgentina.format('HH:mm:ss'));
+    });
+}
+
+
+function renderVentasPorTipoVenta(ventasPorTipoVenta, importeInicioCaja) {
+    $("#contMetodosPagoLayout").empty();
+    let contenedor = $("#contMetodosPagoLayout");
+    let totalImporte = importeInicioCaja;
+
+    crearFilaTotalesTurno(contenedor, "TOTAL INICIO CAJA", importeInicioCaja, "txtInicioCajaCierre");
+
+    ventasPorTipoVenta.forEach(function (venta) {
+        crearFilaTotalesTurno(contenedor, venta.descripcion, venta.total);
+        totalImporte += parseFloat(venta.total);
+    });
+
+    contenedor.append($('<hr>'));
+
+    crearFilaTotalesTurno(contenedor, "TOTAL", totalImporte.toFixed(2), "txtTotalSumado");
+}
+
+function crearFilaTotalesTurno(contenedor, descripcion, total, inputId = null) {
+    let formGroup = $('<div>', { class: 'form-group row align-items-center', style: 'margin-bottom:2px' });  // Reducir el margen inferior
+
+    let label = $('<label>', {
+        class: 'col-sm-7 col-form-label',
+        text: descripcion + ":",
+        style: 'font-size: 20px; padding-right: 0px; padding-top: 0px;'
+    });
+
+    let inputDiv = $('<div>', { class: 'col-sm-5' });
+
+    let inputGroup = $('<div>', { class: 'input-group input-group-sm', style: 'margin-top: 0px;' });
+
+    let inputGroupPrepend = $('<div>', { class: 'input-group-prepend' });
+
+    let span = $('<span>', {
+        class: 'input-group-text',
+        text: '$'
+    });
+
+    let inputAttributes = {
+        type: 'number',
+        step: 'any',
+        class: 'form-control form-control-sm',
+        min: '0',
+        value: total,
+        disabled: true,
+        style: 'text-align: end;'
+    };
+
+    if (inputId) {
+        inputAttributes.id = inputId;
+    }
+
+    let input = $('<input>', inputAttributes);
+
+    inputGroupPrepend.append(span);
+    inputGroup.append(inputGroupPrepend).append(input);
+    inputDiv.append(inputGroup);
+
+    formGroup.append(label).append(inputDiv);
+    contenedor.append(formGroup);
+}
+
+
+$("#btnAbrirTurno").on("click", function () {
+    let desc = $("#txtObservacionesInicioCajaCierre").val();
+    let importeInicioTurno = $("#txtInicioCajaAbrir").val();
+
+    let modelTurno = {
+        observacionesApertura: desc,
+        TotalInicioCaja: parseFloat(importeInicioTurno)
+    };
+    $("#modalDataAbrirTurno").find("div.modal-content").LoadingOverlay("show")
+
+    fetch("/Turno/AbrirTurno", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json;charset=utf-8' },
+        body: JSON.stringify(modelTurno)
+    }).then(response => {
+        $("#modalDataAbrirTurno").find("div.modal-content").LoadingOverlay("hide")
+        return response.json();
+    }).then(responseJson => {
+        if (responseJson.state) {
+
+            $("#modalDataAbrirTurno").modal("hide");
+            location.reload();
+
+        } else {
+            swal("Lo sentimos", responseJson.message, "error");
+        }
+    }).catch((error) => {
+        $("#modalDataAbrirTurno").find("div.modal-content").LoadingOverlay("hide")
+    })
+})
+
+$("#btnFinalizarTurno").on("click", function () {
+
+    let modelTurno = {
+        observacionesCierre: $("#txtObservacionesCierre").val(),
+        idTurno:  parseInt($("#txtIdTurnoLayout").val())
+    };
+    $("#modalDataCerrarTurno").find("div.modal-content").LoadingOverlay("show")
+
+    fetch("/Turno/CerrarTurno", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json;charset=utf-8' },
+        body: JSON.stringify(modelTurno)
+    }).then(response => {
+        $("#modalDataCerrarTurno").find("div.modal-content").LoadingOverlay("hide")
+        return response.json();
+    }).then(responseJson => {
+        if (responseJson.state) {
+
+            $("#modalDataCerrarTurno").modal("hide");
+            location.reload();
+
+        } else {
+            swal("Lo sentimos", responseJson.message, "error");
+        }
+    }).catch((error) => {
+        $("#modalDataCerrarTurno").find("div.modal-content").LoadingOverlay("hide")
+    })
+
+})
+
+
+function abrirTurnoDesdeViewTurnos(idTurno) {
+    fetch(`/Turno/GetOneTurno?idTurno=` + idTurno, {
+        method: "GET"
+    })
+        .then(response => {
+            $("div.container-fluid").LoadingOverlay("hide")
+            return response.json();
+        }).then(responseJson => {
+            if (responseJson.state) {
+
+                $("#txtIdTurnoLayout").val(responseJson.object.idTurno);
+
+                let fechaInicio = moment(responseJson.object.fechaInicio);
+                let fechaFin = responseJson.object.fechaFin
+                    ? moment(responseJson.object.fechaFin)
+                    : '';
+
+                if (fechaInicio.isValid()) {
+                    let fechaFormatted = fechaInicio.format('DD/MM/YYYY');
+                    let horaInicioFormatted = fechaInicio.format('HH:mm:ss');
+
+                    $("#txtInicioTurnoCierre").val(fechaFormatted);
+                    $("#txtHoraInicioTurnoCierre").val(horaInicioFormatted);
+                }
+
+                if (fechaFin != '') {
+                    let horaFinFormatted = fechaFin.format('HH:mm:ss');
+
+                    $("#txtCierraTurnoCierre").val(horaFinFormatted);
+                }
+
+                if (responseJson.object.observacionesApertura != '') {
+                    $("#txtObservacionesApertura").val(responseJson.object.observacionesApertura);
+                    $('#divObservacionesApertura').css('display', '');
+                }
+                else {
+                    $('#divObservacionesApertura').css('display', 'none');
+                }
+                $("#txtObservacionesCierre").val(responseJson.object.observacionesCierre);
+                $("#txtObservacionesCierre").prop("disabled", true);
+                $("#btnFinalizarTurno").hide();
+
+                $("#modalDataCerrarTurno").modal("show");
+
+                renderVentasPorTipoVenta(responseJson.object.ventasPorTipoVenta, responseJson.object.totalInicioCaja);
+
             } else {
                 swal("Lo sentimos", responseJson.message, "error");
             }
@@ -134,46 +371,11 @@ function cerrarTurno() {
         });
 }
 
+$('#modalDataCerrarTurno').on('hidden.bs.modal', function () {
+    $("#txtObservacionesCierre").prop("disabled", false);
 
-$("#btnSaveTurno").on("click", function () {
-    let desc = $("#txtDescripcion").val();
-
-    var modelTurno = {
-        descripcion: desc
-    };
-
-    fetch("/Turno/CerrarTurno", {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json;charset=utf-8' },
-        body: JSON.stringify(modelTurno)
-    }).then(response => {
-        $("#modalDataTurno").find("div.modal-content").LoadingOverlay("hide")
-        return response.json();
-    }).then(responseJson => {
-        if (responseJson.state) {
-
-            $("#modalDataTurno").modal("hide");
-            //swal("Exitoso!", "Se ha cerrado el turno y automaticamente hemos abierto otro", "success");
-            swal({
-                title: 'Se ha cerrado el turno.',
-                text: 'Se debe iniciar sesion nuevamente.',
-                showCancelButton: false,
-                closeOnConfirm: false
-            }, function (value) {
-
-                document.location.href = "/";
-
-            });
-
-        } else {
-            swal("Lo sentimos", responseJson.message, "error");
-        }
-    }).catch((error) => {
-        $("#modalDataTurno").find("div.modal-content").LoadingOverlay("hide")
-    })
-})
-
-
+    $("#btnFinalizarTurno").show();
+});
 function generarDatos() {
     showLoading();
 

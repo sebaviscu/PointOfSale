@@ -40,8 +40,9 @@ namespace PointOfSale.Business.Services
             {
                 Turno Turno_found = await _repository.Get(c => c.IdTurno == entity.IdTurno);
 
-                Turno_found.Descripcion = entity.Descripcion;
                 Turno_found.ModificationUser = entity.ModificationUser;
+                Turno_found.ObservacionesCierre = entity.ObservacionesCierre;
+                Turno_found.FechaFin = entity.FechaFin;
 
                 bool response = await _repository.Edit(Turno_found);
 
@@ -63,7 +64,7 @@ namespace PointOfSale.Business.Services
                 var query = await _repository.Query();
                 var Turno_found = query.Include(_ => _.Sales).FirstOrDefault(c => c.IdTurno == entity.IdTurno && c.IdTienda == idtienda);
 
-                if(Turno_found == null)
+                if (Turno_found == null)
                     throw new TaskCanceledException("Turno no encontrado.");
 
                 if (Turno_found.Sales.Any())
@@ -77,8 +78,7 @@ namespace PointOfSale.Business.Services
                     {
                         Turno_found.FechaFin = TimeHelper.GetArgentinaTime();
                         Turno_found.ModificationUser = entity.ModificationUser;
-                    }
-                    Turno_found.Descripcion = entity.Descripcion;
+                    };
 
                     bool response = await _repository.Edit(Turno_found);
 
@@ -100,21 +100,22 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task<Turno> GetTurnoActualConVentas(int idtienda)
+        public async Task<Turno?> GetTurnoActualConVentas(int idtienda)
         {
             var query = await _repository.Query();
-            var turno = query.Include(_ => _.Sales).Single(_ => _.FechaFin == null
+            var turno = query.Include(_ => _.Sales).FirstOrDefault(_ => _.FechaFin == null
                                             && _.FechaInicio.Day == TimeHelper.GetArgentinaTime().Day
                                             && _.FechaInicio.Month == TimeHelper.GetArgentinaTime().Month
                                             && _.FechaInicio.Year == TimeHelper.GetArgentinaTime().Year
                                             && _.IdTienda == idtienda);
+
             return turno;
         }
 
-        public async Task<Turno> GetTurnoActual(int idtienda)
+        public async Task<Turno?> GetTurnoActual(int idtienda)
         {
             var query = await _repository.Query();
-            var turno = query.Single(_ => _.FechaFin == null
+            var turno = query.SingleOrDefault(_ => _.FechaFin == null
                                             && _.FechaInicio.Day == TimeHelper.GetArgentinaTime().Day
                                             && _.FechaInicio.Month == TimeHelper.GetArgentinaTime().Month
                                             && _.FechaInicio.Year == TimeHelper.GetArgentinaTime().Year
@@ -133,7 +134,7 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task<Turno> GetTurno(int idTienda, string usuario)
+        public async Task<Turno> GetTurno_OrCreate(int idTienda, string usuario)
         {
             var query = await _repository.Query();
             var turno = query.SingleOrDefault(_ => _.IdTienda == idTienda

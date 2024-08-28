@@ -8,6 +8,7 @@ using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
 using PointOfSale.Model.Afip.Factura;
+using PointOfSale.Model.Auditoria;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
 using System.Security.Claims;
@@ -60,8 +61,17 @@ namespace PointOfSale.Controllers
 
         public IActionResult SalesHistory()
         {
-            ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Encargado]);
-            return ValidateSesionViewOrLogin();
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Encargado]);
+
+            if (!HttpContext.User.Identity.IsAuthenticated)
+                return RedirectToAction("Login", "Access");
+
+            var vmReport = new VMReportSale()
+            {
+                IsAdmin = user.IdRol == 1
+            };
+
+            return View("SalesHistory", vmReport);
         }
 
         [HttpGet]
@@ -318,9 +328,18 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public IActionResult ReportSale(int saleNumber)
         {
-            ViewData["saleNumber"] = saleNumber;
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Encargado]);
 
-            return View("SalesHistory");
+            if (!HttpContext.User.Identity.IsAuthenticated)
+                return RedirectToAction("Login", "Access");
+
+            var vmReport = new VMReportSale()
+            {
+                IsAdmin = user.IdRol == 1,
+                saleNumber = saleNumber
+            };
+
+            return View("SalesHistory", vmReport);
         }
 
         [HttpGet]
@@ -497,7 +516,7 @@ namespace PointOfSale.Controllers
                 ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
                 _ = await _saleService.AnularSale(idSale);
-                
+
                 gResponse.State = true;
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }

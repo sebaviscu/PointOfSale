@@ -41,7 +41,6 @@ $(document).ready(function () {
             { "data": "horaInicio" },
             { "data": "horaFin" },
             { "data": "modificationUser" },
-            { "data": "descripcion" },
             { "data": "total" },
             {
                 "defaultContent": '<button class="btn btn-primary btn-sm me-2 btn-edit"><i class="mdi mdi-eye"></i></button>',
@@ -50,7 +49,7 @@ $(document).ready(function () {
                 "width": "80px"
             }
         ],
-        order: [[1, "desc"]],
+        order: [[1, 2, 3, 4, 5, "desc"]],
         dom: "Bfrtip",
         buttons: [
             {
@@ -82,43 +81,9 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
 
 
 const openModalTurno = (model = BASIC_MODEL_TURNO) => {
-    $("#txtId").val(model.idTurno);
-    $("#txtDescripcion").val(model.descripcion);
-    $("#txtFecha").val(model.fecha);
-    $("#txtHoraInicio").val(model.horaInicio);
-    $("#txtHoraFin").val(model.horaFin);
-    $("#txtTotal").val(model.total);
-
-    fetch(`/Turno/GetOneTurno?idTurno=` + model.idTurno, {
-        method: "GET"
-    })
-        .then(response => {
-            $("div.container-fluid").LoadingOverlay("hide")
-            return response.json();
-        }).then(responseJson => {
-            if (responseJson.state) {
-
-                $("#contMetodosPago").empty();
-
-                let resp = responseJson.object;
-                let list = document.getElementById("contMetodosPago");
-                for (i = 0; i < resp.ventasPorTipoVenta.length; ++i) {
-                    let li = document.createElement('li');
-                    li.innerText = resp.ventasPorTipoVenta[i].descripcion + ": $" + resp.ventasPorTipoVenta[i].total;
-                    list.appendChild(li);
-                }
-            } else {
-                swal("Lo sentimos", responseJson.message, "error");
-            }
-        })
-        .catch((error) => {
-            $("div.container-fluid").LoadingOverlay("hide")
-        });
-
-
-    $("#modalData").modal("show")
+    abrirTurnoDesdeViewTurnos(model.idTurno);
+    
 }
-
 
 $("#btnSave").on("click", function () {
 

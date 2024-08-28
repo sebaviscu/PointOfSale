@@ -57,8 +57,6 @@
                 </div>
                 <button class="btn btn-outline-danger" onclick='generarDatos()' hidden>Generar Datos</button>
                 <br />
-                <button class="btn btn-outline-info" onclick='cerrarTurno()' style="margin-left:3px; margin-right:3px">Cerrar Turno</button>
-                <br />
                 <br />
                 <br />
                 <br />
@@ -127,53 +125,136 @@
             </script>
             </footer>*@
 
-        </div> <!-- End Page Wrapper -->
-    </div> <!-- End Wrapper -->
-    <!-- Grid Modal Turno-->
-    <div class="modal fade" id="modalDataTurno" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+        </div>
+        <!-- End Page Wrapper -->
+    </div>
+    <!-- End Wrapper -->
+    <!-- Grid Modal Abrir Turno-->
+    <div class="modal fade" id="modalDataAbrirTurno" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Cerrar Turno</h5>
+                    <h5 class="modal-title">Abrir Turno</h5>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row">
+
+                        <div class="col-sm-12">
+                            <div class="col-md-12 row">
+                                <div class="form-group col-sm-5">
+                                    <label for="txtInicioTurnoAbrir">Fecha</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtInicioTurnoAbrir" name="Fecha" disabled>
+                                </div>
+     
+                                <div class="form-group col-sm-4">
+                                    <label for="txtHoraInicioTurnoAbrir">Hora de Inicio</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtHoraInicioTurnoAbrir" name="Hora de Inicio" disabled>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="txtInicioCajaAbrir">Total Inicio Caja</label>
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">$</span>
+                                        </div>
+                                        <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtInicioCajaAbrir" name="Total inicio de caja">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-row">
+                                    <div class="form-group col-sm-12">
+                                        <label for="txtObservacionesInicioCajaCierre">Observaciones</label>
+                                        <textarea class="form-control" id="txtObservacionesInicioCajaCierre" rows="2" placeholder="..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btnAbrirTurno">Abrir Turno</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <input type="hidden" value="0" id="txtIdTurnoLayout">
+    <!-- Grid Modal Cerrar Turno-->
+    <div class="modal fade" id="modalDataCerrarTurno" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Finalizar Turno</h5>
                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form>
-                        <div class="row">
+                    <div class="row">
 
-                            <div class="col-sm-12">
-                                <div class="form-row">
-                                    <div class="form-group col-sm-5">
-                                        <label for="txtInicio">Fecha de Inicio</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtInicioTurno" name="Fecha de Inicio" disabled>
-                                    </div>
-                                    <div class="form-group col-sm-7">
-                                        <label for="txtDescripcion">Comentario</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtDescripcion" name="Descripcion">
-                                    </div>
+                        <div class="col-sm-5">
+                            <div>
+                                <div class="form-group col-sm-7">
+                                    <label for="txtInicioTurnoCierre">Fecha</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtInicioTurnoCierre" name="Fecha" disabled>
                                 </div>
-                                <div class="card-body">
-                                    <div>
-                                        <h3 for="contMetodosPagoLayout" class="form-label">Ventas:</h3>
-                                    </div>
-                                    <div class="row justify-content-md-center">
-                                        <ul id="contMetodosPagoLayout"></ul>
-
+                            </div>
+                            <div class="col-md-12 row">
+                                <div class="form-group col-sm-6">
+                                    <label for="txtInicioTurnoCierre">Hora de Inicio</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtHoraInicioTurnoCierre" name="Hora del turno" disabled>
+                                </div>                          
+                                <div class="form-group col-sm-6">
+                                    <label for="txtInicioTurnoCierre">Hora de Cierre</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtCierraTurnoCierre" name="Hora del turno de cierre" disabled>
+                                </div>
+                            </div>
+                            <div class="col-sm-12" style="display:none" id="divObservacionesApertura">
+                                <div class="form-row">
+                                    <div class="form-group col-sm-12">
+                                        <label for="txtObservaciones">Observaciones a la apertura</label>
+                                        <textarea class="form-control" id="txtObservacionesApertura" rows="2" placeholder="..." disabled></textarea>
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-sm-12">
+                                <div class="form-row">
+                                    <div class="form-group col-sm-12">
+                                        <label for="txtObservaciones">Observaciones al Cierre</label>
+                                        <textarea class="form-control" id="txtObservacionesCierre" rows="4" placeholder="..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-7">
+                            <div class="form-row">
+                                <div class="card-body">
+                                    <div>
+                                        <h3 for="contMetodosPagoLayout" class="form-label text-center">Ventas</h3>
+                                    </div>
+                                    <br />
+                                    @*                                    <div class="row justify-content-md-center">
+                                    <ul id="contMetodosPagoLayout"></ul>
+                                    </div> *@
 
+                                    <div id="contMetodosPagoLayout"></div>
+
+                                </div>
+                            </div>
                         </div>
 
-                    </form>
-
+                    </div>
                 </div>
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" id="btnSaveTurno">Guardar Turno</button>
+                    <button type="button" class="btn btn-primary" id="btnFinalizarTurno">Finalizar Turno</button>
                 </div>
             </div>
         </div>
@@ -315,7 +396,9 @@
     <script src="~/plugins/toastr/toastr.min.js"></script>
 
     <script src="~/plugins/loadingoverlay/loadingoverlay.min.js"></script>
-    <script src="~/js/views/layout.obf.js"></script>
+    <script src="~/js/views/layout.js"></script>
+    <script src="~/js/moment.js"></script>
+    <script src="~/js/moment-timezone.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

@@ -1,4 +1,5 @@
-﻿@{
+﻿@using PointOfSale.Models;
+@{
     ViewData["Title"] = "SalesHistory";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -8,7 +9,10 @@
     <link href="~/plugins/jquery-ui/jquery-ui.css" rel="stylesheet">
 }
 <div id="txtSaleNumberByClient" style="display:none">
-    @ViewData["saleNumber"]
+    @Model.saleNumber
+</div>
+<div id="txtisAdmin" style="display:none">
+    @Model.IsAdmin
 </div>
 <div class="card shadow mb-4">
     <div class="card-header d-flex align-items-center">
@@ -16,57 +20,63 @@
         <span class="text-danger" id="lblErrorPrintService" style="display: none;"><i class="mdi mdi-alert mdi-24px"></i>&nbsp; El servicio de impresión no se encuentra conectado</span>
     </div>
     <div class="card-body">
-        <div class="form-row">
-            <div class="form-group col-sm-3">
-                <label for="cboSearchBy">Search by</label>
-                <select class="form-control" id="cboSearchBy">
-                    <option value="date">Dia</option>
-                    <option value="number">Num. de venta</option>
-                </select>
-            </div>
-            <div class="form-group col-sm-2 search-date">
-                <label for="txtStartDate">Fecha Inicio</label>
-                <input type="text" class="form-control" id="txtStartDate">
-            </div>
-            <div class="form-group col-sm-2 search-date">
-                <label for="txtEndDate">Fecha Fin</label>
-                <input type="text" class="form-control" id="txtEndDate">
-            </div>
-            <div class="form-group col-sm-4 search-sale">
-                <label for="txtSaleNumberSearch">Numero de Venta</label>
-                <input type="text" class="form-control" id="txtSaleNumberSearch">
-            </div>
-            <div class="form-group col-sm-3 search-date" style="text-align: center;">
-                <label for="rowFilterDia">Presupuestos</label>
-                <div class="row mt-2" id="rowFilterDia">
-                    <div class="ms-3 h4">
-                        <input type="radio" name="radioButton" id="incluir" class="filtro-presupuesto">
-                        <label for="incluir">
-                            Incluir
-                        </label>
-                    </div>
-                    <div class="ms-3 h4">
-                        <input type="radio" name="radioButton" id="noIncluir" class="filtro-presupuesto" checked>
-                        <label for="noIncluir">
-                            No incluir
-                        </label>
-                    </div>
-                    <div class="ms-3 me-5 h4">
-                        <input type="radio" name="radioButton" id="solamente" class="filtro-presupuesto">
-                        <label for="solamente">
-                            Solamente
-                        </label>
+        @if (Model.IsAdmin)
+        {
+            <div class="form-row">
+                <div class="form-group col-sm-3">
+                    <label for="cboSearchBy">Search by</label>
+                    <select class="form-control" id="cboSearchBy">
+                        <option value="date">Dia</option>
+                        <option value="number">Num. de venta</option>
+                    </select>
+                </div>
+                <div class="form-group col-sm-2 search-date">
+                    <label for="txtStartDate">Fecha Inicio</label>
+                    <input type="text" class="form-control" id="txtStartDate">
+                </div>
+                <div class="form-group col-sm-2 search-date">
+                    <label for="txtEndDate">Fecha Fin</label>
+                    <input type="text" class="form-control" id="txtEndDate">
+                </div>
+                <div class="form-group col-sm-4 search-sale">
+                    <label for="txtSaleNumberSearch">Numero de Venta</label>
+                    <input type="text" class="form-control" id="txtSaleNumberSearch">
+                </div>
+                <div class="form-group col-sm-3 search-date" style="text-align: center;">
+                    <label for="rowFilterDia">Presupuestos</label>
+                    <div class="row mt-2" id="rowFilterDia">
+                        <div class="ms-3 h4">
+                            <input type="radio" name="radioButton" id="incluir" class="filtro-presupuesto">
+                            <label for="incluir">
+                                Incluir
+                            </label>
+                        </div>
+                        <div class="ms-3 h4">
+                            <input type="radio" name="radioButton" id="noIncluir" class="filtro-presupuesto" checked>
+                            <label for="noIncluir">
+                                No incluir
+                            </label>
+                        </div>
+                        <div class="ms-3 me-5 h4">
+                            <input type="radio" name="radioButton" id="solamente" class="filtro-presupuesto">
+                            <label for="solamente">
+                                Solamente
+                            </label>
+                        </div>
                     </div>
                 </div>
+                <div class="form-group col-sm-1" style="align-self: end;">
+                    <button class="btn btn-success" type="button" id="btnSearch"><i class="fas fa-search"></i> Buscar</button>
+                </div>
             </div>
-            <div class="form-group col-sm-1" style="align-self: end;">
-                <button class="btn btn-success" type="button" id="btnSearch"><i class="fas fa-search"></i> Buscar</button>
-            </div>
-        </div>
+        }
         <div class="d-flex justify-content-center search-date mt-3">
-            <button class="btn btn-primary btn-sm mx-2" onclick="setToday()" title="Seleccionar hoy">
-                <i class="mdi mdi-calendar"></i> Hoy
-            </button>
+            @if (Model.IsAdmin)
+            {
+                <button class="btn btn-primary btn-sm mx-2" onclick="setToday()" title="Seleccionar hoy">
+                    <i class="mdi mdi-calendar"></i> Hoy
+                </button>
+            }
             <button class="btn btn-primary btn-sm mx-2" onclick="turnoActual()" title="Seleccionar turno actual">
                 <i class="mdi mdi-clock"></i> Turno Actual
             </button>

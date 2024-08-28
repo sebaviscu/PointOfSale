@@ -7,7 +7,6 @@ namespace PointOfSale.Models
         public int IdTurno { get; set; }
         public DateTime? FechaInicio { get; set; }
         public DateTime? FechaFin { get; set; }
-        public string? Descripcion { get; set; }
         public int? IdTienda { get; set; }
         public Tienda? Tienda { get; set; }
         public DateTime? RegistrationDate { get; set; }
@@ -21,6 +20,11 @@ namespace PointOfSale.Models
         public string? Total { get; set; }
 
         public Sale? Sale { get; set; }
+
+
+        public string? ObservacionesApertura { get; set; }
+        public string? ObservacionesCierre { get; set; }
+        public decimal TotalInicioCaja { get; set; }
 
     }
 }

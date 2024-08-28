@@ -37,6 +37,7 @@ namespace PointOfSale.Controllers
         private readonly IAjusteService _ajusteService;
         private readonly IAfipService _afipService;
         private readonly ILogger<AdminController> _logger;
+        private readonly ITurnoService _turnoService;
 
         public AdminController(
             IDashBoardService dashboardService,
@@ -51,7 +52,8 @@ namespace PointOfSale.Controllers
             ICategoryService categoryService,
             IAjusteService ajusteService,
             IAfipService afipService,
-            ILogger<AdminController> logger)
+            ILogger<AdminController> logger,
+            ITurnoService turnoService)
         {
             _dashboardService = dashboardService;
             _userService = userService;
@@ -66,6 +68,7 @@ namespace PointOfSale.Controllers
             _ajusteService = ajusteService;
             _afipService = afipService;
             _logger = logger;
+            _turnoService = turnoService;
         }
 
         public IActionResult DashBoard()
@@ -1673,7 +1676,7 @@ namespace PointOfSale.Controllers
                     ? false
                     : ajuste.ControlEmpleado ?? false;
 
-                switch(user.IdListaPrecios)
+                switch (user.IdListaPrecios)
                 {
                     case 1:
                         vmAjuste.ListaPrecios = ListaDePrecio.Lista_1;
@@ -1685,7 +1688,9 @@ namespace PointOfSale.Controllers
                         vmAjuste.ListaPrecios = ListaDePrecio.Lista_3;
                         break;
                 }
-                
+                var turno = await _turnoService.GetTurnoActual(user.IdTienda);
+
+                vmAjuste.ExisteTurno = turno != null;
                 gResponse.State = true;
                 gResponse.Object = vmAjuste;
                 return StatusCode(StatusCodes.Status200OK, gResponse);

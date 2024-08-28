@@ -23,6 +23,9 @@ idTienda INT NOT NULL,
 registrationDate DATETIME NOT NULL,
 registrationUser VARCHAR(50) NOT NULL,
 modificationUser VARCHAR(50) NULL,
+ObservacionesApertura varchar(200) null,
+ObservacionesCierre varchar(200) null,
+TotalInicioCaja decimal(10,2) not null,
 CONSTRAINT FK_Turno_Tienda FOREIGN KEY (idTienda)
 REFERENCES Tienda(idTienda) ON DELETE CASCADE
 );

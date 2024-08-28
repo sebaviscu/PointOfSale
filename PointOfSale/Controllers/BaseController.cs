@@ -18,7 +18,9 @@ namespace PointOfSale.Controllers
             if (!HttpContext.User.Identity.IsAuthenticated)
                 return RedirectToAction("Login", "Access");
             else
+            {
                 return View();
+            }
         }
 
         public UserAuth ValidarAutorizacion(Roles[] rolesPermitidos)
@@ -69,7 +71,10 @@ namespace PointOfSale.Controllers
                     claims.Remove(claimToRemove);
                 }
 
-                claims.Add(new Claim(claimType, newValue));
+                if (newValue != null)
+                {
+                    claims.Add(new Claim(claimType, newValue));
+                }
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -82,6 +87,7 @@ namespace PointOfSale.Controllers
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), properties);
             }
         }
+
 
         protected IActionResult HandleException(Exception? ex, string errorMessage, ILogger<object> _logger, object model = null, params (string Key, object Value)[] additionalData)
         {
