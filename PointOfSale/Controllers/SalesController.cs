@@ -222,7 +222,9 @@ namespace PointOfSale.Controllers
                         RegistrationUser = user.UserName,
                         SaleNumber = lastNumber,
                         IsWeb = false,
-                        Observaciones = model.Observaciones
+                        Observaciones = model.Observaciones,
+                        ClientId = model.ClientId,
+                        TipoMovimiento = model.TipoMovimiento
                     };
 
                     if (!paso)

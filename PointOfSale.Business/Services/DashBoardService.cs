@@ -96,6 +96,8 @@ namespace PointOfSale.Business.Services
 
         public async Task<Dictionary<string, decimal>> GetSalesByTypoVenta(TypeValuesDashboard typeValues, int idTienda, DateTime dateStart, bool visionGlobal)
         {
+            try
+            {
             FechasParaQuery(typeValues, dateStart, out DateTime end, out DateTime start);
 
             var query = await _repositorySale.Query();
@@ -105,12 +107,15 @@ namespace PointOfSale.Business.Services
                 vd => vd.RegistrationDate.Value.Date >= start.Date && vd.RegistrationDate.Value.Date < end.Date
                 && vd.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
                 && !vd.IsDelete
-                && vd.IdClienteMovimiento == null);
+                && vd.IdTypeDocumentSale != null);
 
             if (!visionGlobal)
             {
                 query = query.Where(v => v.IdTienda == idTienda);
             }
+
+                var s = query
+                    .GroupBy(v => v.TypeDocumentSaleNavigation.Description).ToList();
 
             Dictionary<string, decimal> resultado = query
                 .GroupBy(v => v.TypeDocumentSaleNavigation.Description).OrderByDescending(g => g.Sum(_ => _.Total))
@@ -118,6 +123,13 @@ namespace PointOfSale.Business.Services
                 .ToDictionary(keySelector: r => r.descripcion, elementSelector: r => r.total);
 
             return resultado;
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+
         }
 
 
@@ -132,7 +144,7 @@ namespace PointOfSale.Business.Services
                             && v.RegistrationDate.Value.Date < end.Date
                             && v.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
                             && !v.IsDelete
-                            && v.IdClienteMovimiento == null);
+                            && v.IdTypeDocumentSale != null);
 
             if (!visionGlobal)
             {
@@ -162,7 +174,7 @@ namespace PointOfSale.Business.Services
                             v.RegistrationDate.Value.Date >= start && v.RegistrationDate.Value.Date <= end
                             && v.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
                             && !v.IsDelete
-                            && v.IdClienteMovimiento == null);
+                            && v.IdTypeDocumentSale != null);
 
             if (!visionGlobal)
             {
@@ -191,7 +203,7 @@ namespace PointOfSale.Business.Services
                             && v.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
                             && v.RegistrationDate.Value.Date >= dateCompare.Date
                             && !v.IsDelete
-                            && v.IdClienteMovimiento == null);
+                            && v.IdTypeDocumentSale != null);
 
             if (!visionGlobal)
             {
@@ -216,7 +228,7 @@ namespace PointOfSale.Business.Services
                             && v.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
                             && v.RegistrationDate.Value.Date >= dateCompare.Date
                             && !v.IsDelete
-                            && v.IdClienteMovimiento == null);
+                            && v.IdTypeDocumentSale != null);
 
             if (!visionGlobal)
             {
@@ -288,6 +300,7 @@ namespace PointOfSale.Business.Services
                         && vd.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
                         && vd.IdClienteMovimiento == null
                         && !vd.IsDelete
+                        && vd.IdTypeDocumentSale != null
                         && vd.IdTurno == turno);
 
             if (!visionGlobal)
@@ -313,6 +326,7 @@ namespace PointOfSale.Business.Services
                         && vd.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
                         && vd.IdTurno == turno
                         && !vd.IsDelete
+                        && vd.IdTypeDocumentSale != null
                         && vd.IdTienda == idTienda)
                 .GroupBy(v => v.TypeDocumentSaleNavigation.Description).OrderByDescending(g => g.Sum(_ => _.Total))
                 .Select(dv => new { descripcion = dv.Key, total = dv.Sum(_ => _.Total.Value) })
@@ -411,7 +425,7 @@ namespace PointOfSale.Business.Services
                 vd => vd.RegistrationDate.Value.Date >= start.Date && vd.RegistrationDate.Value.Date < end.Date
                 && vd.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
                 && !vd.IsDelete
-                && vd.IdClienteMovimiento == null);
+                && vd.IdTypeDocumentSale != null);
 
             Dictionary<string, decimal> resultado = query
                 .GroupBy(v => v.Tienda.Nombre).OrderByDescending(g => g.Sum(_ => _.Total))

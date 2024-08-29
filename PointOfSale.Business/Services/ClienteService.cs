@@ -99,7 +99,7 @@ namespace PointOfSale.Business.Services
         {
             IQueryable<ClienteMovimiento> query = await _clienteMovimiento.Query(u => u.IdCliente == idCliente && u.IdTienda == idTienda);
             var result = query.Include(_ => _.Sale).OrderByDescending(_ => _.RegistrationUser).ToList();
-            result.Where(_ => _.TipoMovimiento == TipoMovimientoCliente.Egreso).ToList().ForEach(_ =>
+            result.Where(_ => _.TipoMovimiento == TipoMovimientoCliente.Gastos).ToList().ForEach(_ =>
             {
                 _.Total = _.Total * -1;
             }

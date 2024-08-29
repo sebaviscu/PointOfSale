@@ -24,8 +24,8 @@ namespace PointOfSale.Model
 
         public enum TipoMovimientoCliente
         {
-            Ingreso = 1,
-            Egreso = 2
+            Pagos = 1,
+            Gastos = 2
         }
 
         public enum TypeValuesDashboard

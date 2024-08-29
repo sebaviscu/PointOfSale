@@ -222,12 +222,14 @@ function formatResultsClients(data) {
     if (data.loading)
         return data.text;
 
+    let cuil = data.cuil != null ? data.cuil : '';
+
     let container = $(
         `<table width="100%">
             <tr>
                 <td class="col-sm-8">
                     <p style="font-weight: bolder;margin:2px">${data.text}</p>
-                    <em style="font-weight: bolder;margin:2px">${data.cuil}</em>
+                    <em style="font-weight: bolder;margin:2px">${cuil}</em>
                 </td>
                 <td class="col-sm-4">
                     <p style="font-weight: bolder;" class="${data.color}">${data.total}</p>
@@ -338,8 +340,8 @@ $(document).on("click", "button.finalizarSaleParcial", function () {
         let nombreCliente = $("#cboCliente" + currentTabId)[0].innerText;
 
         swal({
-            title: `¿Desea agregar la venta a la cuenta corriente de ${nombreCliente}?`,
-            text: "",
+            title: `Cuenta Corriente`,
+            text: `\n ¿Desea agregar la venta a la cuenta corriente de ${nombreCliente}? \n`,
             type: "warning",
             showCancelButton: true,
             confirmButtonClass: "btn-info",
@@ -499,6 +501,13 @@ function getVentaForRegister() {
     }
     else {
         total = $("#txtSubTotal" + currentTabId).attr("subTotalReal");
+
+        let subTotal = {
+            total: parseFloat(total).toFixed(2),
+            formaDePago: null
+        };
+
+        formasDePago.push(subTotal);
     }
 
     let cuilParaFactura = $('#txtClienteParaFactura').attr('cuil');

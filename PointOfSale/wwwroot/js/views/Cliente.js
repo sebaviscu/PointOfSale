@@ -306,7 +306,7 @@ $('#tbMovimientos tbody').on('click', 'button.btn-open-sale', function (event) {
     event.preventDefault();
     let data = tableDataMovimientosClientes.row($(this).parents('tr')).data();
     let saleNumber = data['sale']['saleNumber'];
- 
+
     let urlString = '/Sales/ReportSale?saleNumber=' + encodeURIComponent(saleNumber);
 
     window.open(urlString, '_blank');
@@ -377,11 +377,22 @@ $(document).on("click", "button.finalizeSale", function () {
         return;
     }
 
+    let formasDePago = [];
+
+
+    let subTotal = {
+        total: parseFloat($("#txtImporte").val()).toFixed(2),
+        formaDePago: $("#cboTypeDocumentSale").val()
+    };
+
+    formasDePago.push(subTotal);
+
     const sale = {
         idTypeDocumentSale: $("#cboTypeDocumentSale").val(),
         clientId: $("#txtId").val(),
         total: $("#txtImporte").val(),
-        tipoMovimiento: 1
+        tipoMovimiento: 1,
+        multiplesFormaDePago: formasDePago,
     }
 
     $("#btnFinalizeSale").closest("div.card-body").LoadingOverlay("show")

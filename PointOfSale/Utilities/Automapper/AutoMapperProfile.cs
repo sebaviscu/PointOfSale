@@ -264,8 +264,8 @@ namespace PointOfSale.Utilities.Automapper
 
 
             CreateMap<Cliente, VMCliente>()
-                    .ForMember(user => user.TotalDecimal, opt => opt.MapFrom(userEdit => userEdit.ClienteMovimientos != null ? userEdit.ClienteMovimientos.Where(_ => _.TipoMovimiento == TipoMovimientoCliente.Ingreso).Sum(_ => _.Total) - userEdit.ClienteMovimientos.Where(_ => _.TipoMovimiento == TipoMovimientoCliente.Egreso).Sum(_ => _.Total) : 0))
-                    .ForMember(user => user.Total, opt => opt.MapFrom(userEdit => userEdit.ClienteMovimientos != null ? "$" + (userEdit.ClienteMovimientos.Where(_ => _.TipoMovimiento == TipoMovimientoCliente.Ingreso).Sum(_ => _.Total) - userEdit.ClienteMovimientos.Where(_ => _.TipoMovimiento == TipoMovimientoCliente.Egreso).Sum(_ => _.Total)).ToString("F2") : string.Empty));
+                    .ForMember(user => user.TotalDecimal, opt => opt.MapFrom(userEdit => userEdit.ClienteMovimientos != null ? userEdit.ClienteMovimientos.Where(_ => _.TipoMovimiento == TipoMovimientoCliente.Pagos).Sum(_ => _.Total) - userEdit.ClienteMovimientos.Where(_ => _.TipoMovimiento == TipoMovimientoCliente.Gastos).Sum(_ => _.Total) : 0))
+                    .ForMember(user => user.Total, opt => opt.MapFrom(userEdit => userEdit.ClienteMovimientos != null ? "$" + (userEdit.ClienteMovimientos.Where(_ => _.TipoMovimiento == TipoMovimientoCliente.Pagos).Sum(_ => _.Total) - userEdit.ClienteMovimientos.Where(_ => _.TipoMovimiento == TipoMovimientoCliente.Gastos).Sum(_ => _.Total)).ToString("F2") : string.Empty));
 
             CreateMap<VMCliente, Cliente>();
 

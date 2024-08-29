@@ -166,7 +166,7 @@ go
 create table Sale(
 [idSale] int primary key identity(1,1),
 [saleNumber] varchar(6),
-[idTypeDocumentSale] int references TypeDocumentSale(idTypeDocumentSale),
+[idTypeDocumentSale] int references TypeDocumentSale(idTypeDocumentSale) null,
 [idUsers] int references Users(idUsers),
 [customerDocument] varchar(10),
 [clientName] varchar(20),

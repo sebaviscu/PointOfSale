@@ -3,7 +3,7 @@
     public class VMMultiplesFormaPago
     {
         public decimal Total { get; set; }
-        public int FormaDePago { get; set; }
+        public int? FormaDePago { get; set; }
 
     }
 }
