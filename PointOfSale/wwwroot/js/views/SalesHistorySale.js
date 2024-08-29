@@ -1,5 +1,6 @@
 ﻿let idSale;
 let rowSelectedHistoric;
+let tableDataReporteVentas;
 
 let SEARCH_VIEW = {
 
@@ -223,6 +224,7 @@ $("#printTicket").click(function () {
 
 
 function createTable(responseJson) {
+
     $("#tbsale tbody").html("");
 
     if (responseJson.length > 0) {
@@ -280,7 +282,9 @@ function createTable(responseJson) {
         $("#lblCantidadVentas").html("Cantidad de Ventas: <strong> " + Object.keys(uniqs).length + ".</strong>");
         $("#lbltotal").html("Total: <strong>$ " + total + ".</strong>");
     }
+
 }
+
 
 function setToday() {
     let date = new Date();

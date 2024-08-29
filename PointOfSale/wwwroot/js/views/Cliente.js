@@ -150,7 +150,7 @@ const openModalCliente = (model = BASIC_MODEL_CLIENTE) => {
     if (tableDataMovimientosClientes != null)
         tableDataMovimientosClientes.destroy();
 
-    var url = '/Admin/GetMovimientoCliente?idCliente=' + model.idCliente;
+    let url = '/Admin/GetMovimientoCliente?idCliente=' + model.idCliente;
 
     tableDataMovimientosClientes = $("#tbMovimientos").DataTable({
         responsive: true,
