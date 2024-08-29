@@ -14,6 +14,25 @@
 
 }
 <style>
+    .small-row {
+        font-size: 12px; 
+        height: 30px; 
+    }
+
+    .small-cell {
+        padding: 5px;
+    }
+
+    .fixed-width {
+        width: 50px;
+        text-align: center;
+    }
+
+        .fixed-width button {
+            width: 100%;
+            padding: 2px;
+        }
+
     .input-validate-facturacion {
         background-color: beige;
     }
@@ -66,69 +85,151 @@
                 <div class="tab-content pt-5" id="tab-content">
                     <div class="tab-pane active" id="simple-tabpanel-0" role="tabpanel" aria-labelledby="simple-tab-0">
 
-                        <div class="row ">
-                            <div class="col-md-12">
-                                <div class="row ">
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label for="txtCodigoSeguridad">Codigo de Seguridad</label>
-                                            <div class="password-wrapper">
-                                                <input type="password" class="form-control form-control-sm" id="txtCodigoSeguridad" name="Codigo de Seguridad">
-                                                <button id="togglePassword">
-                                                    <span class="mdi mdi-eye mdi-24px" id="eyeIcon" style="width: 20px; height: 20px;"></span>
-                                                </button>
-                                            </div>
-                                        </div>
+                        <div class="col-md-12 row ">
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label for="txtCodigoSeguridad">Codigo de Seguridad</label>
+                                    <div class="password-wrapper">
+                                        <input type="password" class="form-control form-control-sm" id="txtCodigoSeguridad" name="Codigo de Seguridad">
+                                        <button id="togglePassword">
+                                            <span class="mdi mdi-eye mdi-24px" id="eyeIcon" style="width: 20px; height: 20px;"></span>
+                                        </button>
                                     </div>
-                                    <div class="col-sm-2 text-center" style="align-content: end;">
-                                        <div class="form-group">
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" role="switch" id="switchControlEmpleado">
-                                                <label class="form-check-label" for="switchControlEmpleado">Control Empleados</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Habilita / Deshabilita solicitar codigo de seguridad a los empleados"></span>
-                                            </div>
-                                        </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2 text-center" style="align-content: end;">
+                                <div class="form-group">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="switchControlEmpleado">
+                                        <label class="form-check-label" for="switchControlEmpleado">Control Empleados</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Habilita / Deshabilita solicitar codigo de seguridad a los empleados"></span>
                                     </div>
-                                    <div class="col-sm-3 text-center" style="align-content: end;">
-                                        <div class="form-group">
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" role="switch" id="switchImprimirDefault">
-                                                <label class="form-check-label" for="switchImprimirDefault">Imprimir por defecto</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2 text-center" style="align-content: end;">
-                                        <div class="form-group">
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" role="switch" id="switchControlStock">
-                                                <label class="form-check-label" for="switchControlStock">Control Stock</label>
-                                            </div>
-                                        </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2 text-center" style="align-content: end;">
+                                <div class="form-group">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="switchControlStock">
+                                        <label class="form-check-label" for="switchControlStock">Control Stock</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row ">
-                            <div class="col-md-12">
-                                <div class="row ">
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label for="txtImpresora">Nombre Impresora de Ticket</label>
-                                            <select class="form-control form-control-sm" id="cboNombreImpresora" name="Impresora Ticket"></select>
+
+                        <div class="col-md-12 row">
+                            <div class="col-sm-3">
+                                <div class="card shadow">
+                                    <div class="card-header py-3" style="background-color: #ebe6e6;">
+                                        <h4>Impresion Tickets</h4>
+                                    </div>
+                                    <div class="card-body row" style="padding: 20px">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" role="switch" id="switchImprimirDefault">
+                                                    <label class="form-check-label" for="switchImprimirDefault">Imprimir por defecto</label>
+                                                </div>
+                                            </div>
+                                            <div class="">
+                                                <div class="form-group">
+                                                    <label for="txtImpresora">Nombre Impresora</label>
+                                                    <select class="form-control form-control-sm" id="cboNombreImpresora" name="Impresora Ticket"></select>
+                                                </div>
+                                            </div>
+                                            <div class="">
+                                                <div class="form-group">
+                                                    <label for="txtNombreTiendaTicket">Nombre de Tienda en Ticket</label>
+                                                    <div class="password-wrapper">
+                                                        <input type="text" class="form-control form-control-sm" id="txtNombreTiendaTicket" name="Nombre de Tienda en Ticket">
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                         </div>
                                     </div>
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label for="txtNombreTiendaTicket">Nombre de Tienda en Ticket</label>
-                                            <div class="password-wrapper">
-                                                <input type="text" class="form-control form-control-sm" id="txtNombreTiendaTicket" name="Nombre de Tienda en Ticket">
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="card shadow">
+                                    <div class="card-header py-3" style="background-color: #ebe6e6;">
+                                        <h4>Cierre Turno</h4>
+                                    </div>
+                                    <div class="card-body row" style="padding: 20px">
+                                        <div class="col-md-12">
+
+                                            <div class="form-group">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" role="switch" id="switchCierreTurno">
+                                                    <label class="form-check-label" for="switchCierreTurno">Notificar cierre de turno</label>
+                                                </div>
                                             </div>
+
+                                            <div class="form-group">
+                                                <div class="form-group">
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="email" class="form-control form-control-sm" id="txtEmailReceptor" name="Emails receptores">
+                                                        <div class="input-group-prepend">
+                                                            <button class="btn btn-success" id="txtAddEmailsReceptores">+</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <table id="tbEmailsReceptores" class="table table-sm table-striped">
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+
+                                            <div class="accordion-item">
+                                                <div class="py-1">
+
+                                                    <!-- Cabecera -->
+                                                    <div class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                        <h6>Email Emisor <span class="mdi mdi-chevron-down"></span></h6>
+                                                    </div>
+
+                                                </div>
+                                                <div class="card-body" style="padding: 0px;">
+                                                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="padding:10px">
+                                                        <div class="accordion-body">
+
+                                                            <!-- Cuerpo -->
+
+                                                            <div class="row g-3 align-items-center">
+                                                                <div class="col-md-4">
+                                                                    <label for="txtEmailCierreTurno" class="col-form-label">Email</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Solo correo de Gmail"></span>
+                                                                </div>
+                                                                <div class="col-md-8">
+                                                                    <input type="text" class="form-control form-control-sm" id="txtEmailCierreTurno" name="email">
+                                                                </div>
+                                                            </div>
+                                                            <div class="row g-3 align-items-center">
+                                                                <div class="col-md-4">
+                                                                    <label for="txtEmailPassword" class="col-form-label">Password</label>
+                                                                </div>
+                                                                <div class="col-md-8">
+                                                                    <div class="password-wrapper">
+                                                                        <input type="password" class="form-control form-control-sm" id="txtEmailPassword" name="Password email">
+                                                                        <button id="toggleEmailPassword">
+                                                                            <span class="mdi mdi-eye mdi-24px" id="eyeIcon" style="width: 20px; height: 20px;"></span>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                         </div>
                                     </div>
                                 </div>
 
-                            </div>
-                        </div>
 
+                            </div>
+
+
+                        </div>
 
                     </div>
                     <div class="tab-pane" id="simple-tabpanel-1" role="tabpanel" aria-labelledby="simple-tab-1">

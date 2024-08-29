@@ -9,7 +9,11 @@
     nombreImpresora: "",
     minimoIdentificarConsumidor: 0,
     facturaElectronica: false,
-    controlEmpleado: false
+    controlEmpleado: false,
+    notificarEmailCierreTurno: false,
+    emailsReceptores: "",
+    emailEmisorCierreTurno: "",
+    passwordEmailEmisorCierreTurno: "",
 }
 
 const BASIC_MODEL_AJUSTE_WEB = {
@@ -68,10 +72,15 @@ $(document).ready(function () {
                 $("#txtNombreTiendaTicket").val(model.nombreTiendaTicket);
                 $("#txtMinimoIdentificarConsumidor").val(model.minimoIdentificarConsumidor);
                 $("#cboNombreImpresora").val(model.nombreImpresora);
+                loadTableFromEmailsString(model.emailsReceptoresCierreTurno);
+                $("#txtEmailCierreTurno").val(model.emailEmisorCierreTurno);
+                $("#txtEmailPassword").val(model.passwordEmailEmisorCierreTurno);
                 document.getElementById('switchImprimirDefault').checked = model.imprimirDefault;
                 document.getElementById('switchControlStock').checked = model.controlStock;
                 document.getElementById('switchFacturaElectronica').checked = model.facturaElectronica;
                 document.getElementById('switchControlEmpleado').checked = model.controlEmpleado;
+                document.getElementById('switchCierreTurno').checked = model.notificarEmailCierreTurno;
+
 
                 if (model.modificationUser == null)
                     document.getElementById("divModif").style.display = 'none';
@@ -156,11 +165,63 @@ $(document).ready(function () {
 
     setupPasswordToggle($('#txtCodigoSeguridad'), $('#togglePassword'));
     setupPasswordToggle($('#txtContraseñaCertificado'), $('#togglePasswordCert'));
+    setupPasswordToggle($('#txtEmailPassword'), $('#toggleEmailPassword'));
 
     healthcheck();
 
 })
 
+$("#txtAddEmailsReceptores").on("click", function () {
+    let email = $("#txtEmailReceptor").val();
+
+    if (email !== "") {
+
+        let newRow = rowTableFromEmails(email);
+
+        $("#tbEmailsReceptores tbody").append(newRow);
+
+        $("#txtEmailReceptor").val("");
+    } else {
+        alert("Por favor ingrese un email válido.");
+    }
+});
+
+$("#tbEmailsReceptores").on("click", ".delete-row", function () {
+    $(this).closest("tr").remove();
+});
+
+function getEmailsFromTable() {
+    let emails = [];
+
+    $("#tbEmailsReceptores tbody tr").each(function () {
+        let email = $(this).find("td:first").text();
+        emails.push(email);
+    });
+
+    return emails.join(";");
+}
+
+function loadTableFromEmailsString(emailsString) {
+    $("#tbEmailsReceptores tbody").empty();
+
+    if (emailsString != null && emailsString != '') {
+        let emailsArray = emailsString.split(";");
+
+        emailsArray.forEach(function (email) {
+            let newRow = rowTableFromEmails(email);
+
+            $("#tbEmailsReceptores tbody").append(newRow);
+        });
+    }
+
+}
+
+function rowTableFromEmails(email) {
+    return "<tr class='small-row'>" +
+        "<td class='small-cell'>" + email + "</td>" +
+        "<td class='fixed-width'><button class='btn btn-danger btn-sm delete-row'>" +
+        "<span class='mdi mdi-delete'></span></button></td></tr>";
+}
 
 
 $("#btnCargarCertificado").on("click", function () {
@@ -263,12 +324,19 @@ $("#btnSave").on("click", function () {
     let checkboxSwitchControlEmpleados = document.getElementById('switchControlEmpleado');
     model["controlEmpleado"] = checkboxSwitchControlEmpleados.checked;
 
-    model["facturaElectronica"] = checkboxSwitchFacturaElectronica.checked;
+    let checkboxSwitchCierreTurno = document.getElementById('switchCierreTurno');
+    model["notificarEmailCierreTurno"] = checkboxSwitchCierreTurno.checked;
 
+    let emailsReceptores = getEmailsFromTable();
+    model["emailEmisorCierreTurno"] = $("#txtEmailCierreTurno").val();
+    model["passwordEmailEmisorCierreTurno"] = $("#txtEmailPassword").val();
+    model["emailsReceptoresCierreTurno"] = emailsReceptores;
     model["codigoSeguridad"] = $("#txtCodigoSeguridad").val();
     model["nombreTiendaTicket"] = $("#txtNombreTiendaTicket").val();
     model["minimoIdentificarConsumidor"] = $("#txtMinimoIdentificarConsumidor").val();
     model["nombreImpresora"] = $("#cboNombreImpresora").val();
+
+    model["facturaElectronica"] = checkboxSwitchFacturaElectronica.checked;
 
     const modelFacturacion = structuredClone(BASIC_MODEL_AJUSTES_FACTURACION);
     modelFacturacion["idAjustesFacturacion"] = parseInt($("#txtIdAjustesFacturacion").val());

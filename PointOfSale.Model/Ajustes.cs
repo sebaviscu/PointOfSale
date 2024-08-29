@@ -19,6 +19,11 @@ namespace PointOfSale.Model
         public string? NombreImpresora { get; set; }
         public long? MinimoIdentificarConsumidor { get; set; }
 
+        public bool? NotificarEmailCierreTurno { get; set; }
+        public string? EmailEmisorCierreTurno {  get; set; }
+        public string? PasswordEmailEmisorCierreTurno {  get; set; }
+        public string? EmailsReceptoresCierreTurno { get; set; }
+
         public int IdTienda { get; set; }
         public Tienda? Tienda { get; set; }
 

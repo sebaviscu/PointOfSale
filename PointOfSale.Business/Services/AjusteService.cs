@@ -36,7 +36,7 @@ namespace PointOfSale.Business.Services
             catch (ArgumentException e)
             {
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 throw;
             }
@@ -86,7 +86,19 @@ namespace PointOfSale.Business.Services
 
         public async Task<Ajustes> GetAjustes(int idTienda)
         {
-            return await _repositoryAjustes.First(_ => _.IdTienda == idTienda);
+            var ajustes = await _repositoryAjustes.First(_ => _.IdTienda == idTienda);
+            try
+            {
+                ajustes.PasswordEmailEmisorCierreTurno = !string.IsNullOrEmpty(ajustes.PasswordEmailEmisorCierreTurno) ? EncryptionHelper.DecryptString(ajustes.PasswordEmailEmisorCierreTurno) : null;
+            }
+            catch (ArgumentException e)
+            {
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+            return ajustes;
         }
 
         public async Task<Ajustes> Edit(Ajustes entity)
@@ -96,6 +108,10 @@ namespace PointOfSale.Business.Services
             Ajustes_found.ModificationDate = TimeHelper.GetArgentinaTime();
             Ajustes_found.ModificationUser = entity.ModificationUser;
 
+            Ajustes_found.EmailEmisorCierreTurno = entity.EmailEmisorCierreTurno;
+            Ajustes_found.PasswordEmailEmisorCierreTurno = !string.IsNullOrEmpty(entity.PasswordEmailEmisorCierreTurno) ? EncryptionHelper.EncryptString(entity.PasswordEmailEmisorCierreTurno) : null;
+            Ajustes_found.EmailsReceptoresCierreTurno = entity.EmailsReceptoresCierreTurno; 
+            Ajustes_found.NotificarEmailCierreTurno = entity.NotificarEmailCierreTurno;
             Ajustes_found.CodigoSeguridad = entity.CodigoSeguridad;
             Ajustes_found.ImprimirDefault = entity.ImprimirDefault;
             Ajustes_found.FacturaElectronica = entity.FacturaElectronica;
@@ -137,7 +153,7 @@ namespace PointOfSale.Business.Services
             return Ajustes_found;
         }
 
-        public async Task<AjustesFacturacion>  UpdateCertificateInfo(AjustesFacturacion entity)
+        public async Task<AjustesFacturacion> UpdateCertificateInfo(AjustesFacturacion entity)
         {
             var Ajustes_found = await GetAjustesFacturacion(entity.IdTienda);
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
@@ -14,9 +15,13 @@ namespace PointOfSale.Business.Services
     public class TurnoService : ITurnoService
     {
         private readonly IGenericRepository<Turno> _repository;
-        public TurnoService(IGenericRepository<Turno> repository)
+        private readonly IEmailService _emailService;
+        private readonly IAjusteService _ajusteService;
+        public TurnoService(IGenericRepository<Turno> repository, IEmailService emailService, IAjusteService ajusteService)
         {
             _repository = repository;
+            _emailService = emailService;
+            _ajusteService = ajusteService;
         }
 
         public async Task<List<Turno>> List(int idtienda)
@@ -59,45 +64,39 @@ namespace PointOfSale.Business.Services
 
         public async Task<Turno> CloseTurno(int idtienda, Turno entity)
         {
-            try
+            var query = await _repository.Query();
+            var Turno_found = query.Include(_ => _.Sales).FirstOrDefault(c => c.IdTurno == entity.IdTurno && c.IdTienda == idtienda);
+
+            if (Turno_found == null)
+                throw new TaskCanceledException("Turno no encontrado.");
+
+            if (Turno_found.Sales.Any())
             {
-                var query = await _repository.Query();
-                var Turno_found = query.Include(_ => _.Sales).FirstOrDefault(c => c.IdTurno == entity.IdTurno && c.IdTienda == idtienda);
-
-                if (Turno_found == null)
-                    throw new TaskCanceledException("Turno no encontrado.");
-
-                if (Turno_found.Sales.Any())
+                if (entity.ModificationUser == null)
                 {
-                    if (entity.ModificationUser == null)
-                    {
-                        Turno_found.FechaFin = Turno_found.FechaInicio.Date.AddDays(1).AddMinutes(-1);
-                        Turno_found.ModificationUser = "Automatico";
-                    }
-                    else
-                    {
-                        Turno_found.FechaFin = TimeHelper.GetArgentinaTime();
-                        Turno_found.ModificationUser = entity.ModificationUser;
-                    };
-
-                    bool response = await _repository.Edit(Turno_found);
-
-                    if (!response)
-                        throw new TaskCanceledException("Turno no se pudo actualizar.");
+                    Turno_found.FechaFin = Turno_found.FechaInicio.Date.AddDays(1).AddMinutes(-1);
+                    Turno_found.ModificationUser = "Automatico";
                 }
                 else
                 {
-                    bool response = await _repository.Delete(Turno_found);
-                    if (!response)
-                        throw new TaskCanceledException("Turno no se pudo eliminar.");
-                }
+                    Turno_found.FechaFin = TimeHelper.GetArgentinaTime();
+                    Turno_found.ModificationUser = entity.ModificationUser;
+                };
 
-                return Turno_found;
+                bool response = await _repository.Edit(Turno_found);
+
+                if (!response)
+                    throw new TaskCanceledException("Turno no se pudo actualizar.");
             }
-            catch
+            else
             {
-                throw;
+                bool response = await _repository.Delete(Turno_found);
+                if (!response)
+                    throw new TaskCanceledException("Turno no se pudo eliminar.");
             }
+
+            return Turno_found;
+
         }
 
         public async Task<Turno?> GetTurnoActualConVentas(int idtienda)
@@ -160,6 +159,12 @@ namespace PointOfSale.Business.Services
             var turno = await Add(new Turno(idTienda, usuario));
 
             return turno;
+        }
+
+        public async Task CerrarTurno(Turno turno)
+        {
+            var turnoCerrado = await Edit(turno);
+            await _emailService.NotificarCierreCaja(turno.IdTurno);
         }
     }
 }

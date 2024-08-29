@@ -91,6 +91,7 @@ public class Program
             builder.Services.AddScoped<IAjusteService, AjusteService>();
             builder.Services.AddScoped<IAfipService, AfipService>();
             builder.Services.AddScoped<IFileStorageService, FileStorageService>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
 
             builder.Services.AddAFIPConfiguration(x =>
             {
