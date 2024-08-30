@@ -124,10 +124,10 @@ $("#btnSave").on("click", function () {
     model["telefono"] = $("#txtTelefono").val();
     model["direccion"] = $("#txtDireccion").val();
 
-    const inputLogo = document.getElementById('fileLogo');
+    //const inputLogo = document.getElementById('fileLogo');
 
     const formData = new FormData();
-    formData.append('Logo', inputLogo.files[0]);
+    //formData.append('Logo', inputLogo.files[0]);
     formData.append('model', JSON.stringify(model));
 
     $("#modalData").find("div.modal-content").LoadingOverlay("show")

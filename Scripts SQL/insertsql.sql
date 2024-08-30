@@ -46,7 +46,8 @@ insert into Menu([description],idMenuParent,controller,pageAction,isActive) valu
 ('Ajustes',1,'Admin','Ajuste',1), --24
 ('Libro de IVA',4,'Reports','LibroIva',1), -- 25
 ('Stock',2,'Inventory','Stock',1), -- 26
-('Facturacion',6,'Admin','Facturacion',1) -- 27
+('Facturacion',6,'Admin','Facturacion',1), -- 27
+('Movimiento Caja',6,'MovimientoCaja','Index',1) -- 28
 
 go
 
@@ -57,7 +58,6 @@ update Menu set idMenuParent=null where idMenu=5
 
 go
 --________________________________ INSERT MENU ROLE ________________________________
-
 
 --*Admin
 INSERT INTO RolMenu(idRol,idMenu,isActive) values
@@ -88,14 +88,16 @@ INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (1,24,1),
 (1,25,1),
 (1,26,1),
-(1,27,1)
+(1,27,1),
+(1,28,1)
 
 --*empleado
 INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (2,3,1),
 (2,7,1),
 (2,19,1),
-(2,20,1)
+(2,20,1),
+(2,12,1)
 
 --*encargado
 INSERT INTO RolMenu(idRol,idMenu,isActive) values
@@ -107,7 +109,6 @@ INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (3,7,1),
 (3,19,1),
 (3,20,1),
-(3,21,1),
 (3,16,1),
 (3,26,1)
 
@@ -128,6 +129,7 @@ insert into TypeDocumentSale([description],isActive, tipoFactura, web,comision) 
 ('Tarjeta de Debito',1,0,1,0),
 ('Tarjeta de Credito',1,0,1,0),
 ('Mercado Pago',1,0,1,0),
+('Modo',1,0,1,0),
 ('Transferencia',1,0,1,0)
 
 go
@@ -181,7 +183,7 @@ SET idCorrelativeNumber = @NuevoIdCorrelativeNumber
 
 GO
 
-INSERT INTO CorrelativeNumber (lastNumber, quantityDigits, management, dateUpdate)
-VALUES (0, 6, 'SaleWeb', GETDATE());
+INSERT INTO CorrelativeNumber (lastNumber, quantityDigits, management,idTienda,  dateUpdate)
+VALUES (0, 6, 'SaleWeb',1, GETDATE());
 
 GO

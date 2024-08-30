@@ -1,5 +1,5 @@
 ﻿let originalTab = document.getElementById('nuevaVenta');
-let AllTabsForSale = [];
+var AllTabsForSale = [];
 let buttonCerrarTab = '<button class="close" type="button" title="Cerrar tab">×</button>';
 let tabID = 0;
 let formaDePagoID = 0;
@@ -171,7 +171,7 @@ function validateTipoFacturaAndMonto(idLineaFormaPago) {
         updateUIFormaDePago(false, false, false);
     }
 
-    $('#btnFinalizarVentaParcial').prop('disabled', $('#cboTypeDocumentSaleParcial' + idLineaFormaPago).val() == null ? true : false);
+    //$('#btnFinalizarVentaParcial').prop('disabled', $('#cboTypeDocumentSaleParcial' + idLineaFormaPago).val() == null ? true : false);
 }
 function updateUIFormaDePago(disableButton, showMinimo, showCliente) {
     $('#btnFinalizarVentaParcial').prop('disabled', disableButton);
@@ -411,12 +411,12 @@ $(document).on("click", "button.btnAddFormaDePago", function () {
 
     $('#cboFactura' + formaDePagoID).change(function () {
 
-        validateTipoFacturaAndMonto('');
+        validateTipoFacturaAndMonto(formaDePagoID);
     })
 
     $('#txtTotalParcial' + formaDePagoID).change(function () {
 
-        validateTipoFacturaAndMonto('');
+        validateTipoFacturaAndMonto(formaDePagoID);
     })
 
     $('#cboTypeDocumentSaleParcial' + formaDePagoID).change(function () {
@@ -967,7 +967,7 @@ function addFunctions(idTab) {
             }
         },
         placeholder: 'Buscando producto...',
-        minimumInputLength: 3,
+        minimumInputLength: 2,
         templateResult: formatResults,
         allowClear: true
     });
@@ -983,7 +983,8 @@ function addFunctions(idTab) {
 
             let product_found = currentTab.products.filter(prod => prod.idproduct == data.id &&
                 prod.promocion == null &&
-                data.tipoVenta == 2);
+                data.tipoVenta == 2 &&
+                isBarcode(searchTerm));
 
             if (product_found.length == 1) {
 
@@ -1079,6 +1080,8 @@ function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
     let totalQuantity = parseFloat(cant) + parseFloat(quantity_product_found);
     data.total = totalQuantity * parseFloat(data.price);
     data.quantity = Math.trunc(totalQuantity * 10000) / 10000;
+
+    //let currentTab = AllTabsForSale.find(item => item.idTab == idTab);
 
     data = applyPromociones(totalQuantity, data, currentTab);
 

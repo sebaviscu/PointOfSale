@@ -113,5 +113,11 @@ namespace PointOfSale.Model
             RespInscripto = 4
         }
 
+        public enum TipoMovimientoCaja
+        {
+            Egreso,
+            Ingreso
+        }
+
     }
 }

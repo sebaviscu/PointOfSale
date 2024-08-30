@@ -1,5 +1,14 @@
-﻿
+﻿let razonesList;
 
+
+const BASIC_MODEL_MOVIMIENTIO_CAJA = {
+    idMovimientoCaja: 0,
+    comentario: '',
+    registrationDate: null,
+    registrationUser: '',
+    idRazonMovimientoCaja: 0,
+    importe: 0
+}
 $(document).ready(function () {
 
     $('#modalDataAbrirTurno').modal({
@@ -157,7 +166,107 @@ $("#btnAbrirCerrarTurno").on("click", function () {
         .catch((error) => {
             $("div.container-fluid").LoadingOverlay("hide")
         });
+
 })
+
+
+
+$("#btnAbrirMovimientoCaja").on("click", function () {
+    cargarRazones();
+    disablesMovimientoCajaModal(false);
+
+    $("#modalMovimientoCaja").modal("show");
+});
+
+function cargarRazones() {
+    showLoading();
+    fetch("/MovimientoCaja/GetRazonMovimientoCaja")
+        .then(response => {
+            return response.json();
+        }).then(responseJson => {
+
+            if (responseJson.state) {
+                if (responseJson.object.length > 0) {
+                    razonesList = responseJson.object;
+
+                    $("#cboTipoRazonMovimiento").trigger("change");
+                }
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+            removeLoading();
+        });
+}
+
+$("#cboTipoRazonMovimiento").on("change", function () {
+    filterRazones();
+});
+
+function filterRazones() {
+    let selectedTipo = $("#cboTipoRazonMovimiento").val();
+    $("#cboRazonMovimiento").empty();
+
+    razonesList.forEach((item) => {
+        if (item.tipo == selectedTipo) {
+            $("#cboRazonMovimiento").append(
+                $("<option>").val(item.idRazonMovimientoCaja).text(item.descripcion)
+            );
+        }
+    });
+}
+
+$("#btnSaveMovimientoCaja").on("click", function () {
+    const inputs = $("input.input-validate-movimientoCaja").serializeArray();
+    const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
+
+    if (inputs_without_value.length > 0) {
+        const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
+        toastr.warning(msg, "");
+        $(`input[name="${inputs_without_value[0].name}"]`).focus();
+        return;
+    }
+
+    if ($("#txtComentarioMovimientoCaja").val().length < 10) {
+        toastr.warning("La descripción debe ser mayor a 10 caracteres", "");
+    }
+
+    const model = structuredClone(BASIC_MODEL_MOVIMIENTIO_CAJA);
+    model["idRazonMovimientoCaja"] = parseInt($("#cboRazonMovimiento").val());
+    model["importe"] = parseFloat($("#txtImporteMovimientoCaja").val());
+    model["comentario"] = $("#txtComentarioMovimientoCaja").val();
+
+    $("#modalMovimientoCaja").find("div.modal-content").LoadingOverlay("show")
+
+    fetch("/MovimientoCaja/CreateMovimientoCaja", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json;charset=utf-8' },
+        body: JSON.stringify(model)
+    }).then(response => {
+        $("#modalMovimientoCaja").find("div.modal-content").LoadingOverlay("hide")
+        return response.json();
+    }).then(responseJson => {
+
+        if (responseJson.state) {
+            //location.reload()
+            $("#modalMovimientoCaja").modal("hide");
+
+        } else {
+            swal("Lo sentimos", responseJson.message, "error");
+        }
+    }).catch((error) => {
+        $("#modalMovimientoCaja").find("div.modal-content").LoadingOverlay("hide")
+    })
+})
+function disablesMovimientoCajaModal(type) {
+    $('#btnSaveMovimientoCaja').css('display', type ? 'none' : '');
+    $('#divFechaUsuarioMovimientoCaja').css('display', type ? '' : 'none');
+
+    $('#cboTipoRazonMovimiento').prop('disabled', type);
+    $('#cboRazonMovimiento').prop('disabled', type);
+    $('#txtImporteMovimientoCaja').prop('disabled', type);
+    $('#txtComentarioMovimientoCaja').prop('disabled', type);
+
+}
 
 function horaActual() {
     let dateTimeModifHoy = new Date();
@@ -289,7 +398,7 @@ $("#btnFinalizarTurno").on("click", function () {
 
     let modelTurno = {
         observacionesCierre: $("#txtObservacionesCierre").val(),
-        idTurno:  parseInt($("#txtIdTurnoLayout").val())
+        idTurno: parseInt($("#txtIdTurnoLayout").val())
     };
     $("#modalDataCerrarTurno").find("div.modal-content").LoadingOverlay("show")
 

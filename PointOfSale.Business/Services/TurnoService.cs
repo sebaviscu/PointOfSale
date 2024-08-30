@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static iTextSharp.text.pdf.events.IndexEvents;
 
 namespace PointOfSale.Business.Services
 {
@@ -62,40 +63,28 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task<Turno> CloseTurno(int idtienda, Turno entity)
+        private async Task<Turno> CloseTurno(Turno turno)
         {
-            var query = await _repository.Query();
-            var Turno_found = query.Include(_ => _.Sales).FirstOrDefault(c => c.IdTurno == entity.IdTurno && c.IdTienda == idtienda);
 
-            if (Turno_found == null)
-                throw new TaskCanceledException("Turno no encontrado.");
-
-            if (Turno_found.Sales.Any())
+            if (turno.Sales.Any())
             {
-                if (entity.ModificationUser == null)
-                {
-                    Turno_found.FechaFin = Turno_found.FechaInicio.Date.AddDays(1).AddMinutes(-1);
-                    Turno_found.ModificationUser = "Automatico";
-                }
-                else
-                {
-                    Turno_found.FechaFin = TimeHelper.GetArgentinaTime();
-                    Turno_found.ModificationUser = entity.ModificationUser;
-                };
+                turno.FechaFin = turno.FechaInicio.Date.AddDays(1).AddMinutes(-1);
+                turno.ModificationUser = "Automatico";
 
-                bool response = await _repository.Edit(Turno_found);
+
+                bool response = await _repository.Edit(turno);
 
                 if (!response)
                     throw new TaskCanceledException("Turno no se pudo actualizar.");
             }
             else
             {
-                bool response = await _repository.Delete(Turno_found);
+                bool response = await _repository.Delete(turno);
                 if (!response)
                     throw new TaskCanceledException("Turno no se pudo eliminar.");
             }
 
-            return Turno_found;
+            return turno;
 
         }
 
@@ -125,40 +114,18 @@ namespace PointOfSale.Business.Services
         public async Task CheckTurnosViejos(int idtienda)
         {
             var query = await _repository.Query();
-            var turnos = query.Where(_ => _.FechaFin == null && _.FechaInicio.Date <= TimeHelper.GetArgentinaTime().AddDays(-1).Date && _.IdTienda == idtienda).ToList();
+            var turnos = query.Include(_ => _.Sales).Where(_ => _.FechaFin == null && _.FechaInicio.Date <= TimeHelper.GetArgentinaTime().AddDays(-1).Date && _.IdTienda == idtienda).ToList();
 
             foreach (var t in turnos)
             {
-                await CloseTurno(idtienda, t);
+                await CloseTurno(t);
             }
-        }
-
-        public async Task<Turno> GetTurno_OrCreate(int idTienda, string usuario)
-        {
-            var query = await _repository.Query();
-            var turno = query.SingleOrDefault(_ => _.IdTienda == idTienda
-                                            && _.FechaFin == null
-                                            && _.FechaInicio.Date == TimeHelper.GetArgentinaTime().Date);
-
-            if (turno == null)
-            {
-                var t = new Turno(idTienda, usuario);
-                turno = await Add(t);
-            }
-            return turno;
         }
 
         public async Task<Turno> GetTurno(int idTurno)
         {
             var query = await _repository.Query();
             return query.SingleOrDefault(_ => _.IdTurno == idTurno);
-        }
-
-        public async Task<Turno> AbrirTurno(int idTienda, string usuario)
-        {
-            var turno = await Add(new Turno(idTienda, usuario));
-
-            return turno;
         }
 
         public async Task CerrarTurno(Turno turno)

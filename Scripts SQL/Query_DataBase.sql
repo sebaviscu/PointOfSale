@@ -539,6 +539,30 @@ CREATE TABLE CodigoBarras (
 	[idProducto] int references Product(idProduct) not null
 );
 
+go
+
+-- Crear la tabla RazonMovimientoCaja
+CREATE TABLE RazonMovimientoCaja (
+    IdRazonMovimientoCaja INT PRIMARY KEY IDENTITY(1,1),
+    Descripcion NVARCHAR(255) NOT NULL,
+    Tipo INT NOT NULL,
+	estado BIT not null
+);
+
+go
+
+-- Crear la tabla MovimientoCaja
+CREATE TABLE MovimientoCaja (
+    IdMovimientoCaja INT PRIMARY KEY IDENTITY(1,1),
+    Comentario NVARCHAR(500) NULL,
+    RegistrationDate DATETIME NOT NULL,
+    RegistrationUser NVARCHAR(50) NOT NULL,
+	importe decimal(10,2),
+    IdRazonMovimientoCaja INT NOT NULL,
+	idTienda int not null,
+    CONSTRAINT FK_MovimientoCaja_RazonMovimientoCaja FOREIGN KEY (IdRazonMovimientoCaja) REFERENCES RazonMovimientoCaja(IdRazonMovimientoCaja)
+);
+
 
 --select * from turno
 

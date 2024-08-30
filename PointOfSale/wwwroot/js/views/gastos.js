@@ -62,6 +62,7 @@ $(document).ready(function () {
                 swal("Lo sentimos", responseJson.message, "error");
             }
 
+            removeLoading();
         })
 
     fetch("/Tienda/GetTienda")
@@ -73,10 +74,9 @@ $(document).ready(function () {
 
         })
 
-    
+
     cargarTablaGastos(false);
     cargarTablaDinamicaGastos(false);
-    removeLoading();
 })
 
 function cargarTablaGastos(isGlobal) {
@@ -172,7 +172,7 @@ $("#btnSaveTipoDeGastos").on("click", function () {
     }
 
     const model = structuredClone(BASIC_MODEL_TIPO_DE_GASTOS);
-    model["IdTipoGastos"] = parseInt($("#txtIdTipoGastos").val());
+    model["idTipoGastos"] = parseInt($("#txtIdTipoGastos").val());
     model["gastoParticular"] = $("#cboTipoDeGasto").val();
     model["descripcion"] = $("#txtDescripcionTipoDeGasto").val();
     model["tipoFactura"] = parseInt($("#cboTipoFacturaTipoGasto").val());

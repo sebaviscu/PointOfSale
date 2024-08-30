@@ -128,36 +128,39 @@ namespace PointOfSale.Data.Repository
 
         public async Task<VentaWeb> RegisterWeb(VentaWeb entity)
         {
-            var SaleGenerated = new VentaWeb();
-            using (var transaction = _dbcontext.Database.BeginTransaction())
+            try
             {
-                try
+                entity.RegistrationDate = TimeHelper.GetArgentinaTime();
+
+                var productIds = entity.DetailSales.Select(dv => dv.IdProduct).ToList();
+                var products = await _dbcontext.Products
+                                               .Include(p => p.IdCategoryNavigation)
+                                               .Where(p => productIds.Contains(p.IdProduct))
+                                               .ToDictionaryAsync(p => p.IdProduct);
+
+                foreach (var dv in entity.DetailSales)
                 {
-                    entity.RegistrationDate = TimeHelper.GetArgentinaTime();
-                    foreach (DetailSale dv in entity.DetailSales)
+                    if (products.TryGetValue(dv.IdProduct.Value, out var product))
                     {
-                        Product product_found = _dbcontext.Products.Include(_ => _.IdCategoryNavigation)
-                                                                   .Where(p => p.IdProduct == dv.IdProduct).First();
-
-                        dv.TipoVenta = product_found.TipoVenta;
-                        dv.CategoryProducty = product_found.IdCategoryNavigation.Description;
+                        dv.TipoVenta = product.TipoVenta;
+                        dv.CategoryProducty = product.IdCategoryNavigation.Description;
                     }
-
-                    await _dbcontext.VentaWeb.AddAsync(entity);
-                    await _dbcontext.SaveChangesAsync();
-
-                    SaleGenerated = entity;
-
-                    transaction.Commit();
+                    else
+                    {
+                        throw new Exception($"Producto con Id {dv.IdProduct} no encontrado.");
+                    }
                 }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    throw;
-                }
+
+                await _dbcontext.VentaWeb.AddAsync(entity);
+
+                await _dbcontext.SaveChangesAsync();
+
+                return entity;
             }
-
-            return SaleGenerated;
+            catch (Exception ex)
+            {
+                throw new Exception("Ocurrió un error al guardar la venta.", ex);
+            }
         }
 
         public async Task<Sale> CreatSaleFromVentaWeb(VentaWeb entity, Turno turno, Ajustes ajustes)

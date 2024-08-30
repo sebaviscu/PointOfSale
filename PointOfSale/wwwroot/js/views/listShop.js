@@ -219,7 +219,7 @@ function resumenVenta() {
             sum += value.total;
         });
 
-        let tableDataShoopShoop = productos.map(value => {
+        let tableDataShoop = productos.map(value => {
             return (
                 `<tr>
                        <td class="table-products" style="border-right-color: #ffffff00;"><span class="text-muted">$ ${Number.parseFloat(value.price).toFixed(2)} x ${value.quantity} ${value.tipoVenta}</span>. - ${value.DescriptionProduct}</td>

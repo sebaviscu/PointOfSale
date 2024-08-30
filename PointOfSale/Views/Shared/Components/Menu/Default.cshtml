@@ -54,8 +54,13 @@
     var buttonText = Model.TurnoAbierto ? "Cerrar Turno" : "Abrir Turno";
 }
 
-<button class="btn @buttonClass" id="btnAbrirCerrarTurno" style="margin-left:3px; margin-right:3px">@buttonText</button>
+<div style="padding: 5px;">
+    <button class="btn @buttonClass w-100" id="btnAbrirCerrarTurno">@buttonText</button>
+</div>
 
 
+<div style="padding: 5px;">
+    <button class="btn btn-outline-info w-100" id="btnAbrirMovimientoCaja">Movimiento Caja</button>
+</div>
 
 

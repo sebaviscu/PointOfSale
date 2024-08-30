@@ -38,6 +38,7 @@ namespace PointOfSale.Controllers
         private readonly IAfipService _afipService;
         private readonly ILogger<AdminController> _logger;
         private readonly ITurnoService _turnoService;
+        private readonly INotificationService _notificationService;
 
         public AdminController(
             IDashBoardService dashboardService,
@@ -53,7 +54,8 @@ namespace PointOfSale.Controllers
             IAjusteService ajusteService,
             IAfipService afipService,
             ILogger<AdminController> logger,
-            ITurnoService turnoService)
+            ITurnoService turnoService,
+            INotificationService notificationService)
         {
             _dashboardService = dashboardService;
             _userService = userService;
@@ -69,6 +71,7 @@ namespace PointOfSale.Controllers
             _afipService = afipService;
             _logger = logger;
             _turnoService = turnoService;
+            _notificationService = notificationService;
         }
 
         public IActionResult DashBoard()
@@ -1713,6 +1716,9 @@ namespace PointOfSale.Controllers
                 var ajuste = await _ajusteService.GetAjustes(user.IdTienda);
 
                 var codigo = ajuste.CodigoSeguridad != null ? ajuste.CodigoSeguridad : string.Empty;
+
+                var notific = new Notifications(user.UserName);
+                await _notificationService.Save(notific);
 
                 gResponse.State = true;
                 gResponse.Object = encryptedCode == codigo;

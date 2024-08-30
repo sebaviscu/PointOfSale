@@ -421,7 +421,7 @@
 
                                 <div class="row">
                                     <div class="col-md-12 row">
-                                        <div class="col-sm-3 text-left" style="align-content: end;">
+                                        <div class="col-sm-2 text-left" style="align-content: end;">
                                             <div class="form-group">
                                                 <div class="form-check form-switch">
                                                     <input class="form-check-input" type="checkbox" role="switch" id="switchFacturaElectronica">
@@ -429,7 +429,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-sm-9">
+                                        <div class="col-sm-7">
                                             <div class="form-group">
                                                 <label for="fileCertificado">Certificado</label>
                                                 <div class="input-group input-group-sm">
@@ -437,6 +437,17 @@
                                                     <div class="input-group-prepend">
                                                         <button class="btn btn-info" id="btnCargarCertificado">Cargar</button>
                                                     </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-sm-3" style="margin-bottom: 0px;">
+                                            <label for="txtContraseñaCertificado">Contraseña del certificado</label>
+                                            <div class="input-group input-group-sm">
+                                                <input type="password" class="form-control form-control-sm input-validate-facturacion" id="txtContraseñaCertificado" name="ContraseñaCertificado">
+                                                <div class="input-group-prepend" style="margin-left: 5px;">
+                                                    <button id="togglePasswordCert">
+                                                        <span class="mdi mdi-eye mdi-24px" id="eyeIcon"></span>
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -460,17 +471,6 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12 row">
-                                        <div class="form-group col-sm-4" style="margin-bottom: 0px;">
-                                            <label for="txtContraseñaCertificado">Contraseña del certificado</label>
-                                            <div class="input-group input-group-sm">
-                                                <input type="password" class="form-control form-control-sm input-validate-facturacion" id="txtContraseñaCertificado" name="ContraseñaCertificado">
-                                                <div class="input-group-prepend" style="margin-left: 5px;">
-                                                    <button id="togglePasswordCert">
-                                                        <span class="mdi mdi-eye mdi-24px" id="eyeIcon"></span>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
                                         <div class="form-group col-sm-3">
                                             <label for="cboCondicionIva">Condicion IVA</label>
                                             <select class="fontDetalles form-control form-control-sm" id="cboCondicionIva" style="background-color: beige">

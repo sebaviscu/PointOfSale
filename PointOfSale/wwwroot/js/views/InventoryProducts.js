@@ -320,7 +320,7 @@ const openModalProduct = (model = BASIC_MODEL_PRODUCTOS) => {
     $("#txtPrice3").val(model.precio3.replace(/,/g, '.'));
     $("#txtProfit3").val(model.porcentajeProfit3);
     $("#cboFormatoVenta").val(model.formatoWeb);
-    $("#txtPriceFormatoWeb").val(model.precioFormatoWeb != 0 ?model.precioFormatoWeb.replace(/,/g, '.') : '');
+    $("#txtPriceFormatoWeb").val(model.precioFormatoWeb != 0 ? model.precioFormatoWeb.replace(/,/g, '.') : '');
 
     if (model.photoBase64 != null) {
         $("#imgProduct").attr("src", `data:image/png;base64,${model.photoBase64}`);
@@ -463,6 +463,7 @@ $("#tbCodigoBarras tbody").on("click", ".btn-delete-codbarras", function (event)
                         } else {
                             swal("Lo sentimos", responseJson.message, "error");
                         }
+                        $(".showSweetAlert").LoadingOverlay("hide")
                     })
                         .catch((error) => {
                             $(".showSweetAlert").LoadingOverlay("hide")

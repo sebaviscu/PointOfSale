@@ -12194,6 +12194,20 @@ h1, h2, h3, h4, h5,
         }
 
         .product .img-prod span.status {
+            position: relative; /* Cambia a relative para que los elementos se alineen correctamente */
+            display: inline-block; /* Asegura que los spans se alineen uno al lado del otro */
+            margin-right: 3px; /* Añade margen entre los tags */
+            margin-top: 3px; /* Añade un margen superior para separarlos del borde superior */
+            padding: 2px 10px;
+            top: -155px;
+            color: #fff;
+            font-weight: 300;
+            background: #82ae46;
+            font-size: 12px;
+            border-radius: 8px; /* Añade bordes redondeados para mejor presentación */
+        }
+
+/*        .product .img-prod span.status {
             position: absolute;
             top: 0;
             left: 0;
@@ -12202,7 +12216,7 @@ h1, h2, h3, h4, h5,
             font-weight: 300;
             background: #82ae46;
             font-size: 12px;
-        }
+        }*/
 
         .product .img-prod img {
             -webkit-transform: scale(1);

@@ -49,6 +49,8 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<Stock> Stocks { get; set; } = null!;
         public virtual DbSet<FacturaEmitida> FacturasEmitidas { get; set; } = null!;
         public virtual DbSet<CodigoBarras> CodigoBarras { get; set; } = null!;
+        public virtual DbSet<MovimientoCaja> MovimientoCajas { get; set; } = null!;
+        public virtual DbSet<RazonMovimientoCaja> RazonMovimientoCajas { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -56,6 +58,32 @@ namespace PointOfSale.Data.DBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<RazonMovimientoCaja>(entity =>
+            {
+                entity.HasKey(e => e.IdRazonMovimientoCaja);
+
+                entity.ToTable("RazonMovimientoCaja");
+
+                // Relación uno a muchos con MovimientoCaja
+                entity.HasMany(e => e.MovimientoCajas)
+                    .WithOne(m => m.RazonMovimientoCaja)
+                    .HasForeignKey(m => m.IdRazonMovimientoCaja)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<MovimientoCaja>(entity =>
+            {
+                entity.HasKey(e => e.IdMovimientoCaja);
+
+                entity.ToTable("MovimientoCaja");
+
+                // Relación con RazonMovimientoCaja
+                entity.HasOne(d => d.RazonMovimientoCaja)
+                    .WithMany(p => p.MovimientoCajas)
+                    .HasForeignKey(d => d.IdRazonMovimientoCaja)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
 
             modelBuilder.Entity<CodigoBarras>(entity =>
             {

@@ -33,7 +33,6 @@ namespace PointOfSale.Business.Services
             IQueryable<RolMenu> tbRolmenu = await _repositoryRolMenu.Query();
             IQueryable<Menu> tbMenu = await _repositoryMenu.Query();
 
-
             IQueryable<Menu> MenuParent = (from u in tbUser
                                            join rm in tbRolmenu on u.IdRol equals rm.IdRol
                                            join m in tbMenu on rm.IdMenu equals m.IdMenu

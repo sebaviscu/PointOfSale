@@ -95,8 +95,8 @@ $(document).ready(function () {
 
         })
 
-    cargarTablaGastos(false);
-    cargarTablaDinamica(false);
+    cargarTablaGastosProveedores(false);
+    cargarTablaDinamicaProveedores(false);
 
     fetch("/Admin/GetProveedores")
         .then(response => {

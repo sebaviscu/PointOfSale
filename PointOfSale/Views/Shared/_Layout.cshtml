@@ -146,7 +146,7 @@
                                     <label for="txtInicioTurnoAbrir">Fecha</label>
                                     <input type="text" class="form-control form-control-sm" id="txtInicioTurnoAbrir" name="Fecha" disabled>
                                 </div>
-     
+
                                 <div class="form-group col-sm-4">
                                     <label for="txtHoraInicioTurnoAbrir">Hora de Inicio</label>
                                     <input type="text" class="form-control form-control-sm" id="txtHoraInicioTurnoAbrir" name="Hora de Inicio" disabled>
@@ -209,7 +209,7 @@
                                 <div class="form-group col-sm-6">
                                     <label for="txtInicioTurnoCierre">Hora de Inicio</label>
                                     <input type="text" class="form-control form-control-sm" id="txtHoraInicioTurnoCierre" name="Hora del turno" disabled>
-                                </div>                          
+                                </div>
                                 <div class="form-group col-sm-6">
                                     <label for="txtInicioTurnoCierre">Hora de Cierre</label>
                                     <input type="text" class="form-control form-control-sm" id="txtCierraTurnoCierre" name="Hora del turno de cierre" disabled>
@@ -263,7 +263,7 @@
 
     <!-- Grid Modal Cambio Tienda-->
     <div class="modal fade" id="modalCambioTienda" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-        <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Cerrar Turno</h5>
@@ -385,6 +385,71 @@
         </div>
     </div>
 
+    <!-- Grid Modal Movimiento Caja -->
+    <div class="modal fade" id="modalMovimientoCaja" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+        <div class="modal-dialog moda-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalGridTitle">Movimiento de Caja</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <input type="hidden" value="0" id="IdMovimientoCaja">
+                    <div class="row">
+                        <div class="col-sm-12">
+
+                            <div class="form-row" id="divFechaUsuarioMovimientoCaja">
+                                <div class="form-group col-sm-5">
+                                    <label for="txtFechaMovimientoCaja">Fecha</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtFechaMovimientoCaja" name="Fecha" disabled>
+                                </div>
+                                <div class="form-group col-sm-4">
+                                    <label for="txtUsuarioMovimientoCaja">Usuario</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtUsuarioMovimientoCaja" name="Usuario" disabled>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-3">
+                                    <label for="cboTipoRazonMovimiento">Tipo</label>
+                                    <select class="form-control form-control-sm input-validate-movimientoCaja" id="cboTipoRazonMovimiento">
+                                        <option value="0">Egreso</option>
+                                        <option value="1">Ingreso</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-sm-5">
+                                    <label for="cboRazonMovimiento">Razon</label>
+                                    <select class="form-control form-control-sm input-validate-movimientoCaja" id="cboRazonMovimiento">
+                                    </select>
+                                </div>
+                                <div class="form-group col-sm-4">
+                                    <label for="txtImporte">Importe</label>
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">$</span>
+                                        </div>
+                                        <input type="number" step="any" class="form-control form-control-sm input-validate-movimientoCaja-movimientoCaja" min="0" id="txtImporteMovimientoCaja" name="Importe">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-12">
+                                <label for="txtComentario">Comentario</label>
+                                <textarea class="form-control input-validate" id="txtComentarioMovimientoCaja" rows="4" placeholder="..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="btnSaveMovimientoCaja">Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Javascript -->
     <script src="~/plugins/jquery/jquery.min.js"></script>

@@ -102,8 +102,9 @@ namespace PointOfSale.Controllers
                 }
 
                 listaPrecio = (int)tiendas.FirstOrDefault(_ => _.IdTienda == idTienda).IdListaPrecio.Value;
-                //await _turnoService.CheckTurnosViejos(idTienda);
-                //var turno = await _turnoService.GetTurno_OrCreate(idTienda, user_found.Name);
+
+                await _turnoService.CheckTurnosViejos(idTienda);
+                var turnoActual = await _turnoService.GetTurnoActual(idTienda);
 
                 await _productService.ActivarNotificacionVencimientos(idTienda);
 
@@ -116,9 +117,13 @@ namespace PointOfSale.Controllers
                     new Claim(ClaimTypes.Role,user_found.IdRol.ToString()),
                     new Claim("Email",user_found.Email),
                     new Claim("Tienda",idTienda.ToString()),
-                    //new Claim("Turno",turno.IdTurno.ToString()),
                     new Claim("ListaPrecios", listaPrecio.ToString())
                 };
+
+                if(turnoActual != null)
+                {
+                    claims.Add(new Claim("Turno", turnoActual.IdTurno.ToString()));
+                }
 
                 ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 AuthenticationProperties properties = new AuthenticationProperties()

@@ -15,7 +15,6 @@ namespace PointOfSale.Business.Services
 {
     public class AfipService : IAfipService
     {
-        const int ptoVenta = 1;
         const long defaultDocumento = 0;
         const string URL_AFIP_QR = "https://www.afip.gob.ar/fe/qr/?p=";
 
@@ -71,10 +70,10 @@ namespace PointOfSale.Business.Services
 
             var tipoDoc = TipoComprobante.ConvertTipoFactura(tipoFactura);
 
-            var ultimoComprobanteResponse = await _afipFacturacionService.GetUltimoComprobanteAutorizadoAsync(ajustes, ptoVenta, tipoDoc);
+            var ultimoComprobanteResponse = await _afipFacturacionService.GetUltimoComprobanteAutorizadoAsync(ajustes, ajustes.PuntoVenta.Value, tipoDoc);
             var nroFactura = ultimoComprobanteResponse.CbteNro + 1;
 
-            var factura = new FacturaAFIP(sale_created, tipoDoc, nroFactura, ptoVenta, documentoAFacturar);
+            var factura = new FacturaAFIP(sale_created, tipoDoc, nroFactura, ajustes.PuntoVenta.Value, documentoAFacturar);
             var response = await _afipFacturacionService.FacturarAsync(ajustes, factura);
 
             var facturaEmitida = FacturaExtension.ToFacturaEmitida(response.FECAEDetResponse.FirstOrDefault());
@@ -82,7 +81,7 @@ namespace PointOfSale.Business.Services
             facturaEmitida.IdCliente = idCliente != 0 ? idCliente : null;
             facturaEmitida.RegistrationUser = registrationUser;
             facturaEmitida.NroFactura = string.IsNullOrEmpty(facturaEmitida.Observaciones) ? nroFactura : 0;
-            facturaEmitida.PuntoVenta = ptoVenta;
+            facturaEmitida.PuntoVenta = ajustes.PuntoVenta.Value;
             facturaEmitida.IdTienda = sale_created.IdTienda;
             facturaEmitida.TipoFactura = tipoDoc.Description;
             facturaEmitida.ImporteTotal = (decimal)factura.Detalle.First().ImporteTotal;
