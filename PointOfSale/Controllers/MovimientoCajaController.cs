@@ -128,6 +128,7 @@ namespace PointOfSale.Controllers
                 model.RegistrationUser = user.UserName;
                 model.RegistrationDate = TimeHelper.GetArgentinaTime();
                 model.IdTienda = user.IdTienda;
+                model.IdTurno = user.IdTurno;
 
                 var created = await _movimientoCajaService.Add(_mapper.Map<MovimientoCaja>(model));
                 

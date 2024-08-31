@@ -76,5 +76,11 @@ namespace PointOfSale.Business.Services
 
             return response;
         }
+
+        public async Task<List<MovimientoCaja?>> GetMovimientoCajaByTurno(int idTurno)
+        {
+            var res = await _repository.Query(_ => _.IdTurno == idTurno);
+            return res.Include(_=>_.RazonMovimientoCaja).ToList();
+        }
     }
 }

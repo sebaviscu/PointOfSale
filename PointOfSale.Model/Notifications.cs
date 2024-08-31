@@ -47,7 +47,7 @@ namespace PointOfSale.Model
             Descripcion = $"Está proxima la fecha de caducidad ({ajustes.CertificadoFechaCaducidad.Value.ToShortDateString()}) del certificado ({ajustes.CertificadoNombre}) de AFIP.";
             IsActive = true;
             RegistrationDate = TimeHelper.GetArgentinaTime();
-            Accion = "";
+            Accion = "Admin/Ajuste";
             Rols = $"{(int)Roles.Administrador},{(int)Roles.Encargado}";
         }
 
@@ -60,16 +60,18 @@ namespace PointOfSale.Model
             Descripcion = $"El usuario {usuario} ha utilizado el Codigo de Seguridad en una venta a las {TimeHelper.GetArgentinaTime().ToString()}.";
             IsActive = true;
             RegistrationDate = TimeHelper.GetArgentinaTime();
-            Accion = "/Inventory/Stock";
+            Accion = "";
             Rols = $"{(int)Roles.Administrador},{(int)Roles.Encargado}";
         }
 
         public Notifications(MovimientoCaja movCaja)
         {
-            Descripcion = $"El usuario {movCaja.RegistrationUser} ha realizado un {movCaja.RazonMovimientoCaja.Tipo.ToString()} de ${movCaja.Importe} el dia {movCaja.RegistrationDate}.";
+            var tipo =  movCaja.RazonMovimientoCaja != null ? movCaja.RazonMovimientoCaja.Tipo.ToString() : string.Empty;
+
+            Descripcion = $"El usuario {movCaja.RegistrationUser} ha realizado un {tipo} de ${movCaja.Importe} el dia {movCaja.RegistrationDate}.";
             IsActive = true;
             RegistrationDate = TimeHelper.GetArgentinaTime();
-            Accion = "/Inventory/Stock";
+            Accion = "/MovimientoCaja/Index";
             Rols = $"{(int)Roles.Administrador},{(int)Roles.Encargado}";
         }
 

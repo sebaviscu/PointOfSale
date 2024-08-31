@@ -21,14 +21,16 @@ namespace PointOfSale.Controllers
         private readonly ITurnoService _turnoService;
         private readonly IMapper _mapper;
         private readonly IDashBoardService _dashBoardService;
+        private readonly IMovimientoCajaService _movimientoCajaService;
         private readonly ILogger<TurnoController> _logger;
 
-        public TurnoController(ITurnoService turnoService, IMapper mapper, IDashBoardService dashBoardService, ILogger<TurnoController> logger)
+        public TurnoController(ITurnoService turnoService, IMapper mapper, IDashBoardService dashBoardService, ILogger<TurnoController> logger, IMovimientoCajaService movimientoCajaService)
         {
             _turnoService = turnoService;
             _mapper = mapper;
             _dashBoardService = dashBoardService;
             _logger = logger;
+            _movimientoCajaService = movimientoCajaService;
         }
 
         public IActionResult Turno()
@@ -70,16 +72,17 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTurnoActual()
         {
-            var gResponse = new GenericResponse<VMTurno>();
+            var gResponse = new GenericResponse<VMTurnoOutput>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Empleado]);
 
                 var turno = await _turnoService.GetTurnoActualConVentas(user.IdTienda);
-                VMTurno vmTurnp = null;
+                var outout = new VMTurnoOutput();
 
                 if (turno != null)
                 {
+                    VMTurno vmTurnp = null;
                     vmTurnp = _mapper.Map<VMTurno>(turno);
                     var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
                     var dateActual = TimeHelper.GetArgentinaTime();
@@ -95,8 +98,24 @@ namespace PointOfSale.Controllers
                     }
                     vmTurnp.VentasPorTipoVenta = VentasPorTipoVenta;
 
+                    var movimientos = await _movimientoCajaService.GetMovimientoCajaByTurno(user.IdTurno);
+
+                    decimal totalMovimiento = 0;
+                    foreach (var m in movimientos)
+                    {
+                        if (m.RazonMovimientoCaja.Tipo == TipoMovimientoCaja.Egreso)
+                            totalMovimiento -= m.Importe;
+                        else
+                            totalMovimiento += m.Importe;
+                    }
+
+                    outout.Turno = vmTurnp;
+                    outout.TotalMovimientosCaja = totalMovimiento;
+
+                    gResponse.Object = outout;
                 }
-                gResponse.Object = vmTurnp;
+                else
+                    gResponse.Object = null;
 
                 gResponse.State = true;
                 return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -111,11 +130,12 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTurno(int idturno)
         {
-            var gResponse = new GenericResponse<VMTurno>();
+            var gResponse = new GenericResponse<VMTurnoOutput>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Empleado]);
 
+                var outout = new VMTurnoOutput();
                 var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurno(idturno));
 
                 var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
@@ -128,9 +148,24 @@ namespace PointOfSale.Controllers
                         Total = item.Value
                     });
                 }
+
                 vmTurnp.VentasPorTipoVenta = VentasPorTipoVenta;
 
-                return StatusCode(StatusCodes.Status200OK, new { data = vmTurnp });
+                var movimientos = await _movimientoCajaService.GetMovimientoCajaByTurno(idturno);
+
+                decimal totalMovimiento = 0;
+                foreach (var m in movimientos)
+                {
+                    if (m.RazonMovimientoCaja.Tipo == TipoMovimientoCaja.Egreso)
+                        totalMovimiento -= m.Importe;
+                    else
+                        totalMovimiento += m.Importe;
+                }
+
+                outout.Turno = vmTurnp;
+                outout.TotalMovimientosCaja = totalMovimiento;
+
+                return StatusCode(StatusCodes.Status200OK, new { data = outout });
             }
             catch (Exception ex)
             {

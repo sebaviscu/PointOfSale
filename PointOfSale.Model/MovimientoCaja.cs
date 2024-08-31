@@ -16,6 +16,7 @@ namespace PointOfSale.Model
         public decimal Importe { get; set; }
         public int IdRazonMovimientoCaja { get; set; }
         public int IdTienda { get; set; }
+        public int IdTurno { get; set; }
         public virtual RazonMovimientoCaja? RazonMovimientoCaja { get; set; }
     }
 

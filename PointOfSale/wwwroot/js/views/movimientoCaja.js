@@ -70,7 +70,7 @@ $(document).ready(function () {
 })
 
 $("#btnNewRazon").on("click", function () {
-    $("#modalRazon").modal("show")
+    $("#modalRazon").modal("show");
 })
 
 

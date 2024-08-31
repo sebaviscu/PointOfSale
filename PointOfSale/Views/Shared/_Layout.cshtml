@@ -52,6 +52,8 @@
                     <!-- sidebar menu -->
                     <ul class="nav sidebar-inner" id="sidebar-menu">
 
+                        <button class="btn btn-outline-danger" type="button" id="bntBilletes">Billetes</button>
+
                         @await Component.InvokeAsync("Menu")
                     </ul>
                 </div>
@@ -59,6 +61,7 @@
                 <br />
                 <br />
                 <br />
+
                 <br />
 
             </div>
@@ -451,6 +454,55 @@
         </div>
     </div>
 
+    <!-- Grid Modal Billetes -->
+    <div class="modal fade" id="modalBilletes" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalGridTitle">Contador de Billetes</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-sm-6">
+
+                            <div id="billetesContainer"></div>
+
+                        </div>
+                        <div class="col-sm-6">
+                            <div id="billetesContainer2"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer d-flex justify-content-between align-items-center">
+                    <!-- Contenedor para centrar el texto TOTAL y el input -->
+                    <div class="d-flex mx-auto" style="width: 250px; align-items: center;">
+                        <span class="me-2" style="font-size: 20px;">TOTAL:</span>
+                        <div class="input-group input-group-sm" style="margin-bottom: 0px;">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" style="font-size: 15px;">$</span>
+                            </div>
+                            <input type="text" class="form-control text-end" id="totalSumBilletes" name="Total suma billetes" disabled>
+                        </div>
+                    </div>
+
+                    <!-- Botones alineados a la derecha -->
+                    <div>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" id="btnGuardarBilletes">Guardar</button>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
     <!-- Javascript -->
     <script src="~/plugins/jquery/jquery.min.js"></script>
     <script src="~/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -464,6 +516,57 @@
     <script src="~/js/views/layout.js"></script>
     <script src="~/js/moment.js"></script>
     <script src="~/js/moment-timezone.js"></script>
+
+
+
+    <script>
+        const billetes = [
+            { valor: 10, imagen: '@Url.Content("~/images/Billetes/Billete1.png")' },
+            { valor: 20, imagen: '@Url.Content("~/images/Billetes/Billete2.png")' },
+            { valor: 50, imagen: '@Url.Content("~/images/Billetes/Billete3.png")' },
+            { valor: 100, imagen: '@Url.Content("~/images/Billetes/Billete4.png")' },
+            { valor: 200, imagen: '@Url.Content("~/images/Billetes/Billete5.png")' }
+        ];
+
+        const billetes2 = [
+            { valor: 500, imagen: '@Url.Content("~/images/Billetes/Billete6.png")' },
+            { valor: 1000, imagen: '@Url.Content("~/images/Billetes/Billete7.png")' },
+            { valor: 2000, imagen: '@Url.Content("~/images/Billetes/Billete8.png")' },
+            { valor: 10000, imagen: '@Url.Content("~/images/Billetes/Billete9.png")' }
+        ];
+
+        $(document).ready(function () {
+            generateBilletesHTML('#billetesContainer', billetes, 'col1');
+            generateBilletesHTML('#billetesContainer2', billetes2, 'col2');
+        });
+
+        function generateBilletesHTML(containerSelector, billetes, columnPrefix) {
+            const container = $(containerSelector);
+            container.empty();
+
+            billetes.forEach((billete, index) => {
+                const billeteHTML = `
+                        <div class="row mb-3">
+                            <div class="col-md-5">
+                                <div class="form-group" style="margin-bottom: 0px;">
+                                    <input type="number" style="font-size: 20px;" step="1" min="0" value="0" class="form-control text-center txtCantBillete" data-valor="${billete.valor}" id="txtCantBillete_${columnPrefix}_${index}">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0px;">
+                                    <input type="text" class="form-control form-control-sm text-center txtSumaBillete" id="txtSumaBillete_${columnPrefix}_${index}" value="$0" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-7 d-flex align-items-center justify-content-center">
+                                <img style="max-width:220px;" src="${billete.imagen}" class="rounded mx-auto d-block" alt="Photo Product">
+                            </div>
+                        </div>
+                    `;
+                container.append(billeteHTML);
+            });
+        }
+
+    </script>
+
+
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

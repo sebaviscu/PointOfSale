@@ -560,9 +560,9 @@ CREATE TABLE MovimientoCaja (
 	importe decimal(10,2),
     IdRazonMovimientoCaja INT NOT NULL,
 	idTienda int not null,
+	idTurno int not null,
     CONSTRAINT FK_MovimientoCaja_RazonMovimientoCaja FOREIGN KEY (IdRazonMovimientoCaja) REFERENCES RazonMovimientoCaja(IdRazonMovimientoCaja)
 );
-
 
 --select * from turno
 

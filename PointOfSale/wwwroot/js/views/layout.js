@@ -1,6 +1,5 @@
 ﻿let razonesList;
 
-
 const BASIC_MODEL_MOVIMIENTIO_CAJA = {
     idMovimientoCaja: 0,
     comentario: '',
@@ -88,7 +87,6 @@ $(document).ready(function () {
 
     $("#btnCambiarTienda").on("click", function () {
 
-        //$("#modalCambioTienda").modal("hide");
         $("#modalCambioTienda").LoadingOverlay("show")
 
         var idTienda = $("#cboTiendas").val();
@@ -107,7 +105,32 @@ $(document).ready(function () {
             .catch((error) => {
             })
     })
+
+    $('[data-toggle="tooltip"]').tooltip();
+
 });
+
+$(document).on('input', '.txtCantBillete', function () {
+    const idParts = $(this).attr('id').split('_');
+    const columnPrefix = idParts[1];
+    const index = idParts[2];
+    const cantidad = $(this).val();
+    const valorNominal = $(this).data('valor');
+    const total = cantidad * valorNominal;
+
+    $(`#txtSumaBillete_${columnPrefix}_${index}`).val(`$${total}`);
+    calcularTotal();
+});
+
+function calcularTotal() {
+    let totalSum = 0;
+    $('.txtCantBillete').each(function () {
+        const cantidad = parseInt($(this).val(), 10);
+        const valorNominal = parseInt($(this).data('valor'), 10);
+        totalSum += cantidad * valorNominal;
+    });
+    $('#totalSumBilletes').val(`$${totalSum}`);
+}
 
 $("#btnAbrirCerrarTurno").on("click", function () {
 
@@ -125,11 +148,13 @@ $("#btnAbrirCerrarTurno").on("click", function () {
                     openModalDataAbrirTurno();
                 }
                 else {
-                    $("#txtIdTurnoLayout").val(responseJson.object.idTurno);
+                    let resultado = responseJson.object.turno;
 
-                    let fechaInicio = moment(responseJson.object.fechaInicio);
-                    let fechaFin = responseJson.object.FechaFin != null
-                        ? moment(responseJson.object.FechaFin)
+                    $("#txtIdTurnoLayout").val(resultado.idTurno);
+
+                    let fechaInicio = moment(resultado.fechaInicio);
+                    let fechaFin = resultado.FechaFin != null
+                        ? moment(resultado.FechaFin)
                         : moment().tz('America/Argentina/Buenos_Aires');
 
                     if (fechaInicio.isValid()) {
@@ -146,8 +171,8 @@ $("#btnAbrirCerrarTurno").on("click", function () {
                         $("#txtCierraTurnoCierre").val(horaFinFormatted);
                     }
 
-                    if (responseJson.object.observacionesApertura != '') {
-                        $("#txtObservacionesApertura").val(responseJson.object.observacionesApertura);
+                    if (resultado.observacionesApertura != '') {
+                        $("#txtObservacionesApertura").val(resultado.observacionesApertura);
                         $('#divObservacionesApertura').css('display', '');
                     }
                     else {
@@ -155,7 +180,7 @@ $("#btnAbrirCerrarTurno").on("click", function () {
                     }
                     $("#modalDataCerrarTurno").modal("show");
 
-                    renderVentasPorTipoVenta(responseJson.object.ventasPorTipoVenta, responseJson.object.totalInicioCaja);
+                    renderVentasPorTipoVenta(resultado.ventasPorTipoVenta, resultado.totalInicioCaja, responseJson.object.totalMovimientosCaja);
 
                 }
 
@@ -228,6 +253,7 @@ $("#btnSaveMovimientoCaja").on("click", function () {
 
     if ($("#txtComentarioMovimientoCaja").val().length < 10) {
         toastr.warning("La descripción debe ser mayor a 10 caracteres", "");
+        return
     }
 
     const model = structuredClone(BASIC_MODEL_MOVIMIENTIO_CAJA);
@@ -301,12 +327,17 @@ function openModalDataAbrirTurno() {
 }
 
 
-function renderVentasPorTipoVenta(ventasPorTipoVenta, importeInicioCaja) {
+function renderVentasPorTipoVenta(ventasPorTipoVenta, importeInicioCaja, totalMovimientosCaja = null) {
     $("#contMetodosPagoLayout").empty();
     let contenedor = $("#contMetodosPagoLayout");
     let totalImporte = importeInicioCaja;
 
     crearFilaTotalesTurno(contenedor, "TOTAL INICIO CAJA", importeInicioCaja, "txtInicioCajaCierre");
+
+    if (totalMovimientosCaja != null) {
+        crearFilaTotalesTurno(contenedor, "MOV. DE CAJA", totalMovimientosCaja);
+        totalImporte += totalMovimientosCaja;
+    }
 
     ventasPorTipoVenta.forEach(function (venta) {
         crearFilaTotalesTurno(contenedor, venta.descripcion, venta.total);
@@ -315,7 +346,7 @@ function renderVentasPorTipoVenta(ventasPorTipoVenta, importeInicioCaja) {
 
     contenedor.append($('<hr>'));
 
-    crearFilaTotalesTurno(contenedor, "TOTAL", totalImporte.toFixed(2), "txtTotalSumado");
+    crearFilaTotalesTurno(contenedor, "TOTAL", totalImporte.toFixed(0), "txtTotalSumado");
 }
 
 function crearFilaTotalesTurno(contenedor, descripcion, total, inputId = null) {
@@ -327,7 +358,7 @@ function crearFilaTotalesTurno(contenedor, descripcion, total, inputId = null) {
         style: 'font-size: 20px; padding-right: 0px; padding-top: 0px;'
     });
 
-    let inputDiv = $('<div>', { class: 'col-sm-5' });
+    let inputDiv = $('<div>', { class: 'col-sm-5', style: 'padding-right: 0px; padding-left: 0px;' });
 
     let inputGroup = $('<div>', { class: 'input-group input-group-sm', style: 'margin-top: 0px;' });
 
@@ -356,11 +387,30 @@ function crearFilaTotalesTurno(contenedor, descripcion, total, inputId = null) {
 
     inputGroupPrepend.append(span);
     inputGroup.append(inputGroupPrepend).append(input);
-    inputDiv.append(inputGroup);
 
+    if (descripcion === "Efectivo") {
+        let inputGroupAppend = $('<div>', { class: 'input-group-append' });
+
+        let button = $('<button>', {
+            type: 'button',
+            class: 'btn btn-outline-success mdi mdi-cash',
+            style: 'padding: 0 10px;',
+            title: 'Contar billetes',
+            'data-toggle': 'tooltip',
+            click: function () {
+                $('#modalBilletes').modal('show');
+            }
+        });
+
+        inputGroupAppend.append(button);
+        inputGroup.append(inputGroupAppend);
+    }
+
+    inputDiv.append(inputGroup);
     formGroup.append(label).append(inputDiv);
     contenedor.append(formGroup);
 }
+
 
 
 $("#btnAbrirTurno").on("click", function () {
@@ -435,11 +485,13 @@ function abrirTurnoDesdeViewTurnos(idTurno) {
         }).then(responseJson => {
             if (responseJson.state) {
 
-                $("#txtIdTurnoLayout").val(responseJson.object.idTurno);
+                let result = responseJson.object.turno;
 
-                let fechaInicio = moment(responseJson.object.fechaInicio);
-                let fechaFin = responseJson.object.fechaFin
-                    ? moment(responseJson.object.fechaFin)
+                $("#txtIdTurnoLayout").val(result.idTurno);
+
+                let fechaInicio = moment(result.fechaInicio);
+                let fechaFin = result.fechaFin
+                    ? moment(result.fechaFin)
                     : '';
 
                 if (fechaInicio.isValid()) {
@@ -456,20 +508,20 @@ function abrirTurnoDesdeViewTurnos(idTurno) {
                     $("#txtCierraTurnoCierre").val(horaFinFormatted);
                 }
 
-                if (responseJson.object.observacionesApertura != '') {
-                    $("#txtObservacionesApertura").val(responseJson.object.observacionesApertura);
+                if (result.observacionesApertura != '') {
+                    $("#txtObservacionesApertura").val(result.observacionesApertura);
                     $('#divObservacionesApertura').css('display', '');
                 }
                 else {
                     $('#divObservacionesApertura').css('display', 'none');
                 }
-                $("#txtObservacionesCierre").val(responseJson.object.observacionesCierre);
+                $("#txtObservacionesCierre").val(result.observacionesCierre);
                 $("#txtObservacionesCierre").prop("disabled", true);
                 $("#btnFinalizarTurno").hide();
 
                 $("#modalDataCerrarTurno").modal("show");
 
-                renderVentasPorTipoVenta(responseJson.object.ventasPorTipoVenta, responseJson.object.totalInicioCaja);
+                renderVentasPorTipoVenta(result.ventasPorTipoVenta, result.totalInicioCaja);
 
             } else {
                 swal("Lo sentimos", responseJson.message, "error");
@@ -857,3 +909,7 @@ function formatResultsClients(data) {
 
     return container;
 }
+
+$("#bntBilletes").on("click", function () {
+    $("#modalBilletes").modal("show");
+})
