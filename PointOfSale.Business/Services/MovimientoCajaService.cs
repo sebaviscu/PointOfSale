@@ -74,6 +74,8 @@ namespace PointOfSale.Business.Services
             if (response.IdMovimientoCaja == 0)
                 throw new TaskCanceledException("Movimiento Caja no se pudo crear.");
 
+            response = _repository.QuerySimple().Include(_ => _.RazonMovimientoCaja).FirstOrDefault(_ => _.IdMovimientoCaja == response.IdMovimientoCaja);
+
             return response;
         }
 

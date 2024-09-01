@@ -125,6 +125,11 @@ namespace PointOfSale.Controllers
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Encargado]);
+                if(user.IdTurno == 0)
+                {
+                    throw new Exception("Debe haber un turno habierto.");
+                }
+
                 model.RegistrationUser = user.UserName;
                 model.RegistrationDate = TimeHelper.GetArgentinaTime();
                 model.IdTienda = user.IdTienda;

@@ -51,9 +51,6 @@
                 <div class="" data-simplebar style="height: 100%;">
                     <!-- sidebar menu -->
                     <ul class="nav sidebar-inner" id="sidebar-menu">
-
-                        <button class="btn btn-outline-danger" type="button" id="bntBilletes">Billetes</button>
-
                         @await Component.InvokeAsync("Menu")
                     </ul>
                 </div>
@@ -235,7 +232,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-7">
+                        <div class="col-sm-7" style="padding-left: 0;">
                             <div class="form-row">
                                 <div class="card-body">
                                     <div>
@@ -487,7 +484,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text" style="font-size: 15px;">$</span>
                             </div>
-                            <input type="text" class="form-control text-end" id="totalSumBilletes" name="Total suma billetes" disabled>
+                            <input type="text" class="form-control text-end" id="totalSumBilletes" value="0.00" name="Total suma billetes" disabled>
                         </div>
                     </div>
 
@@ -556,7 +553,7 @@
                                 </div>
                             </div>
                             <div class="col-md-7 d-flex align-items-center justify-content-center">
-                                <img style="max-width:220px;" src="${billete.imagen}" class="rounded mx-auto d-block" alt="Photo Product">
+                                        <img style="max-width: 210px;max-height: 88px;" src="${billete.imagen}" class="rounded mx-auto d-block" alt="Photo Product">
                             </div>
                         </div>
                     `;

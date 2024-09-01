@@ -115,7 +115,7 @@ namespace PointOfSale.Controllers
                     gResponse.Object = outout;
                 }
                 else
-                    gResponse.Object = null;
+                    gResponse.Object = outout;
 
                 gResponse.State = true;
                 return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -164,8 +164,10 @@ namespace PointOfSale.Controllers
 
                 outout.Turno = vmTurnp;
                 outout.TotalMovimientosCaja = totalMovimiento;
+                gResponse.Object = outout;
+                gResponse.State = true;
 
-                return StatusCode(StatusCodes.Status200OK, new { data = outout });
+                return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
@@ -235,38 +237,38 @@ namespace PointOfSale.Controllers
         }
 
 
-        [HttpGet]
-        public async Task<IActionResult> GetOneTurno(int idTurno)
-        {
-            var gResponse = new GenericResponse<VMTurno>();
+        //[HttpGet]
+        //public async Task<IActionResult> GetOneTurno(int idTurno)
+        //{
+        //    var gResponse = new GenericResponse<VMTurno>();
 
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador]);
+        //    try
+        //    {
+        //        var user = ValidarAutorizacion([Roles.Administrador]);
 
-                var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurno(idTurno));
+        //        var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurno(idTurno));
 
-                var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
-                foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurno(TypeValuesDashboard.Dia, vmTurnp.IdTurno, user.IdTienda, false))
-                {
-                    VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
-                    {
-                        Descripcion = item.Key,
-                        Total = item.Value
-                    });
-                }
-                vmTurnp.VentasPorTipoVenta = VentasPorTipoVenta;
+        //        var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
+        //        foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurno(TypeValuesDashboard.Dia, vmTurnp.IdTurno, user.IdTienda, false))
+        //        {
+        //            VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
+        //            {
+        //                Descripcion = item.Key,
+        //                Total = item.Value
+        //            });
+        //        }
+        //        vmTurnp.VentasPorTipoVenta = VentasPorTipoVenta;
 
-                gResponse.Object = vmTurnp;
-                gResponse.State = true;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al recuperar turno.", _logger, idTurno);
-            }
+        //        gResponse.Object = vmTurnp;
+        //        gResponse.State = true;
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al recuperar turno.", _logger, idTurno);
+        //    }
 
-        }
+        //}
 
         [HttpPut]
         public async Task<IActionResult> UpdateTurno([FromBody] VMTurno VMTurno)
