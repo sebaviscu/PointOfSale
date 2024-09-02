@@ -51,14 +51,20 @@ $(document).ready(function () {
                 }
             },
             {
-                "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
-                    '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-trash-can"></i></button>',
+                "data": null, // Use "data": null to access the entire row data
+                "render": function (data, type, row) {
+                    let editButton = '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>';
+                    let deleteButton = '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-trash-can"></i></button>';
+
+                    // If it's "Efectivo", do not show the delete button
+                    return row.idTypeDocumentSale == 1 ? editButton : editButton + deleteButton;
+                },
                 "orderable": false,
                 "searchable": false,
                 "width": "80px"
             }
         ],
-        order: [[0, "desc"]],
+        order: [[1, "asc"]],
         dom: "Bfrtip",
         buttons: [
             {
@@ -83,6 +89,8 @@ const openModalTipoVenta = (model = BASIC_MODEL_TIPO_VENTA) => {
     $("#txtComision").val(model.comision);
 
     document.querySelector('#cboWeb').checked = model.web
+
+    $("#txtNombre").prop("disabled", model.idTypeDocumentSale == 1); // Deshabilitar el campo de texto
 
 
     $("#modalData").modal("show")

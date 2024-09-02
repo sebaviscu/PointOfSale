@@ -138,6 +138,17 @@ function changeCboTypeDocumentSaleParcial(idLineaFormaPago, idFormaDePago) {
         $("#cboFactura" + idLineaFormaPago).val(formaDePago.tipoFactura);
         $("#cboFactura" + idLineaFormaPago).trigger('change');
     }
+
+    let hayEfectivo = $('#formaDePagoPanel .cboFormaDePago').filter(function () {
+        return $(this).val() == '1';
+    }).length > 0;
+
+    if (hayEfectivo) {
+        $("#divVueltoEfectivo").show();
+    } else {
+        $("#divVueltoEfectivo").hide();
+    }
+    
 }
 
 
@@ -171,14 +182,42 @@ function validateTipoFacturaAndMonto(idLineaFormaPago) {
         updateUIFormaDePago(false, false, false);
     }
 
-    //$('#btnFinalizarVentaParcial').prop('disabled', $('#cboTypeDocumentSaleParcial' + idLineaFormaPago).val() == null ? true : false);
 }
+
 function updateUIFormaDePago(disableButton, showMinimo, showCliente) {
     $('#btnFinalizarVentaParcial').prop('disabled', disableButton);
     $("#txtMinimoIdentificarConsumidor").toggle(showMinimo);
     document.getElementById("divClienteSeleccionado").style.display = showCliente ? '' : 'none';
 }
 
+function calcularVueltoTotal() {
+    let totalEfectivo = 0;
+    let pagaCon = parseFloat($('#txtPagaCon').val()) || 0;
+
+    // Iterar sobre todos los elementos .form-row dentro de #formaDePagoPanel
+    $('#formaDePagoPanel .form-row').each(function () {
+        let formaDePago = $(this).find('.cboFormaDePago').val(); // Obtener el valor del select de forma de pago
+
+        if (formaDePago == 1) {  // Verifica si es "Efectivo"
+            let subtotal = parseFloat($(this).find('.inputSubtotal').val()) || 0; // Obtener el subtotal para efectivo
+            totalEfectivo += subtotal;  // Sumar al total de efectivo
+        }
+    });
+
+    // Calcular el vuelto
+    let vuelto = pagaCon - totalEfectivo;
+
+    // Asegurarse de que el vuelto no sea negativo
+    vuelto = vuelto >= 0 ? vuelto.toFixed(2) : 0;
+
+    // Colocar el resultado en txtVuelto
+    $('#txtVuelto').val(vuelto);
+}
+
+$('#txtPagaCon').on('change', function () {
+    calcularVueltoTotal();
+
+});
 function formatResults(data) {
 
     if (data.loading)
@@ -312,6 +351,7 @@ function cleanSaleParcial() {
     $('#txtClienteParaFactura').attr('cuil', '');
     $('#txtClienteParaFactura').attr('idCliente', '');
     document.getElementById("divClienteSeleccionado").style.display = 'none';
+    $("#divVueltoEfectivo").hide();
 
 
     for (let i = 1; i < formaDePagoID + 1; i++) {
