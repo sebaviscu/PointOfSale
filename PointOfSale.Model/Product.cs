@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using static PointOfSale.Model.Enum;
+﻿using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Model
 {
     public partial class Product
     {
         public int IdProduct { get; set; }
-        //public string? BarCode { get; set; }
         public string? Description { get; set; }
         public int? IdCategory { get; set; }
         public decimal? Price { get; set; }
@@ -35,6 +32,7 @@ namespace PointOfSale.Model
         public virtual ICollection<PedidoProducto>? PedidoProductos { get; set; }
         public virtual ICollection<Stock>? Stocks { get; set; }
         public virtual ICollection<CodigoBarras>? CodigoBarras { get; set; }
+        public virtual ICollection<ProductTag> ProductTags { get; set; } = new List<ProductTag>();
 
     }
 }

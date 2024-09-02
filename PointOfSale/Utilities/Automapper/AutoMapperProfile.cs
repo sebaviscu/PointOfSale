@@ -452,6 +452,7 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<VMRazonMovimientoCaja, RazonMovimientoCaja>().ReverseMap();
             CreateMap<VMMovimientoCaja, MovimientoCaja>().ReverseMap();
             CreateMap<VMVentasPorTipoDeVenta, VentasPorTipoDeVenta>().ReverseMap();
+            CreateMap<Tag, VMTag>().ReverseMap();
 
             CreateMap<VMFacturaEmitida, FacturaEmitida>();
 

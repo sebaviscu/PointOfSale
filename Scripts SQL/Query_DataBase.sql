@@ -564,6 +564,25 @@ CREATE TABLE MovimientoCaja (
     CONSTRAINT FK_MovimientoCaja_RazonMovimientoCaja FOREIGN KEY (IdRazonMovimientoCaja) REFERENCES RazonMovimientoCaja(IdRazonMovimientoCaja)
 );
 
+go
+
+CREATE TABLE Tags (
+    IdTag INT PRIMARY KEY IDENTITY(1,1),
+    Nombre NVARCHAR(20) NOT NULL,
+    Color NVARCHAR(7) NOT NULL
+);
+
+go
+
+CREATE TABLE ProductTags (
+    ProductId INT NOT NULL,
+    TagId INT NOT NULL,
+    PRIMARY KEY (ProductId, TagId),
+    FOREIGN KEY (ProductId) REFERENCES Product(IdProduct) ON DELETE CASCADE,
+    FOREIGN KEY (TagId) REFERENCES Tags(IdTag) ON DELETE CASCADE
+);
+
+
 --select * from turno
 
 --EXEC sp_fkeys @fktable_name = 'turno';

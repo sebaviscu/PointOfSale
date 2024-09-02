@@ -51,13 +51,43 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<CodigoBarras> CodigoBarras { get; set; } = null!;
         public virtual DbSet<MovimientoCaja> MovimientoCajas { get; set; } = null!;
         public virtual DbSet<RazonMovimientoCaja> RazonMovimientoCajas { get; set; } = null!;
-
+        public virtual DbSet<Tag> Tags { get; set; }
+        public virtual DbSet<ProductTag> ProductTags { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<Tag>(entity =>
+            {
+                entity.HasKey(e => e.IdTag);
+
+                entity.ToTable("Tags");
+
+                entity.HasMany(t => t.ProductTags)
+                    .WithOne(pt => pt.Tag)
+                    .HasForeignKey(pt => pt.TagId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+            });
+
+            modelBuilder.Entity<ProductTag>(entity =>
+            {
+                entity.HasKey(pt => new { pt.ProductId, pt.TagId });
+
+                entity.ToTable("ProductTags");
+
+                entity.HasOne(pt => pt.Product)
+                    .WithMany(p => p.ProductTags)
+                    .HasForeignKey(pt => pt.ProductId);
+
+                entity.HasOne(pt => pt.Tag)
+                    .WithMany(t => t.ProductTags)
+                    .HasForeignKey(pt => pt.TagId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
 
             modelBuilder.Entity<RazonMovimientoCaja>(entity =>
             {
@@ -620,10 +650,10 @@ namespace PointOfSale.Data.DBContext
                     .HasColumnType("datetime")
                     .HasColumnName("modificationDate");
 
-				entity.Property(e => e.ModificationUser)
-	                .HasColumnName("modificationUser");
+                entity.Property(e => e.ModificationUser)
+                    .HasColumnName("modificationUser");
 
-				entity.HasOne(d => d.IdCategoryNavigation)
+                entity.HasOne(d => d.IdCategoryNavigation)
                     .WithMany(p => p.Products)
                     .HasForeignKey(d => d.IdCategory)
                     .HasConstraintName("FK__Product__idCateg__22AA2996");
@@ -637,6 +667,12 @@ namespace PointOfSale.Data.DBContext
                     .WithOne(turno => turno.Product)
                     .HasForeignKey(turno => turno.IdProducto)
                     .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasMany(p => p.ProductTags)
+                     .WithOne(pt => pt.Product)
+                     .HasForeignKey(pt => pt.ProductId)
+                     .OnDelete(DeleteBehavior.Cascade)
+                     .IsRequired();
             });
 
             modelBuilder.Entity<Rol>(entity =>
@@ -823,9 +859,9 @@ namespace PointOfSale.Data.DBContext
                     .HasForeignKey(d => d.IdRol)
                     .HasConstraintName("FK__Users__idRol__1BFD2C07");
 
-				entity.Property(e => e.IdTienda).HasColumnName("idTienda");
+                entity.Property(e => e.IdTienda).HasColumnName("idTienda");
 
-				entity.HasOne(d => d.Tienda)
+                entity.HasOne(d => d.Tienda)
                     .WithMany(p => p.Usuarios)
                     .HasForeignKey(d => d.IdTienda)
                     .HasConstraintName("FK__Users__idTienda__5812160E");

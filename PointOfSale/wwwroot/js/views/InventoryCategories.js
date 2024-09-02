@@ -1,9 +1,11 @@
 ﻿let tableDataCategory;
 let rowSelectedCategory;
+let rowSelectedTag;
+let tableTags;
 
 const BASIC_MODEL_CATEGORIA = {
     idCategory: 0,
-    description:"",
+    description: "",
     isActive: 1,
     modificationDate: null,
     modificationUser: null
@@ -52,11 +54,48 @@ $(document).ready(function () {
                 title: '',
                 filename: 'Reporte categories',
                 exportOptions: {
-                    columns: [1,2]
+                    columns: [1, 2]
                 }
             }, 'pageLength'
         ]
     });
+
+    if (!$.fn.DataTable.isDataTable('#tbTags')) {
+        tableTags = $("#tbTags").DataTable({
+            responsive: true,
+            "ajax": {
+                "url": "/Inventory/GetTags",
+                "type": "GET",
+                "datatype": "json"
+            },
+            "columns": [
+                {
+                    "data": "idTag",
+                    "visible": false,
+                    "searchable": false
+                },
+                { "data": "nombre" },
+                {
+                    "data": "color",
+                    "render": function (data, type, row) {
+                        return `<div style="width: 30px; height: 30px; background-color: ${data}; border-radius: 50%;"></div>`;
+                    },
+                    "orderable": false,
+                    "searchable": false,
+                    "width": "40px"
+                },
+                {
+                    "defaultContent": '<button class="btn btn-primary btn-edit-tag btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
+                        '<button class="btn btn-danger btn-delete-tag btn-sm"><i class="mdi mdi-trash-can"></i></button>',
+                    "orderable": false,
+                    "searchable": false,
+                    "width": "80px"
+                }
+            ],
+            order: [[1, "desc"]],
+            dom: "lfrtip",  // Remove buttons but keep search, length, etc.
+        });
+    }
 })
 
 const openModalCategory = (model = BASIC_MODEL_CATEGORIA) => {
@@ -101,7 +140,7 @@ $("#btnSave").on("click", function () {
 
     $("#modalData").find("div.modal-content").LoadingOverlay("show")
 
-    
+
     if (model.idCategory == 0) {
         fetch("/Inventory/CreateCategory", {
             method: "POST",
@@ -215,3 +254,126 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
             }
         });
 })
+
+$('#btnAddNewTag').on('click', function () {
+    $('#txtTagName').val('');
+    $('#txtTagColor').val('');
+
+    if (tableTags) {
+        tableTags.ajax.reload(null, false); // Recarga la tabla sin restablecer la paginación
+    }
+    $('#modalTagData').modal('show');
+});
+
+$('#btnSaveTag').on('click', function () {
+    let tagData = {
+        idTag: parseInt($('#txtTagId').val()),
+        nombre: $('#txtTagName').val(),
+        color: $('#txtTagColor').val()
+    };
+
+
+    if (tagData.idTag == 0) {
+        fetch("/Inventory/CreateTag", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json;charset=utf-8' },
+            body: JSON.stringify(tagData)
+        }).then(response => response.json())
+            .then(responseJson => {
+                if (responseJson.state) {
+                    tableTags.row.add(responseJson.object).draw(false);
+                    swal("Exitoso!", "El tag fue creado con éxito.", "success");
+                } else {
+                    swal("Lo sentimos", responseJson.message, "error");
+                }
+            }).catch((error) => {
+                swal("Error", "Ocurrió un error al crear el tag.", "error");
+                console.error('Error:', error);
+            });
+    } else {
+
+        fetch("/Inventory/UpdateTag", {
+            method: "PUT",
+            headers: { 'Content-Type': 'application/json;charset=utf-8' },
+            body: JSON.stringify(tagData)
+        }).then(response => response.json())
+            .then(responseJson => {
+                if (responseJson.state) {
+                    tableTags.row(rowSelectedTag).data(responseJson.object).draw(false);
+                    rowSelectedTag = null;
+                    swal("Exitoso!", "El tag fue actualizado con éxito.", "success");
+                } else {
+                    swal("Lo sentimos", responseJson.message, "error");
+                }
+            }).catch((error) => {
+                swal("Error", "Ocurrió un error al actualizar el tag.", "error");
+                console.error('Error:', error);
+            });
+    }
+    $('#txtTagName').val('');
+    $('#txtTagColor').val('');
+    $('#txtTagId').val(0);
+})
+
+$('#tbTags').on('click', '.btn-delete-tag', function () {
+    let row;
+
+    if ($(this).closest('tr').hasClass('child')) {
+        row = $(this).closest('tr').prev();
+    } else {
+        row = $(this).closest('tr');
+    }
+    const data = tableTags.row(row).data();
+
+    swal({
+        title: "¿Está seguro?",
+        text: `Eliminar tag "${data.nombre}"`,
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonClass: "btn-danger",
+        confirmButtonText: "Si, eliminar",
+        cancelButtonText: "No, cancelar",
+        closeOnConfirm: false,
+        closeOnCancel: true
+    },
+        function (respuesta) {
+
+            if (respuesta) {
+
+                $(".showSweetAlert").LoadingOverlay("show")
+
+                fetch(`/Inventory/DeleteTag?idTag=${data.idTag}`, {
+                    method: "DELETE"
+                }).then(response => {
+                    $(".showSweetAlert").LoadingOverlay("hide")
+                    return response.json();
+                }).then(responseJson => {
+                    if (responseJson.state) {
+
+                        tableTags.row(row).remove().draw();
+                        swal("Exitoso!", "Tag fué eliminada", "success");
+
+                    } else {
+                        swal("Lo sentimos", responseJson.message, "error");
+                    }
+                })
+                    .catch((error) => {
+                        $(".showSweetAlert").LoadingOverlay("hide")
+                    })
+            }
+        });
+});
+
+$('#tbTags').on('click', '.btn-edit-tag', function () {
+    if ($(this).closest('tr').hasClass('child')) {
+        rowSelectedTag = $(this).closest('tr').prev();
+    } else {
+        rowSelectedTag = $(this).closest('tr');
+    }
+
+    const data = tableTags.row(rowSelectedTag).data();
+
+    $('#txtTagName').val(data.nombre);
+    $('#txtTagColor').val(data.color);
+    $('#txtTagId').val(data.idTag);
+});

@@ -93,6 +93,7 @@ public class Program
             builder.Services.AddScoped<IFileStorageService, FileStorageService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<IMovimientoCajaService, MovimientoCajaService>();
+            builder.Services.AddScoped<ITagService, TagService>();
 
             builder.Services.AddAFIPConfiguration(x =>
             {

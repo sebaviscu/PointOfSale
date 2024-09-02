@@ -25,8 +25,9 @@ namespace PointOfSale.Controllers
         private readonly IWebHostEnvironment _env;
         private readonly IImportarExcelService _excelService;
         private readonly ILogger<InventoryController> _logger;
+        private readonly ITagService _tagService;
 
-        public InventoryController(ICategoryService categoryService, IProductService productService, IMapper mapper, ISaleService saleService, IWebHostEnvironment env, IImportarExcelService excelService, ILogger<InventoryController> logger)
+        public InventoryController(ICategoryService categoryService, IProductService productService, IMapper mapper, ISaleService saleService, IWebHostEnvironment env, IImportarExcelService excelService, ILogger<InventoryController> logger, ITagService tagService)
         {
             _categoryService = categoryService;
             _productService = productService;
@@ -35,6 +36,7 @@ namespace PointOfSale.Controllers
             _env = env;
             _excelService = excelService;
             _logger = logger;
+            _tagService = tagService;
         }
 
         public IActionResult Categories()
@@ -531,5 +533,79 @@ namespace PointOfSale.Controllers
             }
         }
 
+
+        [HttpPost]
+        public async Task<IActionResult> CreateTag([FromBody] VMTag model)
+        {
+
+            var gResponse = new GenericResponse<VMTag>();
+            try
+            {
+                ValidarAutorizacion([Roles.Administrador]);
+
+                Tag category_created = await _tagService.Add(_mapper.Map<Tag>(model));
+
+                model = _mapper.Map<VMTag>(category_created);
+
+                gResponse.State = true;
+                gResponse.Object = model;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al crear tag.", _logger, model);
+            }
+
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateTag([FromBody] VMTag model)
+        {
+
+            var gResponse = new GenericResponse<VMTag>();
+            try
+            {
+                ValidarAutorizacion([Roles.Administrador]);
+
+                Tag category_created = await _tagService.Edit(_mapper.Map<Tag>(model));
+
+                model = _mapper.Map<VMTag>(category_created);
+
+                gResponse.State = true;
+                gResponse.Object = model;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al crear tag.", _logger, model);
+            }
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetTags()
+        {
+
+            var vmCategoryList = _mapper.Map<List<VMTag>>(await _tagService.List());
+            return StatusCode(StatusCodes.Status200OK, new { data = vmCategoryList });
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteTag(int idTag)
+        {
+
+            GenericResponse<string> gResponse = new GenericResponse<string>();
+            try
+            {
+                ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
+                gResponse.State = await _tagService.Delete(idTag);
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al borrar categoria.", _logger, idTag);
+            }
+        }
     }
 }

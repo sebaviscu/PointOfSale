@@ -17,6 +17,7 @@ namespace PointOfSale.Business.Services
     {
         private readonly IGenericRepository<Category> _repository;
         private readonly IAuditoriaService _auditoriaService;
+
         public CategoryService(IGenericRepository<Category> repository, IAuditoriaService auditoriaService)
         {
             _repository = repository;
@@ -114,23 +115,12 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<Category>> GetCategoriesSearch(string search)
         {
-            try
-            {
+            IQueryable<Category> query = await _repository.Query(p =>
+                       p.IsActive == true && p.Description.Contains(search));
 
-                IQueryable<Category> query = await _repository.Query(p =>
-                           p.IsActive == true && p.Description.Contains(search));
+            var s = query.OrderBy(_ => _.Description).ToList();
+            return s;
 
-                var s = query.OrderBy(_ => _.Description).ToList();
-                return s;
-            }
-            catch (Exception e)
-            {
-
-                throw;
-            }
-            return default;
         }
-
-
     }
 }
