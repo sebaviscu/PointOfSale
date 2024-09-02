@@ -1,6 +1,6 @@
 ﻿let idSale;
 let rowSelectedHistoric;
-let tableDataReporteVentas;
+let tableReportSale;
 
 let SEARCH_VIEW = {
 
@@ -155,7 +155,9 @@ $("#tbsale tbody").on("click", ".btn-pago", function () {
 
 $("#tbsale tbody").on("click", ".btn-info", function () {
 
-    let d = $(this).data("sale")
+
+    let d = tableReportSale.row($(this).parents('tr')).data();
+
     $("#txtRegistrationDate").val(d.registrationDate)
     $("#txtSaleNumber").val(d.saleNumber)
     $("#txtRegisterUser").val(d.registrationUser)
@@ -222,68 +224,86 @@ $("#printTicket").click(function () {
 
 })
 
-
 function createTable(responseJson) {
+
+    if ($.fn.DataTable.isDataTable("#tbsale")) {
+        $('#tbsale').DataTable().destroy();
+    }
 
     $("#tbsale tbody").html("");
 
-    if (responseJson.length > 0) {
-
-        let total = 0;
-
-        var uniqs = responseJson.reduce((acc, val) => {
-            acc[val.saleNumber] = acc[val.saleNumber] === undefined ? 1 : acc[val.saleNumber] += 1;
-            return acc;
-        }, {});
-
-        responseJson.forEach((sale) => {
-
-            total = total + parseFloat(sale.totalDecimal);
-
-            var changePresu = false;
-            if (sale.typeDocumentSale == "Presupuesto") {
-                changePresu = true;
-                sale.typeDocumentSale = sale.typeDocumentSale + " ";
+    tableReportSale = $("#tbsale").DataTable({
+        data: responseJson,
+        responsive: true,
+        pageLength: 100,
+        columns: [
+            {
+                data: "registrationDate",
+                render: function (data, type, row) {
+                    if (type === 'display' || type === 'filter') {
+                        return data ? moment(data).format('DD/MM/YYYY') : '';
+                    }
+                    return data;
+                }
+            },
+            {
+                data: null,
+                render: function (data, type, row) {
+                    let content = `${row.saleNumber}`;
+                    if (row.isWeb) {
+                        content += `<i class="mdi mdi-web ms-3" title="Venta Web"></i>`;
+                    } else if (row.isDelete) {
+                        content += `<i class="mdi mdi-cancel ms-3 text-danger" title="Anulada"></i>`;
+                    }
+                    return content;
+                }
+            },
+            {
+                data: null,
+                render: function (data, type, row) {
+                    let button = row.typeDocumentSale === "Presupuesto" ?
+                        `<button class="btn btn-success btn-sm btn-pago"><i class="mdi mdi-cash-usd"></i></button>` : "";
+                    return `${row.typeDocumentSale} ${button}`;
+                }
+            },
+            { data: "cantidadProductos" },
+            {
+                data: "total",
+                render: $.fn.dataTable.render.number(',', '.', 2, '$ ')
+            },
+            {
+                data: null,
+                render: function (data, type, row) {
+                    return `<button class="btn btn-info btn-sm"><i class="mdi mdi-eye"></i></button>`;
+                }
             }
+        ],
+        order: [[0, "desc"]],
+        dom: "Bfrtip",
+        buttons: [
+            {
+                text: 'Exportar Excel',
+                extend: 'excelHtml5',
+                title: '',
+                filename: 'Reporte Ventas',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4]
+                }
+            }, 'pageLength'
+        ]
+    });
 
-            $("#tbsale tbody").append(
-                $("<tr>").append(
-                    $("<td>").append(
-                        $("<span>").text(sale.registrationDate),
-                        sale.isWeb ? $("<i>")
-                            .addClass("mdi mdi-web ms-3")
-                            .attr("title", "Venta Web")
-                            .tooltip()
-                            : 
-                            sale.isDelete ? $("<i>")
-                            .addClass("mdi mdi-cancel ms-3 text-danger")
-                            .attr("title", "Anulada")
-                            .tooltip()
-                            : null
-                    ),
-                    $("<td>").text(sale.saleNumber),
-                    $("<td>").text(sale.typeDocumentSale)
-                        .append(changePresu != "" ?
-                            $("<button>").addClass("btn btn-success btn-sm btn-pago").append(
-                                $("<i>").addClass("mdi mdi-cash-usd")
-                            ).data("sale", sale) : ""),
+    // Actualizar el total y la cantidad de ventas
+    let total = responseJson.reduce((acc, sale) => acc + parseFloat(sale.totalDecimal), 0);
+    let uniqs = responseJson.reduce((acc, val) => {
+        acc[val.saleNumber] = acc[val.saleNumber] === undefined ? 1 : acc[val.saleNumber] += 1;
+        return acc;
+    }, {});
 
-                    $("<td>").text(sale.cantidadProductos),
-                    $("<td>").text("$ " + sale.total),
-                    $("<td>").append(
-                        $("<button>").addClass("btn btn-info btn-sm").append(
-                            $("<i>").addClass("mdi mdi-eye")
-                        ).data("sale", sale))
-                )
-            );
-
-
-        });
-        $("#lblCantidadVentas").html("Cantidad de Ventas: <strong> " + Object.keys(uniqs).length + ".</strong>");
-        $("#lbltotal").html("Total: <strong>$ " + total + ".</strong>");
-    }
-
+    $("#lblCantidadVentas").html("Cantidad de Ventas: <strong> " + Object.keys(uniqs).length + ".</strong>");
+    $("#lbltotal").html("Total: <strong>$ " + total.toFixed(2) + ".</strong>");
 }
+
 
 
 function setToday() {
