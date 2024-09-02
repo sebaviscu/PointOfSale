@@ -212,21 +212,26 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> CerrarTurno([FromBody] VMTurno modelTurno)
         {
-            var gResponse = new GenericResponse<VMTurno>();
+            var gResponse = new GenericResponse<string>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
 
                 modelTurno.ObservacionesCierre = modelTurno.ObservacionesCierre;
                 modelTurno.ModificationUser = user.UserName;
+                modelTurno.IdTienda = user.IdTienda;
                 modelTurno.FechaFin = TimeHelper.GetArgentinaTime();
 
-                var nuevoTurno = await _turnoService.Edit(_mapper.Map<Turno>(modelTurno));
+                var errores = await _turnoService.CerrarTurno(_mapper.Map<Turno>(modelTurno), _mapper.Map<List<VentasPorTipoDeVenta>>(modelTurno.VentasPorTipoVenta));
+
+                if (errores == string.Empty)
+                {
+                    UpdateClaimAsync("Turno", null);
+                }
 
                 gResponse.State = true;
-                gResponse.Object = _mapper.Map<VMTurno>(nuevoTurno);
+                gResponse.Object = errores;
 
-                UpdateClaimAsync("Turno", null);
 
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }

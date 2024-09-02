@@ -1,15 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static iTextSharp.text.pdf.events.IndexEvents;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services
 {
@@ -18,11 +12,14 @@ namespace PointOfSale.Business.Services
         private readonly IGenericRepository<Turno> _repository;
         private readonly IEmailService _emailService;
         private readonly IAjusteService _ajusteService;
-        public TurnoService(IGenericRepository<Turno> repository, IEmailService emailService, IAjusteService ajusteService)
+        private readonly IDashBoardService _dashBoardService;
+
+        public TurnoService(IGenericRepository<Turno> repository, IEmailService emailService, IAjusteService ajusteService, IDashBoardService dashBoardService)
         {
             _repository = repository;
             _emailService = emailService;
             _ajusteService = ajusteService;
+            _dashBoardService = dashBoardService;
         }
 
         public async Task<List<Turno>> List(int idtienda)
@@ -128,10 +125,44 @@ namespace PointOfSale.Business.Services
             return query.SingleOrDefault(_ => _.IdTurno == idTurno);
         }
 
-        public async Task CerrarTurno(Turno turno)
+        public async Task<string> CerrarTurno(Turno entity, List<VentasPorTipoDeVenta> ventasPorTipoDeVentas)
         {
-            var turnoCerrado = await Edit(turno);
-            await _emailService.NotificarCierreCaja(turno.IdTurno);
+
+            var Turno_found = await _repository.Get(c => c.IdTurno == entity.IdTurno);
+
+            var respError = string.Empty;
+
+            var ventasRegistradas = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, entity.IdTurno, entity.IdTienda, TimeHelper.GetArgentinaTime(), false);
+            foreach (KeyValuePair<string, decimal> item in ventasRegistradas)
+            {
+
+                var venta = ventasPorTipoDeVentas.FirstOrDefault(_ => _.Descripcion == item.Key);
+
+                if (venta != null)
+                {
+                    if (item.Value - 50 > venta.Total || venta.Total > item.Value + 50)
+                    {
+                        respError += $"Existen diferencias en el tipo de ventas  '{venta.Descripcion}'. \n";
+                    }
+                }
+            }
+
+            if (respError == string.Empty)
+            {
+                Turno_found.ModificationUser = entity.ModificationUser;
+                Turno_found.ObservacionesCierre = entity.ObservacionesCierre;
+                Turno_found.FechaFin = entity.FechaFin;
+
+                bool response = await _repository.Edit(Turno_found);
+
+                if (!response)
+                    throw new TaskCanceledException("Turno no se pudo cambiar.");
+
+                var turnoCerrado = await Edit(entity);
+                await _emailService.NotificarCierreCaja(entity.IdTurno);
+            }
+
+            return respError;
         }
     }
 }

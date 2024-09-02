@@ -338,19 +338,22 @@ function openModalDataAbrirTurno() {
 function renderVentasPorTipoVenta(ventasPorTipoVenta, importeInicioCaja, totalMovimientosCaja = null) {
     $("#contMetodosPagoLayout").empty();
     let contenedor = $("#contMetodosPagoLayout");
-    let totalImporte = importeInicioCaja;
 
     crearFilaTotalesTurno(contenedor, "TOTAL INICIO CAJA", importeInicioCaja, true, "txtInicioCajaCierre");
 
     if (totalMovimientosCaja != null) {
         crearFilaTotalesTurno(contenedor, "MOV. DE CAJA", totalMovimientosCaja, true, 'txtMovimientoCaja');
-        totalImporte += totalMovimientosCaja;
     }
 
     ventasPorTipoVenta.forEach(function (venta) {
         let id = 'txt' + venta.descripcion;
-        crearFilaTotalesTurno(contenedor, venta.descripcion, '', false, id);
-        totalImporte += parseFloat(venta.total);
+
+        if (venta.descripcion.toLowerCase() == 'efectivo') {
+            crearFilaTotalesTurno(contenedor, venta.descripcion, '', false, id);
+        }
+        else {
+            crearFilaTotalesTurno(contenedor, venta.descripcion, venta.total, true, id);
+        }
     });
 
     contenedor.append($('<hr>'));
@@ -440,7 +443,7 @@ $("#btnAbrirTurno").on("click", function () {
 
     let modelTurno = {
         observacionesApertura: desc,
-        TotalInicioCaja: parseFloat(importeInicioTurno)
+        TotalInicioCaja: parseFloat(importeInicioTurno != '' ? importeInicioTurno : 0),
     };
     $("#modalDataAbrirTurno").find("div.modal-content").LoadingOverlay("show")
 
@@ -469,10 +472,10 @@ $("#btnFinalizarTurno").on("click", function () {
 
     let modelTurno = {
         observacionesCierre: $("#txtObservacionesCierre").val(),
-        idTurno: parseInt($("#txtIdTurnoLayout").val())
+        idTurno: parseInt($("#txtIdTurnoLayout").val()),
+        ventasPorTipoVenta: obtenerValoresInputsCerrarTurno()
     };
 
-    let valoresInputs = obtenerValoresInputsCerrarTurno();
 
     $("#modalDataCerrarTurno").find("div.modal-content").LoadingOverlay("show")
 
@@ -486,8 +489,22 @@ $("#btnFinalizarTurno").on("click", function () {
     }).then(responseJson => {
         if (responseJson.state) {
 
-            $("#modalDataCerrarTurno").modal("hide");
-            location.reload();
+            if (responseJson.object == '') {
+                $("#txtError").text('');
+                const divError = document.getElementById("divError");
+                divError.classList.remove('d-flex');
+                divError.style.display = 'none';
+
+                $("#modalDataCerrarTurno").modal("hide");
+                location.reload();
+            }
+            else {
+                $("#txtError").text(responseJson.object);
+                const divError = document.getElementById("divError");
+                divError.classList.add('d-flex');
+                divError.style.display = '';
+            }
+
 
         } else {
             swal("Lo sentimos", responseJson.message, "error");
@@ -506,8 +523,14 @@ function obtenerValoresInputsCerrarTurno() {
         let label = inputId.substring(3);
         let valor = parseFloat($(this).val()) || 0;
 
-        let val = [label, valor];
-        valores.push(val);
+        if (valor != 0) {
+            let ventaPorTipo = {
+                Descripcion: label,
+                Total: valor
+            };
+
+            valores.push(ventaPorTipo);
+        }
     });
 
     return valores;
