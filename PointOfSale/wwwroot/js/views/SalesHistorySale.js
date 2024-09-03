@@ -156,7 +156,7 @@ $("#tbsale tbody").on("click", ".btn-pago", function () {
 $("#tbsale tbody").on("click", ".btn-info", function () {
 
 
-    let d = tableReportSale.row($(this).parents('tr')).data();
+    let d = tableReportSale.row($(this).closest('tr')).data();
 
     $("#txtRegistrationDate").val(d.registrationDate)
     $("#txtSaleNumber").val(d.saleNumber)
@@ -233,15 +233,15 @@ function createTable(responseJson) {
     $("#tbsale tbody").html("");
 
     tableReportSale = $("#tbsale").DataTable({
-        data: responseJson,
         responsive: true,
+        data: responseJson,
         pageLength: 100,
         columns: [
             {
                 data: "registrationDate",
                 render: function (data, type, row) {
                     if (type === 'display' || type === 'filter') {
-                        return data ? moment(data).format('DD/MM/YYYY') : '';
+                        return data ? moment(data, 'DD/MM/YYYY HH:mm').format('DD/MM/YYYY HH:mm') : '';
                     }
                     return data;
                 }
@@ -272,13 +272,13 @@ function createTable(responseJson) {
                 render: $.fn.dataTable.render.number(',', '.', 2, '$ ')
             },
             {
-                data: null,
-                render: function (data, type, row) {
-                    return `<button class="btn btn-info btn-sm"><i class="mdi mdi-eye"></i></button>`;
-                }
+                "defaultContent": '<button class="btn btn-info btn-sm"><i class="mdi mdi-eye"></i></button>',
+                "orderable": false,
+                "searchable": false,
+                "width": "100px"
             }
         ],
-        order: [[0, "desc"]],
+        order: [[0, "asc"]],
         dom: "Bfrtip",
         buttons: [
             {
@@ -289,9 +289,74 @@ function createTable(responseJson) {
                 exportOptions: {
                     columns: [0, 1, 2, 3, 4]
                 }
-            }, 'pageLength'
+            },
+            'pageLength'
         ]
     });
+
+
+    //tableReportSale = $("#tbsale").DataTable({
+    //    data: responseJson,
+    //    responsive: true,
+    //    pageLength: 100,
+    //    columns: [
+    //        {
+    //            data: "registrationDate",
+    //            render: function (data, type, row) {
+    //                if (type === 'display' || type === 'filter') {
+    //                    return data ? moment(data, 'DD/MM/YYYY HH:mm').format('DD/MM/YYYY') : '';
+    //                }
+    //                return data;
+    //            }
+    //        },
+    //        {
+    //            data: null,
+    //            render: function (data, type, row) {
+    //                let content = `${row.saleNumber}`;
+    //                if (row.isWeb) {
+    //                    content += `<i class="mdi mdi-web ms-3" title="Venta Web"></i>`;
+    //                } else if (row.isDelete) {
+    //                    content += `<i class="mdi mdi-cancel ms-3 text-danger" title="Anulada"></i>`;
+    //                }
+    //                return content;
+    //            }
+    //        },
+    //        {
+    //            data: null,
+    //            render: function (data, type, row) {
+    //                let button = row.typeDocumentSale === "Presupuesto" ?
+    //                    `<button class="btn btn-success btn-sm btn-pago"><i class="mdi mdi-cash-usd"></i></button>` : "";
+    //                return `${row.typeDocumentSale} ${button}`;
+    //            }
+    //        },
+    //        { data: "cantidadProductos" },
+    //        {
+    //            data: "total",
+    //            render: $.fn.dataTable.render.number(',', '.', 2, '$ ')
+    //        },
+    //        {
+    //            data: null,
+    //            render: function (data, type, row) {
+    //                return `<button class="btn btn-info btn-sm"><i class="mdi mdi-eye"></i></button>`;
+    //            }
+    //        }
+    //    ],
+    //    order: [[0, "desc"]],
+    //    dom: "<'row'<'col-sm-12 col-md-6'B><'col-sm-12 col-md-6'f>>" +
+    //        "<'row'<'col-sm-12'tr>>" +
+    //        "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+    //    buttons: [
+    //        {
+    //            text: 'Exportar Excel',
+    //            extend: 'excelHtml5',
+    //            title: '',
+    //            filename: 'Reporte Ventas',
+    //            exportOptions: {
+    //                columns: [0, 1, 2, 3, 4]
+    //            }
+    //        }, 'pageLength'
+    //    ]
+    //});
 
     // Actualizar el total y la cantidad de ventas
     let total = responseJson.reduce((acc, sale) => acc + parseFloat(sale.totalDecimal), 0);
