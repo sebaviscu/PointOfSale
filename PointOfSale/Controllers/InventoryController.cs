@@ -207,7 +207,7 @@ namespace PointOfSale.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProduct([FromForm] IFormFile photo, [FromForm] string model, [FromForm] string vencimientos, [FromForm] string codBarras)
+        public async Task<IActionResult> CreateProduct([FromForm] IFormFile photo, [FromForm] string model, [FromForm] string vencimientos, [FromForm] string codBarras, [FromForm] string tags)
         {
 
             GenericResponse<VMProduct> gResponse = new GenericResponse<VMProduct>();
@@ -224,6 +224,7 @@ namespace PointOfSale.Controllers
                 var vmProduct = JsonConvert.DeserializeObject<VMProduct>(model);
                 var vmListVencimientos = JsonConvert.DeserializeObject<List<VMVencimiento>>(vencimientos, settings);
                 var vmCodBarras = JsonConvert.DeserializeObject<List<VMCodigoBarras>>(codBarras);
+                var vmTags = JsonConvert.DeserializeObject<List<VMTag>>(tags);
 
 
                 var listPrecios = new List<ListaPrecio>()
@@ -260,7 +261,13 @@ namespace PointOfSale.Controllers
                     stock = new Stock(vmProduct.Quantity.Value, (int)vmProduct.Minimo.Value, 0, user.IdTienda);
                 }
 
-                Product product_created = await _productService.Add(prod, listPrecios, _mapper.Map<List<Vencimiento>>(vmListVencimientos), stock, _mapper.Map<List<CodigoBarras>>(vmCodBarras));
+                Product product_created = await _productService.Add(
+                    prod, 
+                    listPrecios, 
+                    _mapper.Map<List<Vencimiento>>(vmListVencimientos), 
+                    stock, 
+                    _mapper.Map<List<CodigoBarras>>(vmCodBarras),
+                    _mapper.Map<List<Tag>>(vmTags));
 
                 vmProduct = _mapper.Map<VMProduct>(product_created);
 
@@ -276,10 +283,10 @@ namespace PointOfSale.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> EditProduct([FromForm] IFormFile photo, [FromForm] string model, [FromForm] string vencimientos, [FromForm] string codBarras)
+        public async Task<IActionResult> EditProduct([FromForm] IFormFile photo, [FromForm] string model, [FromForm] string vencimientos, [FromForm] string codBarras, [FromForm] string tags)
         {
+            var response = new GenericResponse<VMProduct>();
 
-            GenericResponse<VMProduct> gResponse = new GenericResponse<VMProduct>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
@@ -290,9 +297,10 @@ namespace PointOfSale.Controllers
                     Culture = CultureInfo.InvariantCulture
                 };
 
-                VMProduct vmProduct = JsonConvert.DeserializeObject<VMProduct>(model);
+                var vmProduct = JsonConvert.DeserializeObject<VMProduct>(model);
                 var vmListVencimientos = JsonConvert.DeserializeObject<List<VMVencimiento>>(vencimientos, settings);
                 var vmCodBarras = JsonConvert.DeserializeObject<List<VMCodigoBarras>>(codBarras);
+                var vmTags = JsonConvert.DeserializeObject<List<VMTag>>(tags);
 
                 vmProduct.ModificationUser = user.UserName;
 
@@ -301,47 +309,50 @@ namespace PointOfSale.Controllers
                     using (var ms = new MemoryStream())
                     {
                         photo.CopyTo(ms);
-                        var fileBytes = ms.ToArray();
-                        vmProduct.Photo = fileBytes;
+                        vmProduct.Photo = ms.ToArray();
                     }
                 }
-                else
-                    vmProduct.Photo = null;
 
-                var listPrecios = new List<ListaPrecio>()
+                var listPrecios = new List<ListaPrecio>
                 {
                     new ListaPrecio(vmProduct.IdProduct, ListaDePrecio.Lista_1, Convert.ToDecimal(vmProduct.Price), Convert.ToInt32(vmProduct.PorcentajeProfit)),
-                    new ListaPrecio(vmProduct.IdProduct, ListaDePrecio.Lista_2, Convert.ToDecimal(vmProduct.Precio2),Convert.ToInt32(vmProduct.PorcentajeProfit2)),
-                    new ListaPrecio(vmProduct.IdProduct, ListaDePrecio.Lista_3, Convert.ToDecimal(vmProduct.Precio3),Convert.ToInt32(vmProduct.PorcentajeProfit3))
+                    new ListaPrecio(vmProduct.IdProduct, ListaDePrecio.Lista_2, Convert.ToDecimal(vmProduct.Precio2), Convert.ToInt32(vmProduct.PorcentajeProfit2)),
+                    new ListaPrecio(vmProduct.IdProduct, ListaDePrecio.Lista_3, Convert.ToDecimal(vmProduct.Precio3), Convert.ToInt32(vmProduct.PorcentajeProfit3))
                 };
 
-                foreach (var v in vmListVencimientos.Where(_ => _.IdVencimiento == 0))
+                foreach (var vencimiento in vmListVencimientos.Where(v => v.IdVencimiento == 0))
                 {
-                    v.IdProducto = vmProduct.IdProduct;
-                    v.IdTienda = user.IdTienda;
-                    v.RegistrationDate = TimeHelper.GetArgentinaTime();
-                    v.RegistrationUser = user.UserName;
+                    vencimiento.IdProducto = vmProduct.IdProduct;
+                    vencimiento.IdTienda = user.IdTienda;
+                    vencimiento.RegistrationDate = TimeHelper.GetArgentinaTime();
+                    vencimiento.RegistrationUser = user.UserName;
                 }
 
-                Stock stock = null;
+                Stock? stock = null;
                 if (vmProduct.Quantity.HasValue && vmProduct.Quantity.Value > 0 && vmProduct.Minimo.HasValue && vmProduct.Minimo.Value >= 0)
                 {
                     stock = new Stock(vmProduct.Quantity.Value, (int)vmProduct.Minimo.Value, vmProduct.IdProduct, user.IdTienda);
                 }
 
-                Product product_edited = await _productService.Edit(_mapper.Map<Product>(vmProduct), listPrecios, _mapper.Map<List<Vencimiento>>(vmListVencimientos), stock, _mapper.Map<List<CodigoBarras>>(vmCodBarras));
+                var product_edited = await _productService.Edit(
+                    _mapper.Map<Product>(vmProduct),
+                    listPrecios,
+                    _mapper.Map<List<Vencimiento>>(vmListVencimientos),
+                    stock,
+                    _mapper.Map<List<CodigoBarras>>(vmCodBarras),
+                    _mapper.Map<List<Tag>>(vmTags)  // Pass tags to service
+                );
 
-                vmProduct = _mapper.Map<VMProduct>(product_edited);
-
-                gResponse.State = true;
-                gResponse.Object = vmProduct;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
+                response.State = true;
+                response.Object = _mapper.Map<VMProduct>(product_edited);
+                return Ok(response);
             }
             catch (Exception ex)
             {
                 return HandleException(ex, "Error al editar producto.", _logger, model: null, ("model", model), ("vencimientos", vencimientos));
             }
         }
+
 
         [HttpPut]
         public async Task<IActionResult> EditMassiveProducts([FromBody] EditeMassiveProducts data)

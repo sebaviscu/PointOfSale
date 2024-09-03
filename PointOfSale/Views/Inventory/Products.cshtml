@@ -10,11 +10,19 @@
     <link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
     <link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
     <link href="~/plugins/jquery-ui/jquery-ui.css" rel="stylesheet">
-
+    <link href="~/plugins/choices/choices.min.css" rel="stylesheet">
 }
 
 
 <style>
+    #tagSelector {
+        width: 100%; /* Asegura que el select2 ocupe todo el ancho disponible */
+    }
+
+    .select2-container {
+        width: 100% !important; /* Asegura que el contenedor de select2 tenga suficiente ancho */
+    }
+
     #tablaContainer td:nth-last-child(-n+5) {
         border: 2.3px dotted lightslategray;
     }
@@ -95,7 +103,7 @@
 </div>
 
 
-<div class="modal fade" id="modalData" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+<div class="modal fade" id="modalData" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -336,9 +344,18 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group col-sm-12">
-                                        <label for="txtAumento">Comentario</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario">
+                                    <div class="col-md-12">
+                                        <div class="form-row">
+                                            <div class="col-sm-4">
+                                                <label for="txtAumento">Tags</label>
+                                                <select id="tagSelector" class="form-control" multiple="multiple" style="width: 100%;">
+                                                </select>
+                                            </div>
+                                            <div class="form-group col-sm-8">
+                                                <label for="txtAumento">Comentario</label>
+                                                <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario">
+                                            </div>
+                                        </div>
                                     </div>
 
 
@@ -800,6 +817,7 @@
     <script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
     <script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
     <script src="~/plugins/jquery-ui/jquery-ui.js"></script>
+    <script src="/plugins/choices/choices.min.js"></script>
 
 
     <script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>

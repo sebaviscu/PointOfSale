@@ -49,7 +49,13 @@ namespace PointOfSale.Business.Services
         public async Task<Product> Get(int idProducto)
         {
             IQueryable<Product> queryProduct = await _repository.Query(u => u.IdProduct == idProducto);
-            return queryProduct.Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).Include(_ => _.CodigoBarras).First();
+            return queryProduct.Include(_ => _.Proveedor)
+                                .Include(_ => _.ListaPrecios)
+                                .Include(_ => _.Vencimientos)
+                                .Include(_ => _.CodigoBarras)
+                                .Include(p => p.ProductTags)
+                                    .ThenInclude(pt => pt.Tag)
+                                .First();
         }
 
         public async Task<List<Product>> List()
@@ -96,6 +102,8 @@ namespace PointOfSale.Business.Services
             }
 
             return await query
+                .Include(p => p.ProductTags)
+                .ThenInclude(pt => pt.Tag)
                 .OrderBy(p => p.Description)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -110,7 +118,7 @@ namespace PointOfSale.Business.Services
         }
 
 
-        public async Task<Product> Add(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos, Stock? stock, List<CodigoBarras>? codigoBarras)
+        public async Task<Product> Add(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos, Stock? stock, List<CodigoBarras>? codigoBarras, List<Tag> tags)
         {
             if (codigoBarras != null)
             {
@@ -129,6 +137,8 @@ namespace PointOfSale.Business.Services
             {
                 entity.Photo = GetDefaultImage();
             }
+
+            await UpdateProductTags(entity, tags.Select(_ => _.IdTag).ToList());
 
             Product product_created = await _repository.Add(entity);
 
@@ -153,7 +163,14 @@ namespace PointOfSale.Business.Services
             await EditOrCreateCodBarras(codigoBarras, product_created.IdProduct);
 
             IQueryable<Product> query = await _repository.Query(p => p.IdProduct == product_created.IdProduct);
-            product_created = query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).First();
+            product_created = await query.Include(p => p.IdCategoryNavigation)
+                                                    .Include(p => p.Proveedor)
+                                                    .Include(p => p.ListaPrecios)
+                                                    .Include(p => p.Vencimientos)
+                                                    .Include(p => p.CodigoBarras)
+                                                    .Include(p => p.ProductTags)
+                                                    .ThenInclude(pt => pt.Tag)
+                                                   .FirstOrDefaultAsync();
 
             return product_created;
         }
@@ -196,61 +213,75 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task<Product> Edit(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos, Stock? stock, List<CodigoBarras>? codigoBarras)
+        public async Task<Product> Edit(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos, Stock? stock, List<CodigoBarras>? codigoBarras, List<Tag> tags)
         {
             try
             {
-                IQueryable<Product> queryProduct1 = await _repository.Query(u => u.IdProduct == entity.IdProduct);
-                Product product_edit = queryProduct1.Include(_ => _.ListaPrecios).First();
+                var prodQuery = await _repository.Query(p => p.IdProduct == entity.IdProduct);
 
-                product_edit.Description = entity.Description;
-                product_edit.IdCategory = entity.IdCategory;
+                var product = await prodQuery.Include(p => p.ListaPrecios)
+                                    .Include(p => p.ProductTags)
+                                       .ThenInclude(pt => pt.Tag)
+                                       .FirstOrDefaultAsync();
 
-                product_edit.Price = entity.Price;
-                product_edit.CostPrice = entity.CostPrice;
-                product_edit.PriceWeb = entity.PriceWeb;
-                product_edit.PorcentajeProfit = entity.PorcentajeProfit;
+                if (product == null)
+                    throw new Exception("Producto no encontrado.");
+
+                // Actualizar campos del producto
+                product.Description = entity.Description;
+                product.IdCategory = entity.IdCategory;
+                product.Price = entity.Price;
+                product.CostPrice = entity.CostPrice;
+                product.PriceWeb = entity.PriceWeb;
+                product.PorcentajeProfit = entity.PorcentajeProfit;
+                product.IsActive = entity.IsActive;
+                product.ModificationDate = TimeHelper.GetArgentinaTime();
+                product.ModificationUser = entity.ModificationUser;
+                product.IdProveedor = entity.IdProveedor;
+                product.TipoVenta = entity.TipoVenta;
+                product.Comentario = entity.Comentario;
+                product.Iva = entity.Iva;
+                product.FormatoWeb = entity.FormatoWeb;
+                product.PrecioFormatoWeb = entity.PrecioFormatoWeb;
 
                 if (entity.Photo != null && entity.Photo.Length > 0)
-                    product_edit.Photo = entity.Photo;
-                else if ((entity.Photo == null || entity.Photo.Length == 0) && (product_edit.Photo == null || product_edit.Photo.Length == 0))
+                    product.Photo = entity.Photo;
+                else if ((entity.Photo == null || entity.Photo.Length == 0) && (product.Photo == null || product.Photo.Length == 0))
                 {
-                    product_edit.Photo = GetDefaultImage();
+                    product.Photo = GetDefaultImage();
                 }
 
-                product_edit.IsActive = entity.IsActive;
-                product_edit.ModificationDate = TimeHelper.GetArgentinaTime();
-                product_edit.ModificationUser = entity.ModificationUser;
-                product_edit.IdProveedor = entity.IdProveedor;
-                product_edit.TipoVenta = entity.TipoVenta;
-                product_edit.Comentario = entity.Comentario;
-                product_edit.Iva = entity.Iva;
-                product_edit.FormatoWeb = entity.FormatoWeb;
-                product_edit.PrecioFormatoWeb = entity.PrecioFormatoWeb;
+                await UpdateProductTags(product, tags.Select(_=>_.IdTag).ToList());
 
-                bool response = await _repository.Edit(product_edit);
+
+                bool response = await _repository.Edit(product);
                 if (!response)
-                    throw new TaskCanceledException("El producto no pudo modificarse");
+                    throw new TaskCanceledException("El producto no pudo modificarse.");
 
-
-                await EditListaPrecios(product_edit.ListaPrecios.ToList(), listaPrecios);
-                await EditOrCreateVencimientos(vencimientos, product_edit.IdProduct);
-                await EditOrCreateCodBarras(codigoBarras, product_edit.IdProduct);
+                await EditListaPrecios(product.ListaPrecios.ToList(), listaPrecios);
+                await EditOrCreateVencimientos(vencimientos, product.IdProduct);
+                await EditOrCreateCodBarras(codigoBarras, product.IdProduct);
 
                 if (stock != null)
                     await EditStock(stock);
 
-                IQueryable<Product> queryProduct = await _repository.Query(u => u.IdProduct == entity.IdProduct);
+                var updatedProduct = await prodQuery.Include(p => p.IdCategoryNavigation)
+                                                    .Include(p => p.Proveedor)
+                                                    .Include(p => p.ListaPrecios)
+                                                    .Include(p => p.Vencimientos)
+                                                    .Include(p => p.CodigoBarras)
+                                                    .Include(p => p.ProductTags)
+                                                    .ThenInclude(pt => pt.Tag)
+                                                   .FirstOrDefaultAsync();
 
-                Product product_edited = queryProduct.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).Include(_ => _.CodigoBarras).First();
-
-                return product_edited;
+                return updatedProduct ?? throw new Exception("Error al cargar el producto actualizado.");
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw;
+                throw new Exception("Error al editar el producto.", ex);
             }
         }
+
 
         public byte[] GetDefaultImage()
         {
@@ -277,6 +308,27 @@ namespace PointOfSale.Business.Services
                     throw new TaskCanceledException("El stock no se pudo editar");
             }
         }
+
+        private async Task UpdateProductTags(Product product, List<int> tagIds)
+        {
+            var tagsToRemove = product.ProductTags.Where(pt => !tagIds.Contains(pt.TagId)).ToList();
+
+            foreach (var tagToRemove in tagsToRemove)
+            {
+                product.ProductTags.Remove(tagToRemove);
+            }
+
+            foreach (var tagId in tagIds)
+            {
+                if (!product.ProductTags.Any(pt => pt.TagId == tagId))
+                {
+                    product.ProductTags.Add(new ProductTag { ProductId = product.IdProduct, TagId = tagId });
+                }
+            }
+
+            //await _repository.Edit(product);
+        }
+
 
         public async Task EditListaPrecios(List<ListaPrecio> listaPreciosActual, List<ListaPrecio> listaPreciosNueva)
         {

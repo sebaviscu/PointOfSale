@@ -125,6 +125,7 @@ namespace PointOfSale.Utilities.Automapper
             .ForMember(dest => dest.Vencimientos, opt => opt.MapFrom(src => src.Vencimientos))
             .ForMember(dest => dest.PriceWeb, opt => opt.MapFrom(src => src.PriceWeb.ToString()))
             .ForMember(dest => dest.PrecioFormatoWeb, opt => opt.MapFrom(src => src.PrecioFormatoWeb.ToString()))
+            .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.ProductTags.Select(pt => pt.Tag).ToList()))
             ;
 
             CreateMap<VMProduct, Product>()
@@ -146,7 +147,8 @@ namespace PointOfSale.Utilities.Automapper
             )
             .ForMember(dest => dest.PriceWeb, opt => opt.MapFrom(src => Convert.ToDecimal(src.PriceWeb)))
             .ForMember(dest => dest.PrecioFormatoWeb, opt => opt.MapFrom(src => Convert.ToDecimal(src.PrecioFormatoWeb)))
-            ;
+            .ForMember(dest => dest.ProductTags, opt => opt.Ignore());
+            
 
             CreateMap<ListaPrecio, VmProductsSelect2>()
             .ForMember(destiny =>destiny.IdProduct, opt => opt.MapFrom(source => source.Producto != null ? source.Producto.IdProduct : 0))

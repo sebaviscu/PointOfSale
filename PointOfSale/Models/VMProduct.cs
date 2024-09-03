@@ -46,5 +46,6 @@ namespace PointOfSale.Models
         public string? PrecioFormatoWeb { get; set; }
         public int? FormatoWeb { get; set; }
 
+        public virtual ICollection<VMTag>? Tags { get; set; }
     }
 }

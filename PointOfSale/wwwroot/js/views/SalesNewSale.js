@@ -1004,7 +1004,8 @@ function addFunctions(idTab) {
                         }
                     ))
                 };
-            }
+            },
+            cache: true
         },
         placeholder: 'Buscando producto...',
         minimumInputLength: 2,

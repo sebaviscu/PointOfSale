@@ -12193,30 +12193,26 @@ h1, h2, h3, h4, h5,
             transition: all 0.3s ease;
         }
 
-        .product .img-prod span.status {
-            position: relative; /* Cambia a relative para que los elementos se alineen correctamente */
-            display: inline-block; /* Asegura que los spans se alineen uno al lado del otro */
-            margin-right: 3px; /* Añade margen entre los tags */
-            margin-top: 3px; /* Añade un margen superior para separarlos del borde superior */
-            padding: 2px 10px;
-            top: -155px;
-            color: #fff;
-            font-weight: 300;
-            background: #82ae46;
-            font-size: 12px;
-            border-radius: 8px; /* Añade bordes redondeados para mejor presentación */
+        .product .img-prod .tags-container {
+            position: absolute;
+            top: 10px; /* Ajusta según sea necesario */
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 5px; /* Añade espacio entre los tags */
+            justify-content: center; /* Centra los tags dentro del contenedor */
         }
 
-/*        .product .img-prod span.status {
-            position: absolute;
-            top: 0;
-            left: 0;
-            padding: 2px 10px;
-            color: #fff;
-            font-weight: 300;
-            background: #82ae46;
-            font-size: 12px;
-        }*/
+            .product .img-prod .tags-container .status {
+                display: inline-block;
+                padding: 2px 10px;
+                color: #fff;
+                font-weight: 300;
+                background: #82ae46;
+                font-size: 12px;
+                border-radius: 8px;
+                white-space: nowrap; /* Evita que el texto de los tags se desborde a la siguiente línea */
+            }
 
         .product .img-prod img {
             -webkit-transform: scale(1);

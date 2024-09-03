@@ -4,6 +4,7 @@ let edicionMasiva = false;
 let aProductos = [];
 let aumentoWeb = 0;
 let cantProductosImportar = 0;
+let tagSelector;
 
 const BASIC_MODEL_PRODUCTOS = {
     idProduct: 0,
@@ -31,7 +32,8 @@ const BASIC_MODEL_PRODUCTOS = {
     iva: 0,
     codigoBarras: [],
     formatoWeb: '',
-    precioFormatoWeb: 0
+    precioFormatoWeb: 0,
+    tags: []
 }
 
 const BASIC_MASSIVE_EDIT = {
@@ -198,10 +200,62 @@ $(document).ready(function () {
             }
         })
 
+    cargarSelect2Tags();
+
     $("#txtfVencimiento").datepicker({ dateFormat: 'dd/mm/yy' });
     $("#txtfElaborado").datepicker({ dateFormat: 'dd/mm/yy' });
     removeLoading();
 })
+
+function cargarSelect2Tags() {
+    tagSelector = new Choices('#tagSelector', {
+        removeItemButton: true,
+        maxItemCount: 3,
+        searchResultLimit: 10,
+        placeholderValue: 'Selecciona hasta 3 tags',
+        shouldSort: false,
+        noResultsText: 'No se encontraron resultados',
+        loadingText: 'Cargando...',
+        itemSelectText: 'Presiona para seleccionar',
+        duplicateItemsAllowed: false,
+        searchPlaceholderValue: 'Buscar...',
+        callbackOnCreateTemplates: function (strToEl) {
+            const classNames = this.config.classNames;
+            return {
+                item: (classNames, data) => {
+                    return strToEl(`
+                        <div class="${classNames.item} ${data.highlighted ? classNames.highlightedState : classNames.itemSelectable
+                        }" data-item data-id="${data.id}" data-value="${data.value}" ${data.active ? 'aria-selected="true"' : ''} ${data.disabled ? 'aria-disabled="true"' : ''}>
+                            ${data.label}
+                        </div>
+                    `);
+                },
+                choice: (classNames, data) => {
+                    return strToEl(`
+                        <div class="${classNames.item} ${data.highlighted ? classNames.highlightedState : classNames.itemSelectable
+                        }" data-select-text="${this.config.itemSelectText}" data-choice data-id="${data.id}" data-value="${data.value}" ${data.disabled ? 'data-choice-disabled aria-disabled="true"' : 'data-choice-selectable'}>
+                            <span style="background-color:${data.customProperties.color}; width:20px; height:20px; display:inline-block; margin-right:10px; border-radius:4px;"></span>
+                            ${data.label}
+                        </div>
+                    `);
+                },
+            };
+        },
+    });
+
+    // Cargar datos desde el servidor
+    fetch('/Inventory/GetTags')
+        .then(response => response.json())
+        .then(data => {
+            const tags = data.data.map(tag => ({
+                value: tag.idTag,
+                label: tag.nombre,
+                customProperties: { color: tag.color },
+            }));
+            tagSelector.setChoices(tags, 'value', 'label', false);
+        });
+}
+
 
 $('#cboTipoVenta').change(function () {
     let selectedValue = $(this).val();
@@ -322,6 +376,7 @@ const openModalProduct = (model = BASIC_MODEL_PRODUCTOS) => {
     $("#cboFormatoVenta").val(model.formatoWeb);
     $("#txtPriceFormatoWeb").val(model.precioFormatoWeb != 0 ? model.precioFormatoWeb.replace(/,/g, '.') : '');
 
+
     if (model.photoBase64 != null) {
         $("#imgProduct").attr("src", `data:image/png;base64,${model.photoBase64}`);
     }
@@ -356,8 +411,6 @@ const openModalProduct = (model = BASIC_MODEL_PRODUCTOS) => {
 
         model.codigoBarras.sort((a, b) => b.idVencimiento - a.idVencimiento);
 
-        //const codbarrasMaps = model.codigoBarras.slice(0, 3);
-
         model.codigoBarras.forEach((v) => {
             addCodigosBarrasTable(v);
         });
@@ -369,7 +422,12 @@ const openModalProduct = (model = BASIC_MODEL_PRODUCTOS) => {
     $('#cboTipoVenta').trigger('change');
 
     $("#modalData").modal("show")
+
+    tagSelector.removeActiveItems();
+    let tgsIds = model.tags.map(d => d.idTag);
+    tagSelector.setChoiceByValue(tgsIds);
 }
+
 
 function addVencimientoTable(data) {
     let fechaElaboracion = "";
@@ -810,11 +868,13 @@ $("#btnSave").on("click", async function () {
     let vencimientos = obtenerDatosTablaVencimientos();
 
     let codBarras = obtenerDatosTablaCodigoBarras(model.idProduct);
+    let tags = obtenerTagsSeleccionados();
 
     const formData = new FormData();
     formData.append('model', JSON.stringify(model));
     formData.append('vencimientos', JSON.stringify(vencimientos));
     formData.append('codBarras', JSON.stringify(codBarras));
+    formData.append('tags', JSON.stringify(tags));
 
     const inputPhoto = document.getElementById('txtPhoto');
 
@@ -873,28 +933,17 @@ $("#btnSave").on("click", async function () {
     }
 })
 
-//async function compressImageFromImgTag(imgTag, quality, maxWidth, maxHeight) {
-//    return new Promise((resolve, reject) => {
-//        const img = new Image();
-//        img.crossOrigin = 'Anonymous'; // Necesario si la imagen está en un dominio diferente
-//        img.src = imgTag.src;
-//        img.onload = () => {
-//            const canvas = document.createElement('canvas');
-//            const ctx = canvas.getContext('2d');
+function obtenerTagsSeleccionados() {
+    let tagsSeleccionados = tagSelector.getValue(true);
 
-//            const ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
-//            canvas.width = img.width * ratio;
-//            canvas.height = img.height * ratio;
+    let tagsArray = tagsSeleccionados.map(function (tag) {
+        return {
+            idTag: tag
+        };
+    });
 
-//            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-//            canvas.toBlob(blob => {
-//                resolve(blob);
-//            }, 'image/jpeg', quality);
-//        };
-//        img.onerror = reject;
-//    });
-//}
+    return tagsArray;
+}
 
 function compressImage(file, quality, maxWidth, maxHeight) {
     return new Promise((resolve, reject) => {
@@ -1035,7 +1084,7 @@ function calcularPrecio() {
 
     if (aumento !== '' && precio !== '') {
         let precioFinal = parseFloat(precio) * (1 + (parseFloat(aumento) / 100));
-        $("#txtPriceWeb").val(precioFinal);
+        $("#txtPriceWeb").val(precioFinal.toFixed(2));
     }
 
     calcularPrecioFormatoVenta();

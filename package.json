@@ -3,7 +3,18 @@
     "gulp-typescript": "^6.0.0-alpha.1"
   },
   "dependencies": {
+    "choices.js": "^11.0.1",
     "crypto-js": "^4.2.0",
     "moment-timezone": "^0.5.45"
-  }
+  },
+  "name": "pointofsale",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }
