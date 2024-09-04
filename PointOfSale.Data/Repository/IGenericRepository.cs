@@ -10,7 +10,7 @@ namespace PointOfSale.Data.Repository
 {
     public interface IGenericRepository<TEntity> where TEntity : class
     {
-        Task<TEntity> Get(Expression<Func<TEntity, bool>>  filter);
+        Task<TEntity> Get(Expression<Func<TEntity, bool>> filter);
         Task<TEntity> Add(TEntity entity);
         Task<bool> Edit(TEntity entity);
         Task<bool> Delete(TEntity entity);
@@ -23,5 +23,9 @@ namespace PointOfSale.Data.Repository
         Task<bool> EditAsync(TEntity entity);
         Task<bool> SaveChangesAsync();
         IQueryable<TEntity> QuerySimple();
+
+        Task BeginTransactionAsync();
+        Task CommitTransactionAsync();
+        Task RollbackTransactionAsync();
     }
 }

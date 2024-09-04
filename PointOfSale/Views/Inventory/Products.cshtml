@@ -754,7 +754,7 @@
 
 <!-- Grid Modal Importar -->
 <div class="modal fade" id="modalImpprtar" tabindex="-1" role="dialog" aria-labelledby="exampleModalGridq" aria-hidden="true">
-    <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-dialog" role="document" style="max-width: 90%;">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Importar Productos</h5>
@@ -766,33 +766,62 @@
                 <div>
 
                     <div class="row mb-3">
-                        <label for="txtRutaImportar" class="col-sm-2 col-form-label">Ubicacion Archivo</label>
-                        <div class="col-sm-4">
-                            <input type="email" class="form-control" id="txtRutaImportar" placeholder=".xlsx / .csv">
+                        <label for="fileImportarProductos" class="col-sm-2 col-form-label text-end">Seleccionar Archivo</label>
+                        <div class="col-sm-4 input-group input-group-sm">
+                            <input type="file" class="form-control" id="fileImportarProductos" accept=".xlsx, .csv">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-secondary btn-sm" id="btnCargarImportar">Cargar</button>
+                            </div>
                         </div>
-                        <button class="btn btn-secondary btn-sm" id="btnCargarImportar">Cargar</button>
+
+
+
                         <div class="col-sm-3" style="text-align: center;">
                             <label id="lblCantidadProds" class="col-form-label"></label>
                         </div>
+
+                        <button class="btn btn-outline-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="aca va a ir ayuda <br> para que sea mas facil">
+                            Ayuda
+                        </button>
                     </div>
 
+                    <div>
+                        <label id="lblErrores" class="col-form-label"></label>
+                    </div>
                     <table id="tableImportarProductos" class="table table-striped" style="font-size: 12px;width:100%">
                         <thead>
                             <tr>
                                 <th></th>
-                                <th>Descripcion*</th>
+                                <th>Descripcion<span class="text-danger">*</span></th>
                                 <th>Cod. Barras</th>
-                                <th>Forma de Venta*</th>
+                                <th style="min-width: 130px;">
+                                    Forma de Venta<span class="text-danger">*</span> &nbsp; <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="U = por unidad,<br>Kg = por peso"></span>
+                                </th>
                                 <th>Costo</th>
-                                <th>Ganancia 1</th>
-                                <th>Precio 1*</th>
-                                <th>Ganancia 2</th>
+                                <th>
+                                    Ganancia 1&nbsp;
+                                    <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="Se debe introducir el porcentaje de ganancia, solo el numero"></span>
+                                </th>
+                                <th>Precio 1<span class="text-danger">*</span></th>
+                                <th>
+                                    Ganancia 2&nbsp;
+                                    <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="Se debe introducir el porcentaje de ganancia, solo el numero"></span>
+                                </th>
                                 <th>Precio 2</th>
-                                <th>Ganancia 3</th>
+                                <th>
+                                    Ganancia 3&nbsp;
+                                    <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="Se debe introducir el porcentaje de ganancia, solo el numero"></span>
+                                </th>
                                 <th>Precio 3</th>
                                 <th>Precio Web</th>
-                                <th>Proveedor</th>
-                                <th>Categoria</th>
+                                <th style="min-width: 100px;">
+                                    Proveedor&nbsp;
+                                    <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="Se debe colocar el nombre del 'PROVEEDOR' tal cual esta en el apartado de Proveedores"></span>
+                                </th>
+                                <th style="min-width: 100px;">
+                                    Categoria&nbsp; 
+                                    <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="Se debe colocar el nombre de la 'CATEGORIA' tal cual esta en el apartado de Categorias"></span>
+                                </th>
                             </tr>
                         </thead>
                         <tbody></tbody>

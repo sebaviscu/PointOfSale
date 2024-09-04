@@ -582,7 +582,7 @@ CREATE TABLE ProductTags (
     FOREIGN KEY (TagId) REFERENCES Tags(IdTag) ON DELETE CASCADE
 );
 
-
+select * from ProductTags
 --select * from turno
 
 --EXEC sp_fkeys @fktable_name = 'turno';

@@ -665,9 +665,15 @@ $("#tbVencimientos tbody").on("click", ".btn-danger", function () {
 
 $("#bntModalImportar").on("click", function () {
     $("#modalImpprtar").modal("show")
+    $("#lblErrores").html("");  // Limpiar errores previos
+    $("#lblCantidadProds").html("");  // Limpiar errores previos
+    $("#fileImportarProductos").val('');
+    $("#tableImportarProductos tbody").empty();
 })
 
 $("#btnImportar").on("click", function () {
+    $("#lblErrores").html("");  // Limpiar errores previos
+
     swal({
         title: "¿Está seguro?",
         text: `Se importaran ${cantProductosImportar} Productos`,
@@ -682,28 +688,39 @@ $("#btnImportar").on("click", function () {
         function (respuesta) {
 
             if (respuesta) {
-                let ruta = $("#txtRutaImportar").val();
 
-                $(".showSweetAlert").LoadingOverlay("show")
+                let fileInput = $("#fileInput")[0].files[0]; // Obtiene el archivo seleccionado
 
-                fetch(`/Inventory/ImportarProductos?path=${ruta}`, {
-                    method: "GET"
-                }).then(response => {
-                    $(".showSweetAlert").LoadingOverlay("hide")
-                    return response.json();
-                }).then(responseJson => {
-                    if (responseJson.state) {
-                        swal("Exitoso!", "Se han importado " + cantProductosImportar + " filas", "success");
+                if (!fileInput) {
+                    swal("Error", "Por favor selecciona un archivo", "error");
+                    return;
+                }
 
-                        location.reload();
-                    } else {
-                        swal("Lo sentimos", responseJson.message, "error");
-                    }
+                let formData = new FormData();
+                formData.append("file", fileInput); // Agrega el archivo al formData
+
+                $(".showSweetAlert").LoadingOverlay("show");
+
+                fetch('/Inventory/ImportarProductos', {
+                    method: "POST", // Usa POST para la subida de archivos
+                    body: formData
                 })
-                    .catch((error) => {
-                        $(".showSweetAlert").LoadingOverlay("hide")
+                    .then(response => {
+                        $(".showSweetAlert").LoadingOverlay("hide");
+                        return response.json();
                     })
-
+                    .then(responseJson => {
+                        if (responseJson.state) {
+                            swal("Exitoso!", "Se han importado " + responseJson.totalFilas + " filas", "success");
+                            location.reload();
+                        } else {
+                            $("#lblErrores").html(responseJson.message).css('color', 'red');
+                        }
+                    })
+                    .catch((error) => {
+                        $(".showSweetAlert").LoadingOverlay("hide");
+                        swal("Error", "Hubo un error al cargar el archivo", "error");
+                    });
 
                 swal.close();
             }
@@ -713,19 +730,31 @@ $("#btnImportar").on("click", function () {
 
 
 $("#btnCargarImportar").on("click", function () {
-    $("#btnCargarImportar").LoadingOverlay("show")
+    let fileInputArchivo = $('#fileImportarProductos')[0];  // Obtener el archivo seleccionado
+    let fileInput = fileInputArchivo.files[0];  // Obtener el archivo seleccionado
 
-    let ruta = $("#txtRutaImportar").val();
+    if (!fileInput) {
+        swal("Error", "Por favor selecciona un archivo", "error");
+        return;
+    }
 
-    fetch(`/Inventory/CargarProductos?path=${ruta}`, {
-        method: "GET"
+    $("#tableImportarProductos tbody").empty();
+    $("#lblErrores").html("");  // Limpiar errores previos
+
+    $("#btnCargarImportar").LoadingOverlay("show");
+
+    let formData = new FormData();
+    formData.append("file", fileInput);  // Añadir el archivo al FormData
+
+    fetch(`/Inventory/CargarProductos`, {
+        method: "POST",  // Cambiado a POST
+        body: formData  // Enviamos el archivo como FormData
     }).then(response => {
-        $("#btnCargarImportar").LoadingOverlay("hide")
+        $("#btnCargarImportar").LoadingOverlay("hide");
         return response.json();
     }).then(responseJson => {
         if (responseJson.state) {
-            cantProductosImportar = responseJson.object.length;
-            //swal("Exitoso!", "Se cargaron " + cantProductosImportar + " filas", "success");
+            let cantProductosImportar = responseJson.object.length;
             $("#lblCantidadProds").html("Cantidad de Productos: <strong> " + cantProductosImportar + ".</strong>");
 
             let i = 0;
@@ -747,18 +776,18 @@ $("#btnCargarImportar").on("click", function () {
                         $("<td>").text(product.nameProveedor),
                         $("<td>").text(product.nameCategory)
                     )
-                )
+                );
             });
-
         } else {
-            swal("Lo sentimos", responseJson.message, "error");
+            $("#lblErrores").html(responseJson.message).css('color', 'red');
         }
-    })
-        .catch((error) => {
-            $("#btnCargarImportar").LoadingOverlay("hide")
-        })
+    }).catch((error) => {
+        $("#btnCargarImportar").LoadingOverlay("hide");
+        $("#lblErrores").html("Error al cargar el archivo.").css('color', 'red');
+        swal("Error", "Ocurrió un error al cargar el archivo", "error");
+    });
+});
 
-})
 
 $("#btnNewProduct").on("click", function () {
     openModalProduct()

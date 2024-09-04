@@ -262,10 +262,10 @@ namespace PointOfSale.Controllers
                 }
 
                 Product product_created = await _productService.Add(
-                    prod, 
-                    listPrecios, 
-                    _mapper.Map<List<Vencimiento>>(vmListVencimientos), 
-                    stock, 
+                    prod,
+                    listPrecios,
+                    _mapper.Map<List<Vencimiento>>(vmListVencimientos),
+                    stock,
                     _mapper.Map<List<CodigoBarras>>(vmCodBarras),
                     _mapper.Map<List<Tag>>(vmTags));
 
@@ -472,38 +472,61 @@ namespace PointOfSale.Controllers
 
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ImportarProductos(string path)
+        [HttpPost]  // Cambiado a POST
+        public async Task<IActionResult> CargarProductos(IFormFile file)
         {
+            ValidarAutorizacion([Roles.Administrador]);
 
+            GenericResponse<List<VMProduct>> gResponse = new GenericResponse<List<VMProduct>>();
+            try
+            {
+                var (exito, products, errores) = await _excelService.ImportarProductoAsync(file);  // Usar IFormFile
+
+                if (errores.Any())
+                {
+                    gResponse.State = false;
+                    gResponse.Message = string.Join("<br>", errores);
+                    return StatusCode(StatusCodes.Status400BadRequest, gResponse);
+                }
+
+                var vmProduct = _mapper.Map<List<VMProduct>>(products);
+                gResponse.State = exito;
+                gResponse.Object = vmProduct;
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al cargar productos a importar.", _logger, null);
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> ImportarProductos(IFormFile file)
+        {
             GenericResponse<List<VMProduct>> gResponse = new GenericResponse<List<VMProduct>>();
             try
             {
                 ValidarAutorizacion([Roles.Administrador]);
 
-                var (exito, products) = await _excelService.ImportarProductoAsync(path);
+                var (exito, productos, errores) = await _excelService.ImportarProductoAsync(file);
 
-                foreach (var p in products)
+                if (errores.Any())
                 {
-                    try
-                    {
-                        Product product_created = await _productService.Add(p);
-                    }
-                    catch (Exception e)
-                    {
-                        exito = false;
-                        gResponse.Message = e.Message;
-                        throw;
-                    }
+                    gResponse.State = false;
+                    gResponse.Message = string.Join("<br>", errores);
+                    return StatusCode(StatusCodes.Status400BadRequest, gResponse);
                 }
+
+                _ = await _productService.Add(productos);
 
                 gResponse.State = exito;
                 return StatusCode(StatusCodes.Status200OK, gResponse);
-
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al importar productos.", _logger, path);
+                return HandleException(ex, "Error al importar productos.", _logger, file.FileName);
             }
         }
 

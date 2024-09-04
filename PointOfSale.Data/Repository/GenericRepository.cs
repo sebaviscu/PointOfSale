@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using PointOfSale.Data.DBContext;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,8 @@ namespace PointOfSale.Data.Repository
     public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {
         private readonly POINTOFSALEContext _dbcontext;
+        private IDbContextTransaction _transaction;
+
         public GenericRepository(POINTOFSALEContext context)
         {
             try
@@ -153,6 +156,21 @@ namespace PointOfSale.Data.Repository
         public IQueryable<TEntity> QuerySimple()
         {
             return _dbcontext.Set<TEntity>();
+        }
+
+        public async Task BeginTransactionAsync()
+        {
+            _transaction = await _dbcontext.Database.BeginTransactionAsync();
+        }
+
+        public async Task CommitTransactionAsync()
+        {
+            await _transaction.CommitAsync();
+        }
+
+        public async Task RollbackTransactionAsync()
+        {
+            await _transaction.RollbackAsync();
         }
     }
 }

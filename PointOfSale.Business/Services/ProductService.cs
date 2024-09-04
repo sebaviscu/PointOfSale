@@ -181,35 +181,59 @@ namespace PointOfSale.Business.Services
         /// <param name="entity"></param>
         /// <returns></returns>
         /// <exception cref="TaskCanceledException"></exception>
-        public async Task<Product> Add(Product entity)
+        public async Task<string> Add(List<Product> products)
         {
-            var product_exists = await _repository.QuerySimple()
-                .Include(p => p.CodigoBarras)
-                .Where(p => p.CodigoBarras != null)
-                .ToListAsync();
+            var errorMessages = new StringBuilder();
 
-            if (product_exists.Any(p => p.CodigoBarras.Any(pb => entity.CodigoBarras.Any(eb => eb.Codigo == pb.Codigo))))
-            {
-                throw new TaskCanceledException("El codigo de barras ya existe");
-            }
-
-            if (entity.Photo.Length == 0)
-            {
-                entity.Photo = GetDefaultImage();
-            }
+            await _repository.BeginTransactionAsync();
 
             try
             {
-                Product product_created = await _repository.Add(entity);
+                for (int i = 0; i < products.Count; i++)
+                {
+                    var entity = products[i];
+                    try
+                    {
+                        var productExists = await _repository.QuerySimple()
+                            .Include(p => p.CodigoBarras)
+                            .Where(p => p.CodigoBarras != null)
+                            .ToListAsync();
 
-                if (product_created.IdProduct == 0)
-                    throw new TaskCanceledException("Error al crear producto");
+                        if (productExists.Any(p => p.CodigoBarras.Any(pb => entity.CodigoBarras.Any(eb => eb.Codigo == pb.Codigo))))
+                        {
+                            errorMessages.AppendLine($"Error en la fila {i + 1}: El código de barras ya existe.");
+                            continue;
+                        }
 
-                return product_created;
+                        if (entity.Photo.Length == 0)
+                        {
+                            entity.Photo = GetDefaultImage();
+                        }
+
+                        var productCreated = await _repository.Add(entity);
+                        if (productCreated.IdProduct == 0)
+                        {
+                            errorMessages.AppendLine($"Error en la fila {i + 1}: Error al crear el producto.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        errorMessages.AppendLine($"Error en la fila {i + 1}: {ex.Message}");
+                    }
+                }
+
+                if (errorMessages.Length > 0)
+                {
+                    await _repository.RollbackTransactionAsync();
+                    return errorMessages.ToString();
+                }
+                await _repository.CommitTransactionAsync();
+                return string.Empty;
             }
             catch (Exception ex)
             {
-                throw;
+                await _repository.RollbackTransactionAsync();
+                throw new Exception($"Error general al procesar los productos: {ex.Message}");
             }
         }
 
@@ -251,7 +275,7 @@ namespace PointOfSale.Business.Services
                     product.Photo = GetDefaultImage();
                 }
 
-                await UpdateProductTags(product, tags.Select(_=>_.IdTag).ToList());
+                await UpdateProductTags(product, tags.Select(_ => _.IdTag).ToList());
 
 
                 bool response = await _repository.Edit(product);
