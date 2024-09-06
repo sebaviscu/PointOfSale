@@ -428,7 +428,7 @@ $("#btnAnular").on("click", function (event) {
                     if (responseJson.state) {
 
                         swal("Exitoso!", "La venta fué anulada", "success");
-
+                        location.reload();
                     } else {
                         swal("Lo sentimos", responseJson.message, "error");
                     }

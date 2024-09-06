@@ -25,7 +25,6 @@ namespace PointOfSale.Controllers
         private readonly IConverter _converter;
         private readonly IClienteService _clienteService;
         private readonly ITicketService _ticketService;
-        private readonly IShopService _shopService;
         private readonly ILogger<SalesController> _logger;
         private readonly IAfipService _afipFacturacionService;
         private readonly IAjusteService _ajustesService;
@@ -37,7 +36,6 @@ namespace PointOfSale.Controllers
             IConverter converter,
             IClienteService clienteService,
             ITicketService ticketService,
-            IShopService shopService,
             IAfipService afipFacturacionService,
             ILogger<SalesController> logger,
             IAjusteService ajustesService)
@@ -48,7 +46,6 @@ namespace PointOfSale.Controllers
             _converter = converter;
             _clienteService = clienteService;
             _ticketService = ticketService;
-            _shopService = shopService;
             _afipFacturacionService = afipFacturacionService;
             _logger = logger;
             _ajustesService = ajustesService;
@@ -237,7 +234,15 @@ namespace PointOfSale.Controllers
 
                     await RegistrarionClient(newVMSale, user.UserName, user.IdTienda, sale_created);
 
-                    var facturaEmitida = await RegistrationFacturar(model, sale_created, ajustes);
+                    FacturaEmitida facturaEmitida = null;
+                    try
+                    {
+                        facturaEmitida = await RegistrationFacturar(model, sale_created, ajustes);
+                    }
+                    catch (Exception e)
+                    {
+                        gResponse.Message = e.Message;
+                    }
 
                     // si es multiple, no se podra reimprimir el ticket ya que se necesita el idSale y en este caso, hay muchos, ver que podemos hacer
                     if (model.ImprimirTicket && !string.IsNullOrEmpty(ajustes.NombreImpresora))
@@ -515,9 +520,9 @@ namespace PointOfSale.Controllers
 
             try
             {
-                ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
-                _ = await _saleService.AnularSale(idSale);
+                _ = await _saleService.AnularSale(idSale, user.UserName);
 
                 gResponse.State = true;
                 return StatusCode(StatusCodes.Status200OK, gResponse);

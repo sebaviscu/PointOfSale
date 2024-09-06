@@ -2,6 +2,7 @@
 using AFIP.Facturacion.Services;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
 using System;
 using System.IO;
@@ -24,8 +25,6 @@ namespace AFIP.Facturacion
     /// </remarks>
     public class LoginCmsClient
     {
-        public DateTime DateTimeNowArg = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time"));
-
         public bool IsProdEnvironment { get; set; } = false;
         public string WsaaUrlHomologation { get; set; } = "https://wsaahomo.afip.gov.ar/ws/services/LoginCms";
         public string WsaaUrlProd { get; set; } = "https://wsaa.afip.gov.ar/ws/services/LoginCms";
@@ -61,7 +60,7 @@ namespace AFIP.Facturacion
 
         public async Task<WsaaTicket> GetWsaaTicket(AjustesFacturacion ajustes)
         {
-            if (_ticket == null || _ticket.ExpirationTime <= DateTimeNowArg.AddMinutes(1))
+            if (_ticket == null || _ticket.ExpirationTime <= TimeHelper.GetArgentinaTime().AddMinutes(1))
             {
                 var pathCertificate = FileStorageService.ObtenerRutaCertificado(ajustes);
 
@@ -93,7 +92,7 @@ namespace AFIP.Facturacion
             {
                 var ticketJson = File.ReadAllText(ticketCacheFile);
                 var ticket = JsonConvert.DeserializeObject<WsaaTicket>(ticketJson);
-                if (DateTimeNowArg <= ticket.ExpirationTime)
+                if (TimeHelper.GetArgentinaTime() <= ticket.ExpirationTime)
                     return ticket;
             }
 
@@ -114,8 +113,8 @@ namespace AFIP.Facturacion
                 var xmlNodoGenerationTime = XmlLoginTicketRequest.SelectSingleNode("//generationTime");
                 var xmlNodoExpirationTime = XmlLoginTicketRequest.SelectSingleNode("//expirationTime");
                 var xmlNodoService = XmlLoginTicketRequest.SelectSingleNode("//service");
-                xmlNodoGenerationTime.InnerText = DateTimeNowArg.AddMinutes(-10).ToString("s");
-                xmlNodoExpirationTime.InnerText = DateTimeNowArg.AddMinutes(+10).ToString("s");
+                xmlNodoGenerationTime.InnerText = TimeHelper.GetArgentinaTime().AddMinutes(-10).ToString("s");
+                xmlNodoExpirationTime.InnerText = TimeHelper.GetArgentinaTime().AddMinutes(+10).ToString("s");
                 xmlNodoUniqueId.InnerText = Convert.ToString(GlobalUniqueID);
                 xmlNodoService.InnerText = service;
                 Service = service;

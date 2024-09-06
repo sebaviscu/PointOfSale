@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using PointOfSale.Model;
 using AFIP.Facturacion.Model;
+using PointOfSale.Business.Utilities;
 
 namespace PointOfSale.Model.Afip.Factura
 {
@@ -13,59 +14,105 @@ namespace PointOfSale.Model.Afip.Factura
     public class FacturaAFIP
     {
         public CabeceraFacturaAFIP Cabecera { get; set; }
-        public List<DetalleFacturaAFIP> Detalle { get; set; }
+        public List<DetalleFacturaAFIP> Detalle { get; set; } = new List<DetalleFacturaAFIP>();
+        public ComprobanteAsociado ComprobanteAsociado { get; set; }
 
-        public FacturaAFIP()
-        {
-        }
+        public FacturaAFIP() { }
 
+        /// <summary>
+        /// Para Facturar
+        /// </summary>
+        /// <param name="sale"></param>
+        /// <param name="tipoComprobante"></param>
+        /// <param name="nroComprobante"></param>
+        /// <param name="ptoVenta"></param>
+        /// <param name="documento"></param>
         public FacturaAFIP(Sale sale, TipoComprobante tipoComprobante, int nroComprobante, int ptoVenta, long documento)
         {
-            Cabecera = new CabeceraFacturaAFIP()
+            Cabecera = CrearCabecera(tipoComprobante, ptoVenta);
+            var (importeNeto, importeIVA) = CalcularImportes(sale.Total.Value, tipoComprobante);
+            var tipoDocumento = ObtenerTipoDocumento(tipoComprobante, documento);
+            AgregarDetalle(sale.RegistrationDate.Value, nroComprobante, documento, tipoDocumento, importeNeto, importeIVA);
+        }
+
+        /// <summary>
+        /// Para Notas de Credito
+        /// </summary>
+        /// <param name="tipoComprobante"></param>
+        /// <param name="nroComprobante"></param>
+        /// <param name="facturaEmitida"></param>
+        public FacturaAFIP(TipoComprobante tipoComprobante, int nroComprobante, FacturaEmitida facturaEmitida)
+        {
+            Cabecera = CrearCabecera(tipoComprobante, facturaEmitida.PuntoVenta);
+            ComprobanteAsociado = CrearComprobanteAsociado(tipoComprobante, facturaEmitida);
+            var tipoDocumento = ObtenerTipoDocumento(tipoComprobante, facturaEmitida.NroDocumento);
+            AgregarDetalle(TimeHelper.GetArgentinaTime(), nroComprobante, facturaEmitida.NroDocumento, tipoDocumento, facturaEmitida.ImporteNeto, facturaEmitida.ImporteIVA);
+        }
+
+        private CabeceraFacturaAFIP CrearCabecera(TipoComprobante tipoComprobante, int ptoVenta)
+        {
+            return new CabeceraFacturaAFIP
             {
                 TipoComprobante = tipoComprobante,
                 CantidadRegistros = 1,
                 PuntoVenta = ptoVenta
             };
+        }
 
-            Detalle = new List<DetalleFacturaAFIP>();
-
-            var tipoDocumento = TipoDocumento.CUIL;
-            decimal importeNeto = sale.Total.Value;
+        private (decimal, decimal) CalcularImportes(decimal total, TipoComprobante tipoComprobante)
+        {
+            decimal importeNeto = total;
             decimal importeIVA = 0;
 
             if (tipoComprobante.Id != TipoComprobante.Factura_C.Id)
             {
-                decimal total = sale.Total.Value;
-                importeNeto = Math.Truncate(total / 1.21m * 100) / 100; // Calcular el importe neto sin IVA y truncar a dos decimales
-                importeIVA = Math.Truncate((total - importeNeto) * 100) / 100; // Calcular el importe del IVA y truncar a dos decimales
+                importeNeto = Math.Truncate(total / 1.21m * 100) / 100;
+                importeIVA = Math.Truncate((total - importeNeto) * 100) / 100;
 
-                // Ajustar el importeIVA para asegurar que la suma sea igual al total
                 if (importeNeto + importeIVA != total)
                 {
                     importeIVA = total - importeNeto;
                 }
             }
-            if(tipoComprobante.Id == TipoComprobante.Factura_C.Id || tipoComprobante.Id == TipoComprobante.Factura_B.Id)
-            {
-                // si es B o C, tiene que ser DNI
-                // si el importe es menor a mucha plata, poner el dni en 0 y poer otros
-                tipoDocumento = documento == 0 ? TipoDocumento.DocOtro : TipoDocumento.DNI;
 
-            } else if (tipoComprobante.Id == TipoComprobante.Factura_A.Id)
+            return (importeNeto, importeIVA);
+        }
+
+        private TipoDocumento ObtenerTipoDocumento(TipoComprobante tipoComprobante, long documento)
+        {
+            if (tipoComprobante.Id == TipoComprobante.Factura_C.Id || tipoComprobante.Id == TipoComprobante.Factura_B.Id || tipoComprobante.Id == TipoComprobante.NotaCredito_B.Id)
             {
-                // si es A, tiene que ser CUIT y NroDocumento no puede ser igual al del emisor
-                tipoDocumento = TipoDocumento.CUIT;
+                return documento == 0 ? TipoDocumento.DocOtro : TipoDocumento.DNI;
+            }
+            else if (tipoComprobante.Id == TipoComprobante.Factura_A.Id || tipoComprobante.Id == TipoComprobante.NotaCredito_A.Id)
+            {
+                return TipoDocumento.CUIT;
             }
 
-            var detalleNew = new DetalleFacturaAFIP()
+            return TipoDocumento.DocOtro;
+        }
+
+        private ComprobanteAsociado CrearComprobanteAsociado(TipoComprobante tipoComprobante, FacturaEmitida facturaEmitida)
+        {
+            var tipoFactura = tipoComprobante.Id == TipoComprobante.NotaCredito_A.Id ? TipoComprobante.Factura_A : TipoComprobante.Factura_B;
+            return new ComprobanteAsociado
+            {
+                NroComprobante = facturaEmitida.NroFactura.Value,
+                PuntoVenta = facturaEmitida.PuntoVenta,
+                TipoComprobante = tipoFactura.Id
+            };
+        }
+
+        private void AgregarDetalle(DateTime fechaComprobante, int nroComprobante, long documento, TipoDocumento tipoDocumento, decimal importeNeto, decimal importeIVA)
+        {
+            var detalleNew = new DetalleFacturaAFIP
             {
                 Concepto = Concepto.Producto,
                 TipoDocumento = tipoDocumento,
-                NroDocumento = documento, // Número de documento del comprador (0 consumidor final) 
+                NroDocumento = documento,
                 NroComprobanteDesde = nroComprobante,
                 NroComprobanteHasta = nroComprobante,
-                FechaComprobante = sale.RegistrationDate,
+                FechaComprobante = fechaComprobante,
                 ImporteTotalConc = 0,
                 ImporteNeto = (double)importeNeto,
                 ImporteOpExento = 0,
@@ -77,4 +124,5 @@ namespace PointOfSale.Model.Afip.Factura
             Detalle.Add(detalleNew);
         }
     }
+
 }

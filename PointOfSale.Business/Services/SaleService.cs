@@ -3,6 +3,7 @@ using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
+using PointOfSale.Model.Afip.Factura;
 using System.Globalization;
 using static PointOfSale.Model.Enum;
 
@@ -13,10 +14,13 @@ namespace PointOfSale.Business.Services
         private readonly IGenericRepository<Product> _repositoryProduct;
         private readonly IGenericRepository<Cliente> _repositoryCliente;
         private readonly IGenericRepository<ListaPrecio> _repositoryListaPrecio;
+        private readonly IGenericRepository<FacturaEmitida> _repositoryFacturaEmitida;
         private readonly ISaleRepository _repositorySale;
         private readonly ITypeDocumentSaleService _rTypeNumber;
         private readonly IProductService _rProduct;
         private readonly ITurnoService _turnoService;
+        private readonly IAfipService _afipService;
+
 
         public SaleService(
             IGenericRepository<Product> repositoryProduct,
@@ -25,7 +29,9 @@ namespace PointOfSale.Business.Services
             ITypeDocumentSaleService rTypeNumber,
             IProductService rProduct,
             ITurnoService turnoService,
-            IGenericRepository<ListaPrecio> repositoryListaPrecio)
+            IGenericRepository<ListaPrecio> repositoryListaPrecio,
+            IAfipService afipService,
+            IGenericRepository<FacturaEmitida> repositoryFacturaEmitida)
         {
             _repositoryProduct = repositoryProduct;
             _repositorySale = repositorySale;
@@ -34,43 +40,9 @@ namespace PointOfSale.Business.Services
             _rProduct = rProduct;
             _turnoService = turnoService;
             _repositoryListaPrecio = repositoryListaPrecio;
+            _afipService = afipService;
+            _repositoryFacturaEmitida = repositoryFacturaEmitida;
         }
-
-        //public async Task<List<Product>> GetProducts(string search)
-        //{
-        //    var list = new List<Product>();
-
-        //    // Si la búsqueda contiene espacios, dividimos la búsqueda en múltiples términos
-        //    if (search.Contains(' '))
-        //    {
-        //        var split = search.Split(' ');
-
-        //        // Construcción de la consulta SQL con LIKE para cada término de búsqueda
-        //        var query = "SELECT * FROM Product WHERE ";
-        //        for (int i = 0; i < split.Length; i++)
-        //        {
-        //            query += $"description LIKE '%{split[i]}%' ";
-        //            if (i < split.Length - 1) query += " AND ";
-        //        }
-
-        //        // Ejecutar la consulta con SQL crudo (mejorable usando parámetros SQL para evitar inyecciones)
-        //        list = _repositoryProduct.SqlRaw(query).ToList();
-        //    }
-        //    else
-        //    {
-        //        // Usar IQueryable con Entity Framework para optimizar la consulta
-        //        var query = await _repositoryProduct.Query(p =>
-        //                       p.IsActive == true &&
-        //                       (p.BarCode.Contains(search) || p.Description.Contains(search)));
-
-        //        // Incluir las propiedades de navegación necesarias
-        //        list = await query.Include(c => c.IdCategoryNavigation)
-        //                          .Include(p => p.ListaPrecios)
-        //                          .ToListAsync();
-        //    }
-
-        //    return list;
-        //}
 
 
         public async Task<List<ListaPrecio>> GetProductsSearchAndIdLista(string search, ListaDePrecio listaPrecios)
@@ -224,13 +196,21 @@ namespace PointOfSale.Business.Services
             return sale_found;
         }
 
-        public async Task<Sale> AnularSale(int idSale)
+        public async Task<Sale> AnularSale(int idSale, string registrationUser)
         {
             Sale sale_found = await _repositorySale.Get(c => c.IdSale == idSale);
 
             sale_found.IsDelete = true;
 
             bool response = await _repositorySale.Edit(sale_found);
+
+            var facruturasQuery = await _repositoryFacturaEmitida.Query(v => v.IdSale == idSale);
+            var facturas = facruturasQuery.ToList();
+
+            foreach (var f in facturas)
+            {
+                await _afipService.NotaCredito(f.IdFacturaEmitida, registrationUser);
+            }
 
             if (!response)
                 throw new TaskCanceledException("Venta no se pudo eliminar.");

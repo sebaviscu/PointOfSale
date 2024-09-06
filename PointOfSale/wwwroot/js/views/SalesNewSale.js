@@ -611,6 +611,10 @@ function registrationSale(currentTabId) {
 
         if (responseJson.state) {
 
+            if (responseJson.message != null) {
+                swal("Error al Facturar", "La venta fué registrada correctamente, pero no se ha podido facturar. Error en AFIP: \n" + responseJson.message, "warning");
+            }
+
             let nuevaVentaSpan = document.getElementById('profile-tab' + currentTabId).querySelector('span');
             if (nuevaVentaSpan != null) {
                 nuevaVentaSpan.textContent = responseJson.object.saleNumber;

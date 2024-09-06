@@ -148,10 +148,10 @@ namespace PointOfSale.Utilities.Automapper
             .ForMember(dest => dest.PriceWeb, opt => opt.MapFrom(src => Convert.ToDecimal(src.PriceWeb)))
             .ForMember(dest => dest.PrecioFormatoWeb, opt => opt.MapFrom(src => Convert.ToDecimal(src.PrecioFormatoWeb)))
             .ForMember(dest => dest.ProductTags, opt => opt.Ignore());
-            
+
 
             CreateMap<ListaPrecio, VmProductsSelect2>()
-            .ForMember(destiny =>destiny.IdProduct, opt => opt.MapFrom(source => source.Producto != null ? source.Producto.IdProduct : 0))
+            .ForMember(destiny => destiny.IdProduct, opt => opt.MapFrom(source => source.Producto != null ? source.Producto.IdProduct : 0))
             .ForMember(destiny => destiny.Description, opt => opt.MapFrom(source => source.Producto != null ? source.Producto.Description : string.Empty))
             .ForMember(destiny => destiny.IdCategory, opt => opt.MapFrom(source => source.Producto != null ? source.Producto.IdCategory : 0))
             .ForMember(destiny => destiny.PhotoBase64, opt => opt.MapFrom(source => source.Producto != null ? Convert.ToBase64String(ImageHelper.ResizeImage(source.Producto.Photo, 60, 60)) : string.Empty))
@@ -370,7 +370,7 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<Pedido, VMPedido>()
                                 .ForMember(user => user.RegistrationDateString, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate.ToString("dd/MM/yyyy HH:mm")))
                                 .ForMember(user => user.FechaCerradoString, opt => opt.MapFrom(userEdit => userEdit.FechaCerrado.HasValue ? userEdit.FechaCerrado.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty))
-                                .ForMember(user => user.ImporteEstimadoString, opt => opt.MapFrom(userEdit => !userEdit.ImporteFinal.HasValue || userEdit.ImporteFinal.Value == 0 ?  "$" + userEdit.ImporteEstimado.Value.ToString("F2")+" * " : "$" + userEdit.ImporteFinal.Value.ToString("F2")));
+                                .ForMember(user => user.ImporteEstimadoString, opt => opt.MapFrom(userEdit => !userEdit.ImporteFinal.HasValue || userEdit.ImporteFinal.Value == 0 ? "$" + userEdit.ImporteEstimado.Value.ToString("F2") + " * " : "$" + userEdit.ImporteFinal.Value.ToString("F2")));
 
             CreateMap<VMPedidoProducto, PedidoProducto>();
             CreateMap<PedidoProducto, VMPedidoProducto>();
@@ -456,7 +456,7 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<VMVentasPorTipoDeVenta, VentasPorTipoDeVenta>().ReverseMap();
             CreateMap<Tag, VMTag>().ReverseMap();
 
-            CreateMap<VMFacturaEmitida, FacturaEmitida>();
+            CreateMap<FacturaEmitida, VMFacturaEmitida>().ReverseMap();
 
             CreateMap<FacturaEmitida, VMFacturaEmitida>()
                     .ForMember(user => user.NroFacturaString, opt => opt.MapFrom(userEdit => userEdit.NroFactura.Value != 0 ? userEdit.NroFactura.Value.ToString("D8") : string.Empty))

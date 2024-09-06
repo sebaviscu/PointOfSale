@@ -50,6 +50,21 @@ namespace AFIP.Facturacion.Extensions
                 }
             };
 
+            if(facturaAFIP.ComprobanteAsociado != null)
+            {
+                facturaFinal.FeDetReq.First().CbtesAsoc = new List<CbteAsoc>()
+                {
+                    new CbteAsoc()
+                    {
+                        Tipo = facturaAFIP.ComprobanteAsociado.TipoComprobante,
+                        Nro = facturaAFIP.ComprobanteAsociado.NroComprobante,
+                        PtoVta = facturaAFIP.ComprobanteAsociado.PuntoVenta,
+                        CbteFch = facturaAFIP.ComprobanteAsociado.FechaComprobante?.ToAFIPDateString(),
+                        Cuit = facturaAFIP.ComprobanteAsociado.Cuil?.ToString()
+                    }
+                };
+            }
+
             if (detalle.ImporteIVA > 0)
             {
                 facturaFinal.FeDetReq.First().Iva = new List<AlicIva>

@@ -21,20 +21,11 @@ const BASIC_MODEL_FACTURACION = {
     importeIVA: 0,
     qr: '',
     sale: null,
-    cliente: null
+    cliente: null,
+    facturaAnulada: null,
+    idFacturaAnulada: null
 }
 
-//const BASIC_MODEL_AJUSTES_FACTURACION = {
-//    idAjustesFacturacion: 0,
-//    logo: "",
-//    cuit: 0,
-//    condicionIva: null,
-//    puntoVenta: 0,
-//    certificadoFechaInicio: null,
-//    certificadoFechaCaducidad: null,
-//    certificadoPassword: "",
-//    certificadoNombre: ""
-//}
 
 $(document).ready(function () {
 
@@ -90,7 +81,12 @@ $(document).ready(function () {
                     return data != '' ? `${row.puntoVentaString}-${data} ` : '';
                 }
             },
-            { "data": "sale.typeDocumentSale" },
+            {
+                "data": "sale.typeDocumentSale",
+                "render": function (data, type, row) {
+                    return data ? data : '';
+                }
+            },
             {
                 "data": "importeTotal", render: function (data, type, row) {
                     return `$ ${data}`;
@@ -129,16 +125,30 @@ const openModalFactura = (model = BASIC_MODEL_FACTURACION) => {
     $("#txtFechaEmision").val(moment(model.registrationDate).format('DD/MM/YYYY HH:mm'));
     $("#txtTipoFactura").val(model.tipoFactura);
     $("#txtNumeroFactura").val(model.nroFacturaString);
-    $("#txtFormaPago").val(model.sale.typeDocumentSale);
+    $("#txtFormaPago").val(model.sale != null ? model.sale.typeDocumentSale : '');
     $("#txtImporteTotal").val(model.importeTotal);
     $("#txtImporteNeto").val(model.importeNeto);
     $("#txtImporteIva").val(model.importeIVA);
+    $("#txtNumeroVenta").val(model.sale != null? model.sale.saleNumber : '');
     $("#txtCae").val(model.cae);
     $("#txtVencimientoCae").val(moment(model.caeVencimiento).format('DD/MM/YYYY'));
     $("#txtRegistrationUser").val(model.registrationUser);
     $("#txtPuntoVenta").val(model.puntoVentaString);
     $("#txtCuil").val(`${model.tipoDocumento}: ${model.nroDocumento}`);
-    $("#btnVerVenta").attr("sale-number", model.sale.saleNumber);
+    $("#btnVerVenta").attr("sale-number", model.sale != null ? model.sale.saleNumber : '');
+
+    if (model.facturaAnulada != null) {
+
+        $("#divFormaPago").hide();
+        $("#divFacuraAnulada").show();
+        $("#btnAnularFactura").hide();
+        $("#txtFacuraAnulada").val(model.facturaAnulada);
+    }
+    else {
+        $("#divFormaPago").show();
+        $("#btnAnularFactura").show();
+        $("#divFacuraAnulada").hide();
+    }
 
     if (model.observaciones != null) {
         const divError = document.getElementById("divError");
@@ -147,7 +157,9 @@ const openModalFactura = (model = BASIC_MODEL_FACTURACION) => {
         if (model.resultado === "A") {
             divError.className = "alert alert-warning d-flex align-items-center";
             document.getElementById("alertTitle").textContent = "ALERTA: ";
+            $("#btnAnularFactura").show();
         } else {
+            $("#btnAnularFactura").hide();
             divError.className = "alert alert-danger d-flex align-items-center";
             document.getElementById("alertTitle").textContent = "ERROR: ";
         }
@@ -228,4 +240,47 @@ $("#btnConfiguracion").on("click", function () {
                 swal("Lo sentimos", responseJson.message, "error");
             }
         })
+})
+
+
+$("#btnAnularFactura").on("click", function (event) {
+    event.preventDefault();
+    swal({
+        title: "¿Está seguro?",
+        text: `Anular la factura`,
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonClass: "btn-danger",
+        confirmButtonText: "Si, anular",
+        cancelButtonText: "No, cancelar",
+        closeOnConfirm: false,
+        closeOnCancel: true
+    },
+        function (respuesta) {
+
+            if (respuesta) {
+
+                let idFact = $("#txtIdFacturacion").val();
+
+                $(".showSweetAlert").LoadingOverlay("show")
+
+                fetch(`/Admin/NotaCredito?idFacturaEmitida=${idFact}`, {
+                    method: "DELETE"
+                }).then(response => {
+                    $(".showSweetAlert").LoadingOverlay("hide")
+                    return response.json();
+                }).then(responseJson => {
+                    if (responseJson.state) {
+
+                        swal("Exitoso!", "La factura fué anulada", "success");
+
+                    } else {
+                        swal("Lo sentimos", responseJson.message, "error");
+                    }
+                })
+                    .catch((error) => {
+                        $(".showSweetAlert").LoadingOverlay("hide")
+                    })
+            }
+        });
 })

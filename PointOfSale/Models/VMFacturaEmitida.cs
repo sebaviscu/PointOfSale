@@ -24,6 +24,8 @@ namespace PointOfSale.Models
         public decimal ImporteNeto { get; set; }
         public decimal ImporteIVA { get; set; }
         public string? QR { get; set; }
+        public int? IdFacturaAnulada { get; set; }
+        public string? FacturaAnulada { get; set; }
 
         public int? IdSale { get; set; }
         public VMSale? Sale { get; set; }

@@ -35,5 +35,8 @@ namespace PointOfSale.Model.Afip.Factura
 
         public int IdTienda { get; set; }
         public Tienda? Tienda { get; set; }
+
+        public int? IdFacturaAnulada { get; set; }
+        public string? FacturaAnulada { get; set; }
     }
 }

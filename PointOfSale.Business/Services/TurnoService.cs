@@ -140,7 +140,9 @@ namespace PointOfSale.Business.Services
 
                 if (venta != null)
                 {
-                    if (item.Value - 50 > venta.Total || venta.Total > item.Value + 50)
+                    var coraInferior = item.Value * 0.95m;
+                    var coraSuperior = item.Value * 1.05m;
+                    if (coraInferior > venta.Total || venta.Total > coraSuperior)
                     {
                         respError += $"Existen diferencias en el tipo de ventas  '{venta.Descripcion}'. \n";
                     }

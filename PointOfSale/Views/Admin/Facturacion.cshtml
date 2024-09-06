@@ -51,7 +51,7 @@
 
 <!-- Grid Modal -->
 <div class="modal fade" id="modalData" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalGridTitle">Detalle Factura</h5>
@@ -60,7 +60,7 @@
                 </button>
             </div>
             <div class="modal-body" style="padding-bottom: 0px;">
-                <input type="hidden" value="0" id="txtId">
+                <input type="hidden" value="0" id="txtIdFacturacion">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="row mb-3">
@@ -80,9 +80,13 @@
                                 <label for="txtNumeroFactura">Nro Factura</label>
                                 <input type="text" class="form-control form-control-sm" id="txtNumeroFactura" name="Número Factura" disabled>
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-3" id="divFormaPago">
                                 <label for="txtFormaPago">Forma de Pago</label>
                                 <input type="text" class="form-control form-control-sm" id="txtFormaPago" name="Forma de Pago" disabled>
+                            </div>
+                            <div class="form-group col-md-3" style="accent-color" id="divFacuraAnulada">
+                                <label for="txtFacuraAnulada">Factura anulada</label>
+                                <input type="text" class="form-control form-control-sm" id="txtFacuraAnulada" name="Factura Anulada" disabled>
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -90,13 +94,17 @@
                                 <label for="txtCuil">Doc. Cliente</label>
                                 <input type="text" class="form-control form-control-sm" id="txtCuil" name="Cuil Cliente" disabled>
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-2">
                                 <label for="txtCae">CAE</label>
                                 <input type="text" class="form-control form-control-sm" id="txtCae" name="CAE" disabled>
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-2">
                                 <label for="txtVencimientoCae">Vencimiento CAE</label>
                                 <input type="text" class="form-control form-control-sm" id="txtVencimientoCae" name="Vencimiento CAE" disabled>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label for="txtNumeroVenta">Nro Venta</label>
+                                <input type="text" class="form-control form-control-sm" id="txtNumeroVenta" name="Numero de Venta" disabled>
                             </div>
                             <div class="form-group col-md-3">
                                 <label for="txtRegistrationUser">Registrado por</label>
@@ -132,6 +140,7 @@
                                 </div>
                             </div>
                             <div class="form-group col-md-3 d-flex justify-content-around align-items-center">
+                                <button class="btn btn-sm btn-danger" id="btnAnularFactura"><i class="mdi mdi-cancel"></i> Anular</button>
                                 <button type="button" class="btn btn-secondary btn-sm" id="bntAfip"><i class="mdi mdi-cash me-1"></i>&nbsp;AFIP</button>
                                 <button type="button" class="btn btn-primary btn-sm" id="btnVerVenta"><i class="mdi mdi-forward me-1"></i>&nbsp;Ver Venta</button>
                             </div>

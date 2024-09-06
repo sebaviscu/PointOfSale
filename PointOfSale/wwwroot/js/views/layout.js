@@ -341,7 +341,7 @@ function renderVentasPorTipoVenta(ventasPorTipoVenta, importeInicioCaja, totalMo
 
     crearFilaTotalesTurno(contenedor, "TOTAL INICIO CAJA", importeInicioCaja, true, "txtInicioCajaCierre");
 
-    if (totalMovimientosCaja != null) {
+    if (totalMovimientosCaja != null && totalMovimientosCaja != 0) {
         crearFilaTotalesTurno(contenedor, "MOV. DE CAJA", totalMovimientosCaja, true, 'txtMovimientoCaja');
     }
 

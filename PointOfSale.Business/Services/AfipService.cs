@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using static PointOfSale.Model.Enum;
 using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
 
 namespace PointOfSale.Business.Services
 {
@@ -26,10 +27,10 @@ namespace PointOfSale.Business.Services
         private readonly ISaleRepository _saleRepository;
         private readonly ITypeDocumentSaleService _typeDocumentSaleService;
 
-        public AfipService(IGenericRepository<FacturaEmitida> repository, 
-            IAFIPFacturacionService afipFacturacionService, 
-            IAjusteService ajusteService, 
-            IFileStorageService fileStorageService, 
+        public AfipService(IGenericRepository<FacturaEmitida> repository,
+            IAFIPFacturacionService afipFacturacionService,
+            IAjusteService ajusteService,
+            IFileStorageService fileStorageService,
             INotificationService notificationRepository,
             ISaleRepository saleRepository,
             ITypeDocumentSaleService typeDocumentSaleService)
@@ -43,14 +44,9 @@ namespace PointOfSale.Business.Services
             _typeDocumentSaleService = typeDocumentSaleService;
         }
 
-        private async Task<FacturaEmitida> Facturar(Sale sale_created, string? nroDocumento, int? idCliente, string registrationUser)
+        private async Task<FacturaEmitida> Facturar(Sale sale, string? nroDocumento, int? idCliente, string registrationUser, AjustesFacturacion ajustes)
         {
-            if (sale_created.TypeDocumentSaleNavigation == null)
-            {
-                throw new Exception("El tipo de documento no existe");
-            }
-
-            var ajustes = await _ajusteService.GetAjustesFacturacion(sale_created.IdTienda);
+            ValidarSale(sale);
 
             var validCert = ValidateCertificate(ajustes);
             if (validCert != string.Empty)
@@ -58,38 +54,110 @@ namespace PointOfSale.Business.Services
                 throw new Exception(validCert);
             }
 
-            var tipoFactura = sale_created.TypeDocumentSaleNavigation.TipoFactura;
-            if (tipoFactura == TipoFactura.A && nroDocumento == null)
-            {
-                throw new Exception("La Factura A tiene que tener un número de documento");
-            }
-
-            var documentoAFacturar = ((tipoFactura == TipoFactura.A || tipoFactura == TipoFactura.B) && nroDocumento != null)
-                ? Convert.ToInt64(nroDocumento)
-                : defaultDocumento;
+            var tipoFactura = ObtenerTipoFactura(sale, nroDocumento);
+            var documentoAFacturar = ObtenerDocumentoAFacturar(tipoFactura, nroDocumento);
 
             var tipoDoc = TipoComprobante.ConvertTipoFactura(tipoFactura);
+            var nroFactura = await ObtenerNuevoNumeroFactura(ajustes, tipoDoc);
 
-            var ultimoComprobanteResponse = await _afipFacturacionService.GetUltimoComprobanteAutorizadoAsync(ajustes, ajustes.PuntoVenta.Value, tipoDoc);
-            var nroFactura = ultimoComprobanteResponse.CbteNro + 1;
-
-            var factura = new FacturaAFIP(sale_created, tipoDoc, nroFactura, ajustes.PuntoVenta.Value, documentoAFacturar);
+            var factura = new FacturaAFIP(sale, tipoDoc, nroFactura, ajustes.PuntoVenta.Value, documentoAFacturar);
             var response = await _afipFacturacionService.FacturarAsync(ajustes, factura);
 
+            var facturaEmitida = CrearFacturaEmitida(response, nroFactura, idCliente, registrationUser, factura, sale.IdTienda, sale.IdSale);
+
+            return await _repository.Add(facturaEmitida);
+        }
+
+        private async Task<FacturaEmitida> Credito(string registrationUser, AjustesFacturacion ajustes, FacturaEmitida facturaEmitida)
+        {
+            var validCert = ValidateCertificate(ajustes);
+            if (validCert != string.Empty)
+            {
+                throw new Exception(validCert);
+            }
+
+            var tipoDoc = ObtenerTipoNotaCredito(facturaEmitida);
+
+            var nroFactura = await ObtenerNuevoNumeroFactura(ajustes, tipoDoc);
+
+            var factura = new FacturaAFIP(tipoDoc, nroFactura, facturaEmitida);
+            var response = await _afipFacturacionService.FacturarAsync(ajustes, factura);
+
+            var creditoEmitido = CrearFacturaEmitida(response, nroFactura, facturaEmitida.IdCliente, registrationUser, factura, facturaEmitida.IdTienda, null);
+            creditoEmitido.IdFacturaAnulada = facturaEmitida.IdFacturaEmitida;
+            creditoEmitido.FacturaAnulada = $"{facturaEmitida.TipoFactura} {facturaEmitida.NumeroFacturaString}";
+
+            return await _repository.Add(creditoEmitido);
+        }
+
+        private static TipoComprobante ObtenerTipoNotaCredito(FacturaEmitida facturaEmitida)
+        {
+            var tipoDoc = TipoComprobante.NotaCredito_B;
+
+            switch (facturaEmitida.TipoFactura)
+            {
+                case "Factura A":
+                    tipoDoc = TipoComprobante.NotaCredito_A;
+                    break;
+                case "Factura B":
+                    tipoDoc = TipoComprobante.NotaCredito_B;
+                    break;
+                case "Factura C":
+                    tipoDoc = TipoComprobante.NotaCredito_C;
+                    break;
+            }
+
+            return tipoDoc;
+        }
+
+        private void ValidarSale(Sale sale)
+        {
+            if (sale.TypeDocumentSaleNavigation == null)
+            {
+                throw new Exception("El tipo de documento no existe");
+            }
+        }
+
+        private TipoFactura ObtenerTipoFactura(Sale sale, string? nroDocumento)
+        {
+            var tipoFactura = sale.TypeDocumentSaleNavigation.TipoFactura;
+            if (tipoFactura == TipoFactura.A && nroDocumento == null)
+            {
+                throw new Exception("La Factura A tiene que tener un número de documento");
+            }
+            return tipoFactura;
+        }
+
+        private long ObtenerDocumentoAFacturar(TipoFactura tipoFactura, string? nroDocumento)
+        {
+            return (tipoFactura == TipoFactura.A || tipoFactura == TipoFactura.B) && nroDocumento != null
+                ? Convert.ToInt64(nroDocumento)
+                : defaultDocumento;
+        }
+
+        private async Task<int> ObtenerNuevoNumeroFactura(AjustesFacturacion ajustes, TipoComprobante tipoDoc)
+        {
+            var ultimoComprobanteResponse = await _afipFacturacionService.GetUltimoComprobanteAutorizadoAsync(ajustes, ajustes.PuntoVenta.Value, tipoDoc);
+            return ultimoComprobanteResponse.CbteNro + 1;
+        }
+
+        private FacturaEmitida CrearFacturaEmitida(FacturacionResponse response, int nroFactura, int? idCliente, string registrationUser, FacturaAFIP factura, int idTienda, int? idSale)
+        {
+
             var facturaEmitida = FacturaExtension.ToFacturaEmitida(response.FECAEDetResponse.FirstOrDefault());
-            facturaEmitida.IdSale = sale_created.IdSale;
+
+            facturaEmitida.IdSale = idSale;
             facturaEmitida.IdCliente = idCliente != 0 ? idCliente : null;
             facturaEmitida.RegistrationUser = registrationUser;
             facturaEmitida.NroFactura = string.IsNullOrEmpty(facturaEmitida.Observaciones) ? nroFactura : 0;
-            facturaEmitida.PuntoVenta = ajustes.PuntoVenta.Value;
-            facturaEmitida.IdTienda = sale_created.IdTienda;
-            facturaEmitida.TipoFactura = tipoDoc.Description;
+            facturaEmitida.PuntoVenta = factura.Cabecera.PuntoVenta;
+            facturaEmitida.IdTienda = idTienda;
+            facturaEmitida.TipoFactura = factura.Cabecera.TipoComprobante.Description;
             facturaEmitida.ImporteTotal = (decimal)factura.Detalle.First().ImporteTotal;
             facturaEmitida.ImporteNeto = (decimal)factura.Detalle.First().ImporteNeto;
             facturaEmitida.ImporteIVA = (decimal)factura.Detalle.First().ImporteIVA;
 
-            var facturaEmitidaResponse = await _repository.Add(facturaEmitida);
-            return facturaEmitidaResponse;
+            return facturaEmitida;
         }
 
         public async Task<List<FacturaEmitida>> GetAll(int idTienda)
@@ -185,29 +253,41 @@ namespace PointOfSale.Business.Services
             }
         }
 
+
         public async Task<FacturaEmitida?> FacturarVenta(Sale sale, Ajustes ajustes, string cuil, int? idCliente)
         {
-            if (!ajustes.FacturaElectronica.HasValue || (ajustes.FacturaElectronica.HasValue && !ajustes.FacturaElectronica.Value))
+            if (!ajustes.FacturaElectronica.HasValue || !ajustes.FacturaElectronica.Value)
             {
                 return null;
             }
 
             FacturaEmitida facturaEmitida = null;
+            var tipoVenta = await _typeDocumentSaleService.Get(sale.IdTypeDocumentSale.Value);
 
-            if (ajustes.FacturaElectronica.HasValue && ajustes.FacturaElectronica.Value)
+            if ((int)tipoVenta.TipoFactura < 3)
             {
-                var tipoVenta = await _typeDocumentSaleService.Get(sale.IdTypeDocumentSale.Value);
+                var ajustesFacturacion = await _ajusteService.GetAjustesFacturacion(sale.IdTienda);
 
-                if ((int)tipoVenta.TipoFactura < 3)
-                {
-                    sale.TypeDocumentSaleNavigation = tipoVenta;
+                sale.TypeDocumentSaleNavigation = tipoVenta;
 
-                    facturaEmitida = await Facturar(sale, cuil, idCliente, sale.RegistrationUser);
-                    sale.IdFacturaEmitida = facturaEmitida.IdFacturaEmitida;
-                    _ = await _saleRepository.Edit(sale);
-                }
+                facturaEmitida = await Facturar(sale, cuil, idCliente, sale.RegistrationUser, ajustesFacturacion);
+
+
+                sale.IdFacturaEmitida = facturaEmitida?.IdFacturaEmitida;
+                _ = await _saleRepository.Edit(sale);
             }
+
             return facturaEmitida;
         }
+
+        public async Task<FacturaEmitida?> NotaCredito(int idFacturaemitida, string registrationUser)
+        {
+            var facturaEmitida = await _repository.First(_=>_.IdFacturaEmitida == idFacturaemitida);
+
+            var ajustesFacturacion = await _ajusteService.GetAjustesFacturacion(facturaEmitida.IdTienda);
+
+            return await Credito(registrationUser, ajustesFacturacion, facturaEmitida);
+        }
+
     }
 }

@@ -212,35 +212,12 @@ function cargarSelect2Tags() {
         removeItemButton: true,
         maxItemCount: 3,
         searchResultLimit: 10,
-        placeholderValue: 'Selecciona hasta 3 tags',
         shouldSort: false,
         noResultsText: 'No se encontraron resultados',
         loadingText: 'Cargando...',
         itemSelectText: 'Presiona para seleccionar',
         duplicateItemsAllowed: false,
-        searchPlaceholderValue: 'Buscar...',
-        callbackOnCreateTemplates: function (strToEl) {
-            const classNames = this.config.classNames;
-            return {
-                item: (classNames, data) => {
-                    return strToEl(`
-                        <div class="${classNames.item} ${data.highlighted ? classNames.highlightedState : classNames.itemSelectable
-                        }" data-item data-id="${data.id}" data-value="${data.value}" ${data.active ? 'aria-selected="true"' : ''} ${data.disabled ? 'aria-disabled="true"' : ''}>
-                            ${data.label}
-                        </div>
-                    `);
-                },
-                choice: (classNames, data) => {
-                    return strToEl(`
-                        <div class="${classNames.item} ${data.highlighted ? classNames.highlightedState : classNames.itemSelectable
-                        }" data-select-text="${this.config.itemSelectText}" data-choice data-id="${data.id}" data-value="${data.value}" ${data.disabled ? 'data-choice-disabled aria-disabled="true"' : 'data-choice-selectable'}>
-                            <span style="background-color:${data.customProperties.color}; width:20px; height:20px; display:inline-block; margin-right:10px; border-radius:4px;"></span>
-                            ${data.label}
-                        </div>
-                    `);
-                },
-            };
-        },
+        searchPlaceholderValue: 'Buscar...'
     });
 
     // Cargar datos desde el servidor
@@ -250,7 +227,7 @@ function cargarSelect2Tags() {
             const tags = data.data.map(tag => ({
                 value: tag.idTag,
                 label: tag.nombre,
-                customProperties: { color: tag.color },
+                //customProperties: { color: tag.color },
             }));
             tagSelector.setChoices(tags, 'value', 'label', false);
         });
