@@ -1,16 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using PointOfSale.Business.Contracts;
+﻿using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using static iTextSharp.text.pdf.events.IndexEvents;
 
 namespace PointOfSale.Business.Services
 {

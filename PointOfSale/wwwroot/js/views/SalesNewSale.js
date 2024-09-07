@@ -666,7 +666,10 @@ function disableAfterVenta(tabID) {
     $('#txtObservaciones' + tabID).prop('disabled', true);
     $('#btnFinalizeSaleParcial' + tabID).prop('disabled', true);
     $('#btnFinalizeSaleParcial' + tabID).hide()
+
     $('#btnImprimirTicket' + tabID).prop('hidden', false);
+    $('#btnTicketEmail' + tabID).prop('hidden', false);
+    $('#btnTicketPdf' + tabID).prop('hidden', false);
 }
 
 document.onkeyup = async function (e) {
@@ -781,6 +784,8 @@ function newTab() {
     clone.querySelector("#txtPromociones").id = "txtPromociones" + tabID;
     clone.querySelector("#txtDescRec").id = "txtDescRec" + tabID;
     clone.querySelector("#btnImprimirTicket").id = "btnImprimirTicket" + tabID;
+    clone.querySelector("#btnTicketEmail").id = "btnTicketEmail" + tabID;
+    clone.querySelector("#btnTicketPdf").id = "btnTicketPdf" + tabID;
 
     $('#tab' + tabID).append(clone);
 
@@ -826,48 +831,67 @@ function addFunctions(idTab) {
     $('#btnImprimirTicket' + idTab).on("click", function () {
         let idSale = $("#btnImprimirTicket" + idTab).attr("idsale");
         showLoading();
+
         if (idSale != null) {
-
-            fetch(`/Sales/PrintTicket?idSale=${idSale}`
-            ).then(response => {
-
-                return response.json();
-            }).then(response => {
-                removeLoading();
-                if (isHealthySale &&
-                    response.object.nombreImpresora != null &&
-                    response.object.nombreImpresora != '' &&
-                    response.object.ticket != null &&
-                    response.object.ticket != '') {
-                    printTicket(response.object.ticket, response.object.nombreImpresora);
-                }
-
-                swal("Exitoso!", "Ticket impreso!", "success");
-
-            });
-        }
-        else {
+            imprimirTicketFunction(`/Sales/PrintTicket?idSale=${idSale}`, false);
+        } else {
             let idSalesMultiples = $("#btnImprimirTicket" + idTab).attr("idSalesMultiple");
             let saleNumbersArray = idSalesMultiples.split(",").map(Number);
-
             let queryString = saleNumbersArray.map(id => `idSales=${id}`).join("&");
 
-            fetch(`/Sales/PrintMultiplesTickets?${queryString}`)
-                .then(response => {
-                    return response.json();
-                }).then(response => {
-                    removeLoading();
-                    if (isHealthySale &&
-                        response.object.nombreImpresora != null &&
-                        response.object.nombreImpresora != '' &&
-                        response.object.ticket != null &&
-                        response.object.ticket != '') {
-                        printTicket(response.object.ticket, response.object.nombreImpresora);
-                    }
+            imprimirTicketFunction(`/Sales/PrintMultiplesTickets?${queryString}`, true);
+        }
+    });
 
-                    swal("Exitoso!", "Ticket impreso!", "success");
+    $('#btnTicketPdf' + idTab).on("click", function () {
+        let idSale = $("#btnImprimirTicket" + idTab).attr("idsale");
+        showLoading();
 
-                });
+        if (idSale != null) {
+            generarPdfTicket(`/Sales/PdfTicket?idSale=${idSale}`);
+        } else {
+            let idSalesMultiples = $("#btnImprimirTicket" + idTab).attr("idSalesMultiple");
+            let saleNumbersArray = idSalesMultiples.split(",").map(Number);
+            let queryString = saleNumbersArray.map(id => `idSales=${id}`).join("&");
+
+            generarPdfTicket(`/Sales/PdfMultiplesTickets?${queryString}`);
+        }
+    });
+
+    $('#btnTicketEmail1' + idTab).on("click", function () {
+        $('#emailModal').modal('show');
+    });
+
+    $('#sendEmailBtn').on("click", function () {
+        let email = $('#emailInput').val();
+        let idSale = $("#btnImprimirTicket" + idTab).attr("idsale");
+
+        if (email && idSale) {
+            showLoading();
+
+            fetch(`/Sales/EnviarTicketEmail`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    idSale: idSale
+                })
+            }).then(response => {
+                removeLoading();
+                if (response.ok) {
+                    swal("Exitoso!", "Ticket enviado por correo!", "success");
+                } else {
+                    throw new Error('Error al enviar el correo.');
+                }
+            }).catch(error => {
+                swal("Error", error.message, "error");
+            });
+
+            $('#emailModal').modal('hide');
+        } else {
+            swal("Error", "Debe ingresar un email válido", "error");
         }
     });
 
@@ -1335,6 +1359,42 @@ async function validateCode() {
                     reject(false);
                 });
         });
+    });
+}
+
+function imprimirTicketFunction(url, isMultiple) {
+    fetch(url)
+        .then(response => response.json())
+        .then(response => {
+            removeLoading();
+            if (isHealthySale &&
+                response.object.nombreImpresora != null &&
+                response.object.nombreImpresora != '' &&
+                response.object.ticket != null &&
+                response.object.ticket != '') {
+                printTicket(response.object.ticket, response.object.nombreImpresora);
+            }
+
+            //swal("Exitoso!", "Ticket impreso!", "success");
+        });
+}
+
+function generarPdfTicket(url) {
+    fetch(url, {
+        method: 'GET'
+    }).then(response => {
+        if (response.ok) {
+            return response.blob();
+        }
+        throw new Error('Error al generar el PDF.');
+    }).then(blob => {
+
+        removeLoading();
+        const url = window.URL.createObjectURL(blob);
+
+        window.open(url, '_blank');
+    }).catch(error => {
+        swal("Error", error.message, "error");
     });
 }
 

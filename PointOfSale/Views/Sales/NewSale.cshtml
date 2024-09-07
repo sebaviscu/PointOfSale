@@ -175,7 +175,12 @@
                         <div class="card shadow mb-4">
                             <div class="card-body py-3">
                                 <button class="btn btn-success w-100 finalizarSaleParcial" id="btnFinalizeSaleParcial">Finalizar venta (F2)</button>
-                                <button class="btn btn-info w-100" id="btnImprimirTicket" hidden>Imprimir Ticket</button>
+                                <div class="d-flex justify-content-between">
+                                    <button class="btn btn-info w-50" id="btnImprimirTicket" hidden><span class="mdi mdi-printer"></span>&nbsp; Imprimir Ticket</button>
+                                    <button class="btn btn-success" style="width: 23%;" id="btnTicketEmail" hidden><span class="mdi mdi-email"></span>&nbsp; Email</button>
+                                    <button class="btn btn-primary" style="width: 23%;" id="btnTicketPdf" hidden><span class="mdi mdi-file-pdf"></span>&nbsp; Pdf</button>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -399,6 +404,28 @@
                 <div class="bd-highlight">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal" tabindex="-1">Cerrar</button>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para ingresar el email -->
+<div class="modal fade" id="emailModal" tabindex="-1" aria-labelledby="emailModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="emailModalLabel">Enviar Ticket por Email</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label for="emailInput">Ingrese el correo electrónico:</label>
+                <input type="email" class="form-control" id="emailInput" placeholder="ejemplo@correo.com">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="sendEmailBtn">Enviar</button>
             </div>
         </div>
     </div>

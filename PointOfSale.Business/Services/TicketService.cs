@@ -1,7 +1,14 @@
-﻿using PointOfSale.Business.Contracts;
+﻿using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
+using iText.IO.Image;
+using System.IO;
+using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
 using PointOfSale.Model.Afip.Factura;
+using iText.IO.Font.Constants;
+using iText.Kernel.Font;
 
 namespace PointOfSale.Business.Services
 {
@@ -151,5 +158,43 @@ namespace PointOfSale.Business.Services
                 detailSales.Add(d);
             }
         }
+
+        public byte[] PdfTicket(string ticket, List<Images> ImagesTicket)
+        {
+            // Generar el PDF
+            using (MemoryStream ms = new MemoryStream())
+            {
+                PdfWriter writer = new PdfWriter(ms);
+                PdfDocument pdfDoc = new PdfDocument(writer);
+                Document document = new Document(pdfDoc);
+
+                // Configurar la fuente "Courier New" con tamaño 8
+                PdfFont courierFont = PdfFontFactory.CreateFont(StandardFonts.COURIER);
+
+                // Agregar las líneas del ticket con la fuente "Courier New"
+                string[] lines = ticket.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+                foreach (var line in lines)
+                {
+                    document.Add(new Paragraph(line).SetFont(courierFont).SetFontSize(8));
+                }
+
+                // Agregar imágenes si existen
+                if (ImagesTicket != null && ImagesTicket.Any())
+                {
+                    foreach (var imageTicket in ImagesTicket)
+                    {
+                        byte[] imageBytes = Convert.FromBase64String(imageTicket.ImageBase64);
+                        iText.Layout.Element.Image img = new iText.Layout.Element.Image(ImageDataFactory.Create(imageBytes));
+                        document.Add(img);
+                    }
+                }
+
+                document.Close();
+
+                return ms.ToArray();
+            }
+        }
+
+
     }
 }

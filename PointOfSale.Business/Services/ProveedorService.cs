@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static iTextSharp.text.pdf.events.IndexEvents;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services

@@ -7,7 +7,6 @@ using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
-using static iTextSharp.text.pdf.events.IndexEvents;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Controllers

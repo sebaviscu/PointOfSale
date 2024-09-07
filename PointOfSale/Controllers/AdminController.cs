@@ -16,7 +16,6 @@ using PointOfSale.Utilities.Response;
 using System.Globalization;
 using System.Runtime.ConstrainedExecution;
 using System.Security.Claims;
-using static iTextSharp.text.pdf.AcroFields;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Controllers

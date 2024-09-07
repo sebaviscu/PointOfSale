@@ -8,5 +8,7 @@ namespace PointOfSale.Business.Contracts
     {
         Task<TicketModel> TicketSale(Sale sale, Ajustes ajustes, FacturaEmitida? facturaEmitida);
         Task<TicketModel> TicketSale(VentaWeb sale, Ajustes ajustes);
+
+        byte[] PdfTicket(string ticket, List<Images> ImagesTicket);
     }
 }

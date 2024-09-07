@@ -4,14 +4,12 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using iTextSharp.text;
 using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
 using PointOfSale.Model.Auditoria;
-using static iTextSharp.text.pdf.events.IndexEvents;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services

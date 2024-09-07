@@ -71,7 +71,7 @@ $(document).ready(function () {
 
     $(document).ready(function () {
         tableDataProduct = $("#tbData").DataTable({
-            pageLength: 50,
+            pageLength: 25,
             responsive: true,
             "ajax": {
                 "url": "/Inventory/GetProducts",

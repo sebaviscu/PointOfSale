@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using AutoMapper.Configuration.Annotations;
-using iTextSharp.text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Packaging;

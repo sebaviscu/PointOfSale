@@ -11,6 +11,8 @@ using PointOfSale.Model.Afip.Factura;
 using PointOfSale.Model.Auditoria;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
+using System.Net.Mail;
+using System.Net;
 using System.Security.Claims;
 using static PointOfSale.Model.Enum;
 
@@ -28,6 +30,7 @@ namespace PointOfSale.Controllers
         private readonly ILogger<SalesController> _logger;
         private readonly IAfipService _afipFacturacionService;
         private readonly IAjusteService _ajustesService;
+        private readonly IEmailService _emailService;
 
         public SalesController(
             ITypeDocumentSaleService typeDocumentSaleService,
@@ -38,7 +41,8 @@ namespace PointOfSale.Controllers
             ITicketService ticketService,
             IAfipService afipFacturacionService,
             ILogger<SalesController> logger,
-            IAjusteService ajustesService)
+            IAjusteService ajustesService,
+            IEmailService emailService)
         {
             _typeDocumentSaleService = typeDocumentSaleService;
             _saleService = saleService;
@@ -49,7 +53,9 @@ namespace PointOfSale.Controllers
             _afipFacturacionService = afipFacturacionService;
             _logger = logger;
             _ajustesService = ajustesService;
+            _emailService = emailService;
         }
+
         public IActionResult NewSale()
         {
             ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
@@ -412,18 +418,30 @@ namespace PointOfSale.Controllers
             }
         }
 
+        public async Task<IActionResult> PrintTicket(int idSale)
+        {
+            return await ImprimirTickets(new List<int> { idSale });
+        }
+
         public async Task<IActionResult> PrintMultiplesTickets([FromQuery] List<int> idSales)
+        {
+            return await ImprimirTickets(idSales);
+        }
+
+        private async Task<IActionResult> ImprimirTickets(List<int> idSales)
         {
             GenericResponse<VMSale> gResponse = new GenericResponse<VMSale>();
 
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Empleado]);
-                var model = new VMSale();
-                model.ImagesTicket = new List<Images>();
                 var ajustes = await _ajustesService.GetAjustes(user.IdTienda);
+                var model = new VMSale
+                {
+                    NombreImpresora = ajustes.NombreImpresora,
+                    ImagesTicket = new List<Images>()
+                };
 
-                model.NombreImpresora = ajustes.NombreImpresora;
                 foreach (var item in idSales)
                 {
                     var sale = await _saleService.GetSale(item);
@@ -441,69 +459,88 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al imprimir tickets de venta multiple", _logger, idSales);
+                return HandleException(ex, "Error al imprimir ticket(s)", _logger, idSales);
             }
-
         }
 
-        public async Task<IActionResult> PrintTicket(int idSale)
-        {
-            GenericResponse<VMSale> gResponse = new GenericResponse<VMSale>();
 
+        public async Task<IActionResult> PdfTicket(int idSale)
+        {
+            return await GenerarPdfTicket(new List<int> { idSale });
+        }
+
+        public async Task<IActionResult> PdfMultiplesTickets([FromQuery] List<int> idSales)
+        {
+            return await GenerarPdfTicket(idSales);
+        }
+
+        private async Task<IActionResult> GenerarPdfTicket(List<int> idSales)
+        {
             try
             {
-                if (idSale == 0)
-                {
-                    gResponse.State = false;
-                    gResponse.Message = "Es una venta con multiples formas de pago, no se pued eimprimir ticket.";
-                    StatusCode(StatusCodes.Status500InternalServerError, gResponse);
-                }
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Empleado]);
-
                 var ajustes = await _ajustesService.GetAjustes(user.IdTienda);
-                var sale = await _saleService.GetSale(idSale);
-                var facturaEmitida = await _afipFacturacionService.GetBySaleId(idSale);
-                var ticket = await _ticketService.TicketSale(sale, ajustes, facturaEmitida);
+                var ticketCompleto = string.Empty;
+                var imagesTicket = new List<Images>();
 
-                var model = new VMSale();
+                foreach (var idSale in idSales)
+                {
+                    var sale = await _saleService.GetSale(idSale);
+                    var facturaEmitida = await _afipFacturacionService.GetBySaleId(idSale);
+                    var ticket = await _ticketService.TicketSale(sale, ajustes, facturaEmitida);
 
+                    if (!string.IsNullOrEmpty(ticket.Ticket))
+                    {
+                        ticketCompleto += ticket.Ticket;
+                        imagesTicket.AddRange(ticket.ImagesTicket);
+                    }
+                }
 
-                model.NombreImpresora = ajustes.NombreImpresora;
-                model.Ticket = ticket.Ticket ?? string.Empty;
-                model.ImagesTicket = ticket.ImagesTicket;
+                if (!string.IsNullOrEmpty(ticketCompleto))
+                {
+                    var pdfBytes = _ticketService.PdfTicket(ticketCompleto, imagesTicket);
+                    return File(pdfBytes, "application/pdf", $"Ticket_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.pdf");
+                }
 
-                gResponse.State = true;
-                gResponse.Object = model;
-
-                return StatusCode(StatusCodes.Status200OK, gResponse);
+                return StatusCode(StatusCodes.Status204NoContent, "No se generó ningún ticket.");
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al imprimir ticket", _logger, idSale);
+                return HandleException(ex, "Error al generar PDF del ticket", _logger, idSales);
             }
-
         }
 
-        public async Task<IActionResult> ShowPDFSaleAsync(string saleNumber)
+        [HttpPost]
+        public async Task<IActionResult> EnviarTicketEmail([FromBody] VMEmailTicketRequest request)
         {
-            string urlTemplateView = $"{this.Request.Scheme}://{this.Request.Host}/Template/PDFSale?saleNumber={saleNumber}";
-
-            var pdf = new HtmlToPdfDocument()
+            try
             {
-                GlobalSettings = new GlobalSettings()
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Empleado]);
+
+                // Obtener los ajustes y el ticket
+                var ajustes = await _ajustesService.GetAjustes(user.IdTienda);
+                var sale = await _saleService.GetSale(request.IdSale);
+                var facturaEmitida = await _afipFacturacionService.GetBySaleId(request.IdSale);
+                var ticket = await _ticketService.TicketSale(sale, ajustes, facturaEmitida);
+
+                if (!string.IsNullOrEmpty(ticket.Ticket))
                 {
-                    PaperSize = PaperKind.A4,
-                    Orientation = Orientation.Portrait
-                },
-                Objects = {
-                    new ObjectSettings(){
-                        Page = urlTemplateView
-                    }
+                    var pdfBytes = _ticketService.PdfTicket(ticket.Ticket, ticket.ImagesTicket);
+
+                    // Enviar el ticket por email
+                    await _emailService.EnviarTicketEmail(user.IdTienda, request.Email, pdfBytes);
+
+                    return Ok(new { message = "Correo enviado con éxito." });
                 }
-            };
-            var archivoPDF = _converter.Convert(pdf);
-            return File(archivoPDF, "application/pdf");
+
+                return BadRequest(new { message = "No se pudo generar el ticket." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error al enviar el correo: {ex.Message}");
+            }
         }
+
 
         public async Task<IActionResult> UpstatSale(int idSale, int formaPago)
         {
