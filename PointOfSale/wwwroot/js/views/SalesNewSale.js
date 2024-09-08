@@ -214,10 +214,11 @@ function calcularVueltoTotal() {
     $('#txtVuelto').val(vuelto);
 }
 
-$('#txtPagaCon').on('change', function () {
+$('#txtPagaCon').on('input', function () {
     calcularVueltoTotal();
 
 });
+
 function formatResults(data) {
 
     if (data.loading)
@@ -427,6 +428,37 @@ $(document).on("click", "button.finalizarSaleParcial", function () {
         $("#modalDividirPago").modal("show")
     }
 })
+
+$('#modalDividirPago').on('shown.bs.modal', function () {
+    // Poner el foco en el select y desplegarlo
+    $('#cboTypeDocumentSaleParcial').focus().click();
+
+    // Escuchar eventos de teclado en el select
+    $('#cboTypeDocumentSaleParcial').on('keydown', function (e) {
+        if (e.key === 'Tab') {
+            e.preventDefault(); // Prevenir comportamiento por defecto
+            //    $('#cboImprimirTicket').focus(); // Mover el foco al checkbox
+            $('#btnFinalizarVentaParcial').focus();
+        }
+    });
+
+    // Escuchar eventos de teclado en el checkbox
+    //$('#cboImprimirTicket').on('keydown', function (e) {
+    //    if (e.key === 'Tab') {
+    //        e.preventDefault(); // Prevenir comportamiento por defecto
+    //        $('#btnFinalizarVentaParcial').focus(); // Mover el foco al botón de finalizar venta
+    //    }
+    //});
+
+    // Al presionar enter en el botón, ejecutar el click
+    $('#btnFinalizarVentaParcial').on('keydown', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Prevenir comportamiento por defecto
+            $(this).click(); // Ejecutar el click del botón
+        }
+    });
+});
+
 
 
 $(document).on("click", "button.btnAddFormaDePago", function () {
@@ -830,7 +862,6 @@ function addFunctions(idTab) {
 
     $('#btnImprimirTicket' + idTab).on("click", function () {
         let idSale = $("#btnImprimirTicket" + idTab).attr("idsale");
-        showLoading();
 
         if (idSale != null) {
             imprimirTicketFunction(`/Sales/PrintTicket?idSale=${idSale}`, false);
@@ -845,7 +876,6 @@ function addFunctions(idTab) {
 
     $('#btnTicketPdf' + idTab).on("click", function () {
         let idSale = $("#btnImprimirTicket" + idTab).attr("idsale");
-        showLoading();
 
         if (idSale != null) {
             generarPdfTicket(`/Sales/PdfTicket?idSale=${idSale}`);
@@ -858,41 +888,9 @@ function addFunctions(idTab) {
         }
     });
 
-    $('#btnTicketEmail1' + idTab).on("click", function () {
+    $('#btnTicketEmail' + idTab).on("click", function () {
+        $('#emailInput').val('');
         $('#emailModal').modal('show');
-    });
-
-    $('#sendEmailBtn').on("click", function () {
-        let email = $('#emailInput').val();
-        let idSale = $("#btnImprimirTicket" + idTab).attr("idsale");
-
-        if (email && idSale) {
-            showLoading();
-
-            fetch(`/Sales/EnviarTicketEmail`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: email,
-                    idSale: idSale
-                })
-            }).then(response => {
-                removeLoading();
-                if (response.ok) {
-                    swal("Exitoso!", "Ticket enviado por correo!", "success");
-                } else {
-                    throw new Error('Error al enviar el correo.');
-                }
-            }).catch(error => {
-                swal("Error", error.message, "error");
-            });
-
-            $('#emailModal').modal('hide');
-        } else {
-            swal("Error", "Debe ingresar un email válido", "error");
-        }
     });
 
     $('#tbProduct' + idTab + ' tbody').on('dblclick', 'tr', async function () {
@@ -1363,6 +1361,8 @@ async function validateCode() {
 }
 
 function imprimirTicketFunction(url, isMultiple) {
+            showLoading();
+
     fetch(url)
         .then(response => response.json())
         .then(response => {
@@ -1380,12 +1380,15 @@ function imprimirTicketFunction(url, isMultiple) {
 }
 
 function generarPdfTicket(url) {
+    showLoading();
+
     fetch(url, {
         method: 'GET'
     }).then(response => {
         if (response.ok) {
             return response.blob();
         }
+        removeLoading();
         throw new Error('Error al generar el PDF.');
     }).then(blob => {
 
@@ -1394,9 +1397,44 @@ function generarPdfTicket(url) {
 
         window.open(url, '_blank');
     }).catch(error => {
+        removeLoading();
         swal("Error", error.message, "error");
     });
 }
+
+$('#sendEmailBtn').on("click", function () {
+    let idTab = getTabActiveId();
+    let email = $('#emailInput').val();
+    let idSale = $("#btnImprimirTicket" + idTab).attr("idsale");
+
+    if (email && idSale) {
+        showLoading();
+
+        fetch(`/Sales/EnviarTicketEmail`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email,
+                idSale: idSale
+            })
+        }).then(response => {
+            removeLoading();
+            if (response.ok) {
+                swal("Exitoso!", "Ticket enviado por correo!", "success");
+            } else {
+                throw new Error('Error al enviar el correo.');
+            }
+        }).catch(error => {
+            swal("Error", error.message, "error");
+        });
+
+        $('#emailModal').modal('hide');
+    } else {
+        swal("Error", "Debe ingresar un email válido", "error");
+    }
+});
 
 class Producto {
     idproduct = 0;
