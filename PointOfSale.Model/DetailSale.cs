@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Model
@@ -19,6 +20,7 @@ namespace PointOfSale.Model
         public virtual Sale? IdSaleNavigation { get; set; }
         public virtual Product? Producto { get; set; }
         public string? Promocion { get; set; }
+        public decimal? Iva { get; set; }
         public int? IdVentaWeb { get; set; }
         public virtual VentaWeb? VentaWeb { get; set; }
         public string TipoVentaString => System.Enum.GetName(typeof(TipoVenta), TipoVenta);

@@ -250,12 +250,14 @@ namespace PointOfSale.Controllers
                         gResponse.Message = e.Message;
                     }
 
-                    // si es multiple, no se podra reimprimir el ticket ya que se necesita el idSale y en este caso, hay muchos, ver que podemos hacer
                     if (model.ImprimirTicket && !string.IsNullOrEmpty(ajustes.NombreImpresora))
                     {
                         var ticket = await RegistrationTicketPrinting(ajustes, sale_created, facturaEmitida);
-                        modelResponde.Ticket += ticket.Ticket;
-                        modelResponde.ImagesTicket.AddRange(ticket.ImagesTicket);
+                        if (ticket != null)
+                        {
+                            modelResponde.Ticket += ticket.Ticket;
+                            modelResponde.ImagesTicket.AddRange(ticket.ImagesTicket);
+                        }
                     }
 
                     if (model.MultiplesFormaDePago.Count == 1)
@@ -278,8 +280,13 @@ namespace PointOfSale.Controllers
             }
         }
 
-        private async Task<TicketModel> RegistrationTicketPrinting(Ajustes ajustes, Sale saleCreated, FacturaEmitida? facturaEmitida)
+        private async Task<TicketModel?> RegistrationTicketPrinting(Ajustes ajustes, Sale saleCreated, FacturaEmitida? facturaEmitida)
         {
+            if (string.IsNullOrEmpty(ajustes.NombreImpresora))
+            {
+                return null;
+            }
+
             var ticket = await _ticketService.TicketSale(saleCreated, ajustes, facturaEmitida);
             return ticket;
         }
@@ -446,10 +453,13 @@ namespace PointOfSale.Controllers
                 {
                     var sale = await _saleService.GetSale(item);
                     var facturaEmitida = await _afipFacturacionService.GetBySaleId(item);
-                    var ticket = await _ticketService.TicketSale(sale, ajustes, facturaEmitida);
+                    if (!string.IsNullOrEmpty(ajustes.NombreImpresora))
+                    {
+                        var ticket = await _ticketService.TicketSale(sale, ajustes, facturaEmitida);
 
-                    model.Ticket += ticket.Ticket ?? string.Empty;
-                    model.ImagesTicket.AddRange(ticket.ImagesTicket);
+                        model.Ticket += ticket.Ticket ?? string.Empty;
+                        model.ImagesTicket.AddRange(ticket.ImagesTicket);
+                    }
                 }
 
                 gResponse.State = true;

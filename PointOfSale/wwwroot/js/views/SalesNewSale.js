@@ -1026,6 +1026,7 @@ function addFunctions(idTab) {
                             photoBase64: item.photoBase64,
                             price: item.price,
                             tipoVenta: item.tipoVenta,
+                            iva: item.iva,
                             categoryProducty: item.categoryProducty
                         }
                     ))
@@ -1159,6 +1160,7 @@ function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
     product.price = formatNumber(data.price);
     product.total = formatNumber(data.total);
     product.tipoVenta = data.tipoVenta;
+    product.iva = data.iva;
     product.categoryProducty = data.categoryProducty;
 
     if (data.promocion) {
@@ -1242,6 +1244,7 @@ function applyForProduct(prom, totalQuantity, data, currentTab) {
                     newProd.idproduct = data.id;
                     newProd.descriptionproduct = data.text;
                     newProd.categoryProducty = data.categoryProducty;
+                    newProd.iva = data.iva;
                     newProd.quantity = diffDividido;
                     newProd.price = precio.toFixed(2).toString();
                     newProd.total = (precio * diffDividido).toFixed(2).toString();
@@ -1446,4 +1449,5 @@ class Producto {
     diferenciapromocion = null;
     tipoVenta = 0;
     categoryProducty = "";
+    iva = 21;
 }

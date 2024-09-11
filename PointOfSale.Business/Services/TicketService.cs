@@ -39,11 +39,6 @@ namespace PointOfSale.Business.Services
 
         private async Task<TicketModel> CreateTicket(Ajustes ajustes, DateTime registrationDate, decimal total, ICollection<DetailSale> detailSales, int idTienda, decimal? descuentoRecargo, FacturaEmitida? facturaEmitida)
         {
-
-            if (string.IsNullOrEmpty(ajustes.NombreImpresora))
-            {
-                return null;
-            }
             var isFactura = facturaEmitida != null && string.IsNullOrEmpty(facturaEmitida.Observaciones);
 
             var Ticket1 = new TicketModel();
@@ -72,7 +67,7 @@ namespace PointOfSale.Business.Services
                    d.Price.Value,
                    d.Quantity.Value,
                    d.Total.Value,
-                   21m);
+                   d.Iva.HasValue ? d.Iva.Value : 21m);
             }
 
             Ticket1.TextoIzquierda(" ");

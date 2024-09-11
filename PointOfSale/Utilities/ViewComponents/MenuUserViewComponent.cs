@@ -5,6 +5,7 @@ using PointOfSale.Business.Contracts;
 using PointOfSale.Model;
 using System.Security.Claims;
 using PointOfSale.Models;
+using PointOfSale.Model.Auditoria;
 
 namespace PointOfSale.Utilities.ViewComponents
 {
@@ -56,10 +57,32 @@ namespace PointOfSale.Utilities.ViewComponents
                     var tiendaId = ((ClaimsIdentity)claimuser.Identity).FindFirst("Tienda").Value;
 
                     var turnoId = ((ClaimsIdentity)claimuser.Identity).FindFirst("Turno");
-                    if (turnoId !=  null && !string.IsNullOrEmpty(turnoId.Value))
+                    if (turnoId != null && !string.IsNullOrEmpty(turnoId.Value))
                     {
                         var turnoObjet = await _turnoService.GetTurno(Convert.ToInt32(turnoId.Value));
                         turno = turnoObjet.FechaInicio.ToString();
+                    }
+                    else
+                    {
+                        var turnoObjet = await _turnoService.GetTurnoActual(Convert.ToInt32(tiendaId));
+                        if (turnoObjet != null)
+                        {
+                            turno = turnoObjet.FechaInicio.ToString();
+
+                            var claims = claimuser.Claims.ToList();
+                            claims.Add(new Claim("Turno", turnoObjet.IdTurno.ToString()));
+
+                            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                            var properties = new AuthenticationProperties
+                            {
+                                AllowRefresh = true,
+                                IsPersistent = (HttpContext.Request.Cookies[".AspNetCore.Cookies"] != null)
+                            };
+
+                            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), properties);
+
+                        }
                     }
 
                     var tienda = await _tiendaService.Get(Convert.ToInt32(tiendaId));

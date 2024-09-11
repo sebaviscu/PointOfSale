@@ -12,5 +12,6 @@ namespace PointOfSale.Models
          public string? PhotoBase64 { get; set; }
         public TipoVenta TipoVenta { get; set; }
         public string? CategoryProducty { get; set; }
+        public decimal? Iva { get; set; }
     }
 }

@@ -850,10 +850,8 @@ $("#btnSave").on("click", async function () {
     model["idCategory"] = $("#cboCategory").val();
     model["quantity"] = $("#txtQuantity").val();
     model["minimo"] = $("#txtMinimo").val();
-    model["price"] = $("#txtPrice").val().replace(/\./g, ',');
-    model["priceWeb"] = $("#txtPriceWeb").val();
-    model["porcentajeProfit"] = $("#txtProfit").val();
-    model["costPrice"] = $("#txtCosto").val().replace(/\./g, ',');
+    //model["priceWeb"] = $("#txtPriceWeb").val();
+    model["costPrice"] = processNumericValue($("#txtCosto")) || 0;
     model["tipoVenta"] = $("#cboTipoVenta").val();
     model["isActive"] = $("#cboState").val();
     model["idProveedor"] = $("#cboProveedor").val();
@@ -861,15 +859,19 @@ $("#btnSave").on("click", async function () {
     model["iva"] = $("#txtIva").val();
     model["formatoWeb"] = $("#cboFormatoVenta").val();
 
-    model["precioFormatoWeb"] = $("#txtPriceFormatoWeb").val() != '' ? $("#txtPriceFormatoWeb").val().replace(/\./g, ',') : $("#txtPrice").val().replace(/\./g, ',');
+    model["precioFormatoWeb"] = processNumericValue("#txtPriceFormatoWeb") || processNumericValue("#txtPrice");
+    model["priceWeb"] = processNumericValue("#txtPriceWeb") || processNumericValue("#txtPrice"); 
 
-    model["priceWeb"] = $("#txtPriceWeb").val() != '' && $("#txtPriceWeb").val() != undefined ? $("#txtPriceWeb").val().replace(/\./g, ',') : $("#txtPrice").val().replace(/\./g, ',')
+    model["price"] = processNumericValue("#txtPrice");
+    model["porcentajeProfit"] = parseInt($("#txtProfit").val());
 
-    model["precio2"] = $("#txtPrice2").val() != '' ? $("#txtPrice2").val().replace(/\./g, ',') : $("#txtPrice").val().replace(/\./g, ',');
-    model["porcentajeProfit2"] = $("#txtProfit2").val() != '' ? $("#txtProfit2").val().replace(/\./g, ',') : $("#txtProfit").val().replace(/\./g, ',');
+    model["precio2"] = processNumericValue("#txtPrice2") || processNumericValue("#txtPrice");
+    model["porcentajeProfit2"] = parseInt($("#txtProfit2").val());
 
-    model["precio3"] = $("#txtPrice3").val() != '' ? $("#txtPrice3").val().replace(/\./g, ',') : $("#txtPrice").val().replace(/\./g, ',');
-    model["porcentajeProfit3"] = $("#txtProfit3").val() != '' ? $("#txtProfit3").val().replace(/\./g, ',') : $("#txtProfit").val().replace(/\./g, ',');
+    model["precio3"] = processNumericValue("#txtPrice3") || processNumericValue("#txtPrice");
+    model["porcentajeProfit3"] = parseInt($("#txtProfit3").val());
+
+
 
     let vencimientos = obtenerDatosTablaVencimientos();
 
@@ -939,6 +941,13 @@ $("#btnSave").on("click", async function () {
     }
 })
 
+function processNumericValue(selector) {
+    let value = $(selector).val();
+    if (value !== '') {
+        return parseFloat(value.replace(/\.(?=\d{3})/g, '').replace(/,/g, '.')).toFixed(2);
+    }
+    return null;
+}
 function obtenerTagsSeleccionados() {
     let tagsSeleccionados = tagSelector.getValue(true);
 

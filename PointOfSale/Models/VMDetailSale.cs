@@ -15,6 +15,6 @@ namespace PointOfSale.Models
         public int? row { get; set; }
         public string? diferenciapromocion { get; set; }
         public TipoVenta TipoVenta { get; set; }
-
+        public decimal? Iva { get; set; }
     }
 }

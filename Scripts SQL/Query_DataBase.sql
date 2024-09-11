@@ -219,6 +219,7 @@ promocion varchar(300) null,
 [price] decimal(10,2),
 [total] decimal(10,2),
 tipoVenta int null,
+iva decimal(10,2) null,
 [idVentaWeb] int null references VentaWeb(idVentaWeb)
 )
 

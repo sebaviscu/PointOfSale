@@ -10,6 +10,7 @@ using PointOfSale.Business.Utilities;
 using PointOfSale.Data.DBContext;
 using PointOfSale.Data.Repository;
 using PointOfSale.Utilities.Automapper;
+using System.Globalization;
 using System.Text.Json.Serialization;
 
 public class Program
@@ -51,8 +52,8 @@ public class Program
 
             builder.Services.AddDbContext<POINTOFSALEContext>(options =>
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("SQL"), sqlServerOptionsAction: sqlOptions =>
-                //options.UseSqlServer(builder.Configuration.GetConnectionString("SQL_Publich"), sqlServerOptionsAction: sqlOptions =>
+                //options.UseSqlServer(builder.Configuration.GetConnectionString("SQL"), sqlServerOptionsAction: sqlOptions =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("SQL_Publich"), sqlServerOptionsAction: sqlOptions =>
                 {
                     sqlOptions.EnableRetryOnFailure(
                         maxRetryCount: 5, // Número máximo de reintentos
@@ -94,6 +95,10 @@ public class Program
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<IMovimientoCajaService, MovimientoCajaService>();
             builder.Services.AddScoped<ITagService, TagService>();
+
+            var cultureInfo = new CultureInfo("es-ES");
+            CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+            CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
             builder.Services.AddAFIPConfiguration(x =>
             {
