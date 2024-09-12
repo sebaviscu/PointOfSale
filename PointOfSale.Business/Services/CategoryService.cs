@@ -53,64 +53,43 @@ namespace PointOfSale.Business.Services
         }
         public async Task<Category> Add(Category entity)
         {
-            try
-            {
-                Category category_created = await _repository.Add(entity);
-                if (category_created.IdCategory == 0)
-                    throw new TaskCanceledException("Category no se pudo crear.");
+            Category category_created = await _repository.Add(entity);
+            if (category_created.IdCategory == 0)
+                throw new TaskCanceledException("Category no se pudo crear.");
 
-                return category_created;
-            }
-            catch
-            {
-                throw;
-            }
+            return category_created;
         }
 
         public async Task<Category> Edit(Category entity)
         {
-            try
-            {
-                Category category_found = await _repository.Get(c => c.IdCategory == entity.IdCategory);
+            Category category_found = await _repository.Get(c => c.IdCategory == entity.IdCategory);
 
-                //_auditoriaService.SaveAuditoria(category_found, entity);
+            //_auditoriaService.SaveAuditoria(category_found, entity);
 
-                category_found.Description = entity.Description;
-                category_found.IsActive = entity.IsActive;
-                category_found.ModificationDate = TimeHelper.GetArgentinaTime();
-                category_found.ModificationUser = entity.ModificationUser;
+            category_found.Description = entity.Description;
+            category_found.IsActive = entity.IsActive;
+            category_found.ModificationDate = TimeHelper.GetArgentinaTime();
+            category_found.ModificationUser = entity.ModificationUser;
 
-                bool response = await _repository.Edit(category_found);
+            bool response = await _repository.Edit(category_found);
 
-                if (!response)
-                    throw new TaskCanceledException("Category no se pudo cambiar.");
+            if (!response)
+                throw new TaskCanceledException("Category no se pudo cambiar.");
 
-                return category_found;
-            }
-            catch
-            {
-                throw;
-            }
+            return category_found;
         }
 
         public async Task<bool> Delete(int idCategory)
         {
-            try
-            {
-                Category category_found = await _repository.Get(c => c.IdCategory == idCategory);
+            Category category_found = await _repository.Get(c => c.IdCategory == idCategory);
 
-                if (category_found == null)
-                    throw new TaskCanceledException("The category no existe");
+            if (category_found == null)
+                throw new TaskCanceledException("The category no existe");
 
 
-                bool response = await _repository.Delete(category_found);
+            bool response = await _repository.Delete(category_found);
 
-                return response;
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            return response;
         }
 
         public async Task<List<Category>> GetCategoriesSearch(string search)

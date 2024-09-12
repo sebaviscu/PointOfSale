@@ -39,8 +39,6 @@ namespace PointOfSale.Business.Services
 
         public async Task<Turno> Edit(Turno entity)
         {
-            try
-            {
                 Turno Turno_found = await _repository.Get(c => c.IdTurno == entity.IdTurno);
 
                 Turno_found.ModificationUser = entity.ModificationUser;
@@ -53,11 +51,6 @@ namespace PointOfSale.Business.Services
                     throw new TaskCanceledException("Turno no se pudo cambiar.");
 
                 return Turno_found;
-            }
-            catch
-            {
-                throw;
-            }
         }
 
         private async Task<Turno> CloseTurno(Turno turno)
@@ -151,17 +144,8 @@ namespace PointOfSale.Business.Services
 
             if (respError == string.Empty)
             {
-                Turno_found.ModificationUser = entity.ModificationUser;
-                Turno_found.ObservacionesCierre = entity.ObservacionesCierre;
-                Turno_found.FechaFin = entity.FechaFin;
-
-                bool response = await _repository.Edit(Turno_found);
-
-                if (!response)
-                    throw new TaskCanceledException("Turno no se pudo cambiar.");
-
                 var turnoCerrado = await Edit(entity);
-                await _emailService.NotificarCierreCaja(entity.IdTurno);
+                await _emailService.NotificarCierreCaja(entity.IdTienda);
             }
 
             return respError;

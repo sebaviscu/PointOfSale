@@ -17,5 +17,7 @@ namespace PointOfSale.Business.Contracts
         Task<bool> Delete(int idTag);
 
         Task AddTagToProduct(int productId, int tagId);
+
+        Task<List<Product>> ListProductsByTag(int tagId, int page, int pageSize, string searchText = "");
     }
 }

@@ -8,6 +8,7 @@ using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
+using System.Collections.Generic;
 using System.Security.Claims;
 using static PointOfSale.Model.Enum;
 
@@ -26,6 +27,7 @@ namespace PointOfSale.Controllers
         private readonly ITicketService _ticketService;
         private readonly IAfipService _afipService;
         private readonly ISaleService _saleService;
+        private readonly ITagService _tagService;
 
         public ShopController(IProductService productService,
             IMapper mapper,
@@ -37,7 +39,8 @@ namespace PointOfSale.Controllers
             ILogger<ShopController> logger,
             ITicketService ticketService,
             IAfipService afipService,
-            ISaleService saleService)
+            ISaleService saleService,
+            ITagService tagService)
         {
             _productService = productService;
             _mapper = mapper;
@@ -50,6 +53,7 @@ namespace PointOfSale.Controllers
             _razorViewEngine = razorViewEngine;
             _logger = logger;
             _saleService = saleService;
+            _tagService = tagService;
         }
 
         public async Task<IActionResult> Index()
@@ -57,7 +61,7 @@ namespace PointOfSale.Controllers
             ClaimsPrincipal claimuser = HttpContext.User;
             var ajuste = _mapper.Map<VMAjustesWeb>(await _ajusteService.GetAjustesWeb());
 
-            if(ajuste.HabilitarWeb.HasValue && !ajuste.HabilitarWeb.Value)
+            if (ajuste.HabilitarWeb.HasValue && !ajuste.HabilitarWeb.Value)
             {
                 return View("ErrorWeb");
             }
@@ -90,6 +94,7 @@ namespace PointOfSale.Controllers
                 shop.Products = new List<VMProduct>();//_mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategory(0, page, pageSize));
                 shop.FormasDePago = _mapper.Map<List<VMTypeDocumentSale>>(await _typeDocumentSaleService.ListWeb());
                 shop.Categorias = _mapper.Map<List<VMCategory>>(await _categoryService.ListActive());
+                shop.Tags = _mapper.Map<List<VMTag>>(await _tagService.List());
                 return View("Lista", shop);
             }
             catch (Exception ex)
@@ -99,12 +104,21 @@ namespace PointOfSale.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetMoreProducts(int page, int pageSize, int categoryId = 0, string searchText = "")
+        public async Task<IActionResult> GetMoreProducts(int page, int pageSize, int categoryId = 0, string searchText = "", int tagId = 0)
         {
             var gResponse = new GenericResponse<VMShop>();
             try
             {
-                var products = _mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategory(categoryId, page, pageSize, searchText));
+                List<VMProduct> products;
+                if (categoryId == -2 && tagId != -2)
+                {
+                    products = _mapper.Map<List<VMProduct>>(await _tagService.ListProductsByTag(tagId, page, pageSize, searchText));
+                }
+                else
+                {
+                    products = _mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategory(categoryId, page, pageSize, searchText));
+                }
+
                 var hasMoreProducts = products.Count == pageSize;
 
                 var html = await RenderViewAsync("PVProducts", products);
@@ -160,8 +174,8 @@ namespace PointOfSale.Controllers
         {
             try
             {
-            List<VMVentaWeb> vmCategoryList = _mapper.Map<List<VMVentaWeb>>(await _shopService.List());
-            return StatusCode(StatusCodes.Status200OK, new { data = vmCategoryList });
+                List<VMVentaWeb> vmCategoryList = _mapper.Map<List<VMVentaWeb>>(await _shopService.List());
+                return StatusCode(StatusCodes.Status200OK, new { data = vmCategoryList });
             }
             catch (Exception e)
             {

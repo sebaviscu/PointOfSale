@@ -289,6 +289,15 @@ $("#btnSave").on("click", function () {
         }
     }
 
+    let email = $('#txtEmailCierreTurno').val();
+
+    if (!email.endsWith('@gmail.com')) {
+
+        const msg = `El correo del emisor de Cierre de Turno, debe ser de Gmail.`;
+        toastr.warning(msg, "");
+        return;
+    }
+
     const modelWeb = structuredClone(BASIC_MODEL_AJUSTE_WEB);
     modelWeb["montoEnvioGratis"] = $("#txtEnvioGratis").val();
     modelWeb["aumentoWeb"] = $("#txtAumento").val();

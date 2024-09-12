@@ -67,7 +67,7 @@ namespace PointOfSale.Business.Services
                    d.Price.Value,
                    d.Quantity.Value,
                    d.Total.Value,
-                   d.Iva.HasValue ? d.Iva.Value : 21m);
+                   d.Iva.Value == 0 ? 21m : d.Iva.Value);
             }
 
             Ticket1.TextoIzquierda(" ");

@@ -457,7 +457,7 @@ idTienda INT NOT NULL,
 ControlEmpleado BIT NULL,
 NotificarEmailCierreTurno BIT NULL,
 EmailEmisorCierreTurno VARCHAR(50) NULL,
-PasswordEmailEmisorCierreTurno VARCHAR(50) NULL,
+PasswordEmailEmisorCierreTurno VARCHAR(max) NULL,
 EmailsReceptoresCierreTurno VARCHAR(50) NULL,
 modificationDate DATETIME NULL,
 modificationUser VARCHAR(50) NULL,
@@ -465,6 +465,7 @@ CONSTRAINT FK_Ajustes_Tienda FOREIGN KEY (idTienda)
     REFERENCES Tienda(idTienda)
     ON DELETE CASCADE
 );
+
 
 go
 

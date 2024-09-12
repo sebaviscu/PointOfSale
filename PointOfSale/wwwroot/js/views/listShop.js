@@ -81,10 +81,11 @@ function loadMoreProducts() {
     isLoading = true;
     $('#loader').show();
 
-    const categoryId = $(".btnCategoria.active").attr("cat-id") || 0;
-    const searchText = $("#input-search").val() || '';
+    let categoryId = $(".btnCategoria.active").attr("cat-id") || 0;
+    let tagId = $(".btnCategoria.active").attr("tag-id") || -2;
+    let searchText = $("#input-search").val() || '';
 
-    fetch(`/Shop/GetMoreProducts?page=${page}&pageSize=${pageSize}&categoryId=${categoryId}&searchText=${searchText}`)
+    fetch(`/Shop/GetMoreProducts?page=${page}&pageSize=${pageSize}&categoryId=${categoryId}&searchText=${searchText}&tagId=${tagId}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok.');
@@ -99,11 +100,11 @@ function loadMoreProducts() {
             const pageClass = `-page-${page}`;
             let htmlWithPageClass = data.html.replace(/pluss-button/g, `pluss-button pluss${pageClass}`);
             htmlWithPageClass = htmlWithPageClass.replace(/less-button/g, `less-button less${pageClass}`);
-            $("#dvCategoryResults").append(htmlWithPageClass);            $('#loader').hide();
+            $("#dvCategoryResults").append(htmlWithPageClass); $('#loader').hide();
             isLoading = false;
             page++;
 
-            attachButtonEvents(pageClass); 
+            attachButtonEvents(pageClass);
 
         })
         .catch(error => {
@@ -138,7 +139,10 @@ function SearchProductByText(text) {
     hasMoreProducts = true;
     $("#dvCategoryResults").empty();
 
-    fetch(`/Shop/GetMoreProducts?page=${page}&pageSize=${pageSize}&categoryId=${$(".btnCategoria.active").attr("cat-id") || 0}&searchText=${text}`)
+    let catId = $(".btnCategoria.active").attr("cat-id") || 0;
+    let tagId = $(".btnCategoria.active").attr("tag-id") || -2;
+
+    fetch(`/Shop/GetMoreProducts?page=${page}&pageSize=${pageSize}&categoryId=${catId}&searchText=${searchText}&tagId=${tagId}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok.');
