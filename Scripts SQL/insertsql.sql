@@ -190,3 +190,13 @@ GO
 
 insert into TipoGastos (gastoPArticular, descripcion, iva) values 
 (0, 'Sueldos', 0)
+
+go
+
+insert into FormatosVenta (formato, valor) values 
+('100 gr', 100),
+('200 gr', 200),
+('250 gr', 250),
+('500 gr', 500),
+('750 gr', 750),
+('1 kg', 1000)

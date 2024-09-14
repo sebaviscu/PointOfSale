@@ -53,12 +53,20 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<RazonMovimientoCaja> RazonMovimientoCajas { get; set; } = null!;
         public virtual DbSet<Tag> Tags { get; set; }
         public virtual DbSet<ProductTag> ProductTags { get; set; }
+        public virtual DbSet<FormatosVenta> FormatosVentas { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<FormatosVenta>(entity =>
+            {
+                entity.HasKey(e => e.IdFormatosVenta);
+
+                entity.ToTable("FormatosVenta");
+            });
 
             modelBuilder.Entity<Tag>(entity =>
             {
@@ -673,6 +681,7 @@ namespace PointOfSale.Data.DBContext
                      .HasForeignKey(pt => pt.ProductId)
                      .OnDelete(DeleteBehavior.Cascade)
                      .IsRequired();
+
             });
 
             modelBuilder.Entity<Rol>(entity =>

@@ -114,6 +114,15 @@ create table Proveedor(
 	[modificationUser] varchar(50) null
 )
 
+go
+
+CREATE TABLE FormatosVenta (
+    idFormatosVenta INT PRIMARY KEY IDENTITY(1,1),
+    formato VARCHAR(50),
+    valor FLOAT,
+	estado BIT not null
+);
+
 go 
 create table Product(
 [idProduct] int primary key identity(1,1),
@@ -131,6 +140,7 @@ tipoVenta int not null,
 iva decimal(10,2) null,
 [idCategory] int references Category(idCategory),
 [idProveedor] int references Proveedor(idProveedor) null,
+idFormatosVenta int references FormatosVenta(idFormatosVenta) null,
 [registrationDate] datetime default getdate(),
 [modificationDate] [datetime] null,
 [modificationUser] varchar(50) null

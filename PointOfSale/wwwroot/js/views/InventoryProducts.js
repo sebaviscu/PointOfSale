@@ -169,6 +169,25 @@ $(document).ready(function () {
             }
         })
 
+    fetch("/Tablas/GetFormtadoVentaActive")
+        .then(response => response.json())
+        .then(responseJson => {
+            if (responseJson.data.length > 0) {
+                responseJson.data.forEach((item) => {
+                    // Verificar si el formato es "Unidad" y agregar la clase correspondiente
+                    let className = item.formato === "Unidad" ? "formato-unidad" : "formato-peso";
+
+                    $("#cboFormatoVenta").append(
+                        $("<option>")
+                            .val(item.valor)
+                            .text(item.formato)
+                            .addClass(className)
+                    );
+                });
+            }
+        });
+
+
     fetch("/Admin/GetProveedores")
         .then(response => {
             return response.json();
@@ -220,14 +239,12 @@ function cargarSelect2Tags() {
         searchPlaceholderValue: 'Buscar...'
     });
 
-    // Cargar datos desde el servidor
     fetch('/Inventory/GetTags')
         .then(response => response.json())
         .then(data => {
             const tags = data.data.map(tag => ({
                 value: tag.idTag,
-                label: tag.nombre,
-                //customProperties: { color: tag.color },
+                label: tag.nombre
             }));
             tagSelector.setChoices(tags, 'value', 'label', false);
         });
@@ -237,38 +254,44 @@ function cargarSelect2Tags() {
 $('#cboTipoVenta').change(function () {
     let selectedValue = $(this).val();
 
-    // Ocultar todas las opciones primero
     $('#cboFormatoVenta option').hide();
 
-    if (selectedValue == "1") { // Si se selecciona "Kg"
+    if (selectedValue == "1") { 
         $('#cboFormatoVenta .formato-peso').show();
-        if ($('#cboFormatoVenta').val() == null || $('#cboFormatoVenta').val() == '1')
+        if ($('#cboFormatoVenta').val() == null || $('#cboFormatoVenta').val() == '1') {
             $('#cboFormatoVenta').val('1000');
+        }
 
-    } else if (selectedValue == "2") { // Si se selecciona "Unidad"
+    } else if (selectedValue == "2") {
         $('#cboFormatoVenta .formato-unidad').show();
         $('#cboFormatoVenta').val('1');
     }
-    $('#cboFormatoVenta').trigger('change');
 
+    $('#cboFormatoVenta').trigger('change');
 });
 
 $('#cboFormatoVenta').change(function () {
     calcularPrecioFormatoVenta();
 });
+
 $('#txtPriceWeb').change(function () {
     calcularPrecioFormatoVenta();
 });
 
 function calcularPrecioFormatoVenta() {
-    let val = parseFloat($('#cboFormatoVenta').val() != null ? $('#cboFormatoVenta').val() : 0);
-    if (val == 1) val = 1000;
+    let val = parseFloat($('#cboFormatoVenta').find('option:selected').val());
+
+    if (val == "1") {
+        val = 1000;
+    }
 
     let precioWeb = parseFloat($('#txtPriceWeb').val() != '' ? $('#txtPriceWeb').val() : 0);
 
     let result = val * precioWeb / 1000;
+
     $('#txtPriceFormatoWeb').val(parseFloat(result).toFixed(2).replace('.', ','));
 }
+
 
 $("#chkSelectAll").on("click", function () {
     let estado = document.querySelector('#chkSelectAll').checked;

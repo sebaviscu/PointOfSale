@@ -95,6 +95,7 @@ public class Program
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<IMovimientoCajaService, MovimientoCajaService>();
             builder.Services.AddScoped<ITagService, TagService>();
+            builder.Services.AddScoped<ITablaService, TablaService>();
 
             var cultureInfo = new CultureInfo("es-ES");
             CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
