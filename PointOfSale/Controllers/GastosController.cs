@@ -124,19 +124,16 @@ namespace PointOfSale.Controllers
         }
 
         /// <summary>
-        /// Recupera tipo de gastos para Selects
+        /// Recupera tipo de gastos para Selects y DataTable
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetTipoDeGasto()
         {
-            var gResponse = new GenericResponse<List<VMTipoDeGasto>>();
-
             try
             {
-                gResponse.State = true;
-                gResponse.Object = _mapper.Map<List<VMTipoDeGasto>>(await _GastosService.ListTipoDeGasto());
-                return StatusCode(StatusCodes.Status200OK, gResponse);
+                var tipoGastos = _mapper.Map<List<VMTipoDeGasto>>(await _GastosService.ListTipoDeGasto());
+                return StatusCode(StatusCodes.Status200OK, new { data = tipoGastos });
             }
             catch (Exception ex)
             {

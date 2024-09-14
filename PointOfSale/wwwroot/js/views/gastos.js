@@ -30,18 +30,14 @@ $(document).ready(function () {
             return response.json();
         }).then(responseJson => {
 
-            if (responseJson.state) {
-                if (responseJson.object.length > 0) {
-                    tipoGastosList = responseJson.object;
+            if (responseJson.data.length > 0) {
+                tipoGastosList = responseJson.data;
 
-                    responseJson.object.forEach((item) => {
-                        $("#cboTipoDeGastoEnGasto").append(
-                            $("<option>").val(item.idTipoGastos).text(item.descripcion)
-                        )
-                    });
-                }
-            } else {
-                swal("Lo sentimos", responseJson.message, "error");
+                responseJson.data.forEach((item) => {
+                    $("#cboTipoDeGastoEnGasto").append(
+                        $("<option>").val(item.idTipoGastos).text(item.descripcion)
+                    )
+                });
             }
         })
 
@@ -380,7 +376,7 @@ $('#cboTipoDeGastoEnGasto').change(function () {
     let idTipoGasro = $(this).val();
     let tipoGasto = tipoGastosList.find(_ => _.idTipoGastos == idTipoGasro);
     if (tipoGasto != null) {
-        $("#txtGasto").val(tipoGasto.gastoParticular);
+        $("#txtGasto").val(tipoGasto.gastoParticularString);
         $("#txtIva").val(tipoGasto.iva ?? '')
         $("#cboTipoFactura").val(tipoGasto.tipoFactura ?? '')
     }

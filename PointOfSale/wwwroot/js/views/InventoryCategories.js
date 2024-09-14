@@ -60,42 +60,52 @@ $(document).ready(function () {
         ]
     });
 
-    if (!$.fn.DataTable.isDataTable('#tbTags')) {
-        tableTags = $("#tbTags").DataTable({
-            responsive: true,
-            "ajax": {
-                "url": "/Inventory/GetTags",
-                "type": "GET",
-                "datatype": "json"
+    tableTags = $("#tbTags").DataTable({
+        responsive: true,
+        "ajax": {
+            "url": "/Inventory/GetTags",
+            "type": "GET",
+            "datatype": "json"
+        },
+        "columns": [
+            {
+                "data": "idTag",
+                "visible": false,
+                "searchable": false
             },
-            "columns": [
-                {
-                    "data": "idTag",
-                    "visible": false,
-                    "searchable": false
+            { "data": "nombre" },
+            {
+                "data": "color",
+                "render": function (data, type, row) {
+                    return `<div style="width: 30px; height: 30px; background-color: ${data}; border-radius: 50%;"></div>`;
                 },
-                { "data": "nombre" },
-                {
-                    "data": "color",
-                    "render": function (data, type, row) {
-                        return `<div style="width: 30px; height: 30px; background-color: ${data}; border-radius: 50%;"></div>`;
-                    },
-                    "orderable": false,
-                    "searchable": false,
-                    "width": "40px"
-                },
-                {
-                    "defaultContent": '<button class="btn btn-primary btn-edit-tag btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
-                        '<button class="btn btn-danger btn-delete-tag btn-sm"><i class="mdi mdi-trash-can"></i></button>',
-                    "orderable": false,
-                    "searchable": false,
-                    "width": "80px"
+                "orderable": false,
+                "searchable": false,
+                "width": "40px"
+            },
+            {
+                "defaultContent": '<button class="btn btn-primary btn-edit-tag btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
+                    '<button class="btn btn-danger btn-delete-tag btn-sm"><i class="mdi mdi-trash-can"></i></button>',
+                "orderable": false,
+                "searchable": false,
+                "width": "80px"
+            }
+        ],
+        order: [[1, "desc"]],
+        dom: "Bfrtip",
+        buttons: [
+            {
+                text: 'Exportar Excel',
+                extend: 'excelHtml5',
+                title: '',
+                filename: 'Reporte Tags',
+                exportOptions: {
+                    columns: [1, 2]
                 }
-            ],
-            order: [[1, "desc"]],
-            dom: "lfrtip",  // Remove buttons but keep search, length, etc.
-        });
-    }
+            }, 'pageLength'
+        ]
+    });
+
 })
 
 const openModalCategory = (model = BASIC_MODEL_CATEGORIA) => {
@@ -376,4 +386,6 @@ $('#tbTags').on('click', '.btn-edit-tag', function () {
     $('#txtTagName').val(data.nombre);
     $('#txtTagColor').val(data.color);
     $('#txtTagId').val(data.idTag);
+
+    $("#modalTagData").modal("show")
 });

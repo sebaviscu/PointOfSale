@@ -47,7 +47,8 @@ insert into Menu([description],idMenuParent,controller,pageAction,isActive) valu
 ('Libro de IVA',4,'Reports','LibroIva',1), -- 25
 ('Stock',2,'Inventory','Stock',1), -- 26
 ('Facturacion',6,'Admin','Facturacion',1), -- 27
-('Movimiento Caja',6,'MovimientoCaja','Index',1) -- 28
+('Movimiento Caja',6,'MovimientoCaja','Index',1), -- 28
+('Tablas',1,'Tablas','Index',1) -- 29
 
 go
 
@@ -89,7 +90,8 @@ INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (1,25,1),
 (1,26,1),
 (1,27,1),
-(1,28,1)
+(1,28,1),
+(1,29,1)
 
 --*empleado
 INSERT INTO RolMenu(idRol,idMenu,isActive) values
@@ -193,10 +195,11 @@ insert into TipoGastos (gastoPArticular, descripcion, iva) values
 
 go
 
-insert into FormatosVenta (formato, valor) values 
-('100 gr', 100),
-('200 gr', 200),
-('250 gr', 250),
-('500 gr', 500),
-('750 gr', 750),
-('1 kg', 1000)
+insert into FormatosVenta (formato, valor, estado) values 
+('Unidad', 1,1),
+('100 gr', 100,1),
+('200 gr', 200,1),
+('250 gr', 250,1),
+('500 gr', 500,1),
+('750 gr', 750,1),
+('1 kg', 1000,1)

@@ -40,7 +40,7 @@ namespace PointOfSale.Controllers
             try
             {
                 ValidarAutorizacion([Roles.Administrador]);
-                var list = _mapper.Map<List<VMCliente>>(await _tablaService.ListFormatosVenta());
+                var list = _mapper.Map<List<VMFormatosVenta>>(await _tablaService.ListFormatosVenta());
                 return StatusCode(StatusCodes.Status200OK, new { data = list });
             }
             catch (Exception ex)
