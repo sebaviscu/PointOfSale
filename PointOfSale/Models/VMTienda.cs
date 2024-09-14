@@ -18,5 +18,6 @@ namespace PointOfSale.Models
         public bool? TiendaActual { get; set; }
         public int? IdAjustes { get; set; }
         public int? IdAjustesFacturacion { get; set; }
+        public string Color { get; set; }
     }
 }

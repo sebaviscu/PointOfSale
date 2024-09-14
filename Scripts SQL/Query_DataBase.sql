@@ -8,6 +8,7 @@ Telefono varchar(50) null,
 Direccion varchar(100) null,
 idListaPrecio int null,
 Logo varbinary(max) null,
+Color NVARCHAR(7) NOT NULL,
 [modificationDate] [datetime] null,
 [modificationUser] varchar(50) null,
 )
@@ -465,8 +466,6 @@ CONSTRAINT FK_Ajustes_Tienda FOREIGN KEY (idTienda)
     REFERENCES Tienda(idTienda)
     ON DELETE CASCADE
 );
-
-
 go
 
 CREATE TABLE AjustesFacturacion (

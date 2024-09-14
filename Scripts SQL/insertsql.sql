@@ -1,5 +1,5 @@
 go
-insert into Tienda (nombre, idListaPrecio) values('Mercado', 1)
+insert into Tienda (nombre, idListaPrecio, color) values('Mercado', 1, '#4c84ff')
 go
 
 insert into rol([description],isActive) values

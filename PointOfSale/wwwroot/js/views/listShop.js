@@ -82,7 +82,7 @@ function loadMoreProducts() {
     $('#loader').show();
 
     let categoryId = $(".btnCategoria.active").attr("cat-id") || 0;
-    let tagId = $(".btnCategoria.active").attr("tag-id") || -2;
+    let tagId = $(".btnCategoria.active").attr("tag-id");
     let searchText = $("#input-search").val() || '';
 
     fetch(`/Shop/GetMoreProducts?page=${page}&pageSize=${pageSize}&categoryId=${categoryId}&searchText=${searchText}&tagId=${tagId}`)
@@ -140,7 +140,7 @@ function SearchProductByText(text) {
     $("#dvCategoryResults").empty();
 
     let catId = $(".btnCategoria.active").attr("cat-id") || 0;
-    let tagId = $(".btnCategoria.active").attr("tag-id") || -2;
+    let tagId = $(".btnCategoria.active").attr("tag-id");
 
     fetch(`/Shop/GetMoreProducts?page=${page}&pageSize=${pageSize}&categoryId=${catId}&searchText=${searchText}&tagId=${tagId}`)
         .then(response => {

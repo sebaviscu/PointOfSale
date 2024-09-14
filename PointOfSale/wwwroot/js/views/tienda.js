@@ -13,7 +13,8 @@ const BASIC_MODEL_TIENDA = {
     cuit: 0,
     condicionIva: null,
     puntoVenta: null,
-    certificadoPassword: ""
+    certificadoPassword: "",
+    color: "#4c84ff"
 }
 
 $(document).ready(function () {
@@ -42,6 +43,15 @@ $(document).ready(function () {
                     }
                     return `${data} ${tiendaActualBadge}`;
                 }
+            },
+            {
+                "data": "color",
+                "render": function (data, type, row) {
+                    return `<div style="width: 30px; height: 30px; background-color: ${data}; border-radius: 50%;"></div>`;
+                },
+                "orderable": false,
+                "searchable": false,
+                "width": "40px"
             },
             { "data": "telefono" },
             { "data": "direccion" },
@@ -85,6 +95,7 @@ const openModalTienda = (model = BASIC_MODEL_TIENDA) => {
 
     $("#txtTelefono").val(model.telefono);
     $("#txtDireccion").val(model.direccion);
+    $("#txtColor").val(model.color);
 
     $("#imgTienda").attr("src", `data:image/png;base64,${model.photoBase64}`);
 
@@ -123,6 +134,7 @@ $("#btnSave").on("click", function () {
     model["idListaPrecio"] = parseInt($("#cboListaPrecios").val());
     model["telefono"] = $("#txtTelefono").val();
     model["direccion"] = $("#txtDireccion").val();
+    model["color"] = $("#txtColor").val();
 
     //const inputLogo = document.getElementById('fileLogo');
 

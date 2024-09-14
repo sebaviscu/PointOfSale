@@ -91,10 +91,12 @@ namespace PointOfSale.Controllers
 
                 var shop = new VMShop(ajuste);
                 shop.IsLogin = claimuser.Identity.IsAuthenticated;
-                shop.Products = new List<VMProduct>();//_mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategory(0, page, pageSize));
+                shop.Products = new List<VMProduct>();
                 shop.FormasDePago = _mapper.Map<List<VMTypeDocumentSale>>(await _typeDocumentSaleService.ListWeb());
-                shop.Categorias = _mapper.Map<List<VMCategory>>(await _categoryService.ListActive());
-                shop.Tags = _mapper.Map<List<VMTag>>(await _tagService.List());
+                //shop.Categorias = _mapper.Map<List<VMCategory>>(await _categoryService.ListActive());
+                //shop.Tags = _mapper.Map<List<VMTag>>(await _tagService.List());
+                shop.CategoriaWebs = _mapper.Map<List<VMCategoriaWeb>>(await _categoryService.List());
+                shop.CategoriaWebs.AddRange(_mapper.Map<List<VMCategoriaWeb>>(await _tagService.List()));
                 return View("Lista", shop);
             }
             catch (Exception ex)

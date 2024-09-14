@@ -34,6 +34,7 @@ namespace PointOfSale.Model
 
         public int? IdCorrelativeNumber { get; set; }
         public CorrelativeNumber? CorrelativeNumber { get; set; }
+        public string Color { get; set; }
     }
 }
 	

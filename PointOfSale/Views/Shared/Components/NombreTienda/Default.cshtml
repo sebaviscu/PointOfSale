@@ -3,4 +3,11 @@
 }
 
 
-<span class="brand-name text-truncate">@ViewData["NombreTienda"]</span>
+<div class="app-brand sidebar-toggler" style="background-color: @ViewData["Color"]">
+    <a href="#" id="sidebar-toggler-tienda">
+        @*<span class="brand-name text-truncate">*@
+        <span>
+            <span class="brand-name text-truncate">@ViewData["NombreTienda"]</span>
+        </span>
+    </a>
+</div>

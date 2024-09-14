@@ -462,6 +462,17 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<FacturaEmitida, VMFacturaEmitida>()
                     .ForMember(user => user.NroFacturaString, opt => opt.MapFrom(userEdit => userEdit.NroFactura.Value != 0 ? userEdit.NroFactura.Value.ToString("D8") : string.Empty))
                     .ForMember(user => user.PuntoVentaString, opt => opt.MapFrom(userEdit => userEdit.PuntoVenta.ToString("D4")));
+
+
+            CreateMap<Tag, VMCategoriaWeb>()
+                    .ForMember(user => user.IdTag, opt => opt.MapFrom(userEdit => userEdit.IdTag))
+                    .ForMember(user => user.Descripcion, opt => opt.MapFrom(userEdit => userEdit.Nombre))
+                    .ForMember(user => user.IdCategoria, opt => opt.MapFrom(userEdit => -2));
+
+            CreateMap<Category, VMCategoriaWeb>()
+                    .ForMember(user => user.IdTag, opt => opt.MapFrom(userEdit => -2))
+                    .ForMember(user => user.Descripcion, opt => opt.MapFrom(userEdit => userEdit.Description))
+                    .ForMember(user => user.IdCategoria, opt => opt.MapFrom(userEdit => userEdit.IdCategory));
         }
     }
 }

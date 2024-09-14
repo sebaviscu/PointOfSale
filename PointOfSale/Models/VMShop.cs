@@ -47,6 +47,7 @@ namespace PointOfSale.Models
 
         public List<VMCategory> Categorias { get; set; }
         public List<VMTag> Tags { get; set; }
+        public List<VMCategoriaWeb> CategoriaWebs { get; set; }
 
         public bool IsLogin { get; set; }
 

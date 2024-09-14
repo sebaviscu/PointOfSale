@@ -26,7 +26,7 @@
 </head>
 <body class="goto-here" style="overflow-x: hidden">
 
-    <div class="py-1 bg-primary">
+    <div class="py-1 bg-primary" id="div-cabecera">
         <div class="container">
             <div class="row no-gutters d-flex align-items-start align-items-center px-md-0">
                 <div class="col-lg-12 d-block" id="header">
@@ -81,60 +81,27 @@
         </div>
         <a class="btn btnCategoria active" cat-id="0" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">Todo</a>
 
-        @foreach (var cat in Model.Categorias)
+        @foreach (var cat in Model.CategoriaWebs.OrderBy(_ => _.Descripcion))
+        {
+            <a class="btn btnCategoria" cat-id="@cat.IdCategoria" tag-id="@cat.IdTag" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">@cat.Descripcion</a>
+        }
+@*         @foreach (var cat in Model.Categorias)
         {
             <a class="btn btnCategoria" cat-id="@cat.IdCategory" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">@cat.Description</a>
         }
         @foreach (var tag in Model.Tags)
         {
             <a class="btn btnCategoria" cat-id="-2" tag-id="@tag.IdTag" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">@tag.Nombre</a>
-        }
+        } *@
     </div>
 
     <section class="ftco-section">
         <div class="container text-center">
             <div id="dvCategoryResults" style="margin-right:10px;margin-left: 10px;">
 
-                @* <div class="row">
-                    @foreach (var prod in Model.Products.OrderBy(_ => _.Description))
-                    {
-                        <div class="col-md-2 ftco-animate product-list mb-3" category-prod="@prod.IdCategory" description-prd="@prod.Description">
-                            <div class="product">
-                                <a href="javascript:void(0)" class="img-prod d-md-block d-none" style="text-align: center;">
-                                    <img class="img-fluid" src="data:image/png;base64,@prod.PhotoBase64" alt="Imagen" style="min-height: 160px; max-height: 160px; width:auto;">
-                                </a>
-                                <div class="text pb-1 px-3 text-center product-info" style="height: 110px;">
-                                    <hr class="d-md-block d-none" />
-                                    <h3 class="product-description"><a href="javascript:void(0)" descProd="@prod.Description" id="desc-@prod.IdProduct">@prod.Description</a></h3>
-                                    <div class="d-flex product-pricing">
-                                        <div class="pricing">
-                                            @{
-                                                var precio = prod.PriceWeb != null ? prod.PriceWeb.ToString() : prod.Price;
-                                            }
-                                            <p class="price"><span class="price-sale" id="price-@prod.IdProduct" precio="@precio">$@precio</span><small> / @prod.TipoVenta</small></p>
-                                            <small>@prod.Comentario</small>
-                                        </div>
-                                    </div>
-                                    <div class="bottom-area d-flex px-3" id="bottom-area-@prod.IdProduct">
-                                        <div class="m-auto d-flex justify-content-center">
-                                            <a href="javascript:void(0)" class="add-to-cart d-flex justify-content-center align-items-center text-center mx-1 less-button" idProduct="@prod.IdProduct" style="background: #f87272;">
-                                                <span>-</span>
-                                            </a>
-                                            <input type="text" value="0" typeInput="@prod.TipoVenta" id="prod-@prod.IdProduct" class="form-outline w-50 input-producto" style="border-color:lightgray; text-align:center; background-color:white" disabled>
-                                            <a href="javascript:void(0)" class="remove-to-cart buy-now d-flex justify-content-center align-items-center mx-1 pluss-button" idProduct="@prod.IdProduct">
-                                                <span>+</span>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                </div>
- *@
-                @*                 @{
-                Html.RenderPartial("PVProducts", Model.Products);
-                } *@
+                @{
+                    Html.RenderPartial("PVProducts", Model.Products);
+                }
             </div>
             <div id="loader" class="mt-1" style="display: none;">Cargando productos...</div>
         </div>

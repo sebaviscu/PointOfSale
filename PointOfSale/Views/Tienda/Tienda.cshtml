@@ -34,6 +34,7 @@
                                 <tr>
                                     <th></th>
                                     <th>Nombre</th>
+                                    <th>Color</th>
                                     <th>Telefono</th>
                                     <th>Direccion</th>
                                     <th>Precios</th>
@@ -67,13 +68,13 @@
                             <input type="hidden" value="0" id="txtId">
 
                             <div class="row">
-                                <div class="col-sm-8">
+                                <div class="col-sm-7">
                                     <div class="form-group">
                                         <label for="txtDescription">Nombre</label>
                                         <input type="text" class="form-control form-control-sm input-validate" id="txtNombre" name="Nombre">
                                     </div>
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     <div class="form-group">
                                         <label for="cboListaPrecios">Lista de Precio</label>
                                         <select class="form-control form-control-sm" id="cboListaPrecios">
@@ -82,6 +83,10 @@
                                             <option value="3">Lista 3</option>
                                         </select>
                                     </div>
+                                </div>
+                                <div class="form-group col-sm-2">
+                                    <label for="txtColor">Color</label>
+                                    <input type="color" class="form-control form-control-sm" id="txtColor" value="#4c84ff" name="TagColor">
                                 </div>
                             </div>
                             <div class="row">
@@ -105,57 +110,6 @@
                                     </div>
                                 </div>
                             </div>  *@
-                        </div>
-                        <div class="tab-pane container fade" id="facturacion">
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="form-group">
-                                        <label for="fileCertificado">Certificado</label>
-                                        <input type="file" class="form-control form-control-sm" id="fileCertificado" name="Ruta Certificado" accept=".pfx">
-                                    </div>
-                                </div>
-                                <div class="col-md-12 row">
-                                    <div class="form-group col-sm-6" style="margin-bottom: 0px;">
-                                        <label for="txtContraseñaCertificado">Contraseña del certificado</label>
-                                        <div class="input-group input-group-sm">
-                                            <input type="password" class="form-control form-control-sm" id="txtContraseñaCertificado" name="ContraseñaCertificado">
-                                            <div class="input-group-prepend" style="margin-left: 5px;">
-                                                <button id="togglePassword">
-                                                    <span class="mdi mdi-eye mdi-24px" id="eyeIcon"></span>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-sm-3">
-                                        <label for="txtFechaIniCert">Inicio Cert.</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtFechaIniCert" name="FechaIniCert" disabled>
-                                    </div>
-                                    <div class="form-group col-sm-3">
-                                        <label for="txtFechaCadCert">Caducidad Cert.</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtFechaCadCert" name="FechaCadCert" disabled>
-                                    </div>
-                                </div>
-                                <div class="col-md-12 row">
-                                    <div class="form-group col-sm-4">
-                                        <label for="txtSubjectCert">CUIT / CUIL Cert.</label>
-                                        <input type="number" class="form-control form-control-sm" id="txtSubjectCert" name="Cuit" disabled>
-                                    </div>
-                                    <div class="form-group col-sm-4">
-                                        <label for="cboCondicionIva">Condicion IVA</label>
-                                        <select class="fontDetalles form-control form-control-sm" id="cboCondicionIva">
-                                            <option value="0"></option>
-                                            <option value="1">Consumidor Final</option>
-                                            <option value="2">Exento</option>
-                                            <option value="3">Monotributista</option>
-                                            <option value="4">Resp. Inscripto</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-sm-4">
-                                        <label for="txtPuntoVenta">Punto de Venta</label>
-                                        <input type="number" step="1" min="1" class="form-control form-control-sm" id="txtPuntoVenta" name="PuntoVenta">
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                     <div class="tab-pane container form-row" id="divModif">

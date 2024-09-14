@@ -20,25 +20,19 @@ namespace PointOfSale.Utilities.ViewComponents
 
             ClaimsPrincipal claimuser = HttpContext.User;
             var nombreTienda = string.Empty;
+            var color = "#4c84ff";
 
             if (claimuser.Identity.IsAuthenticated)
             {
                 var tiendaId = ((ClaimsIdentity)claimuser.Identity).FindFirst("Tienda").Value;
 
-                try
-                {
-
                 var tienda = await _tiendaService.Get(Convert.ToInt32(tiendaId));
                 nombreTienda = tienda.Nombre;
-                }
-                catch (Exception e)
-                {
-
-                    throw;
-                }
+                color = tienda.Color;
             }
 
             ViewData["NombreTienda"] = nombreTienda;
+            ViewData["Color"] = color;
 
             return View();
         }

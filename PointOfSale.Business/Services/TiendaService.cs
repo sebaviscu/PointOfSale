@@ -48,6 +48,7 @@ namespace PointOfSale.Business.Services
             Tienda_found.Telefono = entity.Telefono;
             Tienda_found.Logo = entity.Logo;
             Tienda_found.IdListaPrecio = entity.IdListaPrecio;
+            Tienda_found.Color = entity.Color;
 
             Tienda_found.ModificationDate = TimeHelper.GetArgentinaTime();
             Tienda_found.ModificationUser = entity.ModificationUser;
