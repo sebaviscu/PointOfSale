@@ -18,6 +18,7 @@ const ProducstTab = {
 
 $(document).ready(function () {
     showLoading();
+    $.fn.select2.defaults.set("selectOnClose", true);
 
     fetch("/Sales/ListTypeDocumentSale")
         .then(response => {
@@ -148,7 +149,7 @@ function changeCboTypeDocumentSaleParcial(idLineaFormaPago, idFormaDePago) {
     } else {
         $("#divVueltoEfectivo").hide();
     }
-    
+
 }
 
 
@@ -717,6 +718,13 @@ document.onkeyup = async function (e) {
     } else if (e.which == 120) { // F9
         $("#modalConsultarPrecio").modal("show")
         return false;
+    } else if (e.altKey && e.which == 66) { // alt + B
+
+        let tabID = getTabActiveId();
+        $('#cboSearchProduct' + tabID).val("").trigger('change');
+        $('#cboSearchProduct' + tabID).select2('open');
+
+        return false;
     }
 };
 
@@ -938,12 +946,12 @@ function addFunctions(idTab) {
     });
 
     $('#txtPeso' + idTab).on('keypress', function (e) {
-        if ($('#txtPeso' + idTab).val() != '' && e.which === 13) {
+        if ($('#txtPeso' + idTab).val() != '' && e.which === 13) { // 13 => enter
 
             $(this).attr("disabled", "disabled");
 
             agregarProductoEvento(idTab);
-            $('#txtPeso' + idTab).val('');
+            //$('#txtPeso' + idTab).val('');
 
             $(this).removeAttr("disabled");
         }
@@ -1036,9 +1044,9 @@ function addFunctions(idTab) {
         },
         placeholder: 'Buscando producto...',
         minimumInputLength: 2,
-        templateResult: formatResults,
-        allowClear: true
+        templateResult: formatResults
     });
+
 
     $('#cboSearchProduct' + idTab).on('select2:select', function (e) {
         let searchTerm = lastSearchTerm; // Obtener el término de búsqueda guardado
@@ -1070,9 +1078,14 @@ function addFunctions(idTab) {
             peso = peso == "" ? 1 : parseFloat(peso);
 
             setNewProduct(peso, quantity_product_found, data, currentTab, idTab);
-            $('#txtPeso' + idTab).val('');
 
             return;
+        } else if (data.tipoVenta == 1) {
+
+            $('#txtPeso' + idTab).val('');
+        }
+        else {
+            $('#txtPeso' + idTab).val('1');
         }
 
         const element = document.getElementById("txtPeso" + idTab);
@@ -1173,7 +1186,7 @@ function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
     showProducts_Prices(idTab, currentTab);
     $('#cboSearchProduct' + idTab).val("").trigger('change');
     $('#cboSearchProduct' + idTab).select2('open');
-    $('#txtPeso' + idTab).val('');
+    $('#txtPeso' + idTab).val('1');
 }
 
 function formatNumber(num) {
@@ -1364,7 +1377,7 @@ async function validateCode() {
 }
 
 function imprimirTicketFunction(url, isMultiple) {
-            showLoading();
+    showLoading();
 
     fetch(url)
         .then(response => response.json())
