@@ -11,6 +11,6 @@ namespace PointOfSale.Models
         public string TipoString => Tipo.ToString();
 
         public bool Estado { get; set; }
-        //public virtual ICollection<MovimientoCaja>? MovimientoCajas { get; set; }
+
     }
 }

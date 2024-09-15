@@ -29,26 +29,24 @@ go
 insert into Menu([description],idMenuParent,controller,pageAction,isActive) values
 ('Usuarios',6,'Admin','Users',1), --8
 ('Puntos de venta',1, 'Tienda', 'Tienda', 1), --9
-('Categorias',1,'Inventory','Categories',1), --10
-('Productos',2,'Inventory','Products',1), --11
-('Reporte Ventas',4,'Sales','SalesHistory',1), --12
-('Formas de Pago',1,'Admin','TipoVenta',1), --13
-('Clientes',6,'Admin','Cliente',1), --14
-('Proveedores',6,'Admin','Proveedor',1), --15
-('Promociones',2,'Admin','Promociones',1), --16
-('Gastos',6,'Gastos','Gastos',1), --17
-('Turnos',6,'Turno','Turno',1), --18
-('Ventas Web',7,'Shop','VentaWeb',1), --19
-('Shop',7,'Shop','Index',1), --20
-('Reporte Productos',4,'Reports','ProductsReport',1), --21
-('Notificaciones',6,'Notification','Notification',1), --22
-('Pedidos',2,'Pedido','Pedido',1), --23
-('Ajustes',1,'Admin','Ajuste',1), --24
-('Libro de IVA',4,'Reports','LibroIva',1), -- 25
-('Stock',2,'Inventory','Stock',1), -- 26
-('Facturacion',6,'Admin','Facturacion',1), -- 27
-('Movimiento Caja',6,'MovimientoCaja','Index',1), -- 28
-('Tablas',1,'Tablas','Index',1) -- 29
+('Productos',2,'Inventory','Products',1), --10
+('Reporte Ventas',4,'Sales','SalesHistory',1), --11
+('Clientes',6,'Admin','Cliente',1), --12
+('Proveedores',6,'Admin','Proveedor',1), --13
+('Promociones',2,'Admin','Promociones',1), --14
+('Gastos',6,'Gastos','Gastos',1), --15
+('Turnos',6,'Turno','Turno',1), --16
+('Ventas Web',7,'Shop','VentaWeb',1), --17
+('Shop',7,'Shop','Index',1), --18
+('Reporte Productos',4,'Reports','ProductsReport',1), --19
+('Notificaciones',6,'Notification','Notification',1), --20
+('Pedidos',2,'Pedido','Pedido',1), --21
+('Ajustes',1,'Admin','Ajuste',1), --22
+('Libro de IVA',4,'Reports','LibroIva',1), -- 23
+('Stock',2,'Inventory','Stock',1), -- 24
+('Facturacion',6,'Admin','Facturacion',1), -- 25
+('Movimientos de Caja',6,'MovimientoCaja','Index',1), -- 26
+('Tablas',1,'Tablas','Index',1) -- 27
 
 go
 
@@ -89,30 +87,28 @@ INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (1,24,1),
 (1,25,1),
 (1,26,1),
-(1,27,1),
-(1,28,1),
-(1,29,1)
+(1,27,1)
 
 --*empleado
 INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (2,3,1),
 (2,7,1),
-(2,19,1),
-(2,20,1),
-(2,12,1)
+(2,17,1),
+(2,18,1),
+(2,11,1)
 
 --*encargado
 INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (3,2,1),
 (3,3,1),
 (3,4,1),
+(3,10,1),
 (3,11,1),
-(3,12,1),
 (3,7,1),
-(3,19,1),
-(3,20,1),
-(3,16,1),
-(3,26,1)
+(3,17,1),
+(3,18,1),
+(3,14,1),
+(3,24,1)
 
 go
 --________________________________ INSERT CATEGORIES ________________________________

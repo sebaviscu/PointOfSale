@@ -96,6 +96,8 @@ public class Program
             builder.Services.AddScoped<IMovimientoCajaService, MovimientoCajaService>();
             builder.Services.AddScoped<ITagService, TagService>();
             builder.Services.AddScoped<ITablaService, TablaService>();
+            builder.Services.AddScoped<ILovService, LovService>();
+            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
             var cultureInfo = new CultureInfo("es-ES");
             CultureInfo.DefaultThreadCurrentCulture = cultureInfo;

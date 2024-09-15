@@ -39,12 +39,6 @@ namespace PointOfSale.Controllers
             _tagService = tagService;
         }
 
-        public IActionResult Categories()
-        {
-            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
-            return ValidateSesionViewOrLogin();
-        }
-
         public IActionResult Products()
         {
             ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);

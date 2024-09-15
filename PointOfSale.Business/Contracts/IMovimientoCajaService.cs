@@ -20,5 +20,11 @@ namespace PointOfSale.Business.Contracts
         Task<bool> UpdateEstado(int idEntity);
 
         Task<List<MovimientoCaja?>> GetMovimientoCajaByTurno(int idTurno);
+
+        Task<RazonMovimientoCaja> EditRazonMovimientoCaja(RazonMovimientoCaja entity);
+
+        Task<bool> DeleteRazonMovimientoCaja(int idRazonMovimientoCaja);
+
+        Task<List<RazonMovimientoCaja>> GetRazonMovimientoCajaActivas();
     }
 }

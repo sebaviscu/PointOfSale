@@ -797,12 +797,6 @@ namespace PointOfSale.Controllers
 
         }
 
-        public IActionResult TipoVenta()
-        {
-            ValidarAutorizacion([Roles.Administrador]);
-            return ValidateSesionViewOrLogin();
-        }
-
         /// <summary>
         /// Recupero las formas de pago para DataTable
         /// </summary>

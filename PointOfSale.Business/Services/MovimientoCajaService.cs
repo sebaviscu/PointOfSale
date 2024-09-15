@@ -24,7 +24,13 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<RazonMovimientoCaja>> GetRazonMovimientoCaja()
         {
-            var query = await _repositoryRazonMovimientoCaja.Query(_=>_.Estado);
+            var query = await _repositoryRazonMovimientoCaja.Query();
+
+            return await query.ToListAsync();
+        }
+        public async Task<List<RazonMovimientoCaja>> GetRazonMovimientoCajaActivas()
+        {
+            var query = await _repositoryRazonMovimientoCaja.Query(_ => _.Estado);
 
             return await query.ToListAsync();
         }
@@ -83,6 +89,35 @@ namespace PointOfSale.Business.Services
         {
             var res = await _repository.Query(_ => _.IdTurno == idTurno);
             return res.Include(_=>_.RazonMovimientoCaja).ToList();
+        }
+
+        public async Task<RazonMovimientoCaja> EditRazonMovimientoCaja(RazonMovimientoCaja entity)
+        {
+            RazonMovimientoCaja RazonMovimientoCaja_found = await _repositoryRazonMovimientoCaja.Get(c => c.IdRazonMovimientoCaja == entity.IdRazonMovimientoCaja);
+
+            RazonMovimientoCaja_found.Estado = entity.Estado;
+            RazonMovimientoCaja_found.Descripcion = entity.Descripcion;
+            RazonMovimientoCaja_found.Tipo = entity.Tipo;
+
+            bool response = await _repositoryRazonMovimientoCaja.Edit(RazonMovimientoCaja_found);
+
+            if (!response)
+                throw new TaskCanceledException("RazonMovimientoCaja no se pudo cambiar.");
+
+            return RazonMovimientoCaja_found;
+        }
+
+        public async Task<bool> DeleteRazonMovimientoCaja(int idRazonMovimientoCaja)
+        {
+            var RazonMovimientoCaja_found = await _repositoryRazonMovimientoCaja.Get(c => c.IdRazonMovimientoCaja == idRazonMovimientoCaja);
+
+            if (RazonMovimientoCaja_found == null)
+                throw new TaskCanceledException("The RazonMovimientoCaja no existe");
+
+
+            bool response = await _repositoryRazonMovimientoCaja.Delete(RazonMovimientoCaja_found);
+
+            return response;
         }
     }
 }

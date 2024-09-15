@@ -211,7 +211,7 @@ $("#btnAbrirMovimientoCaja").on("click", function () {
 
 function cargarRazones() {
     showLoading();
-    fetch("/MovimientoCaja/GetRazonMovimientoCaja")
+    fetch("/MovimientoCaja/GetRazonMovimientoCajaActivas")
         .then(response => {
             return response.json();
         }).then(responseJson => {

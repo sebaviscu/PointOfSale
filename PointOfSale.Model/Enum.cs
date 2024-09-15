@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -9,6 +10,14 @@ namespace PointOfSale.Model
 {
     public class Enum
     {
+
+        public enum LovType
+        {
+            comodin_1 = 1,
+            comodin_2 = 2,
+            comodin_3 = 3
+
+        }
         public enum Roles
         {
             Administrador = 1,

@@ -54,11 +54,32 @@ namespace PointOfSale.Controllers
         }
 
         /// <summary>
-        /// Recupera RazonMovimientoCaja para Selects
+        /// Recupera RazonMovimientoCaja y DataTable
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetRazonMovimientoCaja()
+        {
+
+            try
+            {
+                ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Encargado]);
+
+                var list = _mapper.Map<List<VMRazonMovimientoCaja>>(await _movimientoCajaService.GetRazonMovimientoCaja());
+                return StatusCode(StatusCodes.Status200OK, new { data = list });
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al recuperar Razones Movimientos Caja.", _logger);
+            }
+        }
+
+        /// <summary>
+        /// Recupera RazonMovimientoCaja para Selects
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetRazonMovimientoCajaActivas()
         {
             var gResponse = new GenericResponse<List<VMRazonMovimientoCaja>>();
 
@@ -67,7 +88,7 @@ namespace PointOfSale.Controllers
                 ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Encargado]);
 
                 gResponse.State = true;
-                gResponse.Object = _mapper.Map<List<VMRazonMovimientoCaja>>(await _movimientoCajaService.GetRazonMovimientoCaja());
+                gResponse.Object = _mapper.Map<List<VMRazonMovimientoCaja>>(await _movimientoCajaService.GetRazonMovimientoCajaActivas());
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
@@ -99,21 +120,43 @@ namespace PointOfSale.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> CambiarEstadoRazonMovimientoCaja(int idRazonMovimientoCaja)
+        public async Task<IActionResult> UpdateRazonMovimientoCaja([FromBody] VMRazonMovimientoCaja model)
         {
 
             GenericResponse<VMRazonMovimientoCaja> gResponse = new GenericResponse<VMRazonMovimientoCaja>();
             try
             {
-                ValidarAutorizacion([Roles.Administrador]);
-                var resp = await _movimientoCajaService.UpdateEstado(idRazonMovimientoCaja);
+                var user = ValidarAutorizacion([Roles.Administrador]);
 
-                gResponse.State = resp;
+                var edited_RazonMovimientoCaja = await _movimientoCajaService.EditRazonMovimientoCaja(_mapper.Map<RazonMovimientoCaja>(model));
+
+                model = _mapper.Map<VMRazonMovimientoCaja>(edited_RazonMovimientoCaja);
+
+                gResponse.State = true;
+                gResponse.Object = model;
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al crear Razon Movimiento Caja.", _logger, idRazonMovimientoCaja);
+                return HandleException(ex, "Error al actualizar RazonMovimientoCaja.", _logger, model);
+            }
+        }
+
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteRazonMovimientoCaja(int idRazonMovimientoCaja)
+        {
+
+            GenericResponse<string> gResponse = new GenericResponse<string>();
+            try
+            {
+                ValidarAutorizacion([Roles.Administrador]);
+                gResponse.State = await _movimientoCajaService.DeleteRazonMovimientoCaja(idRazonMovimientoCaja);
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al eliminar RazonMovimientoCaja.", _logger, idRazonMovimientoCaja);
             }
         }
 

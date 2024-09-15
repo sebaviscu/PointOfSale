@@ -37,71 +37,50 @@ namespace PointOfSale.Business.Services
 
         public async Task<Gastos> Add(Gastos entity)
         {
-            try
-            {
-                Gastos Gastos_created = await _repository.Add(entity);
-                if (Gastos_created.IdGastos == 0)
-                    throw new TaskCanceledException("Gastos no se pudo crear.");
+            Gastos Gastos_created = await _repository.Add(entity);
+            if (Gastos_created.IdGastos == 0)
+                throw new TaskCanceledException("Gastos no se pudo crear.");
 
-                return Gastos_created;
-            }
-            catch
-            {
-                throw;
-            }
+            return Gastos_created;
         }
 
         public async Task<Gastos> Edit(Gastos entity)
         {
-            try
-            {
-                Gastos Gastos_found = await _repository.Get(c => c.IdGastos == entity.IdGastos);
+            Gastos Gastos_found = await _repository.Get(c => c.IdGastos == entity.IdGastos);
 
-                Gastos_found.NroFactura = entity.NroFactura;
-                Gastos_found.TipoFactura = entity.TipoFactura;
-                Gastos_found.TipoDeGasto = entity.TipoDeGasto;
-                Gastos_found.Comentario = entity.Comentario;
-                Gastos_found.Importe = entity.Importe;
-                Gastos_found.Iva = entity.Iva;
-                Gastos_found.IvaImporte = entity.IvaImporte;
-                Gastos_found.ImporteSinIva = entity.ImporteSinIva;
-                Gastos_found.IdUsuario = entity.IdUsuario;
-                Gastos_found.ModificationDate = TimeHelper.GetArgentinaTime();
-                Gastos_found.ModificationUser = entity.ModificationUser;
-                Gastos_found.EstadoPago = entity.EstadoPago;
-                Gastos_found.FacturaPendiente = entity.FacturaPendiente;
+            Gastos_found.NroFactura = entity.NroFactura;
+            Gastos_found.TipoFactura = entity.TipoFactura;
+            Gastos_found.TipoDeGasto = entity.TipoDeGasto;
+            Gastos_found.Comentario = entity.Comentario;
+            Gastos_found.Importe = entity.Importe;
+            Gastos_found.Iva = entity.Iva;
+            Gastos_found.IvaImporte = entity.IvaImporte;
+            Gastos_found.ImporteSinIva = entity.ImporteSinIva;
+            Gastos_found.IdUsuario = entity.IdUsuario;
+            Gastos_found.ModificationDate = TimeHelper.GetArgentinaTime();
+            Gastos_found.ModificationUser = entity.ModificationUser;
+            Gastos_found.EstadoPago = entity.EstadoPago;
+            Gastos_found.FacturaPendiente = entity.FacturaPendiente;
 
-                bool response = await _repository.Edit(Gastos_found);
+            bool response = await _repository.Edit(Gastos_found);
 
-                if (!response)
-                    throw new TaskCanceledException("Gastos no se pudo cambiar.");
+            if (!response)
+                throw new TaskCanceledException("Gastos no se pudo cambiar.");
 
-                return Gastos_found;
-            }
-            catch
-            {
-                throw;
-            }
+            return Gastos_found;
         }
 
         public async Task<bool> Delete(int idGastos)
         {
-            try
-            {
-                Gastos Gastos_found = await _repository.Get(c => c.IdGastos == idGastos);
+            Gastos Gastos_found = await _repository.Get(c => c.IdGastos == idGastos);
 
-                if (Gastos_found == null)
-                    throw new TaskCanceledException("The Gastos no existe");
+            if (Gastos_found == null)
+                throw new TaskCanceledException("The Gastos no existe");
 
 
-                bool response = await _repository.Delete(Gastos_found);
+            bool response = await _repository.Delete(Gastos_found);
 
-                return response;
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            return response;
         }
 
         public async Task<List<TipoDeGasto>> ListTipoDeGasto()
@@ -113,37 +92,23 @@ namespace PointOfSale.Business.Services
 
         public async Task<TipoDeGasto> AddTipoDeGasto(TipoDeGasto entity)
         {
-            try
-            {
-                TipoDeGasto Gastos_created = await _repositoryTipoDeGasto.Add(entity);
-                if (Gastos_created.IdTipoGastos == 0)
-                    throw new TaskCanceledException("Gastos no se pudo crear.");
+            TipoDeGasto Gastos_created = await _repositoryTipoDeGasto.Add(entity);
+            if (Gastos_created.IdTipoGastos == 0)
+                throw new TaskCanceledException("Gastos no se pudo crear.");
 
-                return Gastos_created;
-            }
-            catch
-            {
-                throw;
-            }
+            return Gastos_created;
         }
         public async Task<bool> DeleteTipoDeGasto(int IdTipoGastos)
         {
-            try
-            {
-                TipoDeGasto Gastos_found = await _repositoryTipoDeGasto.Get(c => c.IdTipoGastos == IdTipoGastos);
+            TipoDeGasto Gastos_found = await _repositoryTipoDeGasto.Get(c => c.IdTipoGastos == IdTipoGastos);
 
-                if (Gastos_found == null)
-                    throw new TaskCanceledException("The Gastos no existe");
+            if (Gastos_found == null)
+                throw new TaskCanceledException("The Gastos no existe");
 
 
-                bool response = await _repositoryTipoDeGasto.Delete(Gastos_found);
+            bool response = await _repositoryTipoDeGasto.Delete(Gastos_found);
 
-                return response;
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            return response;
         }
         public async Task<List<Gastos>> ListGastosForTablaDinamica(int idTienda)
         {

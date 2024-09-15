@@ -175,7 +175,7 @@ $(document).ready(function () {
             if (responseJson.data.length > 0) {
                 responseJson.data.forEach((item) => {
                     // Verificar si el formato es "Unidad" y agregar la clase correspondiente
-                    let className = item.formato === "Unidad" ? "formato-unidad" : "formato-peso";
+                    let className = item.formato < 100 ? "formato-unidad" : "formato-peso";
 
                     $("#cboFormatoVenta").append(
                         $("<option>")

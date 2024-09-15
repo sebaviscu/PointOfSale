@@ -22,7 +22,7 @@
 
             <div class="card-body" style="padding-top: 25px;">
                 <div class="row">
-                    <div class="col-sm-3">
+                    <div class="col-sm-2">
                         <!-- Pestañas verticales -->
                         <ul class="nav nav-tabs d-flex flex-column" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                             <li class="nav-item" role="presentation">
@@ -38,35 +38,45 @@
                                 <a class="nav-link" id="v-tipo-gastos-tab" data-bs-toggle="tab" href="#v-tipo-gastos" role="tab" aria-controls="v-tipo-gastos" aria-selected="false">Tipos de Gastos</a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link" id="v-tipo-gastos-tab" data-bs-toggle="tab" href="#v-tipo-gastos" role="tab" aria-controls="v-tipo-gastos" aria-selected="false">Comodin 1</a>
+                                <a class="nav-link" id="v-formas_pago-tab" data-bs-toggle="tab" href="#v-formas_pago" role="tab" aria-controls="v-formas_pago" aria-selected="false">Formas de Pago</a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link" id="v-tipo-gastos-tab" data-bs-toggle="tab" href="#v-tipo-gastos" role="tab" aria-controls="v-tipo-gastos" aria-selected="false">Comodin 2</a>
+                                <a class="nav-link" id="v-mov-caja-tab" data-bs-toggle="tab" href="#v-mov-caja" role="tab" aria-controls="v-mov-caja" aria-selected="false">Razones Mov. Caja</a>
                             </li>
+
+@*                             <li class="nav-item" role="presentation">
+                                <a class="nav-link" id="v-comodin-1-tab" data-bs-toggle="tab" href="#v-comodin-1" role="tab" aria-controls="v-comodin-1" aria-selected="false">Comodin 1</a>
+                            </li>
+
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link" id="v-tipo-gastos-tab" data-bs-toggle="tab" href="#v-tipo-gastos" role="tab" aria-controls="v-tipo-gastos" aria-selected="false">Comodin 3</a>
+                                <a class="nav-link" id="v-comodin-2-tab" data-bs-toggle="tab" href="#v-comodin-2" role="tab" aria-controls="v-comodin-2" aria-selected="false">Comodin 2</a>
                             </li>
+
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" id="v-comodin-3-tab" data-bs-toggle="tab" href="#v-comodin-3" role="tab" aria-controls="v-comodin-3" aria-selected="false">Comodin 3</a>
+                            </li> *@
+
                         </ul>
                     </div>
-                    <div class="col-sm-9">
+                    <div class="col-sm-10">
                         <!-- Contenido de las pestañas -->
                         <div class="tab-content" id="v-pills-tabContent">
-                            <div class="tab-pane fade show active" id="v-categoria" role="tabpanel" aria-labelledby="v-categoria-tab">
 
-                                <!-- Contenido de la pestaña "Categorias" -->
+                            <!-- Contenido de la pestaña "Categorias" -->
+                            <div class="tab-pane fade show active" id="v-categoria" role="tabpanel" aria-labelledby="v-categoria-tab">
                                 <div class="card-header card-header-border-bottom" style="padding-top: 0;">
                                     <div>
                                         <h4>Categorias</h4>
                                     </div>
                                     <div class="ms-auto bd-highlight">
-                                        <button class="btn btn-info" id="btnNew">Nueva Categoria</button>
+                                        <button class="btn btn-info" id="btnNewCategoria">Nueva Categoria</button>
                                     </div>
                                 </div>
 
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-sm-12">
-                                            <table id="tbData" class="table table-striped" style="width:100%">
+                                            <table id="tbDataCategoria" class="table table-striped" style="width:100%">
                                                 <thead>
                                                     <tr>
                                                         <th></th>
@@ -82,9 +92,8 @@
                                 </div>
                             </div>
 
+                            <!-- Contenido de la pestaña "Tags" -->
                             <div class="tab-pane fade" id="v-tags" role="tabpanel" aria-labelledby="v-tags-tab">
-
-                                <!-- Contenido de la pestaña "Tags" -->
                                 <div class="card-header card-header-border-bottom" style="padding-top: 0;">
                                     <div>
                                         <h4>Tags</h4>
@@ -114,15 +123,15 @@
 
                             </div>
 
+                            <!-- Contenido de la pestaña "Formato de Venta" -->
                             <div class="tab-pane fade" id="v-formato-venta" role="tabpanel" aria-labelledby="v-formato-venta-tab">
-                                <!-- Contenido de la pestaña "Formato de Venta" -->
 
                                 <div class="card-header card-header-border-bottom" style="padding-top: 0;">
                                     <div>
                                         <h4>Formato de Venta</h4>
                                     </div>
                                     <div class="ms-auto bd-highlight">
-                                        <button class="btn btn-info" id="btnAddNewTag">Nuevo Formato de Venta</button>
+                                        <button class="btn btn-info" id="btnAddFormtatoVenta">Nuevo Formato de Venta</button>
                                     </div>
                                 </div>
 
@@ -146,8 +155,9 @@
                                 </div>
 
                             </div>
+
+                            <!-- Contenido de la pestaña "tipo-gastos" -->
                             <div class="tab-pane fade" id="v-tipo-gastos" role="tabpanel" aria-labelledby="v-tipo-gastos-tab">
-                                <!-- Contenido de la pestaña "tipo-gastos" -->
                                 <div class="card-header card-header-border-bottom" style="padding-top: 0;">
                                     <div>
                                         <h4>Tipo de Gastos</h4>
@@ -178,239 +188,440 @@
                                 </div>
                             </div>
 
+                            <!-- Contenido de la pestaña "formas_pago-tab" -->
+                            <div class="tab-pane fade" id="v-formas_pago" role="tabpanel" aria-labelledby="v-formas_pago-tab">
+
+                                <div class="card-header card-header-border-bottom" style="padding-top: 0;">
+                                    <div class="">
+                                        <h4>Formas de Pago</h4>
+                                    </div>
+                                    <div class="ms-auto bd-highlight">
+                                        <button class="btn btn-info" id="btnNewFormaPago">Nueva Forma de Pago</button>
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <table id="tbFormaPago" class="table table-striped" style="width:100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>Description</th>
+                                                        <th>Factura</th>
+                                                        <th>Web</th>
+                                                        <th>Comision</th>
+                                                        <th>Estado</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- Contenido de la pestaña "mov-caja-tab" -->
+                            <div class="tab-pane fade" id="v-mov-caja" role="tabpanel" aria-labelledby="v-mov-caja-tab">
+
+                                <div class="card-header card-header-border-bottom" style="padding-top: 0;">
+                                    <div class="">
+                                        <h4>Razones Movimientos de Caja</h4>
+                                    </div>
+                                    <div class="ms-auto bd-highlight">
+                                        <button class="btn btn-info" id="btnNewMovCaja">Nueva Razon</button>
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <table id="tbRazonMovCaja" class="table table-striped" style="width:100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>Description</th>
+                                                        <th>Tipo</th>
+                                                        <th>Estado</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- Contenido de la pestaña "comodin-1" -->
+                            <div class="tab-pane fade" id="v-comodin-1" role="tabpanel" aria-labelledby="v-comodin-1-tab">
+                                comodin 1
+                            </div>
+
+                            <!-- Contenido de la pestaña "comodin-2" -->
+                            <div class="tab-pane fade" id="v-comodin-2" role="tabpanel" aria-labelledby="v-comodin-2-tab">
+                                comodin 2
+                            </div>
+
+                            <!-- Contenido de la pestaña "comodin-3" -->
+                            <div class="tab-pane fade" id="v-comodin-3" role="tabpanel" aria-labelledby="v-comodin-3-tab">
+                                comodin 3
+                            </div>
+
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 
-<!-- Grid Modal -->
-<div class="modal fade" id="modalData" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalGridTitle">Detalle Categorias</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+    <!-- Grid Modal Categoria-->
+    <div class="modal fade" id="modalDataCategoria" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalGridTitle">Detalle Categorias</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <input type="hidden" value="0" id="txtIdCategoria">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-row">
+                                    <div class="form-group col-sm-6">
+                                        <label for="txtDescriptionCategoria">Descripción</label>
+                                        <input type="text" class="form-control form-control-sm input-validate-categoria" id="txtDescriptionCategoria" name="Description">
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label for="cboStateCategoria">Estado</label>
+                                        <select class="form-control form-control-sm" id="cboStateCategoria">
+                                            <option value="1">Activo</option>
+                                            <option value="0">Inactivo</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-row" id="divModif">
+                                    <div class="form-group col-sm-6">
+                                        <label for="txtModificado">Fecha Modificado</label>
+                                        <input type="text" class="form-control form-control-sm" id="txtModificado" name="fechaModificado" readonly>
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label for="txtModificadoUsuario">Por:</label>
+                                        <input type="text" class="form-control form-control-sm" id="txtModificadoUsuario" name="usuarioModificado" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="btnSaveCategoria">Guardar Cambios</button>
+                </div>
             </div>
-            <div class="modal-body">
-                <form>
-                    <input type="hidden" value="0" id="txtId">
+        </div>
+    </div>
+
+    <!-- Grid Modal for Tags -->
+    <div class="modal fade" id="modalTagData" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalGridTitle">Detalle Tag</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" value="0" id="txtTagId">
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-row">
-                                <div class="form-group col-sm-6">
-                                    <label for="txtDescription">Descripción</label>
-                                    <input type="text" class="form-control form-control-sm input-validate" id="txtDescription" name="Description">
+                                <div class="form-group col-sm-7">
+                                    <label for="txtTagName">Nombre</label>
+                                    <input type="text" class="form-control form-control-sm input-validate-tag" id="txtTagName" name="TagName">
                                 </div>
-                                <div class="form-group col-sm-6">
-                                    <label for="cboState">Estado</label>
-                                    <select class="form-control form-control-sm" id="cboState">
+                                <div class="form-group col-sm-5">
+                                    <label for="txtTagColor">Color</label>
+                                    <input type="color" class="form-control form-control-sm" id="txtTagColor" name="TagColor">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="btnSaveTag">Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grid Modal Tipo de Gastos -->
+    <div class="modal fade" id="modalDataTipoDeGasto" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalGridTitle">Tipo De Gasto</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <input type="hidden" value="0" id="txtIdTipoGastos">
+                        <div class="row">
+                            <div class="col-sm-12">
+
+                                <div class="form-row">
+                                    <div class="form-group col-sm-4">
+                                        <label for="cboTipoDeGasto">Tipo de Gasto</label>
+                                        <select class="form-control form-control-sm  input-validate" id="cboTipoDeGasto">
+                                            <option value="-1"></option>
+                                            <option value="0">Sueldo</option>
+                                            <option value="1">Gasto Fijo</option>
+                                            <option value="2">Gasto Variable</option>
+                                            <option value="3">Servicios</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-sm-8">
+                                        <label for="txtDescripcionTipoDeGasto">Descripción</label>
+                                        <input type="text" class="form-control form-control-sm input-validate-TipoDeGastos" id="txtDescripcionTipoDeGasto" name="Description">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-row">
+                                    <div class="form-group col-sm-6 margin-min">
+                                        <label for="txtIvaTipoGasto">IVA</label>
+                                        <select class="form-control form-control-sm" id="txtIvaTipoGasto">
+                                            <option value="0">0 %</option>
+                                            <option value="10.5">10,5 %</option>
+                                            <option value="21">21 %</option>
+                                            <option value="27">27 %</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label for="cboTipoFacturaTipoGasto">Factura</label>
+                                        <select class="form-control form-control-sm" id="cboTipoFacturaTipoGasto">
+                                            <option value=""></option>
+                                            <option value="0">A</option>
+                                            <option value="1">B</option>
+                                            <option value="2">C</option>
+                                            <option value="3">X</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="btnSaveTipoDeGastos">Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grid Modal Formato de Venta -->
+    <div class="modal fade" id="modalFormatoVenta" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalGridTitle">Formato de Venta</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" value="0" id="txtIdFormatoVenta">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-row">
+                                <div class="form-group col-sm-5">
+                                    <label for="txtDescripcionFormatoVenta">Descripcion</label>
+                                    <input type="text" class="form-control form-control-sm input-validate-Formato-Venta" id="txtDescripcionFormatoVenta" name="Description Formato Venta">
+                                </div>
+
+                                <div class="form-group col-sm-4">
+                                    <label for="txtValorFormatoVenta">Valor</label><span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Se debe colocar el equivalente en gramos"></span>
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" class="form-control form-control-sm input-validate-Formato-Venta" id="txtValorFormatoVenta" name="ValorFormato Venta">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">gramos</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-3">
+                                    <label for="cboStateFormatoVenta">Estado</label>
+                                    <select class="form-control form-control-sm" id="cboStateFormatoVenta">
                                         <option value="1">Activo</option>
                                         <option value="0">Inactivo</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-row" id="divModif">
-                                <div class="form-group col-sm-6">
-                                    <label for="txtModificado">Fecha Modificado</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtModificado" name="fechaModificado" readonly>
-                                </div>
-                                <div class="form-group col-sm-6">
-                                    <label for="txtModificadoUsuario">Por:</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtModificadoUsuario" name="usuarioModificado" readonly>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
 
-                </form>
+                </div>
 
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" id="btnSave">Guardar Cambios</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Grid Modal for Tags -->
-<div class="modal fade" id="modalTagData" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalGridTitle">Detalle Tag</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" value="0" id="txtTagId">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="form-row">
-                            <div class="form-group col-sm-7">
-                                <label for="txtTagName">Nombre</label>
-                                <input type="text" class="form-control form-control-sm input-validate" id="txtTagName" name="TagName">
-                            </div>
-                            <div class="form-group col-sm-5">
-                                <label for="txtTagColor">Color</label>
-                                <input type="color" class="form-control form-control-sm" id="txtTagColor" name="TagColor">
-                            </div>
-                        </div>
-                    </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="btnSaveFormatoVenta">Guardar Cambios</button>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" id="btnSaveTag">Guardar Cambios</button>
+    <!-- Grid Modal Formas de Pago -->
+    <div class="modal fade" id="modalDataFormaPago" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalGridTitle">Detalle Formas de Pago</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <input type="hidden" value="0" id="txtIdFormaPago">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-row">
+                                    <div class="form-group col-sm-4">
+                                        <label for="txtNombreFormaPago">Descripción</label>
+                                        <input type="text" class="form-control form-control-sm input-validate-forma-pago" id="txtNombreFormaPago" name="Description">
+                                    </div>
+                                    <div class="form-group col-sm-2">
+                                        <label for="cboStateFormaPago">Estado</label>
+                                        <select class="form-control form-control-sm" id="cboStateFormaPago">
+                                            <option value="1">Activo</option>
+                                            <option value="0">Inactrivo</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-sm-2">
+                                        <label for="cboTipoFactura">Factura</label>
+                                        <select class="form-control form-control-sm" id="cboTipoFactura">
+                                            <option value="0">A</option>
+                                            <option value="1">B</option>
+                                            <option value="2">C</option>
+                                            <option value="3">X</option>
+                                            <option value="4">Presu.</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-sm-2">
+                                        <label for="txtComision">Comision</label>
+                                        <div class="input-group input-group-sm">
+                                            <input type="number" step="any" min="0" class="form-control form-control-sm" id="txtComision" name="Comision" value="0">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-sm-2" style="align-content: center;">
+                                        <div class="form-check">
+                                            <label class="form-label">
+                                                <input type="checkbox" id="cboWeb">
+                                                Web
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="btnSaveFormaPago">Guardar Cambios</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Grid Modal Tipo de Gastos -->
-<div class="modal fade" id="modalDataTipoDeGasto" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalGridTitle">Tipo De Gasto</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <input type="hidden" value="0" id="txtIdTipoGastos">
+    <!-- Grid Modal Razones Mov Caja -->
+    <div class="modal fade" id="modalRazon" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalGridTitle">Razon Movimiento de Caja</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <input type="hidden" value="0" id="txtIdRazon">
                     <div class="row">
                         <div class="col-sm-12">
 
                             <div class="form-row">
-                                <div class="form-group col-sm-4">
-                                    <label for="cboTipoDeGasto">Tipo de Gasto</label>
-                                    <select class="form-control form-control-sm  input-validate" id="cboTipoDeGasto">
-                                        <option value="-1"></option>
-                                        <option value="0">Sueldo</option>
-                                        <option value="1">Gasto Fijo</option>
-                                        <option value="2">Gasto Variable</option>
-                                        <option value="3">Servicios</option>
+                                <div class="form-group col-sm-3">
+                                    <label for="cboTipoRazonMovimientoCaja">Tipo</label>
+                                    <select class="form-control form-control-sm input-validate" id="cboTipoRazonMovimientoCaja">
+                                        <option value="0">Egreso</option>
+                                        <option value="1">Ingreso</option>
                                     </select>
                                 </div>
-                                <div class="form-group col-sm-8">
-                                    <label for="txtDescripcionTipoDeGasto">Descripción</label>
-                                    <input type="text" class="form-control form-control-sm input-validate-TipoDeGastos" id="txtDescripcionTipoDeGasto" name="Description">
+                                <div class="form-group col-sm-7">
+                                    <label for="txtDescripcionRazonMovimientoCaja">Descripción</label>
+                                    <input type="text" class="form-control form-control-sm input-validate-razon-mov-caja" id="txtDescripcionRazonMovimientoCaja" name="Description">
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="form-row">
-                                <div class="form-group col-sm-6 margin-min">
-                                    <label for="txtIvaTipoGasto">IVA</label>
-                                    <select class="form-control form-control-sm" id="txtIvaTipoGasto">
-                                        <option value="0">0 %</option>
-                                        <option value="10.5">10,5 %</option>
-                                        <option value="21">21 %</option>
-                                        <option value="27">27 %</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-sm-6">
-                                    <label for="cboTipoFacturaTipoGasto">Factura</label>
-                                    <select class="form-control form-control-sm" id="cboTipoFacturaTipoGasto">
-                                        <option value=""></option>
-                                        <option value="0">A</option>
-                                        <option value="1">B</option>
-                                        <option value="2">C</option>
-                                        <option value="3">X</option>
+                                <div class="form-group col-sm-2 margin-min">
+                                    <label for="cboStateRazonMovimientoCaja">Estado</label>
+                                    <select class="form-control form-control-sm" id="cboStateRazonMovimientoCaja">
+                                        <option value="1">Activo</option>
+                                        <option value="0">Inactrivo</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                </form>
-
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" id="btnSaveTipoDeGastos">Guardar Cambios</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Grid Modal Formato de Venta -->
-<div class="modal fade" id="modalFormatoVenta" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalGridTitle">Formato de Venta</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" value="0" id="txtIdFormatoVenta">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="form-row">
-                            <div class="form-group col-sm-5">
-                                <label for="txtDescripcionFormatoVenta">Descripcion</label>
-                                <input type="text" class="form-control form-control-sm input-validate-Formato-Venta" id="txtDescripcionFormatoVenta" name="Description Formato Venta">
-                            </div>
-
-                            <div class="form-group col-sm-4">
-                                <label for="txtValorFormatoVenta">Valor</label><span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Se debe colocar el equivalente en gramos"></span>
-                                <div class="input-group input-group-sm">
-                                    <input type="text" class="form-control form-control-sm input-validate-Formato-Venta" id="txtValorFormatoVenta" name="ValorFormato Venta">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">gramos</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group col-sm-3">
-                                <label for="cboStateFormatoVenta">Estado</label>
-                                <select class="form-control form-control-sm" id="cboStateFormatoVenta">
-                                    <option value="1">Activo</option>
-                                    <option value="0">Inactivo</option>
-                                </select>
-                            </div>
-                        </div>
-
-                    </div>
                 </div>
 
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" id="btnSaveFormatoVenta">Guardar Cambios</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="btnSaveRazonMovimientoCaja">Guardar Cambios</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+    @section Scripts {
+        <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
+        <script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
+        <script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
 
 
-@section Scripts {
-    <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
-    <script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
-    <script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
+        <script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
+        <script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
+        <script src="~/plugins/data-tables/jszip.min.js"></script>
+        <script src="~/plugins/data-tables/buttons.html5.min.js"></script>
+        <script src="~/plugins/data-tables/buttons.print.min.js"></script>
 
-
-    <script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
-    <script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
-    <script src="~/plugins/data-tables/jszip.min.js"></script>
-    <script src="~/plugins/data-tables/buttons.html5.min.js"></script>
-    <script src="~/plugins/data-tables/buttons.print.min.js"></script>
-
-    <script src="~/js/views/InventoryCategories.js"></script>
-    <script src="~/js/views/tablas.js"></script>
-}
+        <script src="~/js/views/tablas.js"></script>
+    }
 

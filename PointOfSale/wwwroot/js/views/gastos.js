@@ -136,14 +136,6 @@ function cargarTablaGastos(isGlobal) {
     });
 }
 
-const openModalTipoDeGasto = (model = BASIC_MODEL_TIPO_DE_GASTOS) => {
-    $("#txtIdTipoGastos").val(model.IdTipoGastos);
-    $("#cboTipoDeGasto").val(model.gastoParticular);
-    $("#txtDescripcionTipoDeGasto").val(model.descripcion);
-
-    $("#modalDataTipoDeGasto").modal("show")
-}
-
 $('#SwitchVisionGlobalGastos').change(function () {
     let visionGlobal = $(this).is(':checked')
     cargarTablaDinamicaGastos(visionGlobal);
@@ -151,53 +143,6 @@ $('#SwitchVisionGlobalGastos').change(function () {
 
 });
 
-$("#btnNewTipoDeGasto").on("click", function () {
-    openModalTipoDeGasto()
-})
-
-
-$("#btnSaveTipoDeGastos").on("click", function () {
-    const inputs = $("input.input-validate-TipoDeGastos").serializeArray();
-    const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
-
-    if (inputs_without_value.length > 0) {
-        const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
-        toastr.warning(msg, "");
-        $(`input[name="${inputs_without_value[0].name}"]`).focus();
-        return;
-    }
-
-    const model = structuredClone(BASIC_MODEL_TIPO_DE_GASTOS);
-    model["idTipoGastos"] = parseInt($("#txtIdTipoGastos").val());
-    model["gastoParticular"] = $("#cboTipoDeGasto").val();
-    model["descripcion"] = $("#txtDescripcionTipoDeGasto").val();
-    model["tipoFactura"] = parseInt($("#cboTipoFacturaTipoGasto").val());
-    model["iva"] = $("#txtIvaTipoGasto").val() != '' ? parseInt($("#txtIvaTipoGasto").val()) : 0;
-
-    $("#modalDataTipoDeGasto").find("div.modal-content").LoadingOverlay("show")
-
-
-    if (model.IdTipoGastos == 0) {
-        fetch("/Gastos/CreateTipoDeGastos", {
-            method: "POST",
-            headers: { 'Content-Type': 'application/json;charset=utf-8' },
-            body: JSON.stringify(model)
-        }).then(response => {
-            $("#modalDataTipoDeGasto").find("div.modal-content").LoadingOverlay("hide")
-            return response.json();
-        }).then(responseJson => {
-
-            if (responseJson.state) {
-                location.reload()
-
-            } else {
-                swal("Lo sentimos", responseJson.message, "error");
-            }
-        }).catch((error) => {
-            $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-        })
-    }
-})
 
 const openModalNuevoGasto = (model = BASIC_MODEL_GASTO) => {
     $("#txtIdGastos").val(model.idGastos);

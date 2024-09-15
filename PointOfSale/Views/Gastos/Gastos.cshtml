@@ -30,7 +30,6 @@
                 </div>
                 <div class="ms-auto bd-highlight d-flex flex-column align-items-end">
                     <div>
-                        <button class="btn btn-info ms-3" id="btnNewTipoDeGasto">Nuevo Tipo</button>
                         <button class="btn btn-success ms-5" id="btnNew">Nuevo Gasto</button>
                     </div>
                     <div class="form-group mt-2" id="divSwitchVisionGlobalGastos" style=" margin-bottom: 0px; display: none">
@@ -80,76 +79,6 @@
     </div>
 </div>
 
-@* <!-- Grid Modal Tipo de Gastos -->
-<div class="modal fade" id="modalDataTipoDeGasto" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalGridTitle">Tipo De Gasto</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <input type="hidden" value="0" id="txtIdTipoGastos">
-                    <div class="row">
-                        <div class="col-sm-12">
-
-                            <div class="form-row">
-                                <div class="form-group col-sm-4">
-                                    <label for="cboTipoDeGasto">Tipo de Gasto</label>
-                                    <select class="form-control form-control-sm  input-validate" id="cboTipoDeGasto">
-                                        <option value="-1"></option>
-                                        <option value="0">Sueldo</option>
-                                        <option value="1">Gasto Fijo</option>
-                                        <option value="2">Gasto Variable</option>
-                                        <option value="3">Servicios</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-sm-8">
-                                    <label for="txtDescripcionTipoDeGasto">Descripción</label>
-                                    <input type="text" class="form-control form-control-sm input-validate-TipoDeGastos" id="txtDescripcionTipoDeGasto" name="Description">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="form-row">
-                                <div class="form-group col-sm-6 margin-min">
-                                    <label for="txtIvaTipoGasto">IVA</label>
-                                    <select class="form-control form-control-sm" id="txtIvaTipoGasto">
-                                        <option value="0">0 %</option>
-                                        <option value="10.5">10,5 %</option>
-                                        <option value="21">21 %</option>
-                                        <option value="27">27 %</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-sm-6">
-                                    <label for="cboTipoFacturaTipoGasto">Factura</label>
-                                    <select class="form-control form-control-sm" id="cboTipoFacturaTipoGasto">
-                                        <option value=""></option>
-                                        <option value="0">A</option>
-                                        <option value="1">B</option>
-                                        <option value="2">C</option>
-                                        <option value="3">X</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </form>
-
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" id="btnSaveTipoDeGastos">Guardar Cambios</button>
-            </div>
-        </div>
-    </div>
-</div>
- *@
 <!-- Grid Modal -->
 <div class="modal fade" id="modalData" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
     <div class="modal-dialog" role="document">

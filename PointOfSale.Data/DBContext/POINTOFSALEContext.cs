@@ -54,6 +54,7 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<Tag> Tags { get; set; }
         public virtual DbSet<ProductTag> ProductTags { get; set; }
         public virtual DbSet<FormatosVenta> FormatosVentas { get; set; }
+        public virtual DbSet<Lov> Lov { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
         }
@@ -61,6 +62,13 @@ namespace PointOfSale.Data.DBContext
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
+            modelBuilder.Entity<Lov>(entity =>
+            {
+                entity.HasKey(e => e.IdLov);
+
+                entity.ToTable("Lov");
+            });
+            
             modelBuilder.Entity<FormatosVenta>(entity =>
             {
                 entity.HasKey(e => e.IdFormatosVenta);
