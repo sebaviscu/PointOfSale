@@ -176,6 +176,24 @@ $("#tbsale tbody").on("click", ".btn-info", function () {
 
     document.getElementById("btnAnular").style.display = d.isDelete ? 'none' : '';
 
+    document.getElementById("btnVerFactura").style.display = d.resultadoFacturacion != null ? '' : 'none';
+
+    if (d.resultadoFacturacion != null) {
+        const $btnVerFactura = $("#btnVerFactura");
+
+        if (d.resultadoFacturacion == true) {
+            $btnVerFactura.removeClass("text-organe").addClass("btn-success");
+            $btnVerFactura.html('<i class="mdi mdi-checkbox-marked-circle"></i> Ver Factura');
+        } else {
+            $btnVerFactura.removeClass("btn-success").addClass("text-organe");
+            $btnVerFactura.html('<i class="mdi mdi-minus-circle-outline"></i> Facturas');
+        }
+        $btnVerFactura.off("click").on("click", function () {
+            window.location.href = `/Admin/FacturacionById?idFacturaEmitida=${d.idFacturaEmitida}`;
+        });
+    }
+
+
     idSale = d.idSale;
 
     $("#tbProducts tbody").html("")
@@ -252,8 +270,13 @@ function createTable(responseJson) {
                     let content = `${row.saleNumber}`;
                     if (row.isWeb) {
                         content += `<i class="mdi mdi-web ms-3" title="Venta Web"></i>`;
-                    } else if (row.isDelete) {
+                    }
+                    if (row.isDelete) {
                         content += `<i class="mdi mdi-cancel ms-3 text-danger" title="Anulada"></i>`;
+                    }
+
+                    if (row.resultadoFacturacion != null && !row.resultadoFacturacion) {
+                        content += `<i class="mdi mdi-minus-circle-outline ms-3" style="color:orange;" title="Error al facturar"></i>`;
                     }
                     return content;
                 }
@@ -294,71 +317,6 @@ function createTable(responseJson) {
         ]
     });
 
-
-    //tableReportSale = $("#tbsale").DataTable({
-    //    data: responseJson,
-    //    responsive: true,
-    //    pageLength: 100,
-    //    columns: [
-    //        {
-    //            data: "registrationDate",
-    //            render: function (data, type, row) {
-    //                if (type === 'display' || type === 'filter') {
-    //                    return data ? moment(data, 'DD/MM/YYYY HH:mm').format('DD/MM/YYYY') : '';
-    //                }
-    //                return data;
-    //            }
-    //        },
-    //        {
-    //            data: null,
-    //            render: function (data, type, row) {
-    //                let content = `${row.saleNumber}`;
-    //                if (row.isWeb) {
-    //                    content += `<i class="mdi mdi-web ms-3" title="Venta Web"></i>`;
-    //                } else if (row.isDelete) {
-    //                    content += `<i class="mdi mdi-cancel ms-3 text-danger" title="Anulada"></i>`;
-    //                }
-    //                return content;
-    //            }
-    //        },
-    //        {
-    //            data: null,
-    //            render: function (data, type, row) {
-    //                let button = row.typeDocumentSale === "Presupuesto" ?
-    //                    `<button class="btn btn-success btn-sm btn-pago"><i class="mdi mdi-cash-usd"></i></button>` : "";
-    //                return `${row.typeDocumentSale} ${button}`;
-    //            }
-    //        },
-    //        { data: "cantidadProductos" },
-    //        {
-    //            data: "total",
-    //            render: $.fn.dataTable.render.number(',', '.', 2, '$ ')
-    //        },
-    //        {
-    //            data: null,
-    //            render: function (data, type, row) {
-    //                return `<button class="btn btn-info btn-sm"><i class="mdi mdi-eye"></i></button>`;
-    //            }
-    //        }
-    //    ],
-    //    order: [[0, "desc"]],
-    //    dom: "<'row'<'col-sm-12 col-md-6'B><'col-sm-12 col-md-6'f>>" +
-    //        "<'row'<'col-sm-12'tr>>" +
-    //        "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-    //    buttons: [
-    //        {
-    //            text: 'Exportar Excel',
-    //            extend: 'excelHtml5',
-    //            title: '',
-    //            filename: 'Reporte Ventas',
-    //            exportOptions: {
-    //                columns: [0, 1, 2, 3, 4]
-    //            }
-    //        }, 'pageLength'
-    //    ]
-    //});
-
-    // Actualizar el total y la cantidad de ventas
     let total = responseJson.reduce((acc, sale) => acc + parseFloat(sale.totalDecimal), 0);
     let uniqs = responseJson.reduce((acc, val) => {
         acc[val.saleNumber] = acc[val.saleNumber] === undefined ? 1 : acc[val.saleNumber] += 1;

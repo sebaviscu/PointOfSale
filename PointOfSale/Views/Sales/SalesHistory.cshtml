@@ -15,6 +15,14 @@
 
 }
 
+<style>
+    .text-organe{
+        background-color:orange;
+        color: #ffffff;
+    }
+
+</style>
+
 <div id="txtSaleNumberByClient" style="display:none">
     @Model.saleNumber
 </div>
@@ -159,7 +167,7 @@
                                 <label for="txtDocumentType">Forma de Pago</label>
                                 <input type="text" class="form-control form-control-sm" id="txtDocumentType" disabled>
                             </div>
-                            <div class="form-group col-sm-3">
+                            <div class="form-group col-sm-2">
                                 <label for="txtDocumentType">Desc. / Rec.</label>
                                 <div class="input-group input-group-sm">
                                     <div class="input-group-prepend">
@@ -177,8 +185,9 @@
                                     <input type="text" class="form-control form-control-sm" id="txtTotal" style="text-align: right;" disabled>
                                 </div>
                             </div>
-                            <div class="offset-sm-1 form-group col-sm-2 text-end" style="align-content: center;">
+                            <div class="offset-sm-1 form-group col-md-3 d-flex justify-content-around align-items-center">
                                 <button class="btn btn-sm btn-danger" id="btnAnular"><i class="mdi mdi-cancel"></i> Anular</button>
+                                <button class="btn btn-sm btn-success" id="btnVerFactura"><i class="mdi mdi-checkbox-marked-circle"></i> Facturado</button>
                             </div>
                         </div>
                         <div class="form-row" id="divObs" style="margin-top: -20px; display: none">

@@ -1731,6 +1731,20 @@ namespace PointOfSale.Controllers
             return ValidateSesionViewOrLogin();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> FacturacionById(int idFacturaEmitida)
+        {
+            ValidarAutorizacion([Roles.Administrador]);
+
+            if (!HttpContext.User.Identity.IsAuthenticated)
+                return RedirectToAction("Login", "Access");
+
+            var factura = _mapper.Map<VMFacturaEmitida>(await _afipService.GetById(idFacturaEmitida));
+            ViewData["IdSale"] = factura.IdSale;
+
+            return View("Facturacion");
+        }
+
         /// <summary>
         /// Retorna las facturas para DataTable
         /// </summary>

@@ -274,6 +274,12 @@ namespace PointOfSale.Business.Services
 
 
                 sale.IdFacturaEmitida = facturaEmitida?.IdFacturaEmitida;
+                sale.ResultadoFacturacion = facturaEmitida?.Resultado == "A";
+
+                if (!sale.ResultadoFacturacion.Value)
+                {
+                    sale.Observaciones = $"Error en AFIP:\n{facturaEmitida.Observaciones}";
+                }
                 _ = await _saleRepository.Edit(sale);
             }
 
@@ -282,7 +288,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<FacturaEmitida?> NotaCredito(int idFacturaemitida, string registrationUser)
         {
-            var facturaEmitida = await _repository.First(_=>_.IdFacturaEmitida == idFacturaemitida);
+            var facturaEmitida = await _repository.First(_ => _.IdFacturaEmitida == idFacturaemitida);
 
             var ajustesFacturacion = await _ajusteService.GetAjustesFacturacion(facturaEmitida.IdTienda);
 

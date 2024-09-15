@@ -207,7 +207,7 @@ namespace PointOfSale.Business.Services
             var facruturasQuery = await _repositoryFacturaEmitida.Query(v => v.IdSale == idSale);
             var facturas = facruturasQuery.ToList();
 
-            foreach (var f in facturas)
+            foreach (var f in facturas.Where(_=>_.Resultado == "A"))
             {
                 await _afipService.NotaCredito(f.IdFacturaEmitida, registrationUser);
             }

@@ -192,10 +192,12 @@ insert into TipoGastos (gastoPArticular, descripcion, iva) values
 go
 
 insert into FormatosVenta (formato, valor, estado) values 
-('Unidad', 1,1),
+('Unidad', 1, 1),
 ('100 gr', 100,1),
 ('200 gr', 200,1),
 ('250 gr', 250,1),
 ('500 gr', 500,1),
 ('750 gr', 750,1),
 ('1 kg', 1000,1)
+
+select * from FormatosVenta

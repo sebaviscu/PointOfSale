@@ -189,7 +189,8 @@ descuentoRecargo decimal(10,2) null,
 IdFacturaEmitida int null,
 isWeb bit null,
 isDelete bit not null,
-Observaciones varchar(400),
+Observaciones varchar(max),
+ResultadoFacturacion bit null,
 [registrationDate] datetime default getdate(),
 [registrationUser] varchar(50) not null
 )

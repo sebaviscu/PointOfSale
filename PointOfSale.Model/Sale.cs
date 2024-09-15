@@ -38,5 +38,6 @@ namespace PointOfSale.Model
         public bool? IsWeb { get; set; }
         public string? Observaciones { get; set; }
         public bool IsDelete { get; set; }
+        public bool? ResultadoFacturacion {  get; set; }
     }
 }

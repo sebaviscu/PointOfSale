@@ -29,6 +29,8 @@ const BASIC_MODEL_FACTURACION = {
 
 $(document).ready(function () {
 
+    let textoBusqueda = $('#txtIdSaleViewData').text().trim();
+
     tableDataFactura = $("#tbData").DataTable({
         responsive: true,
         "ajax": {
@@ -38,7 +40,7 @@ $(document).ready(function () {
         },
         "columnDefs": [
             {
-                "targets": [1],
+                "targets": [2],
                 "render": function (data, type, row) {
                     if (type === 'display' || type === 'filter') {
                         return data ? moment(data).format('DD/MM/YYYY HH:mm') : '';
@@ -47,7 +49,7 @@ $(document).ready(function () {
                 }
             },
             {
-                "targets": [7],
+                "targets": [8],
                 "render": function (data, type, row) {
                     if (type === 'display' || type === 'filter') {
                         return data && data != '0001-01-01T00:00:00' ? moment(data).format('DD/MM/YYYY') : '';
@@ -62,11 +64,15 @@ $(document).ready(function () {
                 "visible": false,
                 "searchable": false
             },
+            {
+                "data": "idSale",
+                "visible": false,
+                "searchable": true
+            },
             { "data": "registrationDate" },
             {
                 "data": "tipoFactura",
                 render: function (data, type, row) {
-                    // Asegurando el orden correcto de las operaciones y evitando posibles errores
                     let badge = '';
                     if (row.observaciones != null) {
                         badge = row.resultado != 'A' ?
@@ -108,12 +114,17 @@ $(document).ready(function () {
                 text: 'Exportar Excel',
                 extend: 'excelHtml5',
                 title: '',
-                filename: 'Reporte Formas de Pago',
+                filename: 'Reporte Facturas',
                 exportOptions: {
-                    columns: [1, 2]
+                    columns: [2,3,4,5,6,7,8]
                 }
             }, 'pageLength'
-        ]
+        ],
+        "initComplete": function () {
+            if (textoBusqueda !== '') {
+                this.api().column(1).search(textoBusqueda).draw();
+            }
+        }
     });
 })
 
