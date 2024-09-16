@@ -24,10 +24,33 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<Turno>> List(int idtienda)
         {
-            var result = await _repository.Query();
-            var s = result.Include(_ => _.Sales).OrderByDescending(_ => _.IdTurno).ToList();
-            return s;
+            var result = await _repository.Query(_ => _.IdTienda == idtienda);
+            IQueryable<Turno> list = QueryTurnoisConVentasSinAnular(result);
+
+            return list.ToList();
         }
+
+        private static IQueryable<Turno> QueryTurnoisConVentasSinAnular(IQueryable<Turno> result)
+        {
+            var query = result.Include(_ => _.Sales).OrderByDescending(_ => _.IdTurno);
+            var list = query
+                         .Select(t => new Turno
+                         {
+                             IdTurno = t.IdTurno,
+                             FechaFin = t.FechaFin,
+                             FechaInicio = t.FechaInicio,
+                             IdTienda = t.IdTienda,
+                             ModificationUser = t.ModificationUser,
+                             ObservacionesApertura = t.ObservacionesApertura,
+                             ObservacionesCierre = t.ObservacionesCierre,
+                             RegistrationDate = t.RegistrationDate,
+                             RegistrationUser = t.RegistrationUser,
+                             TotalInicioCaja = t.TotalInicioCaja,
+                             Sales = t.Sales.Where(s => !s.IsDelete).ToList()
+                         });
+            return list;
+        }
+
         public async Task<Turno> Add(Turno entity)
         {
             Turno Turno_created = await _repository.Add(entity);
@@ -39,18 +62,18 @@ namespace PointOfSale.Business.Services
 
         public async Task<Turno> Edit(Turno entity)
         {
-                Turno Turno_found = await _repository.Get(c => c.IdTurno == entity.IdTurno);
+            Turno Turno_found = await _repository.Get(c => c.IdTurno == entity.IdTurno);
 
-                Turno_found.ModificationUser = entity.ModificationUser;
-                Turno_found.ObservacionesCierre = entity.ObservacionesCierre;
-                Turno_found.FechaFin = entity.FechaFin;
+            Turno_found.ModificationUser = entity.ModificationUser;
+            Turno_found.ObservacionesCierre = entity.ObservacionesCierre;
+            Turno_found.FechaFin = entity.FechaFin;
 
-                bool response = await _repository.Edit(Turno_found);
+            bool response = await _repository.Edit(Turno_found);
 
-                if (!response)
-                    throw new TaskCanceledException("Turno no se pudo cambiar.");
+            if (!response)
+                throw new TaskCanceledException("Turno no se pudo cambiar.");
 
-                return Turno_found;
+            return Turno_found;
         }
 
         private async Task<Turno> CloseTurno(Turno turno)
@@ -81,7 +104,9 @@ namespace PointOfSale.Business.Services
         public async Task<Turno?> GetTurnoActualConVentas(int idtienda)
         {
             var query = await _repository.Query();
-            var turno = query.Include(_ => _.Sales).FirstOrDefault(_ => _.FechaFin == null
+            var query2 = QueryTurnoisConVentasSinAnular(query);
+
+            var turno = query2.FirstOrDefault(_ => _.FechaFin == null
                                             && _.FechaInicio.Day == TimeHelper.GetArgentinaTime().Day
                                             && _.FechaInicio.Month == TimeHelper.GetArgentinaTime().Month
                                             && _.FechaInicio.Year == TimeHelper.GetArgentinaTime().Year
@@ -145,7 +170,14 @@ namespace PointOfSale.Business.Services
             if (respError == string.Empty)
             {
                 var turnoCerrado = await Edit(entity);
-                await _emailService.NotificarCierreCaja(entity.IdTienda);
+                var ajustes = await _ajusteService.GetAjustes(entity.IdTienda);
+
+                if (ajustes.NotificarEmailCierreTurno.HasValue && ajustes.NotificarEmailCierreTurno.Value
+                            && !string.IsNullOrEmpty(ajustes.EmailEmisorCierreTurno) && !string.IsNullOrEmpty(ajustes.PasswordEmailEmisorCierreTurno) && !string.IsNullOrEmpty(ajustes.EmailsReceptoresCierreTurno))
+                {
+
+                    await _emailService.NotificarCierreCaja(turnoCerrado, ventasRegistradas, ajustes);
+                }
             }
 
             return respError;

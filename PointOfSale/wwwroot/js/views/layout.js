@@ -133,6 +133,7 @@ function calcularTotal() {
 }
 
 $("#btnAbrirCerrarTurno").on("click", function () {
+    showLoading();
 
     fetch(`/Turno/GetTurnoActual`, {
         method: "GET"
@@ -186,13 +187,13 @@ $("#btnAbrirCerrarTurno").on("click", function () {
                     }
                     $("#modalDataCerrarTurno").modal("show");
 
-                    renderVentasPorTipoVenta(resultado.ventasPorTipoVenta, resultado.totalInicioCaja, responseJson.object.totalMovimientosCaja);
-
+                    renderVentasPorTipoVenta(resultado.ventasPorTipoVenta, resultado.totalInicioCaja, false, responseJson.object.totalMovimientosCaja);
                 }
 
             } else {
                 swal("Lo sentimos", responseJson.message, "error");
             }
+            removeLoading();
         })
         .catch((error) => {
             $("div.container-fluid").LoadingOverlay("hide")
@@ -335,7 +336,7 @@ function openModalDataAbrirTurno() {
 }
 
 
-function renderVentasPorTipoVenta(ventasPorTipoVenta, importeInicioCaja, totalMovimientosCaja = null) {
+function renderVentasPorTipoVenta(ventasPorTipoVenta, importeInicioCaja, turnoCerrado, totalMovimientosCaja = null) {
     $("#contMetodosPagoLayout").empty();
     let contenedor = $("#contMetodosPagoLayout");
 
@@ -344,12 +345,14 @@ function renderVentasPorTipoVenta(ventasPorTipoVenta, importeInicioCaja, totalMo
     if (totalMovimientosCaja != null && totalMovimientosCaja != 0) {
         crearFilaTotalesTurno(contenedor, "MOV. DE CAJA", totalMovimientosCaja, true, 'txtMovimientoCaja');
     }
-
+    let totalImporte = 0;
     ventasPorTipoVenta.forEach(function (venta) {
         let id = 'txt' + venta.descripcion;
+        totalImporte += parseFloat(venta.total);
 
         if (venta.descripcion.toLowerCase() == 'efectivo') {
-            crearFilaTotalesTurno(contenedor, venta.descripcion, '', false, id);
+            let totalEfectivo = turnoCerrado ? venta.total : '';
+            crearFilaTotalesTurno(contenedor, venta.descripcion, totalEfectivo, turnoCerrado, id);
         }
         else {
             crearFilaTotalesTurno(contenedor, venta.descripcion, venta.total, true, id);
@@ -358,8 +361,9 @@ function renderVentasPorTipoVenta(ventasPorTipoVenta, importeInicioCaja, totalMo
 
     contenedor.append($('<hr>'));
 
+    let total = turnoCerrado ? totalImporte.toFixed(0) : '';
     //crearFilaTotalesTurno(contenedor, "TOTAL", totalImporte.toFixed(0), true, "txtTotalSumado");
-    crearFilaTotalesTurno(contenedor, "TOTAL", '', true, "txtTotalSumado");
+    crearFilaTotalesTurno(contenedor, "TOTAL", total, true, "txtTotalSumado");
 }
 
 function crearFilaTotalesTurno(contenedor, descripcion, total, disabled, inputId = null) {
@@ -537,6 +541,8 @@ function obtenerValoresInputsCerrarTurno() {
 }
 
 function abrirTurnoDesdeViewTurnos(idTurno) {
+    showLoading();
+
     fetch(`/Turno/GetTurno?idTurno=` + idTurno, {
         method: "GET"
     })
@@ -582,11 +588,12 @@ function abrirTurnoDesdeViewTurnos(idTurno) {
 
                 $("#modalDataCerrarTurno").modal("show");
 
-                renderVentasPorTipoVenta(result.ventasPorTipoVenta, result.totalInicioCaja);
+                renderVentasPorTipoVenta(result.ventasPorTipoVenta, result.totalInicioCaja, true);
 
             } else {
                 swal("Lo sentimos", responseJson.message, "error");
             }
+            removeLoading();
         })
         .catch((error) => {
             $("div.container-fluid").LoadingOverlay("hide")

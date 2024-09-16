@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PointOfSale.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace PointOfSale.Business.Contracts
 {
     public interface IEmailService
     {
-        Task NotificarCierreCaja(int idTienda);
+        Task NotificarCierreCaja(Turno turno,Dictionary<string,decimal> ventasRegistradas, Ajustes ajustes);
 
         Task EnviarTicketEmail(int idTienda, string emailReceptor, byte[] attachment);
     }

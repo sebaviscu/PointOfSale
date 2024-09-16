@@ -139,8 +139,8 @@ namespace PointOfSale.Controllers
                 var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurno(idturno));
 
                 var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
-                var dateActual = TimeHelper.GetArgentinaTime();
-                foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, user.IdTienda, dateActual, false))
+                var datos = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, user.IdTienda, vmTurnp.FechaInicio.Value, false);
+                foreach (KeyValuePair<string, decimal> item in datos)
                 {
                     VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
                     {
@@ -241,39 +241,6 @@ namespace PointOfSale.Controllers
             }
         }
 
-
-        //[HttpGet]
-        //public async Task<IActionResult> GetOneTurno(int idTurno)
-        //{
-        //    var gResponse = new GenericResponse<VMTurno>();
-
-        //    try
-        //    {
-        //        var user = ValidarAutorizacion([Roles.Administrador]);
-
-        //        var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurno(idTurno));
-
-        //        var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
-        //        foreach (KeyValuePair<string, decimal> item in await _dashBoardService.GetSalesByTypoVentaByTurno(TypeValuesDashboard.Dia, vmTurnp.IdTurno, user.IdTienda, false))
-        //        {
-        //            VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
-        //            {
-        //                Descripcion = item.Key,
-        //                Total = item.Value
-        //            });
-        //        }
-        //        vmTurnp.VentasPorTipoVenta = VentasPorTipoVenta;
-
-        //        gResponse.Object = vmTurnp;
-        //        gResponse.State = true;
-        //        return StatusCode(StatusCodes.Status200OK, gResponse);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return HandleException(ex, "Error al recuperar turno.", _logger, idTurno);
-        //    }
-
-        //}
 
         [HttpPut]
         public async Task<IActionResult> UpdateTurno([FromBody] VMTurno VMTurno)

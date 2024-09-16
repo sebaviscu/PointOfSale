@@ -1,6 +1,7 @@
 ﻿let idSale;
 let rowSelectedHistoric;
 let tableReportSale;
+let isAdmin;
 
 let SEARCH_VIEW = {
 
@@ -28,6 +29,10 @@ let SEARCH_VIEW = {
 let isHealthySaleHistory = false;
 
 $(document).ready(function () {
+
+
+    isAdmin = $("#txtIsAdmin").val()
+
     SEARCH_VIEW["searchDate"]();
 
     $("#txtStartDate").datepicker({ dateFormat: 'dd/mm/yy' });
@@ -188,9 +193,11 @@ $("#tbsale tbody").on("click", ".btn-info", function () {
             $btnVerFactura.removeClass("btn-success").addClass("text-organe");
             $btnVerFactura.html('<i class="mdi mdi-minus-circle-outline"></i> Facturas');
         }
-        $btnVerFactura.off("click").on("click", function () {
-            window.location.href = `/Admin/FacturacionById?idFacturaEmitida=${d.idFacturaEmitida}`;
-        });
+        if (isAdmin) {
+            $btnVerFactura.off("click").on("click", function () {
+                window.location.href = `/Admin/FacturacionById?idFacturaEmitida=${d.idFacturaEmitida}`;
+            });
+        }
     }
 
 
@@ -323,8 +330,10 @@ function createTable(responseJson) {
         return acc;
     }, {});
 
-    $("#lblCantidadVentas").html("Cantidad de Ventas: <strong> " + Object.keys(uniqs).length + ".</strong>");
-    $("#lbltotal").html("Total: <strong>$ " + total.toFixed(2) + ".</strong>");
+    if (isAdmin) {
+        $("#lblCantidadVentas").html("Cantidad de Ventas: <strong> " + Object.keys(uniqs).length + ".</strong>");
+        $("#lbltotal").html("Total: <strong>$ " + total.toFixed(2) + ".</strong>");
+    }
 }
 
 

@@ -37,7 +37,7 @@ namespace PointOfSale.Utilities.ViewComponents
             }
 
             var idTienda = ((ClaimsIdentity)claimuser.Identity).FindFirst("Tienda").Value;
-            var turno = await _turnoService.GetTurnoActualConVentas(Convert.ToInt32(idTienda));
+            var turno = await _turnoService.GetTurnoActual(Convert.ToInt32(idTienda));
 
             menuView.TurnoAbierto = turno != null;
 
