@@ -20,7 +20,7 @@ const BASIC_MODEL_PRODUCTOS = {
     priceWeb: 0,
     porcentajeProfit: 0,
     costPrice: "",
-    tipoVenta: "",
+    tipoVenta: "1",
     idProveedor: "",
     comentario: "",
     minimo: 0,
@@ -175,7 +175,7 @@ $(document).ready(function () {
             if (responseJson.data.length > 0) {
                 responseJson.data.forEach((item) => {
                     // Verificar si el formato es "Unidad" y agregar la clase correspondiente
-                    let className = item.formato < 100 ? "formato-unidad" : "formato-peso";
+                    let className = item.valor == 1 ? "formato-unidad" : "formato-peso";
 
                     $("#cboFormatoVenta").append(
                         $("<option>")
@@ -256,7 +256,7 @@ $('#cboTipoVenta').change(function () {
 
     $('#cboFormatoVenta option').hide();
 
-    if (selectedValue == "1") { 
+    if (selectedValue == "1") {
         $('#cboFormatoVenta .formato-peso').show();
         if ($('#cboFormatoVenta').val() == null || $('#cboFormatoVenta').val() == '1') {
             $('#cboFormatoVenta').val('1000');
@@ -323,6 +323,7 @@ function editAll() {
     $("#txtProfit2Masivo").val('');
     $("#txtPrice3Masivo").val('');
     $("#txtProfit3Masivo").val('');
+    $("#txtPriceFormatoWeb").val('');
 
     // Lista tipo de ventas
     let cont = document.getElementById('listProductosEditar');
@@ -374,8 +375,7 @@ const openModalProduct = (model = BASIC_MODEL_PRODUCTOS) => {
     $("#txtPrice3").val(model.precio3.replace(/,/g, '.'));
     $("#txtProfit3").val(model.porcentajeProfit3);
     $("#cboFormatoVenta").val(model.formatoWeb);
-    $("#txtPriceFormatoWeb").val(model.precioFormatoWeb != 0 ? model.precioFormatoWeb.replace(/,/g, '.') : '');
-
+    $("#txtPriceFormatoWeb").val(model.precioFormatoWeb != 0 ? model.precioFormatoWeb.replace(/,/g, '.') : '0');
 
     if (model.photoBase64 != null) {
         $("#imgProduct").attr("src", `data:image/png;base64,${model.photoBase64}`);
@@ -883,7 +883,7 @@ $("#btnSave").on("click", async function () {
     model["formatoWeb"] = $("#cboFormatoVenta").val();
 
     model["precioFormatoWeb"] = processNumericValue("#txtPriceFormatoWeb") || processNumericValue("#txtPrice");
-    model["priceWeb"] = processNumericValue("#txtPriceWeb") || processNumericValue("#txtPrice"); 
+    model["priceWeb"] = processNumericValue("#txtPriceWeb") || processNumericValue("#txtPrice");
 
     model["price"] = processNumericValue("#txtPrice");
     model["porcentajeProfit"] = parseInt($("#txtProfit").val());
@@ -1080,12 +1080,11 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                     } else {
                         swal("Lo sentimos", responseJson.message, "error");
                     }
+                    $(".showSweetAlert").LoadingOverlay("hide")
                 })
-                    .catch((error) => {
-                        $(".showSweetAlert").LoadingOverlay("hide")
-                    })
-
-                swal.close();
+                .catch((error) => {
+                    $(".showSweetAlert").LoadingOverlay("hide")
+                })
             }
         });
 })

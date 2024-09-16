@@ -14295,6 +14295,14 @@ textarea.form-control {
 
 @media all and (max-width: 770px) and (min-width: 50px) {
 
+    .tags-container{
+        display:none !important;
+    }
+
+    .product .img-prod .tags-container {
+        top: 0px; /* Ajusta según sea necesario */
+    }
+
     .bottom-area {
         margin-bottom: 8px;
     }

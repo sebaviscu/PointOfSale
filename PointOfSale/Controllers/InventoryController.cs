@@ -221,12 +221,16 @@ namespace PointOfSale.Controllers
                 var vmTags = JsonConvert.DeserializeObject<List<VMTag>>(tags);
 
 
-                var listPrecios = new List<ListaPrecio>()
+                var culture = new CultureInfo("es-ES");
+                var listPrecios = new List<ListaPrecio>
                 {
-                    new ListaPrecio(0, ListaDePrecio.Lista_1, Convert.ToDecimal(vmProduct.Price), Convert.ToInt32(vmProduct.PorcentajeProfit)),
-                    new ListaPrecio(0, ListaDePrecio.Lista_2, Convert.ToDecimal(vmProduct.Precio2), Convert.ToInt32(vmProduct.PorcentajeProfit2)),
-                    new ListaPrecio(0, ListaDePrecio.Lista_3, Convert.ToDecimal(vmProduct.Precio3), Convert.ToInt32(vmProduct.PorcentajeProfit3))
+                    new ListaPrecio(vmProduct.IdProduct, ListaDePrecio.Lista_1, decimal.Parse(vmProduct.Price.Replace(".", ","), culture), Convert.ToInt32(vmProduct.PorcentajeProfit)),
+                    new ListaPrecio(vmProduct.IdProduct, ListaDePrecio.Lista_2, decimal.Parse(vmProduct.Precio2.Replace(".", ","), culture), Convert.ToInt32(vmProduct.PorcentajeProfit2)),
+                    new ListaPrecio(vmProduct.IdProduct, ListaDePrecio.Lista_3, decimal.Parse(vmProduct.Precio3.Replace(".", ","), culture), Convert.ToInt32(vmProduct.PorcentajeProfit3))
                 };
+
+                vmProduct.PriceWeb = vmProduct.PriceWeb.Replace(".", ",");
+                vmProduct.PrecioFormatoWeb = vmProduct.PrecioFormatoWeb.Replace(".", ",");
 
                 if (photo != null)
                 {
