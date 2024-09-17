@@ -243,7 +243,15 @@ namespace PointOfSale.Controllers
                     FacturaEmitida facturaEmitida = null;
                     try
                     {
-                        facturaEmitida = await RegistrationFacturar(model, sale_created, ajustes);
+                        if (!ajustes.FacturaElectronica.HasValue || (ajustes.FacturaElectronica.HasValue && !ajustes.FacturaElectronica.Value))
+                        {
+                            facturaEmitida = await RegistrationFacturar(model, sale_created, ajustes);
+
+                            if (facturaEmitida.Resultado != "A")
+                            {
+                                gResponse.Message = facturaEmitida.Observaciones;
+                            }
+                        }
                     }
                     catch (Exception e)
                     {
@@ -293,10 +301,6 @@ namespace PointOfSale.Controllers
 
         private async Task<FacturaEmitida?> RegistrationFacturar(VMSale model, Sale sale_created, Ajustes ajustes)
         {
-            if (!ajustes.FacturaElectronica.HasValue || (ajustes.FacturaElectronica.HasValue && !ajustes.FacturaElectronica.Value))
-            {
-                return null;
-            }
             var facturaEmitida = await _afipFacturacionService.FacturarVenta(sale_created, ajustes, model.CuilFactura, model.IdClienteFactura);
 
             return facturaEmitida;

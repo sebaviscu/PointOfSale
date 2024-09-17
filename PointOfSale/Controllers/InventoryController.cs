@@ -640,7 +640,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al borrar categoria.", _logger, idTag);
+                return HandleException(ex, "Error al borrar Tag.", _logger, idTag);
             }
         }
     }

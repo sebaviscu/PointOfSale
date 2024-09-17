@@ -16,12 +16,6 @@ const BASIC_MODEL_GASTO = {
     estadoPago: 0,
 }
 
-const BASIC_MODEL_TIPO_DE_GASTOS = {
-    IdTipoGastos: 0,
-    gastoParticular: -1,
-    descripcion: ""
-}
-
 $(document).ready(function () {
     showLoading();
 

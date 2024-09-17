@@ -69,6 +69,23 @@ namespace PointOfSale.Business.Services
 
             return Gastos_found;
         }
+        public async Task<TipoDeGasto> EditTipoGastos(TipoDeGasto entity)
+        {
+            var Gastos_found = await _repositoryTipoDeGasto.Get(c => c.IdTipoGastos == entity.IdTipoGastos);
+
+            Gastos_found.TipoFactura = entity.TipoFactura;
+            Gastos_found.GastoParticular= entity.GastoParticular;
+            Gastos_found.Iva = entity.Iva;
+            Gastos_found.Descripcion = entity.Descripcion;
+            Gastos_found.TipoFactura = entity.TipoFactura;
+
+            bool response = await _repositoryTipoDeGasto.Edit(Gastos_found);
+
+            if (!response)
+                throw new TaskCanceledException("Tipo de Gastos no se pudo cambiar.");
+
+            return Gastos_found;
+        }
 
         public async Task<bool> Delete(int idGastos)
         {
@@ -103,7 +120,7 @@ namespace PointOfSale.Business.Services
             TipoDeGasto Gastos_found = await _repositoryTipoDeGasto.Get(c => c.IdTipoGastos == IdTipoGastos);
 
             if (Gastos_found == null)
-                throw new TaskCanceledException("The Gastos no existe");
+                throw new TaskCanceledException("Tipo de Gastos no existe");
 
 
             bool response = await _repositoryTipoDeGasto.Delete(Gastos_found);

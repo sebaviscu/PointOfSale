@@ -82,7 +82,19 @@ namespace PointOfSale.Model.Afip.Factura
         {
             if (tipoComprobante.Id == TipoComprobante.Factura_C.Id || tipoComprobante.Id == TipoComprobante.Factura_B.Id || tipoComprobante.Id == TipoComprobante.NotaCredito_B.Id)
             {
-                return documento == 0 ? TipoDocumento.DocOtro : TipoDocumento.DNI;
+                if(documento == 0)
+                {
+                    return TipoDocumento.DocOtro;
+                }
+                else if(documento.ToString().Length == 8)
+                {
+                    return TipoDocumento.DNI;
+                }
+                else if(documento.ToString().Length == 11)
+                {
+                    return TipoDocumento.CUIL;
+                }
+                return TipoDocumento.DocOtro;
             }
             else if (tipoComprobante.Id == TipoComprobante.Factura_A.Id || tipoComprobante.Id == TipoComprobante.NotaCredito_A.Id)
             {

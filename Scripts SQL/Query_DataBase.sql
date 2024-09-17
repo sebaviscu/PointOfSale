@@ -524,7 +524,7 @@ CREATE TABLE FacturasEmitidas (
     CAE VARCHAR(150) null,
     CAEVencimiento DATETIME null,
     FechaEmicion DATETIME,
-    NroDocumento INT,
+    NroDocumento BIGINT,
     TipoDocumentoId INT,
     TipoDocumento VARCHAR(50),
 	PuntoVenta INT not null,

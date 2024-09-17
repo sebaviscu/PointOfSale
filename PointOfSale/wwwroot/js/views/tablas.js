@@ -34,6 +34,12 @@ const BASIC_MODEL_TIPO_VENTA = {
     tipoFactura: 0
 }
 
+const BASIC_MODEL_TIPO_DE_GASTOS = {
+    IdTipoGastos: 0,
+    gastoParticular: -1,
+    descripcion: ""
+}
+
 $(document).ready(function () {
 
     tableDataCategory = $("#tbDataCategoria").DataTable({
@@ -353,7 +359,7 @@ $('#tbTipoGastos').on('click', '.btn-delete-tipo-gastos', function () {
 
     swal({
         title: "¿Está seguro?",
-        text: `Eliminar Tipo de Gastos "${data.nombre}"`,
+        text: `Eliminar Tipo de Gastos "${data.descripcion}"`,
         type: "warning",
         showCancelButton: true,
         confirmButtonClass: "btn-danger",
@@ -368,7 +374,7 @@ $('#tbTipoGastos').on('click', '.btn-delete-tipo-gastos', function () {
 
                 $(".showSweetAlert").LoadingOverlay("show")
 
-                fetch(`/Inventory/DeleteTag?idTag=${data.idTag}`, {
+                fetch(`/Gastos/DeleteTipoDeGastos?idTipoGastos=${data.idTipoGastos}`, {
                     method: "DELETE"
                 }).then(response => {
                     $(".showSweetAlert").LoadingOverlay("hide")
@@ -429,7 +435,7 @@ $("#btnSaveTipoDeGastos").on("click", function () {
     $("#modalDataTipoDeGasto").find("div.modal-content").LoadingOverlay("show")
 
 
-    if (model.IdTipoGastos == 0) {
+    if (model.idTipoGastos == 0) {
         fetch("/Gastos/CreateTipoDeGastos", {
             method: "POST",
             headers: { 'Content-Type': 'application/json;charset=utf-8' },
@@ -440,14 +446,37 @@ $("#btnSaveTipoDeGastos").on("click", function () {
         }).then(responseJson => {
 
             if (responseJson.state) {
-                location.reload()
-
+                tableTipoGastos.row.add(responseJson.object).draw(false);
+                swal("Exitoso!", "El Tipo de Gastos fue creado con éxito.", "success");
+                $('#modalDataTipoDeGasto').modal('hide');
             } else {
                 swal("Lo sentimos", responseJson.message, "error");
             }
         }).catch((error) => {
             $("#modalDataCategoria").find("div.modal-content").LoadingOverlay("hide")
         })
+    }
+    else {
+        fetch("/Gastos/UpdateTipoDeGastos", {
+            method: "PUT",
+            headers: { 'Content-Type': 'application/json;charset=utf-8' },
+            body: JSON.stringify(model)
+        }).then(response => {
+            $("#modalDataTipoDeGasto").find("div.modal-content").LoadingOverlay("hide")
+            return response.json();
+        }).then(responseJson => {
+            if (responseJson.state) {
+                tableTipoGastos.row(rowSelectedTipoGastos).data(responseJson.object).draw(false);
+                rowSelectedTipoGastos = null;
+                swal("Exitoso!", "El Tipo de Gastos fue actualizado con éxito.", "success");
+                $('#modalDataTipoDeGasto').modal('hide');
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+        }).catch((error) => {
+            swal("Error", "Ocurrió un error al actualizar el Tipo de Gastos.", "error");
+            console.error('Error:', error);
+        });
     }
 })
 

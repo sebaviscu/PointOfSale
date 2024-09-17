@@ -11,7 +11,7 @@ namespace PointOfSale.Model.Afip.Factura
         public string? CAE { get; set; }
         public DateTime? CAEVencimiento { get; set; }
         public DateTime FechaEmicion { get; set; }
-        public int NroDocumento { get; set; }
+        public long NroDocumento { get; set; }
         public int TipoDocumentoId { get; set; }
         public string? TipoDocumento { get; set; }
         public string? Resultado { get; set; }

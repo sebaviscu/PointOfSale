@@ -91,7 +91,7 @@ namespace AFIP.Facturacion.Extensions
                 CAE = fECAECabResponse.CAE,
                 CAEVencimiento = fECAECabResponse.CAEFchVto != string.Empty ? DateTime.ParseExact(fECAECabResponse.CAEFchVto, "yyyyMMdd", CultureInfo.InvariantCulture) : null,
                 FechaEmicion = DateTime.ParseExact(fECAECabResponse.CbteFch, "yyyyMMdd", CultureInfo.InvariantCulture),
-                NroDocumento = (int)fECAECabResponse.DocNro,
+                NroDocumento = fECAECabResponse.DocNro,
                 TipoDocumentoId = fECAECabResponse.DocTipo,
                 TipoDocumento = TipoDocumento.GetById(fECAECabResponse.DocTipo).Description,
                 Resultado = fECAECabResponse.Resultado,

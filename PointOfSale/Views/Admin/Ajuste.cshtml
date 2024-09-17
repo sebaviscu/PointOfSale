@@ -188,7 +188,7 @@
 
                                                     <!-- Cabecera -->
                                                     <div class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                                        <h6>Email Emisor <span class="mdi mdi-chevron-down"></span></h6>
+                                                        <h6>Email Emisor &nbsp; <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="También se utilizará este emisor para enviar el ticket por email"></span> <span class="mdi mdi-chevron-down"></span></h6>
                                                     </div>
 
                                                 </div>
@@ -244,7 +244,7 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="row">
-                                    <div class="col-sm-3 text-left" style="align-content: end;">
+                                    <div class="col-sm-2 text-left" style="align-content: end;">
                                         <div class="form-group">
                                             <div class="form-check form-switch text-center">
                                                 <input class="form-check-input" type="checkbox" role="switch" id="switchHabilitarWeb">
@@ -252,7 +252,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                         <div class="form-group">
                                             <label for="txtNombreTienda">Nombre Tienda</label>
                                             <input type="text" class="form-control form-control-sm" id="txtNombreTienda" name="Nombre Tienda">
@@ -264,18 +264,18 @@
                                             <input type="text" class="form-control form-control-sm" id="txtDireccion" name="Direccion">
                                         </div>
                                     </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label for="txtWhatsApp">WhatsApp</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Numero de WhatsApp donde llegaran los pedidos web"></span>
+                                            <input type="tel" class="form-control form-control-sm" id="txtWhatsApp" name="WhatsApp">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-sm-12">
 
                                 <div class="row">
-                                    <div class="col-sm-5">
-                                        <div class="form-group">
-                                            <label for="txtWhatsApp">WhatsApp pedidos</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Numero de WhatsApp donde llegaran los pedidos web"></span>
-                                            <input type="text" class="form-control form-control-sm" id="txtWhatsApp" name="WhatsApp">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-2">
                                         <div class="form-group">
                                             <label for="txtEnvioGratis">Min. envios gratis</label>
                                             <div class="input-group input-group-sm">
@@ -494,7 +494,7 @@
                                         </div>
                                         <div class="col-sm-3">
                                             <div class="form-group">
-                                                <label for="txtMinimoIdentificarConsumidor">Minimo Identif. Consumidor Final</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Importe de una venta, del cual, superandolo, es necesario identificar al consumidor final"></span>
+                                                <label for="txtMinimoIdentificarConsumidor">Min. Ident. Consumidor Final</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Importe de una venta, del cual, superandolo, es necesario identificar al consumidor final"></span>
                                                 <div class="input-group input-group-sm">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text">$</span>

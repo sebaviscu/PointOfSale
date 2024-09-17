@@ -17,5 +17,6 @@ namespace PointOfSale.Business.Contracts
         Task<List<TipoDeGasto>> ListTipoDeGasto();
         Task<bool> DeleteTipoDeGasto(int IdTipoGastos);
         Task<List<Gastos>> ListGastosForTablaDinamica(int idTienda);
+        Task<TipoDeGasto> EditTipoGastos(TipoDeGasto entity);
     }
 }

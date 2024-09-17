@@ -189,6 +189,30 @@ namespace PointOfSale.Controllers
         //    return StatusCode(StatusCodes.Status200OK, gResponse);
         //}
 
+        [HttpPut]
+        public async Task<IActionResult> UpdateTipoDeGastos([FromBody] VMTipoDeGasto model)
+        {
+            var user = ValidarAutorizacion([Roles.Administrador]);
+
+            var gResponse = new GenericResponse<VMTipoDeGasto>();
+            try
+            {
+                var edited_Gastos = await _GastosService.EditTipoGastos(_mapper.Map<TipoDeGasto>(model));
+
+                model = _mapper.Map<VMTipoDeGasto>(edited_Gastos);
+
+                gResponse.State = true;
+                gResponse.Object = model;
+            }
+            catch (Exception ex)
+            {
+                gResponse.State = false;
+                gResponse.Message = ex.ToString();
+            }
+
+            return StatusCode(StatusCodes.Status200OK, gResponse);
+        }
+
 
         [HttpDelete]
         public async Task<IActionResult> DeleteTipoDeGastos(int idTipoGastos)

@@ -176,7 +176,7 @@ function validateTipoFacturaAndMonto(idLineaFormaPago) {
         if (parseFloat(monto) > parseFloat(ajustes.minimoIdentificarConsumidor)) {
             updateUIFormaDePago(true, true, true);
         } else {
-            updateUIFormaDePago(false, false, false);
+            updateUIFormaDePago(false, false, true);
         }
     } else {
         // Otros casos
@@ -350,6 +350,7 @@ function cleanSaleParcial() {
     $('#cboTypeDocumentSaleParcial').val('');
     $('#cboFactura').val('');
 
+    $("#txtClienteParaFactura").val('')
     $('#txtClienteParaFactura').attr('cuil', '');
     $('#txtClienteParaFactura').attr('idCliente', '');
     document.getElementById("divClienteSeleccionado").style.display = 'none';

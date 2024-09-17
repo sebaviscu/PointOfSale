@@ -30,8 +30,7 @@ let isHealthySaleHistory = false;
 
 $(document).ready(function () {
 
-
-    isAdmin = $("#txtIsAdmin").val()
+    isAdmin = $('#txtIsAdmin').text().trim() == 'True';
 
     SEARCH_VIEW["searchDate"]();
 
@@ -173,7 +172,7 @@ $("#tbsale tbody").on("click", ".btn-info", function () {
 
     const divObs = document.getElementById("divObs");
     if (d.observaciones) {
-        $("#txtObservaciones").val(d.observaciones);
+        $("#txtObservaciones").text(d.observaciones);
         divObs.style.display = '';
     } else {
         divObs.style.display = 'none';
