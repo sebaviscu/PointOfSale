@@ -85,6 +85,54 @@ namespace PointOfSale.Business.Services
                  .ToListAsync();
         }
 
+        public async Task<List<ListaPrecio>> GetProductsSearchAndIdListaWithTags(string search, ListaDePrecio listaPrecios)
+        {
+            IQueryable<ListaPrecio> queryListaPrecio;
+
+            // Si la búsqueda tiene espacios, dividir términos y crear predicado
+            if (search.Contains(' '))
+            {
+                var split = search.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+                var predicate = PredicateBuilder.True<Product>();
+                foreach (var term in split)
+                {
+                    var temp = term;
+                    predicate = predicate.And(p => p.Description.Contains(temp));
+                }
+
+                // Obtener los productos que coinciden con el predicado
+                var idsProdsQuery = await _repositoryProduct.Query(predicate);
+                var idsProds = idsProdsQuery.Select(p => p.IdProduct).ToList();
+
+                // Filtrar lista de precios según los productos obtenidos
+                queryListaPrecio = await _repositoryListaPrecio.Query(p =>
+                    p.Lista == listaPrecios &&
+                    p.Producto.IsActive == true &&
+                    idsProds.Contains(p.IdProducto));
+            }
+            else
+            {
+                // Filtrar por búsqueda directa si no hay espacios
+                queryListaPrecio = await _repositoryListaPrecio.Query(p =>
+                    p.Lista == listaPrecios &&
+                    p.Producto.IsActive == true &&
+                    (p.Producto.CodigoBarras.Any(cb => cb.Codigo.Equals(search)) ||
+                     p.Producto.Description.Contains(search)));
+            }
+
+            // Incluir las relaciones necesarias
+            return await queryListaPrecio
+                .Include(lp => lp.Producto)
+                    .ThenInclude(p => p.IdCategoryNavigation)
+                .Include(lp => lp.Producto)
+                    .ThenInclude(p => p.CodigoBarras)
+                .Include(lp => lp.Producto)
+                    .ThenInclude(p => p.ProductTags)
+                        .ThenInclude(pt => pt.Tag)
+                .ToListAsync();
+        }
+
 
         public async Task<List<Cliente>> GetClientsByFactura(string search)
         {

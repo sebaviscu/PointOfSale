@@ -103,7 +103,6 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProducts(string search, int listaPrecios)
         {
-            var gResponse = new GenericResponse<List<VmProductsSelect2>>();
             try
             {
                 ClaimsPrincipal claimuser = HttpContext.User;
@@ -126,13 +125,13 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProductsVerPrecios(string search)
         {
-            var gResponse = new GenericResponse<List<VMProduct>>();
             try
             {
                 ClaimsPrincipal claimuser = HttpContext.User;
                 var listaPrecioInt = Convert.ToInt32(claimuser.Claims.Where(c => c.Type == "ListaPrecios").Select(c => c.Value).SingleOrDefault());
-                var vmListProducts = _mapper.Map<List<VMProduct>>(await _saleService.GetProductsSearchAndIdLista(search.Trim(), (ListaDePrecio)listaPrecioInt));
-                return StatusCode(StatusCodes.Status200OK, vmListProducts);
+                var products = await _saleService.GetProductsSearchAndIdListaWithTags(search.Trim(), (ListaDePrecio)listaPrecioInt);
+                var list = _mapper.Map<List<VMProduct>>(products.Select(_ => _.Producto).ToList());
+                return StatusCode(StatusCodes.Status200OK, list);
 
             }
             catch (Exception ex)

@@ -34,5 +34,7 @@ namespace PointOfSale.Business.Contracts
 
         Task<Sale> AnularSale(int idSale, string registrationUser);
 
+        Task<List<ListaPrecio>> GetProductsSearchAndIdListaWithTags(string search, ListaDePrecio listaPrecios);
+
     }
 }

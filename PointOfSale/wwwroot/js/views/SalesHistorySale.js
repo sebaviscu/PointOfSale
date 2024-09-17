@@ -265,7 +265,7 @@ function createTable(responseJson) {
                 data: "registrationDate",
                 render: function (data, type, row) {
                     if (type === 'display' || type === 'filter') {
-                        return data ? moment(data, 'DD/MM/YYYY HH:mm').format('DD/MM/YYYY HH:mm') : '';
+                        return data ? moment(data, 'YYYY-MM-DDTHH:mm:ss.SS').format('DD/MM/YYYY HH:mm') : '';
                     }
                     return data;
                 }

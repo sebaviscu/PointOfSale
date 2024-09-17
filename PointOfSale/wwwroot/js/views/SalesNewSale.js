@@ -349,6 +349,8 @@ $(document).on("click", "button.btn-delete", async function () {
 function cleanSaleParcial() {
     $('#cboTypeDocumentSaleParcial').val('');
     $('#cboFactura').val('');
+    $('#txtPagaCon').val('');
+    $('#txtVuelto').val('');
 
     $("#txtClienteParaFactura").val('')
     $('#txtClienteParaFactura').attr('cuil', '');
@@ -737,6 +739,7 @@ function resetModaConsultarPreciol() {
 }
 
 function funConsultarPrecio() {
+
     $('#cboSearchProductConsultarPrecio').select2({
         ajax: {
             url: "/Sales/GetProductsVerPrecios",
@@ -756,7 +759,9 @@ function funConsultarPrecio() {
                         category: item.idCategory,
                         photoBase64: item.photoBase64,
                         price: item.price,
-                        tipoVenta: item.tipoVenta
+                        tipoVenta: item.tipoVenta,
+                        comentario: item.comentario,
+                        tags: item.tags
                     }))
                 };
             }
@@ -771,9 +776,25 @@ function funConsultarPrecio() {
     $('#cboSearchProductConsultarPrecio').on('select2:select', function (e) {
         let data = e.params.data;
         productSelected = data;
+        $('#txtComentariosConsultaProducto').val(data.comentario);
         $('#txtPrecioConsultarPrecio').val(data.price);
         $('#lblProductName').text(data.text);
         $('#imgProductConsultarPrecio').attr('src', `data:image/png;base64,${data.photoBase64}`);
+
+        if (data.tags && data.tags.length > 0) {
+            const tagNames = data.tags.map(tag => tag.nombre).join(', ');
+            $('#txtTagsConsultaProducto').val(tagNames);
+
+            // Mostrar visualmente los tags
+            let tagsContainer = $('.tags-container');
+            tagsContainer.empty(); // Limpiar el contenedor de tags previo
+
+            // Agregar los tags con sus colores
+            data.tags.forEach(tag => {
+                let tagElement = `<span class="status" style="background-color: ${tag.color}; border: 1px solid ${tag.color}; padding: 3px 8px; border-radius: 5px;">${tag.nombre}</span>`;
+                tagsContainer.append(tagElement);
+            });
+        }
     });
 }
 

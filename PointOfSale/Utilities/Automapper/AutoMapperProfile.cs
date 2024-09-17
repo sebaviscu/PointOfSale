@@ -199,10 +199,11 @@ namespace PointOfSale.Utilities.Automapper
                 ).ForMember(destiny =>
                     destiny.TotalDecimal,
                     opt => opt.MapFrom(source => source.Total)
-                ).ForMember(destiny =>
-                    destiny.RegistrationDate,
-                    opt => opt.MapFrom(source => source.RegistrationDate.Value.ToString("dd/MM/yyyy h:mm tt"))
                 )
+                //.ForMember(destiny =>
+                //    destiny.RegistrationDate,
+                //    opt => opt.MapFrom(source => source.RegistrationDate.Value.ToString("dd/MM/yyyy h:mm tt"))
+                //)
                 .ForMember(destiny =>
                     destiny.CantidadProductos,
                     opt => opt.MapFrom(source => source.DetailSales != null ? source.DetailSales.Count : 0))

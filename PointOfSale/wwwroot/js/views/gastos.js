@@ -202,7 +202,6 @@ $("#btnSave").on("click", function () {
 
     $("#modalData").find("div.modal-content").LoadingOverlay("show")
 
-
     if (model.idGastos == 0) {
         fetch("/Gastos/CreateGastos", {
             method: "POST",
@@ -218,6 +217,10 @@ $("#btnSave").on("click", function () {
                 $("#modalData").modal("hide")
 
                 location.reload()
+
+                tableDataGastos.row.add(responseJson.object).draw(false);
+                swal("Exitoso!", "El Gastos fue creado con éxito.", "success");
+                $('#modalData').modal('hide');
 
             } else {
                 swal("Lo sentimos", responseJson.message, "error");
@@ -236,8 +239,10 @@ $("#btnSave").on("click", function () {
             return response.json();
         }).then(responseJson => {
             if (responseJson.state) {
-                swal("Exitoso!", "Modificado con éxito", "success");
-                location.reload()
+                tableDataGastos.row(rowSelectedGastos).data(responseJson.object).draw(false);
+                rowSelectedGastos = null;
+                swal("Exitoso!", "El Gastos fue actualizado con éxito.", "success");
+                $('#modalData').modal('hide');
 
             } else {
                 swal("Lo sentimos", responseJson.message, "error");

@@ -16,7 +16,7 @@ namespace PointOfSale.Models
         public string? ClientName { get; set; }
         public decimal? Total { get; set; }
         public decimal? TotalDecimal { get; set; }
-        public string? RegistrationDate { get; set; }
+        public DateTime? RegistrationDate { get; set; }
         public string? RegistrationUser { get; set; }
         public virtual ICollection<VMDetailSale>? DetailSales { get; set; }
         public int? IdTurno { get; set; }

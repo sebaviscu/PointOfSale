@@ -48,8 +48,8 @@
             <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Home <span class="close" type="button" title="Remove this page">×</span> </button>
         </li>
     </ul>
-    <button data-bs-container="body" data-bs-toggle="popover" data-bs-placement="left" data-bs-html="true" 
-    data-bs-content="
+    <button data-bs-container="body" data-bs-toggle="popover" data-bs-placement="left" data-bs-html="true"
+            data-bs-content="
 <b>F2:</b> Finalizar venta <br />
 <b>F9:</b> Buscar precios <br />
 <b>F11:</b> Pantalla completa <br />
@@ -354,7 +354,7 @@
 
 <!-- Modal Consultar Precio-->
 <div class="modal fade" id="modalConsultarPrecio" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog" role="document" style="max-width: 50%;">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="p-2 bd-highlight">
@@ -371,23 +371,29 @@
                 <div class="row">
                     <div class="card-body" style="padding-bottom: 0px;">
 
-                        <div class="form-row">
+                        <!-- Primera fila: Selector del producto -->
+                        <div class="form-row mb-3">
                             <div class="form-group col-sm-12">
                                 <select class="form-control form-control-sm" id="cboSearchProductConsultarPrecio" style="width: 100%;">
                                     <option value=""></option>
                                 </select>
                             </div>
                         </div>
+
+                        <!-- Segunda fila: Imagen y detalles del producto -->
                         <div class="form-row">
-                            <div class="col-sm-7">
-                                <img id="imgProductConsultarPrecio" style="max-width:250px;max-height: 200px;" src="" class="rounded mx-auto d-block" alt="Photo Product">
+                            <div class="col-sm-6">
+                                <img id="imgProductConsultarPrecio" class="rounded mx-auto d-block img-fluid" src="" alt="Photo Product">
                             </div>
-                            <div class="offset-col-1 col-md-4">
+                            <div class="col-sm-6">
+                                <!-- Detalles del producto -->
+      @*                           <div class="form-group">
+                                    <label id="lblProductName" class="font-weight-bold"></label>
+                                </div> *@
+
+                                <!-- Precio -->
                                 <div class="form-group">
-                                    <div class="form-group">
-                                        <label id="lblProductName" class="font-weight-bold"></label>
-                                    </div>
-                                    <label for="txtImporteEstimado">Precio</label>
+                                    <label for="txtPrecioConsultarPrecio">Precio</label>
                                     <div class="input-group input-group-sm">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">$</span>
@@ -396,17 +402,24 @@
                                     </div>
                                 </div>
 
-                                @*                                <div class="form-group">
-                                <label for="cboTypeDocumentSaleParcial">Promociones</label>
+                                <!-- Tags -->
+                                <div class="form-group">
+                                    <label for="txtTagsConsultaProducto">Tags</label>
+                                    <input type="text" class="form-control" id="txtTagsConsultaProducto" name="Tags" disabled>
+                                </div>
 
-                                </div> *@
+                                <!-- Comentarios -->
+                                <div class="form-group">
+                                    <label for="txtComentariosConsultaProducto">Comentarios</label>
+                                    <textarea type="text" class="form-control" id="txtComentariosConsultaProducto" name="Comentarios" disabled></textarea>
+                                </div>
                             </div>
                         </div>
 
                     </div>
-
                 </div>
             </div>
+
             <div class="modal-footer d-flex bd-highlight">
                 <div class="bd-highlight">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal" tabindex="-1">Cerrar</button>
