@@ -166,14 +166,14 @@ $("#btnAbrirCerrarTurno").on("click", function () {
 
                     if (fechaInicio.isValid()) {
                         let fechaFormatted = fechaInicio.format('DD/MM/YYYY');
-                        let horaInicioFormatted = fechaInicio.format('HH:mm:ss');
+                        let horaInicioFormatted = fechaInicio.format('HH:mm');
 
                         $("#txtInicioTurnoCierre").val(fechaFormatted);
                         $("#txtHoraInicioTurnoCierre").val(horaInicioFormatted);
                     }
 
                     if (fechaFin != '' && fechaFin.isValid()) {
-                        let horaFinFormatted = fechaFin.format('HH:mm:ss');
+                        let horaFinFormatted = fechaFin.format('HH:mm');
 
                         $("#txtCierraTurnoCierre").val(horaFinFormatted);
                     }
@@ -187,6 +187,7 @@ $("#btnAbrirCerrarTurno").on("click", function () {
                     }
                     $("#modalDataCerrarTurno").modal("show");
 
+                    $("#btnValidarFinalizarTurno").show();
                     renderVentasPorTipoVenta(resultado.ventasPorTipoVenta, resultado.totalInicioCaja, false, responseJson.object.totalMovimientosCaja);
                 }
 
@@ -337,6 +338,12 @@ function openModalDataAbrirTurno() {
 
 
 function renderVentasPorTipoVenta(ventasPorTipoVenta, importeInicioCaja, turnoCerrado, totalMovimientosCaja = null) {
+
+    let total = renderVentasPorTipoVenta_OLIVA(ventasPorTipoVenta, importeInicioCaja, turnoCerrado, totalMovimientosCaja);
+    return total;
+}
+
+function renderVentasPorTipoVenta_OLIVA(ventasPorTipoVenta, importeInicioCaja, turnoCerrado, totalMovimientosCaja = null) {
     $("#contMetodosPagoLayout").empty();
     let contenedor = $("#contMetodosPagoLayout");
 
@@ -345,25 +352,40 @@ function renderVentasPorTipoVenta(ventasPorTipoVenta, importeInicioCaja, turnoCe
     if (totalMovimientosCaja != null && totalMovimientosCaja != 0) {
         crearFilaTotalesTurno(contenedor, "MOV. DE CAJA", totalMovimientosCaja, true, 'txtMovimientoCaja');
     }
-    let totalImporte = 0;
-    ventasPorTipoVenta.forEach(function (venta) {
-        let id = 'txt' + venta.descripcion;
-        totalImporte += parseFloat(venta.total);
 
-        if (venta.descripcion.toLowerCase() == 'efectivo') {
-            let totalEfectivo = turnoCerrado ? venta.total : '';
-            crearFilaTotalesTurno(contenedor, venta.descripcion, totalEfectivo, turnoCerrado, id);
-        }
-        else {
-            crearFilaTotalesTurno(contenedor, venta.descripcion, venta.total, true, id);
-        }
+    let total = 0;
+    ventasPorTipoVenta.forEach(function (venta) {
+        total += parseFloat(venta.total);
+        let id = 'txt' + venta.descripcion;
+        let totalVenta = turnoCerrado ? venta.total : '';
+
+        crearFilaTotalesTurno(contenedor, venta.descripcion, totalVenta, turnoCerrado, id);
     });
 
-    contenedor.append($('<hr>'));
+    return total;
+}
 
-    let total = turnoCerrado ? totalImporte.toFixed(0) : '';
-    //crearFilaTotalesTurno(contenedor, "TOTAL", totalImporte.toFixed(0), true, "txtTotalSumado");
-    crearFilaTotalesTurno(contenedor, "TOTAL", total, true, "txtTotalSumado");
+function renderVentasPorTipoVenta_NORMAL(ventasPorTipoVenta, importeInicioCaja, turnoCerrado, totalMovimientosCaja = null) {
+    $("#contMetodosPagoLayout").empty();
+    let contenedor = $("#contMetodosPagoLayout");
+
+    crearFilaTotalesTurno(contenedor, "TOTAL INICIO CAJA", importeInicioCaja, true, "txtInicioCajaCierre");
+
+    if (totalMovimientosCaja != null && totalMovimientosCaja != 0) {
+        crearFilaTotalesTurno(contenedor, "MOV. DE CAJA", totalMovimientosCaja, true, 'txtMovimientoCaja');
+    }
+
+    let total = 0;
+    ventasPorTipoVenta.forEach(function (venta) {
+        total += parseFloat(venta.total);
+
+        let id = 'txt' + venta.descripcion;
+        crearFilaTotalesTurno(contenedor, venta.descripcion, venta.total, true, id);
+    });
+
+    $("#btnValidarFinalizarTurno").hide();
+    $("#btnFinalizarTurno").show();
+    return total;
 }
 
 function crearFilaTotalesTurno(contenedor, descripcion, total, disabled, inputId = null) {
@@ -377,6 +399,7 @@ function crearFilaTotalesTurno(contenedor, descripcion, total, disabled, inputId
 
     let inputDiv = $('<div>', { class: 'col-sm-5', style: 'padding-right: 0px; padding-left: 0px;' });
 
+
     let inputGroup = $('<div>', { class: 'input-group input-group-sm', style: 'margin-top: 0px;' });
 
     let inputGroupPrepend = $('<div>', { class: 'input-group-prepend' });
@@ -386,15 +409,21 @@ function crearFilaTotalesTurno(contenedor, descripcion, total, disabled, inputId
         text: '$'
     });
 
+    let classInput = 'form-control form-control-sm';
+
+    if (total == '' && total != '0') {
+        classInput += ' validate-importe';
+    }
+
     let inputAttributes = {
         type: 'number',
         step: 'any',
-        class: 'form-control form-control-sm',
+        class: classInput,
         min: '0',
         value: total,
         disabled: disabled,
-        style: 'text-align: end;',
-        change: function () { actualizarTotal(); }
+        style: 'text-align: end;'
+        //,change: function () { actualizarTotal(); }
     };
 
     if (inputId != '') {
@@ -472,14 +501,75 @@ $("#btnAbrirTurno").on("click", function () {
     })
 })
 
-$("#btnFinalizarTurno").on("click", function () {
+$("#btnValidarFinalizarTurno").on("click", function () {
+
+    let listaVentas = obtenerValoresInputsCerrarTurno();
+    if (listaVentas == null) {
+        return;
+    }
 
     let modelTurno = {
         observacionesCierre: $("#txtObservacionesCierre").val(),
         idTurno: parseInt($("#txtIdTurnoLayout").val()),
-        ventasPorTipoVenta: obtenerValoresInputsCerrarTurno()
+        ventasPorTipoVenta: listaVentas
     };
 
+    $("#modalDataCerrarTurno").find("div.modal-content").LoadingOverlay("show")
+
+    fetch("/Turno/ValidarCierreTurno", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json;charset=utf-8' },
+        body: JSON.stringify(modelTurno)
+    }).then(response => {
+        $("#modalDataCerrarTurno").find("div.modal-content").LoadingOverlay("hide")
+        return response.json();
+    }).then(responseJson => {
+        if (responseJson.state) {
+            if (responseJson.object == '') {
+                $("#txtError").text('');
+                const divError = document.getElementById("divError");
+                divError.classList.remove('d-flex');
+                divError.style.display = 'none';
+            }
+            else {
+                $("#txtError").html(responseJson.object);
+                const divError = document.getElementById("divError");
+                divError.classList.add('d-flex');
+                divError.style.display = '';
+                errorCerrarTurno = true;
+            }
+            document.getElementById("btnFinalizarTurno").style.display = '';
+
+        } else {
+            swal("Lo sentimos", responseJson.message, "error");
+        }
+    }).catch((error) => {
+        $("#modalDataCerrarTurno").find("div.modal-content").LoadingOverlay("hide")
+    })
+})
+
+let errorCerrarTurno = false;
+
+$("#btnFinalizarTurno").on("click", function () {
+
+    let listaVentas = obtenerValoresInputsCerrarTurno();
+    if (listaVentas == null) {
+        return;
+    }
+
+    let modelTurno = {
+        observacionesCierre: $("#txtObservacionesCierre").val(),
+        idTurno: parseInt($("#txtIdTurnoLayout").val()),
+        ventasPorTipoVenta: listaVentas
+    };
+
+    if (errorCerrarTurno) {
+        if ($("#txtObservacionesCierre").val().length < 5) {
+            toastr.warning("Al tener diferencias, debe agregar una observacion al cierre", "");
+            return
+        }
+        modelTurno.observacionesCierre += " <br> " + $("#txtError").text();
+    }
 
     $("#modalDataCerrarTurno").find("div.modal-content").LoadingOverlay("show")
 
@@ -493,22 +583,8 @@ $("#btnFinalizarTurno").on("click", function () {
     }).then(responseJson => {
         if (responseJson.state) {
 
-            if (responseJson.object == '') {
-                $("#txtError").text('');
-                const divError = document.getElementById("divError");
-                divError.classList.remove('d-flex');
-                divError.style.display = 'none';
-
-                $("#modalDataCerrarTurno").modal("hide");
-                location.reload();
-            }
-            else {
-                $("#txtError").text(responseJson.object);
-                const divError = document.getElementById("divError");
-                divError.classList.add('d-flex');
-                divError.style.display = '';
-            }
-
+            $("#modalDataCerrarTurno").modal("hide");
+            location.reload();
 
         } else {
             swal("Lo sentimos", responseJson.message, "error");
@@ -519,7 +595,32 @@ $("#btnFinalizarTurno").on("click", function () {
 
 })
 
+$('#modalDataCerrarTurno').on('hidden.bs.modal', function () {
+    $("#txtError").text('');
+    const divError = document.getElementById("divError");
+    divError.classList.remove('d-flex');
+    divError.style.display = 'none';
+    document.getElementById("btnFinalizarTurno").style.display = 'none';
+
+    errorCerrarTurno = false;
+    $("#txtObservacionesCierre").prop("disabled", false);
+});
+
+
 function obtenerValoresInputsCerrarTurno() {
+
+    const inputs = $("input.validate-importe").map(function () {
+        return $(this).val();  // Obtener el valor de cada input
+    }).get();  // Convertir a un array
+
+    const inputs_without_value = inputs.filter(value => value.trim() == "");
+
+    if (inputs_without_value.length > 0) {
+        const msg = `Debe completar todos los medios de pagos`;
+        toastr.warning(msg, "");
+        return null;
+    }
+
     let valores = [];
 
     $('#contMetodosPagoLayout input[type="number"]').each(function () {
@@ -563,14 +664,14 @@ function abrirTurnoDesdeViewTurnos(idTurno) {
 
                 if (fechaInicio.isValid()) {
                     let fechaFormatted = fechaInicio.format('DD/MM/YYYY');
-                    let horaInicioFormatted = fechaInicio.format('HH:mm:ss');
+                    let horaInicioFormatted = fechaInicio.format('HH:mm');
 
                     $("#txtInicioTurnoCierre").val(fechaFormatted);
                     $("#txtHoraInicioTurnoCierre").val(horaInicioFormatted);
                 }
 
                 if (fechaFin != '') {
-                    let horaFinFormatted = fechaFin.format('HH:mm:ss');
+                    let horaFinFormatted = fechaFin.format('HH:mm');
 
                     $("#txtCierraTurnoCierre").val(horaFinFormatted);
                 }
@@ -585,10 +686,15 @@ function abrirTurnoDesdeViewTurnos(idTurno) {
                 $("#txtObservacionesCierre").val(result.observacionesCierre);
                 $("#txtObservacionesCierre").prop("disabled", true);
                 $("#btnFinalizarTurno").hide();
-
+                $("#btnValidarFinalizarTurno").hide();
                 $("#modalDataCerrarTurno").modal("show");
 
-                renderVentasPorTipoVenta(result.ventasPorTipoVenta, result.totalInicioCaja, true);
+                let total = renderVentasPorTipoVenta(result.ventasPorTipoVenta, result.totalInicioCaja, true);
+
+                let contenedor = $("#contMetodosPagoLayout");;
+                contenedor.append($('<hr>'));
+                crearFilaTotalesTurno(contenedor, "TOTAL", total, true, "txtTotalSumado");
+
 
             } else {
                 swal("Lo sentimos", responseJson.message, "error");
@@ -600,11 +706,6 @@ function abrirTurnoDesdeViewTurnos(idTurno) {
         });
 }
 
-$('#modalDataCerrarTurno').on('hidden.bs.modal', function () {
-    $("#txtObservacionesCierre").prop("disabled", false);
-
-    $("#btnFinalizarTurno").show();
-});
 function generarDatos() {
     showLoading();
 

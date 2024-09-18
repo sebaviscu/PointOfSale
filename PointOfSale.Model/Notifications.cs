@@ -68,7 +68,7 @@ namespace PointOfSale.Model
         {
             var tipo =  movCaja.RazonMovimientoCaja != null ? movCaja.RazonMovimientoCaja.Tipo.ToString() : string.Empty;
 
-            Descripcion = $"El usuario {movCaja.RegistrationUser} ha realizado un {tipo} de ${movCaja.Importe} el dia {movCaja.RegistrationDate}.";
+            Descripcion = $"El usuario {movCaja.RegistrationUser} ha realizado un {tipo} de ${movCaja.Importe}.";
             IsActive = true;
             RegistrationDate = TimeHelper.GetArgentinaTime();
             Accion = "/MovimientoCaja/Index";

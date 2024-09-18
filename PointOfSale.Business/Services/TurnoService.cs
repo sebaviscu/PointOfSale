@@ -143,40 +143,48 @@ namespace PointOfSale.Business.Services
             return query.SingleOrDefault(_ => _.IdTurno == idTurno);
         }
 
-        public async Task<string> CerrarTurno(Turno entity, List<VentasPorTipoDeVenta> ventasPorTipoDeVentas)
+        public async Task CerrarTurno(Turno entity, List<VentasPorTipoDeVenta> ventasPorTipoDeVentas)
         {
-
-            var Turno_found = await _repository.Get(c => c.IdTurno == entity.IdTurno);
-
-            var respError = string.Empty;
-
             var ventasRegistradas = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, entity.IdTurno, entity.IdTienda, TimeHelper.GetArgentinaTime(), false);
-            foreach (KeyValuePair<string, decimal> item in ventasRegistradas)
+            var errores = await ValidarVentas(ventasPorTipoDeVentas, ventasRegistradas);
+            
+            if (!string.IsNullOrEmpty(errores) && string.IsNullOrEmpty(entity.ObservacionesCierre))
+            {
+                throw new Exception("Debe agregar una observación al cierre del turno");
+            }
+
+            var turnoCerrado = await Edit(entity);
+            var ajustes = await _ajusteService.GetAjustes(entity.IdTienda);
+
+            if (ajustes.NotificarEmailCierreTurno.HasValue && ajustes.NotificarEmailCierreTurno.Value
+                        && !string.IsNullOrEmpty(ajustes.EmailEmisorCierreTurno) && !string.IsNullOrEmpty(ajustes.PasswordEmailEmisorCierreTurno) && !string.IsNullOrEmpty(ajustes.EmailsReceptoresCierreTurno))
             {
 
+                await _emailService.NotificarCierreCaja(turnoCerrado, ventasRegistradas, ajustes);
+            }
+        }
+
+        public async Task<string> ValidarCierreTurno(Turno entity, List<VentasPorTipoDeVenta> ventasPorTipoDeVentas)
+        {
+            var ventasRegistradas = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, entity.IdTurno, entity.IdTienda, TimeHelper.GetArgentinaTime(), false);
+            return await ValidarVentas(ventasPorTipoDeVentas, ventasRegistradas);
+        }
+
+        private async Task<string> ValidarVentas(List<VentasPorTipoDeVenta> ventasPorTipoDeVentas, Dictionary<string, decimal> ventasRegistradas)
+        {
+            var respError = string.Empty;
+            foreach (KeyValuePair<string, decimal> item in ventasRegistradas)
+            {
                 var venta = ventasPorTipoDeVentas.FirstOrDefault(_ => _.Descripcion == item.Key);
 
                 if (venta != null)
                 {
-                    var coraInferior = item.Value * 0.95m;
-                    var coraSuperior = item.Value * 1.05m;
+                    var coraInferior = item.Value * 0.99m;
+                    var coraSuperior = item.Value * 1.01m;
                     if (coraInferior > venta.Total || venta.Total > coraSuperior)
                     {
-                        respError += $"Existen diferencias en el tipo de ventas  '{venta.Descripcion}'. \n";
+                        respError += $"- Existen diferencias en '{venta.Descripcion}'. <br>";
                     }
-                }
-            }
-
-            if (respError == string.Empty)
-            {
-                var turnoCerrado = await Edit(entity);
-                var ajustes = await _ajusteService.GetAjustes(entity.IdTienda);
-
-                if (ajustes.NotificarEmailCierreTurno.HasValue && ajustes.NotificarEmailCierreTurno.Value
-                            && !string.IsNullOrEmpty(ajustes.EmailEmisorCierreTurno) && !string.IsNullOrEmpty(ajustes.PasswordEmailEmisorCierreTurno) && !string.IsNullOrEmpty(ajustes.EmailsReceptoresCierreTurno))
-                {
-
-                    await _emailService.NotificarCierreCaja(turnoCerrado, ventasRegistradas, ajustes);
                 }
             }
 

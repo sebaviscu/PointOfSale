@@ -217,27 +217,46 @@ namespace PointOfSale.Controllers
             {
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
 
-                modelTurno.ObservacionesCierre = modelTurno.ObservacionesCierre;
                 modelTurno.ModificationUser = user.UserName;
                 modelTurno.IdTienda = user.IdTienda;
                 modelTurno.FechaFin = TimeHelper.GetArgentinaTime();
 
-                var errores = await _turnoService.CerrarTurno(_mapper.Map<Turno>(modelTurno), _mapper.Map<List<VentasPorTipoDeVenta>>(modelTurno.VentasPorTipoVenta));
+                await _turnoService.CerrarTurno(_mapper.Map<Turno>(modelTurno), _mapper.Map<List<VentasPorTipoDeVenta>>(modelTurno.VentasPorTipoVenta));
 
-                if (errores == string.Empty)
-                {
-                    UpdateClaimAsync("Turno", null);
-                }
+                UpdateClaimAsync("Turno", null);
+
 
                 gResponse.State = true;
-                gResponse.Object = errores;
-
 
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 return HandleException(ex, "Error al cerrar turno.", _logger, modelTurno);
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> ValidarCierreTurno([FromBody] VMTurno modelTurno)
+        {
+            var gResponse = new GenericResponse<string>();
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
+
+                modelTurno.IdTienda = user.IdTienda;
+
+                var errores = await _turnoService.ValidarCierreTurno(_mapper.Map<Turno>(modelTurno), _mapper.Map<List<VentasPorTipoDeVenta>>(modelTurno.VentasPorTipoVenta));
+
+                gResponse.State = true;
+                gResponse.Object = errores;
+
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al validar cierre de turno.", _logger, modelTurno);
             }
         }
 

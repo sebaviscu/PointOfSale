@@ -18,6 +18,9 @@ namespace PointOfSale.Business.Contracts
 
         Task<Turno> GetTurno(int idTurno);
 
-        Task<string> CerrarTurno(Turno entity, List<VentasPorTipoDeVenta> ventasPorTipoDeVentas);
+        Task CerrarTurno(Turno entity, List<VentasPorTipoDeVenta> ventasPorTipoDeVentas);
+
+        Task<string> ValidarCierreTurno(Turno entity, List<VentasPorTipoDeVenta> ventasPorTipoDeVentas);
+
     }
 }

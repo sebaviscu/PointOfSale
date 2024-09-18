@@ -51,5 +51,14 @@ namespace AFIP.Facturacion
 
             return await wsfeService.FECAESolicitarAsync(auth, feCaeReq);
         }
+        public async Task<FECAEASolicitarResponse> FECAEASolicitarAsync(AjustesFacturacion ajustes ,FECAERequest feCaeReq)
+        {
+            var wsfeService = GetServiceSoapClient();
+            var auth = await GetAuthRequestAsync(ajustes);
+
+            //var a = await wsfeService.FECAEASolicitarAsync(auth, feCaeReq);
+
+            return default;
+        }
     }
 }
