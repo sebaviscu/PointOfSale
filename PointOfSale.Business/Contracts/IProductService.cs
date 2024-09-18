@@ -36,5 +36,7 @@ namespace PointOfSale.Business.Contracts
         Task<List<Stock>> ListStock(int idTienda);
 
         Task<bool> DeleteCodigoBarras(int idCodigoBarras);
+
+        Task<List<Product>> GetProductosDestacados();
     }
 }

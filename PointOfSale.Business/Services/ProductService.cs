@@ -265,6 +265,7 @@ namespace PointOfSale.Business.Services
                 product.Iva = entity.Iva;
                 product.FormatoWeb = entity.FormatoWeb;
                 product.PrecioFormatoWeb = entity.PrecioFormatoWeb;
+                product.Destacado = entity.Destacado;
 
                 if (entity.Photo != null && entity.Photo.Length > 0)
                     product.Photo = entity.Photo;
@@ -580,6 +581,14 @@ namespace PointOfSale.Business.Services
             Random random = new Random();
             var randomProds = prods.OrderBy(x => random.Next()).Take(8).ToList();
             return randomProds;
+        }
+        
+
+        public async Task<List<Product>> GetProductosDestacados()
+        {
+            IQueryable<Product> query = await _repository.Query(_ => _.Destacado);
+            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
+                .OrderBy(_ => _.Description).ToList();
         }
 
         public async Task<List<Product>> GetProductsByIdsActive(List<int> listIds, ListaDePrecio listaPrecios)

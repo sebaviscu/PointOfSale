@@ -149,6 +149,46 @@
         </div>
     </section>
 
+    <section class="ftco-section">
+        <div class="container">
+            <div class="row justify-content-center mb-3 pb-3">
+                <div class="col-md-12 heading-section text-center ftco-animate">
+                    <span class="subheading">Nuestros Productos</span>
+                    <h2 class="mb-4">Destacados</h2>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                @foreach (var prod in Model.Products)
+                {
+                    <div class="col-md-6 col-lg-3 ftco-animate">
+                        <div class="product">
+                            <a href="javascript:void(0)" class="img-prod" style="text-align: center;">
+                                <img class="img-fluid" src="data:image/png;base64,@prod.PhotoBase64" alt="Imagen" style="min-height: 160px; max-height: 160px; width:auto;">
+                                <div class="tags-container">
+                                    @foreach (var tag in prod.Tags)
+                                    {
+                                        <span class="status" style="background-color: @tag.Color">@tag.Nombre</span>
+                                    }
+                                </div>
+                                <div class="overlay"></div>
+                            </a>
+                            <div class="text py-3 pb-4 px-3 text-center" style="height: 110px;">
+                                <h3><a href="#">@prod.Description</a></h3>
+                                <div class="d-flex">
+                                    <div class="pricing">
+                                        <p class="price"><span class="price-sale" id="price-@prod.IdProduct" precio="@prod.PriceWeb">$@prod.PriceWeb</span><small> / @prod.TipoVenta</small></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
     <section class="ftco-section ftco-category ftco-no-pt">
         <div class="container">
             <div class="row">
@@ -188,41 +228,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="ftco-section">
-        <div class="container">
-            <div class="row justify-content-center mb-3 pb-3">
-                <div class="col-md-12 heading-section text-center ftco-animate">
-                    <span class="subheading">Nuestros Productos</span>
-                    <h2 class="mb-4">Destacados</h2>
-                </div>
-            </div>
-        </div>
-        <div class="container">
-            <div class="row">
-                @foreach (var prod in Model.Products)
-                {
-                    <div class="col-md-6 col-lg-3 ftco-animate">
-                        <div class="product">
-                            <a href="javascript:void(0)" class="img-prod" style="text-align: center;">
-                                <img class="img-fluid" src="data:image/png;base64,@prod.PhotoBase64" alt="Imagen" style="min-height: 160px; max-height: 160px; width:auto;">
-                                @*<span class="status">30%</span>*@
-                                <div class="overlay"></div>
-                            </a>
-                            <div class="text py-3 pb-4 px-3 text-center" style="height: 110px;">
-                                <h3><a href="#">@prod.Description</a></h3>
-                                <div class="d-flex">
-                                    <div class="pricing">
-                                        <p class="price"><span class="price-sale" id="price-@prod.IdProduct" precio="@prod.PriceWeb">$@prod.PriceWeb</span><small> / @prod.TipoVenta</small></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                }
             </div>
         </div>
     </section>

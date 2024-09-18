@@ -317,6 +317,7 @@ function showProducts_Prices(idTab, currentTab) {
             totalPromocion = totalPromocion + parseFloat(item.diferenciapromocion) * -1;
             subTotal = subTotal + parseFloat(item.diferenciapromocion);
         }
+
         row++;
     })
 
@@ -776,26 +777,28 @@ function funConsultarPrecio() {
     $('#cboSearchProductConsultarPrecio').on('select2:select', function (e) {
         let data = e.params.data;
         productSelected = data;
+
+        // Asignar los valores de los campos de texto
         $('#txtComentariosConsultaProducto').val(data.comentario);
         $('#txtPrecioConsultarPrecio').val(data.price);
         $('#lblProductName').text(data.text);
         $('#imgProductConsultarPrecio').attr('src', `data:image/png;base64,${data.photoBase64}`);
 
+        // Si hay tags, agregar los tags como <span> en la tags-container
         if (data.tags && data.tags.length > 0) {
-            const tagNames = data.tags.map(tag => tag.nombre).join(', ');
-            $('#txtTagsConsultaProducto').val(tagNames);
+            let tagsContainer = $('#tags-container');  // Asegúrate de tener un contenedor con id="tags-container" o similar
+            tagsContainer.empty();  // Limpiar cualquier tag previo
 
-            // Mostrar visualmente los tags
-            let tagsContainer = $('.tags-container');
-            tagsContainer.empty(); // Limpiar el contenedor de tags previo
-
-            // Agregar los tags con sus colores
+            // Agregar visualmente cada tag con su color y nombre
             data.tags.forEach(tag => {
-                let tagElement = `<span class="status" style="background-color: ${tag.color}; border: 1px solid ${tag.color}; padding: 3px 8px; border-radius: 5px;">${tag.nombre}</span>`;
+                let tagElement = `<span class="status text-white" style="background-color: ${tag.color}; border: 1px solid ${tag.color}; padding: 3px 8px; border-radius: 5px; margin-right: 5px;">${tag.nombre}</span>`;
                 tagsContainer.append(tagElement);
             });
+        } else {
+            $('#tags-container').empty();  // Limpiar si no hay tags
         }
     });
+
 }
 
 

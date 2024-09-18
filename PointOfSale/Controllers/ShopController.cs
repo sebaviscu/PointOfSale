@@ -67,7 +67,7 @@ namespace PointOfSale.Controllers
             }
 
             var shop = new VMShop(ajuste);
-            shop.Products = _mapper.Map<List<VMProduct>>(await _productService.GetRandomProducts());
+            shop.Products = _mapper.Map<List<VMProduct>>(await _productService.GetProductosDestacados());
             shop.IsLogin = claimuser.Identity.IsAuthenticated;
 
             return View("Index", shop);

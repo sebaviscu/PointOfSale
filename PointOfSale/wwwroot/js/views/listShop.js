@@ -226,7 +226,7 @@ function resumenVenta() {
         let tableDataShoop = productos.map(value => {
             return (
                 `<tr>
-                       <td class="table-products" style="border-right-color: #ffffff00;"><span class="text-muted">$ ${Number.parseFloat(value.price).toFixed(2)} x ${value.quantity} ${value.tipoVenta}</span>. - ${value.DescriptionProduct}</td>
+                       <td class="table-products" style="border-right-color: #ffffff00;"><span class="text-muted">${value.DescriptionProduct} - $ ${Number.parseFloat(value.price).toFixed(2)} x ${value.quantity} ${value.tipoVenta}</span>.</td>
                        <td class="table-products" style="font-size: 12px; text-align: right;"><strong>$ ${Number.parseFloat(value.total).toFixed(2)}</strong></td>
                     </tr>`
             );

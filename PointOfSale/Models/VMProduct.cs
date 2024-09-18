@@ -45,7 +45,8 @@ namespace PointOfSale.Models
         public virtual ICollection<Stock>? Stocks { get; set; }
         public string? PrecioFormatoWeb { get; set; }
         public int? FormatoWeb { get; set; }
-
         public virtual ICollection<VMTag>? Tags { get; set; }
+        public bool Destacado { get; set; }
+
     }
 }

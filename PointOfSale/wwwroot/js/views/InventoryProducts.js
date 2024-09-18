@@ -5,6 +5,7 @@ let aProductos = [];
 let aumentoWeb = 0;
 let cantProductosImportar = 0;
 let tagSelector;
+let redondeoToFix = 0;
 
 const BASIC_MODEL_PRODUCTOS = {
     idProduct: 0,
@@ -33,7 +34,8 @@ const BASIC_MODEL_PRODUCTOS = {
     codigoBarras: [],
     formatoWeb: '',
     precioFormatoWeb: 0,
-    tags: []
+    tags: [],
+    destacado: 0
 }
 
 const BASIC_MASSIVE_EDIT = {
@@ -301,7 +303,7 @@ function calcularPrecioFormatoVenta() {
 
     let result = val * precioWeb / 1000;
 
-    $('#txtPriceFormatoWeb').val(parseFloat(result).toFixed(2).replace('.', ','));
+    $('#txtPriceFormatoWeb').val(parseFloat(result).toFixed(redondeoToFix).replace('.', ','));
 }
 
 
@@ -388,6 +390,7 @@ const openModalProduct = (model = BASIC_MODEL_PRODUCTOS) => {
     $("#txtProfit3").val(model.porcentajeProfit3);
     $("#cboFormatoVenta").val(model.formatoWeb);
     $("#txtPriceFormatoWeb").val(model.precioFormatoWeb != 0 ? model.precioFormatoWeb.replace(/,/g, '.') : '0');
+    document.getElementById('switchProductoDescatado').checked = model.destacado;
 
     if (model.photoBase64 != null) {
         $("#imgProduct").attr("src", `data:image/png;base64,${model.photoBase64}`);
@@ -885,7 +888,6 @@ $("#btnSave").on("click", async function () {
     model["idCategory"] = $("#cboCategory").val();
     model["quantity"] = $("#txtQuantity").val();
     model["minimo"] = $("#txtMinimo").val();
-    //model["priceWeb"] = $("#txtPriceWeb").val();
     model["costPrice"] = processNumericValue($("#txtCosto")) || 0;
     model["tipoVenta"] = $("#cboTipoVenta").val();
     model["isActive"] = $("#cboState").val();
@@ -893,6 +895,7 @@ $("#btnSave").on("click", async function () {
     model["comentario"] = $("#txtComentario").val();
     model["iva"] = $("#txtIva").val();
     model["formatoWeb"] = $("#cboFormatoVenta").val();
+    model["destacado"] = document.getElementById('switchProductoDescatado').checked;
 
     model["precioFormatoWeb"] = processNumericValue("#txtPriceFormatoWeb") || processNumericValue("#txtPrice");
     model["priceWeb"] = processNumericValue("#txtPriceWeb") || processNumericValue("#txtPrice");
@@ -979,7 +982,7 @@ $("#btnSave").on("click", async function () {
 function processNumericValue(selector) {
     let value = $(selector).val();
     if (value !== '') {
-        return parseFloat(value.replace(/\.(?=\d{3})/g, '').replace(/,/g, '.')).toFixed(2);
+        return parseFloat(value.replace(/\.(?=\d{3})/g, '').replace(/,/g, '.')).toFixed(redondeoToFix);
     }
     return null;
 }
@@ -1107,8 +1110,10 @@ function calcularPrecio() {
 
     let iva = $("#txtIva").val();
     let costo = $("#txtCosto").val();
+    let roundingDigits = $("#roundingParticular").val();
 
     iva = iva == '' || iva == null ? 0 : parseFloat(iva);
+
 
     if (costo !== '') {
         costo = parseFloat(costo) * (1 + (iva / 100));
@@ -1123,7 +1128,10 @@ function calcularPrecio() {
 
             if (profit !== '') {
                 let precio = costo * (1 + (parseFloat(profit) / 100));
-                $("#txtPrice" + id).val(precio.toFixed(2));
+
+                let roundedPrice = roundToDigits(precio, roundingDigits);
+
+                $("#txtPrice" + id).val(roundedPrice);
             }
         });
     }
@@ -1133,7 +1141,7 @@ function calcularPrecio() {
 
     if (aumento !== '' && precio !== '') {
         let precioFinal = parseFloat(precio) * (1 + (parseFloat(aumento) / 100));
-        $("#txtPriceWeb").val(precioFinal.toFixed(2));
+        $("#txtPriceWeb").val(precioFinal.toFixed(redondeoToFix));
     }
 
     calcularPrecioFormatoVenta();
@@ -1360,7 +1368,7 @@ function cargarTabla(productosFiltrados) {
                 } else if (/^\d*\.?\d*$/.test(contenido)) {
                     let cantidad = parseFloat(contenido.replace('.', ','));
                     if (!isNaN(cantidad)) {
-                        this.textContent = `$ ${cantidad.toFixed(2).replace('.', ',')}`;
+                        this.textContent = `$ ${cantidad.toFixed(redondeoToFix).replace('.', ',')}`;
                     }
                 }
             });
@@ -1371,11 +1379,11 @@ function cargarTabla(productosFiltrados) {
 
 function roundToDigits(number, digits) {
     if (digits === 0) {
-        return number.toFixed(2).replace('.', ',');
+        return number.toFixed(redondeoToFix).replace('.', ',');
     }
 
     let factor = Math.pow(10, digits);
-    return (Math.round(number / factor) * factor).toFixed(2);
+    return (Math.round(number / factor) * factor).toFixed(redondeoToFix);
 }
 
 function recalculatePrices() {

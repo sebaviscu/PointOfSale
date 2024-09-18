@@ -107,10 +107,25 @@
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Detalle de productos</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <div class="row justify-content-between col-md-12">
+
+                    <div class="col-md-4">
+
+                        <h5 class="modal-title">Detalle de productos</h5>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="input-group input-group-sm mb-3">
+                            <span style="align-content: center;">Redondeo: &nbsp; &nbsp;</span>
+                            <input type="number" class="form-control" id="roundingParticular" step="1" min="0" value="1">
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+
+                    </div>
+                </div>
             </div>
             <div class="modal-body">
                 <form>
@@ -274,8 +289,17 @@
 
                         </div>
                         <div class="col-sm-9">
-
                             <div class="col-md-12">
+                                <div class="form-row">
+
+                                    <div class="form-group col-sm-12">
+                                        <label for="txtAumento">Comentario</label>
+                                        <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12" style="padding:0px;">
                                 <ul class="nav nav-tabs" role="tablist">
                                     <li class="nav-item" role="presentation">
                                         <a class="nav-link active" id="simple-tab-0" data-bs-toggle="tab" href="#simple-tabpanel-0" role="tab" aria-controls="simple-tabpanel-0" aria-selected="false">Web</a>
@@ -286,12 +310,9 @@
                                     <li class="nav-item" role="presentation">
                                         <a class="nav-link" id="simple-tab-1" data-bs-toggle="tab" href="#simple-tabpanel-1" role="tab" aria-controls="simple-tabpanel-1" aria-selected="false">Stock y Vntos.</a>
                                     </li>
-                                    <li class="nav-item" role="presentation">
-                                        <a class="nav-link" id="simple-tab-1" data-bs-toggle="tab" href="#simple-tabpanel-2" role="tab" aria-controls="simple-tabpanel-2" aria-selected="false">Sub Categorias</a>
-                                    </li>
                                 </ul>
 
-                                <div class="tab-content pt-4" id="tab-content" style="min-height: 210px;">
+                                <div class="tab-content pt-4" id="tab-content" style="min-height: 150px;">
 
                                     <div class="tab-pane" id="simple-tabpanel-3" role="tabpanel" aria-labelledby="simple-tab-3">
                                         <div class="col-md-12">
@@ -353,29 +374,19 @@
                                                         <input type="text" class="form-control form-control-sm" id="txtPriceFormatoWeb" name="PriceWeb">
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-5">
-                                                    <label for="txtAumento">Tags</label>
-                                                    <select id="tagSelector" class="form-control" multiple="multiple" style="width: 100%;">
-                                                    </select>
-                                                </div>
-                                                <div class="form-group col-sm-2 text-center" style="align-content: normal;">
+                                                <div class="form-group col-sm-2 text-center" style="align-content: end;">
                                                     <div class="form-check form-switch">
                                                         <input class="form-check-input" type="checkbox" role="switch" id="switchProductoDescatado">
                                                         <label class="form-check-label" for="switchProductoDescatado">Destacado</label>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <div class="form-row">
-
-                                                <div class="form-group col-sm-12">
-                                                    <label for="txtAumento">Comentario</label>
-                                                    <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario">
+                                                <div class="col-sm-5">
+                                                    <label for="txtAumento">Tags</label>
+                                                    <select id="tagSelector" class="form-control" multiple="multiple" style="width: 100%;">
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
-
 
 
                                     </div>
@@ -447,14 +458,6 @@
                                                 </div>
                                             </div>
                                         </div>
-
-
-                                    </div>
-
-                                    <div class="tab-pane" id="simple-tabpanel-2" role="tabpanel" aria-labelledby="simple-tab-2">
-
-                                        sub categorias
-
                                     </div>
 
                                 </div>
