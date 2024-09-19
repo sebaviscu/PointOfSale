@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,5 +18,7 @@ namespace PointOfSale.Business.Contracts
         Task<List<T>> List();
 
         Task<List<T>> ListActive();
+
+        Task<IQueryable<T>> IncludeDetails(bool incluideDetails, params Expression<Func<T, object>>[] propertySelectors);
     }
 }

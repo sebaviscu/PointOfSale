@@ -1,0 +1,91 @@
+﻿<!-- Modal datos para facturar-->
+<div class="modal fade" id="modalDatosFactura" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-between">
+                <div class="p-2 bd-highlight">
+                    <h5 class="modal-title">Datos para Facturar </h5>
+                </div>
+                <div class="p-2 bd-highlight">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+            <input type="hidden" value="0" id="txtIdClienteFactura">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-row">
+
+                            <div class="form-group col-sm-6">
+                                <label for="cboClienteFactura">Cliente</label>
+                                <select class="form-control form-control-sm" id="cboClienteFactura" tabindex="0">
+                                </select>
+                            </div>
+                            <div class="form-group col-sm-6 d-flex justify-content-around">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="switchNuevoCliente">
+                                    <label class="form-check-label" for="switchNuevoCliente">Nuevo Cliente</label>
+                                </div>
+                                <div class="form-check form-switch" id="switchGuardarNuevoClienteDiv">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="switchGuardarNuevoCliente">
+                                    <label class="form-check-label" for="switchGuardarNuevoCliente">Guardar</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-6">
+                                <label for="txtNombre">Razon social</label>
+                                <input type="text" class="form-control form-control-sm input-validate-cliente" id="txtNombreCliente" name="Nombre">
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <label for="cboCondicionIva">Condicion IVA</label>
+                                <select class="fontDetalles form-control form-control-sm input-validate-cliente" id="cboCondicionIvaCliente">
+                                    <option value="0"></option>
+                                    <option value="1">Consumidor Final</option>
+                                    @*                                     <option value="2">Exento</option>
+                                    <option value="3">Monotributista</option> *@
+                                    <option value="4">Resp. Inscripto</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <label for="txtCuil">CUIL / CUIT / DNI</label>
+                                <input type="text" class="form-control form-control-sm input-validate-cliente" id="txtCuilCliente" name="Cuil">
+                                @* <input type="text" class="form-control form-control-sm input-validate-cliente" id="txtIdCuilFacturaCliente" name="Cuil" hidden> *@
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-4">
+                                <label for="txtTelefono">Telefono</label>
+                                <input type="text" class="form-control form-control-sm" id="txtTelefonoCliente" name="telefono">
+                            </div>
+                            <div class="form-group col-sm-8">
+                                <label for="txtDireccion">Direccion</label>
+                                <input type="text" class="form-control form-control-sm input-validate-cliente" id="txtDireccionCliente" name="Direccion">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-12">
+                                <label for="txtComentario">Comentario</label>
+                                <input type="text" class="form-control form-control-sm" id="txtComentarioCliente" name="Comentario">
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer d-flex bd-highlight">
+                <div class="bd-highlight">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" tabindex="-1">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="btnSeleccionarClienteFactura" tabindex="0">Seleccionar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/js/views/facturarVC.js"></script>

@@ -1,5 +1,8 @@
-﻿using PointOfSale.Business.Contracts;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using PointOfSale.Business.Contracts;
 using PointOfSale.Data.Repository;
+using System.Linq.Expressions;
 
 namespace PointOfSale.Business.Services
 {
@@ -28,9 +31,8 @@ namespace PointOfSale.Business.Services
 
         public async Task<bool> Delete(int id)
         {
-
-            var entityQuery = await _repository.Query();
-            var entityFound = entityQuery.AsEnumerable().FirstOrDefault(e => (int)e.GetType().GetProperty("Id" + typeof(T).Name).GetValue(e) == id);
+            var entityFound = await _repository.QuerySimple()
+                .FirstOrDefaultAsync(e => (int)e.GetType().GetProperty("Id" + typeof(T).Name).GetValue(e) == id);
 
             if (entityFound == null)
                 throw new TaskCanceledException(typeof(T).Name + " no existe.");
@@ -38,6 +40,7 @@ namespace PointOfSale.Business.Services
             bool response = await _repository.Delete(entityFound);
             return response;
         }
+
 
         public async Task<T> Edit(T entity)
         {
@@ -48,12 +51,14 @@ namespace PointOfSale.Business.Services
 
             var idValue = (int)idProperty.GetValue(entity);
 
-            var entityQuery = await _repository.Query();
-            var entityFound = entityQuery.AsEnumerable().FirstOrDefault(e => (int)e.GetType().GetProperty("Id" + typeof(T).Name).GetValue(e) == idValue);
+            // Realiza la búsqueda directamente en la base de datos
+            var entityFound = await _repository.QuerySimple()
+                .FirstOrDefaultAsync(e => (int)e.GetType().GetProperty("Id" + typeof(T).Name).GetValue(e) == idValue);
 
             if (entityFound == null)
                 throw new TaskCanceledException(typeof(T).Name + " no existe.");
 
+            // Actualiza las propiedades de la entidad encontrada
             foreach (var property in entity.GetType().GetProperties())
             {
                 if (property.CanWrite)
@@ -62,6 +67,7 @@ namespace PointOfSale.Business.Services
                 }
             }
 
+            // Realiza la edición en el repositorio
             bool response = await _repository.Edit(entityFound);
 
             if (!response)
@@ -69,6 +75,7 @@ namespace PointOfSale.Business.Services
 
             return entityFound;
         }
+
 
         public async Task<List<T>> List()
         {
@@ -83,12 +90,27 @@ namespace PointOfSale.Business.Services
             if (estadoProperty == null)
                 throw new InvalidOperationException("La entidad no tiene la propiedad 'Estado'.");
 
-            var query = (await _repository.Query()).AsEnumerable()
-                .Where(e => (bool)estadoProperty.GetValue(e));
+            var query = await _repository.Query(e => (bool)EF.Property<bool>(e, estadoProperty.Name));
 
-            return query.ToList();
+            return await query.ToListAsync();
         }
 
+
+        public async Task<IQueryable<T>> IncludeDetails(bool incluideDetails, params Expression<Func<T, object>>[] propertySelectors)
+        {
+            IQueryable<T> query = await _repository.Query();
+
+            if (incluideDetails && propertySelectors != null && propertySelectors.Length > 0)
+            {
+                foreach (var propertySelector in propertySelectors)
+                {
+                    query = query.Include(propertySelector);
+                }
+
+            }
+
+            return query;
+        }
 
     }
 
