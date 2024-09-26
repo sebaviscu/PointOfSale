@@ -4,7 +4,7 @@
 }
 
 
-@section StylesPOS{
+@section StylesPOS {
 
     <link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
     <link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
@@ -17,13 +17,11 @@
     <div class="col-sm-12">
 
         <div class="card card-default">
-            <div class="card-header card-header-border-bottom">
-                <div class="card-header d-flex align-items-center">
-                    <h4>Turnos</h4>
-                    <span class="text-danger" id="lblErrorPrintService" style="display: none;"><i class="mdi mdi-alert mdi-24px"></i>&nbsp; El servicio de impresión no se encuentra conectado</span>
-                </div>
-            </div>
+            <div class="card-header d-flex align-items-center">
+                <h4 class="col-md-2">Turnos</h4>
+                <span class="offset-md-2 text-danger" id="lblErrorPrintService" style="display: none;"><i class="mdi mdi-alert mdi-24px"></i>&nbsp; El servicio de impresión no se encuentra conectado</span>
 
+            </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-sm-12">
@@ -132,7 +130,7 @@
     </div>
 </div>
 
-@section Scripts{
+@section Scripts {
     <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
     <script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
     <script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
