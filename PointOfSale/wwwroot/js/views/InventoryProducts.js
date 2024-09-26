@@ -35,7 +35,8 @@ const BASIC_MODEL_PRODUCTOS = {
     formatoWeb: '',
     precioFormatoWeb: 0,
     tags: [],
-    destacado: 0
+    destacado: 0,
+    productoWeb: 0
 }
 
 const BASIC_MASSIVE_EDIT = {
@@ -391,6 +392,7 @@ const openModalProduct = (model = BASIC_MODEL_PRODUCTOS) => {
     $("#cboFormatoVenta").val(model.formatoWeb);
     $("#txtPriceFormatoWeb").val(model.precioFormatoWeb != 0 ? model.precioFormatoWeb.replace(/,/g, '.') : '0');
     document.getElementById('switchProductoDescatado').checked = model.destacado;
+    document.getElementById('switchProductoWeb').checked = model.productoWeb;
 
     if (model.photoBase64 != null) {
         $("#imgProduct").attr("src", `data:image/png;base64,${model.photoBase64}`);
@@ -896,6 +898,7 @@ $("#btnSave").on("click", async function () {
     model["iva"] = $("#txtIva").val();
     model["formatoWeb"] = $("#cboFormatoVenta").val();
     model["destacado"] = document.getElementById('switchProductoDescatado').checked;
+    model["productoWeb"] = document.getElementById('switchProductoWeb').checked;
 
     model["precioFormatoWeb"] = processNumericValue("#txtPriceFormatoWeb") || processNumericValue("#txtPrice");
     model["priceWeb"] = processNumericValue("#txtPriceWeb") || processNumericValue("#txtPrice");

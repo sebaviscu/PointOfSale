@@ -46,8 +46,10 @@ insert into Menu([description],idMenuParent,controller,pageAction,isActive) valu
 ('Stock',2,'Inventory','Stock',1), -- 24
 ('Facturacion',6,'Admin','Facturacion',1), -- 25
 ('Movimientos de Caja',6,'MovimientoCaja','Index',1), -- 26
-('Tablas',1,'Tablas','Index',1) -- 27
+('Tablas',1,'Tablas','Index',1), -- 27
+('Reporte Precios',4,'Reports','PreciosReport',1) --28
 
+select * from Menu
 go
 
 UPDATE Menu SET idMenuParent = idMenu where idMenuParent is null
@@ -87,7 +89,9 @@ INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (1,24,1),
 (1,25,1),
 (1,26,1),
-(1,27,1)
+(1,27,1),
+(1,28,1)
+
 
 --*empleado
 INSERT INTO RolMenu(idRol,idMenu,isActive) values
@@ -95,7 +99,8 @@ INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (2,7,1),
 (2,17,1),
 (2,18,1),
-(2,11,1)
+(2,11,1),
+(2,28,1)
 
 --*encargado
 INSERT INTO RolMenu(idRol,idMenu,isActive) values
@@ -108,7 +113,8 @@ INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (3,17,1),
 (3,18,1),
 (3,14,1),
-(3,24,1)
+(3,24,1),
+(3,28,1)
 
 go
 --________________________________ INSERT CATEGORIES ________________________________

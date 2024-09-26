@@ -81,17 +81,17 @@ namespace PointOfSale.Business.Services
             return queryProduct.FirstOrDefault();
         }
 
-        public async Task<List<Product>> ListActiveByCategory(int categoryId, int page, int pageSize, string searchText = "")
+        public async Task<List<Product>> ListActiveByCategoryWeb(int categoryId, int page, int pageSize, string searchText = "")
         {
             IQueryable<Product> query;
 
             if (categoryId != 0)
             {
-                query = await _repository.Query(p => p.IsActive && p.IdCategory.Value == categoryId);
+                query = await _repository.Query(p => p.IsActive && p.ProductoWeb && p.IdCategory.Value == categoryId);
             }
             else
             {
-                query = await _repository.Query(p => p.IsActive);
+                query = await _repository.Query(p => p.IsActive && p.ProductoWeb);
             }
 
             if (!string.IsNullOrEmpty(searchText))
@@ -108,9 +108,9 @@ namespace PointOfSale.Business.Services
                 .ToListAsync();
         }
 
-        public async Task<List<Product>> ListActiveByDescription(string text)
+        public async Task<List<Product>> ListActiveByDescriptionWeb(string text)
         {
-            var query = await _repository.Query(_ => _.Description.Contains(text) && _.IsActive);
+            var query = await _repository.Query(_ => _.Description.Contains(text) && _.IsActive && _.ProductoWeb);
 
             return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).OrderBy(_ => _.Description).ToList();
         }
@@ -266,6 +266,7 @@ namespace PointOfSale.Business.Services
                 product.FormatoWeb = entity.FormatoWeb;
                 product.PrecioFormatoWeb = entity.PrecioFormatoWeb;
                 product.Destacado = entity.Destacado;
+                product.ProductoWeb = entity.ProductoWeb;
 
                 if (entity.Photo != null && entity.Photo.Length > 0)
                     product.Photo = entity.Photo;
@@ -582,11 +583,11 @@ namespace PointOfSale.Business.Services
             var randomProds = prods.OrderBy(x => random.Next()).Take(8).ToList();
             return randomProds;
         }
-        
 
-        public async Task<List<Product>> GetProductosDestacados()
+
+        public async Task<List<Product>> GetProductosDestacadosWeb()
         {
-            IQueryable<Product> query = await _repository.Query(_ => _.Destacado);
+            IQueryable<Product> query = await _repository.Query(_ => _.Destacado && _.ProductoWeb);
             return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
                 .OrderBy(_ => _.Description).ToList();
         }
@@ -619,50 +620,64 @@ namespace PointOfSale.Business.Services
 
         public async Task<Dictionary<int, string?>> ProductsTopByCategory(string category, string starDate, string endDate, int idTienda)
         {
-            try
+            starDate = starDate is null ? "" : starDate;
+            endDate = endDate is null ? "" : endDate;
+
+
+            DateTime start_date = DateTime.ParseExact(starDate, "dd/MM/yyyy", new CultureInfo("es-PE"));
+            DateTime end_date = DateTime.ParseExact(endDate, "dd/MM/yyyy", new CultureInfo("es-PE"));
+
+            IQueryable<DetailSale> query = await _repositoryDetailSale.Query();
+
+            if (category == "Todo")
             {
-                starDate = starDate is null ? "" : starDate;
-                endDate = endDate is null ? "" : endDate;
-
-
-                DateTime start_date = DateTime.ParseExact(starDate, "dd/MM/yyyy", new CultureInfo("es-PE"));
-                DateTime end_date = DateTime.ParseExact(endDate, "dd/MM/yyyy", new CultureInfo("es-PE"));
-
-                IQueryable<DetailSale> query = await _repositoryDetailSale.Query();
-
-                if (category == "Todo")
-                {
-                    query = query
-                            .Include(v => v.IdSaleNavigation)
-                            .Include(v => v.Producto)
-                            .Where(dv =>
-                                    dv.IdSaleNavigation.RegistrationDate.Value.Date >= start_date.Date
-                                    && dv.IdSaleNavigation.RegistrationDate.Value.Date <= end_date.Date
-                                    && dv.IdSaleNavigation.IdTienda == idTienda);
-                }
-                else
-                {
-                    query = query
-                            .Include(v => v.IdSaleNavigation)
-                            .Include(v => v.Producto)
-                            .Where(dv =>
-                                    dv.IdSaleNavigation.RegistrationDate.Value.Date >= start_date.Date
-                                    && dv.IdSaleNavigation.RegistrationDate.Value.Date <= end_date.Date
-                                    && dv.IdSaleNavigation.IdTienda == idTienda
-                                    && dv.CategoryProducty == category);
-                }
-
-                Dictionary<int, string?> resultado = query
-                .GroupBy(dv => dv.IdProduct).OrderByDescending(g => g.Sum(_ => _.Quantity))
-                .Select(dv => new { product = dv.Key, total = dv.Sum(_ => _.Quantity) })
-                .ToDictionary(keySelector: r => r.product.Value, elementSelector: r => Math.Truncate(r.total.Value).ToString());
-
-                return resultado;
+                query = query
+                        .Include(v => v.IdSaleNavigation)
+                        .Include(v => v.Producto)
+                        .Where(dv =>
+                                dv.IdSaleNavigation.RegistrationDate.Value.Date >= start_date.Date
+                                && dv.IdSaleNavigation.RegistrationDate.Value.Date <= end_date.Date
+                                && dv.IdSaleNavigation.IdTienda == idTienda);
             }
-            catch
+            else
             {
-                throw;
+                query = query
+                        .Include(v => v.IdSaleNavigation)
+                        .Include(v => v.Producto)
+                        .Where(dv =>
+                                dv.IdSaleNavigation.RegistrationDate.Value.Date >= start_date.Date
+                                && dv.IdSaleNavigation.RegistrationDate.Value.Date <= end_date.Date
+                                && dv.IdSaleNavigation.IdTienda == idTienda
+                                && dv.CategoryProducty == category);
             }
+
+            Dictionary<int, string?> resultado = query
+            .GroupBy(dv => dv.IdProduct).OrderByDescending(g => g.Sum(_ => _.Quantity))
+            .Select(dv => new { product = dv.Key, total = dv.Sum(_ => _.Quantity) })
+            .ToDictionary(keySelector: r => r.product.Value, elementSelector: r => Math.Truncate(r.total.Value).ToString());
+
+            return resultado;
+        }
+
+        public async Task<List<Product>> ProdctuosPreciosByCategory(string category, string? modificationDate, ListaDePrecio listaPrecio)
+        {
+            var queryProducts = await _repositoryListaPrecios.Query(p =>p.Lista == listaPrecio);
+
+            queryProducts = queryProducts.Include(c => c.Producto).Include(c => c.Producto.IdCategoryNavigation);
+
+            if (category != "Todo")
+            {
+                queryProducts = queryProducts.Where(_ => _.Producto.IdCategory == Convert.ToInt32(category));
+            }
+
+            if (!string.IsNullOrEmpty(modificationDate))
+            {
+                DateTime modification_date = DateTime.ParseExact(modificationDate, "dd/MM/yyyy", new CultureInfo("es-PE"));
+
+                queryProducts = queryProducts.Where(dv => dv.Producto.ModificationDate.HasValue && dv.Producto.ModificationDate.Value.Date == modification_date.Date);
+            }
+
+            return queryProducts.ToList().Select(_ => _.Producto).ToList();
         }
 
         public async Task ActivarNotificacionVencimientos(int idTienda)

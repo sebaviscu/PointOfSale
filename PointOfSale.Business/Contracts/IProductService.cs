@@ -19,8 +19,8 @@ namespace PointOfSale.Business.Contracts
         Task<Product> Get(int idProducto);
         Task<List<Product>> GetRandomProducts();
         Task<List<Product>> ListActive();
-        Task<List<Product>> ListActiveByCategory(int categoryId, int page, int pageSize, string searchText = "");
-        Task<List<Product>> ListActiveByDescription(string text);
+        Task<List<Product>> ListActiveByCategoryWeb(int categoryId, int page, int pageSize, string searchText = "");
+        Task<List<Product>> ListActiveByDescriptionWeb(string text);
         Task<List<Product>> GetProductsByIdsActive(List<int> listIds, ListaDePrecio listaPrecios);
         Task<Dictionary<int, string?>> ProductsTopByCategory(string category, string start, string end, int idTienda);
 
@@ -37,6 +37,8 @@ namespace PointOfSale.Business.Contracts
 
         Task<bool> DeleteCodigoBarras(int idCodigoBarras);
 
-        Task<List<Product>> GetProductosDestacados();
+        Task<List<Product>> GetProductosDestacadosWeb();
+
+        Task<List<Product>> ProdctuosPreciosByCategory(string category, string? modificationDate, ListaDePrecio listaPrecio);
     }
 }

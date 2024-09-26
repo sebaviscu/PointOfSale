@@ -462,6 +462,14 @@ namespace PointOfSale.Utilities.Automapper
 
             CreateMap<FacturaEmitida, VMFacturaEmitida>().ReverseMap();
 
+            CreateMap<Product, VMProductReport>()
+                    .ForMember(user => user.ProductName, opt => opt.MapFrom(userEdit => userEdit.Description))
+                    .ForMember(user => user.Precio1, opt => opt.MapFrom(userEdit => userEdit.ListaPrecios.Any() && userEdit.ListaPrecios.Count > 0 ? userEdit.ListaPrecios[0].Precio.ToString() : "0"))
+                    .ForMember(user => user.ModificationUser, opt => opt.MapFrom(userEdit => userEdit.ModificationUser))
+                    .ForMember(user => user.ModificationDate, opt => opt.MapFrom(userEdit => userEdit.ModificationDate))
+                    .ForMember(user => user.Categoria, opt => opt.MapFrom(userEdit => userEdit.IdCategoryNavigation.Description))
+                    ;
+
             CreateMap<FacturaEmitida, VMFacturaEmitida>()
                     .ForMember(user => user.NroFacturaString, opt => opt.MapFrom(userEdit => userEdit.NroFactura.Value != 0 ? userEdit.NroFactura.Value.ToString("D8") : string.Empty))
                     .ForMember(user => user.PuntoVentaString, opt => opt.MapFrom(userEdit => userEdit.PuntoVenta.ToString("D4")));

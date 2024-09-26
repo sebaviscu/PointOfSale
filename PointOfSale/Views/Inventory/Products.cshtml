@@ -288,7 +288,7 @@
                             </div>
 
                         </div>
-                        <div class="col-sm-9">
+                        <div class="col-sm-9" style="padding-right:0px;">
                             <div class="col-md-12">
                                 <div class="form-row">
 
@@ -312,7 +312,7 @@
                                     </li>
                                 </ul>
 
-                                <div class="tab-content pt-4" id="tab-content" style="min-height: 150px;">
+                                <div class="tab-content pt-4" id="tab-content" style="min-height: 150px; background-color: #F5F6FA">
 
                                     <div class="tab-pane" id="simple-tabpanel-3" role="tabpanel" aria-labelledby="simple-tab-3">
                                         <div class="col-md-12">
@@ -360,6 +360,12 @@
 
                                         <div class="col-md-12">
                                             <div class="form-row">
+                                                <div class="form-group col-sm-2 text-center" style="align-content: end;">
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" role="switch" id="switchProductoWeb">
+                                                        <label class="form-check-label" for="switchProductoWeb">Prod. Web</label>
+                                                    </div>
+                                                </div>
                                                 <div class="col-sm-2">
                                                     <label for="txtAumento">Formato Venta</label>
                                                     <select class="form-control form-control-sm" id="cboFormatoVenta">
@@ -374,20 +380,21 @@
                                                         <input type="text" class="form-control form-control-sm" id="txtPriceFormatoWeb" name="PriceWeb">
                                                     </div>
                                                 </div>
-                                                <div class="form-group col-sm-2 text-center" style="align-content: end;">
-                                                    <div class="form-check form-switch">
-                                                        <input class="form-check-input" type="checkbox" role="switch" id="switchProductoDescatado">
-                                                        <label class="form-check-label" for="switchProductoDescatado">Destacado</label>
-                                                    </div>
-                                                </div>
                                                 <div class="col-sm-5">
                                                     <label for="txtAumento">Tags</label>
                                                     <select id="tagSelector" class="form-control" multiple="multiple" style="width: 100%;">
                                                     </select>
                                                 </div>
                                             </div>
+                                            <div class="form-row">
+                                                <div class="form-group col-sm-2 text-center" style="align-content: end;">
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" role="switch" id="switchProductoDescatado">
+                                                        <label class="form-check-label" for="switchProductoDescatado">Destacado</label>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-
 
                                     </div>
 
@@ -395,6 +402,33 @@
 
                                         <div class="row">
                                             <div class="col-md-6" style="padding-right: 0px;">
+                                                <div class="">
+                                                    <div class="card-body" style="padding: 0px;">
+                                                        <div class="col-md-12">
+                                                            <div class="row">
+                                                                <div class="col-sm-12">
+                                                                    <table id="tbVencimientos" class="table table-sm table-striped">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>Vencimiento</th>
+                                                                                <th>Elaborado</th>
+                                                                                <th>Lote</th>
+                                                                                <th>Notif.</th>
+                                                                                <th></th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6" style="padding-left: 0px;">
                                                 <div class="col-md-12">
                                                     <div class="form-row">
                                                         <div class="form-group col-sm-5" style="margin-bottom: 0px;">
@@ -431,32 +465,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-6" style="padding-left: 0px;">
-                                                <div class="">
-                                                    <div class="card-body" style="padding: 0px;">
-                                                        <div class="col-md-12">
-                                                            <div class="row">
-                                                                <div class="col-sm-12">
-                                                                    <table id="tbVencimientos" class="table table-sm table-striped">
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th>Vencimiento</th>
-                                                                                <th>Elaborado</th>
-                                                                                <th>Lote</th>
-                                                                                <th>Notif.</th>
-                                                                                <th></th>
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
-                                                            </div>
-                                                        </div>
 
-                                                    </div>
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
 
@@ -464,7 +473,7 @@
                             </div>
 
                             <div class="col-md-12">
-                                <div class="form-row" id="divModif">
+                                <div class="form-row" id="divModif" style="margin-top: 15px;">
                                     <div class="form-group col-sm-3">
                                         <label for="txtModificado">Fecha Modificado</label>
                                         <input type="text" class="form-control form-control-sm" id="txtModificado" name="fechaModificado" readonly>

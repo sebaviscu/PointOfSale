@@ -12,5 +12,7 @@
         public string? Stock { get; set; }
         public string? TipoVenta { get; set; }
         public string? Categoria { get; set; }
+        public string? ModificationUser { get; set; }
+        public DateTime? ModificationDate { get; set; }
     }
 }

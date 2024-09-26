@@ -18,6 +18,6 @@ namespace PointOfSale.Business.Contracts
 
         Task AddTagToProduct(int productId, int tagId);
 
-        Task<List<Product>> ListProductsByTag(int tagId, int page, int pageSize, string searchText = "");
+        Task<List<Product>> ListProductsByTagWeb(int tagId, int page, int pageSize, string searchText = "");
     }
 }

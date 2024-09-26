@@ -67,7 +67,7 @@ namespace PointOfSale.Controllers
             }
 
             var shop = new VMShop(ajuste);
-            shop.Products = _mapper.Map<List<VMProduct>>(await _productService.GetProductosDestacados());
+            shop.Products = _mapper.Map<List<VMProduct>>(await _productService.GetProductosDestacadosWeb());
             shop.IsLogin = claimuser.Identity.IsAuthenticated;
 
             return View("Index", shop);
@@ -93,8 +93,6 @@ namespace PointOfSale.Controllers
                 shop.IsLogin = claimuser.Identity.IsAuthenticated;
                 shop.Products = new List<VMProduct>();
                 shop.FormasDePago = _mapper.Map<List<VMTypeDocumentSale>>(await _typeDocumentSaleService.ListWeb());
-                //shop.Categorias = _mapper.Map<List<VMCategory>>(await _categoryService.ListActive());
-                //shop.Tags = _mapper.Map<List<VMTag>>(await _tagService.List());
                 shop.CategoriaWebs = _mapper.Map<List<VMCategoriaWeb>>(await _categoryService.List());
                 shop.CategoriaWebs.AddRange(_mapper.Map<List<VMCategoriaWeb>>(await _tagService.List()));
                 return View("Lista", shop);
@@ -114,11 +112,11 @@ namespace PointOfSale.Controllers
                 List<VMProduct> products;
                 if (categoryId == -2 && tagId != -2)
                 {
-                    products = _mapper.Map<List<VMProduct>>(await _tagService.ListProductsByTag(tagId, page, pageSize, searchText));
+                    products = _mapper.Map<List<VMProduct>>(await _tagService.ListProductsByTagWeb(tagId, page, pageSize, searchText));
                 }
                 else
                 {
-                    products = _mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategory(categoryId, page, pageSize, searchText));
+                    products = _mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategoryWeb(categoryId, page, pageSize, searchText));
                 }
 
                 var hasMoreProducts = products.Count == pageSize;
@@ -163,7 +161,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<ActionResult> GetProductsByDescription(string text)
         {
-            var products = _mapper.Map<List<VMProduct>>(await _productService.ListActiveByDescription(text));
+            var products = _mapper.Map<List<VMProduct>>(await _productService.ListActiveByDescriptionWeb(text));
             return PartialView("PVProducts", products);
         }
         public async Task<IActionResult> VentaWeb()

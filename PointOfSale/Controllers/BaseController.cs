@@ -8,6 +8,8 @@ using static PointOfSale.Model.Enum;
 using PointOfSale.Model;
 using NuGet.Protocol;
 using PointOfSale.Utilities.Response;
+using PointOfSale.Model.Auditoria;
+using PointOfSale.Models;
 
 namespace PointOfSale.Controllers
 {
@@ -27,14 +29,33 @@ namespace PointOfSale.Controllers
         {
             var claimUser = HttpContext.User;
 
+            var idListaPrecios = GetClaimValue<int>(claimUser, "ListaPrecios");
+
+            ListaDePrecio listaPrecios;
+            switch (idListaPrecios)
+            {
+                case 1:
+                    listaPrecios = ListaDePrecio.Lista_1;
+                    break;
+                case 2:
+                    listaPrecios = ListaDePrecio.Lista_2;
+                    break;
+                case 3:
+                    listaPrecios = ListaDePrecio.Lista_3;
+                    break;
+                default:
+                    throw new ArgumentException("Invalid ListaDePrecio value");
+            }
+
             var userAuth = new UserAuth
             {
                 IdRol = GetClaimValue<int>(claimUser, ClaimTypes.Role),
                 UserName = GetClaimValue<string>(claimUser, ClaimTypes.Name),
                 IdTienda = GetClaimValue<int>(claimUser, "Tienda"),
-                IdListaPrecios = GetClaimValue<int>(claimUser, "ListaPrecios"),
+                IdListaPrecios = idListaPrecios,
                 IdUsuario = GetClaimValue<int>(claimUser, ClaimTypes.NameIdentifier),
-                IdTurno = GetClaimValue<int>(claimUser, "Turno")
+                IdTurno = GetClaimValue<int>(claimUser, "Turno"),
+                ListaPrecios = listaPrecios
             };
 
             userAuth.Result = ValidarPermisos.IsValid(userAuth.IdRol, rolesPermitidos);

@@ -141,6 +141,7 @@ function SearchProductByText(text) {
 
     let catId = $(".btnCategoria.active").attr("cat-id") || 0;
     let tagId = $(".btnCategoria.active").attr("tag-id");
+    let searchText = $("#input-search").val() || '';
 
     fetch(`/Shop/GetMoreProducts?page=${page}&pageSize=${pageSize}&categoryId=${catId}&searchText=${searchText}&tagId=${tagId}`)
         .then(response => {

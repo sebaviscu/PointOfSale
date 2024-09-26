@@ -84,27 +84,25 @@ namespace PointOfSale.Business.Services
             await _repositoryProductTag.SaveChangesAsync();
         }
 
-        public async Task<List<Product>> ListProductsByTag(int tagId, int page, int pageSize, string searchText = "")
+        public async Task<List<Product>> ListProductsByTagWeb(int tagId, int page, int pageSize, string searchText = "")
         {
-            // Obtén la consulta inicial del repositorio de ProductTag
             var query = tagId != 0
                 ?await _repositoryProductTag.Query(p => p.TagId == tagId)
                 : await _repositoryProductTag.Query();
 
-            // Aplica el Include antes de seleccionar los productos
             var queryProduct = query
                 .Include(pt => pt.Product)
                 .ThenInclude(p => p.ProductTags)
                 .ThenInclude(pt => pt.Tag)
                 .Select(pt => pt.Product);
 
-            // Filtrar por el texto de búsqueda si es necesario
             if (!string.IsNullOrEmpty(searchText))
             {
                 queryProduct = queryProduct.Where(p => p.Description.Contains(searchText));
             }
 
-            // Ordenar, paginar y devolver el resultado
+            queryProduct = queryProduct.Where(p => p.IsActive && p.ProductoWeb);
+
             return await queryProduct
                 .OrderBy(p => p.Description)
                 .Skip((page - 1) * pageSize)

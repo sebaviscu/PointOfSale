@@ -23,6 +23,7 @@ namespace PointOfSale.Model
         public decimal? PrecioFormatoWeb { get; set; }
         public int? FormatoWeb { get; set; }
         public bool Destacado { get; set; }
+        public bool ProductoWeb { get; set; }
 
         public virtual Category? IdCategoryNavigation { get; set; }
         public int? IdProveedor { get; set; }

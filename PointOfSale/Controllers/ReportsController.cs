@@ -86,6 +86,30 @@ namespace PointOfSale.Controllers
             return StatusCode(StatusCodes.Status200OK, new { data = listVMSalesReport.OrderBy(_ => _.ProductName) });
         }
 
+        public IActionResult PreciosReport()
+        {
+            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Empleado, Roles.Encargado });
+            return ValidateSesionViewOrLogin();
+        }
+
+        /// <summary>
+        /// Recupera productos con precios para DataTable de reportes
+        /// </summary>
+        /// <param name="idCategoria"></param>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetPreciosReport(string idCategoria, string? modificationDate)
+        {
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
+
+            var products = await _productService.ProdctuosPreciosByCategory(idCategoria, modificationDate, user.ListaPrecios);
+            var productsMapper = _mapper.Map<List<VMProductReport>>(products);
+
+            return StatusCode(StatusCodes.Status200OK, new { data = productsMapper });
+        }
+
         public IActionResult IvaReport()
         {
             return View();

@@ -47,6 +47,7 @@ namespace PointOfSale.Models
         public int? FormatoWeb { get; set; }
         public virtual ICollection<VMTag>? Tags { get; set; }
         public bool Destacado { get; set; }
+        public bool ProductoWeb { get; set; }
 
     }
 }

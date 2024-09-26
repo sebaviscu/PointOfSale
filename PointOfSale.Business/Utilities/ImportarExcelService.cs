@@ -95,17 +95,18 @@ namespace PointOfSale.Business.Utilities
                 IdProduct = 0,
                 IsActive = true,
                 Description = reader.GetValue(0)?.ToString(),
-                TipoVenta = reader.GetValue(2)?.ToString().ToLower() == "kg" ? Model.Enum.TipoVenta.Kg : Model.Enum.TipoVenta.U,
+                TipoVenta = reader.GetValue(2)?.ToString().ToLower() == "kg" ? TipoVenta.Kg : TipoVenta.U,
                 CostPrice = ParseDecimal(reader.GetValue(3)),
                 ListaPrecios = ParseListaPrecios(reader),
                 PriceWeb = ParseDecimal(reader.GetValue(10)),
                 Proveedor = proveedor,
                 IdProveedor = proveedor?.IdProveedor,
                 IdCategory = categoria?.IdCategory,
-                IdCategoryNavigation = categoria
+                IdCategoryNavigation = categoria,
+                Destacado = false,
+                ProductoWeb = true
             };
 
-            // Agregar código de barras si existe
             var codBarras = reader.GetValue(1)?.ToString();
             if (!string.IsNullOrEmpty(codBarras))
             {

@@ -474,7 +474,12 @@ namespace PointOfSale.Controllers
 
         }
 
-        [HttpPost]  // Cambiado a POST
+        /// <summary>
+        /// Importador de productos por csv.
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        [HttpPost]
         public async Task<IActionResult> CargarProductos(IFormFile file)
         {
             ValidarAutorizacion([Roles.Administrador]);
@@ -482,7 +487,7 @@ namespace PointOfSale.Controllers
             GenericResponse<List<VMProduct>> gResponse = new GenericResponse<List<VMProduct>>();
             try
             {
-                var (exito, products, errores) = await _excelService.ImportarProductoAsync(file);  // Usar IFormFile
+                var (exito, products, errores) = await _excelService.ImportarProductoAsync(file);
 
                 if (errores.Any())
                 {
