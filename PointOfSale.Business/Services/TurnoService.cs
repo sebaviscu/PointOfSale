@@ -3,6 +3,7 @@ using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
+using PointOfSale.Model.Auditoria;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services
@@ -46,6 +47,10 @@ namespace PointOfSale.Business.Services
                              RegistrationDate = t.RegistrationDate,
                              RegistrationUser = t.RegistrationUser,
                              TotalInicioCaja = t.TotalInicioCaja,
+                             ErroresCierreCaja = t.ErroresCierreCaja,
+                             TotalCierreCajaReal = t.TotalCierreCajaReal,
+                             TotalCierreCajaSistema = t.TotalCierreCajaSistema,
+                             ValidacionRealizada = t.ValidacionRealizada,
                              Sales = t.Sales.Where(s => !s.IsDelete).ToList()
                          });
             return list;
@@ -143,52 +148,67 @@ namespace PointOfSale.Business.Services
             return query.SingleOrDefault(_ => _.IdTurno == idTurno);
         }
 
-        public async Task CerrarTurno(Turno entity, List<VentasPorTipoDeVenta> ventasPorTipoDeVentas)
+        public async Task<(Turno TurnoCerrado, Dictionary<string, decimal> VentasRegistradas)> CerrarTurno(Turno entity, List<VentasPorTipoDeVenta> ventasPorTipoDeVentas)
         {
-            var ventasRegistradas = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, entity.IdTurno, entity.IdTienda, TimeHelper.GetArgentinaTime(), false);
-            var errores = await ValidarVentas(ventasPorTipoDeVentas, ventasRegistradas);
-            
-            if (!string.IsNullOrEmpty(errores) && string.IsNullOrEmpty(entity.ObservacionesCierre))
-            {
-                throw new Exception("Debe agregar una observación al cierre del turno");
-            }
+            var turno = await _repository.Get(_ => _.IdTurno == entity.IdTurno);
+            var ventasRegistradas = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, turno.IdTurno, turno.IdTienda, TimeHelper.GetArgentinaTime(), false);
 
-            var turnoCerrado = await Edit(entity);
-            var ajustes = await _ajusteService.GetAjustes(entity.IdTienda);
+            turno.ModificationUser = entity.ModificationUser;
+            turno.ObservacionesCierre = entity.ObservacionesCierre;
+            turno.FechaFin = TimeHelper.GetArgentinaTime();
+
+            var turnoCerrado = await Edit(turno);
+            var ajustes = await _ajusteService.GetAjustes(turno.IdTienda);
 
             if (ajustes.NotificarEmailCierreTurno.HasValue && ajustes.NotificarEmailCierreTurno.Value
-                        && !string.IsNullOrEmpty(ajustes.EmailEmisorCierreTurno) && !string.IsNullOrEmpty(ajustes.PasswordEmailEmisorCierreTurno) && !string.IsNullOrEmpty(ajustes.EmailsReceptoresCierreTurno))
+                        && !string.IsNullOrEmpty(ajustes.EmailEmisorCierreTurno)
+                        && !string.IsNullOrEmpty(ajustes.PasswordEmailEmisorCierreTurno)
+                        && !string.IsNullOrEmpty(ajustes.EmailsReceptoresCierreTurno))
             {
-
                 await _emailService.NotificarCierreCaja(turnoCerrado, ventasRegistradas, ajustes);
             }
+
+            return (turnoCerrado, ventasRegistradas);
         }
 
-        public async Task<string> ValidarCierreTurno(Turno entity, List<VentasPorTipoDeVenta> ventasPorTipoDeVentas)
+
+        public async Task<Turno> ValidarCierreTurno(Turno entity, List<VentasPorTipoDeVenta> ventasPorTipoDeVentasReales)
         {
-            var ventasRegistradas = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, entity.IdTurno, entity.IdTienda, TimeHelper.GetArgentinaTime(), false);
-            return await ValidarVentas(ventasPorTipoDeVentas, ventasRegistradas);
+            var ventasRegistradasSistema = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, entity.IdTurno, entity.IdTienda, TimeHelper.GetArgentinaTime(), false);
+            return await ValidarVentas(ventasPorTipoDeVentasReales, ventasRegistradasSistema, entity.IdTurno);
         }
 
-        private async Task<string> ValidarVentas(List<VentasPorTipoDeVenta> ventasPorTipoDeVentas, Dictionary<string, decimal> ventasRegistradas)
+        private async Task<Turno> ValidarVentas(List<VentasPorTipoDeVenta> ventasPorTipoDeVentasReales, Dictionary<string, decimal> ventasRegistradasSistema, int idTurno)
         {
+
             var respError = string.Empty;
-            foreach (KeyValuePair<string, decimal> item in ventasRegistradas)
+            foreach (KeyValuePair<string, decimal> item in ventasRegistradasSistema)
             {
-                var venta = ventasPorTipoDeVentas.FirstOrDefault(_ => _.Descripcion == item.Key);
+                var venta = ventasPorTipoDeVentasReales.FirstOrDefault(_ => _.Descripcion == item.Key);
 
                 if (venta != null)
-                {
-                    var coraInferior = item.Value * 0.99m;
-                    var coraSuperior = item.Value * 1.01m;
-                    if (coraInferior > venta.Total || venta.Total > coraSuperior)
+                { 
+                    var diferencia = (int)item.Value - (int)venta.Total;
+
+                    if (diferencia != 0)
                     {
-                        respError += $"- Existen diferencias en '{venta.Descripcion}'. <br>";
+                        respError += $"- Existe diferencia en <strong>'{venta.Descripcion.ToUpper()}'</strong> de <strong>$ {(int)Math.Abs(diferencia)}</strong>. <br>";
                     }
                 }
             }
 
-            return respError;
+            var turno = await _repository.Get(_ => _.IdTurno == idTurno);
+            if (!turno.ValidacionRealizada.HasValue || (turno.ValidacionRealizada.HasValue && !turno.ValidacionRealizada.Value))
+            {
+                turno.ErroresCierreCaja = respError;
+                turno.TotalCierreCajaReal = ventasPorTipoDeVentasReales.Sum(_ => _.Total);
+                turno.TotalCierreCajaSistema = ventasRegistradasSistema.Sum(_ => _.Value);
+                turno.ValidacionRealizada = true;
+
+                await _repository.Edit(turno);
+            }
+
+            return turno;
         }
     }
 }

@@ -23,14 +23,24 @@ namespace PointOfSale.Controllers
         private readonly IDashBoardService _dashBoardService;
         private readonly IMovimientoCajaService _movimientoCajaService;
         private readonly ILogger<TurnoController> _logger;
+        private readonly ITicketService _ticketService;
+        private readonly IAjusteService _ajustesService;
 
-        public TurnoController(ITurnoService turnoService, IMapper mapper, IDashBoardService dashBoardService, ILogger<TurnoController> logger, IMovimientoCajaService movimientoCajaService)
+        public TurnoController(ITurnoService turnoService,
+            IMapper mapper,
+            IDashBoardService dashBoardService,
+            ILogger<TurnoController> logger,
+            IMovimientoCajaService movimientoCajaService,
+            ITicketService ticketService,
+            IAjusteService ajusteService)
         {
             _turnoService = turnoService;
             _mapper = mapper;
             _dashBoardService = dashBoardService;
             _logger = logger;
             _movimientoCajaService = movimientoCajaService;
+            _ticketService = ticketService;
+            _ajustesService = ajusteService;
         }
 
         public IActionResult Turno()
@@ -190,7 +200,9 @@ namespace PointOfSale.Controllers
                     ObservacionesApertura = modelTurno.ObservacionesApertura,
                     TotalInicioCaja = modelTurno.TotalInicioCaja,
                     FechaInicio = TimeHelper.GetArgentinaTime(),
-                    IdTienda = user.IdTienda
+                    IdTienda = user.IdTienda,
+                    TotalCierreCajaReal = 0,
+                    TotalCierreCajaSistema = 0
                 };
 
 
@@ -212,21 +224,38 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> CerrarTurno([FromBody] VMTurno modelTurno)
         {
-            var gResponse = new GenericResponse<string>();
+            var gResponse = new GenericResponse<VMImprimir>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
 
                 modelTurno.ModificationUser = user.UserName;
-                modelTurno.IdTienda = user.IdTienda;
-                modelTurno.FechaFin = TimeHelper.GetArgentinaTime();
 
-                await _turnoService.CerrarTurno(_mapper.Map<Turno>(modelTurno), _mapper.Map<List<VentasPorTipoDeVenta>>(modelTurno.VentasPorTipoVenta));
+                var result = await _turnoService.CerrarTurno(_mapper.Map<Turno>(modelTurno), _mapper.Map<List<VentasPorTipoDeVenta>>(modelTurno.VentasPorTipoVenta));
 
                 UpdateClaimAsync("Turno", null);
 
 
+                var model = new VMImprimir();
+
+                if (modelTurno.ImpirmirCierreCaja.HasValue && modelTurno.ImpirmirCierreCaja.Value)
+                {
+                    var ticket = await _ticketService.CierreTurno(result.TurnoCerrado, result.VentasRegistradas);
+
+                    var ajustes = await _ajustesService.GetAjustes(user.IdTienda);
+
+                    model.NombreImpresora = ajustes.NombreImpresora;
+                    model.ImagesTicket = new List<Images>();
+
+                    if (!string.IsNullOrEmpty(ajustes.NombreImpresora))
+                    {
+                        model.Ticket = ticket.Ticket;
+                        model.ImagesTicket.AddRange(ticket.ImagesTicket);
+                    }
+                }
+
                 gResponse.State = true;
+                gResponse.Object = model;
 
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
@@ -240,17 +269,17 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> ValidarCierreTurno([FromBody] VMTurno modelTurno)
         {
-            var gResponse = new GenericResponse<string>();
+            var gResponse = new GenericResponse<Turno>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
 
                 modelTurno.IdTienda = user.IdTienda;
 
-                var errores = await _turnoService.ValidarCierreTurno(_mapper.Map<Turno>(modelTurno), _mapper.Map<List<VentasPorTipoDeVenta>>(modelTurno.VentasPorTipoVenta));
+                var turno = await _turnoService.ValidarCierreTurno(_mapper.Map<Turno>(modelTurno), _mapper.Map<List<VentasPorTipoDeVenta>>(modelTurno.VentasPorTipoVenta));
 
                 gResponse.State = true;
-                gResponse.Object = errores;
+                gResponse.Object = turno;
 
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
@@ -292,6 +321,43 @@ namespace PointOfSale.Controllers
                 return HandleException(ex, "Error al actualizar turno actual.", _logger, VMTurno);
             }
 
+        }
+
+        private async Task<IActionResult> ImprimirTicketCierre(int idTurno)
+        {
+            var gResponse = new GenericResponse<VMImprimir>();
+
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Empleado]);
+                var ajustes = await _ajustesService.GetAjustes(user.IdTienda);
+                var turno = await _turnoService.GetTurno(idTurno);
+
+                var listaVentas = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, turno.IdTurno, user.IdTienda, turno.FechaInicio, false);
+
+                var model = new VMImprimir
+                {
+                    NombreImpresora = ajustes.NombreImpresora,
+                    ImagesTicket = new List<Images>()
+                };
+
+                if (!string.IsNullOrEmpty(ajustes.NombreImpresora))
+                {
+                    var ticket = await _ticketService.CierreTurno(turno, listaVentas);
+
+                    model.Ticket += ticket.Ticket ?? string.Empty;
+                    model.ImagesTicket.AddRange(ticket.ImagesTicket);
+                }
+
+                gResponse.State = true;
+                gResponse.Object = model;
+
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al imprimir cierre de turno", _logger, idTurno);
+            }
         }
     }
 }

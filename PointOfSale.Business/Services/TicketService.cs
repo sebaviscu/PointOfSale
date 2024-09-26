@@ -9,6 +9,9 @@ using PointOfSale.Model;
 using PointOfSale.Model.Afip.Factura;
 using iText.IO.Font.Constants;
 using iText.Kernel.Font;
+using static PointOfSale.Model.Enum;
+using Microsoft.IdentityModel.Tokens;
+using System.Globalization;
 
 namespace PointOfSale.Business.Services
 {
@@ -16,11 +19,13 @@ namespace PointOfSale.Business.Services
     {
         private readonly IAfipService _afipService;
         private readonly IAjusteService _ajusteService;
+        private readonly IMovimientoCajaService _movimientoCajaService;
 
-        public TicketService(IAfipService afipService, IAjusteService ajusteService)
+        public TicketService(IAfipService afipService, IAjusteService ajusteService, IMovimientoCajaService movimientoCajaService)
         {
             _afipService = afipService;
             _ajusteService = ajusteService;
+            _movimientoCajaService = movimientoCajaService;
         }
 
         public async Task<TicketModel> TicketSale(Sale sale, Ajustes ajustes, FacturaEmitida? facturaEmitida)
@@ -190,6 +195,104 @@ namespace PointOfSale.Business.Services
             }
         }
 
+        public async Task<TicketModel> CierreTurno(Turno turno, Dictionary<string, decimal> VentasRegistradas)
+        {
+            var ticket = new TicketModel();
 
+            var movimientos = await _movimientoCajaService.GetMovimientoCajaByTurno(turno.IdTurno);
+
+            decimal totalMovimientoEgreso = 0;
+            decimal totalMovimientoIngreso = 0;
+            foreach (var m in movimientos)
+            {
+                if (m.RazonMovimientoCaja.Tipo == TipoMovimientoCaja.Egreso)
+                    totalMovimientoEgreso -= m.Importe;
+                else
+                    totalMovimientoIngreso += m.Importe;
+            }
+
+            ticket.TextoIzquierda("");
+            ticket.TextoCentro($"CIERRE DE CAJA");
+            ticket.TextoIzquierda("");
+            ticket.TextoCentro($"{turno.FechaInicio.ToString("dddd", new CultureInfo("es-ES")).ToUpper()} {turno.FechaInicio.ToShortDateString()}");
+            ticket.TextoIzquierda("");
+
+            ticket.TextoIzquierda($"Hora Inicio: {turno.FechaInicio.ToShortTimeString()}");
+            ticket.TextoIzquierda($"Hora Cierre: {turno.FechaInicio.ToShortTimeString()}");
+
+            ticket.TextoIzquierda($"Usuario: {turno.ModificationUser.ToUpper()}");
+            ticket.LineasGuion();
+
+            if (turno.TotalInicioCaja > 0)
+            {
+                ticket.TextoIzquierda($"Inicio de Caja: {(int)turno.TotalInicioCaja}");
+            }
+
+            if (totalMovimientoEgreso != 0)
+            {
+                ticket.TextoIzquierda($"Egreso de Caja: {(int)totalMovimientoEgreso}");
+            }
+
+            if (totalMovimientoIngreso != 0)
+            {
+                ticket.TextoIzquierda($"Ingresos de Caja: {(int)totalMovimientoIngreso}");
+            }
+
+            ticket.TextoIzquierda("");
+            foreach (var ventas in VentasRegistradas)
+            {
+                ticket.AgregaVentasCerrarTurno(ventas.Key, (int)ventas.Value);
+            }
+            ticket.TextoIzquierda("");
+
+            ticket.BetweenCierreTurno("TOTAL Sistema:", (int)turno.TotalCierreCajaSistema.Value);
+            ticket.BetweenCierreTurno("TOTAL Usuario:", (int)turno.TotalCierreCajaReal.Value);
+
+            ticket.TextoIzquierda("");
+            if (!string.IsNullOrEmpty(turno.ErroresCierreCaja))
+            {
+                ticket.LineasGuion();
+                ticket.TextoIzquierda("Diferencias de Caja:");
+                ticket.TextoIzquierda("");
+                var diferenciasArray = turno.ErroresCierreCaja.Split(new string[] { "<br>" }, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var diferencia in diferenciasArray)
+                {
+                    var descripcionMatch = System.Text.RegularExpressions.Regex.Match(diferencia, @"'(.+?)'");
+                    var montoMatch = System.Text.RegularExpressions.Regex.Match(diferencia, @"\$ (\d+)");
+
+                    if (descripcionMatch.Success && montoMatch.Success)
+                    {
+                        // Extraer la descripción y el monto
+                        var descripcion = descripcionMatch.Groups[1].Value;
+                        var monto = Convert.ToInt32( montoMatch.Groups[1].Value);
+
+                        // Usar ticket.FormatearTextoBetween con los valores extraídos
+                        ticket.BetweenCierreTurno(descripcion, monto);
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(turno.ObservacionesApertura) || !string.IsNullOrEmpty(turno.ObservacionesCierre))
+            {
+                ticket.LineasGuion();
+            }
+
+            if (!string.IsNullOrEmpty(turno.ObservacionesApertura))
+            {
+                ticket.TextoIzquierda("");
+                ticket.TextoIzquierda($"Observaciones apertura:");
+                ticket.TextoIzquierda(turno.ObservacionesApertura);
+            }
+
+            if (!string.IsNullOrEmpty(turno.ObservacionesCierre))
+            {
+                ticket.TextoIzquierda("");
+                ticket.TextoIzquierda($"Observaciones cierre:");
+                ticket.TextoIzquierda(turno.ObservacionesCierre);
+            }
+
+            return ticket;
+        }
     }
 }

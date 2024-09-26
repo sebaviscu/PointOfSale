@@ -327,8 +327,19 @@ function showProducts_Prices(idTab, currentTab) {
     $('#txtSubTotal' + idTab).html('$ ' + formatNumber(subTotal));
     $("#txtSubTotal" + idTab).attr("subTotalReal", parseFloat(total).toFixed(2));
 
+    var totalProductos = currentTab.products.reduce(function (total, producto) {
+        if (producto.tipoVenta === 2) {
+            return total + producto.quantity; // Sumar la cantidad
+        } else if (producto.tipoVenta === 1) {
+            return total + 1; // Sumar 1 sin importar la cantidad
+        }
+        return total;
+    }, 0); // Inicializar total en 0
 
-    $("#lblCantidadProductos" + idTab).html("Cantidad de Articulos: <strong> " + currentTab.products.length + "</strong>");
+    // Actualiza el HTML con el total calculado
+    $("#lblCantidadProductos" + idTab).html("Cantidad de Articulos: <strong> " + totalProductos + "</strong>");
+
+    //$("#lblCantidadProductos" + idTab).html("Cantidad de Articulos: <strong> " + currentTab.products.length + "</strong>");
     $('#cboListaPrecios' + idTab).prop('disabled', currentTab.products.length > 0);
 }
 
@@ -435,15 +446,15 @@ $(document).on("click", "button.finalizarSaleParcial", function () {
 })
 
 $('#modalDividirPago').on('shown.bs.modal', function () {
-    // Poner el foco en el select y desplegarlo
     $('#cboTypeDocumentSaleParcial').focus().click();
-
-    // Escuchar eventos de teclado en el select
     $('#cboTypeDocumentSaleParcial').on('keydown', function (e) {
         if (e.key === 'Tab') {
-            e.preventDefault(); // Prevenir comportamiento por defecto
+            e.preventDefault();
             //    $('#cboImprimirTicket').focus(); // Mover el foco al checkbox
             $('#btnFinalizarVentaParcial').focus();
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            $('#btnFinalizarVentaParcial').click();
         }
     });
 
@@ -607,7 +618,7 @@ function getVentaForRegister() {
     return sale;
 }
 
-$("#btnFinalizarVentaParcial").on("click", function () {
+$("#btnFinalizarVentaParcial").off("click").on("click", function () {
     $("#btnFinalizarVentaParcial").closest("div.card-body").LoadingOverlay("show")
 
     if ($(".cboFormaDePago").filter(function () { return $(this).val() === ""; }).length !== 0) {
@@ -710,27 +721,51 @@ function disableAfterVenta(tabID) {
 }
 
 document.onkeyup = async function (e) {
+    let currentTabId = getTabActiveId();
+
     if (e.altKey && e.which == 78) { // alt + N
         newTab();
         return false;
 
     } else if (e.which == 113) { // F2
-        let id = getTabActiveId();
-        $('#cboSearchProduct' + id).select2('close');
-        $('#btnFinalizeSaleParcial' + id).click();
+        $('#cboSearchProduct' + currentTabId).select2('close');
+        $('#btnFinalizeSaleParcial' + currentTabId).click();
         return false;
+
+    } else if (e.which == 114) { // alt + F3
+        registrarVentaEfectivo(currentTabId);
+        return false;
+
     } else if (e.which == 120) { // F9
         $("#modalConsultarPrecio").modal("show")
         return false;
+
     } else if (e.altKey && e.which == 66) { // alt + B
 
-        let tabID = getTabActiveId();
-        $('#cboSearchProduct' + tabID).val("").trigger('change');
-        $('#cboSearchProduct' + tabID).select2('open');
+        $('#cboSearchProduct' + currentTabId).val("").trigger('change');
+        $('#cboSearchProduct' + currentTabId).select2('open');
 
         return false;
     }
 };
+
+function registrarVentaEfectivo(currentTabId) {
+    let currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
+
+    if (currentTab.products.length < 1) {
+        toastr.warning("", "Debe ingresar productos");
+        return;
+    }
+
+    $('#cboSearchProduct' + currentTabId).select2('close');
+    $('#cboTypeDocumentSaleParcial').val(1);
+    $("#cboTypeDocumentSaleParcial").trigger('change');
+
+    let total = $("#txtTotal" + currentTabId).attr("totalReal");
+    $("#txtTotalParcial").val(total);
+
+    registrationSale(currentTabId)
+}
 
 function resetModaConsultarPreciol() {
     $('#cboSearchProductConsultarPrecio').val(null).trigger('change');
@@ -809,9 +844,14 @@ $('#btn-add-tab').click(function () {
 $('#tab-list').on('click', '.close', async function () {
     if (!(await validateCode())) { return false; }
 
-    let tabID = $(this).parents('button').attr('data-bs-target');
+    let tabId = getTabActiveId();
+
+    let tabIndex = $(this).parents('button').attr('data-bs-target');
     $(this).parents('li').remove();
-    $(tabID).remove();
+    $(tabIndex).remove();
+
+
+    AllTabsForSale = AllTabsForSale.filter(p => p.idTab != tabId);
 
     if ($('.nav-item').length === 1) {
         newTab();
@@ -1035,6 +1075,11 @@ function addFunctions(idTab) {
         let data = e.params.data;
     })
 
+
+    let productAddedByBarcode = false;  // Flag para evitar la duplicación
+
+    $('#cboSearchProduct' + idTab).off('select2:select');
+
     $('#cboSearchProduct' + idTab).select2({
         ajax: {
             url: "/Sales/GetProducts",
@@ -1042,7 +1087,7 @@ function addFunctions(idTab) {
             contentType: "application/json; charset=utf-8",
             delay: 250,
             data: function (params) {
-                lastSearchTerm = params.term; // Guardar el término de búsqueda
+                lastSearchTerm = params.term;
 
                 return {
                     search: params.term,
@@ -1050,19 +1095,46 @@ function addFunctions(idTab) {
                 };
             },
             processResults: function (data) {
-                return {
-                    results: data.map((item) => (
-                        {
-                            id: item.idProduct,
-                            text: item.description,
-                            category: item.idCategory,
-                            photoBase64: item.photoBase64,
-                            price: item.price,
-                            tipoVenta: item.tipoVenta,
-                            iva: item.iva,
-                            categoryProducty: item.categoryProducty
+                const results = data.map((item) => ({
+                    id: item.idProduct,
+                    text: item.description,
+                    category: item.idCategory,
+                    photoBase64: item.photoBase64,
+                    price: item.price,
+                    tipoVenta: item.tipoVenta,
+                    iva: item.iva,
+                    categoryProducty: item.categoryProducty
+                }));
+
+                // Si es un código de barras, selecciona automáticamente el primer producto
+                if (isBarcode(lastSearchTerm) && results.length > 0) {
+                    const firstProduct = results[0];
+
+                    // Marcar que se ha añadido un producto por código de barras
+                    productAddedByBarcode = true;
+
+                    // Seleccionar el primer producto
+                    $('#cboSearchProduct' + idTab).val(firstProduct.id).trigger('change');
+
+                    // Llamar manualmente al evento select2:select
+                    $('#cboSearchProduct' + idTab).trigger({
+                        type: 'select2:select',
+                        params: {
+                            data: firstProduct
                         }
-                    ))
+                    });
+
+                    // Limpiar el select2 después de agregar el producto
+                    setTimeout(function () {
+                        $('#cboSearchProduct' + idTab).val(null).trigger('change');
+                    }, 100);
+                }
+                else {
+                    productAddedByBarcode = false;
+                }
+
+                return {
+                    results: results
                 };
             },
             cache: true
@@ -1072,61 +1144,86 @@ function addFunctions(idTab) {
         templateResult: formatResults
     });
 
+    let se_agrego_antes = false;
 
+    // Evento para manejar la selección del producto
     $('#cboSearchProduct' + idTab).on('select2:select', function (e) {
-        let searchTerm = lastSearchTerm; // Obtener el término de búsqueda guardado
+
+
+        let searchTerm = lastSearchTerm;
         let data = e.params.data;
         productSelected = data;
-        let quantity_product_found = 0;
         let currentTab = AllTabsForSale.find(item => item.idTab == idTab);
 
-        if (currentTab.products.length !== 0) {
+        if (productAddedByBarcode) {
+            let quantity_product_found_codBar = 0;
+            let product_found = currentTab.products.filter(prod => prod.idproduct == data.id && prod.promocion == null);
 
+            if (product_found.length == 1) {
+                quantity_product_found_codBar = product_found[0].quantity;
+                currentTab.products.splice(product_found[0].row, 1);
+            }
+
+            let peso = $("#txtPeso" + idTab).val();
+            peso = peso == "" ? 1 : parseFloat(peso);
+            peso += quantity_product_found_codBar;
+            $("#txtPeso" + idTab).val(peso);
+
+            agregarProductoEvento(idTab);
+
+            productAddedByBarcode = false; // Resetear el flag
+            se_agrego_antes = true;
+
+            // Limpiar y reabrir el select2
+            setTimeout(() => {
+                $('#cboSearchProduct' + idTab).select2('close');
+                $('#cboSearchProduct' + idTab).val("").trigger('change');
+                $('#cboSearchProduct' + idTab).select2('open');
+            }, 0);
+
+            return;
+        }
+        else if (se_agrego_antes){
+            se_agrego_antes = false;
+            return;
+        }
+
+
+        let quantity_product_found = 0;
+
+        if (currentTab.products.length !== 0) {
             let product_found = currentTab.products.filter(prod => prod.idproduct == data.id &&
                 prod.promocion == null &&
                 data.tipoVenta == 2 &&
                 isBarcode(searchTerm));
 
             if (product_found.length == 1) {
-
                 quantity_product_found = product_found[0].quantity;
                 currentTab.products.splice(product_found[0].row, 1);
             }
         }
-        if (data.tipoVenta == 2 && isBarcode(searchTerm)) {
-            let peso = $("#txtPeso" + idTab).val();
 
-            if (peso != "") {
-                if (peso === false || isNaN(peso)) return false;
-            }
-
-            peso = peso == "" ? 1 : parseFloat(peso);
-
-            setNewProduct(peso, quantity_product_found, data, currentTab, idTab);
-
-            return;
-        } else if (data.tipoVenta == 1) {
-
+        if (data.tipoVenta == 1) {
             $('#txtPeso' + idTab).val('');
-        }
-        else {
+        } else {
             $('#txtPeso' + idTab).val('1');
         }
 
         const element = document.getElementById("txtPeso" + idTab);
-        window.setTimeout(() => element.focus(), 0);
+        window.setTimeout(() => {
+            element.focus();
+            element.select();
+        }, 0);
+    });
 
-    })
+    function isBarcode(input) {
+        return input.length >= 8 && !isNaN(input);
+    }
 
     $("#btnAgregarProducto" + idTab).on("click", function () {
         agregarProductoEvento(idTab);
     })
 
-}
-
-function isBarcode(term) {
-    const isNumeric = /^\d+$/.test(term);
-    return isNumeric && term.length >= 6 && term.length <= 18;
 }
 
 function adjustQuantity(idTab, increment) {
@@ -1325,39 +1422,8 @@ function lastTab() {
     tabFirst.tab('show');
 }
 
-//$(document).on('click', 'a[href]:not([target="_blank"])', function (event) {
-//    if (AllTabsForSale[0].products.length > 0) {
-//        event.preventDefault();
-//        registerNoCierreSale();
-//    }
-//});
-
-//window.addEventListener('beforeunload', function (event) {
-//    if (AllTabsForSale[0].products.length > 0) {
-//        event.preventDefault();
-//        registerNoCierreSale();
-//    }
-//});
-
-//function registerNoCierreSale() {
-
-//    //let sale = getVentaForRegister();
-//    //sale.idTypeDocumentSale = null
-//    //sale.multiplesFormaDePago = null
-
-//    swal({
-//        title: 'No es posible cerrar la pantalla con una venta abierta \n\n',
-//        icon: 'question',
-//        showCancelButton: true,
-//        confirmButtonText: 'Aceptar'
-//    }, function (value) {
-
-
-//    });
-//}
-
 function ventaAbierta() {
-    return AllTabsForSale[0].products.length > 0;
+    return AllTabsForSale.some(tab => tab.products.length > 0);
 }
 
 function getTabActiveId() {

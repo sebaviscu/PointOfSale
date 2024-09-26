@@ -1390,7 +1390,7 @@ namespace PointOfSale.Controllers
                 p.PromocionString += " [" + string.Join(", ", diasList.Select(_ => _.ToString())) + "]";
             }
             p.PromocionString += " -> ";
-            p.PromocionString += p.Precio != null ? $"Precio fijo: ${p.Precio}" : $"Precio {p.Porcentaje}%: ";
+            p.PromocionString += p.Precio != null ? $"Precio fijo: ${p.Precio}" : $"Precio al: {(int)p.Porcentaje}% ";
         }
 
         [HttpGet]

@@ -82,7 +82,8 @@ namespace PointOfSale.Model
         {
             Lista_1 = 1,
             Lista_2 = 2,
-            Lista_3 = 3
+            Lista_3 = 3,
+            Web = 4
         }
 
         public enum EstadoPago

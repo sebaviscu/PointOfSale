@@ -2,6 +2,7 @@
 let rowSelectedHistoric;
 let tableReportSale;
 let isAdmin;
+let isHealthySaleHistory = false;
 
 let SEARCH_VIEW = {
 
@@ -26,7 +27,6 @@ let SEARCH_VIEW = {
 
 }
 
-let isHealthySaleHistory = false;
 
 $(document).ready(function () {
 
@@ -58,7 +58,7 @@ $(document).ready(function () {
             }
         });
 
-    var saleNumberByClient = $('#txtSaleNumberByClient').text().trim();
+    let saleNumberByClient = $('#txtSaleNumberByClient').text().trim();
 
     if (saleNumberByClient != '') {
         $('#cboSearchBy').val('number');
@@ -162,7 +162,9 @@ $("#tbsale tbody").on("click", ".btn-info", function () {
 
     let d = tableReportSale.row($(this).closest('tr')).data();
 
-    $("#txtRegistrationDate").val(d.registrationDate)
+    let formattedDate = moment(d.registrationDate).format("DD/MM/YYYY HH:mm");
+
+    $("#txtRegistrationDate").val(formattedDate)
     $("#txtSaleNumber").val(d.saleNumber)
     $("#txtRegisterUser").val(d.registrationUser)
     $("#txtDocumentType").val(d.typeDocumentSale)

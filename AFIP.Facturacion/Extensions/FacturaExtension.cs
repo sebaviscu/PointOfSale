@@ -81,6 +81,74 @@ namespace AFIP.Facturacion.Extensions
             return facturaFinal;
         }
 
+        public static FECAEARequest ToFECAERequest_CAEA(FacturaAFIP facturaAFIP)
+        {
+
+            var detalle = facturaAFIP.Detalle.First();
+            var facturaFinal = new FECAEARequest
+            {
+                FeCabReq = new FECAEACabRequest
+                {
+                    CantReg = facturaAFIP.Detalle.Count,
+                    CbteTipo = facturaAFIP.Cabecera.TipoComprobante.Id,
+                    PtoVta = facturaAFIP.Cabecera.PuntoVenta,
+                },
+                FeDetReq = new List<FECAEADetRequest>()
+                {
+                    new FECAEADetRequest
+                    {
+                        Concepto = detalle.Concepto,
+                        DocTipo = detalle.TipoDocumento.Id,
+                        DocNro = detalle.NroDocumento,
+                        CbteDesde = detalle.NroComprobanteDesde,
+                        CbteHasta = detalle.NroComprobanteHasta,
+                        CbteFch = detalle.FechaComprobante?.ToAFIPDateString(),
+                        ImpTotal = detalle.ImporteTotal,
+                        ImpTotConc = detalle.ImporteTotalConc,
+                        ImpNeto = detalle.ImporteNeto,
+                        ImpOpEx = detalle.ImporteOpExento,
+                        ImpIVA = detalle.ImporteIVA,
+                        ImpTrib = detalle.ImporteTributos,
+                        FchServDesde = detalle.FechaServicioDesde?.ToAFIPDateString(),
+                        FchServHasta = detalle.FechaServicioHasta?.ToAFIPDateString(),
+                        FchVtoPago = detalle.FechaVencimientoPago?.ToAFIPDateString(),
+                        MonId = detalle.Moneda.Id,
+                        MonCotiz = detalle.CotizacionMoneda
+                    }
+                }
+            };
+
+            if (facturaAFIP.ComprobanteAsociado != null)
+            {
+                facturaFinal.FeDetReq.First().CbtesAsoc = new List<CbteAsoc>()
+                {
+                    new CbteAsoc()
+                    {
+                        Tipo = facturaAFIP.ComprobanteAsociado.TipoComprobante,
+                        Nro = facturaAFIP.ComprobanteAsociado.NroComprobante,
+                        PtoVta = facturaAFIP.ComprobanteAsociado.PuntoVenta,
+                        CbteFch = facturaAFIP.ComprobanteAsociado.FechaComprobante?.ToAFIPDateString(),
+                        Cuit = facturaAFIP.ComprobanteAsociado.Cuil?.ToString()
+                    }
+                };
+            }
+
+            if (detalle.ImporteIVA > 0)
+            {
+                facturaFinal.FeDetReq.First().Iva = new List<AlicIva>
+                        {
+                            new AlicIva
+                            {
+                                Id = 5,
+                                BaseImp = detalle.ImporteNeto,
+                                Importe = detalle.ImporteIVA
+                            }
+                        };
+            }
+
+            return facturaFinal;
+        }
+
         public static FacturaEmitida ToFacturaEmitida(FECAEDetResponse fECAECabResponse)
         {
             if (fECAECabResponse == null)

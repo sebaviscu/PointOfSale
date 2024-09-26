@@ -18,16 +18,14 @@ namespace PointOfSale.Business.Utilities
         private readonly string smtpServer;
         private readonly int smtpPort;
         private readonly bool enableSsl;
-        private readonly IDashBoardService _dashBoardService;
         private readonly IMovimientoCajaService _movimientoCajaService;
 
-        public EmailService(IAjusteService ajusteService, IDashBoardService dashBoardService, IMovimientoCajaService movimientoCajaService)
+        public EmailService(IAjusteService ajusteService, IMovimientoCajaService movimientoCajaService)
         {
             smtpServer = "smtp.gmail.com"; // Servidor SMTP de Gmail
             smtpPort = 587; // Puerto para TLS
             enableSsl = true; // Usar SSL
             _ajusteService = ajusteService;
-            _dashBoardService = dashBoardService;
             _movimientoCajaService = movimientoCajaService;
         }
 

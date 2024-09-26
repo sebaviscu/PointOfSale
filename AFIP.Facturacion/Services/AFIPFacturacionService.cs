@@ -24,9 +24,17 @@ namespace AFIP.Facturacion.Services
 
             return new FacturacionResponse
             {
-                FECAECabResponse = comprobante.Body.FECAESolicitarResult.FeCabResp, 
+                FECAECabResponse = comprobante.Body.FECAESolicitarResult.FeCabResp,
                 FECAEDetResponse = comprobante.Body.FECAESolicitarResult.FeDetResp,
             };
+
+
+            //var comprobante = await _wsfeClient.FECAEASolicitar_CAEA_Async(ajustes, FacturaExtension.ToFECAERequest_CAEA(factura));
+            //var errors = comprobante.Body.FECAEARegInformativoResult.Errors;
+            //var cabecera = comprobante.Body.FECAEARegInformativoResult.FeCabResp;
+            //var detalles = comprobante.Body.FECAEARegInformativoResult.FeDetResp;
+
+            //return default;
         }
 
         public async Task<FERecuperaLastCbteResponse> GetUltimoComprobanteAutorizadoAsync(AjustesFacturacion ajustes, int ptoVenta, TipoComprobante tipoComprobante)

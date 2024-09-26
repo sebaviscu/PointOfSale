@@ -27,6 +27,10 @@ modificationUser VARCHAR(50) NULL,
 ObservacionesApertura varchar(200) null,
 ObservacionesCierre varchar(200) null,
 TotalInicioCaja decimal(10,2) not null,
+TotalCierreCajaSistema decimal(10,2) null,
+TotalCierreCajaReal decimal(10,2) null,
+ErroresCierreCaja VARCHAR(max) NULL,
+ValidacionRealizada bit null,
 CONSTRAINT FK_Turno_Tienda FOREIGN KEY (idTienda)
 REFERENCES Tienda(idTienda) ON DELETE CASCADE
 );

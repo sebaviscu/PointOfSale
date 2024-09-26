@@ -18,8 +18,9 @@
 
         <div class="card card-default">
             <div class="card-header card-header-border-bottom">
-                <div class="row col-md 3">
+                <div class="card-header d-flex align-items-center">
                     <h4>Turnos</h4>
+                    <span class="text-danger" id="lblErrorPrintService" style="display: none;"><i class="mdi mdi-alert mdi-24px"></i>&nbsp; El servicio de impresión no se encuentra conectado</span>
                 </div>
             </div>
 
@@ -34,7 +35,8 @@
                                     <th>Inicio</th>
                                     <th>Fin</th>
                                     <th>Cierre</th>
-                                    <th>Total</th>
+                                    <th>Total Caja</th>
+                                    <th>Diferencia</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -47,72 +49,84 @@
     </div>
 </div>
 
-<!-- Grid Modal Turno-->
-<div class="modal fade" id="modalData" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<!-- Grid Modal Cerrar Turno-->
+<div class="modal fade" id="modalDataTurno" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalGridTitle">Turno</h5>
+                <h5 class="modal-title">Finalizar Turno</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form>
-                    <input type="hidden" value="0" id="txtId">
-                    <div class="row">
-                        <div class="col-sm-12">
+                <div class="row">
 
-                            <div class="col-sm-12">
-                                <div class="form-row">
-                                    <div class="form-group col-sm-4">
-                                        <label for="txtFecha">Fecha</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtFecha" name="Fecha de Inicio" disabled>
-                                    </div>
-                                    <div class="form-group col-sm-4">
-                                        <label for="txtHoraInicio">Hora de Inicio</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtHoraInicio" name="Hora de Inicio" disabled>
-                                    </div>
-                                    <div class="form-group col-sm-4">
-                                        <label for="txtHoraFin">Hora de Fin</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtHoraFin" name="Hora de Fin" disabled>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-sm-8  mb-0">
-                                        <label for="txtDescripcion">Comentario</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtDescripcion" name="Descripcion">
-                                    </div>
-                                    <div class="form-group col-sm-4 mb-0">
-                                        <label for="txtDescripcion">Total</label>
-                                        <div class="input-group input-group-sm">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">$</span>
-                                            </div>
-                                            <input class="form-control form-control-sm input-validate" id="txtTotal" name="Price" disabled>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <div>
-                                        <h3 for="contMetodosPago" class="form-label">Ventas:</h3>
-                                    </div>
-                                    <div class="row justify-content-md-center">
-                                        <ul id="contMetodosPago"></ul>
-                                    </div>
+                    <input type="hidden" value="0" id="txtIdTurnoLayout">
+                    <div class="col-sm-5">
+                        <div>
+                            <div class="form-group col-sm-7">
+                                <label for="txtFecha">Fecha</label>
+                                <input type="text" class="form-control form-control-sm" id="txtFecha" name="Fecha" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-12 row">
+                            <div class="form-group col-sm-6">
+                                <label for="txtHoraInicio">Hora de Inicio</label>
+                                <input type="text" class="form-control form-control-sm" id="txtHoraInicio" name="Hora del turno" disabled>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="txtHoraCierre">Hora de Cierre</label>
+                                <input type="text" class="form-control form-control-sm" id="txtHoraCierre" name="Hora del turno de cierre" disabled>
+                            </div>
+                        </div>
+                        <div class="col-sm-12" style="display:none" id="divObservacionesApertura">
+                            <div class="form-row">
+                                <div class="form-group col-sm-12">
+                                    <label for="txtObservacionesAperturaTurno">Observaciones apertura</label>
+                                    <textarea class="form-control" id="txtObservacionesAperturaTurno" rows="2" placeholder="..." disabled></textarea>
                                 </div>
                             </div>
-
+                        </div>
+                        <div class="col-sm-12" id="divObservacionesCierre">
+                            <div class="form-row">
+                                <div class="form-group col-sm-12">
+                                    <label for="txtObservacionesCierreTurno">Observaciones Cierre</label>
+                                    <textarea class="form-control" id="txtObservacionesCierreTurno" rows="4" placeholder="..." disabled></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-7" style="padding-left: 0;">
+                        <div class="form-row">
+                            <div class="card-body">
+                                <div>
+                                    <h3 for="contMetodosPagoLayoutList" class="form-label text-center">Ventas</h3>
+                                </div>
+                                <br />
+                                <div id="contMetodosPagoLayoutList"></div>
+                                <div class="text-end">
+                                    <button type="button" class="btn-sm btn btn-info" id="btnValidarTurno">Validar</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                </form>
-
+                    <div class="col-12 d-flex justify-content-around" id="divError" style="display: none !important;">
+                        <div class="alert alert alert-warning d-flex align-items-center" style="padding: 10px;margin-bottom: 0;">
+                            <strong>
+                                <span class="mdi mdi-alert-octagon mdi-48px">&nbsp;</span>
+                            </strong>
+                            <span id="txtError"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="modal-footer">
+                <button type="button" class="btn btn-info" id="btnImprimirCierreCaja">Imprimir cierre de caja</button>
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" id="btnSave">Guardar Turno</button>
+                <button type="button" class="btn btn-primary" id="btnFinalizar" style="display:none">Finalizar Turno</button>
             </div>
         </div>
     </div>

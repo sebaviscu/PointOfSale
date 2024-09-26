@@ -47,42 +47,93 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<ListaPrecio>> GetProductsSearchAndIdLista(string search, ListaDePrecio listaPrecios)
         {
-            IQueryable<ListaPrecio> queryListaPrecio;
+          var listaProductos = new List<ListaPrecio>();
 
-            if (search.Contains(' '))
+            if (listaPrecios == ListaDePrecio.Web)
             {
-                var split = search.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                IQueryable<Product> queryProductosWeb;
 
-                var predicate = PredicateBuilder.True<Product>();
-                foreach (var term in split)
+                if (search.Contains(' '))
                 {
-                    var temp = term;
-                    predicate = predicate.And(p => p.Description.Contains(temp));
-                }   
+                    var split = search.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-                var idsProdsQuery = await _repositoryProduct.Query(predicate);
-                var idsProds = idsProdsQuery.Select(p => p.IdProduct).ToList();
+                    var predicate = PredicateBuilder.True<Product>();
+                    foreach (var term in split)
+                    {
+                        var temp = term;
+                        predicate = predicate.And(p => p.Description.Contains(temp));
+                    }
 
-                queryListaPrecio = await _repositoryListaPrecio.Query(p =>
-                    p.Lista == listaPrecios &&
-                    p.Producto.IsActive == true &&
-                    idsProds.Contains(p.IdProducto));
+                    var idsProdsQuery = await _repositoryProduct.Query(predicate);
+                    var idsProds = idsProdsQuery.Select(p => p.IdProduct).ToList();
+
+                    queryProductosWeb = idsProdsQuery.Where(p => p.IsActive &&
+                        idsProds.Contains(p.IdProduct));
+
+                }
+                else
+                {
+                    queryProductosWeb = await _repositoryProduct.Query(p => p.IsActive &&
+                        (p.CodigoBarras.Any(cb => cb.Codigo.Equals(search)) ||
+                         p.Description.Contains(search)));
+
+                }
+
+                var lisProductosWeb = await queryProductosWeb
+                 .Include(_ => _.IdCategoryNavigation)
+                 .Include(p => p.CodigoBarras)
+                 .ToListAsync();
+
+                listaProductos = lisProductosWeb.Select(_ => new ListaPrecio()
+                {
+                    IdProducto = _.IdProduct,
+                    Lista = ListaDePrecio.Web,
+                    PorcentajeProfit = 0,
+                    Precio = _.PriceWeb.HasValue ? _.PriceWeb.Value : _.Price.Value,
+                    Producto = _
+                }).ToList();
+
             }
             else
             {
-                queryListaPrecio = await _repositoryListaPrecio.Query(p =>
-                    p.Lista == listaPrecios &&
-                    p.Producto.IsActive == true &&
-                    (p.Producto.CodigoBarras.Any(cb => cb.Codigo.Equals(search)) ||
-                     p.Producto.Description.Contains(search)));
-            }
+                IQueryable<ListaPrecio> queryListaPrecio;
 
-            return await queryListaPrecio
+                if (search.Contains(' '))
+                {
+                    var split = search.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+                    var predicate = PredicateBuilder.True<Product>();
+                    foreach (var term in split)
+                    {
+                        var temp = term;
+                        predicate = predicate.And(p => p.Description.Contains(temp));
+                    }
+
+                    var idsProdsQuery = await _repositoryProduct.Query(predicate);
+                    var idsProds = idsProdsQuery.Select(p => p.IdProduct).ToList();
+
+                    queryListaPrecio = await _repositoryListaPrecio.Query(p =>
+                        p.Lista == listaPrecios &&
+                        p.Producto.IsActive == true &&
+                        idsProds.Contains(p.IdProducto));
+                }
+                else
+                {
+                    queryListaPrecio = await _repositoryListaPrecio.Query(p =>
+                        p.Lista == listaPrecios &&
+                        p.Producto.IsActive == true &&
+                        (p.Producto.CodigoBarras.Any(cb => cb.Codigo.Equals(search)) ||
+                         p.Producto.Description.Contains(search)));
+                }
+                listaProductos = await queryListaPrecio
                  .Include(_ => _.Producto)
                  .ThenInclude(_ => _.IdCategoryNavigation)
                  .Include(_ => _.Producto)
                  .ThenInclude(p => p.CodigoBarras)
                  .ToListAsync();
+            }
+
+            return listaProductos;
         }
 
         public async Task<List<ListaPrecio>> GetProductsSearchAndIdListaWithTags(string search, ListaDePrecio listaPrecios)
@@ -255,7 +306,7 @@ namespace PointOfSale.Business.Services
             var facruturasQuery = await _repositoryFacturaEmitida.Query(v => v.IdSale == idSale);
             var facturas = facruturasQuery.ToList();
 
-            foreach (var f in facturas.Where(_=>_.Resultado == "A"))
+            foreach (var f in facturas.Where(_ => _.Resultado == "A"))
             {
                 await _afipService.NotaCredito(f.IdFacturaEmitida, registrationUser);
             }

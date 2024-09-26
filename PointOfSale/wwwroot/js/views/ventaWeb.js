@@ -271,15 +271,11 @@ const openModalEditVentaWeb = (model = BASIC_MODEL_VENTA_WEB) => {
             $('#txtPeso').val('');
             const element = document.getElementById("txtPeso");
             window.setTimeout(() => element.focus(), 0);
-            updateTotal();
-            $('#cboSearchProduct').val("").trigger('change');
             return;
         }
 
         const element = document.getElementById("txtPeso");
         window.setTimeout(() => element.focus(), 0);
-        updateTotal();
-        $('#cboSearchProduct').val("").trigger('change');
 
     })
 
@@ -314,6 +310,7 @@ function functionAddProducto() {
 
     updateTotal();
     $('#cboSearchProduct').val("").trigger('change');
+    $("#txtPeso").val(0)
 }
 
 function addNewProduct(idDetailSale, description, cantidad, tipoVenta, precio, total, idProducto) {

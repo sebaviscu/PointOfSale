@@ -35,5 +35,10 @@ namespace PointOfSale.Model
         public string? ObservacionesCierre { get; set; }
         public decimal TotalInicioCaja { get; set; }
 
+        public decimal? TotalCierreCajaSistema { get; set; }
+        public decimal? TotalCierreCajaReal { get; set; }
+        public string? ErroresCierreCaja { get; set; }
+        public bool? ValidacionRealizada { get; set; }
+
 	}
 }

@@ -27,6 +27,7 @@ const dataDays = [
 ]
 
 $(document).ready(function () {
+
     $('#cboProducto').select2({
         ajax: {
             url: "/Sales/GetProducts",
@@ -35,7 +36,8 @@ $(document).ready(function () {
             delay: 250,
             data: function (params) {
                 return {
-                    search: params.term
+                    search: params.term,
+                    listaPrecios: null
                 };
             },
             processResults: function (data) {
@@ -44,18 +46,19 @@ $(document).ready(function () {
                         {
                             id: item.idProduct,
                             text: item.description,
-
-                            brand: item.brand,
-                            category: item.nameCategory,
+                            category: item.idCategory,
                             photoBase64: item.photoBase64,
-                            price: parseFloat(item.price),
-                            tipoVenta: item.tipoVenta
+                            price: item.price,
+                            tipoVenta: item.tipoVenta,
+                            iva: item.iva,
+                            categoryProducty: item.categoryProducty
                         }
                     ))
                 };
-            }
+            },
+            cache: true
         },
-        placeholder: 'Buscando producto...',
+        placeholder: 'Buscar producto...',
         minimumInputLength: 1,
         templateResult: formatResults,
         allowClear: true,

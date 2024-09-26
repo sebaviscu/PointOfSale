@@ -101,13 +101,16 @@ namespace PointOfSale.Controllers
         /// <param name="search"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetProducts(string search, int listaPrecios)
+        public async Task<IActionResult> GetProducts(string search, int? listaPrecios)
         {
             try
             {
                 ClaimsPrincipal claimuser = HttpContext.User;
-                //var listaPrecioInt = Convert.ToInt32(claimuser.Claims.Where(c => c.Type == "ListaPrecios").Select(c => c.Value).SingleOrDefault());
-                var vmListProducts = _mapper.Map<List<VmProductsSelect2>>(await _saleService.GetProductsSearchAndIdLista(search.Trim(), (ListaDePrecio)listaPrecios));
+                var listaPrecioInt = listaPrecios == null 
+                    ? Convert.ToInt32(claimuser.Claims.Where(c => c.Type == "ListaPrecios").Select(c => c.Value).SingleOrDefault()) 
+                    : listaPrecios;
+
+                var vmListProducts = _mapper.Map<List<VmProductsSelect2>>(await _saleService.GetProductsSearchAndIdLista(search.Trim(), (ListaDePrecio)listaPrecioInt));
                 return StatusCode(StatusCodes.Status200OK, vmListProducts);
 
             }
@@ -242,11 +245,11 @@ namespace PointOfSale.Controllers
                     FacturaEmitida facturaEmitida = null;
                     try
                     {
-                        if (!ajustes.FacturaElectronica.HasValue || (ajustes.FacturaElectronica.HasValue && !ajustes.FacturaElectronica.Value))
+                        if (ajustes.FacturaElectronica.HasValue && ajustes.FacturaElectronica.Value)
                         {
                             facturaEmitida = await RegistrationFacturar(model, sale_created, ajustes);
 
-                            if (facturaEmitida.Resultado != "A")
+                            if (facturaEmitida != null && facturaEmitida.Resultado != "A")
                             {
                                 gResponse.Message = facturaEmitida.Observaciones;
                             }

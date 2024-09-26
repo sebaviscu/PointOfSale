@@ -90,7 +90,7 @@ namespace PointOfSale.Business.Utilities
             return new string(' ', espacioIzq) + text;
         }
 
-        private string FormatearTextoBetween(string text1, string text2)
+        public string FormatearTextoBetween(string text1, string text2)
         {
             text1 = CortarTextoMax(text1, MAX / 2 - Margin);
             text2 = CortarTextoMax(text2, MAX / 2 - Margin);
@@ -114,6 +114,26 @@ namespace PointOfSale.Business.Utilities
         static string MostrarNumeroConDecimales(decimal numero)
         {
             return numero % 1 == 0 ? Math.Truncate(numero).ToString() : numero.ToString();
+        }
+
+        public void AgregaVentasCerrarTurno(string metodoPago, decimal valor)
+        {
+            string articuloCortado = CortarTextoMax(metodoPago, MAX - 10);
+
+            int nroEspacios = MAX - articuloCortado.Length - valor.ToString().Length;
+
+            string lineaArticulo = articuloCortado + new string(' ', nroEspacios) + "$" + valor.ToString();
+            AppendLineWithMargin(lineaArticulo);
+        }
+
+        public void BetweenCierreTurno(string texto, int valor)
+        {
+            string articuloCortado = CortarTextoMax(texto, MAX - 10);
+
+            int nroEspacios = MAX - articuloCortado.Length - valor.ToString().Length;
+
+            string lineaArticulo = articuloCortado + new string(' ', nroEspacios) + "$" + valor.ToString();
+            AppendLineWithMargin(lineaArticulo);
         }
     }
 
