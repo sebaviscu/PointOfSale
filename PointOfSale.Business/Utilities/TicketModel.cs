@@ -5,7 +5,6 @@ namespace PointOfSale.Business.Utilities
     public class TicketModel
     {
         readonly int MAX = 26;
-        readonly int Margin = 2; // Margen variable global
 
         public TicketModel()
         {
@@ -27,17 +26,17 @@ namespace PointOfSale.Business.Utilities
         public void TextoAgradecimiento(string text)
         {
             string texto = FormatearTextoCentro(text);
-            AppendLineWithMargin(texto);
+            line.AppendLine(text);
         }
 
-        public void LineasGuion() => AppendLineWithMargin(new string('-', MAX));
+        public void LineasGuion() => line.AppendLine(new string('-', MAX));
 
-        public void LineasTotal() => AppendLineWithMargin(new string('=', MAX));
+        public void LineasTotal() => line.AppendLine(new string ('=', MAX));
 
         public void TextoIzquierda(string text)
         {
-            string texto = CortarTextoMax(text, MAX - Margin);
-            AppendLineWithMargin(texto);
+            string textoFormateado = CortarTextoMax(text, MAX);
+            line.AppendLine(textoFormateado);
         }
         public void InsertarImagen(string flag, string imageBase64)
         {
@@ -48,27 +47,27 @@ namespace PointOfSale.Business.Utilities
 
         public void TextoCentro(string text)
         {
-            string texto = FormatearTextoCentro(text);
-            AppendLineWithMargin(texto);
+            string textoFormateado = FormatearTextoCentro(text);
+            line.AppendLine(textoFormateado);
         }
 
         public void TextoBetween(string text1, string text2)
         {
             string textoFormateado = FormatearTextoBetween(text1, text2);
-            AppendLineWithMargin(textoFormateado);
+            line.AppendLine(textoFormateado);
         }
 
         public void AgregaTotales(string text, double total)
         {
             string totalString = $"${total}";
             string textoFormateado = FormatearTextoBetween(text, totalString);
-            AppendLineWithMargin(textoFormateado);
+            line.AppendLine(textoFormateado);
         }
 
         public void AgregaArticulo(string articulo, decimal precio, decimal cant, decimal subtotalDecimal, decimal? iva)
         {
             string articuloCortado = CortarTextoMax(articulo, MAX - 5) + (articulo.Length > MAX - 5 ? "..." : "");
-            AppendLineWithMargin(articuloCortado);
+            line.AppendLine(articuloCortado);
 
             string elementos = $" {MostrarNumeroConDecimales(cant)} x ${MostrarNumeroConDecimales(precio)}";
             if (iva != null && iva > 0)
@@ -80,35 +79,28 @@ namespace PointOfSale.Business.Utilities
             int nroEspacios = MAX - elementos.Length - subtotal.Length;
 
             string lineaArticulo = elementos + new string(' ', nroEspacios) + subtotal;
-            AppendLineWithMargin(lineaArticulo);
+            line.AppendLine(lineaArticulo);
         }
 
         private string FormatearTextoCentro(string text)
         {
-            text = CortarTextoMax(text, MAX - 2 * Margin);
+            text = CortarTextoMax(text, MAX);
             int espacioIzq = (MAX - text.Length) / 2;
             return new string(' ', espacioIzq) + text;
         }
 
         public string FormatearTextoBetween(string text1, string text2)
         {
-            text1 = CortarTextoMax(text1, MAX / 2 - Margin);
-            text2 = CortarTextoMax(text2, MAX / 2 - Margin);
+            text1 = CortarTextoMax(text1, MAX);
+            text2 = CortarTextoMax(text2, MAX);
 
-            int espaciosEntre = MAX - text1.Length - text2.Length - Margin;
+            int espaciosEntre = MAX - text1.Length - text2.Length;
             return text1 + new string(' ', espaciosEntre) + text2;
         }
 
         private string CortarTextoMax(string texto, int maxLen)
         {
             return texto.Length > maxLen ? texto.Substring(0, maxLen) : texto;
-        }
-
-        private void AppendLineWithMargin(string text)
-        {
-            // Aplica el margen al principio de cada línea
-            string textoConMargen = new string(' ', Margin / 2) + text;
-            line.AppendLine(textoConMargen);
         }
 
         static string MostrarNumeroConDecimales(decimal numero)
@@ -123,7 +115,7 @@ namespace PointOfSale.Business.Utilities
             int nroEspacios = MAX - articuloCortado.Length - valor.ToString().Length;
 
             string lineaArticulo = articuloCortado + new string(' ', nroEspacios) + "$" + valor.ToString();
-            AppendLineWithMargin(lineaArticulo);
+            line.AppendLine(lineaArticulo);
         }
 
         public void BetweenCierreTurno(string texto, int valor)
@@ -133,7 +125,7 @@ namespace PointOfSale.Business.Utilities
             int nroEspacios = MAX - articuloCortado.Length - valor.ToString().Length;
 
             string lineaArticulo = articuloCortado + new string(' ', nroEspacios) + "$" + valor.ToString();
-            AppendLineWithMargin(lineaArticulo);
+            line.AppendLine(lineaArticulo);
         }
     }
 

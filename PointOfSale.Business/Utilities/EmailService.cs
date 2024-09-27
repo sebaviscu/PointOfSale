@@ -113,7 +113,7 @@ namespace PointOfSale.Business.Utilities
             var emailsReceptores = ajustes.EmailsReceptoresCierreTurno.Split(';').ToList();
 
             var fecha = TimeHelper.GetArgentinaTime();
-            string subject = $"{ajustes.NombreTiendaTicket} [Cierre de Caja] {fecha.ToString()}";
+            string subject = $"[Cierre de Caja] {fecha.ToString()}";
 
             var movimientos = await _movimientoCajaService.GetMovimientoCajaByTurno(turno.IdTurno);
 
@@ -128,7 +128,7 @@ namespace PointOfSale.Business.Utilities
             }
 
             string body =
-                $"<h1>{ajustes.NombreTiendaTicket}</h1>" +
+                $"<h1>{ajustes.Encabezado1}</h1>" +
                 $"<h3>Cierre de Caja {fecha.Date.ToString("dd/MM/yyyy")}</h3>" +
                 $"<p><strong>Fecha de Inicio del Turno:</strong> {turno.FechaInicio}</p>" +
                 $"<p><strong>Fecha de Fin del Turno:</strong> {turno.FechaFin}</p>" +

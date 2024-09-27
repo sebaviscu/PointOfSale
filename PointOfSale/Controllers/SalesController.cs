@@ -31,6 +31,7 @@ namespace PointOfSale.Controllers
         private readonly IAfipService _afipFacturacionService;
         private readonly IAjusteService _ajustesService;
         private readonly IEmailService _emailService;
+        private readonly INotificationService _notificationService;
 
         public SalesController(
             ITypeDocumentSaleService typeDocumentSaleService,
@@ -42,7 +43,8 @@ namespace PointOfSale.Controllers
             IAfipService afipFacturacionService,
             ILogger<SalesController> logger,
             IAjusteService ajustesService,
-            IEmailService emailService)
+            IEmailService emailService,
+            INotificationService notificationService)
         {
             _typeDocumentSaleService = typeDocumentSaleService;
             _saleService = saleService;
@@ -54,6 +56,7 @@ namespace PointOfSale.Controllers
             _logger = logger;
             _ajustesService = ajustesService;
             _emailService = emailService;
+            _notificationService = notificationService;
         }
 
         public IActionResult NewSale()
@@ -258,6 +261,12 @@ namespace PointOfSale.Controllers
                     catch (Exception e)
                     {
                         gResponse.Message = e.Message;
+                    }
+
+                    if(!string.IsNullOrEmpty(gResponse.Message))
+                    {
+                        var notific = new Notifications(sale_created);
+                        await _notificationService.Save(notific);
                     }
 
                     if (model.ImprimirTicket && !string.IsNullOrEmpty(ajustes.NombreImpresora))

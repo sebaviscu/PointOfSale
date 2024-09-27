@@ -1375,7 +1375,9 @@ namespace PointOfSale.Controllers
             if (p.IdProducto != null)
             {
                 var prod = await _productService.Get(Convert.ToInt32(p.IdProducto));
-                p.PromocionString += " [" + string.Join(", ", prod.Description) + "]";
+                p.PromocionString += $" [{string.Join(", ", prod.Description)}] ";
+                var operador = p.Operador == 0 ? "Igual a" : "Mayor o igual a";
+                p.PromocionString += $" [{operador} {p.CantidadProducto} {prod.TipoVenta}] ";
             }
 
             if (p.IdCategory != null && p.IdCategory.Any())
@@ -1672,18 +1674,7 @@ namespace PointOfSale.Controllers
                     ? false
                     : ajuste.ControlEmpleado ?? false;
 
-                switch (user.IdListaPrecios)
-                {
-                    case 1:
-                        vmAjuste.ListaPrecios = ListaDePrecio.Lista_1;
-                        break;
-                    case 2:
-                        vmAjuste.ListaPrecios = ListaDePrecio.Lista_2;
-                        break;
-                    case 3:
-                        vmAjuste.ListaPrecios = ListaDePrecio.Lista_3;
-                        break;
-                }
+                vmAjuste.ListaPrecios = user.ListaPrecios;
                 var turno = await _turnoService.GetTurnoActual(user.IdTienda);
 
                 vmAjuste.ExisteTurno = turno != null;

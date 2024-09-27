@@ -82,6 +82,8 @@ $(document).ready(function () {
 
 
     $('.sub-menu a.sidenav-item-link, .has-sub a.sidenav-item-link').on('click', function (event) {
+        if (!ajustes.needControl) return true;
+
         if (ventaAbierta()) {
             event.preventDefault(); // Prevenir la navegación
             swal({
@@ -345,8 +347,10 @@ function showProducts_Prices(idTab, currentTab) {
 
 $(document).on("click", "button.btn-delete", async function () {
 
-    if (!(await validateCode())) { return false; }
-
+    const isValidCode = await validateCode();
+    if (!isValidCode) {
+        return false;
+    }
     const currentTabId = $(this).data("idTab");
     const row = $(this).data("row");
 
@@ -842,7 +846,10 @@ $('#btn-add-tab').click(function () {
 });
 
 $('#tab-list').on('click', '.close', async function () {
-    if (!(await validateCode())) { return false; }
+    const isValidCode = await validateCode();
+    if (!isValidCode) {
+        return false;
+    }
 
     let tabId = getTabActiveId();
 
@@ -968,47 +975,55 @@ function addFunctions(idTab) {
 
     $('#tbProduct' + idTab + ' tbody').on('dblclick', 'tr', async function () {
 
-        if (!(await validateCode())) { return false; }
+        // Validar el código antes de continuar
+        const isValidCode = await validateCode();
+        if (!isValidCode) {
+            return false;
+        }
 
         let rowIndex = $(this).index();
 
         let currentTab = AllTabsForSale.find(item => item.idTab == idTab);
         let productRow = currentTab.products.filter(prod => prod.row == rowIndex);
 
+        // Agregar un pequeño retraso para que el segundo swal tenga tiempo de abrirse correctamente
+        setTimeout(async () => {
+            // Mostrar el swal para el cambio de precio
+            swal({
+                title: 'Cambio de precio',
+                text: productRow[0].descriptionproduct + ' ($' + productRow[0].price + ')',
+                type: "input",
+                showCancelButton: true,
+                closeOnConfirm: false,
+                inputPlaceholder: "ingrese el nuevo precio"
+            }, async function (value) {
 
-        swal({
-            title: 'Cambio de precio',
-            text: productRow[0].descriptionproduct + ' ($' + productRow[0].price + ')',
-            type: "input",
-            showCancelButton: true,
-            closeOnConfirm: false,
-            inputPlaceholder: "ingrese el nuevo precio"
-        }, async function (value) {
 
+                if (value === false) return false;
 
-            if (value === false) return false;
+                if (value === "") {
+                    toastr.warning("", "debes ingresar el monto");
+                    return false;
+                }
 
-            if (value === "") {
-                toastr.warning("", "debes ingresar el monto");
-                return false;
-            }
+                let nuevoPrecio = parseFloat(value).toFixed(0);
 
-            let nuevoPrecio = parseFloat(value).toFixed(2);
+                if (isNaN(nuevoPrecio)) {
+                    toastr.warning("", "debes ingresar un valor numérico");
+                    return false
+                }
 
-            if (isNaN(nuevoPrecio)) {
-                toastr.warning("", "debes ingresar un valor numérico");
-                return false
-            }
+                productRow[0].price = nuevoPrecio;
+                productRow[0].total = (nuevoPrecio * parseFloat(productRow[0].quantity)).toFixed(2);
 
-            productRow[0].price = nuevoPrecio;
-            productRow[0].total = (nuevoPrecio * parseFloat(productRow[0].quantity)).toFixed(2);
+                showProducts_Prices(idTab, currentTab);
 
-            showProducts_Prices(idTab, currentTab);
+                swal.close();
 
-            swal.close();
-
-        });
+            });
+        }, 500);
     });
+
 
     $('#txtPeso' + idTab).on('keypress', function (e) {
         if ($('#txtPeso' + idTab).val() != '' && e.which === 13) { // 13 => enter
@@ -1325,98 +1340,6 @@ function formatNumber(num) {
     return num.toFixed(2);
 }
 
-function applyPromociones(totalQuantity, data, currentTab) {
-    let currentdate = new Date();
-    let today = currentdate.getDay().toString();
-
-    let promPorDia = promociones.find(item => item.dias.includes(today) && !item.idProducto && item.idCategory.length === 0);
-    let promPorCat = promociones.find(item => item.idCategory.includes(data.category) && !item.idProducto && (!item.dias.length || item.dias.includes(today)));
-    let promPorProducto = promociones.find(item => parseInt(item.idProducto) === data.id);
-
-    if (promPorProducto) {
-        data = applyForProduct(promPorProducto, totalQuantity, data, currentTab);
-    } else if (promPorCat) {
-        data = calcularPrecioPorcentaje(data, promPorCat, totalQuantity);
-        data.promocion = promPorCat.nombre;
-    } else if (promPorDia) {
-        data = calcularPrecioPorcentaje(data, promPorDia, totalQuantity);
-        data.promocion = promPorDia.nombre;
-    }
-
-    return data;
-}
-
-function containsCategoria(cat, catProducto) {
-    return cat.includes(catProducto);
-}
-
-function containsDias(dias) {
-    let today = new Date().getDay().toString();
-    return dias.includes(today);
-}
-
-function applyForProduct(prom, totalQuantity, data, currentTab) {
-    let apply = false;
-
-    if (prom.operador === null && prom.precio !== null) {
-        data = calcularPrecioPorcentaje(data, prom, totalQuantity);
-        apply = true;
-    } else if (prom.operador !== null) {
-        switch (prom.operador) {
-            case 0:
-                if (totalQuantity < prom.cantidadProducto) return data;
-
-                let diffDividido = totalQuantity % prom.cantidadProducto;
-
-                if (diffDividido === 0) {
-                    data = calcularPrecioPorcentaje(data, prom, totalQuantity);
-                    apply = true;
-                } else if (diffDividido > 0) {
-                    let precio = parseFloat(data.price);
-                    if (isNaN(precio)) return data;
-
-                    let newProd = new Producto();
-                    newProd.idproduct = data.id;
-                    newProd.descriptionproduct = data.text;
-                    newProd.categoryProducty = data.categoryProducty;
-                    newProd.iva = data.iva;
-                    newProd.quantity = diffDividido;
-                    newProd.price = precio.toFixed(2).toString();
-                    newProd.total = (precio * diffDividido).toFixed(2).toString();
-
-                    currentTab.products.push(newProd);
-
-                    let difCant = totalQuantity - diffDividido;
-                    data = calcularPrecioPorcentaje(data, prom, difCant);
-                    apply = true;
-                }
-                break;
-
-            case 1:
-                if (totalQuantity > prom.cantidadProducto) {
-                    data = calcularPrecioPorcentaje(data, prom, totalQuantity);
-                    apply = true;
-                }
-                break;
-        }
-    }
-
-    if (apply) data.promocion = prom.nombre;
-
-    return data;
-}
-
-function calcularPrecioPorcentaje(data, prom, totalQuantity) {
-    let precio = prom.precio !== null ? prom.precio : parseFloat(data.price) * (1 - (prom.porcentaje / 100));
-
-    data.diferenciapromocion = (parseFloat(data.price) * totalQuantity) - (precio * totalQuantity);
-    data.total = precio * totalQuantity;
-    data.price = precio;
-    data.quantity = totalQuantity;
-
-    return data;
-}
-
 function lastTab() {
     let tabFirst = $('#tab-list button:last');
     tabFirst.tab('show');
@@ -1440,29 +1363,31 @@ async function validateCode() {
             title: 'Codigo de Seguridad',
             type: "input",
             showCancelButton: true,
-            closeOnConfirm: true,
+            closeOnConfirm: false, // Evitar que se cierre automáticamente
             inputPlaceholder: "password..."
-        }, function (value) {
+        }, async function (value) {
             if (value === false) {
                 resolve(false);
                 return;
             }
 
-            fetch(`/Admin/ValidateSecurityCode?encryptedCode=${value}`, {
-                method: 'POST'
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.state) {
-                        resolve(data.object);
-                    } else {
-                        resolve(false);
-                    }
-                    swal.close();
-                })
-                .catch(error => {
-                    reject(false);
+            try {
+                const response = await fetch(`/Admin/ValidateSecurityCode?encryptedCode=${value}`, {
+                    method: 'POST'
                 });
+                const data = await response.json();
+
+                if (data.state) {
+                    resolve(data.object);
+                } else {
+                    resolve(false);
+                }
+            } catch (error) {
+                reject(false);
+            } finally {
+                // Cerrar swal manualmente después de la validación, pase lo que pase
+                swal.close();
+            }
         });
     });
 }

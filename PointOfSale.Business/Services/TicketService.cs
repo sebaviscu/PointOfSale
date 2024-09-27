@@ -49,8 +49,10 @@ namespace PointOfSale.Business.Services
             var Ticket1 = new TicketModel();
 
             Ticket1.TextoIzquierda("");
-
-            Ticket1.TextoCentro(ajustes.NombreTiendaTicket.ToUpper());
+            if (!string.IsNullOrEmpty(ajustes.Encabezado1)) Ticket1.TextoCentro(ajustes.Encabezado1);
+            if (!string.IsNullOrEmpty(ajustes.Encabezado2)) Ticket1.TextoCentro(ajustes.Encabezado2);
+            if (!string.IsNullOrEmpty(ajustes.Encabezado3)) Ticket1.TextoCentro(ajustes.Encabezado3);
+            Ticket1.TextoIzquierda("");
 
             Ticket1.LineasGuion();
 
@@ -91,7 +93,9 @@ namespace PointOfSale.Business.Services
             Ticket1.LineasTotal();
 
             Ticket1.TextoIzquierda(" ");
-            Ticket1.TextoAgradecimiento("¡Gracias por su compra!");
+            if (!string.IsNullOrEmpty(ajustes.Pie1)) Ticket1.TextoCentro(ajustes.Pie1);
+            if (!string.IsNullOrEmpty(ajustes.Pie2)) Ticket1.TextoCentro(ajustes.Pie2);
+            if (!string.IsNullOrEmpty(ajustes.Pie3)) Ticket1.TextoCentro(ajustes.Pie3);
             Ticket1.TextoIzquierda(" ");
 
 
@@ -104,7 +108,10 @@ namespace PointOfSale.Business.Services
                 var linkAfip = await _afipService.GenerateLinkAfipFactura(facturaEmitida);
                 var qrBase64 = QrHelper.GenerarQR(linkAfip, facturaEmitida.IdSale.ToString());
                 Ticket1.InsertarImagen($"F_{facturaEmitida.CAE}", qrBase64);
+                Ticket1.TextoIzquierda(" ");
             }
+            Ticket1.TextoIzquierda(" ");
+            Ticket1.TextoIzquierda(" ");
 
             return Ticket1;
         }
@@ -265,7 +272,7 @@ namespace PointOfSale.Business.Services
                     {
                         // Extraer la descripción y el monto
                         var descripcion = descripcionMatch.Groups[1].Value;
-                        var monto = Convert.ToInt32( montoMatch.Groups[1].Value);
+                        var monto = Convert.ToInt32(montoMatch.Groups[1].Value);
 
                         // Usar ticket.FormatearTextoBetween con los valores extraídos
                         ticket.BetweenCierreTurno(descripcion, monto);

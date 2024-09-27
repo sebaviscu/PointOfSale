@@ -57,7 +57,7 @@ namespace PointOfSale.Model
         /// <param name="usuario"></param>
         public Notifications(string usuario)
         {
-            Descripcion = $"El usuario {usuario} ha utilizado el Codigo de Seguridad en una venta a las {TimeHelper.GetArgentinaTime().ToString()}.";
+            Descripcion = $"El usuario {usuario} ha utilizado el Codigo de Seguridad.";
             IsActive = true;
             RegistrationDate = TimeHelper.GetArgentinaTime();
             Accion = "";
@@ -73,6 +73,15 @@ namespace PointOfSale.Model
             RegistrationDate = TimeHelper.GetArgentinaTime();
             Accion = "/MovimientoCaja/Index";
             Rols = $"{(int)Roles.Administrador},{(int)Roles.Encargado}";
+        }
+
+        public Notifications(Sale sale)
+        {
+            Descripcion = $"Ha ocurrido un error al Facturar en AFIP para la venta Nro: {sale.SaleNumber}.";
+            IsActive = true;
+            RegistrationDate = TimeHelper.GetArgentinaTime();
+            Accion = "";
+            Rols = $"{(int)Roles.Administrador},{(int)Roles.Encargado},{(int)Roles.Empleado}";
         }
 
         public int IdNotifications { get; set; }

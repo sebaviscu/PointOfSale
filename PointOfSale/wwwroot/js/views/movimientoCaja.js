@@ -37,11 +37,13 @@ $(document).ready(function () {
                     return '$' + parseFloat(data).toFixed(0);
                 }
             },
+            { "data": "comentario" },
             {
                 "defaultContent": '<button class="btn btn-primary btn-view btn-sm me-2"><i class="mdi mdi-eye"></i></button>',
                 "orderable": false,
                 "searchable": false,
-                "width": "50px"
+                "width": "50px",
+                "visible": false
             }
         ],
         order: [[1, "desc"]],

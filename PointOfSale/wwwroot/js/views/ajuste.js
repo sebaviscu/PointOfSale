@@ -5,7 +5,12 @@
     codigoSeguridad: "",
     imprimirDefault: false,
     controlStock: false,
-    nombreTiendaTicket: "",
+    encabezado1: "",
+    encabezado2: "",
+    encabezado3: "",
+    pie1: "",
+    pie2: "",
+    pie3: "",
     nombreImpresora: "",
     minimoIdentificarConsumidor: 0,
     facturaElectronica: false,
@@ -69,7 +74,12 @@ $(document).ready(function () {
                 $("#txtId").val(model.idAjuste);
 
                 $("#txtCodigoSeguridad").val(model.codigoSeguridad);
-                $("#txtNombreTiendaTicket").val(model.nombreTiendaTicket);
+                $("#txtEncabezado1").val(model.encabezado1);
+                $("#txtEncabezado2").val(model.encabezado2);
+                $("#txtEncabezado3").val(model.encabezado3);
+                $("#txtPie1").val(model.pie1);
+                $("#txtPie2").val(model.pie2);
+                $("#txtPie3").val(model.pie3);
                 $("#txtMinimoIdentificarConsumidor").val(model.minimoIdentificarConsumidor);
                 $("#cboNombreImpresora").val(model.nombreImpresora);
                 loadTableFromEmailsString(model.emailsReceptoresCierreTurno);
@@ -341,7 +351,12 @@ $("#btnSave").on("click", function () {
     model["passwordEmailEmisorCierreTurno"] = $("#txtEmailPassword").val();
     model["emailsReceptoresCierreTurno"] = emailsReceptores;
     model["codigoSeguridad"] = $("#txtCodigoSeguridad").val();
-    model["nombreTiendaTicket"] = $("#txtNombreTiendaTicket").val();
+    model["encabezado1"] = $("#txtEncabezado1").val();
+    model["encabezado2"] = $("#txtEncabezado2").val();
+    model["encabezado3"] = $("#txtEncabezado3").val();
+    model["pie1"] = $("#txtPie1").val();
+    model["pie2"] = $("#txtPie2").val();
+    model["pie3"] = $("#txtPie3").val();
     model["minimoIdentificarConsumidor"] = $("#txtMinimoIdentificarConsumidor").val();
     model["nombreImpresora"] = $("#cboNombreImpresora").val();
 

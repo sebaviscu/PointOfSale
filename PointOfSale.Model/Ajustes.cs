@@ -15,7 +15,12 @@ namespace PointOfSale.Model
         public bool? ControlStock { get; set; }
         public bool? FacturaElectronica { get; set; }
         public bool? ControlEmpleado { get; set; }
-        public string? NombreTiendaTicket { get; set; }
+        public string? Encabezado1 { get; set; }
+        public string? Encabezado2 { get; set; }
+        public string? Encabezado3 { get; set; }
+        public string? Pie1 { get; set; }
+        public string? Pie2 { get; set; }
+        public string? Pie3 { get; set; }
         public string? NombreImpresora { get; set; }
         public long? MinimoIdentificarConsumidor { get; set; }
 

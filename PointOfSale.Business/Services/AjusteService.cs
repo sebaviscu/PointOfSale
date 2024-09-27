@@ -116,7 +116,12 @@ namespace PointOfSale.Business.Services
             Ajustes_found.ImprimirDefault = entity.ImprimirDefault;
             Ajustes_found.FacturaElectronica = entity.FacturaElectronica;
             Ajustes_found.ControlStock = entity.ControlStock;
-            Ajustes_found.NombreTiendaTicket = entity.NombreTiendaTicket;
+            Ajustes_found.Encabezado1 = entity.Encabezado1;
+            Ajustes_found.Encabezado2 = entity.Encabezado2;
+            Ajustes_found.Encabezado3 = entity.Encabezado3;
+            Ajustes_found.Pie1 = entity.Pie1;
+            Ajustes_found.Pie2 = entity.Pie2;
+            Ajustes_found.Pie3 = entity.Pie3;
             Ajustes_found.NombreImpresora = entity.NombreImpresora;
             Ajustes_found.MinimoIdentificarConsumidor = entity.MinimoIdentificarConsumidor;
             Ajustes_found.ControlEmpleado = entity.ControlEmpleado;
