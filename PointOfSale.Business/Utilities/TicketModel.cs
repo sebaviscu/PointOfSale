@@ -1,10 +1,11 @@
-﻿using System.Text;
+﻿using System.Drawing;
+using System.Text;
 
 namespace PointOfSale.Business.Utilities
 {
     public class TicketModel
     {
-        readonly int MAX = 26;
+        readonly int MAX = 28;
 
         public TicketModel()
         {
@@ -38,6 +39,17 @@ namespace PointOfSale.Business.Utilities
             string textoFormateado = CortarTextoMax(text, MAX);
             line.AppendLine(textoFormateado);
         }
+
+        public void ChangeFont(int fontSize, FontStyle fontStyle)
+        {
+            line.AppendLine($"[[FontSize]]{fontSize} [[FontStyle]]{fontStyle}");
+        }
+
+        public void ResetFont()
+        {
+            line.AppendLine($"[[FontSize]]{12} [[FontStyle]]{FontStyle.Bold}");
+        }
+
         public void InsertarImagen(string flag, string imageBase64)
         {
             line.AppendLine("");

@@ -12,6 +12,7 @@ using iText.Kernel.Font;
 using static PointOfSale.Model.Enum;
 using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
+using System.Drawing;
 
 namespace PointOfSale.Business.Services
 {
@@ -46,74 +47,77 @@ namespace PointOfSale.Business.Services
         {
             var isFactura = facturaEmitida != null && string.IsNullOrEmpty(facturaEmitida.Observaciones);
 
-            var Ticket1 = new TicketModel();
+            var Ticket = new TicketModel();
 
-            Ticket1.TextoIzquierda("");
-            if (!string.IsNullOrEmpty(ajustes.Encabezado1)) Ticket1.TextoCentro(ajustes.Encabezado1);
-            if (!string.IsNullOrEmpty(ajustes.Encabezado2)) Ticket1.TextoCentro(ajustes.Encabezado2);
-            if (!string.IsNullOrEmpty(ajustes.Encabezado3)) Ticket1.TextoCentro(ajustes.Encabezado3);
-            Ticket1.TextoIzquierda("");
+            Ticket.TextoIzquierda("");
+            Ticket.ChangeFont(18, FontStyle.Underline);
+            if (!string.IsNullOrEmpty(ajustes.Encabezado1)) Ticket.TextoCentro(ajustes.Encabezado1);
+            Ticket.ResetFont();
+            if (!string.IsNullOrEmpty(ajustes.Encabezado2)) Ticket.TextoCentro(ajustes.Encabezado2);
+            if (!string.IsNullOrEmpty(ajustes.Encabezado3)) Ticket.TextoCentro(ajustes.Encabezado3);
+            Ticket.TextoIzquierda("");
 
-            Ticket1.LineasGuion();
+            Ticket.LineasGuion();
 
             if (isFactura)
             {
-                await DatosFactura(idTienda, facturaEmitida, Ticket1);
+                await DatosFactura(idTienda, facturaEmitida, Ticket);
             }
 
-            Ticket1.TextoIzquierda($"Fecha: {registrationDate.ToShortDateString()}");
-            Ticket1.TextoIzquierda($"Hora: {registrationDate.ToShortTimeString()}");
-            Ticket1.LineasGuion();
-            Ticket1.TextoIzquierda("");
+            Ticket.TextoIzquierda($"Fecha: {registrationDate.ToShortDateString()}");
+            Ticket.TextoIzquierda($"Hora: {registrationDate.ToShortTimeString()}");
+            Ticket.LineasGuion();
+            Ticket.TextoIzquierda("");
+            Ticket.TextoIzquierda("123456789012345678901234567890");
 
             IsMultiplesFormasPago(detailSales, total);
 
             foreach (var d in detailSales)
             {
-                Ticket1.AgregaArticulo(d.DescriptionProduct.ToUpper(),
+                Ticket.AgregaArticulo(d.DescriptionProduct.ToUpper(),
                    d.Price.Value,
                    d.Quantity.Value,
                    d.Total.Value,
                    d.Iva.Value == 0 ? 21.00m : d.Iva.Value);
             }
 
-            Ticket1.TextoIzquierda(" ");
+            Ticket.TextoIzquierda(" ");
 
             if (descuentoRecargo != null && descuentoRecargo != 0)
             {
                 string label = descuentoRecargo > 0 ? "Recargo" : "Descuento";
                 decimal amount = Math.Abs(descuentoRecargo.Value);
 
-                Ticket1.TextoIzquierda($" {label}: ${amount}");
-                Ticket1.TextoIzquierda(" ");
+                Ticket.TextoIzquierda($" {label}: ${amount}");
+                Ticket.TextoIzquierda(" ");
             }
 
-            Ticket1.LineasTotal();
-            Ticket1.AgregaTotales("Total", double.Parse(total.ToString()));
-            Ticket1.LineasTotal();
+            Ticket.LineasTotal();
+            Ticket.AgregaTotales("Total", double.Parse(total.ToString()));
+            Ticket.LineasTotal();
 
-            Ticket1.TextoIzquierda(" ");
-            if (!string.IsNullOrEmpty(ajustes.Pie1)) Ticket1.TextoCentro(ajustes.Pie1);
-            if (!string.IsNullOrEmpty(ajustes.Pie2)) Ticket1.TextoCentro(ajustes.Pie2);
-            if (!string.IsNullOrEmpty(ajustes.Pie3)) Ticket1.TextoCentro(ajustes.Pie3);
-            Ticket1.TextoIzquierda(" ");
+            Ticket.TextoIzquierda(" ");
+            if (!string.IsNullOrEmpty(ajustes.Pie1)) Ticket.TextoCentro(ajustes.Pie1);
+            if (!string.IsNullOrEmpty(ajustes.Pie2)) Ticket.TextoCentro(ajustes.Pie2);
+            if (!string.IsNullOrEmpty(ajustes.Pie3)) Ticket.TextoCentro(ajustes.Pie3);
+            Ticket.TextoIzquierda(" ");
 
 
             if (isFactura)
             {
-                Ticket1.TextoIzquierda($"CAE: {facturaEmitida.CAE}");
-                Ticket1.TextoIzquierda($"Vto: {facturaEmitida.CAEVencimiento.Value.ToShortDateString()}");
+                Ticket.TextoIzquierda($"CAE: {facturaEmitida.CAE}");
+                Ticket.TextoIzquierda($"Vto: {facturaEmitida.CAEVencimiento.Value.ToShortDateString()}");
 
                 // Generar y agregar el QR
                 var linkAfip = await _afipService.GenerateLinkAfipFactura(facturaEmitida);
                 var qrBase64 = QrHelper.GenerarQR(linkAfip, facturaEmitida.IdSale.ToString());
-                Ticket1.InsertarImagen($"F_{facturaEmitida.CAE}", qrBase64);
-                Ticket1.TextoIzquierda(" ");
+                Ticket.InsertarImagen($"F_{facturaEmitida.CAE}", qrBase64);
+                Ticket.TextoIzquierda(" ");
             }
-            Ticket1.TextoIzquierda(" ");
-            Ticket1.TextoIzquierda(" ");
+            Ticket.TextoIzquierda(" ");
+            Ticket.TextoIzquierda(" ");
 
-            return Ticket1;
+            return Ticket;
         }
 
         private async Task DatosFactura(int idTienda, FacturaEmitida? facturaEmitida, TicketModel Ticket1)
