@@ -107,7 +107,7 @@ $(document).ready(function () {
                 "width": "80px"
             }
         ],
-        order: [[1, "desc"]],
+        order: [[2, "desc"]],
         dom: "Bfrtip",
         buttons: [
             {
@@ -116,7 +116,7 @@ $(document).ready(function () {
                 title: '',
                 filename: 'Reporte Facturas',
                 exportOptions: {
-                    columns: [2,3,4,5,6,7,8]
+                    columns: [2, 3, 4, 5, 6, 7, 8]
                 }
             }, 'pageLength'
         ],
@@ -140,26 +140,30 @@ const openModalFactura = (model = BASIC_MODEL_FACTURACION) => {
     $("#txtImporteTotal").val(model.importeTotal);
     $("#txtImporteNeto").val(model.importeNeto);
     $("#txtImporteIva").val(model.importeIVA);
-    $("#txtNumeroVenta").val(model.sale != null? model.sale.saleNumber : '');
+    $("#txtNumeroVenta").val(model.sale != null ? model.sale.saleNumber : '');
     $("#txtCae").val(model.cae);
-    $("#txtVencimientoCae").val(moment(model.caeVencimiento).format('DD/MM/YYYY'));
+    $("#txtVencimientoCae").val(model.caeVencimiento != null ? moment(model.caeVencimiento).format('DD/MM/YYYY') : '');
     $("#txtRegistrationUser").val(model.registrationUser);
     $("#txtPuntoVenta").val(model.puntoVentaString);
     $("#txtCuil").val(`${model.tipoDocumento}: ${model.nroDocumento}`);
+    $('#txtCuil').attr('cuil', model.nroDocumento);
     $("#btnVerVenta").attr("sale-number", model.sale != null ? model.sale.saleNumber : '');
 
-    if (model.facturaAnulada != null) {
+    const isAnulada = model.resultado !== "A";
 
-        $("#divFormaPago").hide();
-        $("#divFacuraAnulada").show();
-        $("#btnAnularFactura").hide();
+    $("#bntAfip").toggle(!isAnulada);
+    $("#divFormaPago").toggle(!isAnulada);
+    $("#btnAnularFactura").toggle(!isAnulada);
+
+    $("#btnShowRefacturar").toggle(isAnulada);
+    $("#divFacuraAnulada").toggle(isAnulada);
+
+    if (isAnulada) {
         $("#txtFacuraAnulada").val(model.facturaAnulada);
     }
-    else {
-        $("#divFormaPago").show();
-        $("#btnAnularFactura").show();
-        $("#divFacuraAnulada").hide();
-    }
+
+    document.getElementById("divClienteSeleccionado").style.setProperty("display", "none", "important");
+
 
     if (model.observaciones != null) {
         const divError = document.getElementById("divError");
@@ -189,9 +193,6 @@ const openModalFactura = (model = BASIC_MODEL_FACTURACION) => {
             url_qr = model.qr;
         }
     }
-
-
-
 
     $("#modalData").modal("show")
 }
@@ -234,25 +235,68 @@ $("#bntAfip").on("click", function () {
     }
 })
 
-$("#btnConfiguracion").on("click", function () {
+$("#btnShowRefacturar").on("click", function (event) {
 
-    showLoading();
+    $("#divClienteSeleccionado").show();
+    let cuilText = $("#txtCuil").val();
+    let cuil = $('#txtCuil').attr('cuil');
 
-    fetch(`/Admin/GetAjustesFacturacion`)
-        .then(response => {
-            return response.json();
-        }).then(responseJson => {
-            removeLoading();
-            if (responseJson.state) {
-
-                openModalAjustesFacturacion(responseJson.object);
-
-            } else {
-                swal("Lo sentimos", responseJson.message, "error");
-            }
-        })
+    $('#txtClienteParaFactura').val(cuilText);
+    $('#txtClienteParaFactura').attr('cuil', cuil);
 })
 
+$("#btnRefacturar").on("click", function (event) {
+    event.preventDefault();
+
+    swal({
+        title: "",
+        text: "¿Está seguro que desea refacturar?",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonClass: "btn-danger",
+        cancelButtonClass: "btn-secondary",
+        confirmButtonText: "Si, refacturar",
+        cancelButtonText: "No, cancelar",
+        closeOnConfirm: false,
+        closeOnCancel: true
+    },
+        function (respuesta) {
+
+            if (respuesta) {
+
+                let idFact = $("#txtIdFacturacion").val();
+                let cuil = $('#txtClienteParaFactura').attr('cuil');
+
+                $(".showSweetAlert").LoadingOverlay("show")
+
+                fetch(`/Admin/Refacturar?idFacturaEmitida=${idFact}&cuil=${cuil}`, {
+                    method: "POST"
+                }).then(response => {
+                    $(".showSweetAlert").LoadingOverlay("hide")
+                    return response.json();
+                }).then(responseJson => {
+                    if (responseJson.state) {
+
+                        swal("Exitoso!", "La factura fué refacturada", "success");
+                        $("#modalData").modal("hide")
+
+                        location.reload();
+
+                    } else {
+                        swal("Lo sentimos", responseJson.message, "error");
+                    }
+                })
+                    .catch((error) => {
+                        $(".showSweetAlert").LoadingOverlay("hide")
+                    })
+            }
+        });
+})
+
+$("#btnBuscarCliente").on("click", function () {
+    $("#modalDatosFactura").modal("show");
+    inicializarClientesFactura();
+});
 
 $("#btnAnularFactura").on("click", function (event) {
     event.preventDefault();

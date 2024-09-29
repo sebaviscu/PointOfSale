@@ -371,7 +371,7 @@ namespace PointOfSale.Controllers
             var vmReport = new VMReportSale()
             {
                 IsAdmin = user.IdRol == 1,
-                saleNumber = saleNumber
+                saleNumber = saleNumber.ToString("D6")
             };
 
             return View("SalesHistory", vmReport);

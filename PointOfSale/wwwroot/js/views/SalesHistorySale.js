@@ -309,7 +309,7 @@ function createTable(responseJson) {
                 "width": "100px"
             }
         ],
-        order: [[0, "asc"]],
+        order: [[0, "desc"]],
         dom: "Bfrtip",
         buttons: [
             {

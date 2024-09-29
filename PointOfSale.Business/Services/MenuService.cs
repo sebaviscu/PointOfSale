@@ -30,8 +30,8 @@ namespace PointOfSale.Business.Services
         public async Task<List<Menu>> GetMenus(int idUser)
         {
             IQueryable<User> tbUser = await _repositoryUser.Query(u => u.IdUsers == idUser);
-            IQueryable<RolMenu> tbRolmenu = await _repositoryRolMenu.Query();
-            IQueryable<Menu> tbMenu = await _repositoryMenu.Query();
+            IQueryable<RolMenu> tbRolmenu = await _repositoryRolMenu.Query(_ => _.IsActive.Value);
+            IQueryable<Menu> tbMenu = await _repositoryMenu.Query(_ => _.IsActive.Value);
 
             IQueryable<Menu> MenuParent = (from u in tbUser
                                            join rm in tbRolmenu on u.IdRol equals rm.IdRol
@@ -60,9 +60,9 @@ namespace PointOfSale.Business.Services
 
 
             var user = tbUser.FirstOrDefault();
-            IQueryable<RolMenu> menuUsers = await _repositoryRolMenu.Query(_=>_.IdRol == user.IdRol);
+            IQueryable<RolMenu> menuUsers = await _repositoryRolMenu.Query(_ => _.IdRol == user.IdRol);
 
-            var idMenuUsers = menuUsers.Select(_=>_.IdMenu).ToList();
+            var idMenuUsers = menuUsers.Select(_ => _.IdMenu).ToList();
             listMenu.AddRange(tbMenu.Where(_ => _.IdMenuParent == null && idMenuUsers.Contains(_.IdMenu)));
 
             return listMenu.OrderBy(_ => _.Orden).ToList();

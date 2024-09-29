@@ -27,12 +27,12 @@ namespace PointOfSale.Model.Afip.Factura
         /// <param name="nroComprobante"></param>
         /// <param name="ptoVenta"></param>
         /// <param name="documento"></param>
-        public FacturaAFIP(Sale sale, TipoComprobante tipoComprobante, int nroComprobante, int ptoVenta, long documento)
+        public FacturaAFIP(decimal importeTotal, DateTime fechaComprobante, TipoComprobante tipoComprobante, int nroComprobante, int ptoVenta, long documento)
         {
             Cabecera = CrearCabecera(tipoComprobante, ptoVenta);
-            var (importeNeto, importeIVA) = CalcularImportes(sale.Total.Value, tipoComprobante);
+            var (importeNeto, importeIVA) = CalcularImportes(importeTotal, tipoComprobante);
             var tipoDocumento = ObtenerTipoDocumento(tipoComprobante, documento);
-            AgregarDetalle(sale.RegistrationDate.Value, nroComprobante, documento, tipoDocumento, importeNeto, importeIVA);
+            AgregarDetalle(fechaComprobante, nroComprobante, documento, tipoDocumento, importeNeto, importeIVA);
         }
 
         /// <summary>
@@ -41,12 +41,14 @@ namespace PointOfSale.Model.Afip.Factura
         /// <param name="tipoComprobante"></param>
         /// <param name="nroComprobante"></param>
         /// <param name="facturaEmitida"></param>
-        public FacturaAFIP(TipoComprobante tipoComprobante, int nroComprobante, FacturaEmitida facturaEmitida)
+        public FacturaAFIP(TipoComprobante tipoComprobante, int nroComprobante, FacturaEmitida facturaEmitida, long documento, bool isNotaCredito)
         {
             Cabecera = CrearCabecera(tipoComprobante, facturaEmitida.PuntoVenta);
-            ComprobanteAsociado = CrearComprobanteAsociado(tipoComprobante, facturaEmitida);
-            var tipoDocumento = ObtenerTipoDocumento(tipoComprobante, facturaEmitida.NroDocumento);
-            AgregarDetalle(TimeHelper.GetArgentinaTime(), nroComprobante, facturaEmitida.NroDocumento, tipoDocumento, facturaEmitida.ImporteNeto, facturaEmitida.ImporteIVA);
+            if(isNotaCredito)
+                ComprobanteAsociado = CrearComprobanteAsociado(tipoComprobante, facturaEmitida);
+
+            var tipoDocumento = ObtenerTipoDocumento(tipoComprobante, documento);
+            AgregarDetalle(TimeHelper.GetArgentinaTime(), nroComprobante, documento, tipoDocumento, facturaEmitida.ImporteNeto, facturaEmitida.ImporteIVA);
         }
 
         private CabeceraFacturaAFIP CrearCabecera(TipoComprobante tipoComprobante, int ptoVenta)

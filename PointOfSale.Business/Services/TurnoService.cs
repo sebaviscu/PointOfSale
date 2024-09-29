@@ -180,19 +180,20 @@ namespace PointOfSale.Business.Services
 
         private async Task<Turno> ValidarVentas(List<VentasPorTipoDeVenta> ventasPorTipoDeVentasReales, Dictionary<string, decimal> ventasRegistradasSistema, int idTurno)
         {
-
+            var totalVentaUsuario = 0m;
             var respError = string.Empty;
-            foreach (KeyValuePair<string, decimal> item in ventasRegistradasSistema)
+            foreach (KeyValuePair<string, decimal> itemSistema in ventasRegistradasSistema.OrderBy(_=>_.Key))
             {
-                var venta = ventasPorTipoDeVentasReales.FirstOrDefault(_ => _.Descripcion == item.Key);
+                var ventaUsuario = ventasPorTipoDeVentasReales.FirstOrDefault(_ => _.Descripcion == itemSistema.Key);
 
-                if (venta != null)
+                if (ventaUsuario != null)
                 { 
-                    var diferencia = (int)item.Value - (int)venta.Total;
-
+                    var diferencia = (int)itemSistema.Value - (int)ventaUsuario.Total;
+                    totalVentaUsuario += ventaUsuario.Total;
                     if (diferencia != 0)
                     {
-                        respError += $"- Existe diferencia en <strong>'{venta.Descripcion.ToUpper()}'</strong> de <strong>$ {(int)Math.Abs(diferencia)}</strong>. <br>";
+                        var difAbs = (int)Math.Abs(diferencia);
+                        respError += $"- Existe diferencia en <strong>'{ventaUsuario.Descripcion.ToUpper()}'</strong> de <strong>$ {(int)diferencia}</strong>. <br>";
                     }
                 }
             }
@@ -201,7 +202,7 @@ namespace PointOfSale.Business.Services
             if (!turno.ValidacionRealizada.HasValue || (turno.ValidacionRealizada.HasValue && !turno.ValidacionRealizada.Value))
             {
                 turno.ErroresCierreCaja = respError;
-                turno.TotalCierreCajaReal = ventasPorTipoDeVentasReales.Sum(_ => _.Total);
+                turno.TotalCierreCajaReal = totalVentaUsuario;
                 turno.TotalCierreCajaSistema = ventasRegistradasSistema.Sum(_ => _.Value);
                 turno.ValidacionRealizada = true;
 

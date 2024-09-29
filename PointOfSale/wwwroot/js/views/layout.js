@@ -195,7 +195,7 @@ $("#btnAbrirCerrarTurno").on("click", function () {
                     renderVentasPorTipoVenta(contenedor, resultado.ventasPorTipoVenta, resultado.totalInicioCaja, turnoValidado, responseJson.object.totalMovimientosCaja);
 
                     if (turnoValidado) {
-                        contenedor.append($('<hr>'));
+                        contenedor.append($('<hr style="margin-top: 0px;">'));
                         crearFilaTotalesTurno(contenedor, "TOTAL Sistema", resultado.totalCierreCajaSistema, true, "txtTotalSumado");
                         crearFilaTotalesTurno(contenedor, "TOTAL Usuario", resultado.totalCierreCajaReal, true, "txtTotalSumado");
 
@@ -205,6 +205,7 @@ $("#btnAbrirCerrarTurno").on("click", function () {
                         $("#btnBilletes").hide()
                         mostrarErroresTurno(resultado.erroresCierreCaja);
                     }
+
                 }
 
             } else {
@@ -275,14 +276,21 @@ $("#btnSaveMovimientoCaja").on("click", function () {
         return;
     }
 
-    if ($("#txtComentarioMovimientoCaja").val().length < 10) {
-        toastr.warning("La descripción debe ser mayor a 10 caracteres", "");
+    if ($("#txtComentarioMovimientoCaja").val().length < 5) {
+        toastr.warning("La descripción debe ser mayor a 5 caracteres", "");
         return
+    }
+
+    let importe = parseFloat($("#txtImporteMovimientoCaja").val());
+    if ($("#cboTipoRazonMovimiento").val() == "0" && importe > 0) {
+        const msg = "Si está ingresando un 'Egreso', el importe debe ser negativo";
+        toastr.warning(msg, "");
+        return;
     }
 
     const model = structuredClone(BASIC_MODEL_MOVIMIENTIO_CAJA);
     model["idRazonMovimientoCaja"] = parseInt($("#cboRazonMovimiento").val());
-    model["importe"] = parseFloat($("#txtImporteMovimientoCaja").val());
+    model["importe"] = importe;
     model["comentario"] = $("#txtComentarioMovimientoCaja").val();
 
     $("#modalMovimientoCaja").find("div.modal-content").LoadingOverlay("show")
@@ -340,7 +348,9 @@ function horaActual() {
 }
 
 function openModalDataAbrirTurno() {
-    let dateTimeArgentina = moment().tz('America/Argentina/Buenos_Aires');
+    let dateTimeArgentina = new Date().toLocaleString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" });
+
+    //let dateTimeArgentina = moment().tz('America/Argentina/Buenos_Aires');
 
     // Mostrar el modal
     $("#modalDataAbrirTurno").modal("show");
@@ -366,6 +376,8 @@ function renderVentasPorTipoVenta_OLIVA(contenedor, ventasPorTipoVenta, importeI
     if (totalMovimientosCaja != null && totalMovimientosCaja != 0) {
         crearFilaTotalesTurno(contenedor, "MOV. DE CAJA", totalMovimientosCaja, true, 'txtMovimientoCaja');
     }
+
+    contenedor.append($('<hr style="margin-top: 0px;">'));
 
     let total = 0;
     ventasPorTipoVenta.forEach(function (venta) {
@@ -551,7 +563,7 @@ $("#btnValidarFinalizarTurno").on("click", function () {
             });
 
             let contenedor = $("#contMetodosPagoLayout");
-            contenedor.append($('<hr>'));
+            contenedor.append($('<hr style="margin-top: 0px;">'));
             crearFilaTotalesTurno(contenedor, "TOTAL Sistema", responseJson.object.totalCierreCajaSistema, true, "txtTotalSumado");
             crearFilaTotalesTurno(contenedor, "TOTAL Usuario", responseJson.object.totalCierreCajaReal, true, "txtTotalSumado");
 
@@ -735,7 +747,7 @@ function abrirTurnoDesdeViewTurnos(idTurno) {
 
                 let total = renderVentasPorTipoVenta(contenedor, result.ventasPorTipoVenta, result.totalInicioCaja, true);
 
-                contenedor.append($('<hr>'));
+                contenedor.append($('<hr style="margin-top: 0px;">'));
                 crearFilaTotalesTurno(contenedor, "TOTAL", total, true, "txtTotalSumado");
 
 

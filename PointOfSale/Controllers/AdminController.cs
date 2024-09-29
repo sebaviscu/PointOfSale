@@ -1812,6 +1812,33 @@ namespace PointOfSale.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Refacturar(int idFacturaEmitida, string cuil)
+        {
+            var gResponse = new GenericResponse<VMFacturaEmitida>();
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador]);
+
+                var factura = await _afipService.Refacturar(idFacturaEmitida, cuil, user.UserName);
+
+                var vmFactura = _mapper.Map<VMFacturaEmitida>(factura);
+
+                if (factura.Observaciones == null)
+                {
+                    vmFactura.QR = await _afipService.GenerateLinkAfipFactura(factura);
+                }
+
+                gResponse.State = true;
+                gResponse.Object = vmFactura;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al recuperar facturas", _logger, idFacturaEmitida);
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAjustesFacturacion()
         {

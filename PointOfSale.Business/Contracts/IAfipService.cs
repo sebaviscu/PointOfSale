@@ -31,5 +31,6 @@ namespace PointOfSale.Business.Contracts
         Task<FacturaEmitida?> FacturarVenta(Sale sale, Ajustes ajustes, string cuil, int? idCliente);
 
         Task<FacturaEmitida?> NotaCredito(int idFacturaemitida, string registrationUser);
+        Task<FacturaEmitida?> Refacturar(int idFacturaemitida, string cuil, string registrationUser);
     }
 }

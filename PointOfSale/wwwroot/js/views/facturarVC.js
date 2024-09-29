@@ -204,7 +204,9 @@ async function seleccionaCliente() {
         }
 
         $('#txtClienteParaFactura').val(`${model.nombre}  (CUIT: ${model.cuil})`);
-        $('#txtClienteParaFactura').attr('cuil', model.cuil);
+        let textSinGuiones = model.cuil.replace(/-/g, '');
+
+        $('#txtClienteParaFactura').attr('cuil', textSinGuiones);
         $('#txtClienteParaFactura').attr('idcliente', model.idCliente);
 
         $('#btnFinalizarVentaParcial').prop('disabled', false);

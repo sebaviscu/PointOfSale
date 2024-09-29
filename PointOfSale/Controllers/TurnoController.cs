@@ -113,10 +113,7 @@ namespace PointOfSale.Controllers
                     decimal totalMovimiento = 0;
                     foreach (var m in movimientos)
                     {
-                        if (m.RazonMovimientoCaja.Tipo == TipoMovimientoCaja.Egreso)
-                            totalMovimiento -= m.Importe;
-                        else
-                            totalMovimiento += m.Importe;
+                        totalMovimiento += m.Importe;
                     }
 
                     outout.Turno = vmTurnp;

@@ -148,8 +148,26 @@
                                 <button class="btn btn-sm btn-danger" id="btnAnularFactura"><i class="mdi mdi-cancel"></i> Anular</button>
                                 <button type="button" class="btn btn-secondary btn-sm" id="bntAfip"><i class="mdi mdi-cash me-1"></i>&nbsp;AFIP</button>
                                 <button type="button" class="btn btn-primary btn-sm" id="btnVerVenta"><i class="mdi mdi-forward me-1"></i>&nbsp;Ver Venta</button>
+                                <button type="button" class="btn btn-info btn-sm" id="btnShowRefacturar" style="display: none"><i class="mdi mdi-reload me-1"></i>&nbsp;Refacturar</button>
                             </div>
                         </div>
+                        <div id="divClienteSeleccionado" class="d-flex justify-content-center">
+                            <div class="row col-md-12 d-flex justify-content-center">
+                                <div class="col-sm-5 ms-1">
+                                    <label>Cliente: </label>
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" class="form-control form-control-sm" id="txtClienteParaFactura" disabled>
+                                        <div class="input-group-prepend">
+                                            <button class="btn btn-sm btn-outline-info" id="btnBuscarCliente">Seleccionar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2" style=" align-content: center;">
+                                    <button type="button" class="btn btn-secondary btn-sm" id="btnRefacturar"><i class="mdi mdi-reload me-1"></i>&nbsp;Refacturar</button>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="col-12">
                             <div id="divError" class="alert d-flex align-items-center" style="display: none;">
                                 <div>
@@ -168,6 +186,7 @@
     </div>
 </div>
 
+@await Component.InvokeAsync("Facturar")
 
 @section Scripts {
     <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>

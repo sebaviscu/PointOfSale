@@ -451,10 +451,11 @@ $(document).on("click", "button.finalizarSaleParcial", function () {
 
 $('#modalDividirPago').on('shown.bs.modal', function () {
     $('#cboTypeDocumentSaleParcial').focus().click();
-    $('#cboTypeDocumentSaleParcial').on('keydown', function (e) {
+
+    // Remover cualquier evento previo y añadir el evento 'keydown' para #cboTypeDocumentSaleParcial
+    $('#cboTypeDocumentSaleParcial').off('keydown').on('keydown', function (e) {
         if (e.key === 'Tab') {
             e.preventDefault();
-            //    $('#cboImprimirTicket').focus(); // Mover el foco al checkbox
             $('#btnFinalizarVentaParcial').focus();
         } else if (e.key === 'Enter') {
             e.preventDefault();
@@ -462,23 +463,14 @@ $('#modalDividirPago').on('shown.bs.modal', function () {
         }
     });
 
-    // Escuchar eventos de teclado en el checkbox
-    //$('#cboImprimirTicket').on('keydown', function (e) {
-    //    if (e.key === 'Tab') {
-    //        e.preventDefault(); // Prevenir comportamiento por defecto
-    //        $('#btnFinalizarVentaParcial').focus(); // Mover el foco al botón de finalizar venta
-    //    }
-    //});
-
-    // Al presionar enter en el botón, ejecutar el click
-    $('#btnFinalizarVentaParcial').on('keydown', function (e) {
+    // Remover cualquier evento previo y añadir el evento 'keydown' para #btnFinalizarVentaParcial
+    $('#btnFinalizarVentaParcial').off('keydown').on('keydown', function (e) {
         if (e.key === 'Enter') {
             e.preventDefault(); // Prevenir comportamiento por defecto
             $(this).click(); // Ejecutar el click del botón
         }
     });
 });
-
 
 
 $(document).on("click", "button.btnAddFormaDePago", function () {

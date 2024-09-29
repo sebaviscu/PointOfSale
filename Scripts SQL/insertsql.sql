@@ -97,9 +97,9 @@ INSERT INTO RolMenu(idRol,idMenu,isActive) values
 INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (2,3,1),
 (2,7,1),
+(2,11,1),
 (2,17,1),
 (2,18,1),
-(2,11,1),
 (2,28,1)
 
 --*encargado
@@ -107,12 +107,12 @@ INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (3,2,1),
 (3,3,1),
 (3,4,1),
+(3,7,1),
 (3,10,1),
 (3,11,1),
-(3,7,1),
+(3,14,1),
 (3,17,1),
 (3,18,1),
-(3,14,1),
 (3,24,1),
 (3,28,1)
 
