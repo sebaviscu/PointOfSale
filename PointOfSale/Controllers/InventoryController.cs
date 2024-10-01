@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using NuGet.Protocol;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Reportes;
+using PointOfSale.Business.Services;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
 using PointOfSale.Models;
@@ -20,23 +21,27 @@ namespace PointOfSale.Controllers
     {
         private readonly ICategoryService _categoryService;
         private readonly IProductService _productService;
-        private readonly ISaleService _saleService;
         private readonly IMapper _mapper;
-        private readonly IWebHostEnvironment _env;
         private readonly IImportarExcelService _excelService;
         private readonly ILogger<InventoryController> _logger;
         private readonly ITagService _tagService;
+        private readonly IPromocionService _promocionService;
 
-        public InventoryController(ICategoryService categoryService, IProductService productService, IMapper mapper, ISaleService saleService, IWebHostEnvironment env, IImportarExcelService excelService, ILogger<InventoryController> logger, ITagService tagService)
+        public InventoryController(ICategoryService categoryService, 
+            IProductService productService, 
+            IMapper mapper, 
+            IImportarExcelService excelService, 
+            ILogger<InventoryController> logger, 
+            ITagService tagService, 
+            IPromocionService promocionService)
         {
             _categoryService = categoryService;
             _productService = productService;
             _mapper = mapper;
-            _saleService = saleService;
-            _env = env;
             _excelService = excelService;
             _logger = logger;
             _tagService = tagService;
+            _promocionService = promocionService;
         }
 
         public IActionResult Products()
@@ -421,14 +426,6 @@ namespace PointOfSale.Controllers
 
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetProductsSearch(string search)
-        //{
-        //    List<VMProduct> vmListProducts = _mapper.Map<List<VMProduct>>(await _saleService.GetProducts(search.Trim()));
-        //    return StatusCode(StatusCodes.Status200OK, vmListProducts);
-        //}
-
-
         [HttpGet]
         public async Task<IActionResult> GetCategoriesSearch(string search)
         {
@@ -647,6 +644,206 @@ namespace PointOfSale.Controllers
             {
                 return HandleException(ex, "Error al borrar Tag.", _logger, idTag);
             }
+        }
+
+
+        public IActionResult Promociones()
+        {
+            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+            return ValidateSesionViewOrLogin();
+        }
+
+        /// <summary>
+        /// Recupera promociones para DataTable
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetPromociones()
+        {
+            var gResponse = new GenericResponse<List<VMPromocion>>();
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
+                var listPromocion = _mapper.Map<List<VMPromocion>>(await _promocionService.List(user.IdTienda));
+                foreach (var p in listPromocion)
+                {
+                    await SetStringPromocion(p);
+
+                }
+                return StatusCode(StatusCodes.Status200OK, new { data = listPromocion });
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al recuperar promociones", _logger);
+            }
+
+        }
+
+        private async Task SetStringPromocion(VMPromocion p)
+        {
+            var dias = string.Empty;
+            var producto = string.Empty;
+            var categoria = string.Empty;
+
+            if (p.IdProducto != null)
+            {
+                var prod = await _productService.Get(Convert.ToInt32(p.IdProducto));
+                p.PromocionString += $" [{string.Join(", ", prod.Description)}] ";
+                var operador = p.Operador == 0 ? "Igual a" : "Mayor o igual a";
+                p.PromocionString += $" [{operador} {p.CantidadProducto} {prod.TipoVenta}] ";
+            }
+
+            if (p.IdCategory != null && p.IdCategory.Any())
+            {
+                var catList = await _categoryService.GetMultiple(p.IdCategory);
+                p.PromocionString += " [" + string.Join(", ", catList.Select(_ => _.Description)) + "]";
+            }
+
+            if (p.Dias != null && p.Dias.Any())
+            {
+                var diasList = p.Dias.Select(_ => (Model.Enum.DiasSemana)_).ToList();
+                p.PromocionString += " [" + string.Join(", ", diasList.Select(_ => _.ToString())) + "]";
+            }
+            p.PromocionString += " -> ";
+            p.PromocionString += p.Precio != null ? $"Precio fijo: ${p.Precio}" : $"Precio al: {(int)p.Porcentaje}% ";
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPromocionesActivas()
+        {
+            var gResponse = new GenericResponse<List<VMPromocion>>();
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
+
+                var listPromocion = _mapper.Map<List<VMPromocion>>(await _promocionService.Activas(user.IdTienda));
+
+                gResponse.State = true;
+                gResponse.Object = listPromocion;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al recuperar promociones activas", _logger);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreatePromociones([FromBody] VMPromocion model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+
+            var gResponse = new GenericResponse<VMPromocion>();
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
+                model.IdTienda = user.IdTienda;
+                var usuario_creado = await _promocionService.Add(_mapper.Map<Promocion>(model));
+
+                model = _mapper.Map<VMPromocion>(usuario_creado);
+
+                await SetStringPromocion(model);
+
+                gResponse.State = true;
+                gResponse.Object = model;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al crear promocion", _logger, model);
+            }
+
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdatePromociones([FromBody] VMPromocion vmUser)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(vmUser);
+            }
+
+
+            var gResponse = new GenericResponse<VMPromocion>();
+            try
+            {
+                ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
+                var user_edited = await _promocionService.Edit(_mapper.Map<Promocion>(vmUser));
+
+                vmUser = _mapper.Map<VMPromocion>(user_edited);
+
+                await SetStringPromocion(vmUser);
+                gResponse.State = true;
+                gResponse.Object = vmUser;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al actualizar promocion", _logger, vmUser);
+            }
+
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeletePromociones(int idPromocion)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(idPromocion);
+            }
+
+
+            var gResponse = new GenericResponse<string>();
+            try
+            {
+                ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
+                gResponse.State = await _promocionService.Delete(idPromocion);
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al eliminar promocion", _logger, idPromocion);
+            }
+
+        }
+
+
+        [HttpPut]
+        public async Task<IActionResult> CambiarEstadoPromocion(int idPromocion)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(idPromocion);
+            }
+
+
+            var gResponse = new GenericResponse<VMPromocion>();
+            try
+            {
+                var resp = ValidarAutorizacion([Roles.Administrador]);
+
+                var user_edited = await _promocionService.CambiarEstado(idPromocion, resp.UserName);
+
+                var model = _mapper.Map<VMPromocion>(user_edited);
+                await SetStringPromocion(model);
+
+                gResponse.Object = model;
+                gResponse.State = true;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al cambiar estado de promocion", _logger, idPromocion);
+            }
+
         }
     }
 }

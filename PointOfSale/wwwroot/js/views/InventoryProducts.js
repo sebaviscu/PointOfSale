@@ -191,7 +191,7 @@ $(document).ready(function () {
         });
 
 
-    fetch("/Admin/GetProveedores")
+    fetch("/Proveedores/GetProveedores")
         .then(response => {
             return response.json();
         }).then(responseJson => {
@@ -207,7 +207,7 @@ $(document).ready(function () {
             }
         })
 
-    fetch("/Admin/GetAjustesProductos")
+    fetch("/Ajustes/GetAjustesProductos")
         .then(response => {
             return response.json();
         }).then(responseJson => {

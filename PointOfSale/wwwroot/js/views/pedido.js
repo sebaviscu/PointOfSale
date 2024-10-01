@@ -35,7 +35,7 @@ const BASIC_MODEL_RECIBIR = {
 $(document).ready(function () {
     showLoading();
 
-    fetch("/Admin/GetProveedoresConProductos")
+    fetch("/Proveedores/GetProveedoresConProductos")
         .then(response => {
             return response.json();
         }).then(responseJson => {

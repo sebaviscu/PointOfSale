@@ -797,78 +797,78 @@ namespace PointOfSale.Controllers
 
         }
 
-        /// <summary>
-        /// Recupero las formas de pago para DataTable
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        public async Task<IActionResult> GetTipoVenta()
-        {
+        ///// <summary>
+        ///// Recupero las formas de pago para DataTable
+        ///// </summary>
+        ///// <returns></returns>
+        //[HttpGet]
+        //public async Task<IActionResult> GetTipoVenta()
+        //{
 
-            List<VMTypeDocumentSale> listUsers = _mapper.Map<List<VMTypeDocumentSale>>(await _typeDocumentSaleService.List());
-            return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
-        }
+        //    List<VMTypeDocumentSale> listUsers = _mapper.Map<List<VMTypeDocumentSale>>(await _typeDocumentSaleService.List());
+        //    return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
+        //}
 
-        [HttpPost]
-        public async Task<IActionResult> CreateTipoVenta([FromBody] VMTypeDocumentSale model)
-        {
-            var gResponse = new GenericResponse<VMTypeDocumentSale>();
-            try
-            {
-                ValidarAutorizacion([Roles.Administrador]);
+        //[HttpPost]
+        //public async Task<IActionResult> CreateTipoVenta([FromBody] VMTypeDocumentSale model)
+        //{
+        //    var gResponse = new GenericResponse<VMTypeDocumentSale>();
+        //    try
+        //    {
+        //        ValidarAutorizacion([Roles.Administrador]);
 
-                var usuario_creado = await _typeDocumentSaleService.Add(_mapper.Map<TypeDocumentSale>(model));
+        //        var usuario_creado = await _typeDocumentSaleService.Add(_mapper.Map<TypeDocumentSale>(model));
 
-                gResponse.Object = _mapper.Map<VMTypeDocumentSale>(usuario_creado);
-                gResponse.State = true;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al crear forma de pago", _logger, model);
-            }
+        //        gResponse.Object = _mapper.Map<VMTypeDocumentSale>(usuario_creado);
+        //        gResponse.State = true;
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al crear forma de pago", _logger, model);
+        //    }
 
-        }
+        //}
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateTipoVenta([FromBody] VMTypeDocumentSale model)
-        {
+        //[HttpPut]
+        //public async Task<IActionResult> UpdateTipoVenta([FromBody] VMTypeDocumentSale model)
+        //{
 
-            GenericResponse<VMTypeDocumentSale> gResponse = new GenericResponse<VMTypeDocumentSale>();
-            try
-            {
-                ValidarAutorizacion([Roles.Administrador]);
+        //    GenericResponse<VMTypeDocumentSale> gResponse = new GenericResponse<VMTypeDocumentSale>();
+        //    try
+        //    {
+        //        ValidarAutorizacion([Roles.Administrador]);
 
-                TypeDocumentSale user_edited = await _typeDocumentSaleService.Edit(_mapper.Map<TypeDocumentSale>(model));
+        //        TypeDocumentSale user_edited = await _typeDocumentSaleService.Edit(_mapper.Map<TypeDocumentSale>(model));
 
-                gResponse.Object = _mapper.Map<VMTypeDocumentSale>(user_edited);
-                gResponse.State = true;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al actualizar forma de pago", _logger, model);
-            }
+        //        gResponse.Object = _mapper.Map<VMTypeDocumentSale>(user_edited);
+        //        gResponse.State = true;
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al actualizar forma de pago", _logger, model);
+        //    }
 
-        }
+        //}
 
-        [HttpDelete]
-        public async Task<IActionResult> DeleteTipoVenta(int idTypeDocumentSale)
-        {
+        //[HttpDelete]
+        //public async Task<IActionResult> DeleteTipoVenta(int idTypeDocumentSale)
+        //{
 
-            GenericResponse<string> gResponse = new GenericResponse<string>();
-            try
-            {
-                ValidarAutorizacion([Roles.Administrador]);
+        //    GenericResponse<string> gResponse = new GenericResponse<string>();
+        //    try
+        //    {
+        //        ValidarAutorizacion([Roles.Administrador]);
 
-                gResponse.State = await _typeDocumentSaleService.Delete(idTypeDocumentSale);
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al eliminar forma de pago", _logger, idTypeDocumentSale);
-            }
-        }
+        //        gResponse.State = await _typeDocumentSaleService.Delete(idTypeDocumentSale);
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al eliminar forma de pago", _logger, idTypeDocumentSale);
+        //    }
+        //}
 
 
         public IActionResult Cliente()
@@ -1003,983 +1003,858 @@ namespace PointOfSale.Controllers
 
         }
 
-        public IActionResult Proveedor()
-        {
-            ValidarAutorizacion([Roles.Administrador]);
-            return ValidateSesionViewOrLogin();
-        }
-
-        /// <summary>
-        /// Recupera proveedores para DataTable y Selects
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        public async Task<IActionResult> GetProveedores(bool visionGlobal)
-        {
-            var gResponse = new GenericResponse<List<VMProveedor>>();
-            try
-            {
-                var listProveedor = _mapper.Map<List<VMProveedor>>(await _proveedorService.List());
-                return StatusCode(StatusCodes.Status200OK, new { data = listProveedor });
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al recuperar proveedores", _logger);
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetProveedoresConProductos()
-        {
-
-            var gResponse = new GenericResponse<List<VMPedidosProveedor>>();
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
-
-                var listProveedor = await _proveedorService.ListConProductos(user.IdTienda);
-
-                var list = listProveedor
-                    .Select(p => new Proveedor
-                    {
-                        IdProveedor = p.IdProveedor,
-                        Nombre = p.Nombre,
-                        Products = p.Products.Select(prod => new Product
-                        {
-                            IdProduct = prod.IdProduct,
-                            Description = prod.Description,
-                            CostPrice = prod.CostPrice,
-                            Stocks = prod.Stocks
-                                        .Where(s => s.IdTienda == user.IdTienda)
-                                        .Select(stock => new Stock
-                                        {
-                                            IdStock = stock.IdStock,
-                                            StockActual = stock.StockActual
-                                        }).ToList()
-                        }).ToList()
-                    })
-                    .OrderBy(p => p.Nombre)
-                    .ToList();
-
-                gResponse.State = true;
-                gResponse.Object = _mapper.Map<List<VMPedidosProveedor>>(list);
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al recuperar proveedores con productos para pedido", _logger);
-            }
-
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateProveedor([FromBody] VMProveedor model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            var gResponse = new GenericResponse<VMProveedor>();
-            try
-            {
-                var usuario_creado = await _proveedorService.Add(_mapper.Map<Proveedor>(model));
-
-                gResponse.Object = _mapper.Map<VMProveedor>(usuario_creado);
-                gResponse.State = true;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al crear proveedor", _logger, model);
-            }
-
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> RegistrarPagoProveedor([FromBody] VMProveedorMovimiento model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            var gResponse = new GenericResponse<VMProveedorMovimiento>();
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
-
-                model.RegistrationUser = user.UserName;
-                model.RegistrationDate = TimeHelper.GetArgentinaTime();
-                model.idTienda = user.IdTienda;
-                var usuario_creado = await _proveedorService.Add(_mapper.Map<ProveedorMovimiento>(model));
-
-                model = _mapper.Map<VMProveedorMovimiento>(usuario_creado);
-
-                gResponse.State = true;
-                gResponse.Object = model;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al crear pago a proveedor", _logger, model);
-            }
-
-        }
-
-        /// <summary>
-        /// Recupera movimientos de proveedor para DataTable
-        /// </summary>
-        /// <param name="idProveedor"></param>
-        /// <returns></returns>
-        [HttpGet]
-        public async Task<IActionResult> GetMovimientoProveedor(int idProveedor)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(idProveedor);
-            }
-            var gResponse = new GenericResponse<List<VMProveedorMovimiento>>();
-
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador]);
-
-                var listUsers = _mapper.Map<List<VMProveedorMovimiento>>(await _proveedorService.ListMovimientosProveedor(idProveedor, user.IdTienda));
-                return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al recuperar movimientos de proveedor", _logger, idProveedor);
-            }
-
-        }
-
-        /// <summary>
-        /// Recupera movimientos de proveedores para DataTable
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        public async Task<IActionResult> GetAllMovimientoProveedor(bool visionGlobal)
-        {
-
-            var gResponse = new GenericResponse<List<VMProveedorMovimiento>>();
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador]);
-
-                var idtienda = visionGlobal ? 0 : user.IdTienda;
-
-                var listUsers = _mapper.Map<List<VMProveedorMovimiento>>(await _proveedorService.ListMovimientosProveedorForTablaDinamica(idtienda));
-                return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al recuperar pagos a proveedores", _logger);
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetProveedorTablaDinamica(bool visionGlobal)
-        {
-
-            var gResponse = new GenericResponse<List<VMMovimientoProveedoresTablaDinamica>>();
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador]);
-                var idtienda = visionGlobal ? 0 : user.IdTienda;
-
-                var listUsers = _mapper.Map<List<VMMovimientoProveedoresTablaDinamica>>(await _proveedorService.ListMovimientosProveedorForTablaDinamica(idtienda));
-                gResponse.State = true;
-                gResponse.Object = listUsers;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al recuperar pagos a proveedores para tabla dinamica", _logger);
-            }
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> UpdateProveedor([FromBody] VMProveedor vmUser)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(vmUser);
-            }
-
-
-            var gResponse = new GenericResponse<VMProveedor>();
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
-
-                vmUser.ModificationUser = user.UserName;
-                var user_edited = await _proveedorService.Edit(_mapper.Map<Proveedor>(vmUser));
-
-                vmUser = _mapper.Map<VMProveedor>(user_edited);
-
-                gResponse.State = true;
-                gResponse.Object = vmUser;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al actualizar proveedor", _logger, vmUser);
-            }
-
-        }
-
-        [HttpDelete]
-        public async Task<IActionResult> DeleteProveedor(int idProveedor)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(idProveedor);
-            }
-
-
-            var gResponse = new GenericResponse<string>();
-            try
-            {
-                ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
-
-                gResponse.State = await _proveedorService.Delete(idProveedor);
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al eliminar proveedor", _logger, idProveedor);
-            }
-
-        }
-
-
-        [HttpPut]
-        public async Task<IActionResult> CambioEstadoPagoProveedor(int idMovimiento)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(idMovimiento);
-            }
-
-
-            var gResponse = new GenericResponse<VMProveedor>();
-            try
-            {
-                ValidarAutorizacion([Roles.Administrador]);
-
-                _ = await _proveedorService.CambiarEstadoMovimiento(idMovimiento);
-
-                gResponse.State = true;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al cambiar estrado de pago de pago de proveedor", _logger, idMovimiento.ToJson());
-            }
-
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> UpdatePagoProveedor([FromBody] VMProveedorMovimiento vmUser)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(vmUser);
-            }
-
-            var gResponse = new GenericResponse<VMProveedorMovimiento>();
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
-
-                vmUser.ModificationUser = user.UserName;
-                var user_edited = await _proveedorService.Edit(_mapper.Map<ProveedorMovimiento>(vmUser));
-
-                vmUser = _mapper.Map<VMProveedorMovimiento>(user_edited);
-
-                gResponse.State = true;
-                gResponse.Object = vmUser;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al actualizar pago de proveedor", _logger, vmUser);
-            }
-
-        }
-
-        [HttpDelete]
-        public async Task<IActionResult> DeletePagoProveedor(int idPagoProveedor)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(idPagoProveedor);
-            }
-
-            var gResponse = new GenericResponse<string>();
-            try
-            {
-                ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
-
-                gResponse.State = await _proveedorService.DeleteProveedorMovimiento(idPagoProveedor);
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al eliminar pago de proveedor", _logger, idPagoProveedor);
-            }
-
-        }
-
-        public IActionResult Promociones()
-        {
-            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
-            return ValidateSesionViewOrLogin();
-        }
-
-        /// <summary>
-        /// Recupera promociones para DataTable
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        public async Task<IActionResult> GetPromociones()
-        {
-            var gResponse = new GenericResponse<List<VMPromocion>>();
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
-
-                var listPromocion = _mapper.Map<List<VMPromocion>>(await _promocionService.List(user.IdTienda));
-                foreach (var p in listPromocion)
-                {
-                    await SetStringPromocion(p);
-
-                }
-                return StatusCode(StatusCodes.Status200OK, new { data = listPromocion });
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al recuperar promociones", _logger);
-            }
-
-        }
-
-        private async Task SetStringPromocion(VMPromocion p)
-        {
-            var dias = string.Empty;
-            var producto = string.Empty;
-            var categoria = string.Empty;
-
-            if (p.IdProducto != null)
-            {
-                var prod = await _productService.Get(Convert.ToInt32(p.IdProducto));
-                p.PromocionString += $" [{string.Join(", ", prod.Description)}] ";
-                var operador = p.Operador == 0 ? "Igual a" : "Mayor o igual a";
-                p.PromocionString += $" [{operador} {p.CantidadProducto} {prod.TipoVenta}] ";
-            }
-
-            if (p.IdCategory != null && p.IdCategory.Any())
-            {
-                var catList = await _categoryService.GetMultiple(p.IdCategory);
-                p.PromocionString += " [" + string.Join(", ", catList.Select(_ => _.Description)) + "]";
-            }
-
-            if (p.Dias != null && p.Dias.Any())
-            {
-                var diasList = p.Dias.Select(_ => (Model.Enum.DiasSemana)_).ToList();
-                p.PromocionString += " [" + string.Join(", ", diasList.Select(_ => _.ToString())) + "]";
-            }
-            p.PromocionString += " -> ";
-            p.PromocionString += p.Precio != null ? $"Precio fijo: ${p.Precio}" : $"Precio al: {(int)p.Porcentaje}% ";
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetPromocionesActivas()
-        {
-            var gResponse = new GenericResponse<List<VMPromocion>>();
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
-
-                var listPromocion = _mapper.Map<List<VMPromocion>>(await _promocionService.Activas(user.IdTienda));
-
-                gResponse.State = true;
-                gResponse.Object = listPromocion;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al recuperar promociones activas", _logger);
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreatePromociones([FromBody] VMPromocion model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-
-            var gResponse = new GenericResponse<VMPromocion>();
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
-
-                model.IdTienda = user.IdTienda;
-                var usuario_creado = await _promocionService.Add(_mapper.Map<Promocion>(model));
-
-                model = _mapper.Map<VMPromocion>(usuario_creado);
-
-                await SetStringPromocion(model);
-
-                gResponse.State = true;
-                gResponse.Object = model;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al crear promocion", _logger, model);
-            }
-
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> UpdatePromociones([FromBody] VMPromocion vmUser)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(vmUser);
-            }
-
-
-            var gResponse = new GenericResponse<VMPromocion>();
-            try
-            {
-                ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
-
-                var user_edited = await _promocionService.Edit(_mapper.Map<Promocion>(vmUser));
-
-                vmUser = _mapper.Map<VMPromocion>(user_edited);
-
-                await SetStringPromocion(vmUser);
-                gResponse.State = true;
-                gResponse.Object = vmUser;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al actualizar promocion", _logger, vmUser);
-            }
-
-        }
-
-        [HttpDelete]
-        public async Task<IActionResult> DeletePromociones(int idPromocion)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(idPromocion);
-            }
-
-
-            var gResponse = new GenericResponse<string>();
-            try
-            {
-                ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
-
-                gResponse.State = await _promocionService.Delete(idPromocion);
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al eliminar promocion", _logger, idPromocion);
-            }
-
-        }
-
-
-        [HttpPut]
-        public async Task<IActionResult> CambiarEstadoPromocion(int idPromocion)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(idPromocion);
-            }
-
-
-            var gResponse = new GenericResponse<VMPromocion>();
-            try
-            {
-                var resp = ValidarAutorizacion([Roles.Administrador]);
-
-                var user_edited = await _promocionService.CambiarEstado(idPromocion, resp.UserName);
-
-                var model = _mapper.Map<VMPromocion>(user_edited);
-                await SetStringPromocion(model);
-
-                gResponse.Object = model;
-                gResponse.State = true;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al cambiar estado de promocion", _logger, idPromocion);
-            }
-
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Ajuste()
-        {
-            ValidarAutorizacion([Roles.Administrador]);
-            return ValidateSesionViewOrLogin();
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAjusteWeb()
-        {
-            var gResponse = new GenericResponse<VMAjustesWeb>();
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador]);
-
-                var vmAjusteWeb = _mapper.Map<VMAjustesWeb>(await _ajusteService.GetAjustesWeb());
-
-                gResponse.Object = vmAjusteWeb;
-                gResponse.State = true;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al recuperar ajuste web", _logger);
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAjuste()
-        {
-            var gResponse = new GenericResponse<VMAjustes>();
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador]);
-
-                var vmAjuste = _mapper.Map<VMAjustes>(await _ajusteService.GetAjustes(user.IdTienda));
-
-                gResponse.Object = vmAjuste;
-                gResponse.State = true;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al recuperar ajuste", _logger);
-            }
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> UpdateAjuste([FromForm] IFormFile Certificado, [FromForm] string modelFacturacion, [FromForm] string modelAjustes, [FromForm] string ModelWeb)
-        {
-            var gResponse = new GenericResponse<string>();
-            try
-            {
-                var model = JsonConvert.DeserializeObject<VMAjustes>(modelAjustes);
-                var modelWeb = JsonConvert.DeserializeObject<VMAjustesWeb>(ModelWeb);
-                var vmModelFacturacion = JsonConvert.DeserializeObject<VMAjustesFacturacion>(modelFacturacion);
-
-                var user = ValidarAutorizacion([Roles.Administrador]);
-
-                model.ModificationUser = user.UserName;
-                model.IdTienda = user.IdTienda;
-                vmModelFacturacion.ModificationUser = user.UserName;
-                vmModelFacturacion.IdTienda = user.IdTienda;
-
-                modelWeb.ModificationUser = user.UserName;
-                modelWeb.IdTienda = user.IdTienda;
-
-                _ = await _ajusteService.EditWeb(_mapper.Map<AjustesWeb>(modelWeb));
-
-                _ = await _ajusteService.Edit(_mapper.Map<Ajustes>(model));
-                var pathFile = string.Empty;
-                if (Certificado != null)
-                {
-                    var oldAjustes = await _ajusteService.GetAjustesFacturacion(user.IdTienda);
-
-                    pathFile = await _afipService.ReplaceCertificateAsync(Certificado, user.IdTienda, oldAjustes.CertificadoNombre);
-
-                    vmModelFacturacion.CertificadoNombre = Certificado.FileName;
-                    if (!string.IsNullOrEmpty(vmModelFacturacion.CertificadoPassword))
-                    {
-                        var cert = _afipService.GetCertificateAfipInformation(pathFile, vmModelFacturacion.CertificadoPassword);
-                        if (cert != null)
-                        {
-                            vmModelFacturacion.CertificadoFechaCaducidad = cert.FechaCaducidad;
-                            vmModelFacturacion.CertificadoFechaInicio = cert.FechaInicio;
-                            vmModelFacturacion.Cuit = Convert.ToInt64(cert.Cuil);
-                        }
-                    }
-                }
-
-                _ = await _ajusteService.EditFacturacion(_mapper.Map<AjustesFacturacion>(vmModelFacturacion));
-
-                gResponse.State = true;
-                gResponse.Object = pathFile;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al recuperar ajustes", _logger, model: null, ("ModelFacturacion", modelFacturacion), ("ModelAjustes", modelAjustes));
-            }
-        }
-
-        /// <summary>
-        /// Recupera ajustes para saber aumento web
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        public async Task<IActionResult> GetAjustesProductos()
-        {
-            var gResponse = new GenericResponse<string>();
-            try
-            {
-                var ajuste = await _ajusteService.GetAjustesWeb();
-
-                gResponse.State = true;
-                gResponse.Object = ajuste.AumentoWeb.HasValue ? ajuste.AumentoWeb.Value.ToString("F0") : string.Empty;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al recuperar aumento web", _logger);
-            }
-        }
-
-        /// <summary>
-        /// Recupera ajustes
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        public async Task<IActionResult> GetAjustesVentas()
-        {
-            var gResponse = new GenericResponse<VMAjustesSale?>();
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Encargado]);
-
-                var ajuste = await _ajusteService.GetAjustes(user.IdTienda);
-                var vmAjuste = _mapper.Map<VMAjustesSale>(ajuste);
-
-                vmAjuste.NeedControl = user.IdRol == (int)Roles.Administrador
-                    ? false
-                    : ajuste.ControlEmpleado ?? false;
-
-                vmAjuste.ListaPrecios = user.ListaPrecios;
-                var turno = await _turnoService.GetTurnoActual(user.IdTienda);
-
-                vmAjuste.ExisteTurno = turno != null;
-                gResponse.State = true;
-                gResponse.Object = vmAjuste;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al recuperar ajustes", _logger);
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> ValidateSecurityCode(string encryptedCode)
-        {
-            var gResponse = new GenericResponse<bool>();
-
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Encargado]);
-
-                var ajuste = await _ajusteService.GetAjustes(user.IdTienda);
-
-                var codigo = ajuste.CodigoSeguridad != null ? ajuste.CodigoSeguridad : string.Empty;
-
-                var notific = new Notifications(user.UserName);
-                await _notificationService.Save(notific);
-
-                gResponse.State = true;
-                gResponse.Object = encryptedCode == codigo;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al validar codigo de seguridad", _logger, encryptedCode);
-            }
-        }
-
-
-        [HttpGet]
-        public async Task<IActionResult> Facturacion()
-        {
-            ValidarAutorizacion([Roles.Administrador]);
-            return ValidateSesionViewOrLogin();
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> FacturacionById(int idFacturaEmitida)
-        {
-            ValidarAutorizacion([Roles.Administrador]);
-
-            if (!HttpContext.User.Identity.IsAuthenticated)
-                return RedirectToAction("Login", "Access");
-
-            var factura = _mapper.Map<VMFacturaEmitida>(await _afipService.GetById(idFacturaEmitida));
-            ViewData["IdSale"] = factura.IdSale;
-
-            return View("Facturacion");
-        }
-
-        /// <summary>
-        /// Retorna las facturas para DataTable
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        public async Task<IActionResult> GetFacturas()
-        {
-            var gResponse = new GenericResponse<List<VMFacturaEmitida>>();
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador]);
-                var facturas = await _afipService.GetAll(user.IdTienda);
-                var vmFactura = _mapper.Map<List<VMFacturaEmitida>>(facturas);
-
-                return StatusCode(StatusCodes.Status200OK, new { data = vmFactura });
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al recuperar facturas", _logger);
-            }
-        }
-
-
-        [HttpGet]
-        public async Task<IActionResult> GetFactura(int idFacturaEmitida)
-        {
-            var gResponse = new GenericResponse<VMFacturaEmitida>();
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador]);
-                var factura = await _afipService.GetById(idFacturaEmitida);
-
-                var vmFactura = _mapper.Map<VMFacturaEmitida>(factura);
-
-                if (factura.Observaciones == null)
-                {
-                    vmFactura.QR = await _afipService.GenerateLinkAfipFactura(factura);
-                }
-
-                gResponse.State = true;
-                gResponse.Object = vmFactura;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al recuperar facturas", _logger, idFacturaEmitida);
-            }
-        }
-
-        [HttpDelete]
-        public async Task<IActionResult> NotaCredito(int idFacturaEmitida)
-        {
-            var gResponse = new GenericResponse<VMFacturaEmitida>();
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador]);
-
-                var credito = await _afipService.NotaCredito(idFacturaEmitida, user.UserName);
-
-                var vmFactura = _mapper.Map<VMFacturaEmitida>(credito);
-
-                if (credito.Observaciones == null)
-                {
-                    vmFactura.QR = await _afipService.GenerateLinkAfipFactura(credito);
-                }
-
-                gResponse.State = true;
-                gResponse.Object = vmFactura;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al recuperar facturas", _logger, idFacturaEmitida);
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Refacturar(int idFacturaEmitida, string cuil)
-        {
-            var gResponse = new GenericResponse<VMFacturaEmitida>();
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador]);
-
-                var factura = await _afipService.Refacturar(idFacturaEmitida, cuil, user.UserName);
-
-                var vmFactura = _mapper.Map<VMFacturaEmitida>(factura);
-
-                if (factura.Observaciones == null)
-                {
-                    vmFactura.QR = await _afipService.GenerateLinkAfipFactura(factura);
-                }
-
-                gResponse.State = true;
-                gResponse.Object = vmFactura;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al recuperar facturas", _logger, idFacturaEmitida);
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAjustesFacturacion()
-        {
-            var gResponse = new GenericResponse<VMAjustesFacturacion>();
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador]);
-
-                var vmAjusteWeb = _mapper.Map<VMAjustesFacturacion>(await _ajusteService.GetAjustesFacturacion(user.IdTienda));
-
-                gResponse.Object = vmAjusteWeb;
-                gResponse.State = true;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al recuperar ajuste de facturacion", _logger);
-            }
-        }
-
-
-        [HttpGet]
-        public async Task<IActionResult> GetValidateCertificate()
-        {
-            var gResponse = new GenericResponse<string>();
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Encargado]);
-                var ajustes = await _ajusteService.GetAjustesFacturacion(user.IdTienda);
-                var resp = _afipService.ValidateCertificate(ajustes);
-
-                gResponse.Object = resp;
-                gResponse.State = resp == string.Empty;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error en el certificado", _logger);
-            }
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> UpdateAjustesFacturacion([FromForm] IFormFile Certificado, [FromForm] string model)
-        {
-
-            GenericResponse<VMAjustesFacturacion> gResponse = new GenericResponse<VMAjustesFacturacion>();
-            try
-            {
-                var vmModel = JsonConvert.DeserializeObject<VMAjustesFacturacion>(model);
-                var user = ValidarAutorizacion([Roles.Administrador]);
-
-                if (Certificado != null)
-                {
-                    var oldAjustes = await _ajusteService.GetAjustesFacturacion(user.IdTienda);
-
-                    var pathFile = await _afipService.ReplaceCertificateAsync(Certificado, user.IdTienda, oldAjustes.CertificadoNombre);
-
-                    vmModel.CertificadoNombre = Certificado.FileName;
-                    if (!string.IsNullOrEmpty(vmModel.CertificadoPassword))
-                    {
-                        var cert = _afipService.GetCertificateAfipInformation(pathFile, vmModel.CertificadoPassword);
-                        if (cert != null)
-                        {
-                            vmModel.CertificadoFechaCaducidad = cert.FechaCaducidad;
-                            vmModel.CertificadoFechaInicio = cert.FechaInicio;
-                            vmModel.Cuit = Convert.ToInt64(cert.Cuil);
-                        }
-                    }
-                }
-
-                vmModel.ModificationUser = user.UserName;
-                vmModel.IdTienda = user.IdTienda;
-                var ajustes = await _ajusteService.EditFacturacion(_mapper.Map<AjustesFacturacion>(vmModel));
-
-                gResponse.State = true;
-                gResponse.Object = _mapper.Map<VMAjustesFacturacion>(ajustes);
-                gResponse.Message = string.Empty;
-
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al actualizar ajustes de facturación", _logger, model);
-            }
-
-            return StatusCode(StatusCodes.Status200OK, gResponse);
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> UpdateCertificateInformation([FromForm] IFormFile Certificado, [FromForm] string password)
-        {
-
-            GenericResponse<VMAjustesFacturacion> gResponse = new GenericResponse<VMAjustesFacturacion>();
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador]);
-                var vmModel = new VMAjustesFacturacion();
-
-                if (Certificado != null)
-                {
-
-                    var filePath = Path.Combine(Path.GetTempPath(), Certificado.FileName);
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await Certificado.CopyToAsync(stream);
-                    }
-
-                    vmModel.CertificadoNombre = Certificado.FileName;
-                    if (!string.IsNullOrEmpty(password))
-                    {
-                        var cert = _afipService.GetCertificateAfipInformation(filePath, password);
-                        if (cert != null)
-                        {
-                            vmModel.CertificadoFechaCaducidad = cert.FechaCaducidad;
-                            vmModel.CertificadoFechaInicio = cert.FechaInicio;
-                            vmModel.Cuit = Convert.ToInt64(cert.Cuil);
-                        }
-                    }
-
-                    if (System.IO.File.Exists(filePath))
-                    {
-                        System.IO.File.Delete(filePath);
-                    }
-                }
-
-                //vmModel.ModificationUser = user.UserName;
-                //vmModel.IdTienda = user.IdTienda;
-                //var ajustes = await _ajusteService.UpdateCertificateInfo(_mapper.Map<AjustesFacturacion>(vmModel));
-
-                gResponse.State = true;
-                gResponse.Object = _mapper.Map<VMAjustesFacturacion>(vmModel);
-                gResponse.Message = string.Empty;
-
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al recuperar informacion del certificado.", _logger);
-            }
-
-            return StatusCode(StatusCodes.Status200OK, gResponse);
-        }
+        //public IActionResult Proveedor()
+        //{
+        //    ValidarAutorizacion([Roles.Administrador]);
+        //    return ValidateSesionViewOrLogin();
+        //}
+
+        ///// <summary>
+        ///// Recupera proveedores para DataTable y Selects
+        ///// </summary>
+        ///// <returns></returns>
+        //[HttpGet]
+        //public async Task<IActionResult> GetProveedores(bool visionGlobal)
+        //{
+        //    var gResponse = new GenericResponse<List<VMProveedor>>();
+        //    try
+        //    {
+        //        var listProveedor = _mapper.Map<List<VMProveedor>>(await _proveedorService.List());
+        //        return StatusCode(StatusCodes.Status200OK, new { data = listProveedor });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al recuperar proveedores", _logger);
+        //    }
+        //}
+
+        //[HttpGet]
+        //public async Task<IActionResult> GetProveedoresConProductos()
+        //{
+
+        //    var gResponse = new GenericResponse<List<VMPedidosProveedor>>();
+        //    try
+        //    {
+        //        var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
+        //        var listProveedor = await _proveedorService.ListConProductos(user.IdTienda);
+
+        //        var list = listProveedor
+        //            .Select(p => new Proveedor
+        //            {
+        //                IdProveedor = p.IdProveedor,
+        //                Nombre = p.Nombre,
+        //                Products = p.Products.Select(prod => new Product
+        //                {
+        //                    IdProduct = prod.IdProduct,
+        //                    Description = prod.Description,
+        //                    CostPrice = prod.CostPrice,
+        //                    Stocks = prod.Stocks
+        //                                .Where(s => s.IdTienda == user.IdTienda)
+        //                                .Select(stock => new Stock
+        //                                {
+        //                                    IdStock = stock.IdStock,
+        //                                    StockActual = stock.StockActual
+        //                                }).ToList()
+        //                }).ToList()
+        //            })
+        //            .OrderBy(p => p.Nombre)
+        //            .ToList();
+
+        //        gResponse.State = true;
+        //        gResponse.Object = _mapper.Map<List<VMPedidosProveedor>>(list);
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al recuperar proveedores con productos para pedido", _logger);
+        //    }
+
+        //}
+
+        //[HttpPost]
+        //public async Task<IActionResult> CreateProveedor([FromBody] VMProveedor model)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(model);
+        //    }
+
+        //    var gResponse = new GenericResponse<VMProveedor>();
+        //    try
+        //    {
+        //        var usuario_creado = await _proveedorService.Add(_mapper.Map<Proveedor>(model));
+
+        //        gResponse.Object = _mapper.Map<VMProveedor>(usuario_creado);
+        //        gResponse.State = true;
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al crear proveedor", _logger, model);
+        //    }
+
+        //}
+
+        //[HttpPost]
+        //public async Task<IActionResult> RegistrarPagoProveedor([FromBody] VMProveedorMovimiento model)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(model);
+        //    }
+
+        //    var gResponse = new GenericResponse<VMProveedorMovimiento>();
+        //    try
+        //    {
+        //        var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
+        //        model.RegistrationUser = user.UserName;
+        //        model.RegistrationDate = TimeHelper.GetArgentinaTime();
+        //        model.idTienda = user.IdTienda;
+        //        var usuario_creado = await _proveedorService.Add(_mapper.Map<ProveedorMovimiento>(model));
+
+        //        model = _mapper.Map<VMProveedorMovimiento>(usuario_creado);
+
+        //        gResponse.State = true;
+        //        gResponse.Object = model;
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al crear pago a proveedor", _logger, model);
+        //    }
+
+        //}
+
+        ///// <summary>
+        ///// Recupera movimientos de proveedor para DataTable
+        ///// </summary>
+        ///// <param name="idProveedor"></param>
+        ///// <returns></returns>
+        //[HttpGet]
+        //public async Task<IActionResult> GetMovimientoProveedor(int idProveedor)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(idProveedor);
+        //    }
+        //    var gResponse = new GenericResponse<List<VMProveedorMovimiento>>();
+
+        //    try
+        //    {
+        //        var user = ValidarAutorizacion([Roles.Administrador]);
+
+        //        var listUsers = _mapper.Map<List<VMProveedorMovimiento>>(await _proveedorService.ListMovimientosProveedor(idProveedor, user.IdTienda));
+        //        return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al recuperar movimientos de proveedor", _logger, idProveedor);
+        //    }
+
+        //}
+
+        ///// <summary>
+        ///// Recupera movimientos de proveedores para DataTable
+        ///// </summary>
+        ///// <returns></returns>
+        //[HttpGet]
+        //public async Task<IActionResult> GetAllMovimientoProveedor(bool visionGlobal)
+        //{
+
+        //    var gResponse = new GenericResponse<List<VMProveedorMovimiento>>();
+        //    try
+        //    {
+        //        var user = ValidarAutorizacion([Roles.Administrador]);
+
+        //        var idtienda = visionGlobal ? 0 : user.IdTienda;
+
+        //        var listUsers = _mapper.Map<List<VMProveedorMovimiento>>(await _proveedorService.ListMovimientosProveedorForTablaDinamica(idtienda));
+        //        return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al recuperar pagos a proveedores", _logger);
+        //    }
+        //}
+
+        //[HttpGet]
+        //public async Task<IActionResult> GetProveedorTablaDinamica(bool visionGlobal)
+        //{
+
+        //    var gResponse = new GenericResponse<List<VMMovimientoProveedoresTablaDinamica>>();
+        //    try
+        //    {
+        //        var user = ValidarAutorizacion([Roles.Administrador]);
+        //        var idtienda = visionGlobal ? 0 : user.IdTienda;
+
+        //        var listUsers = _mapper.Map<List<VMMovimientoProveedoresTablaDinamica>>(await _proveedorService.ListMovimientosProveedorForTablaDinamica(idtienda));
+        //        gResponse.State = true;
+        //        gResponse.Object = listUsers;
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al recuperar pagos a proveedores para tabla dinamica", _logger);
+        //    }
+        //}
+
+        //[HttpPut]
+        //public async Task<IActionResult> UpdateProveedor([FromBody] VMProveedor vmUser)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(vmUser);
+        //    }
+
+
+        //    var gResponse = new GenericResponse<VMProveedor>();
+        //    try
+        //    {
+        //        var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
+        //        vmUser.ModificationUser = user.UserName;
+        //        var user_edited = await _proveedorService.Edit(_mapper.Map<Proveedor>(vmUser));
+
+        //        vmUser = _mapper.Map<VMProveedor>(user_edited);
+
+        //        gResponse.State = true;
+        //        gResponse.Object = vmUser;
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al actualizar proveedor", _logger, vmUser);
+        //    }
+
+        //}
+
+        //[HttpDelete]
+        //public async Task<IActionResult> DeleteProveedor(int idProveedor)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(idProveedor);
+        //    }
+
+
+        //    var gResponse = new GenericResponse<string>();
+        //    try
+        //    {
+        //        ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
+        //        gResponse.State = await _proveedorService.Delete(idProveedor);
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al eliminar proveedor", _logger, idProveedor);
+        //    }
+
+        //}
+
+
+        //[HttpPut]
+        //public async Task<IActionResult> CambioEstadoPagoProveedor(int idMovimiento)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(idMovimiento);
+        //    }
+
+
+        //    var gResponse = new GenericResponse<VMProveedor>();
+        //    try
+        //    {
+        //        ValidarAutorizacion([Roles.Administrador]);
+
+        //        _ = await _proveedorService.CambiarEstadoMovimiento(idMovimiento);
+
+        //        gResponse.State = true;
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al cambiar estrado de pago de pago de proveedor", _logger, idMovimiento.ToJson());
+        //    }
+
+        //}
+
+        //[HttpPut]
+        //public async Task<IActionResult> UpdatePagoProveedor([FromBody] VMProveedorMovimiento vmUser)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(vmUser);
+        //    }
+
+        //    var gResponse = new GenericResponse<VMProveedorMovimiento>();
+        //    try
+        //    {
+        //        var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
+        //        vmUser.ModificationUser = user.UserName;
+        //        var user_edited = await _proveedorService.Edit(_mapper.Map<ProveedorMovimiento>(vmUser));
+
+        //        vmUser = _mapper.Map<VMProveedorMovimiento>(user_edited);
+
+        //        gResponse.State = true;
+        //        gResponse.Object = vmUser;
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al actualizar pago de proveedor", _logger, vmUser);
+        //    }
+
+        //}
+
+        //[HttpDelete]
+        //public async Task<IActionResult> DeletePagoProveedor(int idPagoProveedor)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(idPagoProveedor);
+        //    }
+
+        //    var gResponse = new GenericResponse<string>();
+        //    try
+        //    {
+        //        ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
+        //        gResponse.State = await _proveedorService.DeleteProveedorMovimiento(idPagoProveedor);
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al eliminar pago de proveedor", _logger, idPagoProveedor);
+        //    }
+
+        //}
+
+        //public IActionResult Promociones()
+        //{
+        //    ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+        //    return ValidateSesionViewOrLogin();
+        //}
+
+        ///// <summary>
+        ///// Recupera promociones para DataTable
+        ///// </summary>
+        ///// <returns></returns>
+        //[HttpGet]
+        //public async Task<IActionResult> GetPromociones()
+        //{
+        //    var gResponse = new GenericResponse<List<VMPromocion>>();
+        //    try
+        //    {
+        //        var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
+        //        var listPromocion = _mapper.Map<List<VMPromocion>>(await _promocionService.List(user.IdTienda));
+        //        foreach (var p in listPromocion)
+        //        {
+        //            await SetStringPromocion(p);
+
+        //        }
+        //        return StatusCode(StatusCodes.Status200OK, new { data = listPromocion });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al recuperar promociones", _logger);
+        //    }
+
+        //}
+
+        //private async Task SetStringPromocion(VMPromocion p)
+        //{
+        //    var dias = string.Empty;
+        //    var producto = string.Empty;
+        //    var categoria = string.Empty;
+
+        //    if (p.IdProducto != null)
+        //    {
+        //        var prod = await _productService.Get(Convert.ToInt32(p.IdProducto));
+        //        p.PromocionString += $" [{string.Join(", ", prod.Description)}] ";
+        //        var operador = p.Operador == 0 ? "Igual a" : "Mayor o igual a";
+        //        p.PromocionString += $" [{operador} {p.CantidadProducto} {prod.TipoVenta}] ";
+        //    }
+
+        //    if (p.IdCategory != null && p.IdCategory.Any())
+        //    {
+        //        var catList = await _categoryService.GetMultiple(p.IdCategory);
+        //        p.PromocionString += " [" + string.Join(", ", catList.Select(_ => _.Description)) + "]";
+        //    }
+
+        //    if (p.Dias != null && p.Dias.Any())
+        //    {
+        //        var diasList = p.Dias.Select(_ => (Model.Enum.DiasSemana)_).ToList();
+        //        p.PromocionString += " [" + string.Join(", ", diasList.Select(_ => _.ToString())) + "]";
+        //    }
+        //    p.PromocionString += " -> ";
+        //    p.PromocionString += p.Precio != null ? $"Precio fijo: ${p.Precio}" : $"Precio al: {(int)p.Porcentaje}% ";
+        //}
+
+        //[HttpGet]
+        //public async Task<IActionResult> GetPromocionesActivas()
+        //{
+        //    var gResponse = new GenericResponse<List<VMPromocion>>();
+        //    try
+        //    {
+        //        var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
+
+        //        var listPromocion = _mapper.Map<List<VMPromocion>>(await _promocionService.Activas(user.IdTienda));
+
+        //        gResponse.State = true;
+        //        gResponse.Object = listPromocion;
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al recuperar promociones activas", _logger);
+        //    }
+        //}
+
+        //[HttpPost]
+        //public async Task<IActionResult> CreatePromociones([FromBody] VMPromocion model)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(model);
+        //    }
+
+
+        //    var gResponse = new GenericResponse<VMPromocion>();
+        //    try
+        //    {
+        //        var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
+        //        model.IdTienda = user.IdTienda;
+        //        var usuario_creado = await _promocionService.Add(_mapper.Map<Promocion>(model));
+
+        //        model = _mapper.Map<VMPromocion>(usuario_creado);
+
+        //        await SetStringPromocion(model);
+
+        //        gResponse.State = true;
+        //        gResponse.Object = model;
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al crear promocion", _logger, model);
+        //    }
+
+        //}
+
+        //[HttpPut]
+        //public async Task<IActionResult> UpdatePromociones([FromBody] VMPromocion vmUser)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(vmUser);
+        //    }
+
+
+        //    var gResponse = new GenericResponse<VMPromocion>();
+        //    try
+        //    {
+        //        ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
+        //        var user_edited = await _promocionService.Edit(_mapper.Map<Promocion>(vmUser));
+
+        //        vmUser = _mapper.Map<VMPromocion>(user_edited);
+
+        //        await SetStringPromocion(vmUser);
+        //        gResponse.State = true;
+        //        gResponse.Object = vmUser;
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al actualizar promocion", _logger, vmUser);
+        //    }
+
+        //}
+
+        //[HttpDelete]
+        //public async Task<IActionResult> DeletePromociones(int idPromocion)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(idPromocion);
+        //    }
+
+
+        //    var gResponse = new GenericResponse<string>();
+        //    try
+        //    {
+        //        ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
+        //        gResponse.State = await _promocionService.Delete(idPromocion);
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al eliminar promocion", _logger, idPromocion);
+        //    }
+
+        //}
+
+
+        //[HttpPut]
+        //public async Task<IActionResult> CambiarEstadoPromocion(int idPromocion)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(idPromocion);
+        //    }
+
+
+        //    var gResponse = new GenericResponse<VMPromocion>();
+        //    try
+        //    {
+        //        var resp = ValidarAutorizacion([Roles.Administrador]);
+
+        //        var user_edited = await _promocionService.CambiarEstado(idPromocion, resp.UserName);
+
+        //        var model = _mapper.Map<VMPromocion>(user_edited);
+        //        await SetStringPromocion(model);
+
+        //        gResponse.Object = model;
+        //        gResponse.State = true;
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al cambiar estado de promocion", _logger, idPromocion);
+        //    }
+
+        //}
+
+        //[HttpGet]
+        //public async Task<IActionResult> Ajuste()
+        //{
+        //    ValidarAutorizacion([Roles.Administrador]);
+        //    return ValidateSesionViewOrLogin();
+        //}
+
+        //[HttpGet]
+        //public async Task<IActionResult> GetAjusteWeb()
+        //{
+        //    var gResponse = new GenericResponse<VMAjustesWeb>();
+        //    try
+        //    {
+        //        var user = ValidarAutorizacion([Roles.Administrador]);
+
+        //        var vmAjusteWeb = _mapper.Map<VMAjustesWeb>(await _ajusteService.GetAjustesWeb());
+
+        //        gResponse.Object = vmAjusteWeb;
+        //        gResponse.State = true;
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al recuperar ajuste web", _logger);
+        //    }
+        //}
+
+        //[HttpGet]
+        //public async Task<IActionResult> GetAjuste()
+        //{
+        //    var gResponse = new GenericResponse<VMAjustes>();
+        //    try
+        //    {
+        //        var user = ValidarAutorizacion([Roles.Administrador]);
+
+        //        var vmAjuste = _mapper.Map<VMAjustes>(await _ajusteService.GetAjustes(user.IdTienda));
+
+        //        gResponse.Object = vmAjuste;
+        //        gResponse.State = true;
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al recuperar ajuste", _logger);
+        //    }
+        //}
+
+        //[HttpPut]
+        //public async Task<IActionResult> UpdateAjuste([FromForm] IFormFile Certificado, [FromForm] string modelFacturacion, [FromForm] string modelAjustes, [FromForm] string ModelWeb)
+        //{
+        //    var gResponse = new GenericResponse<string>();
+        //    try
+        //    {
+        //        var model = JsonConvert.DeserializeObject<VMAjustes>(modelAjustes);
+        //        var modelWeb = JsonConvert.DeserializeObject<VMAjustesWeb>(ModelWeb);
+        //        var vmModelFacturacion = JsonConvert.DeserializeObject<VMAjustesFacturacion>(modelFacturacion);
+
+        //        var user = ValidarAutorizacion([Roles.Administrador]);
+
+        //        model.ModificationUser = user.UserName;
+        //        model.IdTienda = user.IdTienda;
+        //        vmModelFacturacion.ModificationUser = user.UserName;
+        //        vmModelFacturacion.IdTienda = user.IdTienda;
+
+        //        modelWeb.ModificationUser = user.UserName;
+        //        modelWeb.IdTienda = user.IdTienda;
+
+        //        _ = await _ajusteService.EditWeb(_mapper.Map<AjustesWeb>(modelWeb));
+
+        //        _ = await _ajusteService.Edit(_mapper.Map<Ajustes>(model));
+        //        var pathFile = string.Empty;
+        //        if (Certificado != null)
+        //        {
+        //            var oldAjustes = await _ajusteService.GetAjustesFacturacion(user.IdTienda);
+
+        //            pathFile = await _afipService.ReplaceCertificateAsync(Certificado, user.IdTienda, oldAjustes.CertificadoNombre);
+
+        //            vmModelFacturacion.CertificadoNombre = Certificado.FileName;
+        //            if (!string.IsNullOrEmpty(vmModelFacturacion.CertificadoPassword))
+        //            {
+        //                var cert = _afipService.GetCertificateAfipInformation(pathFile, vmModelFacturacion.CertificadoPassword);
+        //                if (cert != null)
+        //                {
+        //                    vmModelFacturacion.CertificadoFechaCaducidad = cert.FechaCaducidad;
+        //                    vmModelFacturacion.CertificadoFechaInicio = cert.FechaInicio;
+        //                    vmModelFacturacion.Cuit = Convert.ToInt64(cert.Cuil);
+        //                }
+        //            }
+        //        }
+
+        //        _ = await _ajusteService.EditFacturacion(_mapper.Map<AjustesFacturacion>(vmModelFacturacion));
+
+        //        gResponse.State = true;
+        //        gResponse.Object = pathFile;
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al recuperar ajustes", _logger, model: null, ("ModelFacturacion", modelFacturacion), ("ModelAjustes", modelAjustes));
+        //    }
+        //}
+
+        ///// <summary>
+        ///// Recupera ajustes para saber aumento web
+        ///// </summary>
+        ///// <returns></returns>
+        //[HttpGet]
+        //public async Task<IActionResult> GetAjustesProductos()
+        //{
+        //    var gResponse = new GenericResponse<string>();
+        //    try
+        //    {
+        //        var ajuste = await _ajusteService.GetAjustesWeb();
+
+        //        gResponse.State = true;
+        //        gResponse.Object = ajuste.AumentoWeb.HasValue ? ajuste.AumentoWeb.Value.ToString("F0") : string.Empty;
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al recuperar aumento web", _logger);
+        //    }
+        //}
+
+        ///// <summary>
+        ///// Recupera ajustes
+        ///// </summary>
+        ///// <returns></returns>
+        //[HttpGet]
+        //public async Task<IActionResult> GetAjustesVentas()
+        //{
+        //    var gResponse = new GenericResponse<VMAjustesSale?>();
+        //    try
+        //    {
+        //        var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Encargado]);
+
+        //        var ajuste = await _ajusteService.GetAjustes(user.IdTienda);
+        //        var vmAjuste = _mapper.Map<VMAjustesSale>(ajuste);
+
+        //        vmAjuste.NeedControl = user.IdRol == (int)Roles.Administrador
+        //            ? false
+        //            : ajuste.ControlEmpleado ?? false;
+
+        //        vmAjuste.ListaPrecios = user.ListaPrecios;
+        //        var turno = await _turnoService.GetTurnoActual(user.IdTienda);
+
+        //        vmAjuste.ExisteTurno = turno != null;
+        //        gResponse.State = true;
+        //        gResponse.Object = vmAjuste;
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al recuperar ajustes", _logger);
+        //    }
+        //}
+
+        //[HttpPost]
+        //public async Task<IActionResult> ValidateSecurityCode(string encryptedCode)
+        //{
+        //    var gResponse = new GenericResponse<bool>();
+
+        //    try
+        //    {
+        //        var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Encargado]);
+
+        //        var ajuste = await _ajusteService.GetAjustes(user.IdTienda);
+
+        //        var codigo = ajuste.CodigoSeguridad != null ? ajuste.CodigoSeguridad : string.Empty;
+
+        //        var notific = new Notifications(user.UserName);
+        //        await _notificationService.Save(notific);
+
+        //        gResponse.State = true;
+        //        gResponse.Object = encryptedCode == codigo;
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al validar codigo de seguridad", _logger, encryptedCode);
+        //    }
+        //}
+
+        //[HttpGet]
+        //public async Task<IActionResult> GetAjustesFacturacion()
+        //{
+        //    var gResponse = new GenericResponse<VMAjustesFacturacion>();
+        //    try
+        //    {
+        //        var user = ValidarAutorizacion([Roles.Administrador]);
+
+        //        var vmAjusteWeb = _mapper.Map<VMAjustesFacturacion>(await _ajusteService.GetAjustesFacturacion(user.IdTienda));
+
+        //        gResponse.Object = vmAjusteWeb;
+        //        gResponse.State = true;
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al recuperar ajuste de facturacion", _logger);
+        //    }
+        //}
+
+
+        //[HttpGet]
+        //public async Task<IActionResult> GetValidateCertificate()
+        //{
+        //    var gResponse = new GenericResponse<string>();
+        //    try
+        //    {
+        //        var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Encargado]);
+        //        var ajustes = await _ajusteService.GetAjustesFacturacion(user.IdTienda);
+        //        var resp = _afipService.ValidateCertificate(ajustes);
+
+        //        gResponse.Object = resp;
+        //        gResponse.State = resp == string.Empty;
+        //        return StatusCode(StatusCodes.Status200OK, gResponse);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error en el certificado", _logger);
+        //    }
+        //}
+
+        //[HttpPut]
+        //public async Task<IActionResult> UpdateAjustesFacturacion([FromForm] IFormFile Certificado, [FromForm] string model)
+        //{
+
+        //    GenericResponse<VMAjustesFacturacion> gResponse = new GenericResponse<VMAjustesFacturacion>();
+        //    try
+        //    {
+        //        var vmModel = JsonConvert.DeserializeObject<VMAjustesFacturacion>(model);
+        //        var user = ValidarAutorizacion([Roles.Administrador]);
+
+        //        if (Certificado != null)
+        //        {
+        //            var oldAjustes = await _ajusteService.GetAjustesFacturacion(user.IdTienda);
+
+        //            var pathFile = await _afipService.ReplaceCertificateAsync(Certificado, user.IdTienda, oldAjustes.CertificadoNombre);
+
+        //            vmModel.CertificadoNombre = Certificado.FileName;
+        //            if (!string.IsNullOrEmpty(vmModel.CertificadoPassword))
+        //            {
+        //                var cert = _afipService.GetCertificateAfipInformation(pathFile, vmModel.CertificadoPassword);
+        //                if (cert != null)
+        //                {
+        //                    vmModel.CertificadoFechaCaducidad = cert.FechaCaducidad;
+        //                    vmModel.CertificadoFechaInicio = cert.FechaInicio;
+        //                    vmModel.Cuit = Convert.ToInt64(cert.Cuil);
+        //                }
+        //            }
+        //        }
+
+        //        vmModel.ModificationUser = user.UserName;
+        //        vmModel.IdTienda = user.IdTienda;
+        //        var ajustes = await _ajusteService.EditFacturacion(_mapper.Map<AjustesFacturacion>(vmModel));
+
+        //        gResponse.State = true;
+        //        gResponse.Object = _mapper.Map<VMAjustesFacturacion>(ajustes);
+        //        gResponse.Message = string.Empty;
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al actualizar ajustes de facturación", _logger, model);
+        //    }
+
+        //    return StatusCode(StatusCodes.Status200OK, gResponse);
+        //}
+
+        //[HttpPut]
+        //public async Task<IActionResult> UpdateCertificateInformation([FromForm] IFormFile Certificado, [FromForm] string password)
+        //{
+
+        //    GenericResponse<VMAjustesFacturacion> gResponse = new GenericResponse<VMAjustesFacturacion>();
+        //    try
+        //    {
+        //        var user = ValidarAutorizacion([Roles.Administrador]);
+        //        var vmModel = new VMAjustesFacturacion();
+
+        //        if (Certificado != null)
+        //        {
+
+        //            var filePath = Path.Combine(Path.GetTempPath(), Certificado.FileName);
+        //            using (var stream = new FileStream(filePath, FileMode.Create))
+        //            {
+        //                await Certificado.CopyToAsync(stream);
+        //            }
+
+        //            vmModel.CertificadoNombre = Certificado.FileName;
+        //            if (!string.IsNullOrEmpty(password))
+        //            {
+        //                var cert = _afipService.GetCertificateAfipInformation(filePath, password);
+        //                if (cert != null)
+        //                {
+        //                    vmModel.CertificadoFechaCaducidad = cert.FechaCaducidad;
+        //                    vmModel.CertificadoFechaInicio = cert.FechaInicio;
+        //                    vmModel.Cuit = Convert.ToInt64(cert.Cuil);
+        //                }
+        //            }
+
+        //            if (System.IO.File.Exists(filePath))
+        //            {
+        //                System.IO.File.Delete(filePath);
+        //            }
+        //        }
+
+        //        //vmModel.ModificationUser = user.UserName;
+        //        //vmModel.IdTienda = user.IdTienda;
+        //        //var ajustes = await _ajusteService.UpdateCertificateInfo(_mapper.Map<AjustesFacturacion>(vmModel));
+
+        //        gResponse.State = true;
+        //        gResponse.Object = _mapper.Map<VMAjustesFacturacion>(vmModel);
+        //        gResponse.Message = string.Empty;
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HandleException(ex, "Error al recuperar informacion del certificado.", _logger);
+        //    }
+
+        //    return StatusCode(StatusCodes.Status200OK, gResponse);
+        //}
     }
 }
 

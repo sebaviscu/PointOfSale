@@ -91,7 +91,7 @@ $(document).ready(function () {
 
         })
 
-    fetch("/Admin/GetProveedores")
+    fetch("/Proveedores/GetProveedores")
         .then(response => {
             return response.json();
         }).then(responseJson => {
@@ -939,7 +939,7 @@ $("#btnSavePagoProveedor").on("click", function () {
         model["facturaPendiente"] = document.querySelector('#cbxFacturaPendiente').checked;
     }
     else { // proveedor
-        url = "/Admin/RegistrarPagoProveedor";
+        url = "/Proveedores/RegistrarPagoProveedor";
         const inputs = $(".input-validate-proveedor").serializeArray();
         const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
 

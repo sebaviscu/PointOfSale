@@ -1,0 +1,202 @@
+﻿@{
+    ViewData["Title"] = "Promociones";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card card-default">
+            <div class="card-header card-header-border-bottom">
+                <div class="">
+                    <h4>Promociones</h4>
+                </div>
+                <div class="ms-auto bd-highlight">
+                    <button class="btn btn-success" id="btnNew">Nueva Promocion</button>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table id="tbData" class="table table-striped" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Nombre</th>
+                                    <th>Promocion</th>
+                                    <th>Estado</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Grid Modal -->
+<div class="modal fade" id="modalData" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalGridTitle">Detalle Promocion</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <input type="hidden" value="0" id="txtId">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-row">
+                                <div class="form-group col-sm-9">
+                                    <label for="txtNombre">Nombre</label>
+                                    <input type="text" class="form-control form-control-sm input-validate" id="txtNombre" name="Nombre">
+                                </div>
+                                <div class="form-group col-sm-3">
+                                    <label for="cboState">Estado</label>
+                                    <select class="form-control form-control-sm" id="cboState">
+                                        <option value="1">Activo</option>
+                                        <option value="0">Inactrivo</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-12">
+
+                                    <div class="card shadow">
+                                        <div class="card-header py-2">
+                                            <h4>Producto</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-row">
+                                                <div class="form-group col-sm-5">
+                                                    <label for="cboProducto">Producto</label>
+                                                    <select class="form-control" id="cboProducto" data-dropdown-parent="modalData"></select>
+                                                </div>
+                                                <div class="form-group col-sm-3">
+                                                    <label for="cboOperador">Operador</label>
+                                                    <select class="form-control form-control-sm" id="cboOperador">
+                                                        <option value="null"></option>
+                                                        <option value="0">Igual</option>
+                                                        <option value="1">Mayor a</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group col-sm-4">
+                                                    <label for="txtCantidad">Cantidad</label>
+                                                    <input type="number" class="form-control form-control-sm" id="txtCantidad">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-12">
+                                    <div class="card shadow">
+                                        <div class="card-header py-2">
+                                            <h4>Categoria</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-row">
+                                                <div class="form-group col-sm-12">
+                                                    <select class="form-control" id="cboCategoria" data-dropdown-parent="modalData"></select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-12">
+                                    <div class="card shadow">
+                                        <div class="card-header py-">
+                                            <h4>Dias</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-row">
+                                                <div class="form-group col-sm-12">
+                                                    <select class="form-control form-control-sm" id="cboDias" data-dropdown-parent="modalData"></select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-12">
+
+                                    <div class="card shadow">
+                                        <div class="card-header py-2">
+                                            <h4>Precio</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-row">
+                                                <div class="form-group col-sm-6">
+                                                    <label for="txtPrecio">Precio Fijo</label>
+                                                    <input type="number" class="form-control form-control-sm" id="txtPrecio">
+                                                </div>
+                                                <div class="form-group col-sm-6">
+                                                    <label for="txtPorcentaje">Porcentaje</label>
+                                                    <input type="number" class="form-control form-control-sm" id="txtPorcentaje">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="form-row" id="divModif">
+                                <div class="form-group col-sm-6">
+                                    <label for="txtModificado">Fecha Modificado</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtModificado" name="fechaModificado" readonly>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="txtModificadoUsuario">Por:</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtModificadoUsuario" name="usuarioModificado" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="btnSave">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    <script src="~/plugins/select2/js/select2.js"></script>
+    <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
+    <script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
+    <script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
+
+
+    <script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
+    <script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
+    <script src="~/plugins/data-tables/jszip.min.js"></script>
+    <script src="~/plugins/data-tables/buttons.html5.min.js"></script>
+    <script src="~/plugins/data-tables/buttons.print.min.js"></script>
+
+    <script src="~/js/views/Promociones.js"></script>
+}
+
+
+@section StylesPOS{
+    <link href="~/plugins/select2/css/select2.min.css" rel="stylesheet">
+
+    <style>
+        .select2 {
+            width: 100% !important;
+        }
+
+    </style>
+}

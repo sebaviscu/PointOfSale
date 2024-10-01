@@ -41,7 +41,7 @@ $(document).ready(function () {
             }
         });
 
-    fetch("/Admin/GetPromocionesActivas")
+    fetch("/Inventory/GetPromocionesActivas")
         .then(response => {
             return response.json();
         }).then(responseJson => {
@@ -55,7 +55,7 @@ $(document).ready(function () {
 
         });
 
-    fetch("/Admin/GetAjustesVentas")
+    fetch("/Ajustes/GetAjustesVentas")
         .then(response => {
             removeLoading();
             return response.json();
@@ -1364,7 +1364,7 @@ async function validateCode() {
             }
 
             try {
-                const response = await fetch(`/Admin/ValidateSecurityCode?encryptedCode=${value}`, {
+                const response = await fetch(`/Ajustes/ValidateSecurityCode?encryptedCode=${value}`, {
                     method: 'POST'
                 });
                 const data = await response.json();

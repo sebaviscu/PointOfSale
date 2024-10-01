@@ -32,8 +32,8 @@ insert into Menu([description],idMenuParent,controller,pageAction,isActive) valu
 ('Productos',2,'Inventory','Products',1), --10
 ('Reporte Ventas',4,'Sales','SalesHistory',1), --11
 ('Clientes',6,'Admin','Cliente',1), --12
-('Proveedores',6,'Admin','Proveedor',1), --13
-('Promociones',2,'Admin','Promociones',1), --14
+('Proveedores',6,'Proveedores','Index',1), --13
+('Promociones',2,'Inventory','Index',1), --14
 ('Gastos',6,'Gastos','Gastos',1), --15
 ('Turnos',6,'Turno','Turno',1), --16
 ('Ventas Web',7,'Shop','VentaWeb',1), --17
@@ -41,15 +41,14 @@ insert into Menu([description],idMenuParent,controller,pageAction,isActive) valu
 ('Reporte Productos',4,'Reports','ProductsReport',1), --19
 ('Notificaciones',6,'Notification','Notification',1), --20
 ('Pedidos',2,'Pedido','Pedido',1), --21
-('Ajustes',1,'Admin','Ajuste',1), --22
+('Ajustes',1,'Ajustes','Index',1), --22
 ('Libro de IVA',4,'Reports','LibroIva',1), -- 23
 ('Stock',2,'Inventory','Stock',1), -- 24
-('Facturacion',6,'Admin','Facturacion',1), -- 25
+('Facturacion',6,'Facturacion','Index',1), -- 25
 ('Movimientos de Caja',6,'MovimientoCaja','Index',1), -- 26
 ('Tablas',1,'Tablas','Index',1), -- 27
 ('Reporte Precios',4,'Reports','PreciosReport',1) --28
 
-select * from Menu
 go
 
 UPDATE Menu SET idMenuParent = idMenu where idMenuParent is null
@@ -165,8 +164,6 @@ WHERE IdTienda = 1;
 GO
 
 
-go
-
 insert into AjustesWeb(MontoEnvioGratis,AumentoWeb,Whatsapp,Lunes,Martes,Miercoles,Jueves,Viernes,Sabado,Domingo,Feriado,Facebook,Instagram,Tiktok,
 Twitter,Youtube, direccion, telefono,nombre) 
 values (0,0,'','','','','','','','','','','','','','','','','Mercado')
@@ -206,4 +203,4 @@ insert into FormatosVenta (formato, valor, estado) values
 ('750 gr', 750,1),
 ('1 kg', 1000,1)
 
-select * from FormatosVenta
+

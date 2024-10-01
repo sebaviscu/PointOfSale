@@ -38,6 +38,13 @@ namespace PointOfSale.Business.Services
         {
             return await CreateTicket(ajustes, sale.RegistrationDate.Value, sale.Total.Value, sale.DetailSales, sale.IdTienda.Value, null, null);
         }
+
+        public async Task<TicketModel> TicketTest(List<DetailSale> detailSales,Ajustes ajustes)
+        {
+            var total = detailSales.Any() ? detailSales.Sum(_ => _.Total).Value : 0m;
+            return await CreateTicket(ajustes, TimeHelper.GetArgentinaTime(), total, detailSales, ajustes.IdTienda, null, null);
+        }
+
         public void ImprimirTiket(string impresora, string line)
         {
             PrinterModel.SendStringToPrinter(impresora, line);
@@ -68,7 +75,6 @@ namespace PointOfSale.Business.Services
             Ticket.TextoIzquierda($"Hora: {registrationDate.ToShortTimeString()}");
             Ticket.LineasGuion();
             Ticket.TextoIzquierda("");
-            Ticket.TextoIzquierda("123456789012345678901234567890");
 
             IsMultiplesFormasPago(detailSales, total);
 

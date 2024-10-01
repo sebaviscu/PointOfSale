@@ -17,12 +17,14 @@ namespace PointOfSale.Controllers
         private readonly ITablaService _tablaService;
         private readonly IMapper _mapper;
         private readonly ILogger<TablasController> _logger;
+        private readonly ITypeDocumentSaleService _typeDocumentSaleService;
 
-        public TablasController(ITablaService tablaService, IMapper mapper, ILogger<TablasController> logger)
+        public TablasController(ITablaService tablaService, IMapper mapper, ILogger<TablasController> logger, ITypeDocumentSaleService typeDocumentSaleService)
         {
             _tablaService = tablaService;
             _mapper = mapper;
             _logger = logger;
+            _typeDocumentSaleService = typeDocumentSaleService;
         }
 
         public IActionResult Index()
@@ -135,6 +137,79 @@ namespace PointOfSale.Controllers
             catch (Exception ex)
             {
                 return HandleException(ex, "Error al borrar categoria.", _logger, idFormatosVenta);
+            }
+        }
+
+        /// <summary>
+        /// Recupero las formas de pago para DataTable
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetTipoVenta()
+        {
+
+            List<VMTypeDocumentSale> listUsers = _mapper.Map<List<VMTypeDocumentSale>>(await _typeDocumentSaleService.List());
+            return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateTipoVenta([FromBody] VMTypeDocumentSale model)
+        {
+            var gResponse = new GenericResponse<VMTypeDocumentSale>();
+            try
+            {
+                ValidarAutorizacion([Roles.Administrador]);
+
+                var usuario_creado = await _typeDocumentSaleService.Add(_mapper.Map<TypeDocumentSale>(model));
+
+                gResponse.Object = _mapper.Map<VMTypeDocumentSale>(usuario_creado);
+                gResponse.State = true;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al crear forma de pago", _logger, model);
+            }
+
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateTipoVenta([FromBody] VMTypeDocumentSale model)
+        {
+
+            GenericResponse<VMTypeDocumentSale> gResponse = new GenericResponse<VMTypeDocumentSale>();
+            try
+            {
+                ValidarAutorizacion([Roles.Administrador]);
+
+                TypeDocumentSale user_edited = await _typeDocumentSaleService.Edit(_mapper.Map<TypeDocumentSale>(model));
+
+                gResponse.Object = _mapper.Map<VMTypeDocumentSale>(user_edited);
+                gResponse.State = true;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al actualizar forma de pago", _logger, model);
+            }
+
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteTipoVenta(int idTypeDocumentSale)
+        {
+
+            GenericResponse<string> gResponse = new GenericResponse<string>();
+            try
+            {
+                ValidarAutorizacion([Roles.Administrador]);
+
+                gResponse.State = await _typeDocumentSaleService.Delete(idTypeDocumentSale);
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al eliminar forma de pago", _logger, idTypeDocumentSale);
             }
         }
     }

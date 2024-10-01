@@ -47,7 +47,7 @@ $(document).ready(function () {
     tableDataProveedor = $("#tbData").DataTable({
         responsive: true,
         "ajax": {
-            "url": "/Admin/GetProveedores",
+            "url": "/Proveedores/GetProveedores",
             "type": "GET",
             "datatype": "json"
         },
@@ -98,7 +98,7 @@ $(document).ready(function () {
     cargarTablaGastosProveedores(false);
     cargarTablaDinamicaProveedores(false);
 
-    fetch("/Admin/GetProveedores")
+    fetch("/Proveedores/GetProveedores")
         .then(response => {
             return response.json();
         }).then(responseJson => {
@@ -148,7 +148,7 @@ $(document).ready(function () {
 
                     $(".showSweetAlert").LoadingOverlay("show")
 
-                    fetch(`/Admin/CambioEstadoPagoProveedor?idMovimiento=${data.idProveedorMovimiento}`, {
+                    fetch(`/Proveedores/CambioEstadoPagoProveedor?idMovimiento=${data.idProveedorMovimiento}`, {
                         method: "PUT"
                     }).then(response => {
                         $(".showSweetAlert").LoadingOverlay("hide")
@@ -228,7 +228,7 @@ const openModalProveedor = (model = BASIC_MODEL_PROVEEDOR) => {
     if (tableDataMovimientos != null)
         tableDataMovimientos.destroy();
 
-    let url = "/Admin/GetMovimientoProveedor?idProveedor=" + model.idProveedor;
+    let url = "/Proveedores/GetMovimientoProveedor?idProveedor=" + model.idProveedor;
 
     tableDataMovimientos = $("#tbMovimientos").DataTable({
         responsive: true,
@@ -311,7 +311,7 @@ $("#btnSave").on("click", function () {
 
 
     if (model.idProveedor == 0) {
-        fetch("/Admin/CreateProveedor", {
+        fetch("/Proveedores/CreateProveedor", {
             method: "POST",
             headers: { 'Content-Type': 'application/json;charset=utf-8' },
             body: JSON.stringify(model)
@@ -334,7 +334,7 @@ $("#btnSave").on("click", function () {
         })
     } else {
 
-        fetch("/Admin/UpdateProveedor", {
+        fetch("/Proveedores/UpdateProveedor", {
             method: "PUT",
             headers: { 'Content-Type': 'application/json;charset=utf-8' },
             body: JSON.stringify(model)
@@ -393,7 +393,7 @@ $("#btnSavePago").on("click", function () {
 
 
     if (model.idProveedorMovimiento == 0) {
-        fetch("/Admin/RegistrarPagoProveedor", {
+        fetch("/Proveedores/RegistrarPagoProveedor", {
             method: "POST",
             headers: { 'Content-Type': 'application/json;charset=utf-8' },
             body: JSON.stringify(model)
@@ -417,7 +417,7 @@ $("#btnSavePago").on("click", function () {
 
     } else {
 
-        fetch("/Admin/UpdatePagoProveedor", {
+        fetch("/Proveedores/UpdatePagoProveedor", {
             method: "PUT",
             headers: { 'Content-Type': 'application/json;charset=utf-8' },
             body: JSON.stringify(model)
@@ -481,7 +481,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
 
                 $(".showSweetAlert").LoadingOverlay("show")
 
-                fetch(`/Admin/DeleteProveedor?idProveedor=${data.idProveedor}`, {
+                fetch(`/Proveedores/DeleteProveedor?idProveedor=${data.idProveedor}`, {
                     method: "DELETE"
                 }).then(response => {
                     $(".showSweetAlert").LoadingOverlay("hide")
@@ -506,7 +506,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
 
 function cargarTablaGastosProveedores(isGlobal) {
 
-    let url = `/Admin/GetAllMovimientoProveedor?visionGlobal=${isGlobal}`;
+    let url = `/Proveedores/GetAllMovimientoProveedor?visionGlobal=${isGlobal}`;
 
     if ($.fn.DataTable.isDataTable('#tbDataGastos')) {
         $('#tbDataGastos').DataTable().clear().destroy();  // Destruye la instancia existente
@@ -617,7 +617,7 @@ $("#tbDataGastos tbody").on("click", ".btn-delete-pago", function () {
 
                 $(".showSweetAlert").LoadingOverlay("show")
 
-                fetch(`/Admin/DeletePagoProveedor?idPagoProveedor=${data.idProveedorMovimiento}`, {
+                fetch(`/Proveedores/DeletePagoProveedor?idPagoProveedor=${data.idProveedorMovimiento}`, {
                     method: "DELETE"
                 }).then(response => {
                     $(".showSweetAlert").LoadingOverlay("hide")
@@ -695,7 +695,7 @@ $('#txtImporte').keyup(function () {
 
 function cargarTablaDinamicaProveedores(isGlobal) {
 
-    let url = `/Admin/GetProveedorTablaDinamica?visionGlobal=${isGlobal}`;
+    let url = `/Proveedores/GetProveedorTablaDinamica?visionGlobal=${isGlobal}`;
     $("#wdr-component").LoadingOverlay("show")
 
     fetch(url, {

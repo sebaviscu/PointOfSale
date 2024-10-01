@@ -107,7 +107,7 @@ $(document).ready(function () {
     tableDataPromociones = $("#tbData").DataTable({
         responsive: true,
         "ajax": {
-            "url": "/Admin/GetPromociones",
+            "url": "/Inventory/GetPromociones",
             "type": "GET",
             "datatype": "json"
         },
@@ -159,7 +159,7 @@ $(document).ready(function () {
         } else {
             row = $(this).closest('tr');
         }
-        var data = tableDataPromociones.row(row).data();
+        let data = tableDataPromociones.row(row).data();
 
         if (data == undefined) {
             data = tableDataPromociones.row(row).data();
@@ -182,7 +182,7 @@ $(document).ready(function () {
 
                     $(".showSweetAlert").LoadingOverlay("show")
 
-                    fetch(`/Admin/CambiarEstadoPromocion?idPromocion=${data.idPromocion}`, {
+                    fetch(`/Inventory/CambiarEstadoPromocion?idPromocion=${data.idPromocion}`, {
                         method: "PUT"
                     }).then(response => {
                         $(".showSweetAlert").LoadingOverlay("hide")
@@ -210,7 +210,7 @@ function formatResults(data) {
     if (data.loading)
         return data.text;
 
-    var container = $(
+    let container = $(
         `<table width="90%">
             <tr>
                 <td style="width:60px">
@@ -321,7 +321,7 @@ $("#btnSave").on("click", function () {
     $("#modalData").find("div.modal-content").LoadingOverlay("show")
 
     if (model.idPromocion == 0) {
-        fetch("/Admin/CreatePromociones", {
+        fetch("/Inventory/CreatePromociones", {
             method: "POST",
             headers: { 'Content-Type': 'application/json;charset=utf-8' },
             body: JSON.stringify(model)
@@ -344,7 +344,7 @@ $("#btnSave").on("click", function () {
         })
     } else {
 
-        fetch("/Admin/UpdatePromociones", {
+        fetch("/Inventory/UpdatePromociones", {
             method: "PUT",
             headers: { 'Content-Type': 'application/json;charset=utf-8' },
             body: JSON.stringify(model)
@@ -409,7 +409,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
 
                 $(".showSweetAlert").LoadingOverlay("show")
 
-                fetch(`/Admin/DeletePromociones?idPromocion=${data.idPromocion}`, {
+                fetch(`/Inventory/DeletePromociones?idPromocion=${data.idPromocion}`, {
                     method: "DELETE"
                 }).then(response => {
                     $(".showSweetAlert").LoadingOverlay("hide")

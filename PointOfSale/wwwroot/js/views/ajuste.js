@@ -63,7 +63,7 @@ let isHealthyAjustes = false;
 $(document).ready(function () {
     showLoading();
 
-    fetch("/Admin/GetAjuste")
+    fetch("/Ajustes/GetAjuste")
         .then(response => {
             return response.json();
         }).then(responseJson => {
@@ -106,7 +106,7 @@ $(document).ready(function () {
             }
         })
 
-    fetch("/Admin/GetAjusteWeb")
+    fetch("/Ajustes/GetAjusteWeb")
         .then(response => {
             return response.json();
         }).then(responseJson => {
@@ -140,7 +140,7 @@ $(document).ready(function () {
             }
         })
 
-    fetch(`/Admin/GetAjustesFacturacion`)
+    fetch(`/Ajustes/GetAjustesFacturacion`)
         .then(response => {
             return response.json();
         }).then(responseJson => {
@@ -258,7 +258,7 @@ $("#btnCargarCertificado").on("click", function () {
 
     showLoading();
 
-    fetch("/Admin/UpdateCertificateInformation", {
+    fetch("/Ajustes/UpdateCertificateInformation", {
         method: "PUT",
         body: formData
     }).then(response => {
@@ -383,7 +383,7 @@ $("#btnSave").on("click", function () {
 
     showLoading();
 
-    fetch("/Admin/UpdateAjuste", {
+    fetch("/Ajustes/UpdateAjuste", {
         method: "PUT",
         body: formData
     }).then(response => {
@@ -442,3 +442,28 @@ function formatDateToDDMMYYYY(isoDate) {
 
     return `${day}/${month}/${year}`;
 }
+
+$("#btnPruebaTicket").on("click", function () {
+    showLoading()
+    fetch(`/Ajustes/PrintTicketTests`,)
+        .then(response => {
+            return response.json();
+        }).then(responseJson => {
+            removeLoading();
+            if (responseJson.state) {
+                swal("Exitoso!", "El ticket de prueba se está imprimiendo", "success");
+
+                if (isHealthyAjustes &&
+                    responseJson.object.nombreImpresora != null
+                    && responseJson.object.nombreImpresora != ''
+                    && responseJson.object.ticket != null
+                    && responseJson.object.ticket != '') {
+
+                    printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora, responseJson.object.imagesTicket);
+                }
+
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+        })
+})

@@ -232,7 +232,7 @@ $(document).ready(function () {
     tableDataTipoVenta = $("#tbFormaPago").DataTable({
         responsive: true,
         "ajax": {
-            "url": "/Admin/GetTipoVenta",
+            "url": "/Tablas/GetTipoVenta",
             "type": "GET",
             "datatype": "json"
         },
@@ -662,7 +662,7 @@ $("#btnSaveFormaPago").on("click", function () {
 
 
     if (model.idTypeDocumentSale == 0) {
-        fetch("/Admin/CreateTipoVenta", {
+        fetch("/Tablas/CreateTipoVenta", {
             method: "POST",
             headers: { 'Content-Type': 'application/json;charset=utf-8' },
             body: JSON.stringify(model)
@@ -685,7 +685,7 @@ $("#btnSaveFormaPago").on("click", function () {
         })
     } else {
 
-        fetch("/Admin/UpdateTipoVenta", {
+        fetch("/Tablas/UpdateTipoVenta", {
             method: "PUT",
             headers: { 'Content-Type': 'application/json;charset=utf-8' },
             body: JSON.stringify(model)
@@ -751,7 +751,7 @@ $("#tbFormaPago tbody").on("click", ".btn-delete-forma-pago", function () {
 
                 $(".showSweetAlert").LoadingOverlay("show")
 
-                fetch(`/Admin/DeleteTipoVenta?idTypeDocumentSale=${data.idTypeDocumentSale}`, {
+                fetch(`/Tablas/DeleteTipoVenta?idTypeDocumentSale=${data.idTypeDocumentSale}`, {
                     method: "DELETE"
                 }).then(response => {
                     $(".showSweetAlert").LoadingOverlay("hide")

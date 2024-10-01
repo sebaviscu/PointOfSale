@@ -34,7 +34,7 @@ $(document).ready(function () {
     tableDataFactura = $("#tbData").DataTable({
         responsive: true,
         "ajax": {
-            "url": "/Admin/GetFacturas",
+            "url": "/Facturacion/GetFacturas",
             "type": "GET",
             "datatype": "json"
         },
@@ -207,7 +207,7 @@ $("#tbData tbody").on("click", ".btn-ver", function () {
     const data = tableDataFactura.row(rowSelectedFactura).data();
     showLoading();
 
-    fetch(`/Admin/GetFactura?idFacturaEmitida=${data.idFacturaEmitida}`,)
+    fetch(`/Facturacion/GetFactura?idFacturaEmitida=${data.idFacturaEmitida}`,)
         .then(response => {
             return response.json();
         }).then(responseJson => {
@@ -269,7 +269,7 @@ $("#btnRefacturar").on("click", function (event) {
 
                 $(".showSweetAlert").LoadingOverlay("show")
 
-                fetch(`/Admin/Refacturar?idFacturaEmitida=${idFact}&cuil=${cuil}`, {
+                fetch(`/Facturacion/Refacturar?idFacturaEmitida=${idFact}&cuil=${cuil}`, {
                     method: "POST"
                 }).then(response => {
                     $(".showSweetAlert").LoadingOverlay("hide")
@@ -319,7 +319,7 @@ $("#btnAnularFactura").on("click", function (event) {
 
                 $(".showSweetAlert").LoadingOverlay("show")
 
-                fetch(`/Admin/NotaCredito?idFacturaEmitida=${idFact}`, {
+                fetch(`/Facturacion/NotaCredito?idFacturaEmitida=${idFact}`, {
                     method: "DELETE"
                 }).then(response => {
                     $(".showSweetAlert").LoadingOverlay("hide")
