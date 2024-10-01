@@ -124,7 +124,7 @@ namespace PointOfSale.Controllers
                 _ = await _ajusteService.EditFacturacion(_mapper.Map<AjustesFacturacion>(vmModelFacturacion));
 
                 gResponse.State = true;
-                gResponse.Object = pathFile;
+
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)

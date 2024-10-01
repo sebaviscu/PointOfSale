@@ -392,8 +392,8 @@ $("#btnSave").on("click", function () {
     }).then(responseJson => {
         if (responseJson.state) {
 
-            swal("Exitoso!", "Ajustes fué modificado \n Direccion fisica del certificado: " + responseJson.object, "success");
-            //location.reload()
+            swal("Exitoso!", "Ajustes fué modificado", "success");
+            location.reload()
 
         } else {
             swal("Lo sentimos", responseJson.message, "error");
