@@ -15,7 +15,7 @@ namespace AFIP.Facturacion.Services
 {
     public class FileStorageService : IFileStorageService
     {
-        private static readonly string pathProyect = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).FullName, "AFIP.Facturacion");
+        private static readonly string pathProyect = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Certificados");
 
         public FileStorageService()
         {
@@ -23,7 +23,7 @@ namespace AFIP.Facturacion.Services
         }
         public async Task<string> ReplaceCertificateAsync(IFormFile file, int idTienda, string? oldCertificateName)
         {
-            var filePath = Path.Combine(pathProyect, "Certificados", idTienda.ToString() + "_Tienda");
+            var filePath = Path.Combine(pathProyect, idTienda.ToString() + "_Tienda");
 
             await DeleteFileIfExistsAsync(filePath, oldCertificateName);
 
@@ -111,8 +111,7 @@ namespace AFIP.Facturacion.Services
                 throw new Exception($"La tienda no tiene un certificado guardado.");
             }
 
-            // Construye la ruta completa del certificado
-            var certificadoPath = Path.Combine(pathProyect, "Certificados", ajustesFacturacion.IdTienda.ToString() + "_Tienda", ajustesFacturacion.CertificadoNombre);
+            var certificadoPath = Path.Combine(pathProyect, ajustesFacturacion.IdTienda.ToString() + "_Tienda", ajustesFacturacion.CertificadoNombre);
 
             return certificadoPath;
         }
