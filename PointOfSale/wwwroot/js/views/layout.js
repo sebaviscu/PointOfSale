@@ -283,9 +283,7 @@ $("#btnSaveMovimientoCaja").on("click", function () {
 
     let importe = parseFloat($("#txtImporteMovimientoCaja").val());
     if ($("#cboTipoRazonMovimiento").val() == "0" && importe > 0) {
-        const msg = "Si está ingresando un 'Egreso', el importe debe ser negativo";
-        toastr.warning(msg, "");
-        return;
+        importe = importe * -1;
     }
 
     const model = structuredClone(BASIC_MODEL_MOVIMIENTIO_CAJA);

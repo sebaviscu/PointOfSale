@@ -1582,7 +1582,7 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateAjuste([FromForm] IFormFile Certificado, [FromForm] string modelFacturacion, [FromForm] string modelAjustes, [FromForm] string ModelWeb)
         {
-            GenericResponse<VMAjustes> gResponse = new GenericResponse<VMAjustes>();
+            var gResponse = new GenericResponse<string>();
             try
             {
                 var model = JsonConvert.DeserializeObject<VMAjustes>(modelAjustes);
@@ -1599,15 +1599,15 @@ namespace PointOfSale.Controllers
                 modelWeb.ModificationUser = user.UserName;
                 modelWeb.IdTienda = user.IdTienda;
 
-                var edited_AjusteWeb = await _ajusteService.EditWeb(_mapper.Map<AjustesWeb>(modelWeb));
+                _ = await _ajusteService.EditWeb(_mapper.Map<AjustesWeb>(modelWeb));
 
-                var edited_Ajuste = await _ajusteService.Edit(_mapper.Map<Ajustes>(model));
-
+                _ = await _ajusteService.Edit(_mapper.Map<Ajustes>(model));
+                var pathFile = string.Empty;
                 if (Certificado != null)
                 {
                     var oldAjustes = await _ajusteService.GetAjustesFacturacion(user.IdTienda);
 
-                    var pathFile = await _afipService.ReplaceCertificateAsync(Certificado, user.IdTienda, oldAjustes.CertificadoNombre);
+                    pathFile = await _afipService.ReplaceCertificateAsync(Certificado, user.IdTienda, oldAjustes.CertificadoNombre);
 
                     vmModelFacturacion.CertificadoNombre = Certificado.FileName;
                     if (!string.IsNullOrEmpty(vmModelFacturacion.CertificadoPassword))
@@ -1622,9 +1622,10 @@ namespace PointOfSale.Controllers
                     }
                 }
 
-                var ajustesFact = await _ajusteService.EditFacturacion(_mapper.Map<AjustesFacturacion>(vmModelFacturacion));
+                _ = await _ajusteService.EditFacturacion(_mapper.Map<AjustesFacturacion>(vmModelFacturacion));
 
                 gResponse.State = true;
+                gResponse.Object = pathFile;
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)

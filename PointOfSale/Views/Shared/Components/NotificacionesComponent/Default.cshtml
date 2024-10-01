@@ -20,8 +20,8 @@
         <ul class="dropdown-menu dropdown-menu-right" style="width: fit-content;border-color: lightgray;">
             @foreach (var n in Model)
             {
-                <li class="dropdown-header" style="padding: 0px;width: max-content;margin: 0;">
-                    <div class="d-inline-block">
+                <li class="dropdown-header" style="padding: 0px;margin: 0;">
+                    <div class="d-inline-block" style="width: 100%">
                         <a class="notificacion" id="@n.IdNotifications" accion="@n.Accion" href="#">
                             @n.Descripcion
                             <small class="pt-1">@n.RegistrationDate</small>
@@ -34,7 +34,7 @@
             {
                 <li style="padding: 0px;width: max-content;margin: 0;">
                     <a id="limpiarNotificaciones" href="#">
-                        <i class="mdi mdi-delete"></i>Limpiar todo
+                        <i class="mdi mdi-delete me-1"></i>Limpiar todo
                     </a>
                 </li>
             }
