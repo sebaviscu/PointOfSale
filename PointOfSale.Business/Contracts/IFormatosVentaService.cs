@@ -2,7 +2,7 @@
 
 namespace PointOfSale.Business.Contracts
 {
-    public interface ITablaService : IServiceBase<FormatosVenta>
+    public interface IFormatosVentaService : IServiceBase<FormatosVenta>
     {
 
 

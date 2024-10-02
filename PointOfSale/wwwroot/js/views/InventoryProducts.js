@@ -2,10 +2,11 @@
 let rowSelectedProduct;
 let edicionMasiva = false;
 let aProductos = [];
-let aumentoWeb = 0;
 let cantProductosImportar = 0;
 let tagSelector;
+let comodin1Selector, comodin2Selector, comodin3Selector;
 let redondeoToFix = 0;
+let ajustesweb;
 
 const BASIC_MODEL_PRODUCTOS = {
     idProduct: 0,
@@ -207,16 +208,21 @@ $(document).ready(function () {
             }
         })
 
-    fetch("/Ajustes/GetAjustesProductos")
+    fetch("/Ajustes/GetAjustesWeb")
         .then(response => {
             return response.json();
         }).then(responseJson => {
 
             if (responseJson.state) {
 
-                $("#txtAumento").val(responseJson.object);
-                $("#txtAumentoMasivo").val(responseJson.object);
-                aumentoWeb = responseJson.object;
+                $("#txtAumento").val(responseJson.object.aumentoWeb);
+                $("#txtAumentoMasivo").val(responseJson.object.aumentoWeb);
+                ajustesWeb = responseJson.object;
+
+                comodin1Selector = manejarComodinSelector(ajustesWeb.habilitarComodin1, 'Comodin1', ajustesWeb.nombreComodin1, 1);
+                comodin2Selector = manejarComodinSelector(ajustesWeb.habilitarComodin2, 'Comodin2', ajustesWeb.nombreComodin2, 2);
+                comodin3Selector = manejarComodinSelector(ajustesWeb.habilitarComodin3, 'Comodin3', ajustesWeb.nombreComodin3, 3);
+
             } else {
                 swal("Lo sentimos", responseJson.message, "error");
             }
@@ -265,6 +271,42 @@ function cargarSelect2Tags() {
         });
 }
 
+function manejarComodinSelector(habilitar, idComodin, nombreComodin, lovType) {
+    const divComodin = `#div${idComodin}`;
+    const labelComodin = `#${idComodin}Label`;
+    const selectorComodin = `#${idComodin}Selector`;
+
+    if (habilitar) {
+        $(divComodin).show();                      // Mostrar el div del comodín
+        $(labelComodin).text(nombreComodin);       // Cambiar el texto del label
+
+        // Verificar si el selector existe en el DOM
+        if ($(selectorComodin).length) {
+            const selector = new Choices(selectorComodin, {
+                removeItemButton: true,
+                shouldSort: false,
+                duplicateItemsAllowed: false
+            });
+
+            // Realizar el fetch para obtener los datos del lovType correspondiente
+            fetch(`/Lov/GetAllActive?lovType=${lovType}`)
+                .then(response => response.json())
+                .then(data => {
+                    const comodinData = data.listObject.map(com => ({
+                        value: com.idLov,
+                        label: `${com.descripcion}`
+                    }));
+                    selector.setChoices(comodinData, 'value', 'label', false);
+                });
+
+            return selector;  // Retorna el selector para asignarlo a la variable adecuada
+        } else {
+            console.error(`Elemento ${selectorComodin} no encontrado en el DOM`);
+        }
+    } else {
+        $(divComodin).hide();  // Ocultar el div si no está habilitado
+    }
+}
 
 $('#cboTipoVenta').change(function () {
     let selectedValue = $(this).val();
@@ -1100,9 +1142,9 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                     }
                     $(".showSweetAlert").LoadingOverlay("hide")
                 })
-                .catch((error) => {
-                    $(".showSweetAlert").LoadingOverlay("hide")
-                })
+                    .catch((error) => {
+                        $(".showSweetAlert").LoadingOverlay("hide")
+                    })
             }
         });
 })
@@ -1315,7 +1357,7 @@ function cargarTabla(productosFiltrados) {
         }));
         $tr.append($('<td>').text(`$ ${priceWeb}`).addClass('editable').attr({
             'data-profit': producto.porcentajeProfit,
-            'data-web': aumentoWeb,
+            'data-web': ajustesWeb.aumentoWeb,
             'data-iva': producto.iva,
             'contenteditable': true,
             'inputmode': 'numeric',

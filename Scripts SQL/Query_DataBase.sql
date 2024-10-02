@@ -456,6 +456,12 @@ direccion varchar(50) null,
 telefono varchar(50) null,
 nombre varchar(50) null,
 habilitarWeb BIT NULL,
+NombreComodin1 varchar(150) null,
+HabilitarComodin1 BIT NULL,
+NombreComodin2 varchar(150) null,
+HabilitarComodin2 BIT NULL,
+NombreComodin3 varchar(150) null,
+HabilitarComodin3 BIT NULL,
 [modificationDate] [datetime] null,
 [modificationUser] varchar(50) null
 )
@@ -504,6 +510,7 @@ DireccionFacturacion VARCHAR(200) NULL,
 FechaInicioActividad DATETIME NULL,
 NombreTitular VARCHAR(70) NULL,
 idTienda INT NOT NULL,
+IsProdEnvironment BIT not null,
 modificationDate DATETIME NULL,
 modificationUser VARCHAR(50) NULL,
 CONSTRAINT FK_AjustesFacturacion_Tienda FOREIGN KEY (idTienda)
@@ -607,6 +614,15 @@ CREATE TABLE ProductTags (
     FOREIGN KEY (TagId) REFERENCES Tags(IdTag) ON DELETE CASCADE
 );
 
+CREATE TABLE Lov (
+    IdLov INT PRIMARY KEY IDENTITY(1,1),
+	descripcion varchar(50) NOT NULL,
+	estado bit NOT NULL,
+    LovType INT NOT NULL,
+	[registrationDate] datetime not null,
+	[modificationDate] [datetime] null,
+	[modificationUser] varchar(50) null
+);
 
 --select * from turno
 

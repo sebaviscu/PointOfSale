@@ -95,7 +95,7 @@ public class Program
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<IMovimientoCajaService, MovimientoCajaService>();
             builder.Services.AddScoped<ITagService, TagService>();
-            builder.Services.AddScoped<ITablaService, TablaService>();
+            builder.Services.AddScoped<IFormatosVentaService, FormatosVentaService>();
             builder.Services.AddScoped<ILovService, LovService>();
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 

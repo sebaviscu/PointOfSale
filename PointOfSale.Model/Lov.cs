@@ -11,6 +11,9 @@ namespace PointOfSale.Model
 
         public LovType LovType { get; set; }
 
+        public DateTime RegistrationDate { get; set; }
+        public DateTime? ModificationDate { get; set; }
+        public string? ModificationUser { get; set; }
     }
 
 }

@@ -15,9 +15,9 @@ namespace PointOfSale.Business.Contracts
 
         Task<T> Edit(T entity);
 
-        Task<List<T>> List();
+        IQueryable<T> List();
 
-        Task<List<T>> ListActive();
+        IQueryable<T> ListActive();
 
         Task<IQueryable<T>> IncludeDetails(bool incluideDetails, params Expression<Func<T, object>>[] propertySelectors);
     }

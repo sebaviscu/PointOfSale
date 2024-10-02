@@ -14,10 +14,6 @@
 
 }
 <style>
-    .select-font{
-        border-color: #a1a5ad;
-    }
-
     .small-row {
         font-size: 12px;
         height: 30px;
@@ -90,7 +86,7 @@
                     @* General *@
                     <div class="tab-pane active" id="simple-tabpanel-0" role="tabpanel" aria-labelledby="simple-tab-0">
 
-                        <div class="col-md-12 row">
+                        <div class="row">
                             <div class="col-sm-4">
                                 <div class="card shadow">
                                     <div class="card-header py-3" style="background-color: #ebe6e6;">
@@ -246,43 +242,19 @@
                                                             <div class="form-group">
                                                                 <label for="txtEncabezado1">Encabezado 1</label><span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="El tamaño de la fuente de este encabezado, es mayor a los demas"></span>
                                                                 <div>
-                                                                    <input type="text" class="form-control form-control-sm" id="txtEncabezado1" name="Encabezado 1">
+                                                                    <input type="text" class="form-control form-control-sm" id="txtEncabezado1" name="Encabezado 1" maxlength="22">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">
-                                                                <div class="d-flex justify-content-between">
-                                                                    <label for="txtEncabezado2">Encabezado 2</label>
-                                                                    <div class="sm-4">
-                                                                        <small>Tamaño</small>
-                                                                        <select class="select-font">
-                                                                            <option value="0">8</option>
-                                                                            <option value="1">9</option>
-                                                                            <option value="2">10</option>
-                                                                            <option value="3">12</option>
-                                                                            <option value="3">14</option>
-                                                                            <option value="3">18</option>
-                                                                            <option value="3">20</option>
-                                                                        </select>
-                                                                        <small>Estilo</small>
-                                                                        <select class="select-font">
-                                                                            <option value="0">Normal</option>
-                                                                            <option value="1">Negrita</option>
-                                                                            <option value="3">Italic</option>
-                                                                            <option value="2">Subrayado</option>
-                                                                            <option value="4">Tachado</option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-
-
+                                                                <label for="txtEncabezado2">Encabezado 2</label>
                                                                 <div>
-                                                                    <input type="text" class="form-control form-control-sm" id="txtEncabezado2" name="Encabezado 2">
+                                                                    <input type="text" class="form-control form-control-sm" id="txtEncabezado2" name="Encabezado 2" maxlength="27">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">
                                                                 <label for="txtEncabezado3">Encabezado 3</label>
                                                                 <div>
-                                                                    <input type="text" class="form-control form-control-sm" id="txtEncabezado3" name="Encabezado 3">
+                                                                    <input type="text" class="form-control form-control-sm" id="txtEncabezado3" name="Encabezado 3" maxlength="27">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -290,19 +262,19 @@
                                                             <div class="form-group">
                                                                 <label for="txtPie1">Pie 1</label>
                                                                 <div>
-                                                                    <input type="text" class="form-control form-control-sm" id="txtPie1" name="Pie 1">
+                                                                    <input type="text" class="form-control form-control-sm" id="txtPie1" name="Pie 1" maxlength="30">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">
                                                                 <label for="txtPie2">Pie 2</label>
                                                                 <div>
-                                                                    <input type="text" class="form-control form-control-sm" id="txtPie2" name="Pie 2">
+                                                                    <input type="text" class="form-control form-control-sm" id="txtPie2" name="Pie 2" maxlength="30">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">
                                                                 <label for="txtPie3">Pie 3</label>
                                                                 <div>
-                                                                    <input type="text" class="form-control form-control-sm" id="txtPie3" name="Pie 3">
+                                                                    <input type="text" class="form-control form-control-sm" id="txtPie3" name="Pie 3" maxlength="30">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -367,7 +339,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-1">
                                         <div class="form-group">
                                             <label for="txtAumento">Aumento</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Porcentaje que se le aplicará al precio de los productos para mostrar en la web"></span>
                                             <div class="input-group input-group-sm">
@@ -378,11 +350,56 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <div class="d-flex justify-content-start">
+                                                <label for="txtComodin1">Nombre Comodin 1</label>
+                                                <div class="form-group ms-5" style="margin: 0;">
+                                                    <div class="form-check form-switch text-center">
+                                                        <input class="form-check-input" type="checkbox" role="switch" id="switchHabilitarComodin1">
+                                                        <label class="form-check-label" for="switchHabilitarComodin1" style="font-size: large;">Habilitar</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <input type="text" class="form-control form-control-sm" id="txtComodin1" name="comodin 1">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <div class="d-flex justify-content-start">
+                                                <label for="txtComodin2">Nombre Comodin 2</label>
+                                                <div class="form-group ms-5" style="margin: 0;">
+                                                    <div class="form-check form-switch text-center">
+                                                        <input class="form-check-input" type="checkbox" role="switch" id="switchHabilitarComodin2">
+                                                        <label class="form-check-label" for="switchHabilitarComodin2" style="font-size: large;">Habilitar</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <input type="text" class="form-control form-control-sm" id="txtComodin2" name="comodin 2">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <div class="d-flex justify-content-start">
+                                                <label for="txtComodin3">Nombre Comodin 3</label>
+                                                <div class="form-group ms-5" style="margin: 0;">
+                                                    <div class="form-check form-switch text-center">
+                                                        <input class="form-check-input" type="checkbox" role="switch" id="switchHabilitarComodin3">
+                                                        <label class="form-check-label" for="switchHabilitarComodin3" style="font-size: large;">Habilitar</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <input type="text" class="form-control form-control-sm" id="txtComodin3" name="comodin 3">
+                                        </div>
+                                    </div>
+                                    
+
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-6">
+                            <div class="col-sm-3">
                                 <div class="form-group" style="margin-bottom:0px;">
                                     <label>Horario</label>
                                 </div>
@@ -451,7 +468,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-6">
+                            <div class="col-sm-3">
                                 <div class="form-group" style="margin-bottom:0px">
                                     <label>Redes Sociales</label>
                                 </div>
@@ -603,6 +620,16 @@
                                         <div class="form-group col-sm-3">
                                             <label for="txtInicioActividad">Inicio de la Actividad</label>
                                             <input type="date" class="form-control form-control-sm input-validate-facturacion" id="txtInicioActividad" name="InicioActividad">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 row">
+                                        <div class="col-sm-3 text-left " style="align-content: end;">
+                                            <div class="form-group">
+                                                <div class="form-check form-switch text-center">
+                                                    <input class="form-check-input" type="checkbox" role="switch" id="switchIsProdEnvironment">
+                                                    <label class="form-check-label" for="switchIsProdEnvironment" style="font-size: large;">Entorno Produccion</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Habilita / Deshabilita el entorno de homologacion para pruebas"></span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

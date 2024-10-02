@@ -4,13 +4,17 @@ namespace PointOfSale.Models
 {
     public class VMLov
     {
-        public int LovId { get; set; }
-        public string Descripcion { get; set; }
+        public int? IdLov { get; set; }
+        public string? Descripcion { get; set; }
 
-        public bool Estado { get; set; }
+        public bool? Estado { get; set; }
 
-        public LovType LovType { get; set; }
+        public LovType? LovType { get; set; }
 
-        public string LovTypeString => LovType.ToString();
+        public string? LovTypeString => LovType.HasValue ? LovType.ToString() : string.Empty;
+
+        public DateTime? RegistrationDate { get; set; }
+        public DateTime? ModificationDate { get; set; }
+        public string? ModificationUser { get; set; }
     }
 }

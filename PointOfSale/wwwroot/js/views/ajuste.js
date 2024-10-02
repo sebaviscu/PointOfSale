@@ -39,7 +39,13 @@ const BASIC_MODEL_AJUSTE_WEB = {
     twitter: "",
     tiktok: "",
     youtube: "",
-    habilitarWeb: true
+    habilitarWeb: true,
+    nombreComodin1: "",
+    nombreComodin2: "",
+    nombreComodin3: "",
+    habilitarComodin1: false,
+    habilitarComodin2: false,
+    habilitarComodin3: false
 }
 
 
@@ -55,7 +61,8 @@ const BASIC_MODEL_AJUSTES_FACTURACION = {
     certificadoNombre: "",
     nombreTitular: "",
     ingresosBurutosNro: "",
-    direccionFacturacion: ""
+    direccionFacturacion: "",
+    isProdEnvironment: false
 }
 
 
@@ -135,6 +142,13 @@ $(document).ready(function () {
 
                 document.getElementById('switchHabilitarWeb').checked = model.habilitarWeb;
 
+                document.getElementById('switchHabilitarComodin1').checked = model.habilitarComodin1;
+                document.getElementById('switchHabilitarComodin2').checked = model.habilitarComodin2;
+                document.getElementById('switchHabilitarComodin3').checked = model.habilitarComodin3;
+                $("#txtComodin1").val(model.nombreComodin1);
+                $("#txtComodin2").val(model.nombreComodin2);
+                $("#txtComodin3").val(model.nombreComodin3);
+
             } else {
                 swal("Lo sentimos", responseJson.message, "error");
             }
@@ -161,6 +175,8 @@ $(document).ready(function () {
                 $("#txtNombreTitular").val(model.nombreTitular);
                 $("#txtIIBB").val(model.ingresosBurutosNro);
                 $("#txtDireccionFacturacion").val(model.direccionFacturacion);
+
+                document.getElementById('switchIsProdEnvironment').checked = model.isProdEnvironment;
 
                 if (model.fechaInicioActividad != null) {
                     let fecha = model.fechaInicioActividad.split('T')[0];
@@ -331,6 +347,17 @@ $("#btnSave").on("click", function () {
     let checkboxSwitchHabilitarWeb = document.getElementById('switchHabilitarWeb');
     modelWeb["habilitarWeb"] = checkboxSwitchHabilitarWeb.checked;
 
+    modelWeb["nombreComodin1"] = $("#txtComodin1").val();
+    modelWeb["nombreComodin2"] = $("#txtComodin2").val();
+    modelWeb["nombreComodin3"] = $("#txtComodin3").val();
+
+    let habilitarComodin1 = document.getElementById('switchHabilitarComodin1');
+    modelWeb["habilitarComodin1"] = habilitarComodin1.checked;
+    let habilitarComodin2 = document.getElementById('switchHabilitarComodin2');
+    modelWeb["habilitarComodin2"] = habilitarComodin2.checked;
+    let habilitarComodin3 = document.getElementById('switchHabilitarComodin3');
+    modelWeb["habilitarComodin3"] = habilitarComodin3.checked;
+
     const model = structuredClone(BASIC_MODEL_AJUSTE);
     model["idAjuste"] = parseInt($("#txtId").val());
 
@@ -372,6 +399,9 @@ $("#btnSave").on("click", function () {
     modelFacturacion["direccionFacturacion"] = $("#txtDireccionFacturacion").val();
     modelFacturacion["fechaInicioActividad"] = $("#txtInicioActividad").val();
     modelFacturacion["certificadoPassword"] = $("#txtContraseñaCertificado").val();
+
+    let checkboxSwitchIsProdEnvironment = document.getElementById('switchIsProdEnvironment');
+    modelFacturacion["isProdEnvironment"] = checkboxSwitchIsProdEnvironment.checked;
 
     const inputCertificado = document.getElementById('fileCertificado');
 

@@ -1,4 +1,5 @@
-﻿using PointOfSale.Business.Contracts;
+﻿using Microsoft.EntityFrameworkCore;
+using PointOfSale.Business.Contracts;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
 using System;
@@ -11,52 +12,48 @@ using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services
 {
-    public class LovService : ILovService
+    public class LovService : ServiceBase<Lov>, ILovService
     {
-        private readonly IGenericRepository<Lov> _repository;
 
+        public LovService(IGenericRepository<Lov> genericRepository) : base(genericRepository)
+        {
+        }
 
         public async Task<List<Lov>> GetLovByType(LovType lovType)
         {
-            var query = await _repository.Query(_=>_.LovType == lovType);
-            return query.ToList();
+            var list = base.List().Where(_ => _.LovType == lovType);
+            return await list.ToListAsync();
+        }
+
+        public async Task<List<Lov>> GetLovActiveByType(LovType lovType)
+        {
+            var listActive = base.ListActive().Where(_ => _.LovType == lovType);
+            return await listActive.ToListAsync();
+        }
+
+        public async Task<Lov?> GetById(int idLov)
+        {
+            return await _repository.First(_=>_.IdLov == idLov);
         }
 
         public async Task<Lov> Add(Lov entity)
         {
-            var Lov_created = await _repository.Add(entity);
-            if (Lov_created.IdLov == 0)
-                throw new TaskCanceledException("Lov no se pudo crear.");
+            var Lov_created = await base.Add(entity);
 
             return Lov_created;
         }
 
         public async Task<Lov> Edit(Lov entity)
         {
-            var Lov_edit = await _repository.First(_ => _.IdLov == entity.IdLov);
-
-            if (Lov_edit == null)
-                throw new TaskCanceledException("El Lov no existe");
-
-            Lov_edit.Descripcion = entity.Descripcion;
-            Lov_edit.Estado = entity.Estado;
-
-            await _repository.EditAsync(Lov_edit);
-            await _repository.SaveChangesAsync();
+            var Lov_edit = await base.Edit(entity);
 
             return Lov_edit;
         }
 
         public async Task<bool> Delete(int idLov)
         {
-            var entity = await _repository.Get(c => c.IdLov == idLov);
-
-            if (entity == null)
-                throw new TaskCanceledException("El Lov no existe");
-
-            return await _repository.Delete(entity);
+            return await base.Delete(idLov);
         }
-
 
     }
 }

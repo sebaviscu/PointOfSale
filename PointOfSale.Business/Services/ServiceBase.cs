@@ -31,12 +31,22 @@ namespace PointOfSale.Business.Services
 
         public async Task<bool> Delete(int id)
         {
+            // Crear una expresión para comparar el Id dinámicamente
+            var parameter = Expression.Parameter(typeof(T), "e");
+            var property = Expression.Property(parameter, "Id" + typeof(T).Name);
+            var idValueExpression = Expression.Constant(id);
+            var equalExpression = Expression.Equal(property, idValueExpression);
+
+            var lambda = Expression.Lambda<Func<T, bool>>(equalExpression, parameter);
+
+            // Buscar la entidad en la base de datos
             var entityFound = await _repository.QuerySimple()
-                .FirstOrDefaultAsync(e => (int)e.GetType().GetProperty("Id" + typeof(T).Name).GetValue(e) == id);
+                .FirstOrDefaultAsync(lambda);  // Usar la expresión generada dinámicamente
 
             if (entityFound == null)
                 throw new TaskCanceledException(typeof(T).Name + " no existe.");
 
+            // Eliminar la entidad encontrada
             bool response = await _repository.Delete(entityFound);
             return response;
         }
@@ -44,6 +54,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<T> Edit(T entity)
         {
+            // Obtener la propiedad "Id{T}" dinámicamente
             var idProperty = entity.GetType().GetProperty("Id" + typeof(T).Name);
 
             if (idProperty == null)
@@ -51,23 +62,36 @@ namespace PointOfSale.Business.Services
 
             var idValue = (int)idProperty.GetValue(entity);
 
-            // Realiza la búsqueda directamente en la base de datos
+            // Crear una expresión para comparar el Id dinámicamente
+            var parameter = Expression.Parameter(typeof(T), "e");
+            var property = Expression.Property(parameter, "Id" + typeof(T).Name);
+            var idValueExpression = Expression.Constant(idValue);
+            var equalExpression = Expression.Equal(property, idValueExpression);
+
+            var lambda = Expression.Lambda<Func<T, bool>>(equalExpression, parameter);
+
+            // Buscar la entidad en la base de datos
             var entityFound = await _repository.QuerySimple()
-                .FirstOrDefaultAsync(e => (int)e.GetType().GetProperty("Id" + typeof(T).Name).GetValue(e) == idValue);
+                .FirstOrDefaultAsync(lambda);  // Usar la expresión generada dinámicamente
 
             if (entityFound == null)
                 throw new TaskCanceledException(typeof(T).Name + " no existe.");
 
-            // Actualiza las propiedades de la entidad encontrada
-            foreach (var property in entity.GetType().GetProperties())
+            // Actualizar las propiedades de la entidad encontrada
+            foreach (var propertyInfo in entity.GetType().GetProperties())
             {
-                if (property.CanWrite)
+                if(propertyInfo.Name.ToLower() == "registrationdate")
                 {
-                    property.SetValue(entityFound, property.GetValue(entity));
+                    continue;
+                }
+
+                if (propertyInfo.CanWrite)
+                {
+                    propertyInfo.SetValue(entityFound, propertyInfo.GetValue(entity));
                 }
             }
 
-            // Realiza la edición en el repositorio
+            // Realizar la edición en el repositorio
             bool response = await _repository.Edit(entityFound);
 
             if (!response)
@@ -76,25 +100,20 @@ namespace PointOfSale.Business.Services
             return entityFound;
         }
 
-
-        public async Task<List<T>> List()
+        public IQueryable<T> List()
         {
-            var query = await _repository.Query();
-            return query.ToList();
+            return _repository.QuerySimple();
         }
 
-        public async Task<List<T>> ListActive()
+        public IQueryable<T> ListActive()
         {
             var estadoProperty = typeof(T).GetProperty("Estado");
 
             if (estadoProperty == null)
                 throw new InvalidOperationException("La entidad no tiene la propiedad 'Estado'.");
-
-            var query = await _repository.Query(e => (bool)EF.Property<bool>(e, estadoProperty.Name));
-
-            return await query.ToListAsync();
+            var query = _repository.QuerySimple();
+            return query.Where(e => (bool)EF.Property<bool>(e, estadoProperty.Name));
         }
-
 
         public async Task<IQueryable<T>> IncludeDetails(bool incluideDetails, params Expression<Func<T, object>>[] propertySelectors)
         {

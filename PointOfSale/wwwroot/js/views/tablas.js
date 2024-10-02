@@ -11,6 +11,13 @@ let tableTags;
 let tableRazonMovimientoCaja;
 let rowSelectedRazonMovimientoCaja;
 
+let rowSelectedComodin1;
+let tableComodin1;
+let rowSelectedComodin2;
+let tableComodin2;
+let rowSelectedComodin3;
+let tableComodin3;
+
 const BASIC_MODEL_RAZON_MOVIMIENTIO_CAJA = {
     idRazonMovimientoCaja: 0,
     descripcion: '',
@@ -40,7 +47,17 @@ const BASIC_MODEL_TIPO_DE_GASTOS = {
     descripcion: ""
 }
 
+const BASIC_MODEL_LOV = {
+    idLov: 0,
+    descripcion: "",
+    estado: 1,
+    registrationDate: null,
+    modificationDate: null,
+    modificationUser: null
+}
+
 $(document).ready(function () {
+
 
     tableDataCategory = $("#tbDataCategoria").DataTable({
         responsive: true,
@@ -344,7 +361,102 @@ $(document).ready(function () {
             }, 'pageLength'
         ]
     });
+
+
+    fetch("/Ajustes/GetAjustesWeb")
+        .then(response => {
+            return response.json();
+        })
+        .then(responseJson => {
+            if (responseJson.state) {
+                const ajustes = responseJson.object;
+
+                manejarComodin(ajustes.habilitarComodin1, 'Comodin1', ajustes.nombreComodin1, 1);
+                manejarComodin(ajustes.habilitarComodin2, 'Comodin2', ajustes.nombreComodin2, 2);
+                manejarComodin(ajustes.habilitarComodin3, 'Comodin3', ajustes.nombreComodin3, 3);
+
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+        });
 })
+
+function manejarComodin(habilitar, idComodin, nombreComodin, lovType) {
+    if (habilitar) {
+        $(`#tab${idComodin}`).show();
+        $(`#v-${idComodin}-tab`).text(nombreComodin);
+        $(`#btnNew${idComodin}`).text("Nuevo " + nombreComodin);
+        $(`#title${idComodin}`).text(nombreComodin);
+        $(`#titleModal${idComodin}`).text("Detalle " + nombreComodin);
+
+        switch (idComodin) {
+            case 'Comodin1':
+                tableComodin1 = cargarTablaComodin(lovType, `tbData${idComodin}`, `btn-edit-${idComodin}`, `btn-delete-${idComodin}`);
+                editComodin(idComodin, tableComodin1);
+                deleteComodin(idComodin, tableComodin1);
+                break;
+            case 'Comodin2':
+                tableComodin2 = cargarTablaComodin(lovType, `tbData${idComodin}`, `btn-edit-${idComodin}`, `btn-delete-${idComodin}`);
+                editComodin(idComodin, tableComodin2);
+                deleteComodin(idComodin, tableComodin2);
+                break;
+            case 'Comodin3':
+                tableComodin3 = cargarTablaComodin(lovType, `tbData${idComodin}`, `btn-edit-${idComodin}`, `btn-delete-${idComodin}`);
+                editComodin(idComodin, tableComodin3);
+                deleteComodin(idComodin, tableComodin3);
+                break;
+        }
+    } else {
+        $(`#tab${idComodin}`).hide();
+    }
+}
+function cargarTablaComodin(lovType, tableId, btnEditClass, btnDeleteClass) {
+    return $(`#${tableId}`).DataTable({
+        responsive: true,
+        "ajax": {
+            "url": `/Lov/GetDataTable?lovType=${lovType}`,
+            "type": "GET",
+            "datatype": "json"
+        },
+        "columns": [
+            {
+                "data": "idLov",
+                "visible": false,
+                "searchable": false
+            },
+            { "data": "descripcion" },
+            {
+                "data": "estado", render: function (data) {
+                    return data == 1 ? '<span class="badge badge-info">Activo</span>' : '<span class="badge badge-danger">Inactivo</span>';
+                }
+            },
+            {
+                "data": null,
+                "render": function (data, type, row) {
+                    let editButton = `<button class="btn btn-primary ${btnEditClass} btn-sm me-2"><i class="mdi mdi-pencil"></i></button>`;
+                    let deleteButton = `<button class="btn btn-danger ${btnDeleteClass} btn-sm"><i class="mdi mdi-trash-can"></i></button>`;
+                    return row.idTypeDocumentSale == 1 ? editButton : editButton + deleteButton;
+                },
+                "orderable": false,
+                "searchable": false,
+                "width": "80px"
+            }
+        ],
+        order: [[1, 2, "desc"]],
+        dom: "Bfrtip",
+        buttons: [
+            {
+                text: 'Exportar Excel',
+                extend: 'excelHtml5',
+                title: '',
+                filename: 'Reporte',
+                exportOptions: {
+                    columns: [1, 2, 3]
+                }
+            }, 'pageLength'
+        ]
+    });
+}
 
 
 $('#tbTipoGastos').on('click', '.btn-delete-tipo-gastos', function () {
@@ -1210,3 +1322,324 @@ $('#tbRazonMovCaja').on('click', '.btn-delete-razon-mov-caja', function () {
             }
         });
 });
+
+
+//const openModalComodin1 = (model = BASIC_MODEL_LOV) => {
+//    $("#txtIdComodin1").val(model.idLov);
+//    $("#txtDescriptionComodin1").val(model.descripcion);
+//    $("#cboStateComodin1").val(model.estado ? 1 : 0);
+
+//    if (model.modificationUser == null)
+//        document.getElementById("divModifComodin1").style.display = 'none';
+//    else {
+//        document.getElementById("divModifComodin1").style.display = '';
+//        var dateTimeModif = new Date(model.modificationDate);
+
+//        $("#txtModificadoComodin1").val(dateTimeModif.toLocaleString());
+//        $("#txtModificadoUsuarioComodin1").val(model.modificationUser);
+//    }
+
+//    $("#modalDataComodin1").modal("show")
+//}
+
+//$("#btnNewComodin1").on("click", function () {
+//    openModalComodin1()
+//})
+
+//$("#btnSaveComodin1").on("click", function () {
+//    const inputs = $("input.input-validate-comodin1").serializeArray();
+//    const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
+
+//    if (inputs_without_value.length > 0) {
+//        const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
+//        toastr.warning(msg, "");
+//        $(`input[name="${inputs_without_value[0].name}"]`).focus();
+//        return;
+//    }
+
+//    const model = structuredClone(BASIC_MODEL_LOV);
+//    model["idLov"] = parseInt($("#txtIdComodin1").val());
+//    model["descripcion"] = $("#txtDescriptionComodin1").val();
+//    model["estado"] = $("#cboStateComodin1").val() == "1" ? true : false;
+//    model["lovType"] = 1;
+
+
+//    $("#modalDataComodin1").find("div.modal-content").LoadingOverlay("show")
+
+
+//    if (model.idLov == 0) {
+//        fetch("/Lov/Create", {
+//            method: "POST",
+//            headers: { 'Content-Type': 'application/json;charset=utf-8' },
+//            body: JSON.stringify(model)
+//        }).then(response => {
+//            $("#modalDataComodin1").find("div.modal-content").LoadingOverlay("hide")
+//            return response.json();
+//        }).then(responseJson => {
+
+//            if (responseJson.state) {
+
+//                tableComodin1.row.add(responseJson.object).draw(false);
+//                $("#modalDataComodin1").modal("hide");
+//                swal("Exitoso!", "Se ha creada", "success");
+
+//            } else {
+//                swal("Lo sentimos", responseJson.message, "error");
+//            }
+//        }).catch((error) => {
+//            $("#modalDataComodin1").find("div.modal-content").LoadingOverlay("hide")
+//        })
+//    }
+//    else {
+
+//        fetch("/Lov/Update", {
+//            method: "PUT",
+//            headers: { 'Content-Type': 'application/json;charset=utf-8' },
+//            body: JSON.stringify(model)
+//        }).then(response => {
+//            $("#modalDataComodin1").find("div.modal-content").LoadingOverlay("hide")
+//            return response.json();
+//        }).then(responseJson => {
+//            if (responseJson.state) {
+
+//                tableComodin1.row(rowSelectedComodin1).data(responseJson.object).draw(false);
+//                rowSelectedComodin1 = null;
+//                $("#modalDataComodin1").modal("hide");
+//                swal("Exitoso!", "Ha sido modificado", "success");
+
+//            } else {
+//                swal("Lo sentimos", responseJson.message, "error");
+//            }
+//        }).catch((error) => {
+//            $("#modalDataComodin1").find("div.modal-content").LoadingOverlay("hide")
+//        })
+//    }
+
+//})
+
+//$("#tbDataComodin1 tbody").on("click", ".btn-edit-comodin1", function () {
+
+//    if ($(this).closest('tr').hasClass('child')) {
+//        rowSelectedComodin1 = $(this).closest('tr').prev();
+//    } else {
+//        rowSelectedComodin1 = $(this).closest('tr');
+//    }
+
+//    const data = tableComodin1.row(rowSelectedComodin1).data();
+
+//    openModalComodin1(data);
+//})
+//$("#tbDataComodin1 tbody").on("click", ".btn-delete-comodin1", function () {
+
+//    let row;
+
+//    if ($(this).closest('tr').hasClass('child')) {
+//        row = $(this).closest('tr').prev();
+//    } else {
+//        row = $(this).closest('tr');
+//    }
+//    const data = tableComodin1.row(row).data();
+
+//    swal({
+//        title: "¿Está seguro?",
+//        text: `Eliminar "${data.descripcion}"`,
+//        type: "warning",
+//        showCancelButton: true,
+//        confirmButtonClass: "btn-danger",
+//        confirmButtonText: "Si, eliminar",
+//        cancelButtonText: "No, cancelar",
+//        closeOnConfirm: false,
+//        closeOnCancel: true
+//    },
+//        function (respuesta) {
+
+//            if (respuesta) {
+
+//                $(".showSweetAlert").LoadingOverlay("show")
+
+//                fetch(`/Lov/Delete?idLov=${data.idLov}`, {
+//                    method: "DELETE"
+//                }).then(response => {
+//                    $(".showSweetAlert").LoadingOverlay("hide")
+//                    return response.json();
+//                }).then(responseJson => {
+//                    if (responseJson.state) {
+
+//                        tableComodin1.row(row).remove().draw();
+//                        swal("Exitoso!", "Se ha eliminado", "success");
+
+//                    } else {
+//                        swal("Lo sentimos", responseJson.message, "error");
+//                    }
+//                })
+//                    .catch((error) => {
+//                        $(".showSweetAlert").LoadingOverlay("hide")
+//                    })
+//            }
+//        });
+//})
+
+// Función genérica para abrir el modal de comodines
+const openModalComodin = (model = BASIC_MODEL_LOV, comodinId) => {
+    $(`#txtId${comodinId}`).val(model.idLov);
+    $(`#txtDescription${comodinId}`).val(model.descripcion);
+    $(`#cboState${comodinId}`).val(model.estado ? 1 : 0);
+
+    if (model.modificationUser == null)
+        document.getElementById(`divModif${comodinId}`).style.display = 'none';
+    else {
+        document.getElementById(`divModif${comodinId}`).style.display = '';
+        var dateTimeModif = new Date(model.modificationDate);
+        $(`#txtModificado${comodinId}`).val(dateTimeModif.toLocaleString());
+        $(`#txtModificadoUsuario${comodinId}`).val(model.modificationUser);
+    }
+
+    $(`#modalData${comodinId}`).modal("show");
+};
+
+const saveComodin = (comodinId, lovType, tableComodin) => {
+    const inputs = $(`input.input-validate-${comodinId}`).serializeArray();
+    const inputs_without_value = inputs.filter((item) => item.value.trim() == "");
+
+    if (inputs_without_value.length > 0) {
+        const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
+        toastr.warning(msg, "");
+        $(`input[name="${inputs_without_value[0].name}"]`).focus();
+        return;
+    }
+
+    const model = structuredClone(BASIC_MODEL_LOV);
+    model["idLov"] = parseInt($(`#txtId${comodinId}`).val());
+    model["descripcion"] = $(`#txtDescription${comodinId}`).val();
+    model["estado"] = $(`#cboState${comodinId}`).val() == "1" ? true : false;
+    model["lovType"] = lovType;
+
+    $(`#modalData${comodinId}`).find("div.modal-content").LoadingOverlay("show");
+
+    const url = model.idLov == 0 ? "/Lov/Create" : "/Lov/Update";
+    const method = model.idLov == 0 ? "POST" : "PUT";
+
+    fetch(url, {
+        method: method,
+        headers: { 'Content-Type': 'application/json;charset=utf-8' },
+        body: JSON.stringify(model)
+    })
+        .then(response => {
+            $(`#modalData${comodinId}`).find("div.modal-content").LoadingOverlay("hide");
+            return response.json();
+        })
+        .then(responseJson => {
+            if (responseJson.state) {
+                if (model.idLov == 0) {
+                    // Crear nueva fila
+                    tableComodin.row.add(responseJson.object).draw(false);
+                    swal("Exitoso!", "Se ha creado", "success");
+                } else {
+                    // Verificar que rowSelectedComodin esté asignado
+                    if (rowSelectedComodin) {
+                        // Actualizar la fila editada
+                        tableComodin.row(rowSelectedComodin)
+                            .data(responseJson.object)   // Actualiza la fila con los nuevos datos
+                            .invalidate()                // Invalida la fila para forzar la actualización
+                            .draw(false);                // Redibuja la tabla sin reiniciar la paginación
+                        swal("Exitoso!", "Ha sido modificado", "success");
+                        rowSelectedComodin = null;       // Reiniciar la variable
+                    } else {
+                        console.error("No se ha seleccionado ninguna fila para editar.");
+                    }
+                }
+
+                // Cerrar el modal después de la operación exitosa
+                $(`#modalData${comodinId}`).modal("hide");
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+        })
+        .catch((error) => {
+            $(`#modalData${comodinId}`).find("div.modal-content").LoadingOverlay("hide");
+        });
+};
+
+
+
+// Función genérica para manejar la edición
+const editComodin = (comodinId, tableComodin) => {
+    $(`#tbData${comodinId} tbody`).on("click", `.btn-edit-${comodinId}`, function () {
+        // Asignar la fila seleccionada a la variable rowSelectedComodin
+        rowSelectedComodin = $(this).closest('tr');
+
+        // Verifica si la fila es una fila expandida (child row)
+        if (rowSelectedComodin.hasClass('child')) {
+            rowSelectedComodin = rowSelectedComodin.prev(); // Tomar la fila anterior si es una fila hija
+        }
+
+        // Verifica que la tabla esté inicializada
+        if (!tableComodin) {
+            console.error(`tableComodin para ${comodinId} no está inicializada.`);
+            return;
+        }
+
+        // Obtener los datos de la fila seleccionada
+        const data = tableComodin.row(rowSelectedComodin).data();
+        openModalComodin(data, comodinId); // Abre el modal para editar
+    });
+};
+
+
+// Función genérica para manejar la eliminación
+const deleteComodin = (comodinId, tableComodin) => {
+    $(`#tbData${comodinId} tbody`).on("click", `.btn-delete-${comodinId}`, function () {
+        let rowSelectedComodin;
+
+        if ($(this).closest('tr').hasClass('child')) {
+            rowSelectedComodin = $(this).closest('tr').prev();
+        } else {
+            rowSelectedComodin = $(this).closest('tr');
+        }
+
+        const data = tableComodin.row(rowSelectedComodin).data();
+
+        swal({
+            title: "¿Está seguro?",
+            text: `Eliminar "${data.descripcion}"`,
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Si, eliminar",
+            cancelButtonText: "No, cancelar",
+            closeOnConfirm: false,
+            closeOnCancel: true
+        },
+            function (respuesta) {
+                if (respuesta) {
+                    $(".showSweetAlert").LoadingOverlay("show");
+
+                    fetch(`/Lov/Delete?idLov=${data.idLov}`, { method: "DELETE" })
+                        .then(response => {
+                            $(".showSweetAlert").LoadingOverlay("hide");
+                            return response.json();
+                        })
+                        .then(responseJson => {
+                            if (responseJson.state) {
+                                tableComodin.row(rowSelectedComodin).remove().draw();
+                                swal("Exitoso!", "Se ha eliminado", "success");
+                            } else {
+                                swal("Lo sentimos", responseJson.message, "error");
+                            }
+                        })
+                        .catch((error) => {
+                            $(".showSweetAlert").LoadingOverlay("hide");
+                        });
+                }
+            });
+    });
+};
+
+$("#btnNewComodin1").on("click", function () { openModalComodin(BASIC_MODEL_LOV, 'Comodin1'); });
+$("#btnSaveComodin1").on("click", function () { saveComodin('Comodin1', 1, tableComodin1); });
+
+$("#btnNewComodin2").on("click", function () { openModalComodin(BASIC_MODEL_LOV, 'Comodin2'); });
+$("#btnSaveComodin2").on("click", function () { saveComodin('Comodin2', 2, tableComodin2); });
+
+$("#btnNewComodin3").on("click", function () { openModalComodin(BASIC_MODEL_LOV, 'Comodin3'); });
+$("#btnSaveComodin3").on("click", function () { saveComodin('Comodin3', 3, tableComodin3); });

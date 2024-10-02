@@ -25,7 +25,7 @@ namespace AFIP.Facturacion
     /// </remarks>
     public class LoginCmsClient
     {
-        public bool IsProdEnvironment { get; set; } = false;
+        //public bool IsProdEnvironment { get; set; } = false;
         public string WsaaUrlHomologation { get; set; } = "https://wsaahomo.afip.gov.ar/ws/services/LoginCms";
         public string WsaaUrlProd { get; set; } = "https://wsaa.afip.gov.ar/ws/services/LoginCms";
 
@@ -64,7 +64,7 @@ namespace AFIP.Facturacion
             {
                 var pathCertificate = FileStorageService.ObtenerRutaCertificado(ajustes);
 
-                _ticket = await LoginCmsAsync("wsfe", pathCertificate, ajustes.CertificadoPassword, false);
+                _ticket = await LoginCmsAsync("wsfe", pathCertificate, ajustes.CertificadoPassword, ajustes.IsProdEnvironment, false);
             }
 
             return _ticket;
@@ -82,6 +82,7 @@ namespace AFIP.Facturacion
         private async Task<WsaaTicket> LoginCmsAsync(string service,
                                                     string x509CertificateFilePath,
                                                     string password,
+                                                    bool isProdEnvironment,
                                                     bool verbose)
         {
             var ticketCacheFile = string.IsNullOrEmpty(TicketCacheFolderPath) ?
@@ -161,13 +162,13 @@ namespace AFIP.Facturacion
             {
                 if (VerboseMode)
                 {
-                    Console.WriteLine(ID_FNC + "***Llamando al WSAA en URL: {0}", IsProdEnvironment ? WsaaUrlProd : WsaaUrlHomologation);
+                    Console.WriteLine(ID_FNC + "***Llamando al WSAA en URL: {0}", isProdEnvironment ? WsaaUrlProd : WsaaUrlHomologation);
                     Console.WriteLine(ID_FNC + "***Argumento en el request:");
                     Console.WriteLine(base64SignedCms);
                 }
 
                 var wsaaService = new AfipLoginCmsServiceReference.LoginCMSClient();
-                wsaaService.Endpoint.Address = new EndpointAddress(IsProdEnvironment ? WsaaUrlProd : WsaaUrlHomologation);
+                wsaaService.Endpoint.Address = new EndpointAddress(isProdEnvironment ? WsaaUrlProd : WsaaUrlHomologation);
 
                 var response = await wsaaService.loginCmsAsync(base64SignedCms);
                 loginTicketResponse = response.loginCmsReturn;

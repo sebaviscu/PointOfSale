@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Services;
 using PointOfSale.Model;
@@ -14,12 +15,12 @@ namespace PointOfSale.Controllers
     public class TablasController : BaseController
     {
 
-        private readonly ITablaService _tablaService;
+        private readonly IFormatosVentaService _tablaService;
         private readonly IMapper _mapper;
         private readonly ILogger<TablasController> _logger;
         private readonly ITypeDocumentSaleService _typeDocumentSaleService;
 
-        public TablasController(ITablaService tablaService, IMapper mapper, ILogger<TablasController> logger, ITypeDocumentSaleService typeDocumentSaleService)
+        public TablasController(IFormatosVentaService tablaService, IMapper mapper, ILogger<TablasController> logger, ITypeDocumentSaleService typeDocumentSaleService)
         {
             _tablaService = tablaService;
             _mapper = mapper;
@@ -43,7 +44,8 @@ namespace PointOfSale.Controllers
             try
             {
                 ValidarAutorizacion([Roles.Administrador]);
-                var list = _mapper.Map<List<VMFormatosVenta>>(await _tablaService.List());
+                var query = await _tablaService.List().ToListAsync();
+                var list = _mapper.Map<List<VMFormatosVenta>>(query);
                 return StatusCode(StatusCodes.Status200OK, new { data = list.OrderBy(_=>_.Valor) });
             }
             catch (Exception ex)
@@ -63,7 +65,8 @@ namespace PointOfSale.Controllers
             try
             {
                 ValidarAutorizacion([Roles.Administrador]);
-                var list = _mapper.Map<List<VMFormatosVenta>>(await _tablaService.ListActive());
+                var query = await _tablaService.ListActive().ToListAsync();
+                var list = _mapper.Map<List<VMFormatosVenta>>(query);
                 return StatusCode(StatusCodes.Status200OK, new { data = list.OrderBy(_ => _.Valor) });
             }
             catch (Exception ex)

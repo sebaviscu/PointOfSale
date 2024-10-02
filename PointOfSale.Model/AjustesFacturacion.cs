@@ -30,6 +30,7 @@ namespace PointOfSale.Model
 
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }
+        public bool IsProdEnvironment { get; set; }
         public string? CuitString =>
                                     Cuit.HasValue && Cuit.Value.ToString().Length == 11
                                     ? $"{Cuit.Value.ToString().Substring(0, 2)}-{Cuit.Value.ToString().Substring(2, 8)}-{Cuit.Value.ToString().Substring(10, 1)}"

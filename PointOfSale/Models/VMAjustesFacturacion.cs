@@ -24,6 +24,7 @@ namespace PointOfSale.Models
 
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }
+        public bool IsProdEnvironment { get; set; }
 
         public VMX509Certificate2 vMX509Certificate2 { get; set; }
 

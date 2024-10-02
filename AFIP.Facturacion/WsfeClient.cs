@@ -29,16 +29,16 @@ namespace AFIP.Facturacion
             return new FEAuthRequest { Cuit = ajustes.Cuit.Value, Sign = ticket.Sign, Token = ticket.Token };
         }
 
-        private ServiceSoapClient GetServiceSoapClient()
+        private ServiceSoapClient GetServiceSoapClient(bool isProdEnvironment)
         {
             var wsfeService = new ServiceSoapClient(ServiceSoapClient.EndpointConfiguration.ServiceSoap);
-            wsfeService.Endpoint.Address = new EndpointAddress(_configuration.Value.IsProdEnvironment ? WsfeUrlProd : WsfeUrlHomologation);
+            wsfeService.Endpoint.Address = new EndpointAddress(isProdEnvironment ? WsfeUrlProd : WsfeUrlHomologation);
             return wsfeService;
         }
 
         public async Task<FECompUltimoAutorizadoResponse> FECompUltimoAutorizadoAsync(AjustesFacturacion ajustes, int ptoVta, int cbteTipo)
         {
-            var wsfeService = GetServiceSoapClient();
+            var wsfeService = GetServiceSoapClient(ajustes.IsProdEnvironment);
             var auth = await GetAuthRequestAsync(ajustes);
 
             return await wsfeService.FECompUltimoAutorizadoAsync(auth, ptoVta, cbteTipo);
@@ -46,14 +46,14 @@ namespace AFIP.Facturacion
 
         public async Task<FECAESolicitarResponse> FECAESolicitarAsync(AjustesFacturacion ajustes ,FECAERequest feCaeReq)
         {
-            var wsfeService = GetServiceSoapClient();
+            var wsfeService = GetServiceSoapClient(ajustes.IsProdEnvironment);
             var auth = await GetAuthRequestAsync(ajustes);
 
             return await wsfeService.FECAESolicitarAsync(auth, feCaeReq);
         }
         public async Task<FECAEARegInformativoResponse> FECAEASolicitar_CAEA_Async(AjustesFacturacion ajustes , FECAEARequest feCaeReq)
         {
-            var wsfeService = GetServiceSoapClient();
+            var wsfeService = GetServiceSoapClient(ajustes.IsProdEnvironment);
             var auth = await GetAuthRequestAsync(ajustes);
 
             var s2 = await wsfeService.FECAEASolicitarAsync(auth,202409,2);

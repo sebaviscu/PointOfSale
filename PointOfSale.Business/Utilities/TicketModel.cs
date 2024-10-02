@@ -5,7 +5,22 @@ namespace PointOfSale.Business.Utilities
 {
     public class TicketModel
     {
-        readonly int MAX = 28;
+        int MAX = 24;
+
+        public void ChangeMaxLines(int tamanio)
+        {
+            MAX = tamanio switch
+            {
+                7 => 31,
+                8=> 27,
+                9 => 24,
+                10 => 22,
+                11 => 20,
+                12 => 18,
+                13 => 17,
+                _ => 24
+            };
+        }
 
         public TicketModel()
         {
@@ -43,11 +58,13 @@ namespace PointOfSale.Business.Utilities
         public void ChangeFont(int fontSize, FontStyle fontStyle)
         {
             line.AppendLine($"[[FontSize]]{fontSize} [[FontStyle]]{fontStyle}");
+            ChangeMaxLines(fontSize);
         }
 
         public void ResetFont()
         {
-            line.AppendLine($"[[FontSize]]{12} [[FontStyle]]{FontStyle.Bold}");
+            line.AppendLine($"[[FontSize]]{9} [[FontStyle]]{FontStyle.Bold}");
+            ChangeMaxLines(9);
         }
 
         public void InsertarImagen(string flag, string imageBase64)

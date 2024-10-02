@@ -62,6 +62,13 @@ namespace PointOfSale.Controllers
             List<VMCategory> vmCategoryList = _mapper.Map<List<VMCategory>>(await _categoryService.List());
             return StatusCode(StatusCodes.Status200OK, new { data = vmCategoryList });
         }
+        [HttpGet]
+        public async Task<IActionResult> GetCategoriesActive()
+        {
+
+            List<VMCategory> vmCategoryList = _mapper.Map<List<VMCategory>>(await _categoryService.ListActive());
+            return StatusCode(StatusCodes.Status200OK, new { data = vmCategoryList });
+        }
 
         [HttpPost]
         public async Task<IActionResult> CreateCategory([FromBody] VMCategory model)
@@ -168,6 +175,26 @@ namespace PointOfSale.Controllers
             catch (Exception ex)
             {
                 return HandleException(ex, "Error al lista de producto.", _logger, null);
+            }
+        }
+
+        /// <summary>
+        /// Selectw de productos
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetProductsActive()
+        {
+            var gResponse = new GenericResponse<VMProductSimplificado>();
+            try
+            {
+                var productosQuery = await _productService.ListActive();
+
+                return Ok(new { data = _mapper.Map<List<VMProductSimplificado>>(productosQuery) });
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al lista de producto active.", _logger, null);
             }
         }
 

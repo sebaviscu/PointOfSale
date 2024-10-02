@@ -33,7 +33,7 @@ insert into Menu([description],idMenuParent,controller,pageAction,isActive) valu
 ('Reporte Ventas',4,'Sales','SalesHistory',1), --11
 ('Clientes',6,'Admin','Cliente',1), --12
 ('Proveedores',6,'Proveedores','Index',1), --13
-('Promociones',2,'Inventory','Index',1), --14
+('Promociones',2,'Inventory','Promociones',1), --14
 ('Gastos',6,'Gastos','Gastos',1), --15
 ('Turnos',6,'Turno','Turno',1), --16
 ('Ventas Web',7,'Shop','VentaWeb',1), --17
@@ -152,8 +152,8 @@ go
 
 DECLARE @NuevoIdAjusteFacturacion INT;
 
-INSERT INTO AjustesFacturacion (IdTienda)
-VALUES (1);
+INSERT INTO AjustesFacturacion (IdTienda, IsProdEnvironment)
+VALUES (1,0);
 
 SET @NuevoIdAjusteFacturacion = SCOPE_IDENTITY();
 

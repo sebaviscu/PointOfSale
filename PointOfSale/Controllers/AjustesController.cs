@@ -172,15 +172,24 @@ namespace PointOfSale.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetAjustesProductos()
+        public async Task<IActionResult> GetAjustesWeb()
         {
-            var gResponse = new GenericResponse<string>();
+            var gResponse = new GenericResponse<VMAjustesWebReducido>();
             try
             {
                 var ajuste = await _ajusteService.GetAjustesWeb();
 
+                var ajustesWebReducidos = new VMAjustesWebReducido();
+                ajustesWebReducidos.AumentoWeb = ajuste.AumentoWeb.HasValue ? ajuste.AumentoWeb.Value : 0;
+                ajustesWebReducidos.NombreComodin1 = ajuste.NombreComodin1;
+                ajustesWebReducidos.NombreComodin2 = ajuste.NombreComodin2;
+                ajustesWebReducidos.NombreComodin3 = ajuste.NombreComodin3;
+                ajustesWebReducidos.HabilitarComodin1 = ajuste.HabilitarComodin1;
+                ajustesWebReducidos.HabilitarComodin2 = ajuste.HabilitarComodin2;
+                ajustesWebReducidos.HabilitarComodin3 = ajuste.HabilitarComodin3;
+
                 gResponse.State = true;
-                gResponse.Object = ajuste.AumentoWeb.HasValue ? ajuste.AumentoWeb.Value.ToString("F0") : string.Empty;
+                gResponse.Object = ajustesWebReducidos;
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)

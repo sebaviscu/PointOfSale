@@ -1,5 +1,8 @@
 ﻿let tableDataPromociones;
 let rowSelectedPromocion;
+let categorySelector;
+let productSelector;
+let daysSelector;
 
 const BASIC_MODEL_PROMOCION = {
     idPromocion: 0,
@@ -17,92 +20,17 @@ const BASIC_MODEL_PROMOCION = {
 }
 
 const dataDays = [
-    { id: 1, text: 'Lunes' },
-    { id: 2, text: 'Martes' },
-    { id: 3, text: 'Miercoles' },
-    { id: 4, text: 'Jueves' },
-    { id: 5, text: 'Viernes' },
-    { id: 6, text: 'Sabado' },
-    { id: 7, text: 'Domingo' }
+    { value: 1, label: 'Lunes' },
+    { value: 2, label: 'Martes' },
+    { value: 3, label: 'Miercoles' },
+    { value: 4, label: 'Jueves' },
+    { value: 5, label: 'Viernes' },
+    { value: 6, label: 'Sabado' },
+    { value: 7, label: 'Domingo' }
 ]
 
 $(document).ready(function () {
 
-    $('#cboProducto').select2({
-        ajax: {
-            url: "/Sales/GetProducts",
-            dataType: 'json',
-            contentType: "application/json; charset=utf-8",
-            delay: 250,
-            data: function (params) {
-                return {
-                    search: params.term,
-                    listaPrecios: null
-                };
-            },
-            processResults: function (data) {
-                return {
-                    results: data.map((item) => (
-                        {
-                            id: item.idProduct,
-                            text: item.description,
-                            category: item.idCategory,
-                            photoBase64: item.photoBase64,
-                            price: item.price,
-                            tipoVenta: item.tipoVenta,
-                            iva: item.iva,
-                            categoryProducty: item.categoryProducty
-                        }
-                    ))
-                };
-            },
-            cache: true
-        },
-        placeholder: 'Buscar producto...',
-        minimumInputLength: 1,
-        templateResult: formatResults,
-        allowClear: true,
-        dropdownParent: $('#modalData .modal-content')
-    });
-
-    $('#cboCategoria').select2({
-        ajax: {
-            url: "/Inventory/GetCategoriesSearch",
-            dataType: 'json',
-            contentType: "application/json; charset=utf-8",
-            delay: 250,
-            data: function (params) {
-                return {
-                    search: params.term
-                };
-            },
-            processResults: function (data) {
-                return {
-                    results: data.map((item) => (
-                        {
-                            id: item.idCategory,
-                            text: item.description,
-                        }
-                    ))
-                };
-            }
-        },
-        allowClear: true,
-        multiple: true,
-        placeholder: 'Buscar categorias...',
-        debug: true,
-        minimumInputLength: 1,
-        dropdownParent: $('#modalData .modal-content')
-    });
-
-    $('#cboDias').select2({
-        allowClear: true,
-        debug: true,
-        data: dataDays,
-        multiple: true,
-        placeholder: 'Buscar dias...',
-        dropdownParent: $('#modalData .modal-content')
-    });
 
     tableDataPromociones = $("#tbData").DataTable({
         responsive: true,
@@ -128,8 +56,8 @@ $(document).ready(function () {
                 }
             },
             {
-                //"defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
-                "defaultContent": '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-trash-can"></i></button>',
+                "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
+                    '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-trash-can"></i></button>',
                 "orderable": false,
                 "searchable": false,
                 "width": "110px"
@@ -144,88 +72,15 @@ $(document).ready(function () {
                 title: '',
                 filename: 'Reporte Promociones',
                 exportOptions: {
-                    columns: [1, 2,3]
+                    columns: [1, 2, 3]
                 }
             }, 'pageLength'
         ]
     });
 
 
-    $(document).on("click", 'span.btn-cambiar-estado', function (e) {
-        let row;
-
-        if ($(this).closest('tr').hasClass('child')) {
-            row = $(this).closest('tr').prev();
-        } else {
-            row = $(this).closest('tr');
-        }
-        let data = tableDataPromociones.row(row).data();
-
-        if (data == undefined) {
-            data = tableDataPromociones.row(row).data();
-        }
-
-        swal({
-            title: "¿Desea cambiar el estado de la promocion? ",
-            text: ` \n Nombre: ${data.nombre} \n\n ${data.promocionString}  \n  \n `,
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonClass: "btn-danger",
-            confirmButtonText: "Si, cambiar estado",
-            cancelButtonText: "No, cancelar",
-            closeOnConfirm: false,
-            closeOnCancel: true
-        },
-            function (respuesta) {
-
-                if (respuesta) {
-
-                    $(".showSweetAlert").LoadingOverlay("show")
-
-                    fetch(`/Inventory/CambiarEstadoPromocion?idPromocion=${data.idPromocion}`, {
-                        method: "PUT"
-                    }).then(response => {
-                        $(".showSweetAlert").LoadingOverlay("hide")
-                        return response.json();
-                    }).then(responseJson => {
-                        if (responseJson.state) {
-
-                            location.reload()
-
-                        } else {
-                            swal("Lo sentimos", responseJson.message, "error");
-                        }
-                    })
-                        .catch((error) => {
-                            $(".showSweetAlert").LoadingOverlay("hide")
-                        })
-
-                }
-            });
-    })
+    cargarSelect2();
 })
-
-function formatResults(data) {
-
-    if (data.loading)
-        return data.text;
-
-    let container = $(
-        `<table width="90%">
-            <tr>
-                <td style="width:60px">
-                    <img style="height:60px;width:60px;margin-right:10px" src="data:image/png;base64,${data.photoBase64}"/>
-                </td>
-                <td>
-                    <p style="font-weight: bolder;margin:2px">${data.text}</p>
-                    <p>$ ${data.price}</p>
-                </td>
-            </tr>
-         </table>`
-    );
-
-    return container;
-}
 
 
 $("#btnNew").on("click", function () {
@@ -239,15 +94,19 @@ $(document).on('select2:open', () => {
 
 const openModalPromocion = (model = BASIC_MODEL_PROMOCION) => {
     if (model.idPromocion != 0) {
-        //$("#cboProducto").select2().val(model.idProducto).trigger("change");
-        //$("#cboCategoria").select2().val(model.idCategory).trigger("change");
-        $("#cboDias").select2().val(model.dias).trigger("change");
+        productSelector.setChoiceByValue(parseInt(model.idProducto));
+        model.idCategory.forEach(cat => {
+            categorySelector.setChoiceByValue(parseInt(cat));
+        });
+        model.dias.forEach(dia => {
+            daysSelector.setChoiceByValue(dia.toString());
+        });
+    } else {
+        productSelector.removeActiveItems();
+        categorySelector.removeActiveItems();
+        daysSelector.removeActiveItems();
     }
-    else {
-        $("#cboDias").val(null).trigger("change");
-        $("#cboCategoria").val(null).trigger("change");
-        $("#cboProducto").val(null).trigger("change");
-    }
+
 
     $("#txtId").val(model.idPromocion);
     $("#txtNombre").val(model.nombre);
@@ -261,7 +120,7 @@ const openModalPromocion = (model = BASIC_MODEL_PROMOCION) => {
         document.getElementById("divModif").style.display = 'none';
     else {
         document.getElementById("divModif").style.display = '';
-        var dateTimeModif = new Date(model.modificationDate);
+        let dateTimeModif = new Date(model.modificationDate);
 
         $("#txtModificado").val(dateTimeModif.toLocaleString());
         $("#txtModificadoUsuario").val(model.modificationUser);
@@ -269,7 +128,6 @@ const openModalPromocion = (model = BASIC_MODEL_PROMOCION) => {
 
     $("#modalData").modal("show")
 }
-
 
 $("#btnSave").on("click", function () {
     const inputs = $("input.input-validate").serializeArray();
@@ -312,7 +170,7 @@ $("#btnSave").on("click", function () {
     model["isActive"] = $("#cboState").val() === '1' ? true : false;
     model["operador"] = $("#cboOperador").val() != '' ? $("#cboOperador").val() : null;
     model["cantidadProducto"] = $("#txtCantidad").val() != '' ? $("#txtCantidad").val() : null;
-    model["idProducto"] = $("#cboProducto").val() != '' ? $("#cboProducto").val() : null;
+    model["idProducto"] = productSelector.getValue(true);
     model["idCategory"] = $("#cboCategoria").val() != '' ? $("#cboCategoria").val() : null;
     model["dias"] = $("#cboDias").val() != '' ? $("#cboDias").val() : null;
     model["precio"] = $("#txtPrecio").val() != '' ? $("#txtPrecio").val() : null;
@@ -366,6 +224,60 @@ $("#btnSave").on("click", function () {
             $("#modalData").find("div.modal-content").LoadingOverlay("hide")
         })
     }
+})
+
+$("#tbData tbody").on("click", ".btn-cambiar-estado", function () {
+
+    let row;
+
+    if ($(this).closest('tr').hasClass('child')) {
+        row = $(this).closest('tr').prev();
+    } else {
+        row = $(this).closest('tr');
+    }
+    let data = tableDataPromociones.row(row).data();
+
+    if (data == undefined) {
+        data = tableDataPromociones.row(row).data();
+    }
+
+    swal({
+        title: "¿Desea cambiar el estado de la promocion? ",
+        text: ` \n Nombre: ${data.nombre} \n\n ${data.promocionString}  \n  \n `,
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonClass: "btn-danger",
+        confirmButtonText: "Si, cambiar estado",
+        cancelButtonText: "No, cancelar",
+        closeOnConfirm: false,
+        closeOnCancel: true
+    },
+        function (respuesta) {
+
+            if (respuesta) {
+
+                $(".showSweetAlert").LoadingOverlay("show")
+
+                fetch(`/Inventory/CambiarEstadoPromocion?idPromocion=${data.idPromocion}`, {
+                    method: "PUT"
+                }).then(response => {
+                    $(".showSweetAlert").LoadingOverlay("hide")
+                    return response.json();
+                }).then(responseJson => {
+                    if (responseJson.state) {
+
+                        location.reload()
+
+                    } else {
+                        swal("Lo sentimos", responseJson.message, "error");
+                    }
+                })
+                    .catch((error) => {
+                        $(".showSweetAlert").LoadingOverlay("hide")
+                    })
+
+            }
+        });
 })
 
 $("#tbData tbody").on("click", ".btn-edit", function () {
@@ -430,3 +342,55 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
             }
         });
 })
+
+
+function cargarSelect2() {
+
+    daysSelector = new Choices('#cboDias', {
+        removeItemButton: true,
+        maxItemCount: 7,
+        searchResultLimit: 10,
+        shouldSort: false,
+        duplicateItemsAllowed: false
+    });
+
+    daysSelector.setChoices(dataDays, 'value', 'label', false);
+
+
+    categorySelector = new Choices('#cboCategoria', {
+        removeItemButton: true,
+        maxItemCount: 3,
+        searchResultLimit: 10,
+        shouldSort: false,
+        duplicateItemsAllowed: false
+    });
+
+    fetch('/Inventory/GetCategoriesActive')
+        .then(response => response.json())
+        .then(data => {
+            const cats = data.data.map(cat => ({
+                value: cat.idCategory,
+                label: cat.description
+            }));
+            categorySelector.setChoices(cats, 'value', 'label', false);
+        });
+
+    productSelector = new Choices('#cboProducto', {
+        removeItemButton: true,
+        maxItemCount: 1,
+        searchResultLimit: 3,
+        shouldSort: false,
+        duplicateItemsAllowed: false,
+        allowHTML: true
+    });
+
+    fetch('/Inventory/GetProductsActive')
+        .then(response => response.json())
+        .then(data => {
+            const prods = data.data.map(prod => ({
+                value: prod.idProduct,
+                label: `${prod.description}&nbsp;&nbsp;&nbsp;&nbsp;$${prod.price}`
+            }));
+            productSelector.setChoices(prods, 'value', 'label', false);
+        });
+}

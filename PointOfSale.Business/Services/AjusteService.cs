@@ -76,6 +76,13 @@ namespace PointOfSale.Business.Services
             Ajustes_found.MontoEnvioGratis = entity.MontoEnvioGratis;
             Ajustes_found.HabilitarWeb = entity.HabilitarWeb;
 
+            Ajustes_found.NombreComodin1 = entity.NombreComodin1;
+            Ajustes_found.NombreComodin2 = entity.NombreComodin2;
+            Ajustes_found.NombreComodin3 = entity.NombreComodin3;
+            Ajustes_found.HabilitarComodin1 = entity.HabilitarComodin1;
+            Ajustes_found.HabilitarComodin2 = entity.HabilitarComodin2;
+            Ajustes_found.HabilitarComodin3 = entity.HabilitarComodin3;
+
             bool response = await _repositoryWeb.Edit(Ajustes_found);
 
             if (!response)
@@ -137,6 +144,7 @@ namespace PointOfSale.Business.Services
         {
             var Ajustes_found = await GetAjustesFacturacion(entity.IdTienda);
 
+            Ajustes_found.IsProdEnvironment = entity.IsProdEnvironment;
             Ajustes_found.PuntoVenta = entity.PuntoVenta;
             Ajustes_found.CondicionIva = entity.CondicionIva;
             Ajustes_found.NombreTitular = entity.NombreTitular;
@@ -144,23 +152,6 @@ namespace PointOfSale.Business.Services
             Ajustes_found.FechaInicioActividad = entity.FechaInicioActividad;
             Ajustes_found.DireccionFacturacion = entity.DireccionFacturacion;
             Ajustes_found.CertificadoPassword = !string.IsNullOrEmpty(entity.CertificadoPassword) ? EncryptionHelper.EncryptString(entity.CertificadoPassword) : null;
-
-            await UpdateCertificateInfo(entity);
-
-            Ajustes_found.ModificationDate = TimeHelper.GetArgentinaTime();
-            Ajustes_found.ModificationUser = entity.ModificationUser;
-
-            bool response = await _repositoryAjustesFacturacion.Edit(Ajustes_found);
-
-            if (!response)
-                throw new TaskCanceledException("Ajustes Facturacion no se pudo cambiar.");
-
-            return Ajustes_found;
-        }
-
-        public async Task<AjustesFacturacion> UpdateCertificateInfo(AjustesFacturacion entity)
-        {
-            var Ajustes_found = await GetAjustesFacturacion(entity.IdTienda);
 
             Ajustes_found.Cuit = entity.Cuit != 0 ? entity.Cuit : Ajustes_found.Cuit;
             Ajustes_found.CertificadoFechaCaducidad = entity.CertificadoFechaCaducidad != null ? entity.CertificadoFechaCaducidad : Ajustes_found.CertificadoFechaCaducidad;
@@ -188,7 +179,8 @@ namespace PointOfSale.Business.Services
             };
             var ajustesFacturacion = new AjustesFacturacion()
             {
-                IdTienda = idTienda
+                IdTienda = idTienda,
+                IsProdEnvironment = false
             };
             await _repositoryAjustes.Add(ajustes);
             await _repositoryAjustesFacturacion.Add(ajustesFacturacion);

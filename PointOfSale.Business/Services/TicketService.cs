@@ -39,7 +39,7 @@ namespace PointOfSale.Business.Services
             return await CreateTicket(ajustes, sale.RegistrationDate.Value, sale.Total.Value, sale.DetailSales, sale.IdTienda.Value, null, null);
         }
 
-        public async Task<TicketModel> TicketTest(List<DetailSale> detailSales,Ajustes ajustes)
+        public async Task<TicketModel> TicketTest(List<DetailSale> detailSales, Ajustes ajustes)
         {
             var total = detailSales.Any() ? detailSales.Sum(_ => _.Total).Value : 0m;
             return await CreateTicket(ajustes, TimeHelper.GetArgentinaTime(), total, detailSales, ajustes.IdTienda, null, null);
@@ -57,13 +57,15 @@ namespace PointOfSale.Business.Services
             var Ticket = new TicketModel();
 
             Ticket.TextoIzquierda("");
-            Ticket.ChangeFont(18, FontStyle.Underline);
+            Ticket.ChangeFont(10, FontStyle.Bold);
             if (!string.IsNullOrEmpty(ajustes.Encabezado1)) Ticket.TextoCentro(ajustes.Encabezado1);
-            Ticket.ResetFont();
+            Ticket.ChangeFont(8, FontStyle.Bold);
             if (!string.IsNullOrEmpty(ajustes.Encabezado2)) Ticket.TextoCentro(ajustes.Encabezado2);
             if (!string.IsNullOrEmpty(ajustes.Encabezado3)) Ticket.TextoCentro(ajustes.Encabezado3);
             Ticket.TextoIzquierda("");
 
+
+            Ticket.ChangeFont(7, FontStyle.Bold);
             Ticket.LineasGuion();
 
             if (isFactura)
@@ -97,17 +99,17 @@ namespace PointOfSale.Business.Services
                 Ticket.TextoIzquierda($" {label}: ${amount}");
                 Ticket.TextoIzquierda(" ");
             }
-
             Ticket.LineasTotal();
             Ticket.AgregaTotales("Total", double.Parse(total.ToString()));
             Ticket.LineasTotal();
 
+
+            Ticket.TextoIzquierda(" ");
             Ticket.TextoIzquierda(" ");
             if (!string.IsNullOrEmpty(ajustes.Pie1)) Ticket.TextoCentro(ajustes.Pie1);
             if (!string.IsNullOrEmpty(ajustes.Pie2)) Ticket.TextoCentro(ajustes.Pie2);
             if (!string.IsNullOrEmpty(ajustes.Pie3)) Ticket.TextoCentro(ajustes.Pie3);
             Ticket.TextoIzquierda(" ");
-
 
             if (isFactura)
             {
@@ -120,7 +122,7 @@ namespace PointOfSale.Business.Services
                 Ticket.InsertarImagen($"F_{facturaEmitida.CAE}", qrBase64);
                 Ticket.TextoIzquierda(" ");
             }
-            Ticket.TextoIzquierda(" ");
+
             Ticket.TextoIzquierda(" ");
 
             return Ticket;

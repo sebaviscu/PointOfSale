@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace PointOfSale.Business.Services
 {
-    public class TablaService : ServiceBase<FormatosVenta>, ITablaService
+    public class FormatosVentaService : ServiceBase<FormatosVenta>, IFormatosVentaService
     {
-        public TablaService(IGenericRepository<FormatosVenta> repository) : base(repository)
+        public FormatosVentaService(IGenericRepository<FormatosVenta> repository) : base(repository)
         {
         }
 
