@@ -57,6 +57,21 @@ namespace PointOfSale.Data.Repository
                 throw;
             }
         }
+
+        public async Task<List<TEntity>> AddRange(List<TEntity> entity)
+        {
+            try
+            {
+
+                _dbcontext.Set<TEntity>().AddRange(entity);
+                await _dbcontext.SaveChangesAsync();
+                return entity;
+            }
+            catch
+            {
+                throw;
+            }
+        }
         public async Task<TEntity> AddAsync(TEntity entity)
         {
             try

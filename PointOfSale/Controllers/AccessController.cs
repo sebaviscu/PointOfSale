@@ -71,11 +71,12 @@ namespace PointOfSale.Controllers
                     return View(new VMUserLogin() { FirstLogin = true });
                 }
 
-                var user_found = await _userService.GetByCredentials(model.Email, model.PassWord);
+                var resultado = await _userService.GetByCredentials(model.Email, model.PassWord);
+                var user_found = resultado.Usuario;
 
                 if (user_found == null)
                 {
-                    ViewData["Message"] = "Usuario no encontrado";
+                    ViewData["Message"] = resultado.Mensaje;
                     return View(new VMUserLogin());
                 }
 

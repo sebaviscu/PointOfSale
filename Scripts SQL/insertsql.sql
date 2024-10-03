@@ -9,8 +9,8 @@ insert into rol([description],isActive) values
 
 go
 
-insert into Users(name,email,idRol,[password],isActive) values
-('admin','admin',1,'',1)
+insert into Users(name,email,idRol,[password],isActive, sinHorario) values
+('admin','admin',1,'',1, 1)
 
 go
 

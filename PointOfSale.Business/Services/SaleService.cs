@@ -47,42 +47,32 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<ListaPrecio>> GetProductsSearchAndIdLista(string search, ListaDePrecio listaPrecios)
         {
-          var listaProductos = new List<ListaPrecio>();
+            var listaProductos = new List<ListaPrecio>();
 
             if (listaPrecios == ListaDePrecio.Web)
             {
-                IQueryable<Product> queryProductosWeb;
+                var queryProductosWeb = _repositoryProduct.QuerySimple();
+                queryProductosWeb = queryProductosWeb.Where(_ => _.IsActive);
 
                 if (search.Contains(' '))
                 {
                     var split = search.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
-                    var predicate = PredicateBuilder.True<Product>();
                     foreach (var term in split)
                     {
                         var temp = term;
-                        predicate = predicate.And(p => p.Description.Contains(temp));
+                        queryProductosWeb = queryProductosWeb.Where(p => p.Description.Contains(temp));
                     }
-
-                    var idsProdsQuery = await _repositoryProduct.Query(predicate);
-                    var idsProds = idsProdsQuery.Select(p => p.IdProduct).ToList();
-
-                    queryProductosWeb = idsProdsQuery.Where(p => p.IsActive &&
-                        idsProds.Contains(p.IdProduct));
-
                 }
                 else
                 {
-                    queryProductosWeb = await _repositoryProduct.Query(p => p.IsActive &&
-                        (p.CodigoBarras.Any(cb => cb.Codigo.Equals(search)) ||
-                         p.Description.Contains(search)));
-
+                    queryProductosWeb = queryProductosWeb.Where(p =>
+                        p.CodigoBarras.Any(cb => cb.Codigo.Equals(search)) || p.Description.Contains(search));
                 }
 
                 var lisProductosWeb = await queryProductosWeb
-                 .Include(_ => _.IdCategoryNavigation)
-                 .Include(p => p.CodigoBarras)
-                 .ToListAsync();
+                    .Include(_ => _.IdCategoryNavigation)
+                    .Include(p => p.CodigoBarras)
+                    .ToListAsync();
 
                 listaProductos = lisProductosWeb.Select(_ => new ListaPrecio()
                 {
@@ -92,45 +82,33 @@ namespace PointOfSale.Business.Services
                     Precio = _.PriceWeb.HasValue ? _.PriceWeb.Value : _.Price.Value,
                     Producto = _
                 }).ToList();
-
             }
             else
             {
-                IQueryable<ListaPrecio> queryListaPrecio;
+                var queryListaPrecio = _repositoryListaPrecio.QuerySimple();
+                queryListaPrecio = queryListaPrecio.Where(p => p.Lista == listaPrecios && p.Producto.IsActive);
 
                 if (search.Contains(' '))
                 {
                     var split = search.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
-                    var predicate = PredicateBuilder.True<Product>();
                     foreach (var term in split)
                     {
                         var temp = term;
-                        predicate = predicate.And(p => p.Description.Contains(temp));
+                        queryListaPrecio = queryListaPrecio.Where(p => p.Producto.Description.Contains(temp));
                     }
-
-                    var idsProdsQuery = await _repositoryProduct.Query(predicate);
-                    var idsProds = idsProdsQuery.Select(p => p.IdProduct).ToList();
-
-                    queryListaPrecio = await _repositoryListaPrecio.Query(p =>
-                        p.Lista == listaPrecios &&
-                        p.Producto.IsActive == true &&
-                        idsProds.Contains(p.IdProducto));
                 }
                 else
                 {
-                    queryListaPrecio = await _repositoryListaPrecio.Query(p =>
-                        p.Lista == listaPrecios &&
-                        p.Producto.IsActive == true &&
-                        (p.Producto.CodigoBarras.Any(cb => cb.Codigo.Equals(search)) ||
-                         p.Producto.Description.Contains(search)));
+                    queryListaPrecio = queryListaPrecio.Where(p =>
+                        p.Producto.CodigoBarras.Any(cb => cb.Codigo.Equals(search)) || p.Producto.Description.Contains(search));
                 }
+
                 listaProductos = await queryListaPrecio
-                 .Include(_ => _.Producto)
-                 .ThenInclude(_ => _.IdCategoryNavigation)
-                 .Include(_ => _.Producto)
-                 .ThenInclude(p => p.CodigoBarras)
-                 .ToListAsync();
+                    .Include(_ => _.Producto)
+                    .ThenInclude(_ => _.IdCategoryNavigation)
+                    .Include(_ => _.Producto)
+                    .ThenInclude(p => p.CodigoBarras)
+                    .ToListAsync();
             }
 
             return listaProductos;

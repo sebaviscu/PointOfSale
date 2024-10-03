@@ -81,6 +81,7 @@ create table Users(
 [password] varchar(100),
 [photo] varbinary(max),
 [isActive] bit,
+sinHorario bit,
 [registrationDate] datetime default getdate(),
 [modificationDate] [datetime] null,
 [modificationUser] varchar(50) null,
@@ -623,6 +624,19 @@ CREATE TABLE Lov (
 	[modificationDate] [datetime] null,
 	[modificationUser] varchar(50) null
 );
+
+CREATE TABLE Horario (
+    Id INT PRIMARY KEY IDENTITY(1,1),  
+    horaEntrada NVARCHAR(5) NOT NULL,         
+    horaSalida NVARCHAR(5) NOT NULL,          
+    DiaSemana INT NOT NULL,                   
+    IdUsuario INT NOT NULL,                   
+    RegistrationDate DATETIME,                
+    ModificationDate DATETIME,                
+    ModificationUser NVARCHAR(150),           
+	FOREIGN KEY (IdUsuario) REFERENCES Users([idUsers]) ON DELETE CASCADE
+);
+
 
 --select * from turno
 

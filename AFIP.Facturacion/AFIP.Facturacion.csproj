@@ -48,8 +48,4 @@
 		<ProjectReference Include="..\PointOfSale.Model\PointOfSale.Model.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Certificados\1_Tienda\" />
-	</ItemGroup>
-
 </Project>

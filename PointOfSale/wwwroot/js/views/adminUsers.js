@@ -13,7 +13,18 @@ const BASIC_MODEL_USER = {
     idTienda: 0,
     tiendaName: "",
     modificationDate: "",
-    modificationUser: null
+    modificationUser: null,
+    horarios: []
+}
+
+const BASIC_MODEL_HORARIOS = {
+    id: 0,
+    HoraEntrada: "",
+    HoraSalida: "",
+    DiaSemana: null,
+    ModificationUser: null,
+    modificationDate: null,
+    RegistrationDate: null
 }
 
 
@@ -118,6 +129,7 @@ $(document).ready(function () {
     $togglePasswordButton.on('click', function (e) {
         e.preventDefault();
     });
+
 })
 
 const openModalUser = (model = BASIC_MODEL_USER) => {
@@ -130,9 +142,34 @@ const openModalUser = (model = BASIC_MODEL_USER) => {
     $("#cboRol").val(rol);
     $("#cboState").val(model.isActive);
     $("#txtPassWord").val(model.password);
-    $("#cboTiendas").val(tienda);
-    //$("#txtPhoto").val("");
-    //$("#imgUser").attr("src", `data:image/png;base64,${model.photoBase64}`);
+
+    if (rol != 1) {
+        $("#cboTiendas").val(tienda);
+    }
+
+
+    document.getElementById('switchSinHorario').checked = model.sinHorario;
+
+    if (model.horarios != null && model.horarios.length == 7) {
+
+        setearHorario("timeRangeLunes", model.horarios[0].horaEntrada, model.horarios[0].horaSalida);
+        setearHorario("timeRangeMartes", model.horarios[1].horaEntrada, model.horarios[1].horaSalida);
+        setearHorario("timeRangeMiercoles", model.horarios[2].horaEntrada, model.horarios[2].horaSalida);
+        setearHorario("timeRangeJueves", model.horarios[3].horaEntrada, model.horarios[3].horaSalida);
+        setearHorario("timeRangeViernes", model.horarios[4].horaEntrada, model.horarios[4].horaSalida);
+        setearHorario("timeRangeSabado", model.horarios[5].horaEntrada, model.horarios[5].horaSalida);
+        setearHorario("timeRangeDomingo", model.horarios[6].horaEntrada, model.horarios[6].horaSalida);
+    }
+    else {
+        setearHorario("timeRangeLunes", "06:00", "16:00");      // Lunes (6:00 AM - 4:00 PM)
+        setearHorario("timeRangeMartes", "09:00", "17:00");     // Martes (9:00 AM - 5:00 PM)
+        setearHorario("timeRangeMiercoles", "08:00", "18:00");  // Miércoles (8:00 AM - 6:00 PM)
+        setearHorario("timeRangeJueves", "08:00", "18:00");  // Miércoles (8:00 AM - 6:00 PM)
+        setearHorario("timeRangeViernes", "08:00", "18:00");  // Miércoles (8:00 AM - 6:00 PM)
+        setearHorario("timeRangeSabado", "08:00", "18:00");  // Miércoles (8:00 AM - 6:00 PM)
+        setearHorario("timeRangeDomingo", "08:00", "18:00");  // Miércoles (8:00 AM - 6:00 PM)
+    }
+
 
     //let rol = $('#cboRol').val();
     $("#cboTiendas").prop("disabled", rol == '1');
@@ -193,15 +230,23 @@ $("#btnSave").on("click", function () {
     model["phone"] = $("#txtPhone").val();
     model["idRol"] = rol
     model["isActive"] = $("#cboState").val();
-    model["idTienda"] = tienda;
-
     model["password"] = $("#txtPassWord").val();
 
-    //const inputPhoto = document.getElementById('txtPhoto');
+    if (rol != 1) {
+        model["idTienda"] = tienda;
+    }
+    else {
+        model["idTienda"] = null;
+    }
+
+    let checkboxSwitchSinHorario = document.getElementById('switchSinHorario');
+    model["sinHorario"] = checkboxSwitchSinHorario.checked;
+
+    let horarios = obtenerHorariosSemana();
 
     const formData = new FormData();
-    //formData.append('photo', inputPhoto.files[0]);
     formData.append('model', JSON.stringify(model));
+    formData.append('horarios', JSON.stringify(horarios));
 
     $("#modalData").find("div.modal-content").LoadingOverlay("show")
 
@@ -262,8 +307,8 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
     }
 
     const data = tableDataUsers.row(rowSelectedUser).data();
-    showLoading();
 
+    showLoading();
     fetch(`/Admin/GetUser?idUser=${data.idUsers}`,)
         .then(response => {
             return response.json();
@@ -330,4 +375,87 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
             }
         });
 })
+// Función para reinicializar o actualizar el slider
+function setearHorario(idSelector, horaEntrada, horaSalida) {
+    // Función para convertir el formato HH:MM a minutos
+    function convertirHorasAMinutos(hora) {
+        var partes = hora.split(':');
+        var horas = parseInt(partes[0], 10);
+        var minutos = parseInt(partes[1], 10);
+        return horas * 60 + minutos;
+    }
 
+    // Convertimos las horas a minutos
+    var fromValue = convertirHorasAMinutos(horaEntrada);
+    var toValue = convertirHorasAMinutos(horaSalida);
+
+    // Imprimir para depurar
+    console.log(`Desde: ${fromValue} minutos, Hasta: ${toValue} minutos`);
+
+    // Verificar si el slider ya está inicializado
+    var slider = $("#" + idSelector).data("ionRangeSlider");
+
+    if (slider) {
+        // Si ya está inicializado, lo actualizamos con los nuevos valores
+        slider.update({
+            from: fromValue,
+            to: toValue
+        });
+    } else {
+        // Inicializamos el slider si no está inicializado
+        $("#" + idSelector).ionRangeSlider({
+            type: "double",
+            min: 0,
+            max: 1440,           // 1440 minutos = 24 horas
+            from: fromValue,      // Valor convertido para la hora de inicio
+            to: toValue,          // Valor convertido para la hora de fin
+            step: 30,             // Intervalo de 30 minutos
+            grid: true,
+            prettify: function (num) {
+                var hours = Math.floor(num / 60);
+                var minutes = num % 60;
+                if (minutes < 10) minutes = '0' + minutes;
+                return hours.toString().padStart(2, '0') + ':' + minutes.toString().padStart(2, '0');
+            }
+        });
+    }
+}
+
+
+
+function obtenerHorariosSemana() {
+    var horariosSemana = [];
+
+    // Define los IDs de los sliders para cada día de la semana
+    var dias = [
+        { id: "timeRangeLunes", diaSemana: 1 },
+        { id: "timeRangeMartes", diaSemana: 2 },
+        { id: "timeRangeMiercoles", diaSemana: 3 },
+        { id: "timeRangeJueves", diaSemana: 4 },
+        { id: "timeRangeViernes", diaSemana: 5 },
+        { id: "timeRangeSabado", diaSemana: 6 },
+        { id: "timeRangeDomingo", diaSemana: 7 }
+    ];
+
+    // Itera sobre los días de la semana
+    dias.forEach(function (dia) {
+        var slider = $("#" + dia.id).data("ionRangeSlider");
+
+        // Convertir el valor de minutos a formato HH:MM
+        function convertirMinutosAHoras(minutos) {
+            var hours = Math.floor(minutos / 60);
+            var minutes = minutos % 60;
+            if (minutes < 10) minutes = '0' + minutes;
+            return hours.toString().padStart(2, '0') + ':' + minutes.toString().padStart(2, '0');
+        }
+
+        // Agregar el horario del día al array
+        horariosSemana.push({
+            diaSemana: dia.diaSemana,               // Día de la semana (1 = Lunes, 2 = Martes, etc.)
+            horaEntrada: convertirMinutosAHoras(slider.result.from), // Hora de entrada en formato HH:MM
+            horaSalida: convertirMinutosAHoras(slider.result.to)    // Hora de salida en formato HH:MM
+        });
+    });
+
+    return horariosSemana;
+}

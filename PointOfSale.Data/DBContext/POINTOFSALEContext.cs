@@ -55,6 +55,7 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<ProductTag> ProductTags { get; set; }
         public virtual DbSet<FormatosVenta> FormatosVentas { get; set; }
         public virtual DbSet<Lov> Lov { get; set; }
+        public virtual DbSet<Horario> Horario { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
         }
@@ -62,13 +63,23 @@ namespace PointOfSale.Data.DBContext
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
+            modelBuilder.Entity<Horario>(entity =>
+            {
+
+                modelBuilder.Entity<Horario>()
+                           .HasOne(h => h.User)
+                           .WithMany(u => u.Horarios)
+                           .HasForeignKey(h => h.IdUsuario)
+                           .OnDelete(DeleteBehavior.Cascade);
+            });
+
             modelBuilder.Entity<Lov>(entity =>
             {
                 entity.HasKey(e => e.IdLov);
 
                 entity.ToTable("Lov");
             });
-            
+
             modelBuilder.Entity<FormatosVenta>(entity =>
             {
                 entity.HasKey(e => e.IdFormatosVenta);
@@ -882,6 +893,11 @@ namespace PointOfSale.Data.DBContext
                     .WithMany(p => p.Usuarios)
                     .HasForeignKey(d => d.IdTienda)
                     .HasConstraintName("FK__Users__idTienda__5812160E");
+
+                entity.HasMany(u => u.Horarios)
+                    .WithOne(h => h.User)
+                    .HasForeignKey(h => h.IdUsuario)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             OnModelCreatingPartial(modelBuilder);

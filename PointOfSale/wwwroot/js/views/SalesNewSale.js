@@ -10,6 +10,7 @@ let isHealthySale = false;
 let ajustes = null;
 let selectedRowtbProduct = null;
 let lastSearchTerm = '';
+let searchCache = {};
 
 const ProducstTab = {
     idTab: 0,
@@ -1101,6 +1102,24 @@ function addFunctions(idTab) {
                     listaPrecios: $('#cboListaPrecios' + idTab).val()
                 };
             },
+            transport: function (params, success, failure) {
+                // Verifica si el término de búsqueda ya está en la caché
+                if (searchCache[params.data.search]) {
+                    success(searchCache[params.data.search]); // Si está en la caché, usa los datos en caché
+                } else {
+                    // Si no está en la caché, realiza la solicitud AJAX
+                    var $request = $.ajax(params);
+
+                    $request
+                        .done(function (data) {
+                            searchCache[params.data.search] = data; // Almacena en la caché la respuesta
+                            success(data); // Devuelve los resultados
+                        })
+                        .fail(failure);
+
+                    return $request; // Retorna la solicitud AJAX
+                }
+            },
             processResults: function (data) {
                 const results = data.map((item) => ({
                     id: item.idProduct,
@@ -1144,7 +1163,7 @@ function addFunctions(idTab) {
                     results: results
                 };
             },
-            cache: true
+            cache: true // La opción cache sigue habilitada, aunque usamos la nuestra
         },
         placeholder: 'Buscando producto...',
         minimumInputLength: 2,

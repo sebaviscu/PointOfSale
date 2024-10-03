@@ -694,7 +694,7 @@ namespace PointOfSale.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUser([FromForm] IFormFile photo, [FromForm] string model)
+        public async Task<IActionResult> CreateUser([FromForm] IFormFile photo, [FromForm] string model, [FromForm] string horarios)
         {
 
             GenericResponse<VMUser> gResponse = new GenericResponse<VMUser>();
@@ -702,7 +702,14 @@ namespace PointOfSale.Controllers
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
 
-                VMUser vmUser = JsonConvert.DeserializeObject<VMUser>(model);
+                var vmUser = JsonConvert.DeserializeObject<VMUser>(model);
+                var vmHorarios = JsonConvert.DeserializeObject<List<VMHorario>>(horarios);
+
+                foreach (var h in vmHorarios)
+                {
+                    h.RegistrationDate = TimeHelper.GetArgentinaTime();
+                }
+                vmUser.Horarios = vmHorarios;
 
                 if (vmUser.Email.ToLower() == "admin")
                 {
@@ -738,7 +745,7 @@ namespace PointOfSale.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateUser([FromForm] IFormFile photo, [FromForm] string model)
+        public async Task<IActionResult> UpdateUser([FromForm] IFormFile photo, [FromForm] string model, [FromForm] string horarios)
         {
 
             GenericResponse<VMUser> gResponse = new GenericResponse<VMUser>();
@@ -747,6 +754,16 @@ namespace PointOfSale.Controllers
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
                 VMUser vmUser = JsonConvert.DeserializeObject<VMUser>(model);
+
+                var vmHorarios = JsonConvert.DeserializeObject<List<VMHorario>>(horarios);
+
+                foreach (var h in vmHorarios)
+                {
+                    h.ModificationUser = user.UserName;
+                    h.ModificationDate = TimeHelper.GetArgentinaTime();
+                    h.RegistrationDate = TimeHelper.GetArgentinaTime();
+                }
+                vmUser.Horarios = vmHorarios;
 
                 if (vmUser.Email.ToLower() == "admin")
                 {

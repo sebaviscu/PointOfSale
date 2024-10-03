@@ -18,6 +18,7 @@ namespace PointOfSale.Model
         public string? Password { get; set; }
         public byte[]? Photo { get; set; }
         public bool? IsActive { get; set; }
+        public bool? SinHorario { get; set; }
         public DateTime? RegistrationDate { get; set; }
 
         public virtual Rol? IdRolNavigation { get; set; }
@@ -26,7 +27,8 @@ namespace PointOfSale.Model
         public string? ModificationUser { get; set; }
         public int? IdTienda { get; set; }
         public Tienda? Tienda { get; set; }
-        public ICollection<Gastos>? Gastos { get; set; }
+        public virtual ICollection<Gastos>? Gastos { get; set; }
+        public virtual ICollection<Horario>? Horarios { get; set; }
 
         public bool IsAdmin
         {

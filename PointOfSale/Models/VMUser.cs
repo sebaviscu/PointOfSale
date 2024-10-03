@@ -12,9 +12,12 @@
         public byte[]? Photo { get; set; }
         public string? PhotoBase64 { get; set; }
         public int? IsActive { get; set; }
-		public DateTime? ModificationDate { get; set; }
+        public bool? SinHorario { get; set; }
+        public DateTime? ModificationDate { get; set; }
 		public string? ModificationUser { get; set; }
         public int? IdTienda { get; set; }
 		public string? TiendaName { get; set; }
+
+        public ICollection<VMHorario> Horarios { get; set; }
 	}
 }

@@ -174,7 +174,8 @@ namespace PointOfSale.Controllers
         {
             try
             {
-                List<VMVentaWeb> vmCategoryList = _mapper.Map<List<VMVentaWeb>>(await _shopService.List());
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
+                List<VMVentaWeb> vmCategoryList = _mapper.Map<List<VMVentaWeb>>(await _shopService.GetAllByDate(user.IdRol == 1 ? null : TimeHelper.GetArgentinaTime()));
                 return StatusCode(StatusCodes.Status200OK, new { data = vmCategoryList });
             }
             catch (Exception e)

@@ -8,8 +8,7 @@
     <link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
     <link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
     <link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
-
-
+    <link href="~/plugins/rangeSlider/ion.rangeSlider.min.css" rel="stylesheet">
 }
 
 <div class="row">
@@ -55,7 +54,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalGridTitle">User details</h5>
+                <h5 class="modal-title" id="exampleModalGridTitle">Usuarios detalles</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -63,76 +62,174 @@
             <div class="modal-body">
                 <form>
                     <input type="hidden" value="0" id="txtId">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="form-row">
-                                <div class="form-group col-sm-6">
-                                    <label for="txtName">Nombre</label>
-                                    <input type="text" class="form-control form-control-sm input-validate" id="txtName" name="Name">
-                                </div>
-                                <div class="form-group col-sm-6">
-                                    <label for="txtEmail">Usuario</label>
-                                    <input type="text" class="form-control form-control-sm input-validate" id="txtEmail" name="Usuario">
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-sm-6">
-                                    <label for="txtPhone">Telefono</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtPhone" name="Telefono">
-                                </div>
-                                <div class="form-group col-sm-6">
-                                    <label for="cboRol">Rol</label>
-                                    <select class="form-control form-control-sm" id="cboRol">
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-sm-6" style="margin-bottom: 0px;">
-                                    <label for="txtPassWord">Password</label>
-                                    <div class="input-group input-group-sm">
-                                        <input type="password" class="form-control form-control-sm" id="txtPassWord" name="password">
-                                        <div class="input-group-prepend" style="margin-left: 5px;">
-                                            <button id="togglePassword">
-                                                <span class="mdi mdi-eye mdi-24px" id="eyeIcon"></span>
-                                            </button>
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link active" id="simple-tab-0" data-bs-toggle="tab" href="#simple-tabpanel-0" role="tab" aria-controls="simple-tabpanel-0" aria-selected="false">General</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="simple-tab-1" data-bs-toggle="tab" href="#simple-tabpanel-1" role="tab" aria-controls="simple-tabpanel-1" aria-selected="true">Horarios</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="tab-content">
+
+                        <div class="tab-pane active" id="simple-tabpanel-0" role="tabpanel" aria-labelledby="simple-tab-0">
+
+                            <div class="row" style="padding: 12px;">
+                                <div class="col-sm-12">
+                                    <div class="form-row">
+                                        <div class="form-group col-sm-6">
+                                            <label for="txtName">Nombre</label>
+                                            <input type="text" class="form-control form-control-sm input-validate" id="txtName" name="Name">
+                                        </div>
+                                        <div class="form-group col-sm-6">
+                                            <label for="txtEmail">Usuario</label>
+                                            <input type="text" class="form-control form-control-sm input-validate" id="txtEmail" name="Usuario">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-sm-6">
+                                            <label for="txtPhone">Telefono</label>
+                                            <input type="text" class="form-control form-control-sm" id="txtPhone" name="Telefono">
+                                        </div>
+                                        <div class="form-group col-sm-6">
+                                            <label for="cboRol">Rol</label>
+                                            <select class="form-control form-control-sm" id="cboRol">
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-sm-6" style="margin-bottom: 0px;">
+                                            <label for="txtPassWord">Password</label>
+                                            <div class="input-group input-group-sm">
+                                                <input type="password" class="form-control form-control-sm" id="txtPassWord" name="password">
+                                                <div class="input-group-prepend" style="margin-left: 5px;">
+                                                    <button id="togglePassword">
+                                                        <span class="mdi mdi-eye mdi-24px" id="eyeIcon"></span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-sm-6">
+                                            <label for="cboState">Estado</label>
+                                            <select class="form-control form-control-sm" id="cboState">
+                                                <option value="1">Activo</option>
+                                                <option value="0">Inactivo</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-sm-6">
+                                            <label for="txtTienda">Tienda</label>
+                                            <select class="form-control form-control-sm" id="cboTiendas"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-row" id="divModif">
+                                        <div class="form-group col-sm-6">
+                                            <label for="txtModificado">Fecha Modificado</label>
+                                            <input type="text" class="form-control form-control-sm" id="txtModificado" name="fechaModificado" readonly>
+                                        </div>
+                                        <div class="form-group col-sm-6">
+                                            <label for="txtModificadoUsuario">Por:</label>
+                                            <input type="text" class="form-control form-control-sm" id="txtModificadoUsuario" name="usuarioModificado" readonly>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group col-sm-6">
-                                    <label for="cboState">Estado</label>
-                                    <select class="form-control form-control-sm" id="cboState">
-                                        <option value="1">Activo</option>
-                                        <option value="0">Inactivo</option>
-                                    </select>
-                                </div>
+
                             </div>
-                            <div class="form-row">
-                                <div class="form-group col-sm-6">
-                                    <label for="txtTienda">Tienda</label>
-                                    <select class="form-control form-control-sm" id="cboTiendas"></select>
-                                </div>
-                            </div>
-                            <div class="form-row" id="divModif">
-                                <div class="form-group col-sm-6">
-                                    <label for="txtModificado">Fecha Modificado</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtModificado" name="fechaModificado" readonly>
-                                </div>
-                                <div class="form-group col-sm-6">
-                                    <label for="txtModificadoUsuario">Por:</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtModificadoUsuario" name="usuarioModificado" readonly>
-                                </div>
-                            </div>
-                            @* 							<div class="form-row">
-                            <div class="form-group col-sm-6">
-                            <label for="txtPhoto">Foto</label>
-                            <input class="form-control-file" type="file" id="txtPhoto"/>
-                            </div>
-                            </div> *@
+
                         </div>
-                        @* <div class="col-sm-4">
-                        <img id="imgUser" style="max-width:200px;" src="" class="rounded mx-auto d-block" alt="Photo user">
-                        </div> *@
+
+                        <div class="tab-pane" id="simple-tabpanel-1" role="tabpanel" aria-labelledby="simple-tab-1">
+
+                            <div class="text-center mt-3">
+                                <div class="form-group">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="switchSinHorario">
+                                        <label class="form-check-label" for="switchSinHorario">Sin horario</label>  <span class="mdi mdi-information text-info ms-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Habilita / Deshabilita limitar el dia y horario para el inicio de sesion"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="container">
+
+                                <div class="row">
+                                    <h3>Seleccionar horarios semanales</h3> <span class="mdi mdi-information text-info ms-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Limita el inicio de sesion en el dia y la hora determinada"></span>
+                                </div>
+
+                                <div class="row">
+                                    <!-- Columna de Lunes a Viernes -->
+                                    <div class="col-md-6">
+                                        <!-- Lunes -->
+                                        <div class="row" style="padding: 12px;">
+                                            <h5>Lunes</h5>
+                                            <div class="col-md-12">
+                                                <input type="text" id="timeRangeLunes" />
+                                            </div>
+                                        </div>
+
+                                        <!-- Martes -->
+                                        <div class="row" style="padding: 12px;">
+                                            <h5>Martes</h5>
+                                            <div class="col-md-12">
+                                                <input type="text" id="timeRangeMartes" />
+                                            </div>
+                                        </div>
+
+                                        <!-- Miércoles -->
+                                        <div class="row" style="padding: 12px;">
+                                            <h5>Miércoles</h5>
+                                            <div class="col-md-12">
+                                                <input type="text" id="timeRangeMiercoles" />
+                                            </div>
+                                        </div>
+
+                                        <!-- Jueves -->
+                                        <div class="row" style="padding: 12px;">
+                                            <h5>Jueves</h5>
+                                            <div class="col-md-12">
+                                                <input type="text" id="timeRangeJueves" />
+                                            </div>
+                                        </div>
+
+                                        <!-- Viernes -->
+                                        <div class="row" style="padding: 12px;">
+                                            <h5>Viernes</h5>
+                                            <div class="col-md-12">
+                                                <input type="text" id="timeRangeViernes" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Columna de Sábado y Domingo -->
+                                    <div class="col-md-6">
+                                        <!-- Sábado -->
+                                        <div class="row" style="padding: 12px;">
+                                            <h5>Sábado</h5>
+                                            <div class="col-md-12">
+                                                <input type="text" id="timeRangeSabado" />
+                                            </div>
+                                        </div>
+
+                                        <!-- Domingo -->
+                                        <div class="row" style="padding: 12px;">
+                                            <h5>Domingo</h5>
+                                            <div class="col-md-12">
+                                                <input type="text" id="timeRangeDomingo" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+
                     </div>
+
+
+
+
 
                 </form>
 
@@ -157,6 +254,7 @@
     <script src="~/plugins/data-tables/jszip.min.js"></script>
     <script src="~/plugins/data-tables/buttons.html5.min.js"></script>
     <script src="~/plugins/data-tables/buttons.print.min.js"></script>
+    <script src="~/plugins/rangeSlider/ion.rangeSlider.min.js"></script>
 
     <script src="~/js/views/adminUsers.js"></script>
 }

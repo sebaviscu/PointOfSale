@@ -8,22 +8,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services
 {
     public class UserService : IUserService
     {
         private readonly IGenericRepository<User> _repository;
-        public UserService(IGenericRepository<User> repository)
+        private readonly IGenericRepository<Horario> _repositoryHorario;
+
+        public UserService(IGenericRepository<User> repository, IGenericRepository<Horario> repositoryHorario)
         {
             _repository = repository;
+            _repositoryHorario = repositoryHorario;
         }
 
         public async Task<List<User>> List()
         {
             IQueryable<User> query = await _repository.Query();
-            return query.Include(r => r.IdRolNavigation).Include(t => t.Tienda).OrderBy(_ => _.Name).ToList();
+            return query.Include(r => r.IdRolNavigation).Include(r => r.Horarios).Include(t => t.Tienda).OrderBy(_ => _.Name).ToList();
         }
+
         public async Task<User> Add(User entity)
         {
             User user_exists = await _repository.Get(u => u.Email == entity.Email);
@@ -38,9 +43,6 @@ namespace PointOfSale.Business.Services
 
                 if (user_created.IdUsers == 0)
                     throw new TaskCanceledException("Error al crear user");
-
-                IQueryable<User> query = await _repository.Query(u => u.IdUsers == user_created.IdUsers);
-                user_created = query.Include(r => r.IdRolNavigation).First();
 
                 return user_created;
             }
@@ -62,7 +64,7 @@ namespace PointOfSale.Business.Services
             {
                 IQueryable<User> queryUser = await _repository.Query(u => u.IdUsers == entity.IdUsers);
 
-                User user_edit = queryUser.First();
+                User user_edit = queryUser.Include(_=>_.Horarios).First();
 
                 user_edit.Name = entity.Name;
                 user_edit.Email = entity.Email;
@@ -73,24 +75,33 @@ namespace PointOfSale.Business.Services
                 user_edit.ModificationUser = entity.ModificationUser;
                 user_edit.ModificationDate = TimeHelper.GetArgentinaTime();
                 user_edit.IdTienda = entity.IdTienda == -1 ? null : entity.IdTienda;
+                user_edit.SinHorario = entity.SinHorario;
 
-
-                if (entity.Photo != null && entity.Photo.Length > 0)
-                {
-                    user_edit.Photo = entity.Photo;
-                }
+                SetHorarios(user_edit.Horarios.ToList(), entity.Horarios.ToList());
 
                 bool response = await _repository.Edit(user_edit);
                 if (!response)
                     throw new TaskCanceledException("No se pudo modificar user");
 
-                User user_edited = queryUser.Include(r => r.IdRolNavigation).First();
+                User user_edited = queryUser.Include(r => r.IdRolNavigation).Include(r => r.Horarios).First();
 
                 return user_edited;
             }
             catch (Exception ex)
             {
                 throw;
+            }
+        }
+
+        private void SetHorarios(List<Horario> actual, List<Horario> nuevos)
+        {
+            foreach (var h in actual)
+            {
+                var cambio = nuevos.First(_=>_.DiaSemana == h.DiaSemana);
+                h.HoraSalida = cambio.HoraSalida;
+                h.HoraEntrada = cambio.HoraEntrada;
+                h.ModificationDate = cambio.ModificationDate;
+                h.ModificationUser = cambio.ModificationUser;
             }
         }
 
@@ -122,7 +133,7 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task<User?> GetByCredentials(string email, string password)
+        public async Task<User?> GetByCredentials2(string email, string password)
         {
             var query = await _repository.Query();
             var user_found = query.SingleOrDefault(u => u.Email.ToUpper().Equals(email.ToUpper()));
@@ -138,6 +149,50 @@ namespace PointOfSale.Business.Services
 
             return null;
         }
+
+        public async Task<(User? Usuario, string? Mensaje)> GetByCredentials(string email, string password)
+        {
+            var query = await _repository.Query();
+            var user_found = query.Include(_=>_.Horarios).SingleOrDefault(u => u.Email.ToUpper().Equals(email.ToUpper()));
+
+            if (user_found != null)
+            {
+                var passwordDescrypt = EncryptionHelper.DecryptString(user_found.Password);
+                if (passwordDescrypt == password)
+                {
+                    // Si el usuario tiene "SinHorario" en true, retornamos el usuario sin validar horarios
+                    if (user_found.SinHorario == true)
+                    {
+                        return (user_found, null);
+                    }
+
+                    // Validamos el horario si "SinHorario" es false
+                    var now = TimeHelper.GetArgentinaTime();
+                    var diaSemanaActual = (DiasSemana)((int)now.DayOfWeek == 0 ? 7 : (int)now.DayOfWeek); // Convertir de DateTime.DayOfWeek a DiasSemana (donde 0 = Domingo)
+
+                    var horarioValido = user_found.Horarios?.Any(h =>
+                        h.DiaSemana == diaSemanaActual &&
+                        TimeSpan.Parse(h.HoraEntrada) <= now.TimeOfDay &&
+                        TimeSpan.Parse(h.HoraSalida) >= now.TimeOfDay);
+
+                    // Si encontramos un horario válido, retornamos el usuario
+                    if (horarioValido == true)
+                    {
+                        return (user_found, null);
+                    }
+                    else
+                    {
+                        // Retornamos null indicando que el usuario no está en su horario permitido
+                        return (null, "Usuario fuera de su horario permitido");
+                    }
+                }
+            }
+
+            // Si el usuario no fue encontrado o la contraseña es incorrecta
+            return (null, "Usuario no encontrado o contraseña incorrecta");
+        }
+
+
 
         public async Task<bool> CheckFirstLogin(string email, string password)
         {
@@ -157,10 +212,8 @@ namespace PointOfSale.Business.Services
 
         public async Task<User> GetById(int IdUser)
         {
-
-            User user_found = await _repository.Get(u => u.IdUsers == IdUser);
-
-            return user_found;
+            var query = await _repository.Query();
+            return query.Include(_=>_.Horarios).SingleOrDefault(u => u.IdUsers == IdUser);
         }
 
         public async Task<User> GetByIdWithRol(int IdUser)

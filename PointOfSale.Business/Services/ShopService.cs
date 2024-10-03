@@ -21,6 +21,7 @@ namespace PointOfSale.Business.Services
         private readonly IAjusteService _ajusteService;
         private readonly ITypeDocumentSaleService _typeDocumentSaleService;
         private readonly IAfipService _afipService;
+
         public ShopService(ITiendaService tiendaService, IProductService productService, IGenericRepository<VentaWeb> repository, ITurnoService turnoService, ISaleRepository saleRepository, INotificationService notificationService, IGenericRepository<DetailSale> repositoryDetailsSale, IAjusteService ajusteService, ITypeDocumentSaleService typeDocumentSaleService, IAfipService afipService)
         {
             _tiendaService = tiendaService;
@@ -39,6 +40,17 @@ namespace PointOfSale.Business.Services
         {
             IQueryable<VentaWeb> query = await _repository.Query();
             return query.Include(_ => _.DetailSales).Include(_ => _.FormaDePago).ToList();
+        }
+
+        public async Task<List<VentaWeb>> GetAllByDate(DateTime? registrationDate)
+        {
+            if (registrationDate.HasValue)
+            {
+                IQueryable<VentaWeb> query = await _repository.Query(_ => _.RegistrationDate.Value.Date == registrationDate.Value.Date);
+                return query.Include(_ => _.DetailSales).Include(_ => _.FormaDePago).ToList();
+            }
+            else
+                return await List();
         }
 
 
@@ -120,35 +132,26 @@ namespace PointOfSale.Business.Services
 
         private void UpdateDetailSales(VentaWeb ventaWebFound, List<DetailSale> updatedDetailSales)
         {
-            try
+            foreach (var existingDetailSale in ventaWebFound.DetailSales.ToList())
             {
-                foreach (var existingDetailSale in ventaWebFound.DetailSales.ToList())
+                if (!updatedDetailSales.Any(ds => ds.IdDetailSale == existingDetailSale.IdDetailSale))
                 {
-                    if (!updatedDetailSales.Any(ds => ds.IdDetailSale == existingDetailSale.IdDetailSale))
-                    {
-                        _repositoryDetailsSale.Delete(existingDetailSale);
-                    }
-                }
-
-                foreach (var updatedDetailSale in updatedDetailSales)
-                {
-                    var existingDetailSale = ventaWebFound.DetailSales
-                        .FirstOrDefault(ds => ds.IdDetailSale == updatedDetailSale.IdDetailSale);
-
-                    if (existingDetailSale == null)
-                    {
-                        updatedDetailSale.IdVentaWeb = ventaWebFound.IdVentaWeb;
-
-                        ventaWebFound.DetailSales.Add(updatedDetailSale);
-                    }
+                    _repositoryDetailsSale.Delete(existingDetailSale);
                 }
             }
-            catch (Exception e)
+
+            foreach (var updatedDetailSale in updatedDetailSales)
             {
+                var existingDetailSale = ventaWebFound.DetailSales
+                    .FirstOrDefault(ds => ds.IdDetailSale == updatedDetailSale.IdDetailSale);
 
-                throw;
+                if (existingDetailSale == null)
+                {
+                    updatedDetailSale.IdVentaWeb = ventaWebFound.IdVentaWeb;
+
+                    ventaWebFound.DetailSales.Add(updatedDetailSale);
+                }
             }
-
         }
 
 
