@@ -70,11 +70,11 @@ namespace PointOfSale.Business.Services
                 user_edit.Email = entity.Email;
                 user_edit.Phone = entity.Phone;
                 user_edit.IdRol = entity.IdRol;
+                user_edit.IdTienda = entity.IdTienda;
                 user_edit.IsActive = entity.IsActive;
                 user_edit.Password = entity.Password;
                 user_edit.ModificationUser = entity.ModificationUser;
                 user_edit.ModificationDate = TimeHelper.GetArgentinaTime();
-                user_edit.IdTienda = entity.IdTienda == -1 ? null : entity.IdTienda;
                 user_edit.SinHorario = entity.SinHorario;
 
                 SetHorarios(user_edit.Horarios.ToList(), entity.Horarios.ToList());

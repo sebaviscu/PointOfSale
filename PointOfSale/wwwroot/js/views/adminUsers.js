@@ -134,7 +134,7 @@ $(document).ready(function () {
 
 const openModalUser = (model = BASIC_MODEL_USER) => {
     let rol = model.idRol == 0 ? $("#cboRol option:first").val() : model.idRol;
-    let tienda = model.idTienda == 0 ? $("#cboTiendas option:first").val() : model.idTienda;
+    let tienda = model.idTienda == 0 ? null : model.idTienda;
     $("#txtId").val(model.idUsers);
     $("#txtName").val(model.name);
     $("#txtEmail").val(model.email);
@@ -143,9 +143,7 @@ const openModalUser = (model = BASIC_MODEL_USER) => {
     $("#cboState").val(model.isActive);
     $("#txtPassWord").val(model.password);
 
-    if (rol != 1) {
-        $("#cboTiendas").val(tienda);
-    }
+    $("#cboTiendas").val(tienda);
 
 
     document.getElementById('switchSinHorario').checked = model.sinHorario;
@@ -172,7 +170,7 @@ const openModalUser = (model = BASIC_MODEL_USER) => {
 
 
     //let rol = $('#cboRol').val();
-    $("#cboTiendas").prop("disabled", rol == '1');
+    //$("#cboTiendas").prop("disabled", rol == '1');
 
     if (model.modificationUser == null)
         document.getElementById("divModif").style.display = 'none';
@@ -218,10 +216,6 @@ $("#btnSave").on("click", function () {
         toastr.warning("Se debe seleccionar una tienda", "");
         return;
     }
-    else if (rol == '1' && (tienda != '-1' && tienda != null)) {
-        toastr.warning("No se debe seleccionar tienda para un Administrador", "");
-        return;
-    }
 
     const model = structuredClone(BASIC_MODEL_USER);
     model["idUsers"] = parseInt($("#txtId").val());
@@ -232,12 +226,8 @@ $("#btnSave").on("click", function () {
     model["isActive"] = $("#cboState").val();
     model["password"] = $("#txtPassWord").val();
 
-    if (rol != 1) {
-        model["idTienda"] = tienda;
-    }
-    else {
-        model["idTienda"] = null;
-    }
+    model["idTienda"] = tienda != '' && tienda != '-1' ? tienda : null;
+
 
     let checkboxSwitchSinHorario = document.getElementById('switchSinHorario');
     model["sinHorario"] = checkboxSwitchSinHorario.checked;
@@ -388,9 +378,6 @@ function setearHorario(idSelector, horaEntrada, horaSalida) {
     // Convertimos las horas a minutos
     var fromValue = convertirHorasAMinutos(horaEntrada);
     var toValue = convertirHorasAMinutos(horaSalida);
-
-    // Imprimir para depurar
-    console.log(`Desde: ${fromValue} minutos, Hasta: ${toValue} minutos`);
 
     // Verificar si el slider ya está inicializado
     var slider = $("#" + idSelector).data("ionRangeSlider");

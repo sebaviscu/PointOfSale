@@ -1294,7 +1294,7 @@ function agregarProductoEvento(idTab) {
 
     if (currentTab.products.length !== 0) {
 
-        let product_found = currentTab.products.filter(prod => prod.idproduct == productSelected.id && prod.promocion == null)
+        let product_found = currentTab.products.filter(prod => prod.idproduct == productSelected.id)
         if (product_found.length == 1) {
 
             quantity_product_found = product_found[0].quantity;

@@ -84,22 +84,29 @@ namespace PointOfSale.Controllers
                 var tiendas = await _tiendaService.List();
                 int listaPrecio = 1;
 
-                if (tiendas.Count == 1)
+                if (!user_found.IdTienda.HasValue)
                 {
-                    var tienda = tiendas.First();
-                    idTienda = tienda.IdTienda;
+                    if (tiendas.Count == 1)
+                    {
+                        var tienda = tiendas.First();
+                        idTienda = tienda.IdTienda;
+                    }
+                    else
+                    {
+                        if (model.TiendaId == null && user_found.IdRol == 1)
+                        {
+                            model.IsAdmin = true;
+                            model.PassWord = model.PassWord;
+                            model.Email = model.Email;
+                            return View(model);
+                        }
+
+                        idTienda = (int)(user_found.IsAdmin ? model.TiendaId.Value : user_found.IdTienda);
+                    }
                 }
                 else
                 {
-                    if (model.TiendaId == null && user_found.IdRol == 1)
-                    {
-                        model.IsAdmin = true;
-                        model.PassWord = model.PassWord;
-                        model.Email = model.Email;
-                        return View(model);
-                    }
-
-                    idTienda = (int)(user_found.IsAdmin ? model.TiendaId.Value : user_found.IdTienda);
+                    idTienda = user_found.IdTienda.Value;
                 }
 
                 listaPrecio = (int)tiendas.FirstOrDefault(_ => _.IdTienda == idTienda).IdListaPrecio.Value;
@@ -121,7 +128,7 @@ namespace PointOfSale.Controllers
                     new Claim("ListaPrecios", listaPrecio.ToString())
                 };
 
-                if(turnoActual != null)
+                if (turnoActual != null)
                 {
                     claims.Add(new Claim("Turno", turnoActual.IdTurno.ToString()));
                 }
