@@ -8,6 +8,7 @@ namespace PointOfSale.Model
         public User()
         {
             Sales = new HashSet<Sale>();
+            IsSuperAdmin = false;
         }
 
         public int IdUsers { get; set; }
@@ -19,6 +20,7 @@ namespace PointOfSale.Model
         public byte[]? Photo { get; set; }
         public bool? IsActive { get; set; }
         public bool? SinHorario { get; set; }
+        public bool IsSuperAdmin { get; set; }
         public DateTime? RegistrationDate { get; set; }
 
         public virtual Rol? IdRolNavigation { get; set; }

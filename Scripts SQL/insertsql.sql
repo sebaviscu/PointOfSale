@@ -9,8 +9,9 @@ insert into rol([description],isActive) values
 
 go
 
-insert into Users(name,email,idRol,[password],isActive, sinHorario) values
-('admin','admin',1,'',1, 1)
+insert into Users(name,email,idRol,[password],isActive, sinHorario, IsSuperAdmin) values
+('admin','admin',1,'',1, 1,0),
+('SuperAdmin','sebaviscusso',1,'aBtloYrF4Hs6fEWVq0EW7A==:J61S+Sb5u+7YBcoiGM4SiQ==',1, 1,1) -- Viscu.92
 
 go
 

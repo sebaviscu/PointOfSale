@@ -81,7 +81,8 @@ create table Users(
 [password] varchar(100),
 [photo] varbinary(max),
 [isActive] bit,
-sinHorario bit,
+sinHorario bit null,
+IsSuperAdmin  bit null,
 [registrationDate] datetime default getdate(),
 [modificationDate] [datetime] null,
 [modificationUser] varchar(50) null,
@@ -636,6 +637,8 @@ CREATE TABLE Horario (
     ModificationUser NVARCHAR(150),           
 	FOREIGN KEY (IdUsuario) REFERENCES Users([idUsers]) ON DELETE CASCADE
 );
+
+select * from users
 
 
 --select * from turno

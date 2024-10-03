@@ -25,7 +25,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<User>> List()
         {
-            IQueryable<User> query = await _repository.Query();
+            IQueryable<User> query = await _repository.Query(_ => !_.IsSuperAdmin);
             return query.Include(r => r.IdRolNavigation).Include(r => r.Horarios).Include(t => t.Tienda).OrderBy(_ => _.Name).ToList();
         }
 
@@ -64,7 +64,7 @@ namespace PointOfSale.Business.Services
             {
                 IQueryable<User> queryUser = await _repository.Query(u => u.IdUsers == entity.IdUsers);
 
-                User user_edit = queryUser.Include(_=>_.Horarios).First();
+                User user_edit = queryUser.Include(_ => _.Horarios).First();
 
                 user_edit.Name = entity.Name;
                 user_edit.Email = entity.Email;
@@ -97,7 +97,7 @@ namespace PointOfSale.Business.Services
         {
             foreach (var h in actual)
             {
-                var cambio = nuevos.First(_=>_.DiaSemana == h.DiaSemana);
+                var cambio = nuevos.First(_ => _.DiaSemana == h.DiaSemana);
                 h.HoraSalida = cambio.HoraSalida;
                 h.HoraEntrada = cambio.HoraEntrada;
                 h.ModificationDate = cambio.ModificationDate;
@@ -114,13 +114,13 @@ namespace PointOfSale.Business.Services
                 if (user_found == null)
                     throw new TaskCanceledException("User no existe");
 
-                var usersList = await List();
+                var usersList = await GetAllUsers();
 
                 if (usersList.Count == 1)
                     throw new TaskCanceledException("Debe existir al menos un usuario en el sistema");
 
 
-                if (user_found.IsAdmin && usersList.Count(_ => _.IsAdmin) == 1)
+                if (user_found.IsAdmin && usersList.Count(_ => _.IsAdmin && !_.IsSuperAdmin) == 1)
                     throw new TaskCanceledException("Debe existir al menos un usuario Administrador");
 
                 bool response = await _repository.Delete(user_found);
@@ -135,7 +135,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<User?> GetByCredentials2(string email, string password)
         {
-            var query = await _repository.Query();
+            var query = await _repository.Query(_ => !_.IsSuperAdmin);
             var user_found = query.SingleOrDefault(u => u.Email.ToUpper().Equals(email.ToUpper()));
 
             if (user_found != null)
@@ -153,13 +153,20 @@ namespace PointOfSale.Business.Services
         public async Task<(User? Usuario, string? Mensaje)> GetByCredentials(string email, string password)
         {
             var query = await _repository.Query();
-            var user_found = query.Include(_=>_.Horarios).SingleOrDefault(u => u.Email.ToUpper().Equals(email.ToUpper()));
+            var user_found = query.Include(_ => _.Horarios).SingleOrDefault(u => u.IsActive.Value && u.Email.ToUpper().Equals(email.ToUpper()));
 
             if (user_found != null)
             {
+
                 var passwordDescrypt = EncryptionHelper.DecryptString(user_found.Password);
                 if (passwordDescrypt == password)
                 {
+
+                    if (user_found.IsSuperAdmin)
+                    {
+                        return (user_found, null);
+                    }
+
                     // Si el usuario tiene "SinHorario" en true, retornamos el usuario sin validar horarios
                     if (user_found.SinHorario == true)
                     {
@@ -213,7 +220,7 @@ namespace PointOfSale.Business.Services
         public async Task<User> GetById(int IdUser)
         {
             var query = await _repository.Query();
-            return query.Include(_=>_.Horarios).SingleOrDefault(u => u.IdUsers == IdUser);
+            return query.Include(_ => _.Horarios).SingleOrDefault(u => u.IdUsers == IdUser);
         }
 
         public async Task<User> GetByIdWithRol(int IdUser)
@@ -225,7 +232,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<User>> GetAllUsers()
         {
-            IQueryable<User> query = await _repository.Query(u => u.IsActive == true);
+            IQueryable<User> query = await _repository.Query(u => u.IsActive.Value && !u.IsSuperAdmin);
             return query.OrderBy(_ => _.Name).ToList();
         }
     }
