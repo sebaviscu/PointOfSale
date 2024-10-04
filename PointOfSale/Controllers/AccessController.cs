@@ -204,9 +204,7 @@ namespace PointOfSale.Controllers
             var user = ValidarAutorizacion([Roles.Administrador]);
             ClaimsPrincipal claimuser = HttpContext.User;
 
-            string idUsuario = claimuser.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).Select(c => c.Value).SingleOrDefault();
-
-            var result = await _saleService.GenerarVentas(user.IdTienda, int.Parse(idUsuario));
+            var result = await _saleService.GenerarVentas(user.IdTienda);
 
             GenericResponse<VMUser> gResponse = new GenericResponse<VMUser>();
 

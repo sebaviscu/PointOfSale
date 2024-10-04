@@ -346,19 +346,17 @@ function horaActual() {
 }
 
 function openModalDataAbrirTurno() {
-    let dateTimeArgentina = new Date().toLocaleString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" });
-
-    //let dateTimeArgentina = moment().tz('America/Argentina/Buenos_Aires');
+    let dateTimeArgentina = moment().tz('America/Argentina/Buenos_Aires');
 
     // Mostrar el modal
     $("#modalDataAbrirTurno").modal("show");
 
-    // Esperar hasta que el modal esté completamente mostrado
     $('#modalDataAbrirTurno').on('shown.bs.modal', function () {
         $("#txtInicioTurnoAbrir").val(dateTimeArgentina.format('DD/MM/YYYY'));
-        $("#txtHoraInicioTurnoAbrir").val(dateTimeArgentina.format('HH:mm:ss'));
+        $("#txtHoraInicioTurnoAbrir").val(dateTimeArgentina.format('HH:mm'));
     });
 }
+
 
 
 function renderVentasPorTipoVenta(contenedor, ventasPorTipoVenta, importeInicioCaja, turnoCerrado, totalMovimientosCaja = null) {

@@ -345,10 +345,6 @@ namespace PointOfSale.Data.DBContext
                     .WithMany(p => p.Gastos)
                     .HasForeignKey(d => d.IdTipoGasto);
 
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.Gastos)
-                    .HasForeignKey(d => d.IdUsuario);
-
                 entity.Property(e => e.RegistrationDate)
                     .HasColumnType("datetime")
                     .HasColumnName("registrationDate")
@@ -777,8 +773,6 @@ namespace PointOfSale.Data.DBContext
 
                 entity.Property(e => e.IdTypeDocumentSale).HasColumnName("idTypeDocumentSale");
 
-                entity.Property(e => e.IdUsers).HasColumnName("idUsers");
-
                 entity.Property(e => e.RegistrationDate)
                     .HasColumnType("datetime")
                     .HasColumnName("registrationDate")
@@ -798,11 +792,6 @@ namespace PointOfSale.Data.DBContext
                     .WithMany(p => p.Sales)
                     .HasForeignKey(d => d.IdTypeDocumentSale)
                     .HasConstraintName("FK__Sale__idTypeDocu__2B3F6F97");
-
-                entity.HasOne(d => d.IdUsersNavigation)
-                    .WithMany(p => p.Sales)
-                    .HasForeignKey(d => d.IdUsers)
-                    .HasConstraintName("FK__Sale__idUsers__2C3393D0");
 
                 entity.HasOne(d => d.Turno)
                     .WithMany(p => p.Sales)

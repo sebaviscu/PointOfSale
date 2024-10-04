@@ -10,10 +10,11 @@ const BASIC_MODEL_GASTO = {
     idTipoGasto: 0,
     importe: 0,
     comentario: null,
-    idUsuario: 0,
+    //idUsuario: 0,
     modificationDate: null,
     modificationUser: "",
     estadoPago: 0,
+    gastoAsignado: null
 }
 
 $(document).ready(function () {
@@ -142,7 +143,6 @@ const openModalNuevoGasto = (model = BASIC_MODEL_GASTO) => {
     $("#txtIdGastos").val(model.idGastos);
     $("#cboTipoDeGastoEnGasto").val(model.idTipoGasto);
     $("#txtImporte").val(model.importe);
-    $("#cboUsuario").val(model.idUsuario);
     $("#cboTipoFactura").val(model.tipoFactura);
     $("#txtNroFactura").val(model.nroFactura);
     $("#txtIva").val(model.iva);
@@ -163,6 +163,33 @@ const openModalNuevoGasto = (model = BASIC_MODEL_GASTO) => {
     }
 
     $("#modalData").modal("show")
+
+    if (model.gastoAsignado != null) {
+        let textToSelect = model.gastoAsignado;
+        let optionFound = false;
+
+        $("#cboUsuario option").each(function () {
+            if ($(this).text() === textToSelect) {
+                $(this).prop('selected', true);
+                optionFound = true;
+            }
+        });
+
+        if (!optionFound) {
+            let newOption = $("<option></option>")
+                .val(textToSelect)
+                .text(textToSelect);
+
+            $("#cboUsuario").append(newOption);
+
+            newOption.prop('selected', true);
+        }
+
+        $("#cboUsuario").trigger('change');
+    }
+    else {
+        $("#cboUsuario").val(null);
+    }
 }
 
 $("#btnNew").on("click", function () {
@@ -191,7 +218,6 @@ $("#btnSave").on("click", function () {
     model["idTipoGasto"] = $("#cboTipoDeGastoEnGasto").val();
     model["importe"] = $("#txtImporte").val();
     model["comentario"] = $("#txtComentario").val();
-    model["idUsuario"] = $("#cboUsuario").val() != 0 ? $("#cboUsuario").val() : null;
     model["tipoFactura"] = $("#cboTipoFactura").val();
     model["nroFactura"] = $("#txtNroFactura").val();
     model["iva"] = $("#txtIva").val() != '' ? $("#txtIva").val() : 0;
@@ -199,6 +225,9 @@ $("#btnSave").on("click", function () {
     model["importeSinIva"] = $("#txtImporteSinIva").val() != '' ? $("#txtImporteSinIva").val() : 0;
     model["estadoPago"] = parseInt($("#cboEstado").val());
     model["facturaPendiente"] = document.querySelector('#cbxFacturaPendiente').checked;
+
+    model["gastoAsignado"] = $("#cboUsuario").val() != 0 ? $("#cboUsuario option:selected").text() : null;
+
 
     $("#modalData").find("div.modal-content").LoadingOverlay("show")
 
@@ -215,8 +244,6 @@ $("#btnSave").on("click", function () {
             if (responseJson.state) {
                 swal("Exitoso!", "Guardado con éxito", "success");
                 $("#modalData").modal("hide")
-
-                location.reload()
 
                 tableDataGastos.row.add(responseJson.object).draw(false);
                 swal("Exitoso!", "El Gastos fue creado con éxito.", "success");

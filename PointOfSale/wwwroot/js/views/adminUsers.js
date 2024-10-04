@@ -14,7 +14,8 @@ const BASIC_MODEL_USER = {
     tiendaName: "",
     modificationDate: "",
     modificationUser: null,
-    horarios: []
+    horarios: [],
+    sinHorario: 1
 }
 
 const BASIC_MODEL_HORARIOS = {

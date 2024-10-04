@@ -7,7 +7,6 @@ namespace PointOfSale.Model
     {
         public User()
         {
-            Sales = new HashSet<Sale>();
             IsSuperAdmin = false;
         }
 
@@ -24,12 +23,10 @@ namespace PointOfSale.Model
         public DateTime? RegistrationDate { get; set; }
 
         public virtual Rol? IdRolNavigation { get; set; }
-        public virtual ICollection<Sale> Sales { get; set; }
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }
         public int? IdTienda { get; set; }
         public Tienda? Tienda { get; set; }
-        public virtual ICollection<Gastos>? Gastos { get; set; }
         public virtual ICollection<Horario>? Horarios { get; set; }
 
         public bool IsAdmin

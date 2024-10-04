@@ -15,7 +15,6 @@ namespace PointOfSale.Model
         public int IdSale { get; set; }
         public string? SaleNumber { get; set; }
         public int? IdTypeDocumentSale { get; set; }
-        public int? IdUsers { get; set; }
         public string? CustomerDocument { get; set; }
         public string? ClientName { get; set; }
         public decimal? Total { get; set; }
@@ -24,7 +23,6 @@ namespace PointOfSale.Model
         public string RegistrationUser { get; set; }
 
         public virtual TypeDocumentSale? TypeDocumentSaleNavigation { get; set; }
-        public virtual User? IdUsersNavigation { get; set; }
         public virtual ICollection<DetailSale> DetailSales { get; set; }
         public int IdTurno { get; set; }
         public Turno Turno { get; set; }

@@ -209,7 +209,6 @@ namespace PointOfSale.Business.Services
                 )
                 .OrderByDescending(_ => _.IdSale)
                 .Include(tdv => tdv.TypeDocumentSaleNavigation)
-                .Include(u => u.IdUsersNavigation)
                 .Include(dv => dv.DetailSales);
 
                 switch (presupuestos)
@@ -227,7 +226,6 @@ namespace PointOfSale.Business.Services
                 result = query.Where(v => v.SaleNumber.EndsWith(saleNumber))
                 .OrderByDescending(_ => _.IdSale)
                 .Include(tdv => tdv.TypeDocumentSaleNavigation)
-                .Include(u => u.IdUsersNavigation)
                 .Include(dv => dv.DetailSales);
             }
 
@@ -241,7 +239,6 @@ namespace PointOfSale.Business.Services
             var result = query.Where(v => v.IdTurno == idTurno)
             .OrderByDescending(_ => _.IdSale)
             .Include(tdv => tdv.TypeDocumentSaleNavigation)
-            .Include(u => u.IdUsersNavigation)
             .Include(dv => dv.DetailSales);
 
 
@@ -254,7 +251,6 @@ namespace PointOfSale.Business.Services
 
             return query
                .Include(tdv => tdv.TypeDocumentSaleNavigation)
-               .Include(u => u.IdUsersNavigation)
                .Include(dv => dv.DetailSales)
                .First();
         }
@@ -295,7 +291,7 @@ namespace PointOfSale.Business.Services
             return sale_found;
         }
 
-        public async Task<bool> GenerarVentas(int idTienda, int idUser)
+        public async Task<bool> GenerarVentas(int idTienda)
         {
 
             var tiposVentas = await _rTypeNumber.List();
@@ -319,7 +315,7 @@ namespace PointOfSale.Business.Services
 
                     var sale = new Sale();
                     sale.RegistrationDate = dia;
-                    await CrearVentaGenerada(idTienda, idUser, tiposVentas, productos, turno, random, cantTipoVentas, cantproductos, sale);
+                    await CrearVentaGenerada(idTienda, tiposVentas, productos, turno, random, cantTipoVentas, cantproductos, sale);
                 }
 
                 for (int i = 0; i < 50; i++) // ayer y hoy
@@ -328,7 +324,7 @@ namespace PointOfSale.Business.Services
 
                     var sale = new Sale();
                     sale.RegistrationDate = dia;
-                    await CrearVentaGenerada(idTienda, idUser, tiposVentas, productos, turno, random, cantTipoVentas, cantproductos, sale);
+                    await CrearVentaGenerada(idTienda, tiposVentas, productos, turno, random, cantTipoVentas, cantproductos, sale);
                 }
 
                 return true;
@@ -340,12 +336,11 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        private async Task CrearVentaGenerada(int idTienda, int idUser, List<TypeDocumentSale> tiposVentas, List<Product> productos, Turno turno, Random random, int cantTipoVentas, int cantproductos, Sale sale)
+        private async Task CrearVentaGenerada(int idTienda, List<TypeDocumentSale> tiposVentas, List<Product> productos, Turno turno, Random random, int cantTipoVentas, int cantproductos, Sale sale)
         {
             sale.IdTypeDocumentSale = tiposVentas[random.Next(0, cantTipoVentas - 1)].IdTypeDocumentSale;
             sale.IdTienda = idTienda;
             sale.IdTurno = turno.IdTurno;
-            sale.IdUsers = idUser;
             sale.IsWeb = false;
 
             var catProdVenta = random.Next(0, 4);

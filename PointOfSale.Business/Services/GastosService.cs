@@ -32,7 +32,7 @@ namespace PointOfSale.Business.Services
                 query = await _repository.Query(u => u.IdTienda == idTienda);
             }
 
-            return query.Include(_ => _.TipoDeGasto).Include(_ => _.User).OrderBy(_ => _.TipoDeGasto.Descripcion).ToList();
+            return query.Include(_ => _.TipoDeGasto).OrderBy(_ => _.TipoDeGasto.Descripcion).ToList();
         }
 
         public async Task<Gastos> Add(Gastos entity)
@@ -56,11 +56,11 @@ namespace PointOfSale.Business.Services
             Gastos_found.Iva = entity.Iva;
             Gastos_found.IvaImporte = entity.IvaImporte;
             Gastos_found.ImporteSinIva = entity.ImporteSinIva;
-            Gastos_found.IdUsuario = entity.IdUsuario;
             Gastos_found.ModificationDate = TimeHelper.GetArgentinaTime();
             Gastos_found.ModificationUser = entity.ModificationUser;
             Gastos_found.EstadoPago = entity.EstadoPago;
             Gastos_found.FacturaPendiente = entity.FacturaPendiente;
+            Gastos_found.GastoAsignado = entity.GastoAsignado;
 
             bool response = await _repository.Edit(Gastos_found);
 
@@ -136,7 +136,7 @@ namespace PointOfSale.Business.Services
                 query = await _repository.Query(u => u.IdTienda == idTienda);
             }
 
-            return query.Include(_ => _.TipoDeGasto).Include(_ => _.User).ToList();
+            return query.Include(_ => _.TipoDeGasto).ToList();
         }
     }
 }

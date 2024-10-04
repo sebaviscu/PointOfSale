@@ -8,7 +8,6 @@ namespace PointOfSale.Models
         public int IdGastos { get; set; }
         public int IdTipoGasto { get; set; }
         public decimal Importe { get; set; }
-        public int? IdUsuario { get; set; }
         public string? Comentario { get; set; }
         public DateTime? RegistrationDate { get; set; }
         public string? RegistrationUser { get; set; }
@@ -27,5 +26,6 @@ namespace PointOfSale.Models
         public string? FacturaCompleta { get; set; }
         public EstadoPago? EstadoPago { get; set; }
         public bool FacturaPendiente { get; set; }
+        public string? GastoAsignado { get; set; }
     }
 }

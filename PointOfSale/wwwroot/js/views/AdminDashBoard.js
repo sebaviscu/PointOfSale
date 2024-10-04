@@ -25,10 +25,10 @@ const BASIC_MODEL_GASTO_DASHBOARD = {
     idTipoGasto: 0,
     importe: 0,
     comentario: null,
-    idUsuario: 0,
     modificationDate: null,
     modificationUser: "",
     estadoPago: 0,
+    gastoAsignado: null
 }
 
 const BASIC_MODEL_PAGO_PROVEEDOR_DASHBOARD = {
@@ -929,7 +929,6 @@ $("#btnSavePagoProveedor").on("click", function () {
         model["idTipoGasto"] = $("#cboTipoDeGastoEnGasto").val();
         model["importe"] = $("#txtImporte").val();
         model["comentario"] = $("#txtComentario").val();
-        model["idUsuario"] = $("#cboUsuario").val() != 0 ? $("#cboUsuario").val() : null;
         model["tipoFactura"] = $("#cboTipoFactura").val();
         model["nroFactura"] = $("#txtNroFactura").val();
         model["iva"] = $("#txtIva").val() != '' ? $("#txtIva").val() : 0;
@@ -937,6 +936,8 @@ $("#btnSavePagoProveedor").on("click", function () {
         model["importeSinIva"] = $("#txtImporteSinIva").val() != '' ? $("#txtImporteSinIva").val() : 0;
         model["estadoPago"] = parseInt($("#cboEstado").val());
         model["facturaPendiente"] = document.querySelector('#cbxFacturaPendiente').checked;
+        model["gastoAsignado"] = $("#cboUsuario").val() != 0 ? $("#cboUsuario option:selected").text() : null;
+
     }
     else { // proveedor
         url = "/Proveedores/RegistrarPagoProveedor";

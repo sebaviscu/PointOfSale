@@ -190,10 +190,6 @@ namespace PointOfSale.Utilities.Automapper
                     opt => opt.MapFrom(source => source.TypeDocumentSaleNavigation != null ? source.TypeDocumentSaleNavigation.Description : string.Empty)
                 )
                 .ForMember(destiny =>
-                    destiny.Users,
-                    opt => opt.MapFrom(source => source.IdUsersNavigation.Name)
-                )
-                .ForMember(destiny =>
                     destiny.Total,
                     opt => opt.MapFrom(source => source.Total.Value)
                 ).ForMember(destiny =>
@@ -320,7 +316,7 @@ namespace PointOfSale.Utilities.Automapper
 
 
             CreateMap<Gastos, VMGastos>()
-                .ForMember(user => user.Comentario, opt => opt.MapFrom(userEdit => userEdit.Comentario != string.Empty ? userEdit.Comentario : userEdit.IdUsuario != null ? userEdit.User.Name : string.Empty))
+                .ForMember(user => user.Comentario, opt => opt.MapFrom(userEdit => userEdit.Comentario != string.Empty ? userEdit.Comentario : userEdit.GastoAsignado != null ? userEdit.GastoAsignado : string.Empty))
                 .ForMember(user => user.TipoGastoString, opt => opt.MapFrom(userEdit => userEdit.TipoDeGasto != null ? userEdit.TipoDeGasto.Descripcion : string.Empty))
                 .ForMember(user => user.GastoParticular, opt => opt.MapFrom(userEdit => userEdit.TipoDeGasto != null ? userEdit.TipoDeGasto.GastoParticular.ToString() : string.Empty))
                 .ForMember(user => user.FacturaCompleta, opt => opt.MapFrom(userEdit => userEdit.NroFactura))
@@ -332,10 +328,10 @@ namespace PointOfSale.Utilities.Automapper
                 .ForMember(user => user.Importe_Sin_Iva, opt => opt.MapFrom(userEdit => userEdit.ImporteSinIva != null ? userEdit.ImporteSinIva : 0))
                 .ForMember(user => user.Iva_Importe, opt => opt.MapFrom(userEdit => userEdit.IvaImporte != null ? userEdit.IvaImporte : 0))
                 .ForMember(user => user.Iva, opt => opt.MapFrom(userEdit => userEdit.Iva != null ? userEdit.Iva : 0))
-                .ForMember(user => user.Comentario, opt => opt.MapFrom(userEdit => userEdit.Comentario != string.Empty ? userEdit.Comentario : userEdit.IdUsuario != null ? userEdit.User.Name : string.Empty))
+                .ForMember(user => user.Comentario, opt => opt.MapFrom(userEdit => userEdit.Comentario != string.Empty ? userEdit.Comentario : userEdit.GastoAsignado != null ? userEdit.GastoAsignado : string.Empty))
                 .ForMember(user => user.Gasto, opt => opt.MapFrom(userEdit => userEdit.TipoDeGasto != null ? userEdit.TipoDeGasto.GastoParticular.ToString() : string.Empty))
                 .ForMember(user => user.Fecha, opt => opt.MapFrom(userEdit => userEdit.RegistrationDate))
-                .ForMember(user => user.Tipo_Gasto, opt => opt.MapFrom(userEdit => userEdit.TipoDeGasto.GastoParticular == TipoDeGastoEnum.Sueldos ? (userEdit.User != null ? userEdit.User.Name : string.Empty) : userEdit.TipoDeGasto.Descripcion.ToString()))
+                .ForMember(user => user.Tipo_Gasto, opt => opt.MapFrom(userEdit => userEdit.TipoDeGasto.GastoParticular == TipoDeGastoEnum.Sueldos ? (userEdit.GastoAsignado != null ? userEdit.GastoAsignado : string.Empty) : userEdit.TipoDeGasto.Descripcion.ToString()))
                 .ForMember(user => user.Tipo_Factura, opt => opt.MapFrom(userEdit => string.IsNullOrEmpty(userEdit.TipoFactura) ? "-" : ((Model.Enum.TipoFactura)Convert.ToInt32(userEdit.TipoFactura)).ToString()))
                 .ForMember(user => user.Nro_Factura, opt => opt.MapFrom(userEdit => userEdit.NroFactura == string.Empty ? "-" : userEdit.NroFactura));
 
