@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using PointOfSale.Model.Output;
 using System.Security.Cryptography.X509Certificates;
 using PointOfSale.Model.Afip.Factura;
+using PointOfSale.Model.Input;
 
 namespace PointOfSale.Utilities.Automapper
 {
@@ -456,6 +457,8 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<FormatosVenta, VMFormatosVenta>().ReverseMap();
             CreateMap<Lov, VMLov>().ReverseMap();
             CreateMap<Horario, VMHorario>().ReverseMap();
+            CreateMap<MultiplesFormaPago, VMMultiplesFormaPago>().ReverseMap();
+            CreateMap<VMSaleResult, RegisterSaleOutput>().ReverseMap();
 
             CreateMap<FacturaEmitida, VMFacturaEmitida>().ReverseMap();
 

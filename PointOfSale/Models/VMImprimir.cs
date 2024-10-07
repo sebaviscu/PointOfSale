@@ -1,4 +1,5 @@
 ﻿using PointOfSale.Business.Utilities;
+using PointOfSale.Model;
 
 namespace PointOfSale.Models
 {

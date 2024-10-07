@@ -112,5 +112,15 @@ namespace PointOfSale.Business.Services
             var result = query.Include(_ => _.Cliente).ToList();
             return result;
         }
+
+        public async Task<int?> RegistrarionClient(decimal importe, string registrationUser, int IdTienda, int idsale, TipoMovimientoCliente? tipoMovimientoCliente, int? ClientId)
+        {
+            if (ClientId.HasValue)
+            {
+                var mov = await RegistrarMovimiento(ClientId.Value, importe, registrationUser, IdTienda, idsale, tipoMovimientoCliente.Value);
+                return mov.IdClienteMovimiento;
+            }
+            return null;
+        }
     }
 }

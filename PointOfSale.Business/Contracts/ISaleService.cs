@@ -1,4 +1,6 @@
 ﻿using PointOfSale.Model;
+using PointOfSale.Model.Input;
+using PointOfSale.Model.Output;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +15,7 @@ namespace PointOfSale.Business.Contracts
         //Task<List<Product>> GetProducts(string search);
 
         Task<List<Cliente>> GetClients(string search);
-        Task<Sale> Register(Sale entity, Ajustes ajustes);
+        Task<RegisterSaleOutput> RegisterSale(Sale model, RegistrationSaleInput saleInput);
 
         Task<List<Sale>> SaleHistory(string SaleNumber, string StarDate, string EndDate, string presupuestos);
         Task<Sale> Detail(string SaleNumber);

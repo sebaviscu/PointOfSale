@@ -27,7 +27,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<AjustesFacturacion> GetAjustesFacturacion(int idTienda)
         {
-            var ajustes = await _repositoryAjustesFacturacion.First(_ => _.IdTienda == idTienda);
+            var ajustes = await _repositoryAjustesFacturacion.GetAsNoTracking(_ => _.IdTienda == idTienda);
             try
             {
 
@@ -93,7 +93,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<Ajustes> GetAjustes(int idTienda)
         {
-            var ajustes = await _repositoryAjustes.First(_ => _.IdTienda == idTienda);
+            var ajustes = await _repositoryAjustes.GetAsNoTracking(_ => _.IdTienda == idTienda);
             try
             {
                 ajustes.PasswordEmailEmisorCierreTurno = !string.IsNullOrEmpty(ajustes.PasswordEmailEmisorCierreTurno) ? EncryptionHelper.DecryptString(ajustes.PasswordEmailEmisorCierreTurno) : null;
@@ -110,7 +110,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<Ajustes> Edit(Ajustes entity)
         {
-            Ajustes Ajustes_found = await this.GetAjustes(entity.IdTienda);
+            var Ajustes_found = await _repositoryAjustes.First(_ => _.IdTienda == entity.IdTienda);
 
             Ajustes_found.ModificationDate = TimeHelper.GetArgentinaTime();
             Ajustes_found.ModificationUser = entity.ModificationUser;
@@ -142,7 +142,7 @@ namespace PointOfSale.Business.Services
         }
         public async Task<AjustesFacturacion> EditFacturacion(AjustesFacturacion entity)
         {
-            var Ajustes_found = await GetAjustesFacturacion(entity.IdTienda);
+            var Ajustes_found = await _repositoryAjustesFacturacion.First(_ => _.IdTienda == entity.IdTienda);
 
             Ajustes_found.IsProdEnvironment = entity.IsProdEnvironment;
             Ajustes_found.PuntoVenta = entity.PuntoVenta;

@@ -1,10 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
 using PointOfSale.Model.Afip.Factura;
+using PointOfSale.Model.Input;
+using PointOfSale.Model.Output;
 using System.Globalization;
+using static iText.IO.Util.IntHashtable;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services
@@ -20,7 +25,10 @@ namespace PointOfSale.Business.Services
         private readonly IProductService _rProduct;
         private readonly ITurnoService _turnoService;
         private readonly IAfipService _afipService;
-
+        private readonly INotificationService _notificationService;
+        private readonly IClienteService _clienteService;
+        private readonly IAjusteService _ajustesService;
+        private readonly ITicketService _ticketService;
 
         public SaleService(
             IGenericRepository<Product> repositoryProduct,
@@ -31,7 +39,11 @@ namespace PointOfSale.Business.Services
             ITurnoService turnoService,
             IGenericRepository<ListaPrecio> repositoryListaPrecio,
             IAfipService afipService,
-            IGenericRepository<FacturaEmitida> repositoryFacturaEmitida)
+            IGenericRepository<FacturaEmitida> repositoryFacturaEmitida,
+            INotificationService notificationService,
+            IClienteService clienteService,
+            IAjusteService ajusteService,
+            ITicketService ticketService)
         {
             _repositoryProduct = repositoryProduct;
             _repositorySale = repositorySale;
@@ -42,6 +54,10 @@ namespace PointOfSale.Business.Services
             _repositoryListaPrecio = repositoryListaPrecio;
             _afipService = afipService;
             _repositoryFacturaEmitida = repositoryFacturaEmitida;
+            _notificationService = notificationService;
+            _clienteService = clienteService;
+            _ticketService = ticketService;
+            _ajustesService = ajusteService;
         }
 
 
@@ -179,10 +195,110 @@ namespace PointOfSale.Business.Services
             return query.Include(_ => _.ClienteMovimientos).ToList();
         }
 
-        public async Task<Sale> Register(Sale entity, Ajustes ajustes)
+        public async Task<RegisterSaleOutput> RegisterSale(Sale model, RegistrationSaleInput saleInput)
         {
-            var sale = await _repositorySale.Register(entity, ajustes);
-            return sale;
+            var modelResponde = new RegisterSaleOutput();
+
+            try
+            {
+                var ajustesTask = _ajustesService.GetAjustes(model.IdTienda);
+                var lastNumberTask = GetLastSerialNumberSale(model.IdTienda);
+
+                await Task.WhenAll(ajustesTask, lastNumberTask);
+
+                var ajustes = await ajustesTask;
+                var lastNumber = await lastNumberTask;
+
+                var paso = false;
+
+                modelResponde.SaleNumber = lastNumber;
+                modelResponde.NombreImpresora = saleInput.ImprimirTicket && !string.IsNullOrEmpty(ajustes.NombreImpresora) ? ajustes.NombreImpresora : null;
+
+                foreach (var m in saleInput.MultiplesFormaDePago)
+                {
+                    var newVMSale = new Sale
+                    {
+                        Total = m.Total,
+                        IdTypeDocumentSale = m.FormaDePago,
+                        IdTurno = model.IdTurno,
+                        IdTienda = model.IdTienda,
+                        RegistrationUser = model.RegistrationUser,
+                        SaleNumber = lastNumber,
+                        IsWeb = false,
+                        Observaciones = model.Observaciones
+                    };
+
+                    if (!paso)
+                    {
+                        newVMSale.DetailSales = model.DetailSales;
+                        paso = true;
+                    }
+
+                    Sale sale_created = await _repositorySale.Register(newVMSale, ajustes);
+
+                    sale_created.IdClienteMovimiento = await _clienteService.RegistrarionClient(newVMSale.Total.Value, model.RegistrationUser, model.IdTienda, sale_created.IdSale, saleInput.TipoMovimiento, saleInput.ClientId);
+
+                    FacturaEmitida facturaEmitida = null;
+                    try
+                    {
+                        if (ajustes.FacturaElectronica.HasValue && ajustes.FacturaElectronica.Value)
+                        {
+                            facturaEmitida = await _afipService.FacturarVenta(sale_created, ajustes, saleInput.CuilFactura, saleInput.IdClienteFactura);
+
+                            if (facturaEmitida != null && facturaEmitida.Resultado != "A")
+                            {
+                                modelResponde.Errores = facturaEmitida.Observaciones;
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        modelResponde.Errores = e.Message;
+                    }
+
+                    if (!string.IsNullOrEmpty(modelResponde.Errores))
+                    {
+                        var notific = new Notifications(sale_created);
+                        await _notificationService.Save(notific);
+                    }
+
+                    if (saleInput.ImprimirTicket && !string.IsNullOrEmpty(ajustes.NombreImpresora))
+                    {
+                        var ticket = await RegistrationTicketPrinting(ajustes, sale_created, facturaEmitida);
+                        if (ticket != null)
+                        {
+                            modelResponde.Ticket += ticket.Ticket;
+                            modelResponde.ImagesTicket.AddRange(ticket.ImagesTicket);
+                        }
+                    }
+
+                    if (saleInput.MultiplesFormaDePago.Count == 1)
+                    {
+                        modelResponde.IdSale = sale_created.IdSale;
+                    }
+                    else
+                    {
+                        modelResponde.IdSaleMultiple += $"{sale_created.IdSale},";
+                    }
+                }
+
+                return modelResponde;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        private async Task<TicketModel?> RegistrationTicketPrinting(Ajustes ajustes, Sale saleCreated, FacturaEmitida? facturaEmitida)
+        {
+            if (string.IsNullOrEmpty(ajustes.NombreImpresora))
+            {
+                return null;
+            }
+
+            var ticket = await _ticketService.TicketSale(saleCreated, ajustes, facturaEmitida);
+            return ticket;
         }
 
         public async Task<string> GetLastSerialNumberSale(int idTienda)

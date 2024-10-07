@@ -42,6 +42,18 @@ namespace PointOfSale.Data.Repository
                 throw;
             }
         }
+        public async Task<TEntity> GetAsNoTracking(Expression<Func<TEntity, bool>> filter)
+        {
+            try
+            {
+                IQueryable<TEntity> queryentity = filter == null ? _dbcontext.Set<TEntity>().AsNoTracking() : _dbcontext.Set<TEntity>().AsNoTracking().Where(filter);
+                return queryentity.FirstOrDefault();
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
         public async Task<TEntity> Add(TEntity entity)
         {

@@ -1,20 +1,13 @@
 ﻿using AutoMapper;
-using DinkToPdf;
-using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NuGet.Protocol;
 using PointOfSale.Business.Contracts;
-using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
-using PointOfSale.Model.Afip.Factura;
-using PointOfSale.Model.Auditoria;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
-using System.Net.Mail;
-using System.Net;
 using System.Security.Claims;
 using static PointOfSale.Model.Enum;
+using PointOfSale.Model.Input;
 
 namespace PointOfSale.Controllers
 {
@@ -24,39 +17,33 @@ namespace PointOfSale.Controllers
         private readonly ITypeDocumentSaleService _typeDocumentSaleService;
         private readonly ISaleService _saleService;
         private readonly IMapper _mapper;
-        private readonly IConverter _converter;
         private readonly IClienteService _clienteService;
         private readonly ITicketService _ticketService;
         private readonly ILogger<SalesController> _logger;
         private readonly IAfipService _afipFacturacionService;
         private readonly IAjusteService _ajustesService;
         private readonly IEmailService _emailService;
-        private readonly INotificationService _notificationService;
 
         public SalesController(
             ITypeDocumentSaleService typeDocumentSaleService,
             ISaleService saleService,
             IMapper mapper,
-            IConverter converter,
             IClienteService clienteService,
             ITicketService ticketService,
             IAfipService afipFacturacionService,
             ILogger<SalesController> logger,
             IAjusteService ajustesService,
-            IEmailService emailService,
-            INotificationService notificationService)
+            IEmailService emailService)
         {
             _typeDocumentSaleService = typeDocumentSaleService;
             _saleService = saleService;
             _mapper = mapper;
-            _converter = converter;
             _clienteService = clienteService;
             _ticketService = ticketService;
             _afipFacturacionService = afipFacturacionService;
             _logger = logger;
             _ajustesService = ajustesService;
             _emailService = emailService;
-            _notificationService = notificationService;
         }
 
         public IActionResult NewSale()
@@ -109,8 +96,8 @@ namespace PointOfSale.Controllers
             try
             {
                 ClaimsPrincipal claimuser = HttpContext.User;
-                var listaPrecioInt = listaPrecios == null 
-                    ? Convert.ToInt32(claimuser.Claims.Where(c => c.Type == "ListaPrecios").Select(c => c.Value).SingleOrDefault()) 
+                var listaPrecioInt = listaPrecios == null
+                    ? Convert.ToInt32(claimuser.Claims.Where(c => c.Type == "ListaPrecios").Select(c => c.Value).SingleOrDefault())
                     : listaPrecios;
 
                 var vmListProducts = _mapper.Map<List<VmProductsSelect2>>(await _saleService.GetProductsSearchAndIdLista(search.Trim(), (ListaDePrecio)listaPrecioInt));
@@ -197,134 +184,29 @@ namespace PointOfSale.Controllers
             {
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
 
-                model.IdUsers = user.IdUsuario;
+                var inouinput = new RegistrationSaleInput()
+                {
+                    MultiplesFormaDePago = _mapper.Map<List<MultiplesFormaPago>>(model.MultiplesFormaDePago),
+                    ClientId = model.ClientId,
+                    CuilFactura = model.CuilFactura,
+                    IdClienteFactura = model.IdClienteFactura,
+                    ImprimirTicket = model.ImprimirTicket,
+                    TipoMovimiento = model.TipoMovimiento
+                };
+
                 model.IdTurno = user.IdTurno;
                 model.IdTienda = user.IdTienda;
                 model.RegistrationUser = user.UserName;
 
-                var ajustesTask = _ajustesService.GetAjustes(user.IdTienda);
-                var lastNumberTask = _saleService.GetLastSerialNumberSale(user.IdTienda);
-
-                await Task.WhenAll(ajustesTask, lastNumberTask);
-
-                var ajustes = await ajustesTask;
-                var lastNumber = await lastNumberTask;
-
-                var paso = false;
-
-                var modelResponde = new VMSaleResult()
-                {
-                    SaleNumber = lastNumber,
-                    NombreImpresora = model.ImprimirTicket && !string.IsNullOrEmpty(ajustes.NombreImpresora) ? ajustes.NombreImpresora : null
-                };
-
-                foreach (var m in model.MultiplesFormaDePago)
-                {
-                    var newVMSale = new VMSale
-                    {
-                        Total = m.Total,
-                        IdTypeDocumentSale = m.FormaDePago,
-                        IdUsers = user.IdUsuario,
-                        IdTurno = user.IdTurno,
-                        IdTienda = user.IdTienda,
-                        RegistrationUser = user.UserName,
-                        SaleNumber = lastNumber,
-                        IsWeb = false,
-                        Observaciones = model.Observaciones,
-                        ClientId = model.ClientId,
-                        TipoMovimiento = model.TipoMovimiento
-                    };
-
-                    if (!paso)
-                    {
-                        newVMSale.DetailSales = model.DetailSales;
-                        paso = true;
-                    }
-
-                    Sale sale_created = await _saleService.Register(_mapper.Map<Sale>(newVMSale), ajustes);
-
-                    await RegistrarionClient(newVMSale, user.UserName, user.IdTienda, sale_created);
-
-                    FacturaEmitida facturaEmitida = null;
-                    try
-                    {
-                        if (ajustes.FacturaElectronica.HasValue && ajustes.FacturaElectronica.Value)
-                        {
-                            facturaEmitida = await RegistrationFacturar(model, sale_created, ajustes);
-
-                            if (facturaEmitida != null && facturaEmitida.Resultado != "A")
-                            {
-                                gResponse.Message = facturaEmitida.Observaciones;
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        gResponse.Message = e.Message;
-                    }
-
-                    if(!string.IsNullOrEmpty(gResponse.Message))
-                    {
-                        var notific = new Notifications(sale_created);
-                        await _notificationService.Save(notific);
-                    }
-
-                    if (model.ImprimirTicket && !string.IsNullOrEmpty(ajustes.NombreImpresora))
-                    {
-                        var ticket = await RegistrationTicketPrinting(ajustes, sale_created, facturaEmitida);
-                        if (ticket != null)
-                        {
-                            modelResponde.Ticket += ticket.Ticket;
-                            modelResponde.ImagesTicket.AddRange(ticket.ImagesTicket);
-                        }
-                    }
-
-                    if (model.MultiplesFormaDePago.Count == 1)
-                    {
-                        modelResponde.IdSale = sale_created.IdSale;
-                    }
-                    else
-                    {
-                        modelResponde.IdSaleMultiple += $"{sale_created.IdSale},";
-                    }
-                }
+                var result = await _saleService.RegisterSale(_mapper.Map<Sale>(model), inouinput);
 
                 gResponse.State = true;
-                gResponse.Object = modelResponde;
+                gResponse.Object = _mapper.Map<VMSaleResult>(result);
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
                 return HandleException(ex, "Error al registrar la venta", _logger, model);
-            }
-        }
-
-        private async Task<TicketModel?> RegistrationTicketPrinting(Ajustes ajustes, Sale saleCreated, FacturaEmitida? facturaEmitida)
-        {
-            if (string.IsNullOrEmpty(ajustes.NombreImpresora))
-            {
-                return null;
-            }
-
-            var ticket = await _ticketService.TicketSale(saleCreated, ajustes, facturaEmitida);
-            return ticket;
-        }
-
-        private async Task<FacturaEmitida?> RegistrationFacturar(VMSale model, Sale sale_created, Ajustes ajustes)
-        {
-            var facturaEmitida = await _afipFacturacionService.FacturarVenta(sale_created, ajustes, model.CuilFactura, model.IdClienteFactura);
-
-            return facturaEmitida;
-        }
-
-        private async Task RegistrarionClient(VMSale model, string registrationUser, int IdTienda, Sale sale_created)
-        {
-            if (model.ClientId.HasValue)
-            {
-                var mov = await _clienteService.RegistrarMovimiento(model.ClientId.Value, model.Total.Value, registrationUser, IdTienda, sale_created.IdSale, model.TipoMovimiento.Value);
-
-                sale_created.IdClienteMovimiento = mov.IdClienteMovimiento;
-                _ = await _saleService.Edit(sale_created);
             }
         }
 

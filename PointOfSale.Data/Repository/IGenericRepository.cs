@@ -10,6 +10,7 @@ namespace PointOfSale.Data.Repository
 {
     public interface IGenericRepository<TEntity> where TEntity : class
     {
+        Task<TEntity> GetAsNoTracking(Expression<Func<TEntity, bool>> filter);
         Task<TEntity> Get(Expression<Func<TEntity, bool>> filter);
         Task<TEntity> Add(TEntity entity);
         Task<List<TEntity>> AddRange(List<TEntity> entity);

@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using PointOfSale.Model;
+using System.Drawing;
 using System.Text;
 
 namespace PointOfSale.Business.Utilities
@@ -158,16 +159,4 @@ namespace PointOfSale.Business.Utilities
         }
     }
 
-
-    public class Images
-    {
-        public Images(string imageBase64, string flag)
-        {
-            ImageBase64 = imageBase64;
-            Flag = $"[[{flag}]]";
-        }
-
-        public string ImageBase64 { get; set; }
-        public string Flag { get; set; }
-    }
 }
