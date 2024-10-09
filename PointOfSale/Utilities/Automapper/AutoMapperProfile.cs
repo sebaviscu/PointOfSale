@@ -447,20 +447,7 @@ namespace PointOfSale.Utilities.Automapper
                 opt => opt.MapFrom(source => source.ListaPrecios.Any() && source.ListaPrecios.Count > 1 ? source.ListaPrecios[2].PorcentajeProfit : 0));
 
 
-            CreateMap<VMProductSimplificado, Product>();
-
-            CreateMap<VMCodigoBarras, CodigoBarras>().ReverseMap();
-            CreateMap<VMRazonMovimientoCaja, RazonMovimientoCaja>().ReverseMap();
-            CreateMap<VMMovimientoCaja, MovimientoCaja>().ReverseMap();
-            CreateMap<VMVentasPorTipoDeVenta, VentasPorTipoDeVenta>().ReverseMap();
-            CreateMap<Tag, VMTag>().ReverseMap();
-            CreateMap<FormatosVenta, VMFormatosVenta>().ReverseMap();
-            CreateMap<Lov, VMLov>().ReverseMap();
-            CreateMap<Horario, VMHorario>().ReverseMap();
-            CreateMap<MultiplesFormaPago, VMMultiplesFormaPago>().ReverseMap();
-            CreateMap<VMSaleResult, RegisterSaleOutput>().ReverseMap();
-
-            CreateMap<FacturaEmitida, VMFacturaEmitida>().ReverseMap();
+             CreateMap<FacturaEmitida, VMFacturaEmitida>().ReverseMap();
 
             CreateMap<Product, VMProductReport>()
                     .ForMember(user => user.ProductName, opt => opt.MapFrom(userEdit => userEdit.Description))
@@ -484,6 +471,20 @@ namespace PointOfSale.Utilities.Automapper
                     .ForMember(user => user.IdTag, opt => opt.MapFrom(userEdit => -2))
                     .ForMember(user => user.Descripcion, opt => opt.MapFrom(userEdit => userEdit.Description))
                     .ForMember(user => user.IdCategoria, opt => opt.MapFrom(userEdit => userEdit.IdCategory));
+
+            CreateMap<VMProductSimplificado, Product>();
+            CreateMap<VMCodigoBarras, CodigoBarras>().ReverseMap();
+            CreateMap<VMRazonMovimientoCaja, RazonMovimientoCaja>().ReverseMap();
+            CreateMap<VMMovimientoCaja, MovimientoCaja>().ReverseMap();
+            CreateMap<VMVentasPorTipoDeVenta, VentasPorTipoDeVenta>().ReverseMap();
+            CreateMap<Tag, VMTag>().ReverseMap();
+            CreateMap<FormatosVenta, VMFormatosVenta>().ReverseMap();
+            CreateMap<Lov, VMLov>().ReverseMap();
+            CreateMap<Horario, VMHorario>().ReverseMap();
+            CreateMap<MultiplesFormaPago, VMMultiplesFormaPago>().ReverseMap();
+            CreateMap<VMSaleResult, RegisterSaleOutput>().ReverseMap();
+            CreateMap<Empresa, VMEmpresa>().ReverseMap();
+            CreateMap<PagoEmpresa, VMPagoEmpresa>().ReverseMap();
         }
     }
 }

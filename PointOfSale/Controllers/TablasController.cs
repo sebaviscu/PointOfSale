@@ -126,7 +126,7 @@ namespace PointOfSale.Controllers
 
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteFormatosVenta(int idFormatosVenta)
+        public async Task<IActionResult> DeleteFormatosVenta(int id)
         {
 
             GenericResponse<string> gResponse = new GenericResponse<string>();
@@ -134,12 +134,12 @@ namespace PointOfSale.Controllers
             {
                 ValidarAutorizacion([Roles.Administrador]);
 
-                gResponse.State = await _tablaService.Delete(idFormatosVenta);
+                gResponse.State = await _tablaService.Delete(id);
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al borrar categoria.", _logger, idFormatosVenta);
+                return HandleException(ex, "Error al borrar categoria.", _logger, id);
             }
         }
 

@@ -4,7 +4,7 @@ namespace PointOfSale.Models
 {
     public class VMLov
     {
-        public int? IdLov { get; set; }
+        public int? Id { get; set; }
         public string? Descripcion { get; set; }
 
         public bool? Estado { get; set; }

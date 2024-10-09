@@ -48,7 +48,7 @@ const BASIC_MODEL_TIPO_DE_GASTOS = {
 }
 
 const BASIC_MODEL_LOV = {
-    idLov: 0,
+    id: 0,
     descripcion: "",
     estado: 1,
     registrationDate: null,
@@ -204,7 +204,7 @@ $(document).ready(function () {
         },
         "columns": [
             {
-                "data": "idFormatosVenta",
+                "data": "id",
                 "visible": false,
                 "searchable": false
             },
@@ -420,7 +420,7 @@ function cargarTablaComodin(lovType, tableId, btnEditClass, btnDeleteClass) {
         },
         "columns": [
             {
-                "data": "idLov",
+                "data": "id",
                 "visible": false,
                 "searchable": false
             },
@@ -603,7 +603,7 @@ $('#tbFormatoVenta').on('click', '.btn-edit-formato-venta', function () {
 
     const data = tableFormatoVenta.row(rowSelectedFormatoVenta).data();
 
-    $("#txtIdFormatoVenta").val(data.idFormatosVenta);
+    $("#txtIdFormatoVenta").val(data.id);
     $("#txtDescripcionFormatoVenta").val(data.formato);
     $("#txtValorFormatoVenta").val(data.valor);
     $("#cboStateFormatoVenta").val(data.estado ? 1 : 0);
@@ -628,14 +628,14 @@ $('#btnAddFormtatoVenta').on('click', function () {
 
 $('#btnSaveFormatoVenta').on('click', function () {
     let tagData = {
-        idFormatosVenta: parseInt($('#txtIdFormatoVenta').val() == '' ? 0 : $('#txtIdFormatoVenta').val()),
+        id: parseInt($('#txtIdFormatoVenta').val() == '' ? 0 : $('#txtIdFormatoVenta').val()),
         formato: $('#txtDescripcionFormatoVenta').val(),
         valor: $('#txtValorFormatoVenta').val(),
         estado: $('#cboStateFormatoVenta').val() == 1 ? true : false
     };
 
 
-    if (tagData.idFormatosVenta == 0) {
+    if (tagData.id == 0) {
         fetch("/Tablas/CreateFormatosVenta", {
             method: "POST",
             headers: { 'Content-Type': 'application/json;charset=utf-8' },
@@ -707,7 +707,7 @@ $('#tbFormatoVenta').on('click', '.btn-delete-formato-venta', function () {
 
                 $(".showSweetAlert").LoadingOverlay("show")
 
-                fetch(`/Tablas/DeleteFormatosVenta?idFormatosVenta=${data.idFormatosVenta}`, {
+                fetch(`/Tablas/DeleteFormatosVenta?id=${data.id}`, {
                     method: "DELETE"
                 }).then(response => {
                     $(".showSweetAlert").LoadingOverlay("hide")
@@ -1325,7 +1325,7 @@ $('#tbRazonMovCaja').on('click', '.btn-delete-razon-mov-caja', function () {
 
 
 //const openModalComodin1 = (model = BASIC_MODEL_LOV) => {
-//    $("#txtIdComodin1").val(model.idLov);
+//    $("#txtIdComodin1").val(model.id);
 //    $("#txtDescriptionComodin1").val(model.descripcion);
 //    $("#cboStateComodin1").val(model.estado ? 1 : 0);
 
@@ -1358,7 +1358,7 @@ $('#tbRazonMovCaja').on('click', '.btn-delete-razon-mov-caja', function () {
 //    }
 
 //    const model = structuredClone(BASIC_MODEL_LOV);
-//    model["idLov"] = parseInt($("#txtIdComodin1").val());
+//    model["id"] = parseInt($("#txtIdComodin1").val());
 //    model["descripcion"] = $("#txtDescriptionComodin1").val();
 //    model["estado"] = $("#cboStateComodin1").val() == "1" ? true : false;
 //    model["lovType"] = 1;
@@ -1367,7 +1367,7 @@ $('#tbRazonMovCaja').on('click', '.btn-delete-razon-mov-caja', function () {
 //    $("#modalDataComodin1").find("div.modal-content").LoadingOverlay("show")
 
 
-//    if (model.idLov == 0) {
+//    if (model.id == 0) {
 //        fetch("/Lov/Create", {
 //            method: "POST",
 //            headers: { 'Content-Type': 'application/json;charset=utf-8' },
@@ -1457,7 +1457,7 @@ $('#tbRazonMovCaja').on('click', '.btn-delete-razon-mov-caja', function () {
 
 //                $(".showSweetAlert").LoadingOverlay("show")
 
-//                fetch(`/Lov/Delete?idLov=${data.idLov}`, {
+//                fetch(`/Lov/Delete?id=${data.id}`, {
 //                    method: "DELETE"
 //                }).then(response => {
 //                    $(".showSweetAlert").LoadingOverlay("hide")
@@ -1481,7 +1481,7 @@ $('#tbRazonMovCaja').on('click', '.btn-delete-razon-mov-caja', function () {
 
 // Función genérica para abrir el modal de comodines
 const openModalComodin = (model = BASIC_MODEL_LOV, comodinId) => {
-    $(`#txtId${comodinId}`).val(model.idLov);
+    $(`#txtId${comodinId}`).val(model.id);
     $(`#txtDescription${comodinId}`).val(model.descripcion);
     $(`#cboState${comodinId}`).val(model.estado ? 1 : 0);
 
@@ -1509,15 +1509,15 @@ const saveComodin = (comodinId, lovType, tableComodin) => {
     }
 
     const model = structuredClone(BASIC_MODEL_LOV);
-    model["idLov"] = parseInt($(`#txtId${comodinId}`).val());
+    model["id"] = parseInt($(`#txtId${comodinId}`).val());
     model["descripcion"] = $(`#txtDescription${comodinId}`).val();
     model["estado"] = $(`#cboState${comodinId}`).val() == "1" ? true : false;
     model["lovType"] = lovType;
 
     $(`#modalData${comodinId}`).find("div.modal-content").LoadingOverlay("show");
 
-    const url = model.idLov == 0 ? "/Lov/Create" : "/Lov/Update";
-    const method = model.idLov == 0 ? "POST" : "PUT";
+    const url = model.id == 0 ? "/Lov/Create" : "/Lov/Update";
+    const method = model.id == 0 ? "POST" : "PUT";
 
     fetch(url, {
         method: method,
@@ -1530,7 +1530,7 @@ const saveComodin = (comodinId, lovType, tableComodin) => {
         })
         .then(responseJson => {
             if (responseJson.state) {
-                if (model.idLov == 0) {
+                if (model.id == 0) {
                     // Crear nueva fila
                     tableComodin.row.add(responseJson.object).draw(false);
                     swal("Exitoso!", "Se ha creado", "success");
@@ -1614,7 +1614,7 @@ const deleteComodin = (comodinId, tableComodin) => {
                 if (respuesta) {
                     $(".showSweetAlert").LoadingOverlay("show");
 
-                    fetch(`/Lov/Delete?idLov=${data.idLov}`, { method: "DELETE" })
+                    fetch(`/Lov/Delete?id=${data.id}`, { method: "DELETE" })
                         .then(response => {
                             $(".showSweetAlert").LoadingOverlay("hide");
                             return response.json();

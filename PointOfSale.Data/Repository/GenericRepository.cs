@@ -109,6 +109,18 @@ namespace PointOfSale.Data.Repository
                 throw;
             }
         }
+        public async Task<bool> EditRange(List<TEntity> entity)
+        {
+            try
+            {
+                _dbcontext.UpdateRange(entity);
+                return true;
+            }
+            catch
+            {
+                throw;
+            }
+        }
         public async Task<bool> SaveChangesAsync()
         {
             try

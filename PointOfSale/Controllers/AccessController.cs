@@ -43,10 +43,10 @@ namespace PointOfSale.Controllers
                 if (claimuser.Identity.IsAuthenticated)
                 {
                     var rol = claimuser.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).SingleOrDefault();
-                    if (rol == "1")
-                        return RedirectToAction("DashBoard", "Admin");
-                    else
+                    if (rol != "1")
                         return RedirectToAction("NewSale", "Sales");
+                    else
+                        return RedirectToAction("DashBoard", "Admin");
 
                 }
                 return View(new VMUserLogin());

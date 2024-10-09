@@ -193,7 +193,7 @@ const openModalNuevoGasto = (model = BASIC_MODEL_GASTO) => {
 }
 
 $("#btnNew").on("click", function () {
-    openModalNuevoGasto()
+    openModalNuevoPago()
 })
 
 $("#btnSave").on("click", function () {
@@ -291,7 +291,7 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
 
     const data = tableDataGastos.row(rowSelectedGastos).data();
 
-    openModalNuevoGasto(data);
+    openModalNuevoPago(data);
 })
 
 

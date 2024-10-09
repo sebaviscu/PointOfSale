@@ -56,12 +56,33 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<FormatosVenta> FormatosVentas { get; set; }
         public virtual DbSet<Lov> Lov { get; set; }
         public virtual DbSet<Horario> Horario { get; set; }
+        public virtual DbSet<Empresa> Empresas { get; set; }
+        public virtual DbSet<PagoEmpresa> PagoEmpresa { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<PagoEmpresa>(entity =>
+            {
+
+                modelBuilder.Entity<PagoEmpresa>()
+                           .HasOne(h => h.Empresa)
+                           .WithMany(u => u.Pagos)
+                           .HasForeignKey(h => h.IdEmpresa)
+                           .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Empresa>(entity =>
+            {
+
+                entity.HasKey(e => e.Id);
+
+                entity.ToTable("Empresa");
+            });
 
             modelBuilder.Entity<Horario>(entity =>
             {
@@ -75,14 +96,14 @@ namespace PointOfSale.Data.DBContext
 
             modelBuilder.Entity<Lov>(entity =>
             {
-                entity.HasKey(e => e.IdLov);
+                entity.HasKey(e => e.Id);
 
                 entity.ToTable("Lov");
             });
 
             modelBuilder.Entity<FormatosVenta>(entity =>
             {
-                entity.HasKey(e => e.IdFormatosVenta);
+                entity.HasKey(e => e.id);
 
                 entity.ToTable("FormatosVenta");
             });

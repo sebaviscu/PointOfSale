@@ -58,11 +58,12 @@ namespace PointOfSale.Controllers
                 ListaPrecios = listaPrecios
             };
 
-            userAuth.Result = ValidarPermisos.IsValid(userAuth.IdRol, rolesPermitidos);
+            userAuth.Result = rolesPermitidos.Contains((Model.Enum.Roles)userAuth.IdRol);
 
             if (!userAuth.Result)
             {
-                throw new AccessViolationException("USUARIO CON PERMISOS INSUFICIENTES");
+                StatusCode(StatusCodes.Status404NotFound);
+                //throw new AccessViolationException("USUARIO CON PERMISOS INSUFICIENTES");
             }
 
             return userAuth;

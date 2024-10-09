@@ -235,5 +235,11 @@ namespace PointOfSale.Business.Services
             IQueryable<User> query = await _repository.Query(u => u.IsActive.Value && !u.IsSuperAdmin);
             return query.OrderBy(_ => _.Name).ToList();
         }
+
+        public async Task<bool> CheckSuperUser(int idUser)
+        {
+            var superUser = await _repository.First(u => u.IsSuperAdmin);
+            return superUser.IdUsers == idUser;
+        }
     }
 }

@@ -129,5 +129,20 @@ namespace PointOfSale.Model
             Ingreso
         }
 
+        [Flags]
+        public enum Licencias
+        {
+            Ninguna = 0,
+            Base = 1,
+            Facturacion = 2,
+            Web = 4
+        }
+
+        public enum FrecuenciasPago
+        {
+            Mensual,
+            Semestral,
+            Anual
+        }
     }
 }

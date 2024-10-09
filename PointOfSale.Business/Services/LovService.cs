@@ -31,9 +31,9 @@ namespace PointOfSale.Business.Services
             return await listActive.ToListAsync();
         }
 
-        public async Task<Lov?> GetById(int idLov)
+        public async Task<Lov?> GetById(int id)
         {
-            return await _repository.First(_=>_.IdLov == idLov);
+            return await _repository.First(_=>_.Id == id);
         }
 
         public async Task<Lov> Add(Lov entity)
@@ -50,9 +50,9 @@ namespace PointOfSale.Business.Services
             return Lov_edit;
         }
 
-        public async Task<bool> Delete(int idLov)
+        public async Task<bool> Delete(int id)
         {
-            return await base.Delete(idLov);
+            return await base.Delete(id);
         }
 
     }

@@ -97,6 +97,7 @@ public class Program
             builder.Services.AddScoped<ITagService, TagService>();
             builder.Services.AddScoped<IFormatosVentaService, FormatosVentaService>();
             builder.Services.AddScoped<ILovService, LovService>();
+            builder.Services.AddScoped<IPagoEmpresaService, PagoEmpresaService>();
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
             var cultureInfo = new CultureInfo("es-ES");

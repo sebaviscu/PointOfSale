@@ -293,7 +293,7 @@ function manejarComodinSelector(habilitar, idComodin, nombreComodin, lovType) {
                 .then(response => response.json())
                 .then(data => {
                     const comodinData = data.listObject.map(com => ({
-                        value: com.idLov,
+                        value: com.id,
                         label: `${com.descripcion}`
                     }));
                     selector.setChoices(comodinData, 'value', 'label', false);

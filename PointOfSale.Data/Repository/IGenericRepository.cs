@@ -15,6 +15,7 @@ namespace PointOfSale.Data.Repository
         Task<TEntity> Add(TEntity entity);
         Task<List<TEntity>> AddRange(List<TEntity> entity);
         Task<bool> Edit(TEntity entity);
+        Task<bool> EditRange(List<TEntity> entity);
         Task<bool> Delete(TEntity entity);
         Task<IQueryable<TEntity>> Query(Expression<Func<TEntity, bool>> filter = null);
         IQueryable<TEntity> SqlRaw(string query);

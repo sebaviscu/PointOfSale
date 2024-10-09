@@ -8,7 +8,7 @@ namespace PointOfSale.Model
 {
     public class FormatosVenta
     {
-        public int IdFormatosVenta { get; set; }
+        public int id { get; set; }
         public string Formato { get; set; }
         public double Valor { get; set; }
         public bool Estado { get; set; }

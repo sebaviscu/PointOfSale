@@ -12,9 +12,9 @@ namespace PointOfSale.Business.Contracts
     {
         Task<List<Lov>> GetLovByType(LovType lovType);
         Task<List<Lov>> GetLovActiveByType(LovType lovType);
-        Task<Lov?> GetById(int idLov);
+        Task<Lov?> GetById(int id);
         Task<Lov> Add(Lov entity);
         Task<Lov> Edit(Lov entity);
-        Task<bool> Delete(int idLov);
+        Task<bool> Delete(int id);
     }
 }

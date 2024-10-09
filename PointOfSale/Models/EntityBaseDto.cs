@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PointOfSale.Model
+﻿namespace PointOfSale.Models
 {
-    public abstract class EntityBase
+    public class EntityBaseDto
     {
         public int Id { get; set; }
         public DateTime? RegistrationDate { get; set; }

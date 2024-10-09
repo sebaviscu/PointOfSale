@@ -2,11 +2,16 @@ go
 insert into Tienda (nombre, idListaPrecio, color) values('Mercado', 1, '#4c84ff')
 go
 
+insert into Empresa(RazonSocial,Licencia, RegistrationDate, RegistrationUser) values
+('Mercado',1,GETDATE(),'Sistema')
+
+go
+
 insert into rol([description],isActive) values
 ('Admin',1),
 ('Empleado',1),
-('Encargado',1)
-
+('Encargado',1),
+('SuperAdmin',1)
 go
 
 insert into Users(name,email,idRol,[password],isActive, sinHorario, IsSuperAdmin) values
@@ -48,7 +53,8 @@ insert into Menu([description],idMenuParent,controller,pageAction,isActive) valu
 ('Facturacion',6,'Facturacion','Index',1), -- 25
 ('Movimientos de Caja',6,'MovimientoCaja','Index',1), -- 26
 ('Tablas',1,'Tablas','Index',1), -- 27
-('Reporte Precios',4,'Reports','PreciosReport',1) --28
+('Reporte Precios',4,'Reports','PreciosReport',1), --28
+('Licencia',1,'Licencia','Index',1) --29
 
 go
 
@@ -90,7 +96,8 @@ INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (1,25,1),
 (1,26,1),
 (1,27,1),
-(1,28,1)
+(1,28,1),
+(1,29,1)
 
 
 --*empleado

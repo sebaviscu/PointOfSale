@@ -123,7 +123,7 @@ create table Proveedor(
 go
 
 CREATE TABLE FormatosVenta (
-    idFormatosVenta INT PRIMARY KEY IDENTITY(1,1),
+    id INT PRIMARY KEY IDENTITY(1,1),
     formato VARCHAR(50),
     valor FLOAT,
 	estado BIT not null
@@ -148,11 +148,12 @@ destacado bit null,
 productoWeb bit null,
 [idCategory] int references Category(idCategory),
 [idProveedor] int references Proveedor(idProveedor) null,
-idFormatosVenta int references FormatosVenta(idFormatosVenta) null,
+idFormatosVenta int references FormatosVenta(id) null,
 [registrationDate] datetime default getdate(),
 [modificationDate] [datetime] null,
 [modificationUser] varchar(50) null
 )
+
 
 go
 
@@ -616,7 +617,7 @@ CREATE TABLE ProductTags (
 );
 
 CREATE TABLE Lov (
-    IdLov INT PRIMARY KEY IDENTITY(1,1),
+    Id INT PRIMARY KEY IDENTITY(1,1),
 	descripcion varchar(50) NOT NULL,
 	estado bit NOT NULL,
     LovType INT NOT NULL,
@@ -631,14 +632,48 @@ CREATE TABLE Horario (
     horaSalida NVARCHAR(5) NOT NULL,          
     DiaSemana INT NOT NULL,                   
     IdUsuario INT NOT NULL,                   
-    RegistrationDate DATETIME,                
+    RegistrationDate DATETIME, 
+	RegistrationUser varchar(150),
     ModificationDate DATETIME,                
-    ModificationUser NVARCHAR(150),           
+    ModificationUser varchar(150),           
 	FOREIGN KEY (IdUsuario) REFERENCES Users([idUsers]) ON DELETE CASCADE
 );
 
-select * from users
 
+CREATE TABLE Empresa (
+    Id INT PRIMARY KEY IDENTITY(1,1),  
+    RazonSocial VARCHAR(150) NOT NULL,
+    NombreContacto VARCHAR(150) NULL,
+    NumeroContacto VARCHAR(50) NULL,
+    Licencia INT NOT NULL,
+    ProximoPago DATETIME NULL, 
+    FrecuenciaPago INT NULL, 
+    Comentario varchar(300) null, 
+    RegistrationDate DATETIME,     
+	RegistrationUser varchar(150),
+    ModificationDate DATETIME,                
+    ModificationUser varchar(150)
+);
+
+CREATE TABLE PagoEmpresa (
+    Id INT PRIMARY KEY IDENTITY(1,1),  
+    FechaPago DATETIME NOT NULL, 
+    Importe decimal(10,2) NOT NULL,
+	Comentario varchar(300) NULL,
+	EstadoPago int NULL,
+	[importeSinIva] decimal(10,2) null,
+	[Iva] decimal(10,2) null,
+	[Ivaimporte] decimal(10,2) null,
+	[nroFactura] varchar(50) null,
+	[tipoFactura] varchar(50) null,
+	FacturaPendiente bit null
+	IdEmpresa INT NOT NULL,
+    RegistrationDate DATETIME,     
+	RegistrationUser varchar(150),
+    ModificationDate DATETIME,                
+    ModificationUser varchar(150),
+	FOREIGN KEY (IdEmpresa) REFERENCES Empresa(Id) ON DELETE CASCADE
+);
 
 --select * from turno
 

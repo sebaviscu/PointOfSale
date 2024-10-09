@@ -81,13 +81,13 @@ namespace PointOfSale.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(int idLov)
+        public async Task<IActionResult> Get(int id)
         {
             var gResponse = new GenericResponse<VMLov>();
 
             try
             {
-                var lov = _mapper.Map<VMLov>(await _lovService.GetById(idLov));
+                var lov = _mapper.Map<VMLov>(await _lovService.GetById(id));
 
                 gResponse.Object = lov;
                 gResponse.State = true;
@@ -95,7 +95,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al recuperar Lov", _logger, idLov);
+                return HandleException(ex, "Error al recuperar Lov", _logger, id);
             }
         }
 
@@ -147,7 +147,7 @@ namespace PointOfSale.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete(int idLov)
+        public async Task<IActionResult> Delete(int id)
         {
 
             GenericResponse<string> gResponse = new GenericResponse<string>();
@@ -155,12 +155,12 @@ namespace PointOfSale.Controllers
             {
                 ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
-                gResponse.State = await _lovService.Delete(idLov);
+                gResponse.State = await _lovService.Delete(id);
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al borrar lov", _logger, idLov);
+                return HandleException(ex, "Error al borrar lov", _logger, id);
             }
 
         }

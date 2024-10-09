@@ -1,0 +1,118 @@
+﻿@{
+    ViewData["Title"] = "Licencia";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@section StylesPOS {
+
+    <link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
+    <link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
+    <link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
+    <link href="~/plugins/select2/css/select2.min.css" rel="stylesheet">
+
+
+}
+
+<div class="row">
+    <div class="col-sm-12">
+
+        <div class="card card-default">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="col-md-2">Licencia</h4>
+                @if (Convert.ToBoolean(ViewData["superUser"]))
+                {
+                    <button class="btn btn-secondary" onclick="redirectUpdate()">Editar</button>
+                }
+            </div>
+
+            <div class="card-body">
+                <div class="col-sm-12 row">
+                    <div class="form-group col-sm-3">
+                        <label for="txtRazonSocial">Razon Social</label>
+                        <input type="text" class="form-control form-control-sm input-validate-facturacion" id="txtRazonSocial" name="Razon Social" disabled>
+                    </div>
+                    <div class="form-group col-sm-3">
+                        <label for="txtNombreContacto">Nombre de contacto</label>
+                        <input type="text" class="form-control form-control-sm input-validate-facturacion" id="txtNombreContacto" name="Nombre de Contacto" disabled>
+                    </div>
+                    <div class="form-group col-sm-3">
+                        <label for="txtNumeroContacto">Numero de contacto</label>
+                        <input type="text" class="form-control form-control-sm input-validate-facturacion" id="txtNumeroContacto" name="Numero de contacto" disabled>
+                    </div>
+                    <div class="form-group col-sm-3">
+                        <label for="selectLicencia">Licencia</label>
+                        <select id="selectLicencia" class="form-control form-control-sm" name="Licencia" multiple="multiple" disabled>
+                            <option value="1">Base</option>
+                            <option value="2">Facturación</option>
+                            <option value="4">Web</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-12 row">
+                    <div class="form-group col-sm-3">
+                        <label for="cboFrecuenciaPago">Frecuencia de pago</label>
+                        <select class="form-control form-control-sm" id="cboFrecuenciaPago" disabled>
+                            <option value="0">Mensual</option>
+                            <option value="1">Anual</option>
+
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-3">
+                        <label for="txtProximoPago">Proximo Pago</label>
+                        <input type="date" class="form-control form-control-sm input-validate-facturacion" id="txtProximoPago" name="Proximo Pago" disabled>
+                    </div>
+                    <div class="form-group col-sm-6">
+                        <label for="txtComentario">Comentario</label>
+                        <input type="text" class="form-control form-control-sm input-validate-facturacion" id="txtComentario" name="Comentario" disabled>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="card-header d-flex align-items-center" style="padding-top: 0;">
+                <h4 class="col-md-2">Pagos</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table id="tbData" class="table table-striped" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Fecha</th>
+                                    <th>Importe</th>
+                                    <th>Estado</th>
+                                    <th>Comentario</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
+    <script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
+    <script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
+    <script src="~/plugins/jquery-ui/jquery-ui.js"></script>
+
+
+    <script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
+    <script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
+    <script src="~/plugins/data-tables/jszip.min.js"></script>
+    <script src="~/plugins/data-tables/buttons.html5.min.js"></script>
+    <script src="~/plugins/data-tables/buttons.print.min.js"></script>
+
+    <script src="~/plugins/select2/js/select2.js"></script>
+    <script src="~/plugins/moment.js"></script>
+
+    <script src="~/js/views/licencia.js"></script>
+}
+

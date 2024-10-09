@@ -19,7 +19,7 @@ namespace PointOfSale.Business.Services
         {
             var entityCreated = await _repository.Add(entity);
 
-            var idProperty = entityCreated.GetType().GetProperty("Id" + typeof(T).Name);
+            var idProperty = entityCreated.GetType().GetProperty("Id");
 
             if (idProperty == null || (int)idProperty.GetValue(entityCreated) == 0)
             {
@@ -33,7 +33,7 @@ namespace PointOfSale.Business.Services
         {
             // Crear una expresión para comparar el Id dinámicamente
             var parameter = Expression.Parameter(typeof(T), "e");
-            var property = Expression.Property(parameter, "Id" + typeof(T).Name);
+            var property = Expression.Property(parameter, "Id");
             var idValueExpression = Expression.Constant(id);
             var equalExpression = Expression.Equal(property, idValueExpression);
 
@@ -55,7 +55,7 @@ namespace PointOfSale.Business.Services
         public async Task<T> Edit(T entity)
         {
             // Obtener la propiedad "Id{T}" dinámicamente
-            var idProperty = entity.GetType().GetProperty("Id" + typeof(T).Name);
+            var idProperty = entity.GetType().GetProperty("Id");
 
             if (idProperty == null)
                 throw new TaskCanceledException("ID no encontrado.");
@@ -64,7 +64,7 @@ namespace PointOfSale.Business.Services
 
             // Crear una expresión para comparar el Id dinámicamente
             var parameter = Expression.Parameter(typeof(T), "e");
-            var property = Expression.Property(parameter, "Id" + typeof(T).Name);
+            var property = Expression.Property(parameter, "Id");
             var idValueExpression = Expression.Constant(idValue);
             var equalExpression = Expression.Equal(property, idValueExpression);
 

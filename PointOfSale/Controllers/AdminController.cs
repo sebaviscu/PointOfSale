@@ -708,7 +708,9 @@ namespace PointOfSale.Controllers
                 foreach (var h in vmHorarios)
                 {
                     h.RegistrationDate = TimeHelper.GetArgentinaTime();
+                    h.RegistrationUser = user.UserName;
                 }
+
                 vmUser.Horarios = vmHorarios;
 
                 if (vmUser.Email.ToLower() == "admin")
