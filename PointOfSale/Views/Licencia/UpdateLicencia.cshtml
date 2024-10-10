@@ -24,7 +24,8 @@
         <div class="card card-default">
             <div class="card-header d-flex justify-content-between">
                 <h4 class="col-md-2">Licencia</h4>
-                <button class="btn btn-success ms-5" id="btnNew">Nuevo Pago</button>
+                <button type="button" class="btn btn-primary" id="btnSaveEmpresa">Guardar Cambios</button>
+
             </div>
 
             <div class="card-body">
@@ -69,15 +70,12 @@
                     </div>
                 </div>
 
-                <div class="col-sm-12 mt-3" style="text-align-last: end">
-                    <button type="button" class="btn btn-primary" id="btnSaveEmpresa">Guardar Cambios</button>
-                </div>
-
             </div>
 
 
-            <div class="card-header d-flex align-items-center" style="padding-top: 0;">
+            <div class="card-header d-flex justify-content-between align-items-center" style="padding-top: 0;">
                 <h4 class="col-md-2">Pagos</h4>
+                <button class="btn btn-success ms-5" id="btnNew">Nuevo Pago</button>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -89,7 +87,9 @@
                                     <th>Fecha</th>
                                     <th>Importe</th>
                                     <th>Estado</th>
+                                    <th>Factura</th>
                                     <th>Comentario</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -194,8 +194,8 @@
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-sm-12">
-                                    <label for="txtComentario">Comentario</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario">
+                                    <label for="txtComentarioPago">Comentario</label>
+                                    <input type="text" class="form-control form-control-sm" id="txtComentarioPago" name="Comentario">
                                 </div>
                             </div>
                             <div class="form-row" id="divModif">

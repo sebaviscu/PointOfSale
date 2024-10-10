@@ -54,12 +54,20 @@
     var buttonText = Model.TurnoAbierto ? "Cerrar Turno" : "Abrir Turno";
 }
 
-<div style="padding: 5px;">
-    <button class="btn @buttonClass w-100" id="btnAbrirCerrarTurno">@buttonText</button>
+<div id="buttons-wrapper" class="sidebar-buttons">
+    <div style="padding: 5px;">
+        <button class="btn btn-outline-info w-100" id="btnAbrirMovimientoCaja">
+            <i class="mdi mdi-cash-multiple"></i>
+            <span class="nav-text">Movimiento Caja</span>
+
+        </button>
+    </div>
+    <br />
+    <div style="padding: 5px;">
+        <button class="btn @buttonClass w-100" id="btnAbrirCerrarTurno">
+            <i class="mdi mdi-clock-outline"></i>
+            <span class="nav-text">@buttonText</span>
+
+        </button>
+    </div>
 </div>
-
-<div style="padding: 5px;">
-    <button class="btn btn-outline-info w-100" id="btnAbrirMovimientoCaja">Movimiento Caja</button>
-</div>
-
-

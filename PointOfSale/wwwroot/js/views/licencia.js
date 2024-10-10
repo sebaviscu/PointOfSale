@@ -2,8 +2,7 @@
 $(document).ready(function () {
 
     $('#selectLicencia').select2({
-        placeholder: 'Seleccione licencias',
-        allowClear: true
+        placeholder: 'Seleccione licencias'
     });
 
     tableDataPagosLicencia = $("#tbData").DataTable({
@@ -12,6 +11,11 @@ $(document).ready(function () {
             "url": "/Licencia/GetDataTable",
             "type": "GET",
             "datatype": "json"
+        },
+        "rowCallback": function (row, data) {
+            if (data.facturaPendiente == 1) {
+                $('td:eq(3)', row).addClass('factura-pendiente');
+            }
         },
         "columnDefs": [
             {
@@ -43,6 +47,11 @@ $(document).ready(function () {
                         return '<span class="badge rounded-pill bg-success">Pagado</span>';
                     else
                         return '<span class="badge rounded-pill bg-warning text-dark">Pendiente</span>';
+                }
+            },
+            {
+                "data": "nroFactura", render: function (data, type, row) {
+                    return data != '' ? `Factura ${row.tipoFacturaString} ${data} ` : '';
                 }
             },
             { "data": "comentario" }
@@ -79,7 +88,7 @@ $(document).ready(function () {
                 $('#selectLicencia').val(licenciasPreseleccionadas).trigger('change');
 
                 if (responseJson.object.proximoPago != null) {
-                    var fecha = responseJson.object.proximoPago.split("T")[0];
+                    let fecha = responseJson.object.proximoPago.split("T")[0];
                     $('#txtProximoPago').val(fecha);
                 }
 
@@ -92,17 +101,10 @@ $(document).ready(function () {
 
 })
 
-document.onkeyup = async function (e) {
-
-    if (e.altKey && e.which == 78) { // alt + N
-        redirectUpdate()
-    }
-};
-
-function redirectUpdate() {
+$("#btnRedirect").on("click", function () {
     window.open('/Licencia/UpdateLicencia', '_blank');
+})
 
-}
 
 function obtenerLicenciasSeleccionadas(valorLicencias) {
     let licencias = [];

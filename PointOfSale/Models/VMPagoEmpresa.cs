@@ -9,12 +9,13 @@ namespace PointOfSale.Models
         public decimal? Importe { get; set; }
         public string? Comentario { get; set; }
         public EstadoPago EstadoPago { get; set; }
+        public string TipoFacturaString => TipoFactura.ToString();
 
         public decimal? ImporteSinIva { get; set; }
         public decimal? Iva { get; set; }
         public decimal? IvaImporte { get; set; }
         public string? NroFactura { get; set; }
-        public string? TipoFactura { get; set; }
+        public TipoFactura? TipoFactura { get; set; }
         public bool? FacturaPendiente { get; set; }
     }
 }

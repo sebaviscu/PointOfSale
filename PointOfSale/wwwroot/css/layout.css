@@ -41,3 +41,12 @@ select.input-validate {
             border: 1px solid #ccc;
         }
 }
+
+.left-sidebar.active .sidebar-buttons .btn span {
+    display: none;
+}
+
+.left-sidebar.active .sidebar-buttons .btn {
+    justify-content: center;
+    text-align: center;
+}

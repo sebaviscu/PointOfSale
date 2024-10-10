@@ -1,4 +1,4 @@
-﻿var razonesList;
+﻿let razonesList;
 
 const BASIC_MODEL_MOVIMIENTIO_CAJA = {
     idMovimientoCaja: 0,

@@ -39,7 +39,7 @@ $(document).ready(function () {
         },
             "rowCallback": function (row, data) {
                 if (data.facturaPendiente == 1) {
-                    $('td:eq(4)', row).addClass('factura-pendiente');
+                    $('td:eq(3)', row).addClass('factura-pendiente');
                 }
             },
         "columnDefs": [
@@ -74,7 +74,19 @@ $(document).ready(function () {
                         return '<span class="badge rounded-pill bg-warning text-dark">Pendiente</span>';
                 }
             },
-            { "data": "comentario" }
+            {
+                "data": "nroFactura", render: function (data, type, row) {
+                    return data != '' ? `Factura ${row.tipoFacturaString} ${data} ` : '';
+                }
+            },
+            { "data": "comentario" },
+            {
+                "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
+                    '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-trash-can"></i></button>',
+                "orderable": false,
+                "searchable": false,
+                "width": "80px"
+            }
 
         ],
         order: [[1, "desc"]],
@@ -110,7 +122,7 @@ $(document).ready(function () {
                 $('#selectLicencia').val(licenciasPreseleccionadas).trigger('change');
 
                 if (model.proximoPago != null) {
-                    var fecha = model.proximoPago.split("T")[0];
+                    let fecha = model.proximoPago.split("T")[0];
                     $('#txtProximoPago').val(fecha);
                 }
 
@@ -145,15 +157,15 @@ const openModalNuevoPago = (model = BASIC_MODEL_PAGO_LICENCIA) => {
     $("#txtId").val(model.id);
 
     if (model.fechaPago != '') {
-        let dateFechaPago = new Date(model.fechaPago);
-        $("#txtFechaPago").val(dateFechaPago);
+        let fecha = model.fechaPago.split("T")[0];
+        $("#txtFechaPago").val(fecha);
     }
     else {
         setToday();
     }
 
     $("#txtImporte").val(model.importe);
-    $("#txtComentario").val(model.comentario);
+    $("#txtComentarioPago").val(model.comentario);
     $("#cboEstado").val(model.estadoPago);
 
     document.getElementById("cbxFacturaPendiente").checked = model.facturaPendiente;
@@ -196,7 +208,7 @@ $("#btnSave").on("click", function () {
     model["id"] = parseInt($("#txtId").val());
     model["fechaPago"] = $("#txtFechaPago").val();
     model["importe"] = $("#txtImporte").val();
-    model["comentario"] = $("#txtComentario").val();
+    model["comentario"] = $("#txtComentarioPago").val();
     model["estadoPago"] = $("#cboEstado").val();
 
     model["facturaPendiente"] = document.querySelector('#cbxFacturaPendiente').checked;
@@ -286,7 +298,6 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
 
     swal({
         title: "¿Está seguro?",
-        text: `Eliminar gasto "${data.fechaPago} ${data.importe}"`,
         type: "warning",
         showCancelButton: true,
         confirmButtonClass: "btn-danger",
@@ -301,7 +312,7 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
 
                 $(".showSweetAlert").LoadingOverlay("show")
 
-                fetch(`/Licencia/DeletePagoLicencia?idGastos=${data.id}`, {
+                fetch(`/Licencia/DeletePagoLicencia?idPago=${data.id}`, {
                     method: "DELETE"
                 }).then(response => {
                     $(".showSweetAlert").LoadingOverlay("hide")

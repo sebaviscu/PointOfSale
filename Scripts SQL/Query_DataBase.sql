@@ -148,12 +148,9 @@ destacado bit null,
 productoWeb bit null,
 [idCategory] int references Category(idCategory),
 [idProveedor] int references Proveedor(idProveedor) null,
-idFormatosVenta int references FormatosVenta(id) null,
-[registrationDate] datetime default getdate(),
 [modificationDate] [datetime] null,
 [modificationUser] varchar(50) null
 )
-
 
 go
 
@@ -665,7 +662,7 @@ CREATE TABLE PagoEmpresa (
 	[Iva] decimal(10,2) null,
 	[Ivaimporte] decimal(10,2) null,
 	[nroFactura] varchar(50) null,
-	[tipoFactura] varchar(50) null,
+	[tipoFactura] int null,
 	FacturaPendiente bit null
 	IdEmpresa INT NOT NULL,
     RegistrationDate DATETIME,     
@@ -674,6 +671,9 @@ CREATE TABLE PagoEmpresa (
     ModificationUser varchar(150),
 	FOREIGN KEY (IdEmpresa) REFERENCES Empresa(Id) ON DELETE CASCADE
 );
+
+
+
 
 --select * from turno
 

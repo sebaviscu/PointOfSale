@@ -13,6 +13,11 @@
 
 
 }
+<style>
+    .factura-pendiente {
+        background-color: yellow;
+    }
+</style>
 
 <div class="row">
     <div class="col-sm-12">
@@ -22,7 +27,7 @@
                 <h4 class="col-md-2">Licencia</h4>
                 @if (Convert.ToBoolean(ViewData["superUser"]))
                 {
-                    <button class="btn btn-secondary" onclick="redirectUpdate()">Editar</button>
+                    <button class="btn btn-secondary" id="btnRedirect">Editar</button>
                 }
             </div>
 
@@ -84,6 +89,7 @@
                                     <th>Fecha</th>
                                     <th>Importe</th>
                                     <th>Estado</th>
+                                    <th>Factura</th>
                                     <th>Comentario</th>
                                 </tr>
                             </thead>

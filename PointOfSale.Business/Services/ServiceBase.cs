@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Data.Repository;
 using System.Linq.Expressions;
+using PointOfSale.Model.Configuracion;
 
 namespace PointOfSale.Business.Services
 {
@@ -80,7 +81,7 @@ namespace PointOfSale.Business.Services
             // Actualizar las propiedades de la entidad encontrada
             foreach (var propertyInfo in entity.GetType().GetProperties())
             {
-                if(propertyInfo.Name.ToLower() == "registrationdate")
+                if (propertyInfo.IsDefined(typeof(NonUpdatableAttribute), false))
                 {
                     continue;
                 }
