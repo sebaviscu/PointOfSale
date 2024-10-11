@@ -7,7 +7,7 @@ namespace PointOfSale.Model
         public string Nombre { get; set; }
         public string Color { get; set; }
 
-        public virtual ICollection<ProductTag> ProductTags { get; set; } = new List<ProductTag>();
+        public virtual List<ProductTag>? ProductTags { get; set; } = new List<ProductTag>();
 
     }
 }

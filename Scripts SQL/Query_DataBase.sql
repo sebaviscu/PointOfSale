@@ -672,24 +672,17 @@ CREATE TABLE PagoEmpresa (
 	FOREIGN KEY (IdEmpresa) REFERENCES Empresa(Id) ON DELETE CASCADE
 );
 
+CREATE TABLE ProductLov
+(
+    ProductId INT NOT NULL,
+    LovId INT NOT NULL,
+    LovType INT NOT NULL,
 
+    CONSTRAINT PK_ProductLov PRIMARY KEY (ProductId, LovId, LovType),
 
+    CONSTRAINT FK_ProductLov_Product FOREIGN KEY (ProductId) 
+        REFERENCES Product(IdProduct) ON DELETE CASCADE,
 
---select * from turno
-
---EXEC sp_fkeys @fktable_name = 'turno';
-
---ALTER TABLE Turno
---DROP CONSTRAINT FK__Turno__idTienda__267ABA7A;
-
---ALTER TABLE Turno
---ADD CONSTRAINT FK_Turno_Tienda
---FOREIGN KEY (idTienda) REFERENCES Tienda(idTienda)
---ON DELETE CASCADE;
-
-
---select * from users
-
---update users
---set password = '', email='admin', name ='admin'
-
+    CONSTRAINT FK_ProductLov_Lov FOREIGN KEY (LovId) 
+        REFERENCES Lov(Id) ON DELETE CASCADE
+);

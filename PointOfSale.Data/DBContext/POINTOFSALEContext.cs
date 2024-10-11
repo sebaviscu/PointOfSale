@@ -18,6 +18,8 @@ namespace PointOfSale.Data.DBContext
         {
         }
 
+        #region DbSet
+
         public virtual DbSet<Category> Categories { get; set; } = null!;
         public virtual DbSet<CorrelativeNumber> CorrelativeNumbers { get; set; } = null!;
         public virtual DbSet<DetailSale> DetailSales { get; set; } = null!;
@@ -58,6 +60,9 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<Horario> Horario { get; set; }
         public virtual DbSet<Empresa> Empresas { get; set; }
         public virtual DbSet<PagoEmpresa> PagoEmpresa { get; set; }
+        public virtual DbSet<ProductLov> ProductLov { get; set; }
+
+        #endregion
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -65,6 +70,24 @@ namespace PointOfSale.Data.DBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<ProductLov>(entity =>
+            {
+                entity.HasKey(pl => new { pl.ProductId, pl.LovId, pl.LovType });
+
+                entity.ToTable("ProductLov");
+
+                entity.HasOne(pl => pl.Product)
+                    .WithMany(p => p.ProductLovs)
+                    .HasForeignKey(pl => pl.ProductId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(pl => pl.Lov)
+                    .WithMany(l => l.ProductLovs)
+                    .HasForeignKey(pl => pl.LovId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
 
             modelBuilder.Entity<PagoEmpresa>(entity =>
             {

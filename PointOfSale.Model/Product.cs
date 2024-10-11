@@ -6,7 +6,6 @@ namespace PointOfSale.Model
     {
         public int IdProduct { get; set; }
         public string? Description { get; set; }
-        public int? IdCategory { get; set; }
         public decimal? Price { get; set; }
         public byte[]? Photo { get; set; }
         public bool IsActive { get; set; }
@@ -19,23 +18,26 @@ namespace PointOfSale.Model
         public string? Comentario { get; set; }
         public TipoVenta TipoVenta { get; set; }
         public decimal? Iva {  get; set; }
-
         public decimal? PrecioFormatoWeb { get; set; }
         public int? FormatoWeb { get; set; }
         public bool Destacado { get; set; }
         public bool ProductoWeb { get; set; }
 
+        public int? IdCategory { get; set; }
         public virtual Category? IdCategoryNavigation { get; set; }
+
         public int? IdProveedor { get; set; }
         public Proveedor? Proveedor { get; set; }
-        public IEnumerable<DetailSale>? DetalleVentas { get; set; }
-        public List<ListaPrecio>? ListaPrecios { get; set; }
-        public List<Vencimiento>? Vencimientos { get; set; }
 
-        public virtual ICollection<PedidoProducto>? PedidoProductos { get; set; }
-        public virtual ICollection<Stock>? Stocks { get; set; }
-        public virtual ICollection<CodigoBarras>? CodigoBarras { get; set; }
-        public virtual ICollection<ProductTag> ProductTags { get; set; } = new List<ProductTag>();
+        public virtual List<DetailSale>? DetalleVentas { get; set; } = new List<DetailSale>();
+        public virtual List<ListaPrecio>? ListaPrecios { get; set; } = new List<ListaPrecio>();
+        public virtual List<Vencimiento>? Vencimientos { get; set; } = new List<Vencimiento>();
+        public virtual List<PedidoProducto>? PedidoProductos { get; set; } = new List<PedidoProducto>();
+        public virtual List<Stock>? Stocks { get; set; } = new List<Stock>();
+        public virtual List<CodigoBarras>? CodigoBarras { get; set; } = new List<CodigoBarras>();
+        public virtual List<ProductTag> ProductTags { get; set; } = new List<ProductTag>();
+
+        public virtual List<ProductLov>? ProductLovs { get; set; } = new List<ProductLov>();
 
     }
 }
