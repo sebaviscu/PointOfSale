@@ -233,7 +233,7 @@ namespace PointOfSale.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProduct([FromForm] IFormFile photo, [FromForm] string model, [FromForm] string vencimientos, [FromForm] string codBarras, [FromForm] string tags)
+        public async Task<IActionResult> CreateProduct([FromForm] IFormFile photo, [FromForm] string model, [FromForm] string vencimientos, [FromForm] string codBarras, [FromForm] string tags, [FromForm] string comodines)
         {
 
             GenericResponse<VMProduct> gResponse = new GenericResponse<VMProduct>();
@@ -251,6 +251,7 @@ namespace PointOfSale.Controllers
                 var vmListVencimientos = JsonConvert.DeserializeObject<List<VMVencimiento>>(vencimientos, settings);
                 var vmCodBarras = JsonConvert.DeserializeObject<List<VMCodigoBarras>>(codBarras);
                 var vmTags = JsonConvert.DeserializeObject<List<VMTag>>(tags);
+                var vmComodines = JsonConvert.DeserializeObject<List<VMProductLov>>(comodines);
 
 
                 var culture = new CultureInfo("es-ES");
@@ -297,7 +298,9 @@ namespace PointOfSale.Controllers
                     _mapper.Map<List<Vencimiento>>(vmListVencimientos),
                     stock,
                     _mapper.Map<List<CodigoBarras>>(vmCodBarras),
-                    _mapper.Map<List<Tag>>(vmTags));
+                    _mapper.Map<List<Tag>>(vmTags),
+                    _mapper.Map<List<ProductLov>>(vmComodines)
+                    );
 
                 vmProduct = _mapper.Map<VMProduct>(product_created);
 
@@ -313,7 +316,7 @@ namespace PointOfSale.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> EditProduct([FromForm] IFormFile photo, [FromForm] string model, [FromForm] string vencimientos, [FromForm] string codBarras, [FromForm] string tags)
+        public async Task<IActionResult> EditProduct([FromForm] IFormFile photo, [FromForm] string model, [FromForm] string vencimientos, [FromForm] string codBarras, [FromForm] string tags, [FromForm] string comodines)
         {
             var response = new GenericResponse<VMProduct>();
 
@@ -331,6 +334,7 @@ namespace PointOfSale.Controllers
                 var vmListVencimientos = JsonConvert.DeserializeObject<List<VMVencimiento>>(vencimientos, settings);
                 var vmCodBarras = JsonConvert.DeserializeObject<List<VMCodigoBarras>>(codBarras);
                 var vmTags = JsonConvert.DeserializeObject<List<VMTag>>(tags);
+                var vmComodines = JsonConvert.DeserializeObject<List<VMProductLov>>(comodines);
 
                 vmProduct.ModificationUser = user.UserName;
 
@@ -374,7 +378,8 @@ namespace PointOfSale.Controllers
                     _mapper.Map<List<Vencimiento>>(vmListVencimientos),
                     stock,
                     _mapper.Map<List<CodigoBarras>>(vmCodBarras),
-                    _mapper.Map<List<Tag>>(vmTags)  // Pass tags to service
+                    _mapper.Map<List<Tag>>(vmTags),
+                    _mapper.Map<List<ProductLov>>(vmComodines)
                 );
 
                 response.State = true;

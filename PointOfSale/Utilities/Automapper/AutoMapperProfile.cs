@@ -127,6 +127,9 @@ namespace PointOfSale.Utilities.Automapper
             .ForMember(dest => dest.PriceWeb, opt => opt.MapFrom(src => src.PriceWeb.ToString()))
             .ForMember(dest => dest.PrecioFormatoWeb, opt => opt.MapFrom(src => src.PrecioFormatoWeb.ToString()))
             .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.ProductTags.Select(pt => pt.Tag).ToList()))
+            .ForMember(dest => dest.Comodin1, opt => opt.MapFrom(src => src.ProductLovs.Where(_=>_.LovType == LovType.comodin_1).Select(pt => pt.Lov).ToList()))
+            .ForMember(dest => dest.Comodin2, opt => opt.MapFrom(src => src.ProductLovs.Where(_=>_.LovType == LovType.comodin_2).Select(pt => pt.Lov).ToList()))
+            .ForMember(dest => dest.Comodin3, opt => opt.MapFrom(src => src.ProductLovs.Where(_=>_.LovType == LovType.comodin_3).Select(pt => pt.Lov).ToList()))
             ;
 
             CreateMap<VMProduct, Product>()
@@ -485,6 +488,7 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<VMSaleResult, RegisterSaleOutput>().ReverseMap();
             CreateMap<Empresa, VMEmpresa>().ReverseMap();
             CreateMap<PagoEmpresa, VMPagoEmpresa>().ReverseMap();
+            CreateMap<ProductLov, VMProductLov>().ReverseMap();
         }
     }
 }

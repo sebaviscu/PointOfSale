@@ -618,10 +618,13 @@ CREATE TABLE Lov (
 	descripcion varchar(50) NOT NULL,
 	estado bit NOT NULL,
     LovType INT NOT NULL,
-	[registrationDate] datetime not null,
+	[registrationDate] datetime null,
+	RegistrationUser varchar(150),
 	[modificationDate] [datetime] null,
 	[modificationUser] varchar(50) null
 );
+
+go
 
 CREATE TABLE Horario (
     Id INT PRIMARY KEY IDENTITY(1,1),  

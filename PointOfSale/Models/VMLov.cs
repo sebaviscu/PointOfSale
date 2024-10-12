@@ -1,10 +1,10 @@
-﻿using static PointOfSale.Model.Enum;
+﻿using PointOfSale.Model;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Models
 {
-    public class VMLov
+    public class VMLov : EntityBase
     {
-        public int? Id { get; set; }
         public string? Descripcion { get; set; }
 
         public bool? Estado { get; set; }
@@ -13,8 +13,5 @@ namespace PointOfSale.Models
 
         public string? LovTypeString => LovType.HasValue ? LovType.ToString() : string.Empty;
 
-        public DateTime? RegistrationDate { get; set; }
-        public DateTime? ModificationDate { get; set; }
-        public string? ModificationUser { get; set; }
     }
 }

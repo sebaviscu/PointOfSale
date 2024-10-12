@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq.Expressions;
 
 namespace PointOfSale.Business.Contracts
 {
@@ -20,5 +15,7 @@ namespace PointOfSale.Business.Contracts
         IQueryable<T> ListActive();
 
         Task<IQueryable<T>> IncludeDetails(bool incluideDetails, params Expression<Func<T, object>>[] propertySelectors);
+
+        Task<T?> GetById(int id);
     }
 }

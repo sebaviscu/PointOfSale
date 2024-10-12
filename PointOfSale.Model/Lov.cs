@@ -2,19 +2,13 @@
 
 namespace PointOfSale.Model
 {
-    public class Lov
+    public class Lov : EntityBase
     {
-        public int Id { get; set; }
         public string Descripcion { get; set; }
 
         public bool Estado { get; set; }
 
         public LovType LovType { get; set; }
-
-        public DateTime RegistrationDate { get; set; }
-        public DateTime? ModificationDate { get; set; }
-        public string? ModificationUser { get; set; }
-
 
         public virtual List<ProductLov>? ProductLovs { get; set; } = new List<ProductLov>();
     }

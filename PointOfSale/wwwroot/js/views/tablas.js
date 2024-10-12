@@ -10,7 +10,6 @@ let rowSelectedTag;
 let tableTags;
 let tableRazonMovimientoCaja;
 let rowSelectedRazonMovimientoCaja;
-
 let rowSelectedComodin1;
 let tableComodin1;
 let rowSelectedComodin2;

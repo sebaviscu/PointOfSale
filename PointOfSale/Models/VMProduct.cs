@@ -49,5 +49,9 @@ namespace PointOfSale.Models
         public bool Destacado { get; set; }
         public bool ProductoWeb { get; set; }
 
+        public virtual ICollection<VMLov>? Comodin1 { get; set; }
+        public virtual ICollection<VMLov>? Comodin2 { get; set; }
+        public virtual ICollection<VMLov>? Comodin3 { get; set; }
+
     }
 }

@@ -108,6 +108,7 @@ namespace PointOfSale.Controllers
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
                 model.RegistrationDate = TimeHelper.GetArgentinaTime();
+                model.RegistrationUser = user.UserName;
 
                 var lov_creado = await _lovService.Add(_mapper.Map<Lov>(model));
 

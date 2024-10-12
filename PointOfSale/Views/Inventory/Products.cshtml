@@ -57,11 +57,11 @@
     <div class="col-sm-12">
 
         <div class="card card-default">
-            <div class="card-header card-header-border-bottom">
+            <div class="card-header card-header-border-bottom d-flex justify-content-between">
                 <div>
                     <h4>Productos</h4>
                 </div>
-                <div class="ms-auto bd-highlight">
+                <div class="d-flex justify-content-between">
                     <button class="btn btn-primary btn-sm" id="btnEditAll" onclick="editAll()">Editar Seleccion</button>
 
                     <button class="btn btn-info btn-sm ms-4 " id="btnEditAll" onclick="imprimirPrecios()">Imprimir Precio</button>
@@ -342,12 +342,13 @@
                                                             <label for="txtCodBarrasAgregar">Codigo</label>
                                                             <input type="number" min="0" step="1" class="form-control form-control-sm" id="txtCodBarrasAgregar" name="codigo de barras">
                                                         </div>
-                                                        <div class="form-group col-sm-4">
+                                                        <div class="form-group col-sm-5">
                                                             <label for="txtCodBarrasDescripcion">Descripcion</label>
                                                             <input type="text" maxlength="50" class="form-control form-control-sm" id="txtCodBarrasDescripcion" name="descripcion producto">
                                                         </div>
-                                                        <div class="col-sm-2" style="align-self: center;">
-                                                            <button class="btn btn-success btn-sm" id="btnAddCodBarras">Agregar</button>
+                                                        <div class="col-sm-1" style="align-self: center;">
+                                                            <button class="btn btn-success btn-sm" id="btnAddCodBarras">+</button>
+
                                                         </div>
                                                     </div>
                                                 </div>
@@ -393,17 +394,17 @@
                                                         <label class="form-check-label" for="switchProductoDescatado">Destacado</label>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-3" id="divComodin1" style="display:none">
+                                                <div class="col-sm-3" id="divComodin1">
                                                     <label for="Comodin1Selector" id="Comodin1Label">Comodin 1</label>
                                                     <select id="Comodin1Selector" class="form-control" multiple="multiple" style="width: 100%;">
                                                     </select>
                                                 </div>
-                                                <div class="col-sm-3" id="divComodin2" style="display:none">
+                                                <div class="col-sm-3" id="divComodin2">
                                                     <label for="Comodin2Selector" id="Comodin2Label">Comodin 2</label>
                                                     <select id="Comodin2Selector" class="form-control" multiple="multiple" style="width: 100%;">
                                                     </select>
                                                 </div>
-                                                <div class="col-sm-3" id="divComodin3" style="display:none">
+                                                <div class="col-sm-3" id="divComodin3">
                                                     <label for="Comodin3Selector" id="Comodin3Label">Comodin 3</label>
                                                     <select id="Comodin3Selector" class="form-control" multiple="multiple" style="width: 100%;">
                                                     </select>

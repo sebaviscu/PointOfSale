@@ -47,26 +47,20 @@ namespace PointOfSale.Business.Services
         public async Task<Product> Get(int idProducto)
         {
             IQueryable<Product> queryProduct = await _repository.Query(u => u.IdProduct == idProducto);
-            return queryProduct.Include(_ => _.Proveedor)
-                                .Include(_ => _.ListaPrecios)
-                                .Include(_ => _.Vencimientos)
-                                .Include(_ => _.CodigoBarras)
-                                .Include(p => p.ProductTags)
-                                    .ThenInclude(pt => pt.Tag)
-                                .First();
+            return getIncludes(queryProduct).First();
         }
 
         public async Task<List<Product>> List()
         {
             IQueryable<Product> query = await _repository.Query();
-            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).Include(_ => _.CodigoBarras).OrderBy(_ => _.Description).ToList();
-            //return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).Include(_ => _.CodigoBarras).OrderBy(_ => _.Description).Take(3).ToList();
+            return getIncludes(query).ToList();
+            //return getIncludes(query).Take(3).ToList();
         }
 
         public async Task<List<Product>> ListActive()
         {
             IQueryable<Product> query = await _repository.Query(_ => _.IsActive);
-            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).OrderBy(_ => _.Description).ToList();
+            return getIncludes(query).ToList();
         }
 
         public async Task<List<Stock>> ListStock(int idTienda)
@@ -101,7 +95,7 @@ namespace PointOfSale.Business.Services
 
             return await query
                 .Include(p => p.ProductTags)
-                .ThenInclude(pt => pt.Tag)
+                .   ThenInclude(pt => pt.Tag)
                 .OrderBy(p => p.Description)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -112,11 +106,23 @@ namespace PointOfSale.Business.Services
         {
             var query = await _repository.Query(_ => _.Description.Contains(text) && _.IsActive && _.ProductoWeb);
 
-            return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).OrderBy(_ => _.Description).ToList();
+            return getIncludes(query).ToList();
         }
 
+        private IQueryable<Product> getIncludes(IQueryable<Product> query)
+        {
+            return query.Include(c => c.IdCategoryNavigation)
+                .Include(_ => _.Proveedor)
+                .Include(_ => _.ListaPrecios)
+                .Include(_ => _.Vencimientos)
+                .Include(p => p.ProductTags)
+                    .ThenInclude(pt => pt.Tag)
+                .Include(p => p.ProductLovs)
+                    .ThenInclude(pt => pt.Lov)
+                .OrderBy(_ => _.Description);
+        }
 
-        public async Task<Product> Add(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos, Stock? stock, List<CodigoBarras>? codigoBarras, List<Tag> tags)
+        public async Task<Product> Add(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos, Stock? stock, List<CodigoBarras>? codigoBarras, List<Tag> tags, List<ProductLov> comodines)
         {
             if (codigoBarras != null)
             {
@@ -136,7 +142,8 @@ namespace PointOfSale.Business.Services
                 entity.Photo = GetDefaultImage();
             }
 
-            await UpdateProductTags(entity, tags.Select(_ => _.IdTag).ToList());
+            UpdateProductTags(entity, tags.Select(_ => _.IdTag).ToList());
+            UpdateProductComodin(entity, comodines);
 
             Product product_created = await _repository.Add(entity);
 
@@ -235,7 +242,7 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task<Product> Edit(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos, Stock? stock, List<CodigoBarras>? codigoBarras, List<Tag> tags)
+        public async Task<Product> Edit(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos, Stock? stock, List<CodigoBarras>? codigoBarras, List<Tag> tags, List<ProductLov> comodines)
         {
             try
             {
@@ -243,8 +250,10 @@ namespace PointOfSale.Business.Services
 
                 var product = await prodQuery.Include(p => p.ListaPrecios)
                                     .Include(p => p.ProductTags)
-                                       .ThenInclude(pt => pt.Tag)
-                                       .FirstOrDefaultAsync();
+                                       .ThenInclude(pt => pt.Tag)                                    
+                                    .Include(p => p.ProductLovs)
+                                       .ThenInclude(pt => pt.Lov)
+                                    .FirstOrDefaultAsync();
 
                 if (product == null)
                     throw new Exception("Producto no encontrado.");
@@ -275,8 +284,8 @@ namespace PointOfSale.Business.Services
                     product.Photo = GetDefaultImage();
                 }
 
-                await UpdateProductTags(product, tags.Select(_ => _.IdTag).ToList());
-
+                UpdateProductTags(product, tags.Select(_ => _.IdTag).ToList());
+                UpdateProductComodin(product, comodines);
 
                 bool response = await _repository.Edit(product);
                 if (!response)
@@ -295,7 +304,9 @@ namespace PointOfSale.Business.Services
                                                     .Include(p => p.Vencimientos)
                                                     .Include(p => p.CodigoBarras)
                                                     .Include(p => p.ProductTags)
-                                                    .ThenInclude(pt => pt.Tag)
+                                                        .ThenInclude(pt => pt.Tag)
+                                                    .Include(p => p.ProductLovs)
+                                                        .ThenInclude(pt => pt.Lov)
                                                    .FirstOrDefaultAsync();
 
                 return updatedProduct ?? throw new Exception("Error al cargar el producto actualizado.");
@@ -333,7 +344,7 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        private async Task UpdateProductTags(Product product, List<int> tagIds)
+        private void UpdateProductTags(Product product, List<int> tagIds)
         {
             var tagsToRemove = product.ProductTags.Where(pt => !tagIds.Contains(pt.TagId)).ToList();
 
@@ -349,10 +360,27 @@ namespace PointOfSale.Business.Services
                     product.ProductTags.Add(new ProductTag { ProductId = product.IdProduct, TagId = tagId });
                 }
             }
-
-            //await _repository.Edit(product);
         }
 
+        private void UpdateProductComodin(Product product, List<ProductLov> comodines)
+        {
+            var comodinIds = comodines.Select(_ => _.LovId).ToList();
+
+            var lovsToRemove = product.ProductLovs.Where(pt => !comodinIds.Contains(pt.LovId)).ToList();
+
+            foreach (var lovToRemove in lovsToRemove)
+            {
+                product.ProductLovs.Remove(lovToRemove);
+            }
+
+            foreach (var lov in comodines)
+            {
+                if (!product.ProductLovs.Any(pt => pt.LovId == lov.LovId))
+                {
+                    product.ProductLovs.Add(new ProductLov { ProductId = product.IdProduct, LovId = lov.LovId, LovType = lov.LovType });
+                }
+            }
+        }
 
         public async Task EditListaPrecios(List<ListaPrecio> listaPreciosActual, List<ListaPrecio> listaPreciosNueva)
         {

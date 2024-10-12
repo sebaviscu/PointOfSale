@@ -37,7 +37,10 @@ const BASIC_MODEL_PRODUCTOS = {
     precioFormatoWeb: 0,
     tags: [],
     destacado: 0,
-    productoWeb: 0
+    productoWeb: 0,
+    comodin1: [],
+    comodin2: [],
+    comodin3: []
 }
 
 const BASIC_MASSIVE_EDIT = {
@@ -277,10 +280,9 @@ function manejarComodinSelector(habilitar, idComodin, nombreComodin, lovType) {
     const selectorComodin = `#${idComodin}Selector`;
 
     if (habilitar) {
-        $(divComodin).show();                      // Mostrar el div del comodín
-        $(labelComodin).text(nombreComodin);       // Cambiar el texto del label
+        $(divComodin).show();
+        $(labelComodin).text(nombreComodin);
 
-        // Verificar si el selector existe en el DOM
         if ($(selectorComodin).length) {
             const selector = new Choices(selectorComodin, {
                 removeItemButton: true,
@@ -288,7 +290,6 @@ function manejarComodinSelector(habilitar, idComodin, nombreComodin, lovType) {
                 duplicateItemsAllowed: false
             });
 
-            // Realizar el fetch para obtener los datos del lovType correspondiente
             fetch(`/Lov/GetAllActive?lovType=${lovType}`)
                 .then(response => response.json())
                 .then(data => {
@@ -299,12 +300,12 @@ function manejarComodinSelector(habilitar, idComodin, nombreComodin, lovType) {
                     selector.setChoices(comodinData, 'value', 'label', false);
                 });
 
-            return selector;  // Retorna el selector para asignarlo a la variable adecuada
+            return selector;
         } else {
             console.error(`Elemento ${selectorComodin} no encontrado en el DOM`);
         }
     } else {
-        $(divComodin).hide();  // Ocultar el div si no está habilitado
+        $(divComodin).hide();
     }
 }
 
@@ -482,11 +483,21 @@ const openModalProduct = (model = BASIC_MODEL_PRODUCTOS) => {
 
     $("#modalData").modal("show")
 
-    tagSelector.removeActiveItems();
-    let tgsIds = model.tags.map(d => d.idTag);
-    tagSelector.setChoiceByValue(tgsIds);
+    //tagSelector.removeActiveItems();
+    //let tgsIds = model.tags.map(d => d.idTag);
+    //tagSelector.setChoiceByValue(tgsIds);
+
+    setChoices(tagSelector, model.tags.map(d => d.idTag));
+    setChoices(comodin1Selector, model.comodin1.map(d => d.id));
+    setChoices(comodin2Selector, model.comodin2.map(d => d.id));
+    setChoices(comodin3Selector, model.comodin3.map(d => d.id));
 }
 
+function setChoices(comodinSelector, ids) {
+    comodinSelector.removeActiveItems();
+    //let comodinIds = comodin.map(d => d.id);
+    comodinSelector.setChoiceByValue(ids);
+}
 
 function addVencimientoTable(data) {
     let fechaElaboracion = "";
@@ -961,11 +972,18 @@ $("#btnSave").on("click", async function () {
     let codBarras = obtenerDatosTablaCodigoBarras(model.idProduct);
     let tags = obtenerTagsSeleccionados();
 
+    let comodin1 = obtenerComosinesSeleccionados(comodin1Selector, 1, model.idProduct);
+    let comodin2 = obtenerComosinesSeleccionados(comodin2Selector, 2, model.idProduct);
+    let comodin3 = obtenerComosinesSeleccionados(comodin3Selector, 3, model.idProduct);
+
+    let comodines = [comodin1, comodin2, comodin3].flat();
+
     const formData = new FormData();
     formData.append('model', JSON.stringify(model));
     formData.append('vencimientos', JSON.stringify(vencimientos));
     formData.append('codBarras', JSON.stringify(codBarras));
     formData.append('tags', JSON.stringify(tags));
+    formData.append('comodines', JSON.stringify(comodines));
 
     const inputPhoto = document.getElementById('txtPhoto');
 
@@ -1041,6 +1059,20 @@ function obtenerTagsSeleccionados() {
     });
 
     return tagsArray;
+}
+
+function obtenerComosinesSeleccionados(comodinSelector, lovType, idProduct) {
+    let comodinSeleccionados = comodinSelector.getValue(true);
+
+    let comodinesArray = comodinSeleccionados.map(function (comodin) {
+        return {
+            lovId: comodin,
+            productId: idProduct,
+            lovType: lovType
+        };
+    });
+
+    return comodinesArray;
 }
 
 function compressImage(file, quality, maxWidth, maxHeight) {

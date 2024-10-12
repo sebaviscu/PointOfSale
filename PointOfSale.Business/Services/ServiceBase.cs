@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using PointOfSale.Business.Contracts;
 using PointOfSale.Data.Repository;
 using System.Linq.Expressions;
 using PointOfSale.Model.Configuracion;
@@ -132,6 +130,17 @@ namespace PointOfSale.Business.Services
             return query;
         }
 
+        public async Task<T?> GetById(int id)
+        {
+            var parameter = Expression.Parameter(typeof(T), "e");
+            var property = Expression.Property(parameter, "Id");
+            var idValueExpression = Expression.Constant(id);
+            var equalExpression = Expression.Equal(property, idValueExpression);
+
+            var lambda = Expression.Lambda<Func<T, bool>>(equalExpression, parameter);
+
+            return await _repository.QuerySimple().FirstOrDefaultAsync(lambda);
+        }
     }
 
 }
