@@ -16,6 +16,24 @@ let rowSelectedComodin2;
 let tableComodin2;
 let rowSelectedComodin3;
 let tableComodin3;
+let tableDataTienda;
+let rowSelectedTienda;
+
+const BASIC_MODEL_TIENDA = {
+    idTienda: 0,
+    nombre: "",
+    idListaPrecio: 1,
+    modificationDate: null,
+    modificationUser: null,
+    telefono: "",
+    direccion: "",
+    logo: "",
+    cuit: 0,
+    condicionIva: null,
+    puntoVenta: null,
+    certificadoPassword: "",
+    color: "#4c84ff"
+}
 
 const BASIC_MODEL_RAZON_MOVIMIENTIO_CAJA = {
     idRazonMovimientoCaja: 0,
@@ -57,6 +75,66 @@ const BASIC_MODEL_LOV = {
 
 $(document).ready(function () {
 
+    tableDataTienda = $("#tbDataTienda").DataTable({
+        responsive: true,
+        "ajax": {
+            "url": "/Tienda/GetTienda",
+            "type": "GET",
+            "datatype": "json"
+        },
+        "columns": [
+            {
+                "data": "idTienda",
+                "visible": false,
+                "searchable": false
+            },
+            {
+                "data": "nombre", render: function (data, type, row) {
+                    let tiendaActualBadge = '';
+                    if (row.tiendaActual == 1) {
+                        tiendaActualBadge = '<span class="mdi mdi-star"  data-bs-toggle="tooltip" data-bs-placement="bottom" title="Actual"></span>';
+                    }
+                    return `${data} ${tiendaActualBadge}`;
+                }
+            },
+            {
+                "data": "color",
+                "render": function (data, type, row) {
+                    return `<div style="width: 30px; height: 30px; background-color: ${data}; border-radius: 50%;"></div>`;
+                },
+                "orderable": false,
+                "searchable": false,
+                "width": "40px"
+            },
+            { "data": "telefono" },
+            { "data": "direccion" },
+            {
+                "data": "idListaPrecio", render: function (data) {
+                    return 'Lista ' + data;
+                }
+            },
+            {
+                "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
+                    '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-trash-can"></i></button>',
+                "orderable": false,
+                "searchable": false,
+                "width": "80px"
+            }
+        ],
+        order: [[0, "desc"]],
+        dom: "Bfrtip",
+        buttons: [
+            {
+                text: 'Exportar Excel',
+                extend: 'excelHtml5',
+                title: '',
+                filename: 'Reporte Tiendas',
+                exportOptions: {
+                    columns: [1, 2, 4, 5]
+                }
+            }, 'pageLength'
+        ]
+    });
 
     tableDataCategory = $("#tbDataCategoria").DataTable({
         responsive: true,
@@ -1323,162 +1401,8 @@ $('#tbRazonMovCaja').on('click', '.btn-delete-razon-mov-caja', function () {
 });
 
 
-//const openModalComodin1 = (model = BASIC_MODEL_LOV) => {
-//    $("#txtIdComodin1").val(model.id);
-//    $("#txtDescriptionComodin1").val(model.descripcion);
-//    $("#cboStateComodin1").val(model.estado ? 1 : 0);
-
-//    if (model.modificationUser == null)
-//        document.getElementById("divModifComodin1").style.display = 'none';
-//    else {
-//        document.getElementById("divModifComodin1").style.display = '';
-//        var dateTimeModif = new Date(model.modificationDate);
-
-//        $("#txtModificadoComodin1").val(dateTimeModif.toLocaleString());
-//        $("#txtModificadoUsuarioComodin1").val(model.modificationUser);
-//    }
-
-//    $("#modalDataComodin1").modal("show")
-//}
-
-//$("#btnNewComodin1").on("click", function () {
-//    openModalComodin1()
-//})
-
-//$("#btnSaveComodin1").on("click", function () {
-//    const inputs = $("input.input-validate-comodin1").serializeArray();
-//    const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
-
-//    if (inputs_without_value.length > 0) {
-//        const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
-//        toastr.warning(msg, "");
-//        $(`input[name="${inputs_without_value[0].name}"]`).focus();
-//        return;
-//    }
-
-//    const model = structuredClone(BASIC_MODEL_LOV);
-//    model["id"] = parseInt($("#txtIdComodin1").val());
-//    model["descripcion"] = $("#txtDescriptionComodin1").val();
-//    model["estado"] = $("#cboStateComodin1").val() == "1" ? true : false;
-//    model["lovType"] = 1;
 
 
-//    $("#modalDataComodin1").find("div.modal-content").LoadingOverlay("show")
-
-
-//    if (model.id == 0) {
-//        fetch("/Lov/Create", {
-//            method: "POST",
-//            headers: { 'Content-Type': 'application/json;charset=utf-8' },
-//            body: JSON.stringify(model)
-//        }).then(response => {
-//            $("#modalDataComodin1").find("div.modal-content").LoadingOverlay("hide")
-//            return response.json();
-//        }).then(responseJson => {
-
-//            if (responseJson.state) {
-
-//                tableComodin1.row.add(responseJson.object).draw(false);
-//                $("#modalDataComodin1").modal("hide");
-//                swal("Exitoso!", "Se ha creada", "success");
-
-//            } else {
-//                swal("Lo sentimos", responseJson.message, "error");
-//            }
-//        }).catch((error) => {
-//            $("#modalDataComodin1").find("div.modal-content").LoadingOverlay("hide")
-//        })
-//    }
-//    else {
-
-//        fetch("/Lov/Update", {
-//            method: "PUT",
-//            headers: { 'Content-Type': 'application/json;charset=utf-8' },
-//            body: JSON.stringify(model)
-//        }).then(response => {
-//            $("#modalDataComodin1").find("div.modal-content").LoadingOverlay("hide")
-//            return response.json();
-//        }).then(responseJson => {
-//            if (responseJson.state) {
-
-//                tableComodin1.row(rowSelectedComodin1).data(responseJson.object).draw(false);
-//                rowSelectedComodin1 = null;
-//                $("#modalDataComodin1").modal("hide");
-//                swal("Exitoso!", "Ha sido modificado", "success");
-
-//            } else {
-//                swal("Lo sentimos", responseJson.message, "error");
-//            }
-//        }).catch((error) => {
-//            $("#modalDataComodin1").find("div.modal-content").LoadingOverlay("hide")
-//        })
-//    }
-
-//})
-
-//$("#tbDataComodin1 tbody").on("click", ".btn-edit-comodin1", function () {
-
-//    if ($(this).closest('tr').hasClass('child')) {
-//        rowSelectedComodin1 = $(this).closest('tr').prev();
-//    } else {
-//        rowSelectedComodin1 = $(this).closest('tr');
-//    }
-
-//    const data = tableComodin1.row(rowSelectedComodin1).data();
-
-//    openModalComodin1(data);
-//})
-//$("#tbDataComodin1 tbody").on("click", ".btn-delete-comodin1", function () {
-
-//    let row;
-
-//    if ($(this).closest('tr').hasClass('child')) {
-//        row = $(this).closest('tr').prev();
-//    } else {
-//        row = $(this).closest('tr');
-//    }
-//    const data = tableComodin1.row(row).data();
-
-//    swal({
-//        title: "¿Está seguro?",
-//        text: `Eliminar "${data.descripcion}"`,
-//        type: "warning",
-//        showCancelButton: true,
-//        confirmButtonClass: "btn-danger",
-//        confirmButtonText: "Si, eliminar",
-//        cancelButtonText: "No, cancelar",
-//        closeOnConfirm: false,
-//        closeOnCancel: true
-//    },
-//        function (respuesta) {
-
-//            if (respuesta) {
-
-//                $(".showSweetAlert").LoadingOverlay("show")
-
-//                fetch(`/Lov/Delete?id=${data.id}`, {
-//                    method: "DELETE"
-//                }).then(response => {
-//                    $(".showSweetAlert").LoadingOverlay("hide")
-//                    return response.json();
-//                }).then(responseJson => {
-//                    if (responseJson.state) {
-
-//                        tableComodin1.row(row).remove().draw();
-//                        swal("Exitoso!", "Se ha eliminado", "success");
-
-//                    } else {
-//                        swal("Lo sentimos", responseJson.message, "error");
-//                    }
-//                })
-//                    .catch((error) => {
-//                        $(".showSweetAlert").LoadingOverlay("hide")
-//                    })
-//            }
-//        });
-//})
-
-// Función genérica para abrir el modal de comodines
 const openModalComodin = (model = BASIC_MODEL_LOV, comodinId) => {
     $(`#txtId${comodinId}`).val(model.id);
     $(`#txtDescription${comodinId}`).val(model.descripcion);
@@ -1559,9 +1483,6 @@ const saveComodin = (comodinId, lovType, tableComodin) => {
         });
 };
 
-
-
-// Función genérica para manejar la edición
 const editComodin = (comodinId, tableComodin) => {
     $(`#tbData${comodinId} tbody`).on("click", `.btn-edit-${comodinId}`, function () {
         // Asignar la fila seleccionada a la variable rowSelectedComodin
@@ -1584,8 +1505,6 @@ const editComodin = (comodinId, tableComodin) => {
     });
 };
 
-
-// Función genérica para manejar la eliminación
 const deleteComodin = (comodinId, tableComodin) => {
     $(`#tbData${comodinId} tbody`).on("click", `.btn-delete-${comodinId}`, function () {
         let rowSelectedComodin;
@@ -1642,3 +1561,176 @@ $("#btnSaveComodin2").on("click", function () { saveComodin('Comodin2', 2, table
 
 $("#btnNewComodin3").on("click", function () { openModalComodin(BASIC_MODEL_LOV, 'Comodin3'); });
 $("#btnSaveComodin3").on("click", function () { saveComodin('Comodin3', 3, tableComodin3); });
+
+
+
+const openModalTienda = (model = BASIC_MODEL_TIENDA) => {
+
+
+    $("#txtIdTienda").val(model.idTienda);
+    $("#txtNombreTienda").val(model.nombre);
+    $("#cboListaPreciosTienda").val(model.idListaPrecio);
+
+    $("#txtTelefonoTienda").val(model.telefono);
+    $("#txtDireccionTienda").val(model.direccion);
+    $("#txtColorTienda").val(model.color);
+
+    //$("#imgTienda").attr("src", `data:image/png;base64,${model.photoBase64}`);
+
+    if (model.modificationUser === null)
+        document.getElementById("divModifTienda").style.display = 'none';
+    else {
+        document.getElementById("divModifTienda").style.display = '';
+        let dateTimeModif = new Date(model.modificationDate);
+
+        $("#txtModificadoTienda").val(dateTimeModif.toLocaleString());
+        $("#txtModificadoUsuarioTienda").val(model.modificationUser);
+    }
+
+    $("#modalDataTienda").modal("show")
+
+}
+
+$("#btnNewTienda").on("click", function () {
+    openModalTienda()
+})
+
+$("#btnSaveTienda").on("click", function () {
+    const inputs = $("input.input-validate-tienda").serializeArray();
+    const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
+
+    if (inputs_without_value.length > 0) {
+        const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
+        toastr.warning(msg, "");
+        $(`input[name="${inputs_without_value[0].name}"]`).focus();
+        return;
+    }
+
+    const model = structuredClone(BASIC_MODEL_TIENDA);
+    model["idTienda"] = parseInt($("#txtIdTienda").val());
+    model["nombre"] = $("#txtNombreTienda").val();
+    model["idListaPrecio"] = parseInt($("#cboListaPreciosTienda").val());
+    model["telefono"] = $("#txtTelefonoTienda").val();
+    model["direccion"] = $("#txtDireccionTienda").val();
+    model["color"] = $("#txtColorTienda").val();
+
+    const formData = new FormData();
+    formData.append('model', JSON.stringify(model));
+
+    $("#modalDataTienda").find("div.modal-content").LoadingOverlay("show")
+
+    const url = model.idTienda == 0 ? "/Tienda/CreateTienda" : "/Tienda/UpdateTienda";
+    const method = model.idTienda == 0 ? "POST" : "PUT";
+
+    if (model.idTienda == 0) {
+        fetch(url, {
+            method: method,
+            body: formData
+        }).then(response => {
+            $("#modalDataTienda").find("div.modal-content").LoadingOverlay("hide")
+            return response.json();
+        }).then(responseJson => {
+
+            if (responseJson.state) {
+
+                tableDataTienda.row.add(responseJson.object).draw(false);
+                $("#modalDataTienda").modal("hide");
+                swal("Exitoso!", "La tienda fué creada", "success");
+
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+        }).catch((error) => {
+            $("#modalDataTienda").find("div.modal-content").LoadingOverlay("hide")
+        })
+    } else {
+
+        fetch(url, {
+            method: method,
+            body: formData
+        }).then(response => {
+            $("#modalDataTienda").find("div.modal-content").LoadingOverlay("hide")
+            return response.json();
+        }).then(responseJson => {
+            $("#modalDataTienda").modal("hide");
+
+            if (responseJson.state) {
+                tableDataTienda.row(rowSelectedTienda).data(responseJson.object).draw(false);
+                rowSelectedTienda = null;
+                $("#modalDataTienda").modal("hide");
+                swal("Exitoso!", "Punto de venta fué modificado", "success");
+            }
+            else {
+                rowSelectedTienda = null;
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+
+        }).catch((error) => {
+            $("#modalDataTienda").find("div.modal-content").LoadingOverlay("hide")
+        })
+    }
+
+})
+
+$("#tbDataTienda tbody").on("click", ".btn-edit", function () {
+
+    if ($(this).closest('tr').hasClass('child')) {
+        rowSelectedTienda = $(this).closest('tr').prev();
+    } else {
+        rowSelectedTienda = $(this).closest('tr');
+    }
+
+    const data = tableDataTienda.row(rowSelectedTienda).data();
+
+    openModalTienda(data);
+})
+
+$("#tbDataTienda tbody").on("click", ".btn-delete", function () {
+
+    let row;
+
+    if ($(this).closest('tr').hasClass('child')) {
+        row = $(this).closest('tr').prev();
+    } else {
+        row = $(this).closest('tr');
+    }
+    const data = tableDataTienda.row(row).data();
+
+    swal({
+        title: "¿Está seguro?",
+        text: `Eliminar tienda "${data.nombre}"`,
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonClass: "btn-danger",
+        confirmButtonText: "Si, eliminar",
+        cancelButtonText: "No, cancelar",
+        closeOnConfirm: false,
+        closeOnCancel: true
+    },
+        function (respuesta) {
+
+            if (respuesta) {
+
+                $(".showSweetAlert").LoadingOverlay("show")
+
+                fetch(`/Tienda/DeleteTienda?idTienda=${data.idTienda}`, {
+                    method: "DELETE"
+                }).then(response => {
+                    $(".showSweetAlert").LoadingOverlay("hide")
+                    return response.json();
+                }).then(responseJson => {
+                    if (responseJson.state) {
+
+                        tableDataTienda.row(row).remove().draw();
+                        swal("Exitoso!", "Punto de venta fué eliminado", "success");
+
+                    } else {
+                        swal("Lo sentimos", responseJson.message, "error");
+                    }
+                })
+                    .catch((error) => {
+                        $(".showSweetAlert").LoadingOverlay("hide")
+                    })
+            }
+        });
+})

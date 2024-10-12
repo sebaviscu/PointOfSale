@@ -40,5 +40,8 @@ namespace PointOfSale.Business.Contracts
         Task<List<Product>> GetProductosDestacadosWeb();
 
         Task<List<Product>> ProdctuosPreciosByCategory(string category, string? modificationDate, ListaDePrecio listaPrecio);
+
+        Task<Vencimiento> AddVencimiento(Vencimiento entity);
+        Task<Vencimiento> EditVencimiento(Vencimiento entity);
     }
 }

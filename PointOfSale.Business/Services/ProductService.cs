@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
-using PointOfSale.Model.Auditoria;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services
@@ -95,7 +90,7 @@ namespace PointOfSale.Business.Services
 
             return await query
                 .Include(p => p.ProductTags)
-                .   ThenInclude(pt => pt.Tag)
+                .ThenInclude(pt => pt.Tag)
                 .OrderBy(p => p.Description)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -250,7 +245,7 @@ namespace PointOfSale.Business.Services
 
                 var product = await prodQuery.Include(p => p.ListaPrecios)
                                     .Include(p => p.ProductTags)
-                                       .ThenInclude(pt => pt.Tag)                                    
+                                       .ThenInclude(pt => pt.Tag)
                                     .Include(p => p.ProductLovs)
                                        .ThenInclude(pt => pt.Lov)
                                     .FirstOrDefaultAsync();
@@ -689,7 +684,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<Product>> ProdctuosPreciosByCategory(string category, string? modificationDate, ListaDePrecio listaPrecio)
         {
-            var queryProducts = await _repositoryListaPrecios.Query(p =>p.Lista == listaPrecio);
+            var queryProducts = await _repositoryListaPrecios.Query(p => p.Lista == listaPrecio);
 
             queryProducts = queryProducts.Include(c => c.Producto).Include(c => c.Producto.IdCategoryNavigation);
 
@@ -752,14 +747,44 @@ namespace PointOfSale.Business.Services
                         Notificar = true,
                         FechaVencimiento = pedProd.Vencimiento.Value,
                         Lote = pedProd.Lote,
-                        RegistrationDate = TimeHelper.GetArgentinaTime(),
                         RegistrationUser = registrationUser
                     };
-
-                    await _repositoryVencimientos.Add(v);
+                    _ = await AddVencimiento(v);
                 }
 
             }
+        }
+
+        public async Task<Vencimiento> AddVencimiento(Vencimiento entity)
+        {
+            entity.RegistrationDate = TimeHelper.GetArgentinaTime();
+            var vencimiento_created = await _repositoryVencimientos.Add(entity);
+
+            if (vencimiento_created.IdVencimiento == 0)
+                throw new TaskCanceledException("Error al crear Vencimiento");
+
+            return vencimiento_created;
+        }
+
+
+        public async Task<Vencimiento> EditVencimiento(Vencimiento entity)
+        {
+            IQueryable<Vencimiento> queryVencimiento = await _repositoryVencimientos.Query(u => u.IdVencimiento == entity.IdVencimiento);
+
+            Vencimiento Vencimiento_edit = queryVencimiento.First();
+
+            Vencimiento_edit.IdProducto = entity.IdProducto;
+            Vencimiento_edit.Lote = entity.Lote;
+            Vencimiento_edit.FechaVencimiento = entity.FechaVencimiento;
+            Vencimiento_edit.FechaElaboracion = entity.FechaElaboracion;
+            Vencimiento_edit.Notificar = entity.Notificar;
+
+
+            bool response = await _repositoryVencimientos.Edit(Vencimiento_edit);
+            if (!response)
+                throw new TaskCanceledException("No se pudo modificar Vencimiento");
+
+            return Vencimiento_edit;
         }
 
         public async Task UpdateStock(int idTienda, Product p, int stockRecibido)

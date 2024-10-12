@@ -29,6 +29,9 @@
                                 <a class="nav-link active" id="v-categoria-tab" data-bs-toggle="tab" href="#v-categoria" role="tab" aria-controls="v-categoria" aria-selected="true">Categorias</a>
                             </li>
                             <li class="nav-item" role="presentation">
+                                <a class="nav-link" id="v-tiendas-tab-tab" data-bs-toggle="tab" href="#v-tiendas" role="tab" aria-controls="v-tiendas" aria-selected="false">Puntos de Venta</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
                                 <a class="nav-link" id="v-tags-tab-tab" data-bs-toggle="tab" href="#v-tags" role="tab" aria-controls="v-tags" aria-selected="false">Tags</a>
                             </li>
                             <li class="nav-item" role="presentation">
@@ -90,6 +93,40 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+
+                            <!-- Contenido de la pestaña "Tiendas" -->
+                            <div class="tab-pane fade" id="v-tiendas" role="tabpanel" aria-labelledby="v-tiendas-tab">
+                                <div class="card-header card-header-border-bottom d-flex justify-content-between" style="padding-top: 0;">
+                                    <div>
+                                        <h4>Puntos de Venta</h4>
+                                    </div>
+                                    <div class="">
+                                        <button class="btn btn-info" id="btnNewTienda">Nuevo Punto de Venta</button>
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <table id="tbDataTienda" class="table table-striped" style="width:100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>Nombre</th>
+                                                        <th>Color</th>
+                                                        <th>Telefono</th>
+                                                        <th>Direccion</th>
+                                                        <th>Precios</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
 
                             <!-- Contenido de la pestaña "Tags" -->
@@ -838,6 +875,81 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
                 <button type="button" class="btn btn-primary" id="btnSaveRazonMovimientoCaja">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Grid Modal Tienda -->
+<div class="modal fade" id="modalDataTienda" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalGridTitle">Detalle Punto de Venta</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formTienda" enctype="multipart/form-data">
+                    <div class="row">
+
+                        <div class="col-md-12">
+                            <input type="hidden" value="0" id="txtIdTienda">
+
+                            <div class="row">
+                                <div class="col-sm-7">
+                                    <div class="form-group">
+                                        <label for="txtNombreTienda">Nombre</label>
+                                        <input type="text" class="form-control form-control-sm input-validate-tienda" id="txtNombreTienda" name="Nombre">
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label for="cboListaPreciosTienda">Lista de Precio</label>
+                                        <select class="form-control form-control-sm" id="cboListaPreciosTienda">
+                                            <option value="1">Lista 1</option>
+                                            <option value="2">Lista 2</option>
+                                            <option value="3">Lista 3</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-2">
+                                    <label for="txtColorTienda">Color</label>
+                                    <input type="color" class="form-control form-control-sm" id="txtColorTienda" value="#4c84ff" name="TagColor">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="txtTelefonoTienda">Telefono</label>
+                                        <input type="text" class="form-control form-control-sm" id="txtTelefonoTienda" name="Telefono">
+                                    </div>
+                                </div>
+                                <div class="col-sm-8">
+                                    <div class="form-group">
+                                        <label for="txtDireccionTienda">Direccion</label>
+                                        <input type="text" class="form-control form-control-sm" id="txtDireccionTienda" name="Direccion">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane container form-row" id="divModifTienda">
+                            <div class=" form-group col-sm-6">
+                                <label for="txtModificadoTienda">Fecha Modificado</label>
+                                <input type="text" class="form-control form-control-sm" id="txtModificadoTienda" name="fechaModificado" readonly>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="txtModificadoUsuarioTienda">Por:</label>
+                                <input type="text" class="form-control form-control-sm" id="txtModificadoUsuarioTienda" name="usuarioModificado" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="btnSaveTienda">Guardar Cambios</button>
             </div>
         </div>
     </div>

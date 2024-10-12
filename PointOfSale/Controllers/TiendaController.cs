@@ -28,12 +28,6 @@ namespace PointOfSale.Controllers
             _saleService = saleService;
         }
 
-        public IActionResult Tienda()
-        {
-            ValidarAutorizacion([Roles.Administrador]);
-            return ValidateSesionViewOrLogin();
-        }
-
         [HttpGet]
         public async Task<IActionResult> GetTienda()
         {

@@ -484,25 +484,6 @@ namespace PointOfSale.Controllers
             }
         }
 
-
-        [HttpGet]
-        public async Task<IActionResult> GetVencimientos()
-        {
-            var gResponse = new GenericResponse<List<VMVencimiento>>();
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
-
-                List<VMVencimiento> vmVencimientos = _mapper.Map<List<VMVencimiento>>(await _productService.GetProximosVencimientos(user.IdTienda));
-                return StatusCode(StatusCodes.Status200OK, new { data = vmVencimientos.OrderBy(_ => _.Estado).ThenBy(_ => _.FechaVencimiento) });
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al recuperar lista de vencimientos.", _logger, null);
-            }
-
-        }
-
         /// <summary>
         /// Importador de productos por csv.
         /// </summary>
@@ -563,25 +544,6 @@ namespace PointOfSale.Controllers
             catch (Exception ex)
             {
                 return HandleException(ex, "Error al importar productos.", _logger, file.FileName);
-            }
-        }
-
-
-        [HttpDelete]
-        public async Task<IActionResult> DeleteVencimiento(int idVencimiento)
-        {
-
-            GenericResponse<string> gResponse = new GenericResponse<string>();
-            try
-            {
-                ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
-
-                gResponse.State = await _productService.DeleteVencimiento(idVencimiento);
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al eliminar vencimientos.", _logger, idVencimiento);
             }
         }
 
@@ -876,6 +838,102 @@ namespace PointOfSale.Controllers
                 return HandleException(ex, "Error al cambiar estado de promocion", _logger, idPromocion);
             }
 
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetVencimientos()
+        {
+            var gResponse = new GenericResponse<List<VMVencimiento>>();
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
+
+                List<VMVencimiento> vmVencimientos = _mapper.Map<List<VMVencimiento>>(await _productService.GetProximosVencimientos(user.IdTienda));
+                return StatusCode(StatusCodes.Status200OK, new { data = vmVencimientos.OrderBy(_ => _.Estado).ThenBy(_ => _.FechaVencimiento) });
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al recuperar lista de vencimientos.", _logger, null);
+            }
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateVencimiento([FromBody] VMVencimiento model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+
+            var gResponse = new GenericResponse<VMVencimiento>();
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
+                model.IdTienda = user.IdTienda;
+                model.RegistrationUser = user.UserName;
+                var usuario_creado = await _productService.AddVencimiento(_mapper.Map<Vencimiento>(model));
+
+                model = _mapper.Map<VMVencimiento>(usuario_creado);
+
+                gResponse.State = true;
+                gResponse.Object = model;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al crear Vencimiento", _logger, model);
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateVencimientoes([FromBody] VMVencimiento vmUser)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(vmUser);
+            }
+
+
+            var gResponse = new GenericResponse<VMVencimiento>();
+            try
+            {
+                ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
+                var user_edited = await _productService.EditVencimiento(_mapper.Map<Vencimiento>(vmUser));
+
+                vmUser = _mapper.Map<VMVencimiento>(user_edited);
+
+                gResponse.State = true;
+                gResponse.Object = vmUser;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al actualizar Vencimiento", _logger, vmUser);
+            }
+        }
+
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteVencimiento(int idVencimiento)
+        {
+
+            GenericResponse<string> gResponse = new GenericResponse<string>();
+            try
+            {
+                ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
+                gResponse.State = await _productService.DeleteVencimiento(idVencimiento);
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al eliminar vencimientos.", _logger, idVencimiento);
+            }
         }
     }
 }
