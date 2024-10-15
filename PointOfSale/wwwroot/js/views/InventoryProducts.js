@@ -488,9 +488,18 @@ const openModalProduct = (model = BASIC_MODEL_PRODUCTOS) => {
     //tagSelector.setChoiceByValue(tgsIds);
 
     setChoices(tagSelector, model.tags.map(d => d.idTag));
-    setChoices(comodin1Selector, model.comodin1.map(d => d.id));
-    setChoices(comodin2Selector, model.comodin2.map(d => d.id));
-    setChoices(comodin3Selector, model.comodin3.map(d => d.id));
+
+    if (ajustesWeb.habilitarComodin1) {
+        setChoices(comodin1Selector, model.comodin1.map(d => d.id));
+    }
+
+    if (ajustesWeb.habilitarComodin2) {
+        setChoices(comodin2Selector, model.comodin2.map(d => d.id));
+    }
+
+    if (ajustesWeb.habilitarComodin3) {
+        setChoices(comodin3Selector, model.comodin3.map(d => d.id));
+    }
 }
 
 function setChoices(comodinSelector, ids) {
@@ -972,11 +981,22 @@ $("#btnSave").on("click", async function () {
     let codBarras = obtenerDatosTablaCodigoBarras(model.idProduct);
     let tags = obtenerTagsSeleccionados();
 
-    let comodin1 = obtenerComosinesSeleccionados(comodin1Selector, 1, model.idProduct);
-    let comodin2 = obtenerComosinesSeleccionados(comodin2Selector, 2, model.idProduct);
-    let comodin3 = obtenerComosinesSeleccionados(comodin3Selector, 3, model.idProduct);
+    const comodines = [];
 
-    let comodines = [comodin1, comodin2, comodin3].flat();
+    if (ajustesWeb.habilitarComodin1) {
+        const comodin1 = obtenerComosinesSeleccionados(comodin1Selector, 1, model.idProduct);
+        comodines.push(...comodin1);
+    }
+
+    if (ajustesWeb.habilitarComodin2) {
+        const comodin2 = obtenerComosinesSeleccionados(comodin2Selector, 2, model.idProduct);
+        comodines.push(...comodin2);
+    }
+
+    if (ajustesWeb.habilitarComodin3) {
+        const comodin3 = obtenerComosinesSeleccionados(comodin3Selector, 3, model.idProduct);
+        comodines.push(...comodin3);
+    }
 
     const formData = new FormData();
     formData.append('model', JSON.stringify(model));
@@ -984,6 +1004,10 @@ $("#btnSave").on("click", async function () {
     formData.append('codBarras', JSON.stringify(codBarras));
     formData.append('tags', JSON.stringify(tags));
     formData.append('comodines', JSON.stringify(comodines));
+
+    if (comodines.length > 0) {
+        formData.append('comodines', JSON.stringify(comodines));
+    }
 
     const inputPhoto = document.getElementById('txtPhoto');
 

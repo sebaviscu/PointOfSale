@@ -3,7 +3,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@section StylesPOS{
+@section StylesPOS {
     <link href="~/plugins/jquery-ui/jquery-ui.css" rel="stylesheet">
 }
 
@@ -73,24 +73,14 @@
     <div class="col-xl-2 mb-4">
         <div class="card border-left-primary shadow h-100 py-2">
             <div class="card-body">
-                <div class="accordion">
-
-                    <div class="col me-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Ventas
-                        </div>
-
-                        <div class="row" style="padding-left: 15px;">
-                            <div class="h5 mb-0 font-weight-bold" id="txtTotalSale" style="color:gray"></div>
-
-                            @* <div class="h5 mb-0 font-weight-bold" id="txtTotalSaleAfetr" style="color:darkgray"> &nbsp;  &nbsp; &nbsp;($ 600)</div> *@
-                        </div>
-
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-shopping-basket fa-2x"></i>
+                <div class="ms-3">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                        Ventas
                     </div>
 
+                    <div class="">
+                        <div class="h5 font-weight-bold" id="txtTotalSale" style="color:gray"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -100,20 +90,13 @@
     <div class="col-xl-2 mb-4">
         <div class="card border-left-success shadow h-100 py-2">
             <div class="card-body">
-                <div class="row g-0 align-items-center">
-                    <div class="col me-2">
-                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                            Clientes
-                        </div>
-
-                        <div class="row" style="padding-left: 15px;">
-                            <div class="h5 mb-0 font-weight-bold" id="txtCantidadClientes" style="color:gray"></div>
-                            @* <div class="h5 mb-0 font-weight-bold" id="txtTotalSaleAfetr" style="color:darkgray"> &nbsp;  &nbsp; &nbsp;(20)</div> *@
-
-                        </div>
+                <div class="ms-3">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                        Clientes
                     </div>
-                    <div class="col-auto">
-                        <i class="fas fa-dollar-sign fa-2x"></i>
+
+                    <div class="">
+                        <div class="h5 font-weight-bold" id="txtCantidadClientes" style="color:gray"></div>
                     </div>
                 </div>
             </div>
@@ -124,59 +107,54 @@
     <div class="col-xl-3 mb-4">
         <div class="card border-left-info shadow h-100 py-2">
             <div class="card-body" style="padding-bottom: 3px;">
-                <div class="row g-0 align-items-center">
-                    <div class="col me-2">
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                            Gastos
-                        </div>
-                        <div class="row" style="padding-left: 15px;">
-                            <div class="h5 mb-0 font-weight-bold" id="txtTotalGastos" style="color:gray; padding-right: 20px;"></div>
-
-                            <table border="0">
-                                <thead>
-                                    <tr style="text-align: center;">
-                                        <th>
-                                            <p style="font-style: italic; font-size:12px;" class="text-muted"> &nbsp; Proveedores &nbsp;</p>
-                                        </th>
-                                        <th>
-                                            <p style="font-style: italic; font-size:12px;" class="text-muted">+</p>
-                                        </th>
-                                        <th>
-                                            <p style="font-style: italic; font-size:12px;" class="text-muted">&nbsp; Sueldos &nbsp;</p>
-                                        </th>
-                                        <th>
-                                            <p style="font-style: italic; font-size:12px;" class="text-muted">+</p>
-                                        </th>
-                                        <th>
-                                            <p style="font-style: italic; font-size:12px;" class="text-muted"> &nbsp; Gastos &nbsp; </p>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr style="text-align: center;">
-                                        <td>
-                                            <p style="font-style: italic; font-size:12px;" class="text-muted" id="gastosProvvedoresTexto"></p>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <p style="font-style: italic; font-size:12px;" class="text-muted" id="gastosSueldosTexto"></p>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <p style="font-style: italic; font-size:12px;" class="text-muted" id="gastoTexto"></p>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                            @* <div class="h5 mb-0 font-weight-bold" id="txtTotalSaleAfetr" style="color:darkgray"> &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp;($ 600)</div> *@
-
-                        </div>
-
-
+                <div class="col me-2">
+                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                        Gastos
                     </div>
+                    <div class="row" style="padding-left: 15px;">
+                        <div class="h5 mb-0 font-weight-bold" id="txtTotalGastos" style="color:gray; padding-right: 20px;"></div>
+
+                        <table border="0">
+                            <thead>
+                                <tr style="text-align: center;">
+                                    <th>
+                                        <p style="font-style: italic; font-size:12px;" class="text-muted"> &nbsp; Proveedores &nbsp;</p>
+                                    </th>
+                                    <th>
+                                        <p style="font-style: italic; font-size:12px;" class="text-muted">+</p>
+                                    </th>
+                                    <th>
+                                        <p style="font-style: italic; font-size:12px;" class="text-muted">&nbsp; Sueldos &nbsp;</p>
+                                    </th>
+                                    <th>
+                                        <p style="font-style: italic; font-size:12px;" class="text-muted">+</p>
+                                    </th>
+                                    <th>
+                                        <p style="font-style: italic; font-size:12px;" class="text-muted"> &nbsp; Gastos &nbsp; </p>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="text-align: center;">
+                                    <td>
+                                        <p style="font-style: italic; font-size:12px;" class="text-muted" id="gastosProvvedoresTexto"></p>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                        <p style="font-style: italic; font-size:12px;" class="text-muted" id="gastosSueldosTexto"></p>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                        <p style="font-style: italic; font-size:12px;" class="text-muted" id="gastoTexto"></p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+
                 </div>
             </div>
         </div>
@@ -186,17 +164,13 @@
     <div class="col-xl-2 mb-4">
         <div class="card border-left-warning shadow h-100 py-2">
             <div class="card-body">
-                <div class="row g-0 align-items-center">
+                <div class="ms-3">
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                        Ganancia
+                    </div>
 
-                    <div class="col me-2">
-                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                            Ganancia
-                        </div>
-
-                        <div class="row" style="padding-left: 15px;">
-                            <div class="h5 mb-0 font-weight-bold" id="txtGanancia" style="color:gray"></div>
-                            @* <div class="h5 mb-0 font-weight-bold" id="txtTotalSaleAfetr" style="color:darkgray"> &nbsp;  &nbsp; &nbsp;($ 600)</div> *@
-                        </div>
+                    <div class="">
+                        <div class="h5 font-weight-bold" id="txtGanancia" style="color:gray"></div>
                     </div>
                 </div>
             </div>
@@ -485,10 +459,10 @@
 </div>
 
 
-@section Scripts{
+@section Scripts {
     <script src="~/plugins/jquery-ui/jquery-ui.js"></script>
     <script src="~/plugins/charts/Chart.min.js"></script>
     <script src="~/plugins/apexcharts/js/apexcharts.min.js"></script>
     <script src="~/js/views/AdminDashBoard.js"></script>
 
-    }
+}

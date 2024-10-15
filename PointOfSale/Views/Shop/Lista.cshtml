@@ -56,40 +56,44 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
 
-        @{
-            if (Model.IsLogin)
+
+        <div class="container justify-content-center align-items-center">
+            @if (Model.IsLogin)
             {
-                <div class="justify-content-start align-items-start">
+                <div>
                     <a href="/Access/Login" class="btn btn-info"><i class="mdi mdi-login-variant mdi-18px mdi-rotate-180"></i></a>
                 </div>
             }
-        }
-        <div class="container justify-content-center align-items-center">
             <a href="/Shop/Index" class="navbar-brand">@Model.Ajustes.Nombre</a>
         </div>
     </nav>
     <hr />
-    <div class="row justify-content-center" style="padding: 6px;align-items: center;">
-        <div class="search-wrapper">
-            <div class="input-holder">
-                <input id="input-search" type="text" class="search-input input-search" placeholder="Buscar producto..." />
-                <button class="search-icon" id="search-icon" style="border-radius: 40%;border: solid;border-color: #d3d3d370;">
-                    <span></span>
-                </button>
-            </div>
-            <span class="close" id="btnCloseSearchText" onclick="searchToggle(this, event);"></span>
-        </div>
-        <a class="btn btnCategoria active" cat-id="0" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">Todo</a>
 
-        @foreach (var cat in Model.CategoriaWebs.OrderBy(_ => _.Descripcion))
-        {
-            <a class="btn btnCategoria" cat-id="@cat.IdCategoria" tag-id="@cat.IdTag" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">@cat.Descripcion</a>
-        }
+    <div class="d-flex justify-content-center">
+        <div class="row justify-content-center" style="padding: 10px;">
+            <div class="search-wrapper">
+                <div class="input-holder">
+                    <input id="input-search" type="text" class="search-input input-search" placeholder="Buscar producto..." />
+                    <button class="search-icon" id="search-icon" style="border-radius: 40%;border: solid;border-color: #d3d3d370;">
+                        <span></span>
+                    </button>
+                </div>
+                <span class="close" id="btnCloseSearchText" onclick="searchToggle(this, event);"></span>
+            </div>
+            <a class="btn btnCategoria active" cat-id="0" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">Todo</a>
+
+            <a class="btn btnCategoria active" cat-id="-3" tag-id="-3" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">Destacados</a>
+
+            @foreach (var cat in Model.CategoriaWebs.OrderBy(_ => _.Descripcion))
+            {
+                <a class="btn btnCategoria" cat-id="@cat.IdCategoria" tag-id="@cat.IdTag" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">@cat.Descripcion</a>
+            }
+        </div>
     </div>
 
     <section class="ftco-section">
         <div class="container text-center">
-            <div id="dvCategoryResults" style="margin-right:10px;margin-left: 10px;">
+            <div id="dvCategoryResults" style="margin: 10px;">
 
                 @{
                     Html.RenderPartial("PVProducts", Model.Products);
@@ -128,6 +132,16 @@
                                 if (!string.IsNullOrWhiteSpace(@Model.Ajustes.Instagram))
                                 {
                                     <li class="ftco-animate"><a href="https://www.instagram.com/@Model.Ajustes.Instagram" target=”_blank”><span class="icon-instagram"></span></a></li>
+                                }
+
+                                if (!string.IsNullOrWhiteSpace(@Model.Ajustes.Tiktok))
+                                {
+                                    <li class="ftco-animate"><a href="https://www.tiktok.com/@Model.Ajustes.Tiktok" target="_blank" style="align-content: center;text-align: center;"><img src="~/images/tiktok.png" alt="TikTok" width="24" height="24" /></a></li>
+                                }
+
+                                if (!string.IsNullOrWhiteSpace(@Model.Ajustes.Youtube))
+                                {
+                                    <li class="ftco-animate"><a href="https://www.youtube.com/@Model.Ajustes.Youtube" target=”_blank”><span class="icon-youtube"></span></a></li>
                                 }
                             }
                         </ul>

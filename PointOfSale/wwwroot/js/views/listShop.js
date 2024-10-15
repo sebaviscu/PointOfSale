@@ -4,32 +4,29 @@ let isLoading = false;
 let hasMoreProducts = true;
 let debounceTimeout;
 let productos = [];
+let primerCargaCache = true;
 
 $(window).scroll(function () {
     if ($(window).scrollTop() + $(window).height() >= $(document).height() - 50 && hasMoreProducts && !isLoading) {
         loadMoreProducts();
     }
 });
+//ajustarDivTextPrice();
 
 $(document).ready(function () {
 
-    //function checkScreenWidth() {
-    //    if ($(window).width() < 700) {
-    //        $('.product-list').removeClass('col-md-2');
-    //    } else {
-    //        $('.product-list').addClass('col-md-2');
-    //    }
-    //}
-
-    //// Check on load
-    //checkScreenWidth();
-
-    //// Check on window resize
-    //$(window).resize(function () {
-    //    checkScreenWidth();
-    //});
-
     loadMoreProducts();
+
+    //setTimeout(function () {
+
+    //    productos = JSON.parse(localStorage.getItem('productos')) || [];
+    //    productos.forEach(function (p) {
+
+    //        opacityButtonArea(p.quantity, 1, p.idProduct);
+    //        document.getElementById("prod-" + p.idProduct).value = p.quantity;
+    //    });
+    //    dibujarAreaTotales();
+    //}, 5000);
 
     $(".btnCategoria").on("click", function () {
         page = 1;
@@ -75,17 +72,39 @@ $(document).ready(function () {
     otrasFunciones();
 });
 
-function loadMoreProducts() {
-    if (isLoading || !hasMoreProducts) return;
+//$(window).on('resize', function () {
+//    ajustarDivTextPrice();
+//});
 
+//function ajustarDivTextPrice() {
+//    setTimeout(function () {
+//        if ($(window).width() < 700) {
+//            $('.div-text-price').addClass('d-flex');
+//            $('.div-text-price').addClass('justify-content-around');
+//            $('.div-text-price').addClass('mt-2');
+//        } else {
+//            $('.div-text-price').removeClass('d-flex');
+//            $('.div-text-price').removeClass('justify-content-around');
+//            $('.div-text-price').removeClass('mt-2');
+//        }
+//    }, 700);
+//}
+
+function fetchProducts(page, pageSize, categoryId, tagId, searchText) {
     isLoading = true;
     $('#loader').show();
 
-    let categoryId = $(".btnCategoria.active").attr("cat-id") || 0;
-    let tagId = $(".btnCategoria.active").attr("tag-id");
-    let searchText = $("#input-search").val() || '';
+    const productsQuantity = Object.fromEntries(
+        productos.map(product => [product.idProduct, product.quantity])
+    );
 
-    fetch(`/Shop/GetMoreProducts?page=${page}&pageSize=${pageSize}&categoryId=${categoryId}&searchText=${searchText}&tagId=${tagId}`)
+    fetch(`/Shop/GetMoreProducts?page=${page}&pageSize=${pageSize}&categoryId=${categoryId}&searchText=${searchText}&tagId=${tagId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(productsQuantity),
+    })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok.');
@@ -100,12 +119,23 @@ function loadMoreProducts() {
             const pageClass = `-page-${page}`;
             let htmlWithPageClass = data.html.replace(/pluss-button/g, `pluss-button pluss${pageClass}`);
             htmlWithPageClass = htmlWithPageClass.replace(/less-button/g, `less-button less${pageClass}`);
-            $("#dvCategoryResults").append(htmlWithPageClass); $('#loader').hide();
+            $("#dvCategoryResults").append(htmlWithPageClass);
+            $('#loader').hide();
             isLoading = false;
             page++;
 
             attachButtonEvents(pageClass);
 
+            if (primerCargaCache) {
+                productos = JSON.parse(localStorage.getItem('productos')) || [];
+                productos.forEach(function (p) {
+
+                    opacityButtonArea(p.quantity, 1, p.idProduct);
+                    document.getElementById("prod-" + p.idProduct).value = p.quantity;
+                });
+                dibujarAreaTotales();
+                primerCargaCache = false;
+            }
         })
         .catch(error => {
             console.error('Fetch error:', error);
@@ -114,6 +144,30 @@ function loadMoreProducts() {
         });
 }
 
+// Función para cargar más productos
+function loadMoreProducts() {
+    if (isLoading || !hasMoreProducts) return;
+
+    let categoryId = $(".btnCategoria.active").attr("cat-id") || 0;
+    let tagId = $(".btnCategoria.active").attr("tag-id");
+    let searchText = $("#input-search").val() || '';
+
+    // Reutilizar la función fetchProducts
+    fetchProducts(page, pageSize, categoryId, tagId, searchText);
+}
+
+// Función para buscar productos por texto
+function SearchProductByText(text) {
+    page = 1;
+    hasMoreProducts = true;
+    $("#dvCategoryResults").empty();
+
+    let categoryId = $(".btnCategoria.active").attr("cat-id") || 0;
+    let tagId = $(".btnCategoria.active").attr("tag-id");
+    let searchText = $("#input-search").val() || '';
+
+    fetchProducts(page, pageSize, categoryId, tagId, searchText);
+}
 function searchToggle(obj) {
     let container = $(obj).closest('.search-wrapper');
     let text = document.getElementById("input-search").value;
@@ -132,40 +186,6 @@ function searchToggle(obj) {
     else if (container.hasClass('active') && text.length >= 3) {
         SearchProductByText(text);
     }
-}
-
-function SearchProductByText(text) {
-    page = 1;
-    hasMoreProducts = true;
-    $("#dvCategoryResults").empty();
-
-    let catId = $(".btnCategoria.active").attr("cat-id") || 0;
-    let tagId = $(".btnCategoria.active").attr("tag-id");
-    let searchText = $("#input-search").val() || '';
-
-    fetch(`/Shop/GetMoreProducts?page=${page}&pageSize=${pageSize}&categoryId=${catId}&searchText=${searchText}&tagId=${tagId}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok.');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (!data.hasMoreProducts) {
-                hasMoreProducts = false;
-            }
-
-            $("#dvCategoryResults").append(data.html);
-            $('#loader').hide();
-            isLoading = false;
-            page++;
-
-        })
-        .catch(error => {
-            console.error('Fetch error:', error);
-            $('#loader').hide();
-            isLoading = false;
-        });
 }
 
 function debounce(func, wait) {
@@ -227,7 +247,7 @@ function resumenVenta() {
         let tableDataShoop = productos.map(value => {
             return (
                 `<tr>
-                       <td class="table-products" style="border-right-color: #ffffff00;"><span class="text-muted">${value.DescriptionProduct} - $ ${Number.parseFloat(value.price).toFixed(2)} x ${value.quantity} ${value.tipoVenta}</span>.</td>
+                       <td class="table-products" style="border-right-color: #ffffff00;"><span class="text-muted">${value.descriptionProduct} - $ ${Number.parseFloat(value.price).toFixed(2)} x ${value.quantity} ${value.tipoVenta}</span>.</td>
                        <td class="table-products" style="font-size: 12px; text-align: right;"><strong>$ ${Number.parseFloat(value.total).toFixed(2)}</strong></td>
                     </tr>`
             );
@@ -298,10 +318,11 @@ function finalizarVenta() {
 
         textWA += productos.map(value => {
             return (
-                `%0A - _${value.DescriptionProduct}_: ${value.quantity} ${value.tipoVenta}`
+                `%0A - _${value.descriptionProduct}_: ${value.quantity} ${value.tipoVenta}`
             );
         }).join('');
 
+        localStorage.removeItem('productos');
 
         $("#modalData").modal("hide")
 
@@ -376,7 +397,6 @@ function setValue(event, mult) {
     else {
         value = value + (0.5 * mult);
     }
-    opacityButtonArea(value, mult, idProd);
 
     inputProd.value = value
 
@@ -394,13 +414,23 @@ function setValue(event, mult) {
             idProduct: idProd,
             quantity: value,
             price: parseFloat(priceProd.attributes.precio.value),
-            DescriptionProduct: descProd.attributes.descProd.value,
+            descriptionProduct: descProd.attributes.descProd.value,
             total: value * parseFloat(priceProd.attributes.precio.value),
             tipoVenta: inputProd.attributes.typeinput.value
         }
 
         productos.push(prod);
     }
+
+    opacityButtonArea(value, mult, idProd);
+    dibujarAreaTotales();
+
+    // chache
+    localStorage.setItem('productos', JSON.stringify(productos));
+}
+
+function dibujarAreaTotales(){
+
     let total = 0;
     let textArea = document.getElementById("text-area-products");
     textArea.textContent = '';
@@ -411,7 +441,7 @@ function setValue(event, mult) {
     });
 
     productsToDisplay.forEach((a) => {
-        textArea.innerText += `· ${a.DescriptionProduct}: $${Number.parseFloat(a.price).toFixed(2)} x ${a.quantity} = $ ${Number.parseFloat(a.total).toFixed(2)} \n`;
+        textArea.innerText += `· ${a.descriptionProduct}: $${Number.parseFloat(a.price).toFixed(2)} x ${a.quantity} = $ ${Number.parseFloat(a.total).toFixed(2)} \n`;
     });
 
     $("#btnTrash").text(productos.length).append('<i class="mdi mdi-trash-can mdi-18px"></i>');

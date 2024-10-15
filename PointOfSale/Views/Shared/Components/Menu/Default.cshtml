@@ -48,26 +48,23 @@
 
 }
 <br />
-<br />
 @{
-    var buttonClass = Model.TurnoAbierto ? "btn-outline-success" : "btn-outline-danger";
+    var buttonClass = Model.TurnoAbierto ? "#34ff34" : "#ff5050";
     var buttonText = Model.TurnoAbierto ? "Cerrar Turno" : "Abrir Turno";
 }
 
-<div id="buttons-wrapper" class="sidebar-buttons">
-    <div style="padding: 5px;">
-        <button class="btn btn-outline-info w-100" id="btnAbrirMovimientoCaja">
-            <i class="mdi mdi-cash-multiple"></i>
-            <span class="nav-text">Movimiento Caja</span>
+<li class="has-sub">
+    <a class="sidenav-item-link" href="#" id="btnAbrirMovimientoCaja">
+        <i class="mdi mdi-cash-multiple"></i>
+        <span class="nav-text">Movimiento Caja</span>
+    </a>
+</li>
 
-        </button>
-    </div>
-    <br />
-    <div style="padding: 5px;">
-        <button class="btn @buttonClass w-100" id="btnAbrirCerrarTurno">
-            <i class="mdi mdi-clock-outline"></i>
-            <span class="nav-text">@buttonText</span>
+<br />
 
-        </button>
-    </div>
-</div>
+<li class="has-sub">
+    <a class="sidenav-item-link" href="#" id="btnAbrirCerrarTurno">
+        <i class="mdi mdi-clock-outline" style="color:@buttonClass"></i>
+        <span class="nav-text">@buttonText</span>
+    </a>
+</li>

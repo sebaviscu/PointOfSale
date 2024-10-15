@@ -103,21 +103,45 @@ namespace PointOfSale.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetMoreProducts(int page, int pageSize, int categoryId = 0, string searchText = "", int tagId = 0)
+        [HttpPost]
+        public async Task<IActionResult> GetMoreProducts([FromBody] Dictionary<int, decimal> productsQuantity, int page, int pageSize, int categoryId = 0, string searchText = "", int tagId = 0)
         {
             var gResponse = new GenericResponse<VMShop>();
+
             try
             {
                 List<VMProduct> products;
+
                 if (categoryId == -2 && tagId != -2)
                 {
-                    products = _mapper.Map<List<VMProduct>>(await _tagService.ListProductsByTagWeb(tagId, page, pageSize, searchText));
+                    products = _mapper.Map<List<VMProduct>>(
+                        await _tagService.ListProductsByTagWeb(tagId, page, pageSize, searchText)
+                    );
+                }
+                else if (categoryId == -3 && tagId == -3)
+                {
+                    products = _mapper.Map<List<VMProduct>>(
+                        await _productService.ListDestacados()
+                    );
                 }
                 else
                 {
-                    products = _mapper.Map<List<VMProduct>>(await _productService.ListActiveByCategoryWeb(categoryId, page, pageSize, searchText));
+                    products = _mapper.Map<List<VMProduct>>(
+                        await _productService.ListActiveByCategoryWeb(categoryId, page, pageSize, searchText)
+                    );
                 }
+
+                if (productsQuantity.Any())
+                {
+                    products.ForEach(product =>
+                    {
+                        if (productsQuantity.TryGetValue(product.IdProduct, out var quantity))
+                        {
+                            product.Quantity = quantity;
+                        }
+                    });
+                }
+
 
                 var hasMoreProducts = products.Count == pageSize;
 
@@ -127,9 +151,8 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al recuperar mas productos paginados para la web", _logger, null);
+                return HandleException(ex, "Error al recuperar más productos paginados para la web", _logger, null);
             }
-
         }
 
         private async Task<string> RenderViewAsync(string viewName, object model)

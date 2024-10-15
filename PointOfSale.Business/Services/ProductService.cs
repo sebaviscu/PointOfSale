@@ -57,6 +57,11 @@ namespace PointOfSale.Business.Services
             IQueryable<Product> query = await _repository.Query(_ => _.IsActive);
             return getIncludes(query).ToList();
         }
+        public async Task<List<Product>> ListDestacados()
+        {
+            IQueryable<Product> query = await _repository.Query(_ => _.Destacado);
+            return getIncludes(query).ToList();
+        }
 
         public async Task<List<Stock>> ListStock(int idTienda)
         {
