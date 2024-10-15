@@ -99,6 +99,15 @@ $(document).ready(function () {
             window.location.href = $(this).attr('href');
         }
     });
+
+    let currentTab = JSON.parse(localStorage.getItem('ventaActual'));
+    if (currentTab != null) {
+        showProducts_Prices(currentTab.idTab, currentTab);
+        AllTabsForSale = [];
+        AllTabsForSale.push(currentTab);
+    }
+
+
 })
 
 function inicializarConsultarPrecios() {
@@ -358,6 +367,7 @@ $(document).on("click", "button.btn-delete", async function () {
     let currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
 
     currentTab.products.splice(row, 1);
+    localStorage.setItem('ventaActual', JSON.stringify(currentTab));
 
     showProducts_Prices(currentTabId, currentTab);
 
@@ -653,6 +663,7 @@ function registrationSale(currentTabId) {
         return response.json();
     }).then(responseJson => {
         removeLoading();
+        localStorage.removeItem('ventaActual');
 
         if (responseJson.state) {
 
@@ -850,6 +861,7 @@ $('#tab-list').on('click', '.close', async function () {
     $(this).parents('li').remove();
     $(tabIndex).remove();
 
+    localStorage.removeItem('ventaActual');
 
     AllTabsForSale = AllTabsForSale.filter(p => p.idTab != tabId);
 
@@ -1209,7 +1221,7 @@ function addFunctions(idTab) {
 
             return;
         }
-        else if (se_agrego_antes){
+        else if (se_agrego_antes) {
             se_agrego_antes = false;
             return;
         }
@@ -1303,6 +1315,8 @@ function agregarProductoEvento(idTab) {
     }
 
     setNewProduct(peso, quantity_product_found, productSelected, currentTab, idTab);
+
+
 }
 
 function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
@@ -1335,6 +1349,9 @@ function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
     $('#cboSearchProduct' + idTab).val("").trigger('change');
     $('#cboSearchProduct' + idTab).select2('open');
     $('#txtPeso' + idTab).val('1');
+
+
+    localStorage.setItem('ventaActual', JSON.stringify(currentTab));
 }
 
 function formatNumber(num) {
