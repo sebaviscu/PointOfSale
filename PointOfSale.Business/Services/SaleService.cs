@@ -275,10 +275,12 @@ namespace PointOfSale.Business.Services
                     if (saleInput.MultiplesFormaDePago.Count == 1)
                     {
                         modelResponde.IdSale = sale_created.IdSale;
+                        modelResponde.TipoVenta = "F"+sale_created.TypeDocumentSaleNavigation.TipoFactura.ToString();
                     }
                     else
                     {
                         modelResponde.IdSaleMultiple += $"{sale_created.IdSale},";
+                        modelResponde.TipoVenta += $"F{sale_created.TypeDocumentSaleNavigation.TipoFactura.ToString()},";
                     }
                 }
 

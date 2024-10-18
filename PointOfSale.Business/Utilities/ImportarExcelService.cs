@@ -3,6 +3,7 @@ using ExcelDataReader;
 using Microsoft.AspNetCore.Http;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Model;
+using System.IO;
 using System.Text.RegularExpressions;
 using static PointOfSale.Model.Enum;
 
@@ -21,7 +22,7 @@ namespace PointOfSale.Business.Utilities
         }
 
 
-        public async Task<(bool exito, List<Product>? productos, List<string> errores)> ImportarProductoAsync(IFormFile file)
+        public async Task<(bool exito, List<Product>? productos, List<string> errores)> ImportarProductoAsync(IFormFile file, bool modificarPrecio, bool productoWeb)
         {
             // Validar si el archivo es válido
             if (file == null || file.Length == 0)
@@ -59,7 +60,7 @@ namespace PointOfSale.Business.Utilities
                             if (reader.GetValue(2)?.ToString().ToLower() != "kg" && reader.GetValue(2)?.ToString().ToLower() != "u")
                                 throw new Exception("Tipo de venta inválido");
 
-                            Product product = ParseProduct(reader, listaProveedores, listaCategorias);
+                            Product product = ParseProduct(reader, listaProveedores, listaCategorias, modificarPrecio, productoWeb);
                             products.Add(product);
                         }
                         catch (Exception ex)
@@ -75,42 +76,50 @@ namespace PointOfSale.Business.Utilities
             return (exito, products, errores);
         }
 
-        private Product ParseProduct(IExcelDataReader reader, List<Proveedor> listaProveedores, List<Category> listaCategorias)
+        private Product ParseProduct(IExcelDataReader reader, List<Proveedor> listaProveedores, List<Category> listaCategorias, bool modificarPrecio, bool productoWeb)
         {
 
-            var proveedor = listaProveedores.FirstOrDefault(_ => _.Nombre.ToLower() == reader.GetValue(11)?.ToString()?.ToLower());
-            if(proveedor == null && !string.IsNullOrEmpty(reader.GetValue(11)?.ToString()?.ToLower()))
+            var proveedor = listaProveedores.FirstOrDefault(_ => _.Nombre.ToLower() == reader.GetValue(12)?.ToString()?.ToLower());
+            if(proveedor == null && !string.IsNullOrEmpty(reader.GetValue(12)?.ToString()?.ToLower()))
             {
-                throw new Exception($"Proveedor '{reader.GetValue(11)?.ToString()}' no encontrado");
+                throw new Exception($"Proveedor '{reader.GetValue(12)?.ToString()}' no encontrado");
             }
 
-            var categoria = listaCategorias.FirstOrDefault(_ => _.Description.ToLower() == reader.GetValue(12)?.ToString()?.ToLower());
-            if(categoria == null && !string.IsNullOrEmpty(reader.GetValue(12)?.ToString()?.ToLower()))
+            var categoria = listaCategorias.FirstOrDefault(_ => _.Description.ToLower() == reader.GetValue(13)?.ToString()?.ToLower());
+            if(categoria == null && !string.IsNullOrEmpty(reader.GetValue(13)?.ToString()?.ToLower()))
             {
-                throw new Exception($"Categoria '{reader.GetValue(12)?.ToString()}' no encontrada");
+                throw new Exception($"Categoria '{reader.GetValue(13)?.ToString()}' no encontrada");
             }
+
+            var tipoVenta = reader.GetValue(2)?.ToString().ToLower() == "kg" ? TipoVenta.Kg : TipoVenta.U;
+            var precioWeb = ParseDecimal(reader.GetValue(11), "Precio Web");
 
             Product product = new Product
             {
                 IdProduct = 0,
                 IsActive = true,
                 Description = reader.GetValue(0)?.ToString(),
-                TipoVenta = reader.GetValue(2)?.ToString().ToLower() == "kg" ? TipoVenta.Kg : TipoVenta.U,
-                CostPrice = ParseDecimal(reader.GetValue(3)),
+                TipoVenta = tipoVenta,
+                CostPrice = ParseDecimal(reader.GetValue(3), "Costo"),
                 ListaPrecios = ParseListaPrecios(reader),
-                PriceWeb = ParseDecimal(reader.GetValue(10)),
+                PriceWeb = precioWeb,
                 Proveedor = proveedor,
                 IdProveedor = proveedor?.IdProveedor,
                 IdCategory = categoria?.IdCategory,
                 IdCategoryNavigation = categoria,
                 Destacado = false,
-                ProductoWeb = true
+                ProductoWeb = productoWeb,
+                Iva = ParseDecimal(reader.GetValue(4), "IVA"),
+                Comentario = string.Empty,
+                FormatoWeb = tipoVenta == TipoVenta.Kg ? 1000 : 1,
+                PrecioFormatoWeb = precioWeb,
+                ModificarPrecio = modificarPrecio
             };
 
             var codBarras = reader.GetValue(1)?.ToString();
             if (!string.IsNullOrEmpty(codBarras))
             {
-                product.CodigoBarras = new List<CodigoBarras>() { new CodigoBarras(codBarras) };
+                product.CodigoBarras = new List<CodigoBarras>() { new CodigoBarras(ParseInt(codBarras, "Codigo de barras").ToString()) };
             }
 
             return product;
@@ -122,25 +131,25 @@ namespace PointOfSale.Business.Utilities
     {
         new ListaPrecio(ListaDePrecio.Lista_1)
         {
-            PorcentajeProfit = ParseInt(reader.GetValue(4)),
-            Precio = ParseDecimal(reader.GetValue(5))
+            PorcentajeProfit = ParseInt(reader.GetValue(5), "Procentaje de ganancia 1"),
+            Precio = ParseDecimal(reader.GetValue(6), "Precio 1")
         },
         new ListaPrecio(ListaDePrecio.Lista_2)
         {
-            PorcentajeProfit = ParseInt(reader.GetValue(6)),
-            Precio = ParseDecimal(reader.GetValue(7))
+            PorcentajeProfit = ParseInt(reader.GetValue(7), "Procentaje de ganancia 2"),
+            Precio = ParseDecimal(reader.GetValue(8), "Precio 2")
         },
         new ListaPrecio(ListaDePrecio.Lista_3)
         {
-            PorcentajeProfit = ParseInt(reader.GetValue(8)),
-            Precio = ParseDecimal(reader.GetValue(9))
+            PorcentajeProfit = ParseInt(reader.GetValue(9), "Procentaje de ganancia 3"),
+            Precio = ParseDecimal(reader.GetValue(10), "Precio 3")
         }
     };
 
             return listaPrecios;
         }
 
-        private decimal ParseDecimal(object value)
+        private decimal ParseDecimal(object value, string detalle)
         {
             if (value == null)
                 return 0;
@@ -155,11 +164,11 @@ namespace PointOfSale.Business.Utilities
             }
             catch (FormatException ex)
             {
-                throw new FormatException($"El valor '{value}' no es un decimal válido.");
+                throw new FormatException($"El valor '{value}' no es un decimal válido para {detalle}.");
             }
         }
 
-        private int ParseInt(object value)
+        private int ParseInt(object value, string detalle)
         {
             if (value == null)
                 return 0;
@@ -174,7 +183,7 @@ namespace PointOfSale.Business.Utilities
             }
             catch (Exception ex)
             {
-                throw new FormatException($"El valor '{value}' no es un entero válido.");
+                throw new FormatException($"El valor '{value}' no es un entero válido para {detalle}.");
             }
         }
 

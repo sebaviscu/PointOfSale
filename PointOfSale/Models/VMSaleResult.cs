@@ -18,6 +18,7 @@ namespace PointOfSale.Models
         public string? SaleNumber { get; set; }
         public string? NombreImpresora { get; set; }
         public string? Ticket { get; set; }
+        public string TipoVenta { get; set; }
         public List<Images> ImagesTicket { get; set; }
     }
 }

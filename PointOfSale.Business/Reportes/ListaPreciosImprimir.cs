@@ -14,11 +14,6 @@ namespace PointOfSale.Business.Reportes
 {
     public class ListaPreciosImprimir
     {
-        static PdfFont fNombreProducto = PdfFontFactory.CreateFont(StandardFonts.COURIER);
-        static PdfFont fPrecio = PdfFontFactory.CreateFont(StandardFonts.COURIER_BOLD);
-        static PdfFont fKgUnidad = PdfFontFactory.CreateFont(StandardFonts.COURIER);
-        static PdfFont fcodyfecha = PdfFontFactory.CreateFont(StandardFonts.COURIER);
-
         public static byte[] Imprimir(List<Product> lisProducts, bool codBarras, bool fechaModif)
         {
             using (MemoryStream ms = new MemoryStream())
@@ -84,86 +79,95 @@ namespace PointOfSale.Business.Reportes
 
             return outer;
         }
-
         private static Table CreateTable(Product p, bool codBarras, bool fechaModif)
         {
-            Table tableTitulo = new Table(UnitValue.CreatePercentArray(8))
-                .SetWidth(UnitValue.CreatePercentValue(25));
+            PdfFont fNombreProducto = PdfFontFactory.CreateFont(StandardFonts.COURIER);
+            PdfFont fPrecio = PdfFontFactory.CreateFont(StandardFonts.COURIER_BOLD);
+            PdfFont fKgUnidad = PdfFontFactory.CreateFont(StandardFonts.COURIER);
+            PdfFont fcodyfecha = PdfFontFactory.CreateFont(StandardFonts.COURIER);
+
+            Table tableTitulo = new Table(UnitValue.CreatePercentArray(new float[] { 70, 30 }))
+                .SetWidth(UnitValue.CreatePercentValue(100)) // Ajustar al 100% de la celda
+                .SetMargin(2) // Añadir margen para mejorar la separación
+                .SetPadding(2);
 
             string descripcion = p.Description;
-            if (descripcion.Length > 17)
+            if (descripcion.Length > 19)
             {
-                descripcion = descripcion.Substring(0, 17) + ".";
+                descripcion = descripcion.Substring(0, 19) + ".";
             }
 
-            Cell EtiquetaDescription = new Cell(1, 8)
-                .Add(new Paragraph(descripcion).SetFont(fNombreProducto))
+            // Nombre del producto
+            Cell EtiquetaDescription = new Cell(1, 2) // Fila completa para la descripción
+                .Add(new Paragraph(descripcion.ToUpper()).SetFont(fNombreProducto))
+                .SetFontSize(10)
                 .SetTextAlignment(TextAlignment.CENTER)
-                .SetPaddingTop(6)
-                .SetPaddingBottom(4)
-                .SetBorderBottom(Border.NO_BORDER);
+                .SetPadding(2)
+                .SetBorder(Border.NO_BORDER);
 
-            Cell EtiquetaPrice = new Cell(1, 6)
-                .Add(new Paragraph("$ " + p.Price.ToString()).SetFont(fPrecio))
-                .SetTextAlignment(TextAlignment.RIGHT)
-                .SetPadding(5)
-                .SetPaddingBottom(10)
-                .SetBorderTop(Border.NO_BORDER)
-                .SetBorderRight(Border.NO_BORDER);
+            // Precio y Tipo de venta combinados en una sola celda
+            var precio = (int)p.ListaPrecios[0].Precio;
+            Paragraph priceAndType = new Paragraph()
+                .Add(new Text("$ " + precio.ToString()).SetFont(fPrecio).SetFontSize(20))  // Precio con tamaño 18
+                .Add(new Text(" /" + p.TipoVenta.ToString()).SetFont(fKgUnidad).SetFontSize(12));  // Tipo de venta con tamaño 12
 
-            Cell EtiquetaTipoVenta = new Cell(1, 2)
-                .Add(new Paragraph("/" + p.TipoVenta.ToString()).SetFont(fKgUnidad))
+            Cell EtiquetaPriceAndTipoVenta = new Cell(1, 2) // Una celda que ocupa dos columnas
+                .Add(priceAndType)
                 .SetTextAlignment(TextAlignment.CENTER)
                 .SetPadding(5)
-                .SetPaddingBottom(10)
-                .SetBorderTop(Border.NO_BORDER)
-                .SetBorderLeft(Border.NO_BORDER);
+                .SetBorder(Border.NO_BORDER);
 
-            if (fechaModif && codBarras)
-            {
-                EtiquetaTipoVenta.SetBorderBottom(Border.NO_BORDER);
-                EtiquetaPrice.SetBorderBottom(Border.NO_BORDER);
-            }
+            // Crear una tabla para colocar el código de barras a la izquierda y la fecha a la derecha
+            Table barCodeAndDateTable = new Table(UnitValue.CreatePercentArray(new float[] { 50, 50 }))
+                .SetWidth(UnitValue.CreatePercentValue(100));
 
-            Cell EtiquetaBarCode = new Cell(1, 4).Add(new Paragraph(""));
+            // Si hay código de barras, agregarlo a la izquierda
+            Cell barCodeCell = new Cell().SetBorder(Border.NO_BORDER);
             if (codBarras)
             {
                 var codBar = p.CodigoBarras.FirstOrDefault();
                 if (codBar != null)
                 {
-                    EtiquetaBarCode = new Cell(1, 4)
-                        .Add(new Paragraph(codBar.Codigo).SetFont(fcodyfecha))
-                        .SetTextAlignment(TextAlignment.LEFT)
-                        .SetPaddingBottom(4)
-                        .SetBorderTop(Border.NO_BORDER)
-                        .SetBorderRight(Border.NO_BORDER);
+                    barCodeCell.Add(new Paragraph(codBar.Codigo).SetFont(fcodyfecha).SetFontSize(7))
+                               .SetTextAlignment(TextAlignment.LEFT);
                 }
             }
+            barCodeAndDateTable.AddCell(barCodeCell);
 
-            Cell EtiquetaModificationDate = new Cell(1, 4).Add(new Paragraph(""));
+            // Si hay fecha de modificación, agregarla a la derecha
+            Cell dateCell = new Cell().SetBorder(Border.NO_BORDER);
             if (fechaModif)
             {
                 var modificationDate = p.ModificationDate.HasValue ? p.ModificationDate.Value.ToShortDateString() : string.Empty;
-                EtiquetaModificationDate = new Cell(1, 4)
-                    .Add(new Paragraph(modificationDate).SetFont(fcodyfecha))
-                    .SetTextAlignment(TextAlignment.RIGHT)
-                    .SetPaddingBottom(4)
-                    .SetBorderTop(Border.NO_BORDER)
-                    .SetBorderLeft(Border.NO_BORDER);
+                if (!string.IsNullOrEmpty(modificationDate))
+                {
+                    dateCell.Add(new Paragraph(modificationDate).SetFont(fcodyfecha).SetFontSize(7))
+                            .SetTextAlignment(TextAlignment.RIGHT);
+                }
             }
+            barCodeAndDateTable.AddCell(dateCell);
 
-            tableTitulo.AddCell(EtiquetaDescription);
-            tableTitulo.AddCell(EtiquetaPrice);
-            tableTitulo.AddCell(EtiquetaTipoVenta);
+            // Agregar las celdas a la tabla
+            tableTitulo.AddCell(EtiquetaDescription); // Descripción
+            tableTitulo.AddCell(EtiquetaPriceAndTipoVenta); // Precio y Tipo de venta combinados
 
-            if (fechaModif || codBarras)
+            // Solo agregar la tabla de código de barras y fecha si uno de ellos está presente
+            if (codBarras || fechaModif)
             {
-                tableTitulo.AddCell(EtiquetaBarCode);
-                tableTitulo.AddCell(EtiquetaModificationDate);
+                Cell EtiquetaBarCodeAndDate = new Cell(1, 2) // Una celda que ocupa dos columnas
+                    .Add(barCodeAndDateTable)
+                    .SetPadding(0)
+                    .SetBorder(Border.NO_BORDER);
+
+                tableTitulo.AddCell(EtiquetaBarCodeAndDate);
             }
+
 
             return tableTitulo;
         }
+
+
+
     }
 
 }

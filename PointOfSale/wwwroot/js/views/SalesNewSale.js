@@ -357,7 +357,7 @@ function showProducts_Prices(idTab, currentTab) {
 
 $(document).on("click", "button.btn-delete", async function () {
 
-    const isValidCode = await validateCode();
+    const isValidCode = await validateCode("borrar producto de una venta");
     if (!isValidCode) {
         return false;
     }
@@ -673,7 +673,7 @@ function registrationSale(currentTabId) {
 
             let nuevaVentaSpan = document.getElementById('profile-tab' + currentTabId).querySelector('span');
             if (nuevaVentaSpan != null) {
-                nuevaVentaSpan.textContent = responseJson.object.saleNumber;
+                nuevaVentaSpan.textContent = responseJson.object.tipoVenta + '-' +responseJson.object.saleNumber;
             }
 
             if (responseJson.object.idSale != null) {
@@ -820,10 +820,11 @@ function funConsultarPrecio() {
     $('#cboSearchProductConsultarPrecio').on('select2:select', function (e) {
         let data = e.params.data;
         productSelected = data;
+        let tipoVentaString = data.tipoVenta == 1 ? "Kg" : "U.";
 
         // Asignar los valores de los campos de texto
         $('#txtComentariosConsultaProducto').val(data.comentario);
-        $('#txtPrecioConsultarPrecio').val(data.price);
+        $('#txtPrecioConsultarPrecio').val(`${data.price} / ${tipoVentaString}`);
         $('#lblProductName').text(data.text);
         $('#imgProductConsultarPrecio').attr('src', `data:image/png;base64,${data.photoBase64}`);
 
@@ -850,7 +851,7 @@ $('#btn-add-tab').click(function () {
 });
 
 $('#tab-list').on('click', '.close', async function () {
-    const isValidCode = await validateCode();
+    const isValidCode = await validateCode("cerrar venta sin finalizar");
     if (!isValidCode) {
         return false;
     }
@@ -980,16 +981,18 @@ function addFunctions(idTab) {
 
     $('#tbProduct' + idTab + ' tbody').on('dblclick', 'tr', async function () {
 
+        let rowIndex = $(this).index();
+        let currentTab = AllTabsForSale.find(item => item.idTab == idTab);
+        let productRow = currentTab.products.filter(prod => prod.row == rowIndex);
+
+        if (!productRow[0].modificarPrecio)
+            return;
+
         // Validar el código antes de continuar
-        const isValidCode = await validateCode();
+        const isValidCode = await validateCode("cambio de precio");
         if (!isValidCode) {
             return false;
         }
-
-        let rowIndex = $(this).index();
-
-        let currentTab = AllTabsForSale.find(item => item.idTab == idTab);
-        let productRow = currentTab.products.filter(prod => prod.row == rowIndex);
 
         // Agregar un pequeño retraso para que el segundo swal tenga tiempo de abrirse correctamente
         setTimeout(async () => {
@@ -1141,7 +1144,8 @@ function addFunctions(idTab) {
                     price: item.price,
                     tipoVenta: item.tipoVenta,
                     iva: item.iva,
-                    categoryProducty: item.categoryProducty
+                    categoryProducty: item.categoryProducty,
+                    modificarPrecio: item.modificarPrecio
                 }));
 
                 // Si es un código de barras, selecciona automáticamente el primer producto
@@ -1337,6 +1341,7 @@ function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
     product.tipoVenta = data.tipoVenta;
     product.iva = data.iva;
     product.categoryProducty = data.categoryProducty;
+    product.modificarPrecio = data.modificarPrecio;
 
     if (data.promocion) {
         product.promocion = data.promocion;
@@ -1383,7 +1388,7 @@ function getTabActiveId() {
     return idTab[idTab.length - 1];
 }
 
-async function validateCode() {
+async function validateCode(detalle) {
     if (!ajustes.needControl) return true;
 
     return new Promise((resolve, reject) => {
@@ -1400,7 +1405,7 @@ async function validateCode() {
             }
 
             try {
-                const response = await fetch(`/Ajustes/ValidateSecurityCode?encryptedCode=${value}`, {
+                const response = await fetch(`/Ajustes/ValidateSecurityCode?encryptedCode=${value}&detalle=${detalle}`, {
                     method: 'POST'
                 });
                 const data = await response.json();
@@ -1507,4 +1512,5 @@ class Producto {
     tipoVenta = 0;
     categoryProducty = "";
     iva = 21;
+    modificarPrecio = 1;
 }

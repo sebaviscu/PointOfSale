@@ -62,13 +62,13 @@
                     <h4>Productos</h4>
                 </div>
                 <div class="d-flex justify-content-between">
-                    <button class="btn btn-primary btn-sm" id="btnEditAll" onclick="editAll()">Editar Seleccion</button>
+                    <button class="btn btn-primary btn-sm" id="btnEditAll" onclick="editAll()"><span class="mdi mdi-select-all me-1"></span> Editar Seleccion</button>
 
-                    <button class="btn btn-info btn-sm ms-4 " id="btnEditAll" onclick="imprimirPrecios()">Imprimir Precio</button>
+                    <button class="btn btn-info btn-sm ms-4 " id="btnEditAll" onclick="imprimirPrecios()"><span class="mdi mdi-printer me-1"></span> Imprimir Precio</button>
 
-                    <button class="btn btn-secondary btn-sm ms-4 " id="bntModalImportar">Importar</button>
+                    <button class="btn btn-secondary btn-sm ms-4 " id="bntModalImportar"><span class="mdi mdi-import me-1"></span>Importar</button>
 
-                    <button class="btn btn-success btn-sm ms-4 " id="btnNewProduct">Nuevo Producto</button>
+                    <button class="btn btn-success btn-sm ms-4 " id="btnNewProduct"><span class="mdi mdi-note-plus me-1"></span>Nuevo Producto</button>
 
                 </div>
             </div>
@@ -183,6 +183,12 @@
                                         <option value="1">Activo</option>
                                         <option value="0">Inactrivo</option>
                                     </select>
+                                </div>
+                                <div class="form-group col-md-2 text-center" style="align-self: center;">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="switchPuedeModificar">
+                                        <label class="form-check-label" for="switchPuedeModificar">Modificar precio <span class="mdi mdi-information text-info ms-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Habilita / Deshabilita si es posible modificar su precio en el momento de la venta"></span></label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -818,7 +824,7 @@
             <div class="modal-body">
                 <div>
 
-                    <div class="row mb-3">
+                    <div class="row">
                         <label for="fileImportarProductos" class="col-sm-2 col-form-label text-end">Seleccionar Archivo</label>
                         <div class="col-sm-4 input-group input-group-sm">
                             <input type="file" class="form-control" id="fileImportarProductos" accept=".xlsx, .csv">
@@ -826,7 +832,14 @@
                                 <button class="btn btn-secondary btn-sm" id="btnCargarImportar">Cargar</button>
                             </div>
                         </div>
-
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="switchProductoWebImportar">
+                            <label class="form-check-label" for="switchProductoWebImportar">Producto Web</label>
+                        </div>
+                        <div class="form-check form-switch ms-5">
+                            <input class="form-check-input" type="checkbox" role="switch" id="switchPuedeModificarImportar">
+                            <label class="form-check-label" for="switchPuedeModificarImportar">Puede modificar precio</label>
+                        </div>
 
 
                         <div class="col-sm-3" style="text-align: center;">
@@ -844,9 +857,13 @@
                                 <th>Descripcion<span class="text-danger">*</span></th>
                                 <th>Cod. Barras</th>
                                 <th style="min-width: 130px;">
-                                    Forma de Venta<span class="text-danger">*</span> &nbsp; <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="U = por unidad,<br>Kg = por peso"></span>
+                                    Forma de Venta<span class="text-danger">*</span> &nbsp; <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="U = por unidad<br>Kg = por peso"></span>
                                 </th>
                                 <th>Costo</th>
+                                <th>
+                                    IVA
+                                    <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="Se debe introducir el porcentaje de IVA, solo el numero"></span>
+                                </th>
                                 <th>
                                     Ganancia 1&nbsp;
                                     <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="Se debe introducir el porcentaje de ganancia, solo el numero"></span>

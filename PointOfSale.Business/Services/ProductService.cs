@@ -189,58 +189,75 @@ namespace PointOfSale.Business.Services
         public async Task<string> Add(List<Product> products)
         {
             var errorMessages = new StringBuilder();
+            string resultMessage = string.Empty;  // Variable para almacenar el resultado
 
-            await _repository.BeginTransactionAsync();
+            // Crear la estrategia de ejecución
+            var strategy = _repository.CreateExecutionStrategy();
 
-            try
+            // Ejecutar todas las operaciones dentro de la estrategia de reintento
+            await strategy.ExecuteAsync(async () =>
             {
-                for (int i = 0; i < products.Count; i++)
+                // Iniciar la transacción
+                await _repository.BeginTransactionAsync();
+
+                try
                 {
-                    var entity = products[i];
-                    try
+                    for (int i = 0; i < products.Count; i++)
                     {
-                        var productExists = await _repository.QuerySimple()
-                            .Include(p => p.CodigoBarras)
-                            .Where(p => p.CodigoBarras != null)
-                            .ToListAsync();
-
-                        if (productExists.Any(p => p.CodigoBarras.Any(pb => entity.CodigoBarras.Any(eb => eb.Codigo == pb.Codigo))))
+                        var entity = products[i];
+                        try
                         {
-                            errorMessages.AppendLine($"Error en la fila {i + 1}: El código de barras ya existe.");
-                            continue;
+                            var productExists = await _repository.QuerySimple()
+                                .Include(p => p.CodigoBarras)
+                                .Where(p => p.CodigoBarras != null)
+                                .ToListAsync();
+
+                            if (productExists.Any(p => p.CodigoBarras.Any(pb => entity.CodigoBarras.Any(eb => eb.Codigo == pb.Codigo))))
+                            {
+                                errorMessages.AppendLine($"Error en la fila {i + 1}: El código de barras ya existe.");
+                                continue;
+                            }
+
+                            if (entity.Photo == null)
+                            {
+                                entity.Photo = GetDefaultImage();
+                            }
+
+                            var productCreated = await _repository.Add(entity);
+                            if (productCreated.IdProduct == 0)
+                            {
+                                errorMessages.AppendLine($"Error en la fila {i + 1}: Error al crear el producto.");
+                            }
                         }
-
-                        if (entity.Photo.Length == 0)
+                        catch (Exception ex)
                         {
-                            entity.Photo = GetDefaultImage();
-                        }
-
-                        var productCreated = await _repository.Add(entity);
-                        if (productCreated.IdProduct == 0)
-                        {
-                            errorMessages.AppendLine($"Error en la fila {i + 1}: Error al crear el producto.");
+                            errorMessages.AppendLine($"Error en la fila {i + 1}: {ex.Message}");
                         }
                     }
-                    catch (Exception ex)
+
+                    // Si hay errores, hacer rollback y almacenar el mensaje de error
+                    if (errorMessages.Length > 0)
                     {
-                        errorMessages.AppendLine($"Error en la fila {i + 1}: {ex.Message}");
+                        await _repository.RollbackTransactionAsync();
+                        resultMessage = errorMessages.ToString();  // Asignar el mensaje de error a la variable resultMessage
+                        return;
                     }
+
+                    // Si todo es correcto, hacer commit
+                    await _repository.CommitTransactionAsync();
                 }
-
-                if (errorMessages.Length > 0)
+                catch (Exception ex)
                 {
+                    // En caso de excepción, hacer rollback
                     await _repository.RollbackTransactionAsync();
-                    return errorMessages.ToString();
+                    throw new Exception($"Error general al procesar los productos: {ex.Message}");
                 }
-                await _repository.CommitTransactionAsync();
-                return string.Empty;
-            }
-            catch (Exception ex)
-            {
-                await _repository.RollbackTransactionAsync();
-                throw new Exception($"Error general al procesar los productos: {ex.Message}");
-            }
+            });
+
+            // Devolver el mensaje resultante (si hubo errores o éxito)
+            return resultMessage;
         }
+
 
         public async Task<Product> Edit(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos, Stock? stock, List<CodigoBarras>? codigoBarras, List<Tag> tags, List<ProductLov> comodines)
         {
@@ -276,6 +293,7 @@ namespace PointOfSale.Business.Services
                 product.PrecioFormatoWeb = entity.PrecioFormatoWeb;
                 product.Destacado = entity.Destacado;
                 product.ProductoWeb = entity.ProductoWeb;
+                product.ModificarPrecio = entity.ModificarPrecio;
 
                 if (entity.Photo != null && entity.Photo.Length > 0)
                     product.Photo = entity.Photo;
@@ -578,7 +596,7 @@ namespace PointOfSale.Business.Services
             try
             {
                 IQueryable<Product> query = await _repository.Query(p => p.IdProduct == idProduct);
-                var product_found = query.Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).FirstOrDefault();
+                var product_found = query.Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).Include(_ => _.CodigoBarras).FirstOrDefault();
 
                 if (product_found == null)
                     throw new TaskCanceledException("El producto no existe");
@@ -591,6 +609,11 @@ namespace PointOfSale.Business.Services
                 if (product_found.Vencimientos != null)
                 {
                     _ = await _repositoryVencimientos.Delete(product_found.Vencimientos);
+                }
+
+                if (product_found.CodigoBarras != null)
+                {
+                    _ = await _repositoryCodigosBarras.Delete(product_found.CodigoBarras);
                 }
 
                 bool response = await _repository.Delete(product_found);

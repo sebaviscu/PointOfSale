@@ -13,5 +13,6 @@ namespace PointOfSale.Models
         public TipoVenta TipoVenta { get; set; }
         public string? CategoryProducty { get; set; }
         public decimal? Iva { get; set; }
+        public bool? ModificarPrecio { get; set; }
     }
 }

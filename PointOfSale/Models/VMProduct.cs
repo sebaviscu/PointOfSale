@@ -29,26 +29,26 @@ namespace PointOfSale.Models
         public string? ModificationDateString { get; set; }
 
         public decimal? Iva { get; set; }
-        //public virtual IEnumerable<ListaDePrecio>? ListaPrecios { get; set; }
 
         public string? Precio2 { get; set; }
         public int? PorcentajeProfit2 { get; set; }
 
         public string? Precio3 { get; set; }
         public int? PorcentajeProfit3 { get; set; }
+
+        public string? PrecioFormatoWeb { get; set; }
+        public int? FormatoWeb { get; set; }
+        public bool Destacado { get; set; }
+        public bool ProductoWeb { get; set; }
+        public bool? ModificarPrecio { get; set; }
+
+        public virtual ICollection<Stock>? Stocks { get; set; }
+        public virtual ICollection<VMTag>? Tags { get; set; }
         public List<VMVencimiento>? Vencimientos { get; set; }
         public List<VMListaPrecio>? ListaPrecios { get; set; }
         public virtual ICollection<VMCodigoBarras>? CodigoBarras { get; set; }
         public VMProveedor? Proveedor { get; set; }
         public virtual VMCategory? IdCategoryNavigation { get; set; }
-
-        public virtual ICollection<Stock>? Stocks { get; set; }
-        public string? PrecioFormatoWeb { get; set; }
-        public int? FormatoWeb { get; set; }
-        public virtual ICollection<VMTag>? Tags { get; set; }
-        public bool Destacado { get; set; }
-        public bool ProductoWeb { get; set; }
-
         public virtual ICollection<VMLov>? Comodin1 { get; set; }
         public virtual ICollection<VMLov>? Comodin2 { get; set; }
         public virtual ICollection<VMLov>? Comodin3 { get; set; }

@@ -47,17 +47,17 @@ namespace PointOfSale.Model
             Descripcion = $"Está proxima la fecha de caducidad ({ajustes.CertificadoFechaCaducidad.Value.ToShortDateString()}) del certificado ({ajustes.CertificadoNombre}) de AFIP.";
             IsActive = true;
             RegistrationDate = TimeHelper.GetArgentinaTime();
-            Accion = "Admin/Ajuste";
-            Rols = $"{(int)Roles.Administrador},{(int)Roles.Encargado}";
+            Accion = "Ajustes/Index";
+            Rols = $"{(int)Roles.Administrador}";
         }
 
         /// <summary>
         /// Notifiacacion cuando un usuario utiliza el Codigo de Seguridad en una venta
         /// </summary>
         /// <param name="usuario"></param>
-        public Notifications(string usuario)
+        public Notifications(string usuario, string detalle)
         {
-            Descripcion = $"El usuario {usuario} ha utilizado el Codigo de Seguridad.";
+            Descripcion = $"El usuario {usuario} ha utilizado el Codigo de Seguridad para {detalle}.";
             IsActive = true;
             RegistrationDate = TimeHelper.GetArgentinaTime();
             Accion = "";

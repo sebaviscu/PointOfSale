@@ -497,7 +497,7 @@ namespace PointOfSale.Controllers
             GenericResponse<List<VMProduct>> gResponse = new GenericResponse<List<VMProduct>>();
             try
             {
-                var (exito, products, errores) = await _excelService.ImportarProductoAsync(file);
+                var (exito, products, errores) = await _excelService.ImportarProductoAsync(file, false, false);
 
                 if (errores.Any())
                 {
@@ -520,14 +520,14 @@ namespace PointOfSale.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> ImportarProductos(IFormFile file)
+        public async Task<IActionResult> ImportarProductos(IFormFile file, bool modificarPrecio, bool productoWeb)
         {
-            GenericResponse<List<VMProduct>> gResponse = new GenericResponse<List<VMProduct>>();
+            var gResponse = new GenericResponse<string>();
             try
             {
                 ValidarAutorizacion([Roles.Administrador]);
 
-                var (exito, productos, errores) = await _excelService.ImportarProductoAsync(file);
+                var (exito, productos, errores) = await _excelService.ImportarProductoAsync(file, modificarPrecio, productoWeb);
 
                 if (errores.Any())
                 {
@@ -536,9 +536,10 @@ namespace PointOfSale.Controllers
                     return StatusCode(StatusCodes.Status400BadRequest, gResponse);
                 }
 
-                _ = await _productService.Add(productos);
+                var resp = await _productService.Add(productos);
 
-                gResponse.State = exito;
+                gResponse.State = resp == string.Empty;
+                gResponse.Message = resp;
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)

@@ -40,7 +40,8 @@ const BASIC_MODEL_PRODUCTOS = {
     productoWeb: 0,
     comodin1: [],
     comodin2: [],
-    comodin3: []
+    comodin3: [],
+    modificarPrecio: 0
 }
 
 const BASIC_MASSIVE_EDIT = {
@@ -436,6 +437,7 @@ const openModalProduct = (model = BASIC_MODEL_PRODUCTOS) => {
     $("#txtPriceFormatoWeb").val(model.precioFormatoWeb != 0 ? model.precioFormatoWeb.replace(/,/g, '.') : '0');
     document.getElementById('switchProductoDescatado').checked = model.destacado;
     document.getElementById('switchProductoWeb').checked = model.productoWeb;
+    document.getElementById('switchPuedeModificar').checked = model.modificarPrecio;
 
     if (model.photoBase64 != null) {
         $("#imgProduct").attr("src", `data:image/png;base64,${model.photoBase64}`);
@@ -768,7 +770,7 @@ $("#btnImportar").on("click", function () {
 
             if (respuesta) {
 
-                let fileInput = $("#fileInput")[0].files[0]; // Obtiene el archivo seleccionado
+                let fileInput = $("#fileImportarProductos")[0].files[0];
 
                 if (!fileInput) {
                     swal("Error", "Por favor selecciona un archivo", "error");
@@ -776,12 +778,15 @@ $("#btnImportar").on("click", function () {
                 }
 
                 let formData = new FormData();
-                formData.append("file", fileInput); // Agrega el archivo al formData
+                formData.append("file", fileInput);
 
                 $(".showSweetAlert").LoadingOverlay("show");
 
-                fetch('/Inventory/ImportarProductos', {
-                    method: "POST", // Usa POST para la subida de archivos
+                let productoWeb = document.getElementById('switchProductoWebImportar').checked;
+                let puedeModificarPrecio = document.getElementById('switchPuedeModificarImportar').checked;
+
+                fetch(`/Inventory/ImportarProductos?modificarPrecio=${puedeModificarPrecio}&productoWeb=${productoWeb}`, {
+                    method: "POST",
                     body: formData
                 })
                     .then(response => {
@@ -795,6 +800,7 @@ $("#btnImportar").on("click", function () {
                         } else {
                             $("#lblErrores").html(responseJson.message).css('color', 'red');
                         }
+                        $(".showSweetAlert").LoadingOverlay("hide");
                     })
                     .catch((error) => {
                         $(".showSweetAlert").LoadingOverlay("hide");
@@ -833,7 +839,7 @@ $("#btnCargarImportar").on("click", function () {
         return response.json();
     }).then(responseJson => {
         if (responseJson.state) {
-            let cantProductosImportar = responseJson.object.length;
+            cantProductosImportar = responseJson.object.length;
             $("#lblCantidadProds").html("Cantidad de Productos: <strong> " + cantProductosImportar + ".</strong>");
 
             let i = 0;
@@ -845,11 +851,12 @@ $("#btnCargarImportar").on("click", function () {
                         $("<td>").text(product.barCode),
                         $("<td>").text(product.tipoVenta == '1' ? 'Kg' : 'U'),
                         $("<td>").text(product.costPrice),
-                        $("<td>").text(product.porcentajeProfit),
+                        $("<td>").text(product.iva != '' ? product.iva + '%' : ''),
+                        $("<td>").text(product.porcentajeProfit != '' ? product.porcentajeProfit + '%' : ''),
                         $("<td>").text(product.price),
-                        $("<td>").text(product.porcentajeProfit2),
+                        $("<td>").text(product.porcentajeProfit2 != '' ? product.porcentajeProfit2 + '%' : ''),
                         $("<td>").text(product.precio2),
-                        $("<td>").text(product.porcentajeProfit3),
+                        $("<td>").text(product.porcentajeProfit3 != '' ? product.porcentajeProfit3 + '%' : ''),
                         $("<td>").text(product.precio3),
                         $("<td>").text(product.priceWeb),
                         $("<td>").text(product.nameProveedor),
@@ -960,6 +967,8 @@ $("#btnSave").on("click", async function () {
     model["iva"] = $("#txtIva").val();
     model["formatoWeb"] = $("#cboFormatoVenta").val();
     model["destacado"] = document.getElementById('switchProductoDescatado').checked;
+    model["modificarPrecio"] = document.getElementById('switchPuedeModificar').checked;
+
     model["productoWeb"] = document.getElementById('switchProductoWeb').checked;
 
     model["precioFormatoWeb"] = processNumericValue("#txtPriceFormatoWeb") || processNumericValue("#txtPrice");

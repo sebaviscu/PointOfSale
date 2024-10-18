@@ -211,5 +211,10 @@ namespace PointOfSale.Data.Repository
         {
             await _transaction.RollbackAsync();
         }
+
+        public IExecutionStrategy CreateExecutionStrategy()
+        {
+            return _dbcontext.Database.CreateExecutionStrategy();
+        }
     }
 }

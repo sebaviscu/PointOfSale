@@ -17,5 +17,6 @@ namespace PointOfSale.Model.Output
         public string? Ticket { get; set; }
         public List<Images> ImagesTicket { get; set; }
         public string? Errores {  get; set; }
+        public string TipoVenta { get; set; }
     }
 }

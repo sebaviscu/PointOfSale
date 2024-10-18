@@ -22,6 +22,7 @@ namespace PointOfSale.Model
         public int? FormatoWeb { get; set; }
         public bool Destacado { get; set; }
         public bool ProductoWeb { get; set; }
+        public bool? ModificarPrecio { get; set; }
 
         public int? IdCategory { get; set; }
         public virtual Category? IdCategoryNavigation { get; set; }
@@ -36,7 +37,6 @@ namespace PointOfSale.Model
         public virtual List<Stock>? Stocks { get; set; } = new List<Stock>();
         public virtual List<CodigoBarras>? CodigoBarras { get; set; } = new List<CodigoBarras>();
         public virtual List<ProductTag> ProductTags { get; set; } = new List<ProductTag>();
-
         public virtual List<ProductLov>? ProductLovs { get; set; } = new List<ProductLov>();
 
     }

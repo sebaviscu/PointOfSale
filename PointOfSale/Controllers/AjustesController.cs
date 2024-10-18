@@ -199,7 +199,7 @@ namespace PointOfSale.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ValidateSecurityCode(string encryptedCode)
+        public async Task<IActionResult> ValidateSecurityCode(string encryptedCode, string detalle)
         {
             var gResponse = new GenericResponse<bool>();
 
@@ -211,7 +211,7 @@ namespace PointOfSale.Controllers
 
                 var codigo = ajuste.CodigoSeguridad != null ? ajuste.CodigoSeguridad : string.Empty;
 
-                var notific = new Notifications(user.UserName);
+                var notific = new Notifications(user.UserName, detalle);
                 await _notificationService.Save(notific);
 
                 gResponse.State = true;

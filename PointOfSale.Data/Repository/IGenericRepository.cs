@@ -1,4 +1,5 @@
-﻿using PointOfSale.Model;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using PointOfSale.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,5 +31,7 @@ namespace PointOfSale.Data.Repository
         Task BeginTransactionAsync();
         Task CommitTransactionAsync();
         Task RollbackTransactionAsync();
+        IExecutionStrategy CreateExecutionStrategy();
+
     }
 }
