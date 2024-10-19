@@ -1336,6 +1336,7 @@ $("#btnImprimir").on("click", function () {
     model["listaPrecio"] = parseInt($("#cboListaPrecio").val());
     model["fechaModificacion"] = document.getElementById("switchUltimaModificacion").checked
     model["codigoBarras"] = document.getElementById("switchCodigoBarras").checked
+    model["vencimiento"] = document.getElementById("switchVencimiento").checked
 
     showLoading();
     $("#modalDataImprimirPrecios").modal("hide");

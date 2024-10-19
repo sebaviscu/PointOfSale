@@ -9,5 +9,6 @@ namespace PointOfSale.Models
         public ListaDePrecio ListaPrecio { get; set; }
         public bool FechaModificacion { get; set; }
         public bool CodigoBarras { get; set; }
+        public bool Vencimiento { get; set; }
     }
 }

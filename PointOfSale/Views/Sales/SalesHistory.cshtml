@@ -31,8 +31,8 @@
     @Model.IsAdmin
 </div>
 
-<div class="card shadow mb-4">
-    <div class="card-header d-flex align-items-center">
+<div class="card card-default">
+    <div class="card-header card-header-border-bottom d-flex align-items-center">
         <h4 class="col-md-4">Reporte de Ventas</h4>
         <span class="text-danger" id="lblErrorPrintService" style="display: none;"><i class="mdi mdi-alert mdi-24px"></i>&nbsp; El servicio de impresión no se encuentra conectado</span>
     </div>
@@ -61,7 +61,7 @@
                 </div>
                 <div class="form-group col-sm-3 search-date" style="text-align: center;">
                     <label for="rowFilterDia">Presupuestos</label>
-                    <div class="row mt-2" id="rowFilterDia">
+                    <div class="d-flex justify-content-center" id="rowFilterDia">
                         <div class="ms-3 h4">
                             <input type="radio" name="radioButton" id="incluir" class="filtro-presupuesto">
                             <label for="incluir">
@@ -74,7 +74,7 @@
                                 No incluir
                             </label>
                         </div>
-                        <div class="ms-3 me-5 h4">
+                        <div class="ms-3 h4">
                             <input type="radio" name="radioButton" id="solamente" class="filtro-presupuesto">
                             <label for="solamente">
                                 Solamente
@@ -83,7 +83,7 @@
                     </div>
                 </div>
                 <div class="form-group col-sm-1" style="align-self: end;">
-                    <button class="btn btn-success" type="button" id="btnSearch"><i class="fas fa-search"></i> Buscar</button>
+                    <button class="btn btn-success" type="button" id="btnSearch"><i class="mdi mdi-magnify"></i> Buscar</button>
                 </div>
             </div>
         }

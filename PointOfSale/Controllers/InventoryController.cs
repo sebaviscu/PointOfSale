@@ -474,7 +474,7 @@ namespace PointOfSale.Controllers
             {
                 var listtaProds = await _productService.GetProductsByIdsActive(model.IdProductos, model.ListaPrecio);
 
-                gResponse.Object = ListaPreciosImprimir.Imprimir(listtaProds, model.CodigoBarras, model.FechaModificacion);
+                gResponse.Object = ListaPreciosImprimir.Imprimir(listtaProds, model.CodigoBarras, model.FechaModificacion, model.Vencimiento);
                 gResponse.State = true;
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }

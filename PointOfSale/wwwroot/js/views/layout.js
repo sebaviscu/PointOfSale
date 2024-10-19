@@ -196,8 +196,9 @@ $("#btnAbrirCerrarTurno").on("click", function () {
 
                     if (turnoValidado) {
                         contenedor.append($('<hr style="margin-top: 0px;">'));
-                        crearFilaTotalesTurno(contenedor, "TOTAL Sistema", resultado.totalCierreCajaSistema, true, "txtTotalSumado");
-                        crearFilaTotalesTurno(contenedor, "TOTAL Usuario", resultado.totalCierreCajaReal, true, "txtTotalSumado");
+
+                        //crearFilaTotalesTurno(contenedor, "TOTAL Sistema", resultado.totalCierreCajaSistema, true, "txtTotalSumado");
+                        //crearFilaTotalesTurno(contenedor, "TOTAL Usuario", resultado.totalCierreCajaReal, true, "txtTotalSumado");
 
                         $("#btnValidarFinalizarTurno").hide();
                         $("#btnFinalizarTurno").show();
@@ -560,8 +561,8 @@ $("#btnValidarFinalizarTurno").on("click", function () {
 
             let contenedor = $("#contMetodosPagoLayout");
             contenedor.append($('<hr style="margin-top: 0px;">'));
-            crearFilaTotalesTurno(contenedor, "TOTAL Sistema", responseJson.object.totalCierreCajaSistema, true, "txtTotalSumado");
-            crearFilaTotalesTurno(contenedor, "TOTAL Usuario", responseJson.object.totalCierreCajaReal, true, "txtTotalSumado");
+            //crearFilaTotalesTurno(contenedor, "TOTAL Sistema", responseJson.object.totalCierreCajaSistema, true, "txtTotalSumado");
+            //crearFilaTotalesTurno(contenedor, "TOTAL Usuario", responseJson.object.totalCierreCajaReal, true, "txtTotalSumado");
 
         } else {
             swal("Lo sentimos", responseJson.message, "error");
