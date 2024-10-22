@@ -235,6 +235,8 @@ function clean() {
         let elementArea = document.querySelector('#bottom-area-' + idProd);
         elementArea.style.removeProperty('opacity');
     });
+    localStorage.removeItem('productos');
+
 }
 
 function resumenVenta() {
@@ -386,7 +388,9 @@ function setValue(event, mult) {
     let descProd = document.getElementById("desc-" + idProd)
 
     let value = parseFloat(inputProd.value);
+    let formatoWeb = 1;
 
+    let price = parseFloat(priceProd.attributes.precio.value);
     if (mult === -1 && value === 0) {
         return;
     }
@@ -395,7 +399,11 @@ function setValue(event, mult) {
         value = value + (1 * mult);
     }
     else {
-        value = value + (0.5 * mult);
+
+        formatoWeb = parseInt(inputProd.attributes.formatoWeb.value);
+        formatoWeb = formatoWeb / 1000;
+        value = value + (formatoWeb * mult);
+        price = price * (1 / formatoWeb);
     }
 
     inputProd.value = value
@@ -413,10 +421,11 @@ function setValue(event, mult) {
         let prod = {
             idProduct: idProd,
             quantity: value,
-            price: parseFloat(priceProd.attributes.precio.value),
+            price: price,
             descriptionProduct: descProd.attributes.descProd.value,
-            total: value * parseFloat(priceProd.attributes.precio.value),
-            tipoVenta: inputProd.attributes.typeinput.value
+            total: value * price,
+            tipoVenta: inputProd.attributes.typeinput.value,
+            formatoWeb: formatoWeb
         }
 
         productos.push(prod);
@@ -441,8 +450,9 @@ function dibujarAreaTotales(){
     });
 
     productsToDisplay.forEach((a) => {
-        textArea.innerText += `· ${a.descriptionProduct}: $${Number.parseFloat(a.price).toFixed(2)} x ${a.quantity} = $ ${Number.parseFloat(a.total).toFixed(2)} \n`;
+        textArea.innerHTML += `· ${a.descriptionProduct}: $${Number.parseFloat(a.price).toFixed(0)} x ${a.quantity} ${a.tipoVenta} = $ ${Number.parseFloat(a.total).toFixed(0)}<br>`;
     });
+
 
     $("#btnTrash").text(productos.length).append('<i class="mdi mdi-trash-can mdi-18px"></i>');
 

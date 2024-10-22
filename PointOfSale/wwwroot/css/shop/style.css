@@ -12267,7 +12267,7 @@ h1, h2, h3, h4, h5,
     }
 
     .product .text {
-        background: #fff;
+        /*background: #fff;*/
         position: relative;
         width: 100%;
     }

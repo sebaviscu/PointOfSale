@@ -29,46 +29,7 @@ namespace PointOfSale.Business.Utilities
             _movimientoCajaService = movimientoCajaService;
         }
 
-        private void SendEmail(string senderEmail, string senderPassword, List<string> recipientEmails, string subject, string body)
-        {
-            try
-            {
-                // Configuración del cliente SMTP
-                using (SmtpClient smtpClient = new SmtpClient(smtpServer, smtpPort))
-                {
-                    smtpClient.Credentials = new NetworkCredential(senderEmail, senderPassword);
-                    smtpClient.EnableSsl = enableSsl;
-
-                    // Configuración del mensaje de correo
-                    using (MailMessage mailMessage = new MailMessage())
-                    {
-                        mailMessage.From = new MailAddress(senderEmail);
-                        mailMessage.Subject = subject;
-                        mailMessage.Body = body;
-                        mailMessage.IsBodyHtml = true; // Cambia esto a false si no estás enviando HTML
-
-                        // Agregar los destinatarios
-                        foreach (string recipient in recipientEmails)
-                        {
-                            if (!string.IsNullOrEmpty(recipient))
-                            {
-                                mailMessage.To.Add(recipient);
-                            }
-                        }
-
-                        // Enviar el correo electrónico
-                        smtpClient.Send(mailMessage);
-                    }
-                }
-
-            }
-            catch (Exception ex)
-            {
-                new Exception($"Error al enviar el correo: {ex.Message}");
-            }
-        }
-
-        private void SendEmailTicket(string senderEmail, string senderPassword, List<string> recipientEmails, string subject, string body, byte[] attachment)
+        private void SendEmail(string senderEmail, string senderPassword, List<string> recipientEmails, string subject, string body, byte[]? attachment = null)
         {
             try
             {
@@ -198,7 +159,7 @@ namespace PointOfSale.Business.Utilities
 
             if (!string.IsNullOrEmpty(ajustes.EmailEmisorCierreTurno) && !string.IsNullOrEmpty(ajustes.PasswordEmailEmisorCierreTurno))
             {
-                SendEmailTicket(ajustes.EmailEmisorCierreTurno, ajustes.PasswordEmailEmisorCierreTurno, new List<string> { emailReceptor }, "Ticket de Venta", "Adjunto se encuentra su ticket de venta.", attachment);
+                SendEmail(ajustes.EmailEmisorCierreTurno, ajustes.PasswordEmailEmisorCierreTurno, new List<string> { emailReceptor }, "Ticket de Venta", "Adjunto se encuentra su ticket de venta.", attachment);
             }
 
         }

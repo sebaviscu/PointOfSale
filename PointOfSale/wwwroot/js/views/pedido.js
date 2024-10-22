@@ -453,9 +453,10 @@ $("#btnSave").on("click", function () {
         }).then(responseJson => {
 
             if (responseJson.state) {
+                tableDataPedido.row(rowSelectedPedido).data(responseJson.object).draw(false);
+                rowSelectedPedido = null;
                 $("#modalData").modal("hide");
                 swal("Exitoso!", "Pedido fue modificado", "success");
-                location.reload()
 
             } else {
                 swal("Lo sentimos", responseJson.message, "error");
