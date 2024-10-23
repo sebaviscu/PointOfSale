@@ -41,7 +41,9 @@ const BASIC_MODEL_PRODUCTOS = {
     comodin1: [],
     comodin2: [],
     comodin3: [],
-    modificarPrecio: 0
+    modificarPrecio: 0,
+    precioAlMomento: 0,
+    excluirPromociones: 0
 }
 
 const BASIC_MASSIVE_EDIT = {
@@ -438,6 +440,8 @@ const openModalProduct = (model = BASIC_MODEL_PRODUCTOS) => {
     document.getElementById('switchProductoDescatado').checked = model.destacado;
     document.getElementById('switchProductoWeb').checked = model.productoWeb;
     document.getElementById('switchPuedeModificar').checked = model.modificarPrecio;
+    document.getElementById('switchPrecioAlMomento').checked = model.precioAlMomento;
+    document.getElementById('switchExcluirPromocion').checked = model.excluirPromociones;
 
     if (model.photoBase64 != null) {
         $("#imgProduct").attr("src", `data:image/png;base64,${model.photoBase64}`);
@@ -968,6 +972,8 @@ $("#btnSave").on("click", async function () {
     model["formatoWeb"] = $("#cboFormatoVenta").val();
     model["destacado"] = document.getElementById('switchProductoDescatado').checked;
     model["modificarPrecio"] = document.getElementById('switchPuedeModificar').checked;
+    model["precioAlMomento"] = document.getElementById('switchPrecioAlMomento').checked;
+    model["excluirPromociones"] = document.getElementById('switchExcluirPromocion').checked;
 
     model["productoWeb"] = document.getElementById('switchProductoWeb').checked;
 

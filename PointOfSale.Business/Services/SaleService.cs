@@ -198,7 +198,7 @@ namespace PointOfSale.Business.Services
         public async Task<RegisterSaleOutput> RegisterSale(Sale model, RegistrationSaleInput saleInput)
         {
             var modelResponde = new RegisterSaleOutput();
-
+            Sale sale_created = null;
             try
             {
                 var ajustesTask = _ajustesService.GetAjustes(model.IdTienda);
@@ -234,7 +234,7 @@ namespace PointOfSale.Business.Services
                         paso = true;
                     }
 
-                    Sale sale_created = await _repositorySale.Register(newVMSale, ajustes);
+                    sale_created = await _repositorySale.Register(newVMSale, ajustes);
 
                     sale_created.IdClienteMovimiento = await _clienteService.RegistrarionClient(newVMSale.Total.Value, model.RegistrationUser, model.IdTienda, sale_created.IdSale, saleInput.TipoMovimiento, saleInput.ClientId);
 
@@ -253,7 +253,7 @@ namespace PointOfSale.Business.Services
                     }
                     catch (Exception e)
                     {
-                        modelResponde.Errores = e.Message;
+                        modelResponde.ErrorFacturacion = e.Message;
                     }
 
                     if (!string.IsNullOrEmpty(modelResponde.Errores))
@@ -275,7 +275,7 @@ namespace PointOfSale.Business.Services
                     if (saleInput.MultiplesFormaDePago.Count == 1)
                     {
                         modelResponde.IdSale = sale_created.IdSale;
-                        modelResponde.TipoVenta = "F"+sale_created.TypeDocumentSaleNavigation.TipoFactura.ToString();
+                        modelResponde.TipoVenta = "F" + sale_created.TypeDocumentSaleNavigation.TipoFactura.ToString();
                     }
                     else
                     {
@@ -284,12 +284,13 @@ namespace PointOfSale.Business.Services
                     }
                 }
 
-                return modelResponde;
             }
             catch (Exception ex)
             {
-                throw;
+                var mensaje = sale_created != null ? "La venta se ha registrado, pero ha habido un error: \n" : "La venta NO SE ha registrado, ha habido un error: \n";
+                modelResponde.Errores = mensaje + ex.ToString();
             }
+            return modelResponde;
         }
 
         private async Task<TicketModel?> RegistrationTicketPrinting(Ajustes ajustes, Sale saleCreated, FacturaEmitida? facturaEmitida)

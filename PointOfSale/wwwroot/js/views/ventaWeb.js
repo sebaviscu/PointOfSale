@@ -388,8 +388,11 @@ $("#btnSave").on("click", function () {
 })
 
 $("#btnFinalizarVenta").on("click", function () {
+    $("#modalPago").LoadingOverlay("show")
 
     editarVentaWeb();
+    $("#modalPago").LoadingOverlay("hide")
+    $('#modalPago').modal('hide');
 })
 
 async function editarVentaWeb() {
@@ -450,6 +453,7 @@ async function editarVentaWeb() {
     model["detailSales"] = products;
 
     showLoading();
+    $("#modalData").LoadingOverlay("show")
 
     fetch("/Shop/UpdateVentaWeb", {
         method: "PUT",
@@ -460,6 +464,7 @@ async function editarVentaWeb() {
         return response.json();
     }).then(responseJson => {
 
+    $("#modalData").LoadingOverlay("hide")
         if (responseJson.state) {
 
             tableDataVentaWeb.row(rowSelectedVentaWeb).data(responseJson.object).draw(false);
@@ -503,7 +508,8 @@ function select2Modal() {
             delay: 250,
             data: function (params) {
                 return {
-                    search: params.term
+                    search: params.term,
+                    listaPrecios: 4
                 };
             },
             processResults: function (data) {

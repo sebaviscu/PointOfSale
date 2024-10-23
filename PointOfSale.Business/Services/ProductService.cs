@@ -294,6 +294,8 @@ namespace PointOfSale.Business.Services
                 product.Destacado = entity.Destacado;
                 product.ProductoWeb = entity.ProductoWeb;
                 product.ModificarPrecio = entity.ModificarPrecio;
+                product.PrecioAlMomento = entity.PrecioAlMomento;
+                product.ExcluirPromociones = entity.ExcluirPromociones;
 
                 if (entity.Photo != null && entity.Photo.Length > 0)
                     product.Photo = entity.Photo;

@@ -1,5 +1,4 @@
-﻿
-namespace PointOfSale.Model.Output
+﻿namespace PointOfSale.Model.Output
 {
     public class RegisterSaleOutput
     {
@@ -18,5 +17,6 @@ namespace PointOfSale.Model.Output
         public List<Images> ImagesTicket { get; set; }
         public string? Errores {  get; set; }
         public string TipoVenta { get; set; }
+        public string? ErrorFacturacion { get; set; }
     }
 }

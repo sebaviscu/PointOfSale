@@ -113,7 +113,9 @@ namespace PointOfSale.Business.Utilities
                 Comentario = string.Empty,
                 FormatoWeb = tipoVenta == TipoVenta.Kg ? 1000 : 1,
                 PrecioFormatoWeb = precioWeb,
-                ModificarPrecio = modificarPrecio
+                ModificarPrecio = modificarPrecio,
+                PrecioAlMomento = false,
+                ExcluirPromociones = false
             };
 
             var codBarras = reader.GetValue(1)?.ToString();

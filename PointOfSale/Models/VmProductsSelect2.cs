@@ -14,5 +14,7 @@ namespace PointOfSale.Models
         public string? CategoryProducty { get; set; }
         public decimal? Iva { get; set; }
         public bool? ModificarPrecio { get; set; }
+        public bool? PrecioAlMomento { get; set; }
+        public bool? ExcluirPromociones { get; set; }
     }
 }

@@ -667,13 +667,15 @@ function registrationSale(currentTabId) {
 
         if (responseJson.state) {
 
-            if (responseJson.message != null) {
+            if (responseJson.message != null && responseJson.message != '') {
                 swal("Error al Facturar", "La venta fué registrada correctamente, pero no se ha podido facturar. Error en AFIP: \n" + responseJson.message, "warning");
+            } else if (responseJson.object.errores != null && responseJson.object.errores != '') {
+                swal("Error", responseJson.object.errores, "warning");
             }
 
             let nuevaVentaSpan = document.getElementById('profile-tab' + currentTabId).querySelector('span');
             if (nuevaVentaSpan != null) {
-                nuevaVentaSpan.textContent = responseJson.object.tipoVenta + '-' +responseJson.object.saleNumber;
+                nuevaVentaSpan.textContent = responseJson.object.tipoVenta + '-' + responseJson.object.saleNumber;
             }
 
             if (responseJson.object.idSale != null) {
@@ -1145,7 +1147,9 @@ function addFunctions(idTab) {
                     tipoVenta: item.tipoVenta,
                     iva: item.iva,
                     categoryProducty: item.categoryProducty,
-                    modificarPrecio: item.modificarPrecio
+                    modificarPrecio: item.modificarPrecio,
+                    precioAlMomento: item.precioAlMomento,
+                    excluirPromociones: item.excluirPromociones
                 }));
 
                 // Si es un código de barras, selecciona automáticamente el primer producto
@@ -1191,11 +1195,45 @@ function addFunctions(idTab) {
     // Evento para manejar la selección del producto
     $('#cboSearchProduct' + idTab).on('select2:select', function (e) {
 
+        let currentTab = AllTabsForSale.find(item => item.idTab == idTab);
 
         let searchTerm = lastSearchTerm;
         let data = e.params.data;
         productSelected = data;
-        let currentTab = AllTabsForSale.find(item => item.idTab == idTab);
+
+        if (productSelected.precioAlMomento) {
+
+            swal({
+                title: 'Ingrese el precio',
+                text: '',
+                type: "input",
+                showCancelButton: true,
+                closeOnConfirm: true,
+                inputPlaceholder: "$"
+            }, async function (value) {
+
+                if (value === "") {
+                    toastr.warning("", "debes ingresar el monto");
+                    return false;
+                }
+
+                let nuevoPrecio = parseFloat(value).toFixed(0);
+
+                if (isNaN(nuevoPrecio)) {
+                    toastr.warning("", "debes ingresar un valor numérico");
+                    return false
+                }
+
+                data.price = nuevoPrecio;
+                data.total = nuevoPrecio;
+                setNewProduct(1, 0, data, currentTab, idTab);
+
+                swal.close();
+
+            });
+            return;
+        }
+
 
         if (productAddedByBarcode) {
             let quantity_product_found_codBar = 0;
@@ -1319,8 +1357,6 @@ function agregarProductoEvento(idTab) {
     }
 
     setNewProduct(peso, quantity_product_found, productSelected, currentTab, idTab);
-
-
 }
 
 function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
@@ -1329,8 +1365,9 @@ function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
     data.quantity = Math.trunc(totalQuantity * 10000) / 10000;
 
     //let currentTab = AllTabsForSale.find(item => item.idTab == idTab);
-
-    data = applyPromociones(totalQuantity, data, currentTab);
+    if (!data.excluirPromociones) {
+        data = applyPromociones(totalQuantity, data, currentTab);
+    }
 
     let product = new Producto();
     product.idproduct = data.id;
@@ -1342,6 +1379,8 @@ function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
     product.iva = data.iva;
     product.categoryProducty = data.categoryProducty;
     product.modificarPrecio = data.modificarPrecio;
+    product.precioAlMomento = data.precioAlMomento;
+    product.excluirPromociones = data.excluirPromociones;
 
     if (data.promocion) {
         product.promocion = data.promocion;
@@ -1513,4 +1552,6 @@ class Producto {
     categoryProducty = "";
     iva = 21;
     modificarPrecio = 1;
+    precioAlMomento = 0;
+    excluirPromociones = 0;
 }

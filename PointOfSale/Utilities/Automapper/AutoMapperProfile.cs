@@ -161,6 +161,8 @@ namespace PointOfSale.Utilities.Automapper
             .ForMember(destiny => destiny.PhotoBase64, opt => opt.MapFrom(source => source.Producto != null ? Convert.ToBase64String(ImageHelper.ResizeImage(source.Producto.Photo, 60, 60)) : string.Empty))
             .ForMember(destiny => destiny.TipoVenta, opt => opt.MapFrom(source => source.Producto != null ? source.Producto.TipoVenta : 0))
             .ForMember(destiny => destiny.ModificarPrecio, opt => opt.MapFrom(source => source.Producto != null ? source.Producto.ModificarPrecio : false))
+            .ForMember(destiny => destiny.PrecioAlMomento, opt => opt.MapFrom(source => source.Producto != null ? source.Producto.PrecioAlMomento : false))
+            .ForMember(destiny => destiny.ExcluirPromociones, opt => opt.MapFrom(source => source.Producto != null ? source.Producto.ExcluirPromociones : false))
             .ForMember(destiny => destiny.Price, opt => opt.MapFrom(source => source.Precio))
             .ForMember(destiny => destiny.Iva, opt => opt.MapFrom(source => source.Producto != null ? source.Producto.Iva : 21m))
             .ForMember(destiny => destiny.CategoryProducty, opt => opt.MapFrom(source => source.Producto != null && source.Producto.IdCategoryNavigation != null ? source.Producto.IdCategoryNavigation.Description : string.Empty))

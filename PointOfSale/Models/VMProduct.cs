@@ -27,20 +27,18 @@ namespace PointOfSale.Models
         public string? Comentario { get; set; }
         public decimal? Minimo { get; set; }
         public string? ModificationDateString { get; set; }
-
         public decimal? Iva { get; set; }
-
         public string? Precio2 { get; set; }
         public int? PorcentajeProfit2 { get; set; }
-
         public string? Precio3 { get; set; }
         public int? PorcentajeProfit3 { get; set; }
-
         public string? PrecioFormatoWeb { get; set; }
         public int? FormatoWeb { get; set; }
         public bool Destacado { get; set; }
         public bool ProductoWeb { get; set; }
         public bool? ModificarPrecio { get; set; }
+        public bool? PrecioAlMomento { get; set; }
+        public bool? ExcluirPromociones { get; set; }
 
         public virtual ICollection<Stock>? Stocks { get; set; }
         public virtual ICollection<VMTag>? Tags { get; set; }

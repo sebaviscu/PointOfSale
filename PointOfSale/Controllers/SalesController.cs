@@ -201,6 +201,7 @@ namespace PointOfSale.Controllers
                 var result = await _saleService.RegisterSale(_mapper.Map<Sale>(model), inouinput);
 
                 gResponse.State = true;
+                gResponse.Message = result.ErrorFacturacion;
                 gResponse.Object = _mapper.Map<VMSaleResult>(result);
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
