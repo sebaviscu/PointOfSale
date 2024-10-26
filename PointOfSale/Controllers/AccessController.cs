@@ -133,6 +133,16 @@ namespace PointOfSale.Controllers
                     claims.Add(new Claim("Turno", turnoActual.IdTurno.ToString()));
                 }
 
+                var now = TimeHelper.GetArgentinaTime();
+                var diaSemanaActual = (DiasSemana)((int)now.DayOfWeek == 0 ? 7 : (int)now.DayOfWeek);
+                var horario = user_found.Horarios.FirstOrDefault(_ => _.DiaSemana == diaSemanaActual);
+
+                if (horario != null && user_found.SinHorario.HasValue && !user_found.SinHorario.Value)
+                {
+                    claims.Add(new Claim("HoraEntrada", horario.HoraEntrada));
+                    claims.Add(new Claim("HoraSalida", horario.HoraSalida));
+                }
+
                 ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 AuthenticationProperties properties = new AuthenticationProperties()
                 {

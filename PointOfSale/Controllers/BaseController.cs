@@ -21,6 +21,7 @@ namespace PointOfSale.Controllers
                 return RedirectToAction("Login", "Access");
             else
             {
+                ValidarHorario();
                 return View();
             }
         }
@@ -144,5 +145,27 @@ namespace PointOfSale.Controllers
             return StatusCode(StatusCodes.Status500InternalServerError, gResponse);
         }
 
+
+
+        public void ValidarHorario()
+        {
+            var claimUser = HttpContext.User;
+
+            var horaEntrada = GetClaimValue<string>(claimUser, "HoraEntrada");
+            var horaSalida = GetClaimValue<string>(claimUser, "HoraSalida");
+
+            if (horaEntrada == null || horaSalida == null)
+                return;
+            var now = TimeHelper.GetArgentinaTime();
+
+            var vaido = TimeSpan.Parse(horaEntrada) <= now.TimeOfDay &&
+                        TimeSpan.Parse(horaSalida) >= now.TimeOfDay;
+
+            if (!vaido)
+            {
+                throw new AccessViolationException("FUERA DEL HORARIO LABORAL");
+            }
+
+        }
     }
 }
