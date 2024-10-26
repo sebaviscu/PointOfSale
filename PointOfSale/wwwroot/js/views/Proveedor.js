@@ -64,8 +64,12 @@ $(document).ready(function () {
             { "data": "web" },
             { "data": "comentario" },
             {
-                "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
-                    '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-trash-can"></i></button>',
+                "defaultContent": '<button class="btn btn-info btn-edit btn-sm"><i class="mdi mdi-eye"></i></button>',
+
+
+                //"defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
+                //    '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-trash-can"></i></button>',
+
                 "orderable": false,
                 "searchable": false,
                 "width": "80px"
@@ -277,168 +281,168 @@ const openModalProveedor = (model = BASIC_MODEL_PROVEEDOR) => {
     $("#modalData").modal("show")
 }
 
-$("#btnNew").on("click", function () {
-    openModalProveedor()
-})
+//$("#btnNew").on("click", function () {
+//    openModalProveedor()
+//})
 
-$("#btnSave").on("click", function () {
-    const inputs = $("input.input-validate").serializeArray();
-    const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
+//$("#btnSave").on("click", function () {
+//    const inputs = $("input.input-validate").serializeArray();
+//    const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
 
-    if (inputs_without_value.length > 0) {
-        const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
-        toastr.warning(msg, "");
-        $(`input[name="${inputs_without_value[0].name}"]`).focus();
-        return;
-    }
-
-
-    const model = structuredClone(BASIC_MODEL_PROVEEDOR);
-    model["idProveedor"] = $("#txtId").val();
-    model["nombre"] = $("#txtNombre").val();
-    model["direccion"] = $("#txtDireccion").val();
-    model["cuil"] = $("#txtCuil").val();
-    model["telefono"] = $("#txtTelefono").val();
-    model["telefono2"] = $("#txtTelefono2").val();
-    model["nombreContacto"] = $("#txtContacto").val();
-    model["web"] = $("#txtWeb").val();
-    model["email"] = $("#txtEmail").val();
-    model["iva"] = $("#txtIvaProveedor").val();
-    model["comentario"] = $("#txtComentario").val();
-    model["tipoFactura"] = parseInt($("#cboTipoFactura").val());
-
-    $("#modalData").find("div.modal-content").LoadingOverlay("show")
+//    if (inputs_without_value.length > 0) {
+//        const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
+//        toastr.warning(msg, "");
+//        $(`input[name="${inputs_without_value[0].name}"]`).focus();
+//        return;
+//    }
 
 
-    if (model.idProveedor == 0) {
-        fetch("/Proveedores/CreateProveedor", {
-            method: "POST",
-            headers: { 'Content-Type': 'application/json;charset=utf-8' },
-            body: JSON.stringify(model)
-        }).then(response => {
-            $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-            return response.json();
-        }).then(responseJson => {
+//    const model = structuredClone(BASIC_MODEL_PROVEEDOR);
+//    model["idProveedor"] = $("#txtId").val();
+//    model["nombre"] = $("#txtNombre").val();
+//    model["direccion"] = $("#txtDireccion").val();
+//    model["cuil"] = $("#txtCuil").val();
+//    model["telefono"] = $("#txtTelefono").val();
+//    model["telefono2"] = $("#txtTelefono2").val();
+//    model["nombreContacto"] = $("#txtContacto").val();
+//    model["web"] = $("#txtWeb").val();
+//    model["email"] = $("#txtEmail").val();
+//    model["iva"] = $("#txtIvaProveedor").val();
+//    model["comentario"] = $("#txtComentario").val();
+//    model["tipoFactura"] = parseInt($("#cboTipoFactura").val());
 
-            if (responseJson.state) {
-
-                tableDataProveedor.row.add(responseJson.object).draw(false);
-                $("#modalData").modal("hide");
-                swal("Exitoso!", "Proveedor fué creada", "success");
-
-            } else {
-                swal("Lo sentimos", responseJson.message, "error");
-            }
-        }).catch((error) => {
-            $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-        })
-    } else {
-
-        fetch("/Proveedores/UpdateProveedor", {
-            method: "PUT",
-            headers: { 'Content-Type': 'application/json;charset=utf-8' },
-            body: JSON.stringify(model)
-        }).then(response => {
-            $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-            return response.json();
-        }).then(responseJson => {
-            if (responseJson.state) {
-
-                tableDataProveedor.row(rowSelectedProveedor).data(responseJson.object).draw(false);
-                rowSelectedProveedor = null;
-                $("#modalData").modal("hide");
-                swal("Exitoso!", "Proveedor fué modificada", "success");
-
-            } else {
-                swal("Lo sentimos", responseJson.message, "error");
-            }
-        }).catch((error) => {
-            $("#modalData").find("div.modal-content").LoadingOverlay("hide")
-        })
-    }
-
-})
-
-$("#btnSavePago").on("click", function () {
-    const inputs = $("input.input-validate-pago").serializeArray();
-    const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
-
-    if (inputs_without_value.length > 0) {
-        const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
-        toastr.warning(msg, "");
-        $(`input[name="${inputs_without_value[0].name}"]`).focus();
-        return;
-    }
-
-    if ($("#cboProveedor").val() == '') {
-        const msg = `Debe seleccionar un proveedor`;
-        toastr.warning(msg, "");
-        return;
-    }
-
-    const model = structuredClone(BASIC_MODEL_PAGO);
-    model["idProveedorMovimiento"] = parseInt($("#txtIdPagoProveedor").val());
-    model["idProveedor"] = $("#cboProveedor").val();
-    model["tipoFactura"] = $("#cboTipoFacturaPago").val();
-    model["nroFactura"] = $("#txtNroFactura").val();
-    model["iva"] = $("#txtIva").val() != '' ? $("#txtIva").val() : 0;
-    model["ivaImporte"] = $("#txtImporteIva").val() != '' ? $("#txtImporteIva").val() : 0;
-    model["importe"] = $("#txtImporte").val();
-    model["importeSinIva"] = $("#txtImporteSinIva").val() != '' ? $("#txtImporteSinIva").val() : 0;
-    model["comentario"] = $("#txtComentarioPago").val();
-    model["estadoPago"] = parseInt($("#cboEstado").val());
-    model["facturaPendiente"] = document.querySelector('#cbxFacturaPendiente').checked;
-
-    $("#modalPago").find("div.modal-content").LoadingOverlay("show")
+//    $("#modalData").find("div.modal-content").LoadingOverlay("show")
 
 
-    if (model.idProveedorMovimiento == 0) {
-        fetch("/Proveedores/RegistrarPagoProveedor", {
-            method: "POST",
-            headers: { 'Content-Type': 'application/json;charset=utf-8' },
-            body: JSON.stringify(model)
-        }).then(response => {
-            $("#modalPago").find("div.modal-content").LoadingOverlay("hide")
-            return response.json();
-        }).then(responseJson => {
+//    if (model.idProveedor == 0) {
+//        fetch("/Proveedores/CreateProveedor", {
+//            method: "POST",
+//            headers: { 'Content-Type': 'application/json;charset=utf-8' },
+//            body: JSON.stringify(model)
+//        }).then(response => {
+//            $("#modalData").find("div.modal-content").LoadingOverlay("hide")
+//            return response.json();
+//        }).then(responseJson => {
 
-            if (responseJson.state) {
-                tableDataProveedores.row.add(responseJson.object).draw(false);
+//            if (responseJson.state) {
 
-                $("#modalPago").modal("hide");
-                swal("Exitoso!", "Pago a proveedor fué creada", "success");
+//                tableDataProveedor.row.add(responseJson.object).draw(false);
+//                $("#modalData").modal("hide");
+//                swal("Exitoso!", "Proveedor fué creada", "success");
 
-            } else {
-                swal("Lo sentimos", responseJson.message, "error");
-            }
-        }).catch((error) => {
-            $("#modalPago").find("div.modal-content").LoadingOverlay("hide")
-        })
+//            } else {
+//                swal("Lo sentimos", responseJson.message, "error");
+//            }
+//        }).catch((error) => {
+//            $("#modalData").find("div.modal-content").LoadingOverlay("hide")
+//        })
+//    } else {
 
-    } else {
+//        fetch("/Proveedores/UpdateProveedor", {
+//            method: "PUT",
+//            headers: { 'Content-Type': 'application/json;charset=utf-8' },
+//            body: JSON.stringify(model)
+//        }).then(response => {
+//            $("#modalData").find("div.modal-content").LoadingOverlay("hide")
+//            return response.json();
+//        }).then(responseJson => {
+//            if (responseJson.state) {
 
-        fetch("/Proveedores/UpdatePagoProveedor", {
-            method: "PUT",
-            headers: { 'Content-Type': 'application/json;charset=utf-8' },
-            body: JSON.stringify(model)
-        }).then(response => {
-            $("#modalPago").find("div.modal-content").LoadingOverlay("hide")
-            return response.json();
-        }).then(responseJson => {
-            if (responseJson.state) {
-                tableDataProveedores.row(rowSelectedProveedor).data(responseJson.object).draw(false);
-                rowSelectedProveedor = null;
-                $("#modalPago").modal("hide");
-                swal("Exitoso!", "Pago a proveedor fué modificada", "success");
+//                tableDataProveedor.row(rowSelectedProveedor).data(responseJson.object).draw(false);
+//                rowSelectedProveedor = null;
+//                $("#modalData").modal("hide");
+//                swal("Exitoso!", "Proveedor fué modificada", "success");
 
-            } else {
-                swal("Lo sentimos", responseJson.message, "error");
-            }
-        }).catch((error) => {
-            $("#modalPago").find("div.modal-content").LoadingOverlay("hide")
-        })
-    }
-})
+//            } else {
+//                swal("Lo sentimos", responseJson.message, "error");
+//            }
+//        }).catch((error) => {
+//            $("#modalData").find("div.modal-content").LoadingOverlay("hide")
+//        })
+//    }
+
+//})
+
+//$("#btnSavePago").on("click", function () {
+//    const inputs = $("input.input-validate-pago").serializeArray();
+//    const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
+
+//    if (inputs_without_value.length > 0) {
+//        const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
+//        toastr.warning(msg, "");
+//        $(`input[name="${inputs_without_value[0].name}"]`).focus();
+//        return;
+//    }
+
+//    if ($("#cboProveedor").val() == '') {
+//        const msg = `Debe seleccionar un proveedor`;
+//        toastr.warning(msg, "");
+//        return;
+//    }
+
+//    const model = structuredClone(BASIC_MODEL_PAGO);
+//    model["idProveedorMovimiento"] = parseInt($("#txtIdPagoProveedor").val());
+//    model["idProveedor"] = $("#cboProveedor").val();
+//    model["tipoFactura"] = $("#cboTipoFacturaPago").val();
+//    model["nroFactura"] = $("#txtNroFactura").val();
+//    model["iva"] = $("#txtIva").val() != '' ? $("#txtIva").val() : 0;
+//    model["ivaImporte"] = $("#txtImporteIva").val() != '' ? $("#txtImporteIva").val() : 0;
+//    model["importe"] = $("#txtImporte").val();
+//    model["importeSinIva"] = $("#txtImporteSinIva").val() != '' ? $("#txtImporteSinIva").val() : 0;
+//    model["comentario"] = $("#txtComentarioPago").val();
+//    model["estadoPago"] = parseInt($("#cboEstado").val());
+//    model["facturaPendiente"] = document.querySelector('#cbxFacturaPendiente').checked;
+
+//    $("#modalPago").find("div.modal-content").LoadingOverlay("show")
+
+
+//    if (model.idProveedorMovimiento == 0) {
+//        fetch("/Proveedores/RegistrarPagoProveedor", {
+//            method: "POST",
+//            headers: { 'Content-Type': 'application/json;charset=utf-8' },
+//            body: JSON.stringify(model)
+//        }).then(response => {
+//            $("#modalPago").find("div.modal-content").LoadingOverlay("hide")
+//            return response.json();
+//        }).then(responseJson => {
+
+//            if (responseJson.state) {
+//                tableDataProveedores.row.add(responseJson.object).draw(false);
+
+//                $("#modalPago").modal("hide");
+//                swal("Exitoso!", "Pago a proveedor fué creada", "success");
+
+//            } else {
+//                swal("Lo sentimos", responseJson.message, "error");
+//            }
+//        }).catch((error) => {
+//            $("#modalPago").find("div.modal-content").LoadingOverlay("hide")
+//        })
+
+//    } else {
+
+//        fetch("/Proveedores/UpdatePagoProveedor", {
+//            method: "PUT",
+//            headers: { 'Content-Type': 'application/json;charset=utf-8' },
+//            body: JSON.stringify(model)
+//        }).then(response => {
+//            $("#modalPago").find("div.modal-content").LoadingOverlay("hide")
+//            return response.json();
+//        }).then(responseJson => {
+//            if (responseJson.state) {
+//                tableDataProveedores.row(rowSelectedProveedor).data(responseJson.object).draw(false);
+//                rowSelectedProveedor = null;
+//                $("#modalPago").modal("hide");
+//                swal("Exitoso!", "Pago a proveedor fué modificada", "success");
+
+//            } else {
+//                swal("Lo sentimos", responseJson.message, "error");
+//            }
+//        }).catch((error) => {
+//            $("#modalPago").find("div.modal-content").LoadingOverlay("hide")
+//        })
+//    }
+//})
 
 $("#tbData tbody").on("click", ".btn-edit", function () {
 
@@ -453,55 +457,55 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
     openModalProveedor(data);
 })
 
-$("#tbData tbody").on("click", ".btn-delete", function () {
+//$("#tbData tbody").on("click", ".btn-delete", function () {
 
-    let row;
+//    let row;
 
-    if ($(this).closest('tr').hasClass('child')) {
-        row = $(this).closest('tr').prev();
-    } else {
-        row = $(this).closest('tr');
-    }
-    const data = tableDataProveedor.row(row).data();
+//    if ($(this).closest('tr').hasClass('child')) {
+//        row = $(this).closest('tr').prev();
+//    } else {
+//        row = $(this).closest('tr');
+//    }
+//    const data = tableDataProveedor.row(row).data();
 
-    swal({
-        title: "¿Está seguro?",
-        text: `Eliminar Proveedor "${data.nombre}"`,
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonClass: "btn-danger",
-        confirmButtonText: "Si, eliminar",
-        cancelButtonText: "No, cancelar",
-        closeOnConfirm: false,
-        closeOnCancel: true
-    },
-        function (respuesta) {
+//    swal({
+//        title: "¿Está seguro?",
+//        text: `Eliminar Proveedor "${data.nombre}"`,
+//        type: "warning",
+//        showCancelButton: true,
+//        confirmButtonClass: "btn-danger",
+//        confirmButtonText: "Si, eliminar",
+//        cancelButtonText: "No, cancelar",
+//        closeOnConfirm: false,
+//        closeOnCancel: true
+//    },
+//        function (respuesta) {
 
-            if (respuesta) {
+//            if (respuesta) {
 
-                $(".showSweetAlert").LoadingOverlay("show")
+//                $(".showSweetAlert").LoadingOverlay("show")
 
-                fetch(`/Proveedores/DeleteProveedor?idProveedor=${data.idProveedor}`, {
-                    method: "DELETE"
-                }).then(response => {
-                    $(".showSweetAlert").LoadingOverlay("hide")
-                    return response.json();
-                }).then(responseJson => {
-                    if (responseJson.state) {
+//                fetch(`/Proveedores/DeleteProveedor?idProveedor=${data.idProveedor}`, {
+//                    method: "DELETE"
+//                }).then(response => {
+//                    $(".showSweetAlert").LoadingOverlay("hide")
+//                    return response.json();
+//                }).then(responseJson => {
+//                    if (responseJson.state) {
 
-                        tableDataProveedor.row(row).remove().draw();
-                        swal("Exitoso!", "Proveedor  fué eliminada", "success");
+//                        tableDataProveedor.row(row).remove().draw();
+//                        swal("Exitoso!", "Proveedor  fué eliminada", "success");
 
-                    } else {
-                        swal("Lo sentimos", responseJson.message, "error");
-                    }
-                })
-                    .catch((error) => {
-                        $(".showSweetAlert").LoadingOverlay("hide")
-                    })
-            }
-        });
-})
+//                    } else {
+//                        swal("Lo sentimos", responseJson.message, "error");
+//                    }
+//                })
+//                    .catch((error) => {
+//                        $(".showSweetAlert").LoadingOverlay("hide")
+//                    })
+//            }
+//        });
+//})
 
 
 function cargarTablaGastosProveedores(isGlobal) {

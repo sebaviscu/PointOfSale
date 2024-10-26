@@ -32,6 +32,9 @@
                                 <a class="nav-link" id="v-tiendas-tab-tab" data-bs-toggle="tab" href="#v-tiendas" role="tab" aria-controls="v-tiendas" aria-selected="false">Puntos de Venta</a>
                             </li>
                             <li class="nav-item" role="presentation">
+                                <a class="nav-link" id="v-proveedores-tab-tab" data-bs-toggle="tab" href="#v-proveedores" role="tab" aria-controls="v-proveedores" aria-selected="false">Proveedores</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
                                 <a class="nav-link" id="v-tags-tab-tab" data-bs-toggle="tab" href="#v-tags" role="tab" aria-controls="v-tags" aria-selected="false">Tags</a>
                             </li>
                             <li class="nav-item" role="presentation">
@@ -118,6 +121,39 @@
                                                         <th>Telefono</th>
                                                         <th>Direccion</th>
                                                         <th>Precios</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- Contenido de la pestaña "Proveedores" -->
+                            <div class="tab-pane fade" id="v-proveedores" role="tabpanel" aria-labelledby="v-proveedores-tab">
+                                <div class="card-header card-header-border-bottom d-flex justify-content-between" style="padding-top: 0;">
+                                    <div>
+                                        <h4>Proveedores</h4>
+                                    </div>
+                                    <div class="">
+                                        <button class="btn btn-success btn-sm" id="btnNewProveedor"><span class="mdi mdi-note-plus me-1"></span>Nuevo Proveedor</button>
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <table id="tbDataProveedor" class="table table-striped" style="width:100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>Nombre</th>
+                                                        <th>Contacto</th>
+                                                        <th>Telefono</th>
+                                                        <th>Comentario</th>
                                                         <th></th>
                                                     </tr>
                                                 </thead>
@@ -954,6 +990,117 @@
         </div>
     </div>
 </div>
+
+
+
+<!-- Grid Modal -->
+<div class="modal fade" id="modalDataProveedor" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalGridTitle">Detalle Proveedors</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" value="0" id="txtIdProveedor">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-row">
+                            <div class="form-group col-sm-12 margin-min">
+                                <label for="txtRazonSocialProveedor">Razon Social</label>
+                                <input type="text" class="form-control form-control-sm input-validate-proveedor" id="txtRazonSocialProveedor" name="Nombre">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-6 margin-min">
+                                <label for="txtCuilProveedor">Cuil</label>
+                                <input type="text" class="form-control form-control-sm" id="txtCuilProveedor" name="Cuil">
+                            </div>
+                            <div class="form-group col-sm-3 margin-min">
+                                <label for="txtIvaProveedor">IVA</label>
+                                <select class="form-control form-control-sm" id="txtIvaProveedor">
+                                    <option value="0">0 %</option>
+                                    <option value="10.5">10,5 %</option>
+                                    <option value="21">21 %</option>
+                                    <option value="27">27 %</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <label for="cboTipoFacturaProveedor">Factura</label>
+                                <select class="form-control form-control-sm" id="cboTipoFacturaProveedor">
+                                    <option value=""></option>
+                                    <option value="0">A</option>
+                                    <option value="1">B</option>
+                                    <option value="2">C</option>
+                                    <option value="3">X</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-12 margin-min">
+                                <label for="txtContactoProveedor">Nombre de Contacto</label>
+                                <input type="text" class="form-control form-control-sm" id="txtContactoProveedor" name="Nombre de contacto">
+                            </div>
+
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-6 margin-min">
+                                <label for="txtTelefonoProveedor">Telefono 1</label>
+                                <input type="text" class="form-control form-control-sm" id="txtTelefonoProveedor" name="telefono">
+                            </div>
+                            <div class="form-group col-sm-6 margin-min">
+                                <label for="txtTelefono2Proveedor">Telefono 2</label>
+                                <input type="text" class="form-control form-control-sm" id="txtTelefono2Proveedor" name="telefono">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-12 margin-min">
+                                <label for="txtDireccionProveedor">Direccion</label>
+                                <input type="text" class="form-control form-control-sm" id="txtDireccionProveedor" name="Direccion">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-6 margin-min">
+                                <label for="txtEmailProveedor">Email</label>
+                                <input type="text" class="form-control form-control-sm" id="txtEmailProveedor" name="Email">
+                            </div>
+                            <div class="form-group col-sm-6 margin-min">
+                                <label for="txtWebProveedor">Web</label>
+                                <input type="text" class="form-control form-control-sm" id="txtWebProveedor" name="Web">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-12 margin-min">
+                                <label for="txtComentarioProveedor">Comentario</label>
+                                <input type="text" class="form-control form-control-sm" id="txtComentarioProveedor" name="Comentario">
+                            </div>
+                        </div>
+                        <div class="form-row" id="divModifProveedor">
+                            <div class="form-group col-sm-6 margin-min">
+                                <label for="txtModificadoProveedor">Fecha Modificado</label>
+                                <input type="text" class="form-control form-control-sm" id="txtModificadoProveedor" name="fechaModificado" readonly>
+                            </div>
+                            <div class="form-group col-sm-6 margin-min">
+                                <label for="txtModificadoUsuarioProveedor">Por:</label>
+                                <input type="text" class="form-control form-control-sm" id="txtModificadoUsuarioProveedor" name="usuarioModificado" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="btnSaveProveedor">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @section Scripts {
     <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>

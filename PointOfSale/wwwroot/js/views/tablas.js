@@ -18,6 +18,25 @@ let rowSelectedComodin3;
 let tableComodin3;
 let tableDataTienda;
 let rowSelectedTienda;
+let tableDataProveedor;
+let rowSelectedProveedor;
+
+const BASIC_MODEL_PROVEEDOR = {
+    idProveedor: 0,
+    nombre: '',
+    cuil: null,
+    telefono: null,
+    direccion: null,
+    nombreContacto: null,
+    telefono2: null,
+    email: null,
+    web: null,
+    comentario: null,
+    iva: null,
+    registrationDate: null,
+    modificationDate: null,
+    modificationUser: null
+}
 
 const BASIC_MODEL_TIENDA = {
     idTienda: 0,
@@ -74,6 +93,46 @@ const BASIC_MODEL_LOV = {
 }
 
 $(document).ready(function () {
+
+    tableDataProveedor = $("#tbDataProveedor").DataTable({
+        responsive: true,
+        "ajax": {
+            "url": "/Proveedores/GetProveedores",
+            "type": "GET",
+            "datatype": "json"
+        },
+        "columns": [
+            {
+                "data": "idProveedor",
+                "visible": false,
+                "searchable": false
+            },
+            { "data": "nombre" },
+            { "data": "nombreContacto" },
+            { "data": "telefono" },
+            { "data": "comentario" },
+            {
+                "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
+                    '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-trash-can"></i></button>',
+                "orderable": false,
+                "searchable": false,
+                "width": "80px"
+            }
+        ],
+        order: [[1, "asc"]],
+        dom: "Bfrtip",
+        buttons: [
+            {
+                text: 'Exportar Excel',
+                extend: 'excelHtml5',
+                title: '',
+                filename: 'Reporte Proveedors',
+                exportOptions: {
+                    columns: [1, 2, 3, 4]
+                }
+            }, 'pageLength'
+        ]
+    });
 
     tableDataTienda = $("#tbDataTienda").DataTable({
         responsive: true,
@@ -1723,6 +1782,179 @@ $("#tbDataTienda tbody").on("click", ".btn-delete", function () {
 
                         tableDataTienda.row(row).remove().draw();
                         swal("Exitoso!", "Punto de venta fué eliminado", "success");
+
+                    } else {
+                        swal("Lo sentimos", responseJson.message, "error");
+                    }
+                })
+                    .catch((error) => {
+                        $(".showSweetAlert").LoadingOverlay("hide")
+                    })
+            }
+        });
+})
+
+
+
+const openModalProveedor = (model = BASIC_MODEL_PROVEEDOR) => {
+    $("#txtIdProveedor").val(model.idProveedor);
+    $("#txtRazonSocialProveedor").val(model.nombre);
+    $("#txtCuilProveedor").val(model.cuil);
+    $("#txtDireccionProveedor").val(model.direccion);
+    $("#txtTelefonoProveedor").val(model.telefono);
+    $("#txtTelefono2Proveedor").val(model.telefono2);
+    $("#txtContactoProveedor").val(model.nombreContacto);
+    $("#txtWebProveedor").val(model.web);
+    $("#txtEmailProveedor").val(model.email);
+    $("#txtIvaProveedor").val(model.iva);
+    $("#txtComentarioProveedor").val(model.comentario);
+    $("#cboTipoFacturaProveedor").val(model.tipoFactura);
+
+    if (model.modificationUser === null)
+        document.getElementById("divModifProveedor").style.display = 'none';
+    else {
+        document.getElementById("divModifProveedor").style.display = '';
+        let dateTimeModif = new Date(model.modificationDate);
+
+        $("#txtModificadoProveedor").val(dateTimeModif.toLocaleString());
+        $("#txtModificadoUsuarioProveedor").val(model.modificationUser);
+    }
+
+    $("#modalDataProveedor").modal("show")
+}
+
+$("#btnNewProveedor").on("click", function () {
+    openModalProveedor()
+})
+
+$("#btnSaveProveedor").on("click", function () {
+    const inputs = $("input.input-validate-proveedor").serializeArray();
+    const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
+
+    if (inputs_without_value.length > 0) {
+        const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
+        toastr.warning(msg, "");
+        $(`input[name="${inputs_without_value[0].name}"]`).focus();
+        return;
+    }
+
+    const model = structuredClone(BASIC_MODEL_PROVEEDOR);
+    model["idProveedor"] = $("#txtIdProveedor").val();
+    model["nombre"] = $("#txtRazonSocialProveedor").val();
+    model["direccion"] = $("#txtDireccionProveedor").val();
+    model["cuil"] = $("#txtCuilProveedor").val();
+    model["telefono"] = $("#txtTelefonoProveedor").val();
+    model["telefono2"] = $("#txtTelefono2Proveedor").val();
+    model["nombreContacto"] = $("#txtContactoProveedor").val();
+    model["web"] = $("#txtWebProveedor").val();
+    model["email"] = $("#txtEmailProveedor").val();
+    model["iva"] = $("#txtIvaProveedor").val();
+    model["comentario"] = $("#txtComentarioProveedor").val();
+    model["tipoFactura"] = parseInt($("#cboTipoFacturaProveedor").val());
+
+    $("#modalDataProveedor").find("div.modal-content").LoadingOverlay("show")
+
+
+    if (model.idProveedor == 0) {
+        fetch("/Proveedores/CreateProveedor", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json;charset=utf-8' },
+            body: JSON.stringify(model)
+        }).then(response => {
+            $("#modalDataProveedor").find("div.modal-content").LoadingOverlay("hide")
+            return response.json();
+        }).then(responseJson => {
+
+            if (responseJson.state) {
+
+                tableDataProveedor.row.add(responseJson.object).draw(false);
+                $("#modalDataProveedor").modal("hide");
+                swal("Exitoso!", "Proveedor fué creada", "success");
+
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+        }).catch((error) => {
+            $("#modalDataProveedor").find("div.modal-content").LoadingOverlay("hide")
+        })
+    } else {
+
+        fetch("/Proveedores/UpdateProveedor", {
+            method: "PUT",
+            headers: { 'Content-Type': 'application/json;charset=utf-8' },
+            body: JSON.stringify(model)
+        }).then(response => {
+            $("#modalDataProveedor").find("div.modal-content").LoadingOverlay("hide")
+            return response.json();
+        }).then(responseJson => {
+            if (responseJson.state) {
+
+                tableDataProveedor.row(rowSelectedProveedor).data(responseJson.object).draw(false);
+                rowSelectedProveedor = null;
+                $("#modalDataProveedor").modal("hide");
+                swal("Exitoso!", "Proveedor fué modificada", "success");
+
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+        }).catch((error) => {
+            $("#modalDataProveedor").find("div.modal-content").LoadingOverlay("hide")
+        })
+    }
+
+})
+
+$("#tbDataProveedor tbody").on("click", ".btn-edit", function () {
+
+    if ($(this).closest('tr').hasClass('child')) {
+        rowSelectedProveedor = $(this).closest('tr').prev();
+    } else {
+        rowSelectedProveedor = $(this).closest('tr');
+    }
+
+    const data = tableDataProveedor.row(rowSelectedProveedor).data();
+
+    openModalProveedor(data);
+})
+
+$("#tbDataProveedor tbody").on("click", ".btn-delete", function () {
+
+    let row;
+
+    if ($(this).closest('tr').hasClass('child')) {
+        row = $(this).closest('tr').prev();
+    } else {
+        row = $(this).closest('tr');
+    }
+    const data = tableDataProveedor.row(row).data();
+
+    swal({
+        title: "¿Está seguro?",
+        text: `Eliminar Proveedor "${data.nombre}"`,
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonClass: "btn-danger",
+        confirmButtonText: "Si, eliminar",
+        cancelButtonText: "No, cancelar",
+        closeOnConfirm: false,
+        closeOnCancel: true
+    },
+        function (respuesta) {
+
+            if (respuesta) {
+
+                $(".showSweetAlert").LoadingOverlay("show")
+
+                fetch(`/Proveedores/DeleteProveedor?idProveedor=${data.idProveedor}`, {
+                    method: "DELETE"
+                }).then(response => {
+                    $(".showSweetAlert").LoadingOverlay("hide")
+                    return response.json();
+                }).then(responseJson => {
+                    if (responseJson.state) {
+
+                        tableDataProveedor.row(row).remove().draw();
+                        swal("Exitoso!", "Proveedor  fué eliminada", "success");
 
                     } else {
                         swal("Lo sentimos", responseJson.message, "error");

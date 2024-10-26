@@ -32,7 +32,7 @@
                 <div class="ms-auto bd-highlight d-flex flex-column align-items-end">
                     <div>
                         <button class="btn btn-info btn-sm ms-3" id="btnNuevoGasto"><i class="mdi mdi-cash-multiple me-1"></i>&nbsp;Nuevo Pago</button>
-                        <button class="btn btn-success btn-sm ms-5" id="btnNew"><span class="mdi mdi-note-plus me-1"></span>Nuevo Proveedor</button>
+                        @* <button class="btn btn-success btn-sm ms-5" id="btnNew"><span class="mdi mdi-note-plus me-1"></span>Nuevo Proveedor</button> *@
                     </div>
                     <div class="form-group mt-2" id="divSwitchVisionGlobalProveedores" style=" margin-bottom: 0px; display: none">
                         <div class="form-check form-switch">
@@ -126,118 +126,156 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form>
-                    <input type="hidden" value="0" id="txtId">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <div class="form-row">
-                                <div class="form-group col-sm-12 margin-min">
-                                    <label for="txtNombre">Razon Social</label>
-                                    <input type="text" class="form-control form-control-sm input-validate" id="txtNombre" name="Nombre">
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-sm-6 margin-min">
-                                    <label for="txtCuil">Cuil</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtCuil" name="Cuil">
-                                </div>
-                                <div class="form-group col-sm-3 margin-min">
-                                    <label for="txtIvaProveedor">IVA</label>
-                                    <select class="form-control form-control-sm" id="txtIvaProveedor">
-                                        <option value="0">0 %</option>
-                                        <option value="10.5">10,5 %</option>
-                                        <option value="21">21 %</option>
-                                        <option value="27">27 %</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-sm-3">
-                                    <label for="cboTipoFactura">Factura</label>
-                                    <select class="form-control form-control-sm" id="cboTipoFactura">
-                                        <option value=""></option>
-                                        <option value="0">A</option>
-                                        <option value="1">B</option>
-                                        <option value="2">C</option>
-                                        <option value="3">X</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-sm-12 margin-min">
-                                    <label for="txtContacto">Nombre de Contacto</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtContacto" name="Nombre de contacto">
-                                </div>
 
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-sm-6 margin-min">
-                                    <label for="txtTelefono">Telefono 1</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtTelefono" name="telefono">
-                                </div>
-                                <div class="form-group col-sm-6 margin-min">
-                                    <label for="txtTelefono2">Telefono 2</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtTelefono2" name="telefono">
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-sm-12 margin-min">
-                                    <label for="txtDireccion">Direccion</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtDireccion" name="Direccion">
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-sm-6 margin-min">
-                                    <label for="txtEmail">Email</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtEmail" name="Email">
-                                </div>
-                                <div class="form-group col-sm-6 margin-min">
-                                    <label for="txtWeb">Web</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtWeb" name="Web">
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-sm-12 margin-min">
-                                    <label for="txtComentario">Comentario</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario">
-                                </div>
-                            </div>
-                            <div class="form-row" id="divModif">
-                                <div class="form-group col-sm-6 margin-min">
-                                    <label for="txtModificado">Fecha Modificado</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtModificado" name="fechaModificado" readonly>
-                                </div>
-                                <div class="form-group col-sm-6 margin-min">
-                                    <label for="txtModificadoUsuario">Por:</label>
-                                    <input type="text" class="form-control form-control-sm" id="txtModificadoUsuario" name="usuarioModificado" readonly>
-                                </div>
+                <input type="hidden" value="0" id="txtId">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-row">
+                            <div class="form-group col-sm-12 margin-min">
+                                <label for="txtNombre">Razon Social</label>
+                                <input type="text" class="form-control form-control-sm input-validate" id="txtNombre" name="Nombre" disabled>
                             </div>
                         </div>
-                        <div class="col-sm-8">
-                            <div class="col-sm-12">
-                                <table id="tbMovimientos" class="table" style="width:100%">
-                                    <thead>
-                                        <tr>
-                                            <th></th>
-                                            <th>Fecha</th>
-                                            <th>Importe</th>
-                                            <th>Tipo</th>
-                                            <th>Factura Nro.</th>
-                                            <th>Estado</th>
-                                            <th>Registrado por</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
+                        <div class="form-row">
+                            <div class="form-group col-sm-6 margin-min">
+                                <label for="txtCuil">Cuil</label>
+                                <input type="text" class="form-control form-control-sm" id="txtCuil" name="Cuil" disabled>
+                            </div>
+                            <div class="form-group col-sm-3 margin-min">
+                                <label for="txtIvaProveedor">IVA</label>
+                                <select class="form-control form-control-sm" id="txtIvaProveedor" disabled>
+                                    <option value="0">0 %</option>
+                                    <option value="10.5">10,5 %</option>
+                                    <option value="21">21 %</option>
+                                    <option value="27">27 %</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <label for="cboTipoFactura">Factura</label>
+                                <select class="form-control form-control-sm" id="cboTipoFactura" disabled>
+                                    <option value=""></option>
+                                    <option value="0">A</option>
+                                    <option value="1">B</option>
+                                    <option value="2">C</option>
+                                    <option value="3">X</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-12 margin-min">
+                                <label for="txtContacto">Nombre de Contacto</label>
+                                <input type="text" class="form-control form-control-sm" id="txtContacto" name="Nombre de contacto" disabled>
+                            </div>
+
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-6 margin-min">
+                                <label for="txtTelefono">Telefono 1</label>
+                                <input type="text" class="form-control form-control-sm" id="txtTelefono" name="telefono" disabled>
+                            </div>
+                            <div class="form-group col-sm-6 margin-min">
+                                <label for="txtTelefono2">Telefono 2</label>
+                                <input type="text" class="form-control form-control-sm" id="txtTelefono2" name="telefono" disabled>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-12 margin-min">
+                                <label for="txtDireccion">Direccion</label>
+                                <input type="text" class="form-control form-control-sm" id="txtDireccion" name="Direccion" disabled>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-6 margin-min">
+                                <label for="txtEmail">Email</label>
+                                <input type="text" class="form-control form-control-sm" id="txtEmail" name="Email" disabled>
+                            </div>
+                            <div class="form-group col-sm-6 margin-min">
+                                <label for="txtWeb">Web</label>
+                                <input type="text" class="form-control form-control-sm" id="txtWeb" name="Web" disabled>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-12 margin-min">
+                                <label for="txtComentario">Comentario</label>
+                                <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario" disabled>
+                            </div>
+                        </div>
+                        <div class="form-row" id="divModif">
+                            <div class="form-group col-sm-6 margin-min">
+                                <label for="txtModificado">Fecha Modificado</label>
+                                <input type="text" class="form-control form-control-sm" id="txtModificado" name="fechaModificado" readonly>
+                            </div>
+                            <div class="form-group col-sm-6 margin-min">
+                                <label for="txtModificadoUsuario">Por:</label>
+                                <input type="text" class="form-control form-control-sm" id="txtModificadoUsuario" name="usuarioModificado" readonly>
                             </div>
                         </div>
                     </div>
+                    <div class="col-sm-8">
 
-                </form>
+                        <ul class="nav nav-tabs" role="tablist">
+
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link active" id="v-pagos-tab" data-bs-toggle="tab" href="#v-pagos" role="tab" aria-controls="v-pagos" aria-selected="true">Pagos</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" id="v-pedidos-tab" data-bs-toggle="tab" href="#v-pedidos" role="tab" aria-controls="v-pedidos" aria-selected="false">Pedidos</a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content" id="v-pills-tabContent">
+
+                            <!-- Contenido de la pestaña "Pagos" -->
+                            <div class="tab-pane fade show active" id="v-pagos" role="tabpanel" aria-labelledby="v-pagos-tab">
+
+                                <div class="col-sm-12 mt-3">
+                                    <table id="tbMovimientos" class="table" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th>Fecha</th>
+                                                <th>Importe</th>
+                                                <th>Tipo</th>
+                                                <th>Factura Nro.</th>
+                                                <th>Estado</th>
+                                                <th>Registrado por</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+
+                            <!-- Contenido de la pestaña "Pedidos" -->
+                            <div class="tab-pane fade" id="v-pedidos" role="tabpanel" aria-labelledby="v-pedidos-tab">
+                                PENDIENTE
+                                <div class="col-sm-12 mt-3">
+                                    <table id="tbPedidos" class="table" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th>Fecha</th>
+                                                <th>Importe</th>
+                                                <th>Estado</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
 
             </div>
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" id="btnSave">Guardar Cambios</button>
+                @* <button type="button" class="btn btn-primary" id="btnSave">Guardar Cambios</button> *@
             </div>
         </div>
     </div>
