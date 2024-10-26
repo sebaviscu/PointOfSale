@@ -209,7 +209,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <span>Envío gratis con orden superior a $@Convert.ToInt32(Model.Ajustes.MontoEnvioGratis).</span>
+                            <span id="txtEnvioGratis" montoEnvioGratis="@Model.Ajustes.MontoEnvioGratis">
+                                Envío gratis con orden superior a $@Convert.ToInt32(Model.Ajustes.MontoEnvioGratis).
+                            </span>
                         </div>
 
                     </form>

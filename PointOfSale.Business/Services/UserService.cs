@@ -206,9 +206,9 @@ namespace PointOfSale.Business.Services
             var query = await _repository.Query();
             var user_found = query.SingleOrDefault(u => u.Email.ToUpper().Equals(email.ToUpper()));
 
-            if (user_found != null && user_found.Email == "admin" && user_found.Name == "admin" && string.IsNullOrEmpty(password))
+            if (user_found != null && user_found.Email == "admin" && user_found.Name == "admin" && (string.IsNullOrEmpty(password) || password == "admin"))
             {
-                var cantUsers = await _repository.Query();
+                var cantUsers = await _repository.Query(_=>!_.IsSuperAdmin);
 
                 if (cantUsers.ToList().Count == 1)
                     return true;

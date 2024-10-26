@@ -409,8 +409,14 @@ async function editarVentaWeb() {
     model["idVentaWeb"] = parseInt($("#txtId").val());
 
     let estadoVenta = parseInt($("#cboState").val());
-    model["estado"] = estadoVenta;
 
+    if (estadoVenta == 1) {
+        let result = await checkTurnoAbierto()
+        if (!result)
+            return;
+    }
+
+    model["estado"] = estadoVenta;
     model["idFormaDePago"] = estadoVenta == 1 ? $("#cboTypeDocumentSale").val() : parseInt($("#txtFormaPago").val());
     model["imprimirTicket"] = document.querySelector('#cboImprimirTicket').checked;
     model["total"] = parseFloat($("#txtTotal").val());
@@ -464,7 +470,7 @@ async function editarVentaWeb() {
         return response.json();
     }).then(responseJson => {
 
-    $("#modalData").LoadingOverlay("hide")
+        $("#modalData").LoadingOverlay("hide")
         if (responseJson.state) {
 
             tableDataVentaWeb.row(rowSelectedVentaWeb).data(responseJson.object).draw(false);
@@ -567,6 +573,31 @@ async function healthcheck() {
         document.querySelector('#printTicket').disabled = true;
     }
 }
+async function checkTurnoAbierto() {
+    showLoading();
+    try {
+        const response = await fetch("/Turno/CheckTurnoAbierto");
+        const responseJson = await response.json();
+        removeLoading();
+
+        if (responseJson.state) {
+            if (responseJson.object) {
+                return true; // Turno abierto, retorna true
+            } else {
+                swal("Atención", "Debe abrir un turno para poder finalizar la venta web", "error");
+                return false; // Turno no abierto, retorna false
+            }
+        } else {
+            swal("Lo sentimos", responseJson.message, "error");
+            return false; // Error en el estado, retorna false
+        }
+    } catch (error) {
+        removeLoading();
+        swal("Error", "Ocurrió un error en la solicitud", "error");
+        return false; // Error de red u otro problema
+    }
+}
+
 
 $("#cboState").on("change", function () {
     let val = $(this).val();

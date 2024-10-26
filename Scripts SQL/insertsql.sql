@@ -21,46 +21,47 @@ insert into Users(name,email,idRol,[password],isActive, sinHorario, IsSuperAdmin
 go
 
 insert into Menu([description],icon,isActive, orden, controller, pageAction) values
-('Configuracion','mdi mdi-settings',1,4,null,null), --1
-('Inventario','mdi mdi-package-variant-closed',1,3,null,null), --2
-('Venta','mdi mdi-shopping',1,7,'Sales','NewSale'), --3
-('Reportes','mdi mdi-chart-bar',1,5,null,null), --4
-('Dashboard','mdi mdi-view-dashboard-outline',1,1,'Admin','DashBoard'), --5
-('Admin','mdi mdi-account',1,2,null,null), --6
-('Web','mdi mdi-web',1,6,null,null) --7
+('Dashboard','mdi mdi-view-dashboard-outline',1,1,'Admin','DashBoard'), --1
+('Admin','mdi mdi-account',1,2,null,null), --2
+('Gestion','mdi mdi-chart-pie',1,3,null,null), --3
+('Inventario','mdi mdi-package-variant-closed',1,3,null,null), --4
+('Configuracion','mdi mdi-settings',1,4,null,null), --5
+('Reportes','mdi mdi-chart-bar',1,5,null,null), --6
+('Web','mdi mdi-web',1,6,null,null), --7
+('Venta','mdi mdi-shopping',1,7,'Sales','NewSale') --8
 
 go
 
 --*menu child - Admin
 insert into Menu([description],idMenuParent,controller,pageAction,isActive) values
-('Usuarios',6,'Admin','Users',1), --8
-('Productos',2,'Inventory','Products',1), --9
-('Reporte Ventas',4,'Sales','SalesHistory',1), --10
-('Clientes',6,'Admin','Cliente',1), --11
-('Proveedores',6,'Proveedores','Index',1), --12
-('Promociones',2,'Inventory','Promociones',1), --13
-('Gastos',6,'Gastos','Gastos',1), --14
-('Turnos',6,'Turno','Turno',1), --15
-('Ventas Web',7,'Shop','VentaWeb',1), --16
-('Shop',7,'Shop','Index',1), --17
-('Reporte Productos',4,'Reports','ProductsReport',1), --18
-('Notificaciones',6,'Notification','Notification',1), --19
-('Pedidos',2,'Pedido','Pedido',1), --20
-('Ajustes',1,'Ajustes','Index',1), --21
-('Libro de IVA',4,'Reports','LibroIva',1), -- 22
-('Stock',2,'Inventory','Stock',1), -- 23
-('Facturacion',6,'Facturacion','Index',1), -- 24
-('Movimientos de Caja',6,'MovimientoCaja','Index',1), -- 25
-('Tablas',1,'Tablas','Index',1), -- 26
-('Reporte Precios',4,'Reports','PreciosReport',1), --27
-('Licencia',1,'Licencia','Index',1) --28
+('Usuarios',2,'Admin','Users',1), --9
+('Productos',4,'Inventory','Products',1), --10
+('Reporte Ventas',6,'Sales','SalesHistory',1), --11
+('Clientes',2,'Admin','Cliente',1), --12
+('Proveedores',3,'Proveedores','Index',1), --13
+('Promociones',4,'Inventory','Promociones',1), --14
+('Gastos',3,'Gastos','Gastos',1), --15
+('Turnos',2,'Turno','Turno',1), --16
+('Ventas Web',7,'Shop','VentaWeb',1), --17
+('Shop',7,'Shop','Index',1), --18
+('Reporte Productos',6,'Reports','ProductsReport',1), --19
+('Notificaciones',2,'Notification','Notification',1), --20
+('Pedidos',4,'Pedido','Pedido',1), --21
+('Ajustes',5,'Ajustes','Index',1), --22
+('Libro de IVA',6,'Reports','LibroIva',1), -- 23
+('Stock',4,'Inventory','Stock',1), -- 24
+('Facturacion',3,'Facturacion','Index',1), -- 25
+('Movimientos Caja',2,'MovimientoCaja','Index',1), -- 26
+('Tablas',5,'Tablas','Index',1), -- 27
+('Reporte Precios',6,'Reports','PreciosReport',1), --28
+('Licencia',5,'Licencia','Index',1) --29
 
 go
 
 UPDATE Menu SET idMenuParent = idMenu where idMenuParent is null
 
-update Menu set idMenuParent=null where idMenu=3
-update Menu set idMenuParent=null where idMenu=5
+update Menu set idMenuParent=null where idMenu=1 -- dashboard
+update Menu set idMenuParent=null where idMenu=8 -- ventas
 
 go
 --________________________________ INSERT MENU ROLE ________________________________
@@ -95,31 +96,32 @@ INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (1,25,1),
 (1,26,1),
 (1,27,1),
-(1,28,1)
+(1,28,1),
+(1,29,1)
 
 
 --*empleado
 INSERT INTO RolMenu(idRol,idMenu,isActive) values
-(2,3,1),
-(2,7,1),
-(2,10,1),
-(2,16,1),
+(2,8,1),
+(2,6,1),
+(2,11,1),
 (2,17,1),
-(2,27,1)
+(2,18,1),
+(2,28,1)
 
 --*encargado
 INSERT INTO RolMenu(idRol,idMenu,isActive) values
-(3,2,1),
-(3,3,1),
 (3,4,1),
+(3,5,1),
+(3,6,1),
 (3,7,1),
-(3,9,1),
-(3,10,1),
-(3,13,1),
-(3,16,1),
+(3,8,1),
+(3,11,1),
+(3,14,1),
 (3,17,1),
-(3,23,1),
-(3,27,1)
+(3,18,1),
+(3,24,1),
+(3,28,1)
 
 go
 --________________________________ INSERT CATEGORIES ________________________________

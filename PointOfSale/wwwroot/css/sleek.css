@@ -15887,9 +15887,10 @@ div.copied {
 }
 
 .sidebar .sidenav-item-link {
-  display: flex !important;
-  flex-grow: 1;
-  align-items: center;
+    display: flex !important;
+    flex-grow: 1;
+    align-items: center;
+    padding: 10px 10px 10px 20px;
 }
 
 .sidebar .sidenav-item-link .nav-text {

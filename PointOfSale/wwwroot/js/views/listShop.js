@@ -5,6 +5,7 @@ let hasMoreProducts = true;
 let debounceTimeout;
 let productos = [];
 let primerCargaCache = true;
+let montoEnvioGratis = 0;
 
 $(window).scroll(function () {
     if ($(window).scrollTop() + $(window).height() >= $(document).height() - 50 && hasMoreProducts && !isLoading) {
@@ -16,6 +17,7 @@ $(window).scroll(function () {
 $(document).ready(function () {
 
     loadMoreProducts();
+    montoEnvioGratis = $("#txtEnvioGratis").attr('montoEnvioGratis') != null ? parseFloat($("#txtEnvioGratis").attr('montoEnvioGratis')) : 0;
 
     //setTimeout(function () {
 

@@ -1,5 +1,6 @@
 
 
+--create database POINTOFSALE
 
 create table Tienda(
 idTienda int primary key identity(1,1),
@@ -151,8 +152,9 @@ PrecioAlMomento bit null,
 ExcluirPromociones bit null,
 [idCategory] int references Category(idCategory),
 [idProveedor] int references Proveedor(idProveedor) null,
-[modificationDate] [datetime] null,
-[modificationUser] varchar(50) null
+[modificationDate] datetime null,
+[modificationUser] varchar(50) null,
+[registrationDate] datetime null
 )
 
 go
