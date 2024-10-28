@@ -41,7 +41,7 @@
                 @await Component.InvokeAsync("NombreTienda")
 
                 <!-- begin sidebar scrollbar -->
-                <div class="" data-simplebar style="height: 100%;">
+                <div class="sidebar-container" data-simplebar>
                     <!-- sidebar menu -->
                     <ul class="nav sidebar-inner" id="sidebar-menu" style="margin-top: 10px;">
                         @await Component.InvokeAsync("Menu")
@@ -173,6 +173,7 @@
             </div>
 
             <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
                 <button type="button" class="btn btn-primary" id="btnAbrirTurno">Abrir Turno</button>
             </div>
         </div>

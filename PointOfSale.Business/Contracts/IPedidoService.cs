@@ -20,5 +20,7 @@ namespace PointOfSale.Business.Contracts
         Task<Pedido> Recibir(Pedido entity);
 
         Task<Pedido> CerrarPedido(Pedido entity);
+
+        Task<List<Pedido>> GetByProveedor(int idTienda, int idProveedor);
     }
 }

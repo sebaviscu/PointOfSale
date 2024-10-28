@@ -35,6 +35,8 @@ const BASIC_MODEL_RECIBIR = {
 $(document).ready(function () {
     showLoading();
 
+    let textoBusqueda = $('#txtIdPedidoSearch').text().trim();
+
     fetch("/Proveedores/GetProveedoresConProductos")
         .then(response => {
             return response.json();
@@ -56,7 +58,7 @@ $(document).ready(function () {
 
         })
 
-    tableDataPedido = $("#tbData").DataTable({
+    tableDataPedido = $("#tbDataPedido").DataTable({
         responsive: true,
         "ajax": {
             "url": "/Pedido/GetPedidos",
@@ -87,7 +89,7 @@ $(document).ready(function () {
             {
                 "data": "idPedido",
                 "visible": false,
-                "searchable": false
+                "searchable": true
             },
             {
                 "data": "orden",
@@ -140,7 +142,12 @@ $(document).ready(function () {
                     columns: [1, 2, 3, 4, 5, 6]
                 }
             }, 'pageLength'
-        ]
+        ],
+        "initComplete": function () {
+            if (textoBusqueda !== '') {
+                this.api().column(0).search(parseInt( textoBusqueda)).draw();
+            }
+        }
     });
 
     new ClipboardJS('#btnCopiar');

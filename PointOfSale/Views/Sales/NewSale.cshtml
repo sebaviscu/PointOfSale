@@ -38,6 +38,31 @@
         #cboTypeDocumentSaleParcial:focus {
             outline: 3px solid Blue;
         }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+            z-index: 10; /* Se asegura que esté encima del contenido */
+            cursor: not-allowed; /* Cambia el cursor para indicar que está bloqueado */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #bloqueo-texto {
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.7); /* Fondo ligeramente más oscuro para el texto */
+            border-radius: 5px;
+        }
+
     </style>
 }
 <span class="offset-md-3 text-danger" id="lblErrorPrintService" style="display: none;"><i class="mdi mdi-alert mdi-24px"></i>&nbsp; El servicio de impresión no se encuentra conectado</span>
@@ -66,6 +91,10 @@
 </div>
 
 <div class="tab-content" id="tab-content">
+    <div id="bloqueo" style="display: none;" class="overlay">
+        <span id="bloqueo-texto">Debes abrir un turno para continuar</span>
+    </div>
+
     <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0" hidden>
 
         <div class="row" id="nuevaVenta">

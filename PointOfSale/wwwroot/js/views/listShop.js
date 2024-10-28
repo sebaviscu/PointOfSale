@@ -17,7 +17,7 @@ $(window).scroll(function () {
 $(document).ready(function () {
 
     loadMoreProducts();
-    montoEnvioGratis = $("#txtEnvioGratis").attr('montoEnvioGratis') != null ? parseFloat($("#txtEnvioGratis").attr('montoEnvioGratis')) : 0;
+    montoEnvioGratis = $('#txtMontoEnvioGratis').text().trim() != null ? parseFloat($('#txtMontoEnvioGratis').text().trim()) : null;
 
     //setTimeout(function () {
 
@@ -251,19 +251,33 @@ function resumenVenta() {
         let tableDataShoop = productos.map(value => {
             return (
                 `<tr>
-                       <td class="table-products" style="border-right-color: #ffffff00;"><span class="text-muted">${value.descriptionProduct} - $ ${Number.parseFloat(value.price).toFixed(2)} x ${value.quantity} ${value.tipoVenta}</span>.</td>
-                       <td class="table-products" style="font-size: 12px; text-align: right;"><strong>$ ${Number.parseFloat(value.total).toFixed(2)}</strong></td>
+                       <td class="table-products" style="border-right-color: #ffffff00;"><span class="text-muted">${value.descriptionProduct} - $ ${Number.parseFloat(value.price).toFixed(0)} x ${value.quantity} ${value.tipoVenta}</span>.</td>
+                       <td class="table-products" style="font-size: 12px; text-align: right;"><strong>$ ${Number.parseFloat(value.total).toFixed(0)}</strong></td>
                     </tr>`
             );
         }).join('');
 
+        let total = Number.parseFloat(sum).toFixed(0);
+
         tableDataShoop = tableDataShoop.concat(`<tr>
                        <td class="table-products" style="font-size: 14px; border-right-color: #ffffff00;"><strong>TOTAL</strong></td>
-                       <td class="table-products" style="font-size: 14px; text-align: right;"><strong>$ ${Number.parseFloat(sum).toFixed(2)}</strong></td>
+                       <td class="table-products" style="font-size: 14px; text-align: right;"><strong>$ ${total}</strong></td>
                     </tr>`);
 
         const tableBody = document.querySelector("#tableProductos");
         tableBody.innerHTML = tableDataShoop;
+
+
+        const divMensajeEnvio = document.getElementById("divMensajeEnvio");
+
+        if (total > montoEnvioGratis) {
+            divMensajeEnvio.className = "alert alert-success d-flex align-items-center";
+            document.getElementById("alertTitle").textContent = "¡¡ Envio Gratis !!";
+        } else {
+            divMensajeEnvio.className = "alert alert-warning d-flex align-items-center";
+            document.getElementById("alertTitle").textContent = `Solo faltan $${montoEnvioGratis - total} para que el Envio sea GRATIS !!`;
+        }
+
 
         $("#modalData").modal("show")
     }
@@ -440,7 +454,7 @@ function setValue(event, mult) {
     localStorage.setItem('productos', JSON.stringify(productos));
 }
 
-function dibujarAreaTotales(){
+function dibujarAreaTotales() {
 
     let total = 0;
     let textArea = document.getElementById("text-area-products");
@@ -467,9 +481,17 @@ function dibujarAreaTotales(){
         $("#btnTrash").hide();
     }
 
+    if (total >= montoEnvioGratis && !pasoEnvioGratis) {
+        toastr.success("", "¡¡ Envio gratis !!");
+        pasoEnvioGratis = true;
+    }
+    else if (total < montoEnvioGratis)
+        pasoEnvioGratis = false;
+
     document.getElementById("btnCompras").innerText = `Total: $ ${total}`;
 }
 
+let pasoEnvioGratis = false;
 function otrasFunciones() {
 
     "use strict";

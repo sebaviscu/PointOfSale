@@ -16,6 +16,7 @@
 <link rel="stylesheet" type="text/css" href="~/css/shop/flaticon.css">
 <link rel="stylesheet" type="text/css" href="~/css/shop/icomoon.css">
 <link rel="stylesheet" type="text/css" href="~/css/shop/style.css">
+<link href="~/plugins/toastr/toastr.css" rel="stylesheet">
 
 <html lang="es">
 <head>
@@ -25,6 +26,11 @@
 
 </head>
 <body class="goto-here" style="overflow-x: hidden">
+
+
+    <div id="txtMontoEnvioGratis" style="display:none">
+        @Model.Ajustes.MontoEnvioGratis
+    </div>
 
     <div class="py-1 bg-primary" id="div-cabecera">
         <div class="container">
@@ -209,9 +215,17 @@
                                     </div>
                                 </div>
                             </div>
-                            <span id="txtEnvioGratis" montoEnvioGratis="@Model.Ajustes.MontoEnvioGratis">
-                                Envío gratis con orden superior a $@Convert.ToInt32(Model.Ajustes.MontoEnvioGratis).
-                            </span>
+
+
+                            <div class="col-12">
+                                <div id="divMensajeEnvio" class="alert d-flex" style="justify-content: center;">
+                                    <div>
+                                        <strong id="alertTitle"></strong>
+                                    </div>
+                                </div>
+                            </div>
+
+
                         </div>
 
                     </form>
@@ -236,6 +250,8 @@
     <script src="~/js/shop/jquery.magnific-popup.min.js"></script>
     <script src="~/js/shop/aos.js"></script>
     <script src="~/plugins/sweetalert/sweetalert.js"></script>
+    <script src="~/plugins/toastr/toastr.min.js"></script>
+
     <script src="~/js/views/listShop.js"></script>
 </body>
 </html>

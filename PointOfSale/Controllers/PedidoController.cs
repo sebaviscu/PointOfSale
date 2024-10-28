@@ -31,6 +31,19 @@ namespace PointOfSale.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> ViewById(int idPedido)
+        {
+            ValidarAutorizacion([Roles.Administrador]);
+
+            if (!HttpContext.User.Identity.IsAuthenticated)
+                return RedirectToAction("Login", "Access");
+
+            ViewData["IdPedido"] = idPedido;
+
+            return View("Pedido");
+        }
+
+        [HttpGet]
         public async Task<IActionResult> GetPedidos()
         {
             var gResponse = new GenericResponse<List<VMPedido>>();
@@ -38,6 +51,25 @@ namespace PointOfSale.Controllers
             {
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
                 var list = await _pedidoService.List(user.IdTienda);
+
+                List<VMPedido> vmPedidoList = _mapper.Map<List<VMPedido>>(list);
+                return StatusCode(StatusCodes.Status200OK, new { data = vmPedidoList.OrderBy(_ => _.Orden).ThenByDescending(_ => _.IdPedido).ToList() });
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al recuperar lista de pedidos.", _logger, null);
+            }
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPedidoByProveedor(int idProveedor)
+        {
+            var gResponse = new GenericResponse<List<VMPedido>>();
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+                var list = await _pedidoService.GetByProveedor(user.IdTienda, idProveedor);
 
                 List<VMPedido> vmPedidoList = _mapper.Map<List<VMPedido>>(list);
                 return StatusCode(StatusCodes.Status200OK, new { data = vmPedidoList.OrderBy(_ => _.Orden).ThenByDescending(_ => _.IdPedido).ToList() });

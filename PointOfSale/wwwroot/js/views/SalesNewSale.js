@@ -69,7 +69,12 @@ $(document).ready(function () {
 
                 if (!ajustes.existeTurno) {
                     $('#cboSearchProduct1').select2('close');
-                    openModalDataAbrirTurno();
+                    //openModalDataAbrirTurno();
+                    $('#bloqueo').show();
+
+                }
+                else {
+                    $('#bloqueo').hide();
                 }
 
             } else {

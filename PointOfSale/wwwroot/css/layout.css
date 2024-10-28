@@ -50,3 +50,38 @@ select.input-validate {
     justify-content: center;
     text-align: center;
 }
+
+
+/* Estilo del scrollbar solo dentro del contenedor lateral */
+.sidebar-container {
+    overflow-y: auto;
+}
+
+    /* Estilo para navegadores basados en WebKit (Chrome, Safari, Edge) */
+    .sidebar-container::-webkit-scrollbar {
+        width: 8px; /* Ancho del scrollbar */
+    }
+
+    .sidebar-container::-webkit-scrollbar-track {
+        background-color: #1f2937; /* Color de fondo del track */
+    }
+
+    .sidebar-container::-webkit-scrollbar-thumb {
+        background-color: #3b82f6; /* Color del "pulgar" o scroll */
+        border-radius: 10px; /* Bordes redondeados */
+    }
+
+        .sidebar-container::-webkit-scrollbar-thumb:hover {
+            background-color: #2563eb; /* Color al hacer hover sobre el scroll */
+        }
+
+/* Estilos adicionales para Firefox */
+.sidebar-container {
+    scrollbar-width: thin;
+    scrollbar-color: #3b82f6 #1f2937; /* Color del thumb y del track */
+}
+
+/* Para que no haya scroll horizontal */
+.sidebar-container {
+    overflow-x: hidden;
+}

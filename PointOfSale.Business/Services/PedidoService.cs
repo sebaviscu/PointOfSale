@@ -35,17 +35,16 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<Pedido>> List(int idTienda)
         {
-            try
-            {
-                IQueryable<Pedido> query = await _repository.Query(_ => _.IdTienda == idTienda);
-                var resp = query.Include(_ => _.Proveedor).Include(_ => _.Productos).ToList();
-                return resp;
-            }
-            catch (Exception e)
-            {
+            IQueryable<Pedido> query = await _repository.Query(_ => _.IdTienda == idTienda);
+            var resp = query.Include(_ => _.Proveedor).Include(_ => _.Productos).ToList();
+            return resp;
+        }
 
-                throw;
-            }
+        public async Task<List<Pedido>> GetByProveedor(int idTienda, int idProveedor)
+        {
+            var query = await _repository.Query(c => c.IdTienda == idTienda && idProveedor == idProveedor);
+            var resp = query.Include(_ => _.Productos).ThenInclude(_ => _.Product).ToList();
+            return resp;
         }
 
         public async Task<Pedido> Add(Pedido entity)
@@ -100,7 +99,7 @@ namespace PointOfSale.Business.Services
                 if (Pedido_found == null)
                     throw new TaskCanceledException("El Pedido no se puede cerrar");
 
-                if(entity.Estado == Model.Enum.EstadoPedido.Cancelado)
+                if (entity.Estado == Model.Enum.EstadoPedido.Cancelado)
                 {
                     Pedido_found.FechaCerrado = TimeHelper.GetArgentinaTime();
                     Pedido_found.UsuarioFechaCerrado = entity.UsuarioFechaCerrado;

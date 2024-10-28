@@ -52,8 +52,8 @@ public class Program
 
             builder.Services.AddDbContext<POINTOFSALEContext>(options =>
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("SQL"), sqlServerOptionsAction: sqlOptions =>
-                //options.UseSqlServer(builder.Configuration.GetConnectionString("SQL_Publich"), sqlServerOptionsAction: sqlOptions =>
+                //options.UseSqlServer(builder.Configuration.GetConnectionString("SQL"), sqlServerOptionsAction: sqlOptions =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("SQL_Publich"), sqlServerOptionsAction: sqlOptions =>
                 {
                     sqlOptions.EnableRetryOnFailure(
                         maxRetryCount: 5, // Número máximo de reintentos
