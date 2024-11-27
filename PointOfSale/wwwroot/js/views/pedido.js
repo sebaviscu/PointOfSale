@@ -115,19 +115,17 @@ $(document).ready(function () {
             },
             {
                 "data": "estado",
-                "className": "text-center", render: function (data) {
-                    if (data == 2)
-                        return '<button class="btn btn-secondary btn-sm btn-recibir">Recibir</button>';
-                    else
-                        return '';
-                }
-            },
-            {
-                "defaultContent": '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
-                    '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-trash-can"></i></button>',
                 "orderable": false,
                 "searchable": false,
-                "width": "80px"
+                "width": "80px",
+                "className": "text-center", render: function (data) {
+                    if (data == 1)
+                        return '<button class="btn btn-primary btn-edit btn-sm me-2"><i class="mdi mdi-pencil"></i></button>' +
+                            '<button class="btn btn-danger btn-delete btn-sm"><i class="mdi mdi-cancel" title="Cancelar pedido"></i></button>';
+                    else if(data == 2)
+                    return '<button class="btn btn-secondary btn-sm btn-recibir">Recibir</button>';
+                        return '';
+                }
             }
         ],
         order: [[1, "asc"]],
@@ -276,7 +274,7 @@ $("#btnNew").on("click", function () {
 })
 
 
-$("#tbData tbody").on("click", ".btn-edit", function () {
+$("#tbDataPedido tbody").on("click", ".btn-edit", function () {
 
     if ($(this).closest('tr').hasClass('child')) {
         rowSelectedPedido = $(this).closest('tr').prev();
@@ -475,7 +473,7 @@ $("#btnSave").on("click", function () {
 
 })
 
-$("#tbData tbody").on("click", ".btn-delete", function () {
+$("#tbDataPedido tbody").on("click", ".btn-delete", function () {
 
     let row;
 
@@ -526,10 +524,13 @@ $("#tbData tbody").on("click", ".btn-delete", function () {
                 }
             });
     }
+    else {
+        toastr.warning("No puede cancelar un pedido enciado.", "");
+    }
 })
 
 
-$("#tbData tbody").on("click", ".btn-recibir", function () {
+$("#tbDataPedido tbody").on("click", ".btn-recibir", function () {
 
     if ($(this).closest('tr').hasClass('child')) {
         rowSelectedPedido = $(this).closest('tr').prev();
