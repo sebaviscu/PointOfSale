@@ -425,6 +425,8 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<AjustesFacturacion, VMAjustesFacturacion>().ReverseMap();
             CreateMap<Ajustes, VMAjustesSale>().ReverseMap();
 
+            CreateMap<AjustesWeb, VMAjustesWebReducido>().ReverseMap();
+
             CreateMap<Stock, VMStock>().ReverseMap();
             CreateMap<ListaPrecio, VMListaPrecio>().ReverseMap();
 

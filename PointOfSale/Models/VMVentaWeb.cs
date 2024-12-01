@@ -24,7 +24,7 @@ namespace PointOfSale.Models
         public string? TotalString { get; set; }
         public EstadoVentaWeb? Estado { get; set; }
         public int? IdTienda { get; set; }
-        public virtual ICollection<DetailSale>? DetailSales { get; set; }
+        public virtual ICollection<VMDetailSale>? DetailSales { get; set; }
         public string? Fecha { get; set; }
         public DateTime? RegistrationDate { get; set; }
         public string? FormaDePago { get; set; }
@@ -42,6 +42,9 @@ namespace PointOfSale.Models
         public List<Images> ImagesTicket { get; set; }
 
         public bool ImprimirTicket { get; set; }
+        public decimal? DescuentoRetiroLocal { get; set; }
+        public string? CruceCallesDireccion { get; set; }
+        public decimal? CostoEnvio { get; set; }
 
     }
 }

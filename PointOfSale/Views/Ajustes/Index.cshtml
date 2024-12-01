@@ -330,22 +330,11 @@
                                 <div class="row">
                                     <div class="col-sm-2">
                                         <div class="form-group">
-                                            <label for="txtEnvioGratis">Min. envios gratis</label>
-                                            <div class="input-group input-group-sm">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text">$</span>
-                                                </div>
-                                                <input type="number" class="form-control form-control-sm" id="txtEnvioGratis" name="EnvioGratis">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-1">
-                                        <div class="form-group">
                                             <label for="txtAumento">Aumento</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Porcentaje que se le aplicará al precio de los productos para mostrar en la web"></span>
                                             <div class="input-group input-group-sm">
-                                                <input type="number" class="form-control form-control-sm" id="txtAumento" name="Aumento">
+                                                <input type="number" min="0" class="form-control form-control-sm" id="txtAumento" name="Aumento">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Es el procentaje de aumento que se le aplicará al precio de los productos que se mostraran en la web">%</span>
+                                                    <span class="input-group-text">%</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -393,8 +382,6 @@
                                             <input type="text" class="form-control form-control-sm" id="txtComodin3" name="comodin 3">
                                         </div>
                                     </div>
-                                    
-
                                 </div>
                             </div>
                         </div>
@@ -510,6 +497,67 @@
                                     </div>
                                     <div class="col-md-9">
                                         <input type="text" class="form-control form-control-sm" id="txtYouTube" name="YouTube">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="col-md-12">
+                                    <div class="row">
+
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label for="txtCostoEnvio">Costo Envio</label>
+                                                <div class="input-group input-group-sm">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">$</span>
+                                                    </div>
+                                                    <input type="number" min="0" class="form-control form-control-sm" id="txtCostoEnvio" name="costo envio">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label for="txtEnvioGratis">Min. envio gratis</label>
+                                                <div class="input-group input-group-sm">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">$</span>
+                                                    </div>
+                                                    <input type="number" min="0" class="form-control form-control-sm" id="txtEnvioGratis" name="EnvioGratis">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label for="txtCompraMinima">Compra Minima</label>
+                                                <div class="input-group input-group-sm">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">$</span>
+                                                    </div>
+                                                    <input type="number" min="0" class="form-control form-control-sm" id="txtCompraMinima" name="compra minima">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <div class="d-flex justify-content-start">
+                                                    <label for="txtTakeAway">Retiro en el local</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Porcentaje de descuento al retirar en el local"></span>
+                                                    <div class="form-group ms-5" style="margin: 0;">
+                                                        <div class="form-check form-switch text-center">
+                                                            <input class="form-check-input" type="checkbox" role="switch" id="switchTakeAway">
+                                                            <label class="form-check-label" for="switchTakeAway" style="font-size: large;">Habilitar</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="input-group input-group-sm">
+                                                    <input type="number" min="0" class="form-control form-control-sm" id="txtTakeAway" name="Take away">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text" >%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

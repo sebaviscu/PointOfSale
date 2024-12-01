@@ -200,6 +200,9 @@ const openModalEditVentaWeb = (model = BASIC_MODEL_VENTA_WEB) => {
     document.querySelector('#txtDireccion').disabled = true;
     document.querySelector('#txtFormaPago').disabled = true;
     document.querySelector('#txtComentario').disabled = true;
+    document.querySelector('#txtTakeAway').disabled = true;
+    document.querySelector('#txtEnvio').disabled = true;
+    document.querySelector('#txtCruceCallesDireccion').disabled = true;
 
     $("#txtId").val(model.idVentaWeb);
     $("#txtFecha").val(model.fecha);
@@ -211,6 +214,10 @@ const openModalEditVentaWeb = (model = BASIC_MODEL_VENTA_WEB) => {
     $("#txtComentario").val(model.comentario);
     $("#cboState").val(model.estado);
     $("#cboTienda").val(model.idTienda);
+
+    $("#txtTakeAway").val(model.descuentoRetiroLocal);
+    $("#txtEnvio").val(model.costoEnvio == 0 ? "GRATIS" : model.costoEnvio);
+    $("#txtCruceCallesDireccion").val(model.cruceCallesDireccion);
 
     if (model.isEdit) {
         document.getElementById("popoverEdit").style.display = '';
@@ -336,7 +343,7 @@ $("#btnEdit").click(function () {
     document.getElementById("divSearchproducts").style.display = isHidden ? '' : 'none';
     document.getElementById("cboSearchProduct").style.display = isHidden ? '' : 'none';
 
-    const fields = ['#txtNombre', '#txtTelefono', '#txtDireccion', '#txtFormaPago', '#txtComentario'];
+    const fields = ['#txtNombre', '#txtTelefono', '#txtDireccion', '#txtFormaPago', '#txtComentario', '#txtTakeAway', 'txtEnvio', 'txtCruceCallesDireccion'];
     fields.forEach(field => {
         document.querySelector(field).disabled = !isHidden;
     });
@@ -424,7 +431,9 @@ async function editarVentaWeb() {
     model["nombre"] = $("#txtNombre").val();
     model["telefono"] = $("#txtTelefono").val();
     model["direccion"] = $("#txtDireccion").val();
-
+    model["descuentoRetiroLocal"] = $("#txtTakeAway").val();
+    model["costoEnvio"] = $("#txtEnvio").val();
+    model["cruceCallesDireccion"] = $("#txtCruceCallesDireccion").val();
 
     let cuilParaFactura = $('#txtClienteParaFactura').attr('cuil');
     let idClienteParaFactura = $('#txtClienteParaFactura').attr('idCliente');

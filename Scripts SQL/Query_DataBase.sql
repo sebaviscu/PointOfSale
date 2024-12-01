@@ -220,12 +220,14 @@ IdTienda int null,
 estado int not null,
 isEdit bit null,
 editText varchar(max) null,
+descuentoRetiroLocal decimal(10,2) null,
+cruceCallesDireccion varchar(max) null,
+CostoEnvio decimal(10,2) null,
 idSale int references Sale(idSale) null,
 [registrationDate] datetime not null,
 [modificationDate] datetime null,
 [modificationUser] varchar(50) null,
 )
-
 
 go
 
@@ -442,6 +444,10 @@ create table AjustesWeb(
 idAjusteWeb int primary key identity(1,1),
 MontoEnvioGratis decimal(10,2) null,
 AumentoWeb decimal(10,2) null,
+CostoEnvio decimal(10,2) null,
+CompraMinima decimal(10,2) null,
+TakeAwayDescuento decimal(10,2) null,
+HabilitarTakeAway BIT NULL,
 Whatsapp varchar(50) null,
 Lunes varchar(100) null,
 Martes varchar(100) null,

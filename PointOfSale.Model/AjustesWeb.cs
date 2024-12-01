@@ -12,6 +12,10 @@ namespace PointOfSale.Model
         public string? Nombre { get; set; }
         public string? Direccion { get; set; }
         public decimal? MontoEnvioGratis { get; set; }
+        public decimal? CostoEnvio {  get; set; }
+        public decimal? CompraMinima { get; set; }
+        public bool? HabilitarTakeAway { get; set; }
+        public decimal? TakeAwayDescuento { get; set; }
         public decimal? AumentoWeb { get; set; }
         public string? Whatsapp { get; set; }
         public string? Lunes { get; set; }

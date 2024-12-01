@@ -6,6 +6,19 @@ let debounceTimeout;
 let productos = [];
 let primerCargaCache = true;
 let montoEnvioGratis = 0;
+let ajustesWeb;
+let descuentoTakeAway = 0;
+
+const BASIC_MODEL_SHOP = {
+    nombre: '',
+    telefono: '',
+    direccion: '',
+    metodoPago: '',
+    comentario: '',
+    total: '',
+    cruceCallesDireccion: '',
+    costoEnvio: 0
+}
 
 $(window).scroll(function () {
     if ($(window).scrollTop() + $(window).height() >= $(document).height() - 50 && hasMoreProducts && !isLoading) {
@@ -19,6 +32,19 @@ $(document).ready(function () {
     loadMoreProducts();
     montoEnvioGratis = $('#txtMontoEnvioGratis').text().trim() != null ? parseFloat($('#txtMontoEnvioGratis').text().trim()) : null;
 
+    fetch("/Ajustes/GetAjustesWeb")
+        .then(response => {
+
+            return response.json();
+        }).then(responseJson => {
+            if (responseJson.state) {
+                ajustesWeb = responseJson.object;
+
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+        })
+
     //setTimeout(function () {
 
     //    productos = JSON.parse(localStorage.getItem('productos')) || [];
@@ -29,6 +55,9 @@ $(document).ready(function () {
     //    });
     //    dibujarAreaTotales();
     //}, 5000);
+
+    var elem = document.getElementById('switchTakeAway');
+    var init = new Switchery(elem, { color: '#1ab394', size: 'small' });
 
     $(".btnCategoria").on("click", function () {
         page = 1;
@@ -251,39 +280,86 @@ function resumenVenta() {
         let tableDataShoop = productos.map(value => {
             return (
                 `<tr>
-                       <td class="table-products" style="border-right-color: #ffffff00;"><span class="text-muted">${value.descriptionProduct} - $ ${Number.parseFloat(value.price).toFixed(0)} x ${value.quantity} ${value.tipoVenta}</span>.</td>
-                       <td class="table-products" style="font-size: 12px; text-align: right;"><strong>$ ${Number.parseFloat(value.total).toFixed(0)}</strong></td>
+                       <td class="table-products" style="border-right-color: #ffffff00;"><span class="text-muted">${value.descriptionProduct} - $ ${parseFloat(value.price).toFixed(0)} x ${value.quantity} ${value.tipoVenta}</span>.</td>
+                       <td class="table-products" style="font-size: 12px; text-align: right;"><strong>$ ${parseFloat(value.total).toFixed(0)}</strong></td>
                     </tr>`
             );
         }).join('');
 
-        let total = Number.parseFloat(sum).toFixed(0);
+        let total = parseFloat(sum);
+
+        descuentoTakeAway = 0;
+        if (ajustesWeb.habilitarTakeAway) {
+
+            descuentoTakeAway = parseFloat(total * (parseInt(ajustesWeb.takeAwayDescuento) / 100));
+
+            tableDataShoop = tableDataShoop.concat(`<tr>
+                       <td class="table-products td-discount" style="font-size: 14px; border-right-color: #ffffff00; display: none;"><strong>Descuento ${parseInt(ajustesWeb.takeAwayDescuento)}% por retiro en el local</strong ></td >
+                       <td class="table-products td-discount" style="font-size: 14px; text-align: right; display: none;"><strong>- $ ${descuentoTakeAway.toFixed(0) }</strong></td>
+                    </tr>`);
+        }
+
+        const divMensajeEnvio = document.getElementById("divMensajeEnvio");
+
+        if (total < ajustesWeb.compraMinima) {
+            divMensajeEnvio.className = "alert alert-warning d-flex align-items-center";
+            document.getElementById("alertTitle").textContent = `Compra mínima $${ajustesWeb.compraMinima}`;
+            $('#btnFinalizar').prop('disabled', true);
+        }
+        else {
+            $('#btnFinalizar').prop('disabled', false);
+
+            if (total >= montoEnvioGratis) {
+                divMensajeEnvio.className = "alert alert-success d-flex align-items-center";
+                document.getElementById("alertTitle").textContent = "¡¡ Envio Gratis !!";
+            } else if (total < montoEnvioGratis) {
+                divMensajeEnvio.className = "alert alert-warning d-flex align-items-center";
+                document.getElementById("alertTitle").textContent = `Solo faltan $${montoEnvioGratis - total.toFixed(0) } para que el Envio sea GRATIS !!`;
+
+                tableDataShoop = tableDataShoop.concat(`<tr>
+                       <td class="table-products td-envio" style="font-size: 13px; border-right-color: #ffffff00;"><strong>Envio</strong></td>
+                       <td class="table-products td-envio" style="font-size: 13px; text-align: right;"><strong>$ ${ajustesWeb.costoEnvio}</strong></td>
+                    </tr>`);
+
+                total += parseFloat(ajustesWeb.costoEnvio);
+            }
+        }
 
         tableDataShoop = tableDataShoop.concat(`<tr>
-                       <td class="table-products" style="font-size: 14px; border-right-color: #ffffff00;"><strong>TOTAL</strong></td>
-                       <td class="table-products" style="font-size: 14px; text-align: right;"><strong>$ ${total}</strong></td>
+                       <td class="table-products" style="font-size: 18px; border-right-color: #ffffff00;"><strong>TOTAL</strong></td>
+                       <td class="table-products" id="td-sin-descuento" style="font-size: 18px; text-align: right;"><strong>$ ${total.toFixed(0) }</strong></td>
+                       <td class="table-products td-discount" style="font-size: 18px; text-align: right; display: none;"><strong>$ ${(total - descuentoTakeAway).toFixed(0) }</strong></td>
                     </tr>`);
 
         const tableBody = document.querySelector("#tableProductos");
         tableBody.innerHTML = tableDataShoop;
-
-
-        const divMensajeEnvio = document.getElementById("divMensajeEnvio");
-
-        if (total > montoEnvioGratis) {
-            divMensajeEnvio.className = "alert alert-success d-flex align-items-center";
-            document.getElementById("alertTitle").textContent = "¡¡ Envio Gratis !!";
-        } else {
-            divMensajeEnvio.className = "alert alert-warning d-flex align-items-center";
-            document.getElementById("alertTitle").textContent = `Solo faltan $${montoEnvioGratis - total} para que el Envio sea GRATIS !!`;
-        }
-
 
         $("#modalData").modal("show")
     }
 
 }
 
+$('#switchTakeAway').change(function () {
+    let check = document.getElementById("switchTakeAway").checked;
+
+    $('#txtDireccion').prop('disabled', check);
+    if (check)
+        $('#txtDireccion').val('');
+
+    let discountElements = document.getElementsByClassName("td-discount");
+
+    for (let element of discountElements) {
+        element.style.display = check ? '' : 'none';
+    }
+    
+    discountElements = document.getElementsByClassName("td-envio");
+
+    for (let element of discountElements) {
+        element.style.display = check ? 'none' : '';
+    }
+
+    document.getElementById("td-sin-descuento").style.display = check ? 'none' : '';
+});
 
 function finalizarVenta() {
 
@@ -315,6 +391,8 @@ function finalizarVenta() {
         model["direccion"] = $("#txtDireccion").val();
         model["metodoPago"] = $("#cboFormaPago").val();
         model["comentario"] = $("#txtComentario").val();
+        model["cruceCallesDireccion"] = $("#txtCruceCallesDireccion").val();
+
 
         let inputPhone = document.getElementById("txtPhone");
         let phone = inputPhone.attributes.phoneNumber.value;
@@ -324,6 +402,25 @@ function finalizarVenta() {
             sum += value.total;
         });
 
+        let envio = "$" + ajustesWeb.costoEnvio;
+
+        if (sum < montoEnvioGratis) {
+            sum = parseFloat(sum) + parseFloat(envio);
+        }
+        else {
+            envio = "GRATIS";
+        }
+
+        if (sum < montoEnvioGratis) {
+            model["costoEnvio"] = ajustesWeb.costoEnvio;
+            sum += ajustesWeb.costoEnvio;
+        }
+
+        let check = document.getElementById("switchTakeAway").checked;
+
+        if (check)
+            sum -= descuentoTakeAway;
+
         let textWA = `*NUEVO PEDIDO*%0A`;
 
         textWA = textWA.concat(`
@@ -332,6 +429,7 @@ function finalizarVenta() {
 %0A· *Direccion*: ${model.direccion} 
 %0A· *Forma de pago*: ${selectedText}
 %0A· *Comentarios*: ${model.comentario} 
+%0A· *Envio*: ${envio} 
 %0A· *TOTAL*: $${Number.parseFloat(sum).toFixed(2)}%0A`);
 
         textWA += productos.map(value => {
@@ -351,7 +449,7 @@ function finalizarVenta() {
         }, function (value) {
 
             // Whatsapp
-            window.open('https://wa.me/' + phone + '?text=' + textWA, '_blank');
+            //window.open('https://wa.me/' + phone + '?text=' + textWA, '_blank');
 
             productos.forEach(value => {
                 delete value.tipoVenta;
@@ -365,7 +463,10 @@ function finalizarVenta() {
                 direccion: model.direccion,
                 telefono: model.telefono,
                 comentario: model.comentario,
-                estado: 0
+                estado: 0,
+                descuentoRetiroLocal: descuentoTakeAway,
+                cruceCallesDireccion: model.cruceCallesDireccion,
+                costoEnvio: model.costoEnvio
             }
 
             fetch("/Shop/RegisterSale", {
@@ -386,14 +487,6 @@ function finalizarVenta() {
     }
 }
 
-const BASIC_MODEL_SHOP = {
-    nombre: '',
-    telefono: '',
-    direccion: '',
-    metodoPago: '',
-    comentario: '',
-    total: ''
-}
 
 
 function setValue(event, mult) {

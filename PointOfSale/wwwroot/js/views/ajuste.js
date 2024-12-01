@@ -24,6 +24,8 @@
 const BASIC_MODEL_AJUSTE_WEB = {
     idAjusteWeb: 0,
     montoEnvioGratis: 0,
+    costoEnvio: 0,
+    compraMinima: 0,
     aumentoWeb: 0,
     whatsapp: "",
     lunes: "",
@@ -45,7 +47,9 @@ const BASIC_MODEL_AJUSTE_WEB = {
     nombreComodin3: "",
     habilitarComodin1: false,
     habilitarComodin2: false,
-    habilitarComodin3: false
+    habilitarComodin3: false,
+    takeAwayDescuento: 0,
+    habilitarTakeAway: false
 }
 
 
@@ -124,6 +128,8 @@ $(document).ready(function () {
                 $("#txtNombreTienda").val(model.nombre);
                 $("#txtDireccion").val(model.direccion);
                 $("#txtEnvioGratis").val(model.montoEnvioGratis);
+                $("#txtCostoEnvio").val(model.costoEnvio);
+                $("#txtCompraMinima").val(model.compraMinima);
                 $("#txtAumento").val(model.aumentoWeb);
                 $("#txtWhatsApp").val(model.whatsapp);
                 $("#txtLunes").val(model.lunes);
@@ -139,6 +145,9 @@ $(document).ready(function () {
                 $("#txtTikTok").val(model.tiktok);
                 $("#txtTwitter").val(model.twitter);
                 $("#txtYouTube").val(model.youtube);
+
+                document.getElementById('switchTakeAway').checked = model.habilitarTakeAway;
+                $("#txtTakeAway").val(model.takeAwayDescuento);
 
                 document.getElementById('switchHabilitarWeb').checked = model.habilitarWeb;
 
@@ -326,6 +335,8 @@ $("#btnSave").on("click", function () {
 
     const modelWeb = structuredClone(BASIC_MODEL_AJUSTE_WEB);
     modelWeb["montoEnvioGratis"] = $("#txtEnvioGratis").val();
+    modelWeb["compraMinima"] = $("#txtCompraMinima").val();
+    modelWeb["costoEnvio"] = $("#txtCostoEnvio").val();
     modelWeb["aumentoWeb"] = $("#txtAumento").val();
     modelWeb["whatsapp"] = $("#txtWhatsApp").val();
     modelWeb["lunes"] = $("#txtLunes").val();
@@ -343,6 +354,10 @@ $("#btnSave").on("click", function () {
     modelWeb["youtube"] = $("#txtYouTube").val();
     modelWeb["nombre"] = $("#txtNombreTienda").val();
     modelWeb["direccion"] = $("#txtDireccion").val();
+
+    let checkboxSwitchTakeAway = document.getElementById('switchTakeAway');
+    modelWeb["habilitarTakeAway"] = checkboxSwitchTakeAway.checked;
+    modelWeb["takeAwayDescuento"] = $("#txtTakeAway").val();
 
     let checkboxSwitchHabilitarWeb = document.getElementById('switchHabilitarWeb');
     modelWeb["habilitarWeb"] = checkboxSwitchHabilitarWeb.checked;

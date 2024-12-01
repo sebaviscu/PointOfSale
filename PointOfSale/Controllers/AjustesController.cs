@@ -179,17 +179,8 @@ namespace PointOfSale.Controllers
             {
                 var ajuste = await _ajusteService.GetAjustesWeb();
 
-                var ajustesWebReducidos = new VMAjustesWebReducido();
-                ajustesWebReducidos.AumentoWeb = ajuste.AumentoWeb.HasValue ? ajuste.AumentoWeb.Value : 0;
-                ajustesWebReducidos.NombreComodin1 = ajuste.NombreComodin1;
-                ajustesWebReducidos.NombreComodin2 = ajuste.NombreComodin2;
-                ajustesWebReducidos.NombreComodin3 = ajuste.NombreComodin3;
-                ajustesWebReducidos.HabilitarComodin1 = ajuste.HabilitarComodin1;
-                ajustesWebReducidos.HabilitarComodin2 = ajuste.HabilitarComodin2;
-                ajustesWebReducidos.HabilitarComodin3 = ajuste.HabilitarComodin3;
-
                 gResponse.State = true;
-                gResponse.Object = ajustesWebReducidos;
+                gResponse.Object = _mapper.Map<VMAjustesWebReducido>(ajuste);
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)

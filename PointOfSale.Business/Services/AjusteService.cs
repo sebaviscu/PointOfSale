@@ -74,7 +74,11 @@ namespace PointOfSale.Business.Services
             Ajustes_found.Domingo = entity.Domingo;
             Ajustes_found.Feriado = entity.Feriado;
             Ajustes_found.MontoEnvioGratis = entity.MontoEnvioGratis;
+            Ajustes_found.CompraMinima = entity.CompraMinima;
+            Ajustes_found.CostoEnvio = entity.CostoEnvio;
             Ajustes_found.HabilitarWeb = entity.HabilitarWeb;
+            Ajustes_found.TakeAwayDescuento = entity.TakeAwayDescuento;
+            Ajustes_found.HabilitarTakeAway = entity.HabilitarTakeAway;
 
             Ajustes_found.NombreComodin1 = entity.NombreComodin1;
             Ajustes_found.NombreComodin2 = entity.NombreComodin2;

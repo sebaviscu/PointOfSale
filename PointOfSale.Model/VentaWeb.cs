@@ -31,6 +31,10 @@ namespace PointOfSale.Model
         public bool? IsEdit { get; set; }
         public string? EditText { get; set; }
 
+        public decimal? DescuentoRetiroLocal { get; set; }
+        public string? CruceCallesDireccion { get; set; }
+        public decimal? CostoEnvio { get; set; }
+
         public virtual TypeDocumentSale? FormaDePago { get; set; }
         public virtual ICollection<DetailSale>? DetailSales { get; set; }
 

@@ -7,6 +7,8 @@
 
 <link href="https://cdn.materialdesignicons.com/4.4.95/css/materialdesignicons.min.css" rel="stylesheet" />
 
+<link rel="stylesheet" href="~/plugins/switchery/switchery.min.css" />
+
 <link rel="stylesheet" href="~/css/shop/open-iconic-bootstrap.min.css">
 <link rel="stylesheet" href="~/css/shop/animate.css">
 
@@ -188,9 +190,21 @@
                                     </div>
                                     <div class="form-group col-sm-4">
                                         <label for="txtNombre">Telefono <b>*</b></label>
-                                        <input type="text" class="form-control form-control-sm input-validate" id="txtTelefono" name="Telefono">
+                                        <input type="tel" class="form-control form-control-sm input-validate" id="txtTelefono" name="Telefono">
                                     </div>
                                 </div>
+                                @{
+                                    if (Model.Ajustes.HabilitarTakeAway.HasValue && Model.Ajustes.HabilitarTakeAway.Value)
+                                    {
+                                        var takeAway = $"Retiro en el local {Convert.ToInt32(@Model.Ajustes.TakeAwayDescuento)}% de descuento";
+                                        <div class="text-center">
+                                            <div class="form-check form-switch">
+                                                <input type="checkbox" id="switchTakeAway">
+                                                <label class="form-check-label" for="switchTakeAway">@takeAway</label>
+                                            </div>
+                                        </div>
+                                    }
+                                }
                                 <div class="form-row">
                                     <div class="form-group col-sm-8">
                                         <label for="txtNombre">Direccion de entrega <b">*</b></label>
@@ -210,7 +224,13 @@
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col-sm-12">
-                                        <label for="txtNombre">Comentario</label>
+                                        <label for="txtCruceCallesDireccion">Calles que cruzan la dirección</label>
+                                        <input type="text" class="form-control form-control-sm" id="txtCruceCallesDireccion" name="Calles que cruzan la dirección">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-sm-12">
+                                        <label for="txtComentario">Comentario</label>
                                         <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario">
                                     </div>
                                 </div>
@@ -219,7 +239,7 @@
 
                             <div class="col-12">
                                 <div id="divMensajeEnvio" class="alert d-flex" style="justify-content: center;">
-                                    <div>
+                                    <div class="text-center">
                                         <strong id="alertTitle"></strong>
                                     </div>
                                 </div>
@@ -244,7 +264,7 @@
     <!-- loader -->
     <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee" /><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00" /></svg></div>
 
-
+    <script src="~/plugins/switchery/switchery.min.js"></script>
     <script src="~/js/shop/jquery.min.js"></script>
     <script src="~/js/shop/jquery.waypoints.min.js"></script>
     <script src="~/js/shop/jquery.magnific-popup.min.js"></script>

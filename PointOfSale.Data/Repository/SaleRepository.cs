@@ -174,9 +174,11 @@ namespace PointOfSale.Data.Repository
             sale.IdTurno = turno.IdTurno;
             sale.DetailSales = entity.DetailSales;
             sale.RegistrationUser = entity.ModificationUser;
-            sale.DescuentoRecargo = 0;
+            sale.DescuentoRecargo = entity.DescuentoRetiroLocal;
             sale.IsWeb = true;
-            sale.Observaciones = entity.Comentario;
+            sale.Observaciones = entity.DescuentoRetiroLocal != null && entity.DescuentoRetiroLocal > 0 ? $" Retiro en persona: -${entity.DescuentoRetiroLocal}" : "";
+            sale.Observaciones += !string.IsNullOrEmpty(entity.CruceCallesDireccion) ? $"\n Cruce de calles de la direccion: {entity.CruceCallesDireccion}" : "";
+            sale.Observaciones += !string.IsNullOrEmpty(entity.Comentario) ? $" \n Comentario: {entity.Comentario}" : "";
 
             var saleCreated = await Register(sale, ajustes);
 

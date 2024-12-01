@@ -9,5 +9,9 @@
         public bool? HabilitarComodin2 { get; set; }
         public string? NombreComodin3 { get; set; }
         public bool? HabilitarComodin3 { get; set; }
+        public decimal? CostoEnvio { get; set; }
+        public decimal? CompraMinima { get; set; }
+        public bool? HabilitarTakeAway { get; set; }
+        public decimal? TakeAwayDescuento { get; set; }
     }
 }

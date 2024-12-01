@@ -47,7 +47,7 @@ public class Program
                 .AddCookie(option =>
                 {
                     option.LoginPath = "/Access/Login";
-                    option.ExpireTimeSpan = TimeSpan.FromHours(3);
+                    //option.ExpireTimeSpan = TimeSpan.FromHours(3);
                 });
 
             builder.Services.AddDbContext<POINTOFSALEContext>(options =>

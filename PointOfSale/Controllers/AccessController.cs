@@ -2,12 +2,9 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using PointOfSale.Business.Contracts;
-using PointOfSale.Business.Services;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
-using PointOfSale.Model.Auditoria;
 using PointOfSale.Models;
-using PointOfSale.Utilities;
 using PointOfSale.Utilities.Response;
 using System.Security.Claims;
 using static PointOfSale.Model.Enum;
@@ -147,7 +144,7 @@ namespace PointOfSale.Controllers
                 AuthenticationProperties properties = new AuthenticationProperties()
                 {
                     AllowRefresh = true,
-                    IsPersistent = model.KeepLoggedIn
+                    IsPersistent = true // model.KeepLoggedIn
                 };
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), properties);
