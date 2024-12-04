@@ -42,7 +42,7 @@ namespace PointOfSale.Business.Services
         public async Task<Product> Get(int idProducto)
         {
             IQueryable<Product> queryProduct = await _repository.Query(u => u.IdProduct == idProducto);
-            return getIncludes(queryProduct).First();
+            return getIncludes(queryProduct).Include(_=>_.IdCategoryNavigation).First();
         }
 
         public async Task<List<Product>> List()

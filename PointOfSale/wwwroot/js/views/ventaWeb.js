@@ -3,6 +3,8 @@ let rowSelectedVentaWeb;
 let productSelectedVentaWeb = null;
 let isHealthySaleWeb = false;
 let formasDePagosListVentaWeb = [];
+let ventaWebModal = null;
+let ajustesWeb;
 
 const BASIC_MODEL_VENTA_WEB = {
     idVentaWeb: 0,
@@ -34,6 +36,20 @@ $(document).ready(function () {
         html: true,
         trigger: 'focus'
     });
+
+
+    fetch("/Ajustes/GetAjustesWeb")
+        .then(response => {
+
+            return response.json();
+        }).then(responseJson => {
+            if (responseJson.state) {
+                ajustesWeb = responseJson.object;
+
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+        })
 
     fetch("/Sales/ListTypeDocumentSale")
         .then(response => {
@@ -85,7 +101,23 @@ $(document).ready(function () {
             { "data": "nombre" },
             { "data": "direccion" },
             { "data": "telefono" },
-            { "data": "totalString" },
+            {
+                "data": "totalConEnvio", render: function (data) {
+                    return '$' + data;
+                }
+            },
+            {
+                "data": "descuentoRetiroLocal", render: function (data, type, row) {
+                    if (data > 0)
+                        return 'Retiro en el local';
+                    else if (row.costoEnvio == null || (row.costoEnvio != null && row.costoEnvio == 0))
+                        return 'Envio Gratis';
+                    else if (row.costoEnvio != null && row.costoEnvio > 0)
+                        return '$' + row.costoEnvio;
+                    else
+                        return '';
+                }
+            },
             {
                 "data": "estado", render: function (data) {
                     if (data == 0)
@@ -192,6 +224,7 @@ const openModalEditVentaWeb = (model = BASIC_MODEL_VENTA_WEB) => {
     $('#modalData').modal('show');
 
     $("#btnSave").text("Guardar Cambios");
+    ventaWebModal = model;
 
     document.getElementById("divSearchproducts").style.display = 'none';
 
@@ -206,7 +239,8 @@ const openModalEditVentaWeb = (model = BASIC_MODEL_VENTA_WEB) => {
 
     $("#txtId").val(model.idVentaWeb);
     $("#txtFecha").val(model.fecha);
-    $("#txtTotal").val(model.total);
+    $("#txtTotal").val(model.total + model.costoEnvio);
+    $("#txtTotal").attr("totalReal", model.total);
     $("#txtNombre").val(model.nombre);
     $("#txtTelefono").val(model.telefono);
     $("#txtDireccion").val(model.direccion);
@@ -216,8 +250,9 @@ const openModalEditVentaWeb = (model = BASIC_MODEL_VENTA_WEB) => {
     $("#cboTienda").val(model.idTienda);
 
     $("#txtTakeAway").val(model.descuentoRetiroLocal);
-    $("#txtEnvio").val(model.costoEnvio == 0 ? "GRATIS" : model.costoEnvio);
+    $("#txtEnvio").val(model.costoEnvio);
     $("#txtCruceCallesDireccion").val(model.cruceCallesDireccion);
+    document.getElementById('switchTakeAway').checked = model.descuentoRetiroLocal > 0;
 
     if (model.isEdit) {
         document.getElementById("popoverEdit").style.display = '';
@@ -252,7 +287,7 @@ const openModalEditVentaWeb = (model = BASIC_MODEL_VENTA_WEB) => {
     $("#tbProducts tbody").html("");
 
     model.detailSales.forEach((item) => {
-        addNewProduct(item.idDetailSale, item.descriptionProduct, item.quantity, item.tipoVentaString, item.price, item.total, item.idProduct);
+        addNewProduct(item.idDetailSale, item.descriptionProduct, item.quantity, item.tipoVenta == 2 ? "U" : "Kg", item.price, item.total, item.idProduct);
     });
 
     $('#modalData').on('shown.bs.modal', function () {
@@ -343,7 +378,7 @@ $("#btnEdit").click(function () {
     document.getElementById("divSearchproducts").style.display = isHidden ? '' : 'none';
     document.getElementById("cboSearchProduct").style.display = isHidden ? '' : 'none';
 
-    const fields = ['#txtNombre', '#txtTelefono', '#txtDireccion', '#txtFormaPago', '#txtComentario', '#txtTakeAway', 'txtEnvio', 'txtCruceCallesDireccion'];
+    const fields = ['#txtNombre', '#txtTelefono', '#txtDireccion', '#txtFormaPago', '#txtComentario', '#txtTakeAway', '#txtEnvio', '#txtCruceCallesDireccion', '#switchTakeAway'];
     fields.forEach(field => {
         document.querySelector(field).disabled = !isHidden;
     });
@@ -368,6 +403,7 @@ function updateTotal() {
     });
 
     $("#txtTotal").val(`${totalAmount.toFixed(2)}`);
+    $("#txtTotal").attr("totalReal", totalAmount.toFixed(2));
 }
 
 $("#btnSave").on("click", function () {
@@ -426,7 +462,8 @@ async function editarVentaWeb() {
     model["estado"] = estadoVenta;
     model["idFormaDePago"] = estadoVenta == 1 ? $("#cboTypeDocumentSale").val() : parseInt($("#txtFormaPago").val());
     model["imprimirTicket"] = document.querySelector('#cboImprimirTicket').checked;
-    model["total"] = parseFloat($("#txtTotal").val());
+    //model["total"] = parseFloat($("#txtTotal").val());
+    model["total"] = parseFloat($("#txtTotal").attr("totalReal"));
     model["comentario"] = $("#txtComentario").val();
     model["nombre"] = $("#txtNombre").val();
     model["telefono"] = $("#txtTelefono").val();
@@ -616,6 +653,41 @@ $("#cboState").on("change", function () {
     } else {
         $("#btnSave").text("Guardar Cambios");
     }
+});
+
+$("#switchTakeAway").on("change", function () {
+    let chequeado = document.getElementById('switchTakeAway').checked;
+    let total;
+
+    if (chequeado) {
+        if (ventaWebModal.descuentoRetiroLocal > 0) {
+            total = ventaWebModal.total;
+            $("#txtTakeAway").val(ventaWebModal.descuentoRetiroLocal);
+        }
+        else if (ajustesWeb.takeAwayDescuento != null && ajustesWeb.takeAwayDescuento > 0) {
+            let descuento = (ventaWebModal.total * (ajustesWeb.takeAwayDescuento / 100));
+            $("#txtTakeAway").val(descuento);
+            total = (ventaWebModal.total - descuento).toFixed(2);
+        }
+    }
+    else {
+        if (ventaWebModal.descuentoRetiroLocal > 0) {
+            total = ventaWebModal.total + ventaWebModal.descuentoRetiroLocal;
+        }
+        else {
+            total = ventaWebModal.total;
+        }
+        $("#txtTakeAway").val(0);
+    }
+
+    $("#txtEnvio").val(0);
+    $("#txtTotal").val(total);
+});
+
+$("#txtEnvio").on("change", function () {
+    let envio = parseInt($("#txtEnvio").val());
+
+    $("#txtTotal").val(ventaWebModal.total + envio);
 });
 
 $('#cboTypeDocumentSale').change(function () {

@@ -46,5 +46,6 @@ namespace PointOfSale.Models
         public string? CruceCallesDireccion { get; set; }
         public decimal? CostoEnvio { get; set; }
 
+        public decimal? TotalConEnvio => Total + (CostoEnvio != null ? CostoEnvio : 0);
     }
 }

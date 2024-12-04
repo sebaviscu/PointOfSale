@@ -54,7 +54,7 @@ namespace PointOfSale.Business.Services
         }
 
 
-        public async Task<VentaWeb> Update(VentaWeb entity)
+        public async Task<VentaWeb> Update(Ajustes ajustes, VentaWeb entity)
         {
             IQueryable<VentaWeb> query = await _repository.Query(c => c.IdVentaWeb == entity.IdVentaWeb);
             var VentaWeb_found = query.Include(_ => _.DetailSales).Include(_ => _.FormaDePago).First();
@@ -78,7 +78,10 @@ namespace PointOfSale.Business.Services
                 VentaWeb_found.Telefono = entity.Telefono;
                 VentaWeb_found.IdFormaDePago = entity.IdFormaDePago;
                 VentaWeb_found.Total = entity.Total;
-                UpdateDetailSales(VentaWeb_found, entity.DetailSales.ToList());
+                VentaWeb_found.CostoEnvio = entity.CostoEnvio;
+                VentaWeb_found.CruceCallesDireccion = entity.CruceCallesDireccion;
+                VentaWeb_found.DescuentoRetiroLocal= entity.DescuentoRetiroLocal;
+                await UpdateDetailSales(VentaWeb_found, entity.DetailSales.ToList());
             }
 
             VentaWeb_found.Estado = entity.Estado;
@@ -88,8 +91,6 @@ namespace PointOfSale.Business.Services
 
             if (entity.Estado == EstadoVentaWeb.Finalizada && entity.IdTienda.HasValue)
             {
-                var ajustes = await _ajusteService.GetAjustes(VentaWeb_found.IdTienda.Value);
-
                 var turno = await _turnoService.GetTurnoActual(VentaWeb_found.IdTienda.Value);
                 if(turno == null)
                 {
@@ -116,7 +117,10 @@ namespace PointOfSale.Business.Services
                                    original.Nombre != updated.Nombre ||
                                    original.Direccion != updated.Direccion ||
                                    original.Telefono != updated.Telefono ||
-                                   original.IdFormaDePago != updated.IdFormaDePago;
+                                   original.IdFormaDePago != updated.IdFormaDePago ||
+                                   original.CostoEnvio != updated.CostoEnvio||
+                                   original.DescuentoRetiroLocal != updated.DescuentoRetiroLocal ||
+                                   original.CruceCallesDireccion != updated.CruceCallesDireccion;
 
             // Verificar cambios en los DetailSales
             bool detailSalesChanged = original.DetailSales.Count != updated.DetailSales.Count ||
@@ -134,30 +138,54 @@ namespace PointOfSale.Business.Services
         }
 
 
-        private void UpdateDetailSales(VentaWeb ventaWebFound, List<DetailSale> updatedDetailSales)
+        private async Task UpdateDetailSales(VentaWeb ventaWebFound, List<DetailSale> updatedDetailSales)
         {
-            foreach (var existingDetailSale in ventaWebFound.DetailSales.ToList())
+            // Obtener la lista actual de detalles rastreados en la venta
+            var currentDetails = ventaWebFound.DetailSales.ToList();
+
+            // Identificar detalles para eliminar (existen en la base pero no en la nueva lista)
+            var detailsToRemove = currentDetails
+                .Where(existingDetail => !updatedDetailSales.Any(updated => updated.IdDetailSale == existingDetail.IdDetailSale))
+                .ToList();
+
+            foreach (var detail in detailsToRemove)
             {
-                if (!updatedDetailSales.Any(ds => ds.IdDetailSale == existingDetailSale.IdDetailSale))
-                {
-                    _repositoryDetailsSale.Delete(existingDetailSale);
-                }
+                ventaWebFound.DetailSales.Remove(detail);
+                await _repositoryDetailsSale.Delete(detail); // Asegura eliminación del repositorio
             }
 
-            foreach (var updatedDetailSale in updatedDetailSales)
+            // Identificar detalles para agregar o actualizar
+            foreach (var updatedDetail in updatedDetailSales)
             {
-                var existingDetailSale = ventaWebFound.DetailSales
-                    .FirstOrDefault(ds => ds.IdDetailSale == updatedDetailSale.IdDetailSale);
+                var existingDetail = currentDetails.FirstOrDefault(detail => detail.IdDetailSale == updatedDetail.IdDetailSale);
 
-                if (existingDetailSale == null)
+                if (existingDetail == null)
                 {
-                    updatedDetailSale.IdVentaWeb = ventaWebFound.IdVentaWeb;
-
-                    ventaWebFound.DetailSales.Add(updatedDetailSale);
+                    // Es un nuevo detalle, agregarlo
+                    updatedDetail.IdVentaWeb = ventaWebFound.IdVentaWeb;
+                    var prod = await _productService.Get(updatedDetail.IdProduct.Value);
+                    updatedDetail.CategoryProducty = prod.IdCategoryNavigation.Description;
+                    ventaWebFound.DetailSales.Add(updatedDetail);
+                }
+                else
+                {
+                    // Actualizar detalles existentes si hay cambios
+                    if (HasChanges(existingDetail, updatedDetail))
+                    {
+                        existingDetail.Price = updatedDetail.Price;
+                        existingDetail.Quantity = updatedDetail.Quantity;
+                        existingDetail.Total = updatedDetail.Total;
+                        // Actualizar otras propiedades necesarias
+                    }
                 }
             }
         }
-
+        private bool HasChanges(DetailSale existingDetail, DetailSale updatedDetail)
+        {
+            return existingDetail.Price != updatedDetail.Price ||
+                   existingDetail.Quantity != updatedDetail.Quantity ||
+                   existingDetail.Total != updatedDetail.Total;
+        }
 
         public async Task<VentaWeb> Get(int idVentaWeb)
         {

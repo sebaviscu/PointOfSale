@@ -40,6 +40,7 @@
                                     <th>Direccion</th>
                                     <th>Telefono</th>
                                     <th>Total</th>
+                                    <th>Envio</th>
                                     <th>Estado</th>
                                     <th></th>
                                 </tr>
@@ -97,7 +98,7 @@
                     <div class="col-md-6">
                         <div class="form-row">
                             <div class="form-group col-md-3">
-                                <label for="txtTotal">Total</label>
+                                <label for="txtTotal">Total</label><span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Incluye Envio y descuentos por retiro en el local"></span>
                                 <div class="input-group input-group-sm">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">$</span>
@@ -132,23 +133,23 @@
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-6 mb-0">
                                 <label for="txtEnvio">Envio</label>
                                 <div class="input-group input-group-sm">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">$</span>
                                     </div>
-                                    <input type="text" class="form-control form-control-sm input-validate" id="txtEnvio" name="Envio" disabled>
+                                    <input type="number" min="0" step="1" class="form-control form-control-sm input-validate" id="txtEnvio" name="Envio" disabled>
                                 </div>
                             </div>
-                            <div class="form-group col-md-6">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" role="switch" id="switchTakeAway">
+                            <div class="form-group col-md-6 mb-0">
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="switchTakeAway" disabled>
                                     <label class="form-check-label" for="switchTakeAway">Retiro en el local</label>
                                 </div>
                                 <div class="input-group input-group-sm">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text">$</span>
+                                        <span class="input-group-text">-$</span>
                                     </div>
                                     <input type="text" class="form-control form-control-sm input-validate" id="txtTakeAway" name="Take Away" disabled>
                                 </div>
@@ -166,15 +167,15 @@
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <label for="txtNombre">Comentario</label>
-                                <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario" disabled>
-                            </div>
-                        </div>
-                        <div class="form-row">
                             <div class="form-group col-sm-12">
                                 <label for="txtCruceCallesDireccion">Calles que cruzan la dirección</label>
                                 <input type="text" class="form-control form-control-sm" id="txtCruceCallesDireccion" name="Calles que cruzan la dirección" disabled>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="txtNombre">Comentario</label>
+                                <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario" disabled>
                             </div>
                         </div>
                         <div class="form-row" id="divModif">

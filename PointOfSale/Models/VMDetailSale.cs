@@ -4,6 +4,7 @@ namespace PointOfSale.Models
 {
     public class VMDetailSale
     {
+        public int? IdDetailSale { get; set; }
         public int? IdProduct { get; set; }
         public string? BrandProduct { get; set; }
         public string? DescriptionProduct { get; set; }

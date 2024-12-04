@@ -295,11 +295,12 @@ function resumenVenta() {
 
             tableDataShoop = tableDataShoop.concat(`<tr>
                        <td class="table-products td-discount" style="font-size: 14px; border-right-color: #ffffff00; display: none;"><strong>Descuento ${parseInt(ajustesWeb.takeAwayDescuento)}% por retiro en el local</strong ></td >
-                       <td class="table-products td-discount" style="font-size: 14px; text-align: right; display: none;"><strong>- $ ${descuentoTakeAway.toFixed(0) }</strong></td>
+                       <td class="table-products td-discount" style="font-size: 14px; text-align: right; display: none;"><strong>- $ ${descuentoTakeAway.toFixed(0)}</strong></td>
                     </tr>`);
         }
 
         const divMensajeEnvio = document.getElementById("divMensajeEnvio");
+        let totalSinTakeAway = total;
 
         if (total < ajustesWeb.compraMinima) {
             divMensajeEnvio.className = "alert alert-warning d-flex align-items-center";
@@ -314,27 +315,28 @@ function resumenVenta() {
                 document.getElementById("alertTitle").textContent = "¡¡ Envio Gratis !!";
             } else if (total < montoEnvioGratis) {
                 divMensajeEnvio.className = "alert alert-warning d-flex align-items-center";
-                document.getElementById("alertTitle").textContent = `Solo faltan $${montoEnvioGratis - total.toFixed(0) } para que el Envio sea GRATIS !!`;
+                document.getElementById("alertTitle").textContent = `Solo faltan $${montoEnvioGratis - total.toFixed(0)} para que el Envio sea GRATIS !!`;
 
                 tableDataShoop = tableDataShoop.concat(`<tr>
                        <td class="table-products td-envio" style="font-size: 13px; border-right-color: #ffffff00;"><strong>Envio</strong></td>
                        <td class="table-products td-envio" style="font-size: 13px; text-align: right;"><strong>$ ${ajustesWeb.costoEnvio}</strong></td>
                     </tr>`);
-
-                total += parseFloat(ajustesWeb.costoEnvio);
+                totalSinTakeAway = total + parseFloat(ajustesWeb.costoEnvio);
             }
         }
 
         tableDataShoop = tableDataShoop.concat(`<tr>
                        <td class="table-products" style="font-size: 18px; border-right-color: #ffffff00;"><strong>TOTAL</strong></td>
-                       <td class="table-products" id="td-sin-descuento" style="font-size: 18px; text-align: right;"><strong>$ ${total.toFixed(0) }</strong></td>
-                       <td class="table-products td-discount" style="font-size: 18px; text-align: right; display: none;"><strong>$ ${(total - descuentoTakeAway).toFixed(0) }</strong></td>
+                       <td class="table-products" id="td-sin-descuento" style="font-size: 18px; text-align: right;"><strong>$ ${totalSinTakeAway.toFixed(0)}</strong></td>
+                       <td class="table-products td-discount" style="font-size: 18px; text-align: right; display: none;"><strong>$ ${(total - descuentoTakeAway).toFixed(0)}</strong></td>
                     </tr>`);
 
         const tableBody = document.querySelector("#tableProductos");
         tableBody.innerHTML = tableDataShoop;
 
-        $("#modalData").modal("show")
+        $("#modalData").modal("show");
+
+        document.getElementById("switchTakeAway").checked = false;
     }
 
 }
@@ -351,7 +353,7 @@ $('#switchTakeAway').change(function () {
     for (let element of discountElements) {
         element.style.display = check ? '' : 'none';
     }
-    
+
     discountElements = document.getElementsByClassName("td-envio");
 
     for (let element of discountElements) {
@@ -403,23 +405,22 @@ function finalizarVenta() {
         });
 
         let envio = "$" + ajustesWeb.costoEnvio;
+        let totalWS = sum;
+        let checkTakeAway = document.getElementById("switchTakeAway").checked;
 
-        if (sum < montoEnvioGratis) {
-            sum = parseFloat(sum) + parseFloat(envio);
+        if (checkTakeAway) {
+            totalWS -=  descuentoTakeAway;
+            envio = "Retiro en persona";
         }
         else {
-            envio = "GRATIS";
+            if (totalWS < montoEnvioGratis) {
+                totalWS += ajustesWeb.costoEnvio;
+                model["costoEnvio"] = ajustesWeb.costoEnvio;
+            }
+            else {
+                envio = "GRATIS";
+            }
         }
-
-        if (sum < montoEnvioGratis) {
-            model["costoEnvio"] = ajustesWeb.costoEnvio;
-            sum += ajustesWeb.costoEnvio;
-        }
-
-        let check = document.getElementById("switchTakeAway").checked;
-
-        if (check)
-            sum -= descuentoTakeAway;
 
         let textWA = `*NUEVO PEDIDO*%0A`;
 
@@ -430,7 +431,7 @@ function finalizarVenta() {
 %0A· *Forma de pago*: ${selectedText}
 %0A· *Comentarios*: ${model.comentario} 
 %0A· *Envio*: ${envio} 
-%0A· *TOTAL*: $${Number.parseFloat(sum).toFixed(2)}%0A`);
+%0A· *TOTAL*: $${totalWS.toFixed(2)}%0A`);
 
         textWA += productos.map(value => {
             return (
@@ -464,7 +465,7 @@ function finalizarVenta() {
                 telefono: model.telefono,
                 comentario: model.comentario,
                 estado: 0,
-                descuentoRetiroLocal: descuentoTakeAway,
+                descuentoRetiroLocal: checkTakeAway ? descuentoTakeAway : 0,
                 cruceCallesDireccion: model.cruceCallesDireccion,
                 costoEnvio: model.costoEnvio
             }

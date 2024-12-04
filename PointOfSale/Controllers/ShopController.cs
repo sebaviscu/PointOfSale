@@ -198,7 +198,8 @@ namespace PointOfSale.Controllers
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
-                List<VMVentaWeb> vmCategoryList = _mapper.Map<List<VMVentaWeb>>(await _shopService.GetAllByDate(user.IdRol == 1 ? null : TimeHelper.GetArgentinaTime()));
+                var ventasWeb = await _shopService.GetAllByDate(user.IdRol == 1 ? null : TimeHelper.GetArgentinaTime());
+                var vmCategoryList = _mapper.Map<List<VMVentaWeb>>(ventasWeb);
                 return StatusCode(StatusCodes.Status200OK, new { data = vmCategoryList });
             }
             catch (Exception e)
@@ -220,11 +221,12 @@ namespace PointOfSale.Controllers
 
                 model.ModificationUser = user.UserName;
 
-                VentaWeb edited_VemntaWeb = await _shopService.Update(_mapper.Map<VentaWeb>(model));
+                var ajustes = await _ajusteService.GetAjustes(model.IdTienda.Value);
+                VentaWeb edited_VemntaWeb = await _shopService.Update(ajustes, _mapper.Map<VentaWeb>(model));
+
                 model = _mapper.Map<VMVentaWeb>(edited_VemntaWeb);
                 if (model.Estado == EstadoVentaWeb.Finalizada && model.IdTienda.HasValue)
                 {
-                    var ajustes = await _ajusteService.GetAjustes(model.IdTienda.Value);
                     var sale = await _saleService.GetSale(edited_VemntaWeb.IdSale.Value);
 
                     var facturaEmitida = await _afipService.FacturarVenta(sale, ajustes, model.CuilFactura, model.IdClienteFactura);
