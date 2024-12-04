@@ -197,6 +197,10 @@ namespace PointOfSale.Utilities.Automapper
                     opt => opt.MapFrom(source => source.TypeDocumentSaleNavigation != null ? source.TypeDocumentSaleNavigation.Description : string.Empty)
                 )
                 .ForMember(destiny =>
+                    destiny.TipoFactura,
+                    opt => opt.MapFrom(source => source.TypeDocumentSaleNavigation != null ? source.TypeDocumentSaleNavigation.TipoFactura.ToString() : string.Empty)
+                )
+                .ForMember(destiny =>
                     destiny.Total,
                     opt => opt.MapFrom(source => source.Total.Value)
                 ).ForMember(destiny =>

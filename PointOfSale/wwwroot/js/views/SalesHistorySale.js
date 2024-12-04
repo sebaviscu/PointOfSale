@@ -333,7 +333,28 @@ function createTable(responseJson) {
 
     if (isAdmin) {
         $("#lblCantidadVentas").html("Cantidad de Ventas: <strong> " + Object.keys(uniqs).length + ".</strong>");
-        $("#lbltotal").html("Total: <strong>$ " + total.toFixed(2) + ".</strong>");
+
+        const groupedSales = responseJson.reduce((acc, sale) => {
+            if (!acc[sale.tipoFactura]) {
+                acc[sale.tipoFactura] = { tipoFactura: sale.tipoFactura, total: 0 };
+            }
+            acc[sale.tipoFactura].total += sale.total;
+            return acc;
+        }, {});
+
+        // Convertir el objeto agrupado en un array
+        const groupedData = Object.values(groupedSales);
+
+        // Generar el contenido HTML
+        let htmlContent = `Total: <strong>$ ${total.toFixed(0)}</strong>`;
+        groupedData.forEach(item => {
+            htmlContent += ` | Factura ${item.tipoFactura}: <strong>$ ${item.total.toFixed(0)}</strong>`;
+        });
+
+        // Asignar el contenido al elemento
+        $("#lbltotal").html(htmlContent);
+
+        //$("#lbltotal").html("Total: <strong>$ " + total.toFixed(2) + ".</strong>");
     }
 }
 

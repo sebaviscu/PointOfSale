@@ -10,6 +10,7 @@ namespace PointOfSale.Models
         public string? SaleNumber { get; set; }
         public int? IdTypeDocumentSale { get; set; }
         public string? TypeDocumentSale { get; set; }
+        public string? TipoFactura { get; set; }
         public int? IdUsers { get; set; }
         public string? CustomerDocument { get; set; }
         public string? ClientName { get; set; }

@@ -347,7 +347,6 @@ namespace PointOfSale.Business.Services
                 .Include(tdv => tdv.TypeDocumentSaleNavigation)
                 .Include(dv => dv.DetailSales);
             }
-
             return await result.ToListAsync(); // Usar ToListAsync para evitar bloquear el hilo
         }
 
