@@ -6,6 +6,8 @@ namespace PointOfSale.Models
     public class VMProductSimplificado
     {
         public int IdProduct { get; set; }
+
+        public string? SKU { get; set; }
         public string? BarCode { get; set; }
         public string? Brand { get; set; }
         public string? Description { get; set; }

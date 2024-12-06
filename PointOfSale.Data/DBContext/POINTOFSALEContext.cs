@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using PointOfSale.Model;
 using PointOfSale.Model.Afip.Factura;
+using PointOfSale.Model.Auditoria;
 
 namespace PointOfSale.Data.DBContext
 {
@@ -61,6 +62,7 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<Empresa> Empresas { get; set; }
         public virtual DbSet<PagoEmpresa> PagoEmpresa { get; set; }
         public virtual DbSet<ProductLov> ProductLov { get; set; }
+        public virtual DbSet<BackupProducto> BackupProducto { get; set; }
 
         #endregion
 
@@ -71,6 +73,12 @@ namespace PointOfSale.Data.DBContext
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
+            modelBuilder.Entity<BackupProducto>(entity =>
+            {
+
+                entity.ToTable("BackupProducto");
+
+            });            
             modelBuilder.Entity<ProductLov>(entity =>
             {
                 entity.HasKey(pl => new { pl.ProductId, pl.LovId, pl.LovType });

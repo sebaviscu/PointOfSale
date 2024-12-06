@@ -152,6 +152,7 @@ PrecioAlMomento bit null,
 ExcluirPromociones bit null,
 [idCategory] int references Category(idCategory),
 [idProveedor] int references Proveedor(idProveedor) null,
+sku varchar(50) null,
 [modificationDate] datetime null,
 [modificationUser] varchar(50) null,
 [registrationDate] datetime null
@@ -650,6 +651,7 @@ CREATE TABLE Horario (
 	FOREIGN KEY (IdUsuario) REFERENCES Users([idUsers]) ON DELETE CASCADE
 );
 
+go 
 
 CREATE TABLE Empresa (
     Id INT PRIMARY KEY IDENTITY(1,1),  
@@ -665,6 +667,8 @@ CREATE TABLE Empresa (
     ModificationDate DATETIME,                
     ModificationUser varchar(150)
 );
+
+go 
 
 CREATE TABLE PagoEmpresa (
     Id INT PRIMARY KEY IDENTITY(1,1),  
@@ -686,6 +690,8 @@ CREATE TABLE PagoEmpresa (
 	FOREIGN KEY (IdEmpresa) REFERENCES Empresa(Id) ON DELETE CASCADE
 );
 
+go 
+
 CREATE TABLE ProductLov
 (
     ProductId INT NOT NULL,
@@ -700,3 +706,41 @@ CREATE TABLE ProductLov
     CONSTRAINT FK_ProductLov_Lov FOREIGN KEY (LovId) 
         REFERENCES Lov(Id) ON DELETE CASCADE
 );
+
+go 
+
+create table BackupProducto(
+Id int primary key identity(1,1), 
+CorrelativeNumberMasivo VARCHAR(10) null,
+RegistrationUser varchar(50) null,
+RegistrationDate datetime null,
+[idProduct] int,
+[description] varchar(100),
+[price] decimal(10,2),
+[photo] varbinary(max),
+[isActive] bit,
+priceWeb decimal(10,2) null,
+precioFormatoWeb decimal(10,2) null,
+formatoWeb int null,
+porcentajeProfit int null,
+costPrice decimal(10,2) null,
+tipoVenta int not null,
+[comentario] varchar(300) null,
+iva decimal(10,2) null,
+destacado bit null,
+productoWeb bit null,
+modificarPrecio bit null,
+PrecioAlMomento bit null,
+ExcluirPromociones bit null,
+[Category] varchar(100) null,
+[Proveedor] varchar(100) null,
+Precio1 decimal(10,2) null,
+PorcentajeProfit1 int null,
+Precio2 decimal(10,2) null,
+PorcentajeProfit2 int null,
+Precio3 decimal(10,2) null,
+PorcentajeProfit3 int null,
+sku varchar(50) null
+)
+
+select * from BackupProducto

@@ -197,6 +197,11 @@ VALUES (0, 6, 'SaleWeb',1, GETDATE());
 
 GO
 
+INSERT INTO CorrelativeNumber (lastNumber, quantityDigits, management,  dateUpdate)
+VALUES (0, 4, 'EdicionMasivaBackup', GETDATE());
+
+GO
+
 insert into TipoGastos (gastoPArticular, descripcion, iva) values 
 (0, 'Sueldos', 0)
 

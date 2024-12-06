@@ -5,6 +5,8 @@ using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
+using PointOfSale.Model.Auditoria;
+using static iText.IO.Util.IntHashtable;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services
@@ -19,6 +21,8 @@ namespace PointOfSale.Business.Services
         private readonly IGenericRepository<CodigoBarras> _repositoryCodigosBarras;
         private readonly INotificationService _notificationService;
         private readonly IGenericRepository<Stock> _repositoryStock;
+        private readonly IBackupService _backupService;
+        private readonly ISaleRepository _saleRepository;
 
         public ProductService(IGenericRepository<Product> repository,
             IGenericRepository<ListaPrecio> repositoryListaPrecios,
@@ -27,7 +31,9 @@ namespace PointOfSale.Business.Services
             INotificationService notificationService,
             IGenericRepository<Stock> repositoryStock,
             IGenericRepository<Notifications> notificationRepository,
-            IGenericRepository<CodigoBarras> repositoryCodigosBarras)
+            IGenericRepository<CodigoBarras> repositoryCodigosBarras,
+            IBackupService backupService,
+            ISaleRepository saleRepository)
         {
             _repository = repository;
             _repositoryListaPrecios = repositoryListaPrecios;
@@ -37,12 +43,14 @@ namespace PointOfSale.Business.Services
             _repositoryStock = repositoryStock;
             _notificationRepository = notificationRepository;
             _repositoryCodigosBarras = repositoryCodigosBarras;
+            _backupService = backupService;
+            _saleRepository = saleRepository;
         }
 
         public async Task<Product> Get(int idProducto)
         {
             IQueryable<Product> queryProduct = await _repository.Query(u => u.IdProduct == idProducto);
-            return getIncludes(queryProduct).Include(_=>_.IdCategoryNavigation).First();
+            return getIncludes(queryProduct).Include(_ => _.IdCategoryNavigation).First();
         }
 
         public async Task<List<Product>> List()
@@ -258,7 +266,6 @@ namespace PointOfSale.Business.Services
             return resultMessage;
         }
 
-
         public async Task<Product> Edit(Product entity, List<ListaPrecio> listaPrecios, List<Vencimiento> vencimientos, Stock? stock, List<CodigoBarras>? codigoBarras, List<Tag> tags, List<ProductLov> comodines)
         {
             try
@@ -266,6 +273,7 @@ namespace PointOfSale.Business.Services
                 var prodQuery = await _repository.Query(p => p.IdProduct == entity.IdProduct);
 
                 var product = await prodQuery.Include(p => p.ListaPrecios)
+                                    .Include(_=>_.IdCategoryNavigation)
                                     .Include(p => p.ProductTags)
                                        .ThenInclude(pt => pt.Tag)
                                     .Include(p => p.ProductLovs)
@@ -274,6 +282,8 @@ namespace PointOfSale.Business.Services
 
                 if (product == null)
                     throw new Exception("Producto no encontrado.");
+
+                await _backupService.SaveBackup(entity.ModificationUser, TimeHelper.GetArgentinaTime(), null, product);
 
                 // Actualizar campos del producto
                 product.Description = entity.Description;
@@ -296,6 +306,7 @@ namespace PointOfSale.Business.Services
                 product.ModificarPrecio = entity.ModificarPrecio;
                 product.PrecioAlMomento = entity.PrecioAlMomento;
                 product.ExcluirPromociones = entity.ExcluirPromociones;
+                product.SKU = entity.SKU;
 
                 if (entity.Photo != null && entity.Photo.Length > 0)
                     product.Photo = entity.Photo;
@@ -481,10 +492,13 @@ namespace PointOfSale.Business.Services
         {
             try
             {
+                var modificationDate = TimeHelper.GetArgentinaTime();
+                var lastSerialNumber = await _saleRepository.GetLastSerialNumberSale(null, "EdicionMasivaBackup");
                 foreach (var p in data.idProductos)
                 {
 
                     var product_edit = await GetProductById(p);
+                    await _backupService.SaveBackup(user, modificationDate, lastSerialNumber, product_edit);
 
                     var precioWeb = product_edit.PriceWeb;
                     var precio1 = listaPrecios.First(_ => _.Lista == ListaDePrecio.Lista_1);
@@ -509,7 +523,7 @@ namespace PointOfSale.Business.Services
                     product_edit.Comentario = data.Comentario;
                     product_edit.Iva = data.Iva;
                     product_edit.ModificationUser = user;
-                    product_edit.ModificationDate = TimeHelper.GetArgentinaTime();
+                    product_edit.ModificationDate = modificationDate;
 
                     bool response = await _repository.Edit(product_edit);
                     if (!response)
@@ -540,15 +554,20 @@ namespace PointOfSale.Business.Services
         {
             try
             {
+                var modificationDate = TimeHelper.GetArgentinaTime();
+                var lastSerialNumber = await _saleRepository.GetLastSerialNumberSale(null, "EdicionMasivaBackup");
+
                 foreach (var p in data)
                 {
                     var product_edit = await GetProductById(p.Id);
+
+                    await _backupService.SaveBackup(user, modificationDate, lastSerialNumber, product_edit);
 
                     product_edit.Price = p.Precio1;
                     product_edit.PriceWeb = p.PrecioWeb;
                     product_edit.CostPrice = p.Costo;
                     product_edit.ModificationUser = user;
-                    product_edit.ModificationDate = TimeHelper.GetArgentinaTime();
+                    product_edit.ModificationDate = modificationDate;
 
 
                     var listaPrecios = new List<ListaPrecio>();

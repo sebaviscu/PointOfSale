@@ -8,11 +8,11 @@ using PointOfSale.Business.Reportes;
 using PointOfSale.Business.Services;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
+using PointOfSale.Model.Auditoria;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
 using System.Globalization;
 using static PointOfSale.Model.Enum;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PointOfSale.Controllers
 {
@@ -26,6 +26,7 @@ namespace PointOfSale.Controllers
         private readonly ILogger<InventoryController> _logger;
         private readonly ITagService _tagService;
         private readonly IPromocionService _promocionService;
+        private readonly IBackupService _backupService;
 
         public InventoryController(ICategoryService categoryService, 
             IProductService productService, 
@@ -33,7 +34,8 @@ namespace PointOfSale.Controllers
             IImportarExcelService excelService, 
             ILogger<InventoryController> logger, 
             ITagService tagService, 
-            IPromocionService promocionService)
+            IPromocionService promocionService,
+            IBackupService backupService)
         {
             _categoryService = categoryService;
             _productService = productService;
@@ -42,6 +44,7 @@ namespace PointOfSale.Controllers
             _logger = logger;
             _tagService = tagService;
             _promocionService = promocionService;
+            _backupService = backupService;
         }
 
         public IActionResult Products()
@@ -49,6 +52,13 @@ namespace PointOfSale.Controllers
             ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
             return ValidateSesionViewOrLogin();
         }
+
+        public IActionResult Backups()
+        {
+            ValidarAutorizacion([Roles.Administrador]);
+            return ValidateSesionViewOrLogin();
+        }
+
         public IActionResult Stock()
         {
             ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
@@ -68,6 +78,13 @@ namespace PointOfSale.Controllers
 
             List<VMCategory> vmCategoryList = _mapper.Map<List<VMCategory>>(await _categoryService.ListActive());
             return StatusCode(StatusCodes.Status200OK, new { data = vmCategoryList });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetBackups()
+        {
+            var vmBackupList = _mapper.Map<List<VMBackupProducto>>(_backupService.List().ToList());
+            return StatusCode(StatusCodes.Status200OK, new { data = vmBackupList });
         }
 
         [HttpPost]
@@ -935,6 +952,27 @@ namespace PointOfSale.Controllers
             {
                 return HandleException(ex, "Error al eliminar vencimientos.", _logger, idVencimiento);
             }
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> RestoreBackup(int idBackup, string correlativeNumber)
+        {
+
+            GenericResponse<string> gResponse = new GenericResponse<string>();
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador]);
+                await _backupService.RestoreBackup(user.UserName, idBackup, correlativeNumber);
+
+                gResponse.State = true;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al restaurar el backup.", _logger, idBackup);
+            }
+
         }
     }
 }

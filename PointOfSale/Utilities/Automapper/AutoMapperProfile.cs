@@ -8,6 +8,7 @@ using PointOfSale.Model.Output;
 using System.Security.Cryptography.X509Certificates;
 using PointOfSale.Model.Afip.Factura;
 using PointOfSale.Model.Input;
+using PointOfSale.Model.Auditoria;
 
 namespace PointOfSale.Utilities.Automapper
 {
@@ -498,6 +499,8 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<Empresa, VMEmpresa>().ReverseMap();
             CreateMap<PagoEmpresa, VMPagoEmpresa>().ReverseMap();
             CreateMap<ProductLov, VMProductLov>().ReverseMap();
+            CreateMap<BackupProducto, VMBackupProducto>().ReverseMap();
+            CreateMap<Product, BackupProducto>().ReverseMap();
         }
     }
 }

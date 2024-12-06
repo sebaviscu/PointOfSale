@@ -47,17 +47,17 @@ namespace PointOfSale.Business.Utilities
                         try
                         {
                             // Omitir encabezados
-                            if (reader.GetValue(0)?.ToString() == "Descripcion*" || ( string.IsNullOrEmpty(reader.GetValue(0)?.ToString()) && string.IsNullOrEmpty(reader.GetValue(2)?.ToString()) && string.IsNullOrEmpty(reader.GetValue(5)?.ToString())))
+                            if (reader.GetValue(0)?.ToString() == "Descripcion*" || ( string.IsNullOrEmpty(reader.GetValue(1)?.ToString()) && string.IsNullOrEmpty(reader.GetValue(3)?.ToString()) && string.IsNullOrEmpty(reader.GetValue(6)?.ToString())))
                                 continue;
 
-                            if(string.IsNullOrEmpty(reader.GetValue(0)?.ToString()) || 
-                                string.IsNullOrEmpty(reader.GetValue(2)?.ToString())|| 
-                                string.IsNullOrEmpty(reader.GetValue(5)?.ToString()))
+                            if(string.IsNullOrEmpty(reader.GetValue(1)?.ToString()) || 
+                                string.IsNullOrEmpty(reader.GetValue(3)?.ToString())|| 
+                                string.IsNullOrEmpty(reader.GetValue(6)?.ToString()))
                             {
                                 throw new FormatException("Valores obligatorios no completados.");
                             }
 
-                            if (reader.GetValue(2)?.ToString().ToLower() != "kg" && reader.GetValue(2)?.ToString().ToLower() != "u")
+                            if (reader.GetValue(3)?.ToString().ToLower() != "kg" && reader.GetValue(3)?.ToString().ToLower() != "u")
                                 throw new Exception("Tipo de venta inválido");
 
                             Product product = ParseProduct(reader, listaProveedores, listaCategorias, modificarPrecio, productoWeb);
@@ -79,28 +79,29 @@ namespace PointOfSale.Business.Utilities
         private Product ParseProduct(IExcelDataReader reader, List<Proveedor> listaProveedores, List<Category> listaCategorias, bool modificarPrecio, bool productoWeb)
         {
 
-            var proveedor = listaProveedores.FirstOrDefault(_ => _.Nombre.ToLower() == reader.GetValue(12)?.ToString()?.ToLower());
-            if(proveedor == null && !string.IsNullOrEmpty(reader.GetValue(12)?.ToString()?.ToLower()))
+            var proveedor = listaProveedores.FirstOrDefault(_ => _.Nombre.ToLower() == reader.GetValue(13)?.ToString()?.ToLower());
+            if(proveedor == null && !string.IsNullOrEmpty(reader.GetValue(13)?.ToString()?.ToLower()))
             {
-                throw new Exception($"Proveedor '{reader.GetValue(12)?.ToString()}' no encontrado");
+                throw new Exception($"Proveedor '{reader.GetValue(13)?.ToString()}' no encontrado");
             }
 
-            var categoria = listaCategorias.FirstOrDefault(_ => _.Description.ToLower() == reader.GetValue(13)?.ToString()?.ToLower());
-            if(categoria == null && !string.IsNullOrEmpty(reader.GetValue(13)?.ToString()?.ToLower()))
+            var categoria = listaCategorias.FirstOrDefault(_ => _.Description.ToLower() == reader.GetValue(14)?.ToString()?.ToLower());
+            if(categoria == null && !string.IsNullOrEmpty(reader.GetValue(14)?.ToString()?.ToLower()))
             {
-                throw new Exception($"Categoria '{reader.GetValue(13)?.ToString()}' no encontrada");
+                throw new Exception($"Categoria '{reader.GetValue(14)?.ToString()}' no encontrada");
             }
 
-            var tipoVenta = reader.GetValue(2)?.ToString().ToLower() == "kg" ? TipoVenta.Kg : TipoVenta.U;
-            var precioWeb = ParseDecimal(reader.GetValue(11), "Precio Web");
+            var tipoVenta = reader.GetValue(3)?.ToString().ToLower() == "kg" ? TipoVenta.Kg : TipoVenta.U;
+            var precioWeb = ParseDecimal(reader.GetValue(12), "Precio Web");
 
             Product product = new Product
             {
                 IdProduct = 0,
                 IsActive = true,
-                Description = reader.GetValue(0)?.ToString(),
+                SKU = reader.GetValue(0)?.ToString(),
+                Description = reader.GetValue(1)?.ToString(),
                 TipoVenta = tipoVenta,
-                CostPrice = ParseDecimal(reader.GetValue(3), "Costo"),
+                CostPrice = ParseDecimal(reader.GetValue(4), "Costo"),
                 ListaPrecios = ParseListaPrecios(reader),
                 PriceWeb = precioWeb,
                 Proveedor = proveedor,
@@ -109,7 +110,7 @@ namespace PointOfSale.Business.Utilities
                 IdCategoryNavigation = categoria,
                 Destacado = false,
                 ProductoWeb = productoWeb,
-                Iva = ParseDecimal(reader.GetValue(4), "IVA"),
+                Iva = ParseDecimal(reader.GetValue(5), "IVA"),
                 Comentario = string.Empty,
                 FormatoWeb = tipoVenta == TipoVenta.Kg ? 1000 : 1,
                 PrecioFormatoWeb = precioWeb,
@@ -118,7 +119,7 @@ namespace PointOfSale.Business.Utilities
                 ExcluirPromociones = false
             };
 
-            var codBarras = reader.GetValue(1)?.ToString();
+            var codBarras = reader.GetValue(2)?.ToString();
             if (!string.IsNullOrEmpty(codBarras))
             {
                 product.CodigoBarras = new List<CodigoBarras>() { new CodigoBarras(ParseInt(codBarras, "Codigo de barras").ToString()) };
@@ -133,18 +134,18 @@ namespace PointOfSale.Business.Utilities
     {
         new ListaPrecio(ListaDePrecio.Lista_1)
         {
-            PorcentajeProfit = ParseInt(reader.GetValue(5), "Procentaje de ganancia 1"),
-            Precio = ParseDecimal(reader.GetValue(6), "Precio 1")
+            PorcentajeProfit = ParseInt(reader.GetValue(6), "Procentaje de ganancia 1"),
+            Precio = ParseDecimal(reader.GetValue(7), "Precio 1")
         },
         new ListaPrecio(ListaDePrecio.Lista_2)
         {
-            PorcentajeProfit = ParseInt(reader.GetValue(7), "Procentaje de ganancia 2"),
-            Precio = ParseDecimal(reader.GetValue(8), "Precio 2")
+            PorcentajeProfit = ParseInt(reader.GetValue(8), "Procentaje de ganancia 2"),
+            Precio = ParseDecimal(reader.GetValue(9), "Precio 2")
         },
         new ListaPrecio(ListaDePrecio.Lista_3)
         {
-            PorcentajeProfit = ParseInt(reader.GetValue(9), "Procentaje de ganancia 3"),
-            Precio = ParseDecimal(reader.GetValue(10), "Precio 3")
+            PorcentajeProfit = ParseInt(reader.GetValue(10), "Procentaje de ganancia 3"),
+            Precio = ParseDecimal(reader.GetValue(11), "Precio 3")
         }
     };
 

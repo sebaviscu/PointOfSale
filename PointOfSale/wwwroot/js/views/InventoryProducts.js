@@ -43,7 +43,8 @@ const BASIC_MODEL_PRODUCTOS = {
     comodin3: [],
     modificarPrecio: 0,
     precioAlMomento: 0,
-    excluirPromociones: 0
+    excluirPromociones: 0,
+    sku: null
 }
 
 const BASIC_MASSIVE_EDIT = {
@@ -91,7 +92,7 @@ $(document).ready(function () {
             rowId: 'idProduct',
             "columnDefs": [
                 {
-                    "targets": [6],
+                    "targets": [7],
                     "render": function (data, type, row) {
                         if (type === 'display' || type === 'filter') {
                             return data ? moment(data).format('DD/MM/YYYY HH:mm') : '';
@@ -113,6 +114,7 @@ $(document).ready(function () {
                     "width": "40px",
                     "className": "text-center"
                 },
+                { "data": "sku" },
                 { "data": "description" },
                 { "data": "idCategoryNavigation.description" },
                 {
@@ -147,7 +149,7 @@ $(document).ready(function () {
                     "className": "text-center"
                 }
             ],
-            order: [[2, "asc"]],
+            order: [[3, "asc"]],
             dom: "Bfrtip",
             buttons: [
                 {
@@ -156,7 +158,7 @@ $(document).ready(function () {
                     title: '',
                     filename: 'Report Productos',
                     exportOptions: {
-                        columns: [2, 3, 4, 5, 6, 7, 8]
+                        columns: [2, 3, 4, 5, 6, 7, 8,9]
                     }
                 }, 'pageLength'
             ]
@@ -437,6 +439,7 @@ const openModalProduct = (model = BASIC_MODEL_PRODUCTOS) => {
     $("#txtProfit3").val(model.porcentajeProfit3);
     $("#cboFormatoVenta").val(model.formatoWeb);
     $("#txtPriceFormatoWeb").val(model.precioFormatoWeb != 0 ? model.precioFormatoWeb.replace(/,/g, '.') : '0');
+    $("#txtSku").val(model.sku);
     document.getElementById('switchProductoDescatado').checked = model.destacado;
     document.getElementById('switchProductoWeb').checked = model.productoWeb;
     document.getElementById('switchPuedeModificar').checked = model.modificarPrecio;
@@ -851,6 +854,7 @@ $("#btnCargarImportar").on("click", function () {
                 $("#tableImportarProductos tbody").append(
                     $("<tr>").append(
                         $("<td>").text(++i),
+                        $("<td>").text(product.sku),
                         $("<td>").text(product.description),
                         $("<td>").text(product.barCode),
                         $("<td>").text(product.tipoVenta == '1' ? 'Kg' : 'U'),
@@ -970,6 +974,7 @@ $("#btnSave").on("click", async function () {
     model["comentario"] = $("#txtComentario").val();
     model["iva"] = $("#txtIva").val();
     model["formatoWeb"] = $("#cboFormatoVenta").val();
+    model["sku"] = $("#txtSku").val();
     model["destacado"] = document.getElementById('switchProductoDescatado').checked;
     model["modificarPrecio"] = document.getElementById('switchPuedeModificar').checked;
     model["precioAlMomento"] = document.getElementById('switchPrecioAlMomento').checked;
