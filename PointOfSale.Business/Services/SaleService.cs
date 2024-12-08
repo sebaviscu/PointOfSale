@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using iText.StyledXmlParser.Jsoup.Nodes;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
@@ -20,6 +21,7 @@ namespace PointOfSale.Business.Services
         private readonly IGenericRepository<Cliente> _repositoryCliente;
         private readonly IGenericRepository<ListaPrecio> _repositoryListaPrecio;
         private readonly IGenericRepository<FacturaEmitida> _repositoryFacturaEmitida;
+        private readonly IGenericRepository<TypeDocumentSale> _repositoryTypeDocumentSale;
         private readonly ISaleRepository _repositorySale;
         private readonly ITypeDocumentSaleService _rTypeNumber;
         private readonly IProductService _rProduct;
@@ -43,7 +45,8 @@ namespace PointOfSale.Business.Services
             INotificationService notificationService,
             IClienteService clienteService,
             IAjusteService ajusteService,
-            ITicketService ticketService)
+            ITicketService ticketService,
+            IGenericRepository<TypeDocumentSale> repositoryTypeDocumentSale)
         {
             _repositoryProduct = repositoryProduct;
             _repositorySale = repositorySale;
@@ -58,6 +61,7 @@ namespace PointOfSale.Business.Services
             _clienteService = clienteService;
             _ticketService = ticketService;
             _ajustesService = ajusteService;
+            _repositoryTypeDocumentSale = repositoryTypeDocumentSale;
         }
 
 
@@ -194,7 +198,7 @@ namespace PointOfSale.Business.Services
 
             return query.Include(_ => _.ClienteMovimientos).ToList();
         }
-
+        
         public async Task<RegisterSaleOutput> RegisterSale(Sale model, RegistrationSaleInput saleInput)
         {
             var modelResponde = new RegisterSaleOutput();
@@ -272,6 +276,11 @@ namespace PointOfSale.Business.Services
                         }
                     }
 
+                    if (sale_created.TypeDocumentSaleNavigation == null)
+                    {
+                        sale_created.TypeDocumentSaleNavigation = await _repositoryTypeDocumentSale.Get(_ => _.IdTypeDocumentSale == sale_created.IdTypeDocumentSale);
+
+                    }
                     if (saleInput.MultiplesFormaDePago.Count == 1)
                     {
                         modelResponde.IdSale = sale_created.IdSale;
