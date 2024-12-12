@@ -246,7 +246,7 @@
                     <div class="col-12 d-flex justify-content-around" id="divError" style="display: none !important;">
                         <div class="alert alert alert-warning d-flex align-items-center" style="padding: 10px;margin-bottom: 0;">
                             <strong>
-                                <span class="mdi mdi-alert-octagon mdi-48px">&nbsp;</span>
+                                <span class="mdi mdi-alert-octagon mdi-48px me-2">&nbsp;</span>
                             </strong>
                             <span id="txtError"></span>
                         </div>
@@ -427,6 +427,7 @@
 
 <script src="~/plugins/loadingoverlay/loadingoverlay.min.js"></script>
 <script src="~/js/views/layout.js"></script>
+<script src="~/js/views/cierreTurno.js"></script>
 <script src="~/js/moment.js"></script>
 <script src="~/js/moment-timezone.js"></script>
 <script src="~/plugins/printService.min.js"></script>
@@ -434,7 +435,7 @@
 
 
 <script>
-    const billetes = [
+    const billetes1 = [
         { valor: 10, imagen: '@Url.Content("~/images/Billetes/Billete1.png")' },
         { valor: 20, imagen: '@Url.Content("~/images/Billetes/Billete2.png")' },
         { valor: 50, imagen: '@Url.Content("~/images/Billetes/Billete3.png")' },
@@ -446,31 +447,32 @@
         { valor: 500, imagen: '@Url.Content("~/images/Billetes/Billete6.png")' },
         { valor: 1000, imagen: '@Url.Content("~/images/Billetes/Billete7.png")' },
         { valor: 2000, imagen: '@Url.Content("~/images/Billetes/Billete8.png")' },
-        { valor: 10000, imagen: '@Url.Content("~/images/Billetes/Billete9.png")' }
+        { valor: 10000, imagen: '@Url.Content("~/images/Billetes/Billete9.png")' },
+        { valor: 20000, imagen: '@Url.Content("~/images/Billetes/Billete10.png")' }
     ];
 
     $(document).ready(function () {
-        generateBilletesHTML('#billetesContainer', billetes, 'col1');
+        generateBilletesHTML('#billetesContainer', billetes1, 'col1');
         generateBilletesHTML('#billetesContainer2', billetes2, 'col2');
     });
 
-    function generateBilletesHTML(containerSelector, billetes, columnPrefix) {
+    function generateBilletesHTML(containerSelector, billetesList, columnPrefix) {
         const container = $(containerSelector);
         container.empty();
 
-        billetes.forEach((billete, index) => {
+        billetesList.forEach((b, index) => {
             const billeteHTML = `
                                                                 <div class="row mb-3">
                                                                     <div class="col-md-5">
                                                                         <div class="form-group" style="margin-bottom: 0px;">
-                                                                            <input type="number" style="font-size: 20px;" step="1" min="0" value="0" class="form-control text-center txtCantBillete" data-valor="${billete.valor}" id="txtCantBillete_${columnPrefix}_${index}">
+                                                                            <input type="number" style="font-size: 20px;" step="1" min="0" value="0" class="form-control text-center txtCantBillete" data-valor="${b.valor}" id="txtCantBillete_${columnPrefix}_${index}">
                                                                         </div>
                                                                         <div class="form-group" style="margin-bottom: 0px;">
                                                                             <input type="text" class="form-control form-control-sm text-center txtSumaBillete" id="txtSumaBillete_${columnPrefix}_${index}" value="$0" readonly>
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-md-7 d-flex align-items-center justify-content-center">
-                                                                                <img style="max-width: 210px;max-height: 88px;" src="${billete.imagen}" class="rounded mx-auto d-block" alt="Photo Product">
+                                                                                <img style="max-width: 210px;max-height: 88px;" src="${b.imagen}" class="rounded mx-auto d-block" alt="Photo Product">
                                                                     </div>
                                                                 </div>
                                                             `;

@@ -10,7 +10,7 @@ namespace PointOfSale.Model
     {
         public Turno()
         {
-
+            ValidacionRealizada = false;
         }
 
         public Turno(int idTienda, string usuario)
@@ -40,5 +40,9 @@ namespace PointOfSale.Model
         public string? ErroresCierreCaja { get; set; }
         public bool? ValidacionRealizada { get; set; }
 
-	}
+
+        public string? BilletesEfectivo { get; set; }
+        public ICollection<VentasPorTipoDeVentaTurno>? VentasPorTipoDeVenta { get; set; }
+
+    }
 }

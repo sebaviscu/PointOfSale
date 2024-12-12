@@ -43,11 +43,12 @@ public class Program
                 });
             });
 
+            var timeExpire = TimeHelper.GetArgentinaTime().AddHours(2);
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(option =>
                 {
                     option.LoginPath = "/Access/Login";
-                    //option.ExpireTimeSpan = TimeSpan.FromHours(3);
+                    option.ExpireTimeSpan = timeExpire.TimeOfDay;
                 });
 
             builder.Services.AddDbContext<POINTOFSALEContext>(options =>

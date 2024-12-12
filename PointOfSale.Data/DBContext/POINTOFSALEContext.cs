@@ -63,6 +63,7 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<PagoEmpresa> PagoEmpresa { get; set; }
         public virtual DbSet<ProductLov> ProductLov { get; set; }
         public virtual DbSet<BackupProducto> BackupProducto { get; set; }
+        public virtual DbSet<VentasPorTipoDeVentaTurno> VentasPorTipoDeVentaTurno { get; set; }
 
         #endregion
 
@@ -73,12 +74,24 @@ namespace PointOfSale.Data.DBContext
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
+            modelBuilder.Entity<VentasPorTipoDeVentaTurno>(entity =>
+            {
+
+                entity.ToTable("VentasPorTipoDeVentaTurno");
+
+                entity.HasOne(e => e.Turno)
+                .WithMany(_=>_.VentasPorTipoDeVenta)
+                .HasForeignKey(e => e.IdTurno)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });   
+
             modelBuilder.Entity<BackupProducto>(entity =>
             {
 
                 entity.ToTable("BackupProducto");
 
-            });            
+            });   
+            
             modelBuilder.Entity<ProductLov>(entity =>
             {
                 entity.HasKey(pl => new { pl.ProductId, pl.LovId, pl.LovType });
@@ -504,6 +517,11 @@ namespace PointOfSale.Data.DBContext
                     .WithMany(p => p.Turnos)
                     .HasForeignKey(d => d.IdTienda)
                     .HasConstraintName("FK__Turno__idTurno__4F7CD00D");
+
+                entity.HasMany(e => e.VentasPorTipoDeVenta)
+                    .WithOne(e => e.Turno)
+                    .HasForeignKey(e => e.IdTurno)
+                        .OnDelete(DeleteBehavior.Cascade);
 
             });
 

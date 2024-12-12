@@ -32,6 +32,7 @@ TotalCierreCajaSistema decimal(10,2) null,
 TotalCierreCajaReal decimal(10,2) null,
 ErroresCierreCaja VARCHAR(max) NULL,
 ValidacionRealizada bit null,
+BilletesEfectivo NVARCHAR(max) NULL,
 CONSTRAINT FK_Turno_Tienda FOREIGN KEY (idTienda)
 REFERENCES Tienda(idTienda) ON DELETE CASCADE
 );
@@ -743,4 +744,15 @@ PorcentajeProfit3 int null,
 sku varchar(50) null
 )
 
-select * from BackupProducto
+go
+
+CREATE TABLE VentasPorTipoDeVentaTurno (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Descripcion NVARCHAR(MAX) NULL,
+    TotalSistema DECIMAL(18, 2) NULL,
+    TotalUsuario DECIMAL(18, 2) NULL,
+    Error NVARCHAR(MAX) NULL,
+    IdTurno INT NOT NULL,
+
+    CONSTRAINT FK_VentasPorTipoDeVentaTurno_Turno FOREIGN KEY (IdTurno) REFERENCES Turno(IdTurno)
+);

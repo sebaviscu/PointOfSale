@@ -12,7 +12,7 @@ namespace PointOfSale.Models
         public DateTime? RegistrationDate { get; set; }
         public string? RegistrationUser { get; set; }
         public string? ModificationUser { get; set; }
-        public List<VMVentasPorTipoDeVenta>? VentasPorTipoVenta { get; set; }
+        public List<VMVentasPorTipoDeVenta>? VentasPorTipoVentaPreviaValidacion { get; set; }
         public string? Fecha { get; set; }
         public string? HoraInicio { get; set; }
         public string? HoraFin { get; set; }
@@ -34,6 +34,9 @@ namespace PointOfSale.Models
         public int? DiferenciaCierreCaja => (int)((TotalCierreCajaReal != null ? TotalCierreCajaReal.Value : 0) - (TotalCierreCajaSistema != null ? TotalCierreCajaSistema.Value : 0));
 
         public bool? ImpirmirCierreCaja { get; set; }
+        public string? BilletesEfectivo { get; set; }
+
+        public ICollection<VentasPorTipoDeVentaTurno>? VentasPorTipoDeVenta { get; set; }
 
     }
 }

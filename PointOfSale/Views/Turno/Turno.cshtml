@@ -49,7 +49,7 @@
 
 <!-- Grid Modal Cerrar Turno-->
 <div class="modal fade" id="modalDataTurno" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Finalizar Turno</h5>
@@ -62,18 +62,23 @@
 
                     <input type="hidden" value="0" id="txtIdTurnoLayout">
                     <div class="col-sm-5">
-                        <div>
-                            <div class="form-group col-sm-7">
+                        <div class="col-md-12 row">
+                            <div class="form-group col-sm-5">
                                 <label for="txtFecha">Fecha</label>
                                 <input type="text" class="form-control form-control-sm" id="txtFecha" name="Fecha" disabled>
                             </div>
+                            <div class="offset-sm-2 col-sm-5" id="divValidacionRealizada" style="align-content: center;">
+                                <div class="form-row">
+                                    <span class="badge rounded-pill bg-success">Validacion Realizada</span>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-12 row">
-                            <div class="form-group col-sm-6">
+                            <div class="form-group col-sm-4">
                                 <label for="txtHoraInicio">Hora de Inicio</label>
                                 <input type="text" class="form-control form-control-sm" id="txtHoraInicio" name="Hora del turno" disabled>
                             </div>
-                            <div class="form-group col-sm-6">
+                            <div class="offset-sm-1 form-group col-sm-4">
                                 <label for="txtHoraCierre">Hora de Cierre</label>
                                 <input type="text" class="form-control form-control-sm" id="txtHoraCierre" name="Hora del turno de cierre" disabled>
                             </div>
@@ -103,19 +108,19 @@
                                 </div>
                                 <br />
                                 <div id="contMetodosPagoLayoutList"></div>
-                                <div class="text-end">
+@*                                 <div class="text-end">
                                     <button type="button" class="btn-sm btn btn-info" id="btnValidarTurno">Validar</button>
-                                </div>
+                                </div> *@
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-12 d-flex justify-content-around" id="divError" style="display: none !important;">
+                    <div class="col-12 d-flex justify-content-around" id="divErrorTurno" style="display: none !important;">
                         <div class="alert alert alert-warning d-flex align-items-center" style="padding: 10px;margin-bottom: 0;">
                             <strong>
-                                <span class="mdi mdi-alert-octagon mdi-48px">&nbsp;</span>
+                                <span class="mdi mdi-alert-octagon mdi-48px me-2">&nbsp;</span>
                             </strong>
-                            <span id="txtError"></span>
+                            <span id="txtErrorTurno"></span>
                         </div>
                     </div>
                 </div>

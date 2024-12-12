@@ -87,26 +87,30 @@ namespace PointOfSale.Controllers
             {
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Empleado]);
 
-                var turno = await _turnoService.GetTurnoActualConVentas(user.IdTienda);
+                var turno = await _turnoService.GetTurnoConVentasPorTipoDeVentaTurno(user.IdTurno);
                 var outout = new VMTurnoOutput();
 
                 if (turno != null)
                 {
                     VMTurno vmTurnp = null;
                     vmTurnp = _mapper.Map<VMTurno>(turno);
-                    var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
-                    var dateActual = TimeHelper.GetArgentinaTime();
 
-                    var ventas = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, user.IdTienda, dateActual, false);
-                    foreach (KeyValuePair<string, decimal> item in ventas.OrderBy(_ => _.Key))
+                    if (!vmTurnp.ValidacionRealizada.HasValue || !vmTurnp.ValidacionRealizada.Value)
                     {
-                        VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
+                        var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
+                        var dateActual = TimeHelper.GetArgentinaTime();
+
+                        var ventas = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, user.IdTienda, dateActual, false);
+                        foreach (KeyValuePair<string, decimal> item in ventas.OrderBy(_ => _.Key))
                         {
-                            Descripcion = item.Key,
-                            Total = item.Value
-                        });
+                            VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
+                            {
+                                Descripcion = item.Key,
+                                Total = item.Value
+                            });
+                        }
+                        vmTurnp.VentasPorTipoVentaPreviaValidacion = VentasPorTipoVenta;
                     }
-                    vmTurnp.VentasPorTipoVenta = VentasPorTipoVenta;
 
                     var movimientos = await _movimientoCajaService.GetMovimientoCajaByTurno(user.IdTurno);
 
@@ -156,7 +160,7 @@ namespace PointOfSale.Controllers
                     });
                 }
 
-                vmTurnp.VentasPorTipoVenta = VentasPorTipoVenta;
+                vmTurnp.VentasPorTipoVentaPreviaValidacion = VentasPorTipoVenta;
 
                 var movimientos = await _movimientoCajaService.GetMovimientoCajaByTurno(idturno);
 
@@ -199,7 +203,8 @@ namespace PointOfSale.Controllers
                     FechaInicio = TimeHelper.GetArgentinaTime(),
                     IdTienda = user.IdTienda,
                     TotalCierreCajaReal = 0,
-                    TotalCierreCajaSistema = 0
+                    TotalCierreCajaSistema = 0,
+                    ValidacionRealizada = false
                 };
 
 
@@ -228,7 +233,7 @@ namespace PointOfSale.Controllers
 
                 modelTurno.ModificationUser = user.UserName;
 
-                var result = await _turnoService.CerrarTurno(_mapper.Map<Turno>(modelTurno), _mapper.Map<List<VentasPorTipoDeVenta>>(modelTurno.VentasPorTipoVenta));
+                var result = await _turnoService.CerrarTurno(_mapper.Map<Turno>(modelTurno), _mapper.Map<List<VentasPorTipoDeVentaTurno>>(modelTurno.VentasPorTipoVentaPreviaValidacion));
 
                 UpdateClaimAsync("Turno", null);
 
@@ -273,7 +278,7 @@ namespace PointOfSale.Controllers
 
                 modelTurno.IdTienda = user.IdTienda;
 
-                var turno = await _turnoService.ValidarCierreTurno(_mapper.Map<Turno>(modelTurno), _mapper.Map<List<VentasPorTipoDeVenta>>(modelTurno.VentasPorTipoVenta));
+                var turno = await _turnoService.ValidarCierreTurno(_mapper.Map<Turno>(modelTurno), _mapper.Map<List<VentasPorTipoDeVentaTurno>>(modelTurno.VentasPorTipoVentaPreviaValidacion));
 
                 gResponse.State = true;
                 gResponse.Object = turno;

@@ -485,11 +485,13 @@ namespace PointOfSale.Utilities.Automapper
                     .ForMember(user => user.Descripcion, opt => opt.MapFrom(userEdit => userEdit.Description))
                     .ForMember(user => user.IdCategoria, opt => opt.MapFrom(userEdit => userEdit.IdCategory));
 
+            CreateMap<VMVentasPorTipoDeVenta, VentasPorTipoDeVentaTurno>()
+                                    .ForMember(user => user.TotalUsuario, opt => opt.MapFrom(userEdit => userEdit.Total)).ReverseMap();
+
             CreateMap<VMProductSimplificado, Product>();
             CreateMap<VMCodigoBarras, CodigoBarras>().ReverseMap();
             CreateMap<VMRazonMovimientoCaja, RazonMovimientoCaja>().ReverseMap();
             CreateMap<VMMovimientoCaja, MovimientoCaja>().ReverseMap();
-            CreateMap<VMVentasPorTipoDeVenta, VentasPorTipoDeVenta>().ReverseMap();
             CreateMap<Tag, VMTag>().ReverseMap();
             CreateMap<FormatosVenta, VMFormatosVenta>().ReverseMap();
             CreateMap<Lov, VMLov>().ReverseMap();
