@@ -47,12 +47,12 @@ namespace PointOfSale.Business.Utilities
                         try
                         {
                             // Omitir encabezados
-                            if (reader.GetValue(0)?.ToString() == "Descripcion*" || ( string.IsNullOrEmpty(reader.GetValue(1)?.ToString()) && string.IsNullOrEmpty(reader.GetValue(3)?.ToString()) && string.IsNullOrEmpty(reader.GetValue(6)?.ToString())))
+                            if (reader.GetValue(1)?.ToString() == "Descripcion*" || ( string.IsNullOrEmpty(reader.GetValue(1)?.ToString()) && string.IsNullOrEmpty(reader.GetValue(3)?.ToString()) && string.IsNullOrEmpty(reader.GetValue(7)?.ToString())))
                                 continue;
 
                             if(string.IsNullOrEmpty(reader.GetValue(1)?.ToString()) || 
                                 string.IsNullOrEmpty(reader.GetValue(3)?.ToString())|| 
-                                string.IsNullOrEmpty(reader.GetValue(6)?.ToString()))
+                                string.IsNullOrEmpty(reader.GetValue(7)?.ToString()))
                             {
                                 throw new FormatException("Valores obligatorios no completados.");
                             }
@@ -122,7 +122,8 @@ namespace PointOfSale.Business.Utilities
             var codBarras = reader.GetValue(2)?.ToString();
             if (!string.IsNullOrEmpty(codBarras))
             {
-                product.CodigoBarras = new List<CodigoBarras>() { new CodigoBarras(ParseInt(codBarras, "Codigo de barras").ToString()) };
+                //product.CodigoBarras = new List<CodigoBarras>() { new CodigoBarras(ParseInt(codBarras, "Codigo de barras").ToString()) };
+                product.CodigoBarras = new List<CodigoBarras>() { new CodigoBarras(codBarras) };
             }
 
             return product;

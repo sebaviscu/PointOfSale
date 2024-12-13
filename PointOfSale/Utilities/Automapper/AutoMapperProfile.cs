@@ -128,9 +128,9 @@ namespace PointOfSale.Utilities.Automapper
             .ForMember(dest => dest.PriceWeb, opt => opt.MapFrom(src => src.PriceWeb.ToString()))
             .ForMember(dest => dest.PrecioFormatoWeb, opt => opt.MapFrom(src => src.PrecioFormatoWeb.ToString()))
             .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.ProductTags.Select(pt => pt.Tag).ToList()))
-            .ForMember(dest => dest.Comodin1, opt => opt.MapFrom(src => src.ProductLovs.Where(_=>_.LovType == LovType.comodin_1).Select(pt => pt.Lov).ToList()))
-            .ForMember(dest => dest.Comodin2, opt => opt.MapFrom(src => src.ProductLovs.Where(_=>_.LovType == LovType.comodin_2).Select(pt => pt.Lov).ToList()))
-            .ForMember(dest => dest.Comodin3, opt => opt.MapFrom(src => src.ProductLovs.Where(_=>_.LovType == LovType.comodin_3).Select(pt => pt.Lov).ToList()))
+            .ForMember(dest => dest.Comodin1, opt => opt.MapFrom(src => src.ProductLovs.Where(_ => _.LovType == LovType.comodin_1).Select(pt => pt.Lov).ToList()))
+            .ForMember(dest => dest.Comodin2, opt => opt.MapFrom(src => src.ProductLovs.Where(_ => _.LovType == LovType.comodin_2).Select(pt => pt.Lov).ToList()))
+            .ForMember(dest => dest.Comodin3, opt => opt.MapFrom(src => src.ProductLovs.Where(_ => _.LovType == LovType.comodin_3).Select(pt => pt.Lov).ToList()))
             ;
 
             CreateMap<VMProduct, Product>()
@@ -438,6 +438,7 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<Stock, VMStockSimplificado>().ReverseMap();
             CreateMap<Proveedor, VMProveedorSimplificado>().ReverseMap();
 
+            CreateMap<VMProductSimplificado, Product>();
 
             CreateMap<Product, VMProductSimplificado>()
             .ForMember(destiny =>
@@ -460,7 +461,7 @@ namespace PointOfSale.Utilities.Automapper
                 opt => opt.MapFrom(source => source.ListaPrecios.Any() && source.ListaPrecios.Count > 1 ? source.ListaPrecios[2].PorcentajeProfit : 0));
 
 
-             CreateMap<FacturaEmitida, VMFacturaEmitida>().ReverseMap();
+            CreateMap<FacturaEmitida, VMFacturaEmitida>().ReverseMap();
 
             CreateMap<Product, VMProductReport>()
                     .ForMember(user => user.ProductName, opt => opt.MapFrom(userEdit => userEdit.Description))
@@ -488,7 +489,6 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<VMVentasPorTipoDeVenta, VentasPorTipoDeVentaTurno>()
                                     .ForMember(user => user.TotalUsuario, opt => opt.MapFrom(userEdit => userEdit.Total)).ReverseMap();
 
-            CreateMap<VMProductSimplificado, Product>();
             CreateMap<VMCodigoBarras, CodigoBarras>().ReverseMap();
             CreateMap<VMRazonMovimientoCaja, RazonMovimientoCaja>().ReverseMap();
             CreateMap<VMMovimientoCaja, MovimientoCaja>().ReverseMap();

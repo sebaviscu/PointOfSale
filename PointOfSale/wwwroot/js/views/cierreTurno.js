@@ -482,9 +482,9 @@ $("#btnGuardarBilletes").on("click", function () {
 
     actualizarTotal();
 
-
+    
     $(".txtCantBillete").each(function () {
-
+        
         const cantidad = $(this).val();
         const valorNominal = $(this).data('valor');
 

@@ -116,7 +116,10 @@ $(document).ready(function () {
                 },
                 { "data": "sku" },
                 { "data": "description" },
-                { "data": "idCategoryNavigation.description" },
+                {
+                    "data": "idCategoryNavigation.description",
+                    "defaultContent": ""
+                },
                 {
                     "data": "proveedor.nombre",
                     "render": function (data, type, row) {
@@ -127,7 +130,8 @@ $(document).ready(function () {
                     "data": "listaPrecios",
                     "render": function (data, type, row) {
                         return data && data.length > 0 ? `$ ${data[0].precio}` : '';
-                    }
+                    },
+                    "defaultContent": ""
                 },
                 { "data": "modificationDate" },
                 {
@@ -158,7 +162,7 @@ $(document).ready(function () {
                     title: '',
                     filename: 'Report Productos',
                     exportOptions: {
-                        columns: [2, 3, 4, 5, 6, 7, 8,9]
+                        columns: [2, 3, 4, 5, 6, 7, 8, 9]
                     }
                 }, 'pageLength'
             ]
@@ -792,6 +796,8 @@ $("#btnImportar").on("click", function () {
                 let productoWeb = document.getElementById('switchProductoWebImportar').checked;
                 let puedeModificarPrecio = document.getElementById('switchPuedeModificarImportar').checked;
 
+                $("#btnImportar").LoadingOverlay("show");
+
                 fetch(`/Inventory/ImportarProductos?modificarPrecio=${puedeModificarPrecio}&productoWeb=${productoWeb}`, {
                     method: "POST",
                     body: formData
@@ -801,6 +807,7 @@ $("#btnImportar").on("click", function () {
                         return response.json();
                     })
                     .then(responseJson => {
+                        $("#btnImportar").LoadingOverlay("hide");
                         if (responseJson.state) {
                             swal("Exitoso!", "Se han importado " + responseJson.totalFilas + " filas", "success");
                             location.reload();
@@ -856,7 +863,7 @@ $("#btnCargarImportar").on("click", function () {
                         $("<td>").text(++i),
                         $("<td>").text(product.sku),
                         $("<td>").text(product.description),
-                        $("<td>").text(product.barCode),
+                        $("<td>").text(product.codigoBarras != null && product.codigoBarras.length > 0 ? product.codigoBarras[0].codigo : ''),
                         $("<td>").text(product.tipoVenta == '1' ? 'Kg' : 'U'),
                         $("<td>").text(product.costPrice),
                         $("<td>").text(product.iva != '' ? product.iva + '%' : ''),

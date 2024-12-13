@@ -186,7 +186,6 @@ namespace PointOfSale.Controllers
             try
             {
                 var productosQuery = await _productService.List();
-
                 return Ok(new { data = _mapper.Map<List<VMProductSimplificado>>(productosQuery) });
             }
             catch (Exception ex)
