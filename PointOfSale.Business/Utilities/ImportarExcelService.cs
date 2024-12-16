@@ -40,6 +40,16 @@ namespace PointOfSale.Business.Utilities
             {
                 using (var reader = ExcelReaderFactory.CreateReader(stream))
                 {
+                    var dataSet = reader.AsDataSet();
+                    var sheet = dataSet.Tables[0];
+
+                    int rowCount = sheet.Rows.Count;
+
+                    if(rowCount > 75)
+                    {
+                        throw new Exception("No es posible cargar mas de 75 productos al mismo tiempo.");
+                    }
+
                     int rowIndex = 0; // Para identificar el número de fila
                     while (reader.Read())
                     {
@@ -120,9 +130,8 @@ namespace PointOfSale.Business.Utilities
             };
 
             var codBarras = reader.GetValue(2)?.ToString();
-            if (!string.IsNullOrEmpty(codBarras))
+            if (!string.IsNullOrEmpty(codBarras) && codBarras != "0")
             {
-                //product.CodigoBarras = new List<CodigoBarras>() { new CodigoBarras(ParseInt(codBarras, "Codigo de barras").ToString()) };
                 product.CodigoBarras = new List<CodigoBarras>() { new CodigoBarras(codBarras) };
             }
 

@@ -22,6 +22,7 @@ const BASIC_MODEL_SHOP = {
 
 $(window).scroll(function () {
     if ($(window).scrollTop() + $(window).height() >= $(document).height() - 50 && hasMoreProducts && !isLoading) {
+        page++;
         loadMoreProducts();
     }
 });
@@ -65,6 +66,7 @@ $(document).ready(function () {
         $("#dvCategoryResults").empty();
         $('.btnCategoria').removeClass('active');
         $(this).addClass('active');
+        page = 1;
         loadMoreProducts();
     });
 
@@ -81,6 +83,7 @@ $(document).ready(function () {
         page = 1;
         hasMoreProducts = true;
         $("#dvCategoryResults").empty();
+        page = 1;
         loadMoreProducts();
     });
 

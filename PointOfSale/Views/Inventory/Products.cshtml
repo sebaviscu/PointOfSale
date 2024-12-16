@@ -868,75 +868,84 @@
             <div class="modal-body">
                 <div>
 
-                    <div class="row">
-                        <label for="fileImportarProductos" class="col-sm-2 col-form-label text-end">Seleccionar Archivo</label>
-                        <div class="col-sm-4 input-group input-group-sm">
-                            <input type="file" class="form-control" id="fileImportarProductos" accept=".xlsx, .csv">
-                            <div class="input-group-prepend">
-                                <button class="btn btn-secondary btn-sm" id="btnCargarImportar">Cargar</button>
-                            </div>
-                        </div>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" role="switch" id="switchProductoWebImportar">
-                            <label class="form-check-label" for="switchProductoWebImportar">Producto Web</label>
-                        </div>
-                        <div class="form-check form-switch ms-5">
-                            <input class="form-check-input" type="checkbox" role="switch" id="switchPuedeModificarImportar">
-                            <label class="form-check-label" for="switchPuedeModificarImportar">Puede modificar precio</label>
-                        </div>
+                    <div class="col-md-12">
+                        <div class="d-flex justify-content-between">
+							<label for="fileImportarProductos" class=" col-form-label text-end">Seleccionar Archivo</label>
+							<div class="col-sm-4 input-group input-group-sm">
+								<input type="file" class="form-control" id="fileImportarProductos" accept=".xlsx, .csv">
+								<div class="input-group-prepend">
+									<button class="btn btn-secondary btn-sm" id="btnCargarImportar">Cargar</button>
+								</div>
+							</div>
 
+                            <label class="label">Maximo 75 productos al mismo tiempo</label>
 
-                        <div class="col-sm-3" style="text-align: center;">
-                            <label id="lblCantidadProds" class="col-form-label"></label>
-                        </div>
+							<div class="form-check form-switch">
+								<input class="form-check-input" type="checkbox" role="switch" id="switchProductoWebImportar">
+								<label class="form-check-label" for="switchProductoWebImportar">Producto Web</label>
+							</div>
+							<div class="form-check form-switch ms-5">
+								<input class="form-check-input" type="checkbox" role="switch" id="switchPuedeModificarImportar">
+								<label class="form-check-label" for="switchPuedeModificarImportar">Puede modificar precio</label>
+							</div>
+
+							<div class="" style="text-align: center;">
+								<label id="lblCantidadProds" class="col-form-label"></label>
+							</div>
+						</div>
                     </div>
 
-                    <div>
+                    <div class="col-md-12">
                         <label id="lblErrores" class="col-form-label"></label>
                     </div>
-                    <table id="tableImportarProductos" class="table table-striped" style="font-size: 12px;width:100%">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>SKU</th>
-                                <th>Descripcion<span class="text-danger">*</span></th>
-                                <th>Cod. Barras</th>
-                                <th style="min-width: 130px;">
-                                    Forma de Venta<span class="text-danger">*</span> &nbsp; <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="U = por unidad<br>Kg = por peso"></span>
-                                </th>
-                                <th>Costo</th>
-                                <th>
-                                    IVA
-                                    <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="Se debe introducir el porcentaje de IVA, solo el numero, usar ','"></span>
-                                </th>
-                                <th>
-                                    Ganancia 1&nbsp;
-                                    <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="Se debe introducir el porcentaje de ganancia, solo el numero"></span>
-                                </th>
-                                <th>Precio 1<span class="text-danger">*</span></th>
-                                <th>
-                                    Ganancia 2&nbsp;
-                                    <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="Se debe introducir el porcentaje de ganancia, solo el numero"></span>
-                                </th>
-                                <th>Precio 2</th>
-                                <th>
-                                    Ganancia 3&nbsp;
-                                    <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="Se debe introducir el porcentaje de ganancia, solo el numero"></span>
-                                </th>
-                                <th>Precio 3</th>
-                                <th>Precio Web</th>
-                                <th style="min-width: 100px;">
-                                    Proveedor&nbsp;
-                                    <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="Se debe colocar el nombre del 'PROVEEDOR' tal cual esta en el apartado de Proveedores"></span>
-                                </th>
-                                <th style="min-width: 100px;">
-                                    Categoria&nbsp;
-                                    <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="Se debe colocar el nombre de la 'CATEGORIA' tal cual esta en el apartado de Categorias"></span>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+
+                    <div class="col-md-12">
+						<table id="tableImportarProductos" class="table table-striped" style="font-size: 12px;width:100%">
+							<thead>
+								<tr>
+									<th></th>
+									<th>SKU</th>
+									<th>Descripcion<span class="text-danger">*</span></th>
+									<th>Cod. Barras</th>
+									<th style="min-width: 130px;">
+										Forma de Venta<span class="text-danger">*</span> &nbsp; <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="U = por unidad<br>Kg = por peso"></span>
+									</th>
+									<th>Costo</th>
+									<th>
+										IVA
+										<span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="Se debe introducir el porcentaje de IVA, solo el numero, usar ','"></span>
+									</th>
+									<th>
+										Ganancia 1&nbsp;
+										<span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="Se debe introducir el porcentaje de ganancia, solo el numero"></span>
+									</th>
+									<th>Precio 1<span class="text-danger">*</span></th>
+									<th>
+										Ganancia 2&nbsp;
+										<span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="Se debe introducir el porcentaje de ganancia, solo el numero"></span>
+									</th>
+									<th>Precio 2</th>
+									<th>
+										Ganancia 3&nbsp;
+										<span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="Se debe introducir el porcentaje de ganancia, solo el numero"></span>
+									</th>
+									<th>Precio 3</th>
+									<th>Precio Web</th>
+									<th style="min-width: 100px;">
+										Proveedor&nbsp;
+										<span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="Se debe colocar el nombre del 'PROVEEDOR' tal cual esta en el apartado de Proveedores"></span>
+									</th>
+									<th style="min-width: 100px;">
+										Categoria&nbsp;
+										<span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="Se debe colocar el nombre de la 'CATEGORIA' tal cual esta en el apartado de Categorias"></span>
+									</th>
+								</tr>
+							</thead>
+							<tbody></tbody>
+						</table>
+                    </div>
+
+                    
 
 
                 </div>

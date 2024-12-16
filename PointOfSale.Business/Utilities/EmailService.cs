@@ -112,7 +112,7 @@ namespace PointOfSale.Business.Utilities
 
             body +=
                 $"<h4>Resumen:</h4>" +
-                $"<table border='1' cellpadding='5' cellspacing='0' style='border-collapse: collapse; width: 25%;'>" +
+                $"<table border='1' cellpadding='5' cellspacing='0' style='border-collapse: collapse; width: 50%;'>" +
                 $"<thead>" +
                 $"<tr><th>Metodo de pago</th><th>Importe</th></tr>" +
                 $"</thead>" +
