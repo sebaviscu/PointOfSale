@@ -453,7 +453,7 @@ function finalizarVenta() {
         }, function (value) {
 
             // Whatsapp
-            //window.open('https://wa.me/' + phone + '?text=' + textWA, '_blank');
+            window.open('https://wa.me/' + phone + '?text=' + textWA, '_blank');
 
             productos.forEach(value => {
                 delete value.tipoVenta;

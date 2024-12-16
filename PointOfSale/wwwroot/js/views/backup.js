@@ -93,7 +93,7 @@ function openModalBackup(model) {
 
     tableDataTablaProductoBackup = $("#tbDataProductosBackup").DataTable({
         responsive: true,
-        data: dd, // Aquí pasamos el array directamente
+        data: model.products, // Aquí pasamos el array directamente
         columns: [
             { data: "description", title: "Producto" },
             { data: "tipoVenta", title: "TipoVenta", render: data => data == 1 ? "Kg" : "U" },
@@ -129,6 +129,8 @@ $("#btnRestoreBackup").on("click", function () {
 
     let idBackup = $("#txtId").val();
     let correlativeNumberMasivo = $("#txtCorrelativeNumberMasivo").val();
+    $("#btnRestoreBackup").LoadingOverlay("show")
+
 
     fetch(`/Inventory/RestoreBackup?idBackup=${idBackup}&correlativeNumber=${correlativeNumberMasivo}`, {
         method: "POST"
@@ -136,6 +138,8 @@ $("#btnRestoreBackup").on("click", function () {
         $(".showSweetAlert").LoadingOverlay("hide")
         return response.json();
     }).then(responseJson => {
+
+        $("#btnRestoreBackup").LoadingOverlay("hide")
         if (responseJson.state) {
 
             $("#modalDataBackup").modal("hide")

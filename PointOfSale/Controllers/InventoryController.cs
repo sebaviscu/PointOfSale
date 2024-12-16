@@ -84,7 +84,57 @@ namespace PointOfSale.Controllers
         public async Task<IActionResult> GetBackups()
         {
             var vmBackupList = _mapper.Map<List<VMBackupProducto>>(_backupService.List().ToList());
-            return StatusCode(StatusCodes.Status200OK, new { data = vmBackupList });
+
+
+
+            var backups = _backupService.List().ToList();
+
+            var groupedBackups = backups
+                 .GroupBy(b => b.CorrelativeNumberMasivo)
+                 .Select(g => new
+                 {
+                     CorrelativeNumberMasivo = g.Key,
+                     RegistrationDate = g.First().RegistrationDate,
+                     RegistrationUser = g.First().RegistrationUser,
+                     Descriptions = g.Key != null
+                         ? string.Join(", ", g.Select(b => b.Description))
+                         : g.First().Description,
+                     Products = g.ToList()
+                 })
+                 .ToList();
+
+            // Separar los grupos con CorrelativeNumberMasivo == null
+            var result = groupedBackups
+                .Where(g => g.CorrelativeNumberMasivo != null)
+                .Select(g => new
+                {
+                    Id = 0,
+                    CorrelativeNumberMasivo = g.CorrelativeNumberMasivo,
+                    Description = g.Descriptions,
+                    RegistrationDate = g.RegistrationDate,
+                    RegistrationUser = g.RegistrationUser,
+                    Products = g.Products
+                })
+                .ToList();
+
+            // Agregar los registros individuales (CorrelativeNumberMasivo == null)
+            var individualBackups = backups
+                .Where(b => b.CorrelativeNumberMasivo == null)
+                .Select(b => new
+                {
+                    Id = b.Id,
+                    CorrelativeNumberMasivo = (string?)null,
+                    Description = b.Description,
+                    RegistrationDate = b.RegistrationDate,
+                    RegistrationUser = b.RegistrationUser,
+                    Products = new List<BackupProducto> { b }
+                })
+                .ToList();
+
+            result.AddRange(individualBackups);
+
+
+            return StatusCode(StatusCodes.Status200OK, new { data = result });
         }
 
         [HttpPost]

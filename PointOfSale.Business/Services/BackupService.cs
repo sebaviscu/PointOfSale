@@ -74,11 +74,22 @@ public class BackupService : ServiceBase<BackupProducto>, IBackupService
 
     public async Task RestoreBackup(string modificationUser, int idBackupProduct, string? correlativeNumber)
     {
-
-
         if (!string.IsNullOrEmpty(correlativeNumber))
         {
+            var backups = await _repository.Query(_ => _.CorrelativeNumberMasivo == correlativeNumber);
+            var productIds = backups.Select(dv => dv.IdProduct).Distinct().ToList();
 
+            var productsQuery = await _repositoryProduct.Query();
+
+            var products = await productsQuery.Include(p => p.ListaPrecios).Where(p => productIds.Contains(p.IdProduct))
+                                       .ToListAsync();
+
+            foreach (var b in backups)
+            {
+                var prod = products.First(_=>_.IdProduct == b.IdProduct);
+
+                await RestoreProduct(modificationUser, prod, b);
+            }
         }
         else
         {
