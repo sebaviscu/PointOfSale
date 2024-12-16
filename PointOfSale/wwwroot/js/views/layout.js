@@ -70,11 +70,11 @@ $(document).ready(function () {
                             idActual = item.idTienda;
                             actual = ' (Actual)';
                         }
-                        $("#cboTiendas").append(
+                        $("#cboCambiarTiendas").append(
                             $("<option>").val(item.idTienda).text(item.nombre + ' ' + actual)
                         )
                     });
-                    $("#cboTiendas").val(idActual);
+                    $("#cboCambiarTiendas").val(idActual);
                 }
             })
     })
@@ -83,7 +83,7 @@ $(document).ready(function () {
 
         $("#modalCambioTienda").LoadingOverlay("show")
 
-        var idTienda = $("#cboTiendas").val();
+        var idTienda = $("#cboCambiarTiendas").val();
         fetch(`/Tienda/ChangeTienda?idTienda=${idTienda}`, {
             method: "DELETE"
         }).then(response => {
