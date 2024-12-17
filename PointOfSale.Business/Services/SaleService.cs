@@ -260,7 +260,7 @@ namespace PointOfSale.Business.Services
                         modelResponde.ErrorFacturacion = e.Message;
                     }
 
-                    if (!string.IsNullOrEmpty(modelResponde.Errores))
+                    if (!string.IsNullOrEmpty(modelResponde.Errores) || !string.IsNullOrEmpty(modelResponde.ErrorFacturacion))
                     {
                         var notific = new Notifications(sale_created);
                         await _notificationService.Save(notific);

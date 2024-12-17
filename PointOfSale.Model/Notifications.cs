@@ -77,7 +77,7 @@ namespace PointOfSale.Model
 
         public Notifications(Sale sale)
         {
-            Descripcion = $"Ha ocurrido un error al Facturar en AFIP para la venta Nro: {sale.SaleNumber}.";
+            Descripcion = $"Ha ocurrido un error al Facturar para la venta Nro: {sale.SaleNumber}.";
             IsActive = true;
             RegistrationDate = TimeHelper.GetArgentinaTime();
             Accion = "";
