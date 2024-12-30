@@ -127,15 +127,17 @@ $("#btnAbrirCerrarTurno").on("click", function () {
 })
 
 function openModalDataAbrirTurno() {
-    let dateTimeArgentina = moment().tz('America/Argentina/Buenos_Aires');
-
-    // Mostrar el modal
     $("#modalDataAbrirTurno").modal("show");
 
-    $('#modalDataAbrirTurno').on('shown.bs.modal', function () {
-        $("#txtInicioTurnoAbrir").val(dateTimeArgentina.format('DD/MM/YYYY'));
-        $("#txtHoraInicioTurnoAbrir").val(dateTimeArgentina.format('HH:mm'));
-    });
+    if (moment.tz != null) {
+
+        let dateTimeArgentina = moment().tz('America/Argentina/Buenos_Aires');
+
+        $('#modalDataAbrirTurno').on('shown.bs.modal', function () {
+            $("#txtInicioTurnoAbrir").val(dateTimeArgentina.format('DD/MM/YYYY'));
+            $("#txtHoraInicioTurnoAbrir").val(dateTimeArgentina.format('HH:mm'));
+        });
+    }
 }
 
 function horaActual() {
@@ -482,9 +484,9 @@ $("#btnGuardarBilletes").on("click", function () {
 
     actualizarTotal();
 
-    
+
     $(".txtCantBillete").each(function () {
-        
+
         const cantidad = $(this).val();
         const valorNominal = $(this).data('valor');
 

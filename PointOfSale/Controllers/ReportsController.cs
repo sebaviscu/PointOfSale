@@ -100,11 +100,11 @@ namespace PointOfSale.Controllers
         /// <param name="endDate"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetPreciosReport(string idCategoria, string? modificationDate)
+        public async Task<IActionResult> GetPreciosReport(string categoria, string? modificationDate)
         {
             var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
 
-            var products = await _productService.ProdctuosPreciosByCategory(idCategoria, modificationDate, user.ListaPrecios);
+            var products = await _productService.ProdctuosPreciosByCategory(categoria, modificationDate, user.ListaPrecios);
             var productsMapper = _mapper.Map<List<VMProductReport>>(products);
 
             return StatusCode(StatusCodes.Status200OK, new { data = productsMapper });

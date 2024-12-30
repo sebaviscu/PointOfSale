@@ -27,6 +27,7 @@ const BASIC_MODEL_PROVEEDOR = {
 }
 
 const BASIC_MODEL_PAGO = {
+    idProveedorMovimiento: 0,
     idProveedor: 0,
     tipoFactura: null,
     nroFactura: null,
@@ -179,7 +180,8 @@ $('#switchVisionGlobalProveedores').change(function () {
 });
 
 $("#btnNuevoGasto").on("click", function () {
-    $("#modalPago").modal("show")
+    openModalPago();
+    //$("#modalPago").modal("show")
 })
 
 $('#cboProveedor').change(function () {
@@ -189,7 +191,7 @@ $('#cboProveedor').change(function () {
     if (proveedor != null) {
         $("#txtCuilPago").val(proveedor.cuil);
         $("#txtDireccionPago").val(proveedor.direccion);
-        $("#txtIva").val(proveedor.iva != null ? proveedor.iva : '');
+        $("#txtIva").val(proveedor.iva != null ? proveedor.iva : 0);
         $("#cboTipoFacturaPago").val(proveedor.tipoFactura ?? '');
     }
     else {
@@ -211,7 +213,7 @@ const openModalProveedor = (model = BASIC_MODEL_PROVEEDOR) => {
     $("#txtContacto").val(model.nombreContacto);
     $("#txtWeb").val(model.web);
     $("#txtEmail").val(model.email);
-    $("#txtIvaProveedor").val(model.iva);
+    $("#txtIvaProveedor").val(model.iva != null ? model.iva : 0);
     $("#txtComentario").val(model.comentario);
     $("#cboTipoFactura").val(model.tipoFactura);
 
@@ -270,6 +272,9 @@ const openModalProveedor = (model = BASIC_MODEL_PROVEEDOR) => {
             }, 'pageLength'
         ]
     });
+
+    if (tableDataPedidosProveedores != null)
+        tableDataPedidosProveedores.destroy();
 
     tableDataPedidosProveedores = $("#tbPedidos").DataTable({
         responsive: true,
@@ -518,8 +523,8 @@ $("#tbDataGastos tbody").on("click", ".btn-delete-pago", function () {
 const openModalPago = (model = BASIC_MODEL_PAGO) => {
 
     $("#txtIdPagoProveedor").val(model.idProveedorMovimiento);
-    $("#txtCuilPago").val(model.proveedor.cuil);
-    $("#txtDireccionPago").val(model.proveedor.direccion);
+    $("#txtCuilPago").val(model.proveedor != null ? model.proveedor.cuil : '');
+    $("#txtDireccionPago").val(model.proveedor != null ? model.proveedor.direccion : '');
     $("#cboTipoFactura").val(model.tipoFactura);
     $("#txtNroFactura").val(model.nroFactura);
     $("#txtIva").val(model.iva);
@@ -684,3 +689,84 @@ function cargarTablaDinamicaProveedores(isGlobal) {
         }
     })
 }
+
+$("#btnSavePago").on("click", function () {
+    const inputs = $("input.input-validate-pago").serializeArray();
+    const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
+
+    if (inputs_without_value.length > 0) {
+        const msg = `Debe completar los campos : "${inputs_without_value[0].name}"`;
+        toastr.warning(msg, "");
+        $(`input[name="${inputs_without_value[0].name}"]`).focus();
+        return;
+    }
+
+    if ($("#cboProveedor").val() == '') {
+        const msg = `Debe seleccionar un proveedor`;
+        toastr.warning(msg, "");
+        return;
+    }
+
+    const model = structuredClone(BASIC_MODEL_PAGO);
+    model["idProveedorMovimiento"] = parseInt($("#txtIdPagoProveedor").val());
+    model["idProveedor"] = $("#cboProveedor").val();
+    model["tipoFactura"] = $("#cboTipoFacturaPago").val();
+    model["nroFactura"] = $("#txtNroFactura").val();
+    model["iva"] = $("#txtIva").val() != '' ? $("#txtIva").val() : 0;
+    model["ivaImporte"] = $("#txtImporteIva").val() != '' ? $("#txtImporteIva").val() : 0;
+    model["importe"] = $("#txtImporte").val();
+    model["importeSinIva"] = $("#txtImporteSinIva").val() != '' ? $("#txtImporteSinIva").val() : 0;
+    model["comentario"] = $("#txtComentarioPago").val();
+    model["estadoPago"] = parseInt($("#cboEstado").val());
+    model["facturaPendiente"] = document.querySelector('#cbxFacturaPendiente').checked;
+
+    $("#modalPago").find("div.modal-content").LoadingOverlay("show")
+
+
+    if (model.idProveedorMovimiento == 0) {
+        fetch("/Proveedores/RegistrarPagoProveedor", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json;charset=utf-8' },
+            body: JSON.stringify(model)
+        }).then(response => {
+            $("#modalPago").find("div.modal-content").LoadingOverlay("hide")
+            return response.json();
+        }).then(responseJson => {
+
+            if (responseJson.state) {
+                tableDataProveedores.row.add(responseJson.object).draw(false);
+
+                $("#modalPago").modal("hide");
+                swal("Exitoso!", "Pago a proveedor fué creada", "success");
+
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+        }).catch((error) => {
+            $("#modalPago").find("div.modal-content").LoadingOverlay("hide")
+        })
+
+    } else {
+
+        fetch("/Proveedores/UpdatePagoProveedor", {
+            method: "PUT",
+            headers: { 'Content-Type': 'application/json;charset=utf-8' },
+            body: JSON.stringify(model)
+        }).then(response => {
+            $("#modalPago").find("div.modal-content").LoadingOverlay("hide")
+            return response.json();
+        }).then(responseJson => {
+            if (responseJson.state) {
+                tableDataProveedores.row(rowSelectedProveedor).data(responseJson.object).draw(false);
+                rowSelectedProveedor = null;
+                $("#modalPago").modal("hide");
+                swal("Exitoso!", "Pago a proveedor fué modificada", "success");
+
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+        }).catch((error) => {
+            $("#modalPago").find("div.modal-content").LoadingOverlay("hide")
+        })
+    }
+})

@@ -15,7 +15,7 @@ $(document).ready(function () {
 
                 responseJson.data.forEach((item) => {
                     $("#cboCategory").append(
-                        $("<option>").val(item.description).text(item.description)
+                        $("<option>").val(item.idCategory).text(item.description)
                     )
                 });
 
@@ -36,7 +36,7 @@ $("#btnSearch").click(function () {
         "processing": true,
         pageLength: 25,
         "ajax": {
-            "url": `/Reports/GetPreciosReport?idCategoria=${idCategory}&modificationDate=${modificationDate}`,
+            "url": `/Reports/GetPreciosReport?categoria=${idCategory}&modificationDate=${modificationDate}`,
             "type": "GET",
             "datatype": "json"
         },
@@ -56,7 +56,7 @@ $("#btnSearch").click(function () {
             { "data": "categoria" },
             {
                 "data": "Price", render: function (data, type, row) {
-                    return "<span>" + row.precio1 + " / " + row.tipoVenta + " </span>";
+                    return "<span> $ " + row.precio1 + " / " + row.tipoVenta + " </span>";
                 }
             },
             { "data": "modificationDate" },

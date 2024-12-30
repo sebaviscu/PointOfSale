@@ -3,7 +3,6 @@ using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
-using PointOfSale.Model.Auditoria;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services

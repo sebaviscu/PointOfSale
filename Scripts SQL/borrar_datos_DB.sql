@@ -54,6 +54,7 @@ TRUNCATE TABLE ProductTags
 TRUNCATE TABLE ProductLov
 TRUNCATE TABLE BackupProducto
 TRUNCATE TABLE VentasPorTipoDeVentaTurno
+TRUNCATE TABLE promocion
 
 -- Deshabilitar temporalmente las restricciones de clave foránea 
 ALTER TABLE Turno NOCHECK CONSTRAINT ALL 

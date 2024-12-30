@@ -1,18 +1,11 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Scaffolding;
 using PointOfSale.Business.Contracts;
-using PointOfSale.Business.Services;
 using PointOfSale.Model;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
-using System.Security.Claims;
 using static PointOfSale.Model.Enum;
 using PointOfSale.Business.Utilities;
-using NuGet.Protocol;
-using PointOfSale.Model.Auditoria;
 
 namespace PointOfSale.Controllers
 {
@@ -213,7 +206,7 @@ namespace PointOfSale.Controllers
                 gResponse.State = true;
                 gResponse.Object = _mapper.Map<VMTurno>(nuevoTurno);
 
-                UpdateClaimAsync("Turno", nuevoTurno.IdTurno.ToString());
+                await UpdateClaimAsync("Turno", nuevoTurno.IdTurno.ToString());
 
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
@@ -235,7 +228,7 @@ namespace PointOfSale.Controllers
 
                 var result = await _turnoService.CerrarTurno(_mapper.Map<Turno>(modelTurno), _mapper.Map<List<VentasPorTipoDeVentaTurno>>(modelTurno.VentasPorTipoVentaPreviaValidacion));
 
-                UpdateClaimAsync("Turno", null);
+                await UpdateClaimAsync("Turno", null);
 
 
                 var model = new VMImprimir();

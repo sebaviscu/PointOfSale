@@ -18,14 +18,15 @@ namespace PointOfSale.Controllers
         private readonly ILogger<TiendaController> _logger;
         private readonly IAjusteService _ajusteService;
         private readonly ISaleService _saleService;
-
-        public TiendaController(ITiendaService TiendaService, IMapper mapper, ILogger<TiendaController> logger, IAjusteService ajusteService, ISaleService saleService)
+        private readonly ITurnoService _turnoService;
+        public TiendaController(ITiendaService TiendaService, IMapper mapper, ILogger<TiendaController> logger, IAjusteService ajusteService, ISaleService saleService, ITurnoService turnoService)
         {
             _TiendaService = TiendaService;
             _mapper = mapper;
             _logger = logger;
             _ajusteService = ajusteService;
             _saleService = saleService;
+            _turnoService = turnoService;
         }
 
         [HttpGet]
@@ -173,9 +174,13 @@ namespace PointOfSale.Controllers
             GenericResponse<string> gResponse = new GenericResponse<string>();
             try
             {
-                ValidarAutorizacion([Roles.Administrador]);
+                var a = ValidarAutorizacion([Roles.Administrador]);
 
                 await UpdateClaimAsync("Tienda", idTienda);
+
+                var turno = await _turnoService.GetTurnoActual(Convert.ToInt32(idTienda));
+
+                await UpdateClaimAsync("Turno", turno != null ? turno.IdTurno.ToString() : null);
 
                 gResponse.State = true;
                 return StatusCode(StatusCodes.Status200OK, gResponse);

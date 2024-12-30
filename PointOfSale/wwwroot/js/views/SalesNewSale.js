@@ -87,23 +87,23 @@ $(document).ready(function () {
     inicializarConsultarPrecios();
 
 
-    $('.sub-menu a.sidenav-item-link, .has-sub a.sidenav-item-link').on('click', function (event) {
-        if (!ajustes.needControl) return true;
+    //$('.sub-menu a.sidenav-item-link, .has-sub a.sidenav-item-link').on('click', function (event) {
+    //    if (!ajustes.needControl) return true;
 
-        if (ventaAbierta()) {
-            event.preventDefault(); // Prevenir la navegación
-            swal({
-                title: '',
-                text: 'No es posible dejar una venta abierta\n\n',
-                icon: 'question',
-                showCancelButton: false,
-                confirmButtonText: 'Aceptar'
-            }, function (value) {
-            });
-        } else {
-            window.location.href = $(this).attr('href');
-        }
-    });
+    //    if (ventaAbierta()) {
+    //        event.preventDefault(); // Prevenir la navegación
+    //        swal({
+    //            title: '',
+    //            text: 'No es posible dejar una venta abierta\n\n',
+    //            icon: 'question',
+    //            showCancelButton: false,
+    //            confirmButtonText: 'Aceptar'
+    //        }, function (value) {
+    //        });
+    //    } else {
+    //        window.location.href = $(this).attr('href');
+    //    }
+    //});
 
     let currentTab = JSON.parse(localStorage.getItem('ventaActual'));
     if (currentTab != null) {

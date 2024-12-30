@@ -147,7 +147,7 @@ namespace PointOfSale.Data.DBContext
 
             modelBuilder.Entity<FormatosVenta>(entity =>
             {
-                entity.HasKey(e => e.id);
+                entity.HasKey(e => e.Id);
 
                 entity.ToTable("FormatosVenta");
             });

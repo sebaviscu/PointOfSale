@@ -2,14 +2,11 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using PointOfSale.Business.Utilities;
-using System;
 using System.Security.Claims;
 using static PointOfSale.Model.Enum;
 using PointOfSale.Model;
 using NuGet.Protocol;
 using PointOfSale.Utilities.Response;
-using PointOfSale.Model.Auditoria;
-using PointOfSale.Models;
 
 namespace PointOfSale.Controllers
 {
@@ -100,14 +97,18 @@ namespace PointOfSale.Controllers
                 }
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
+                // Actualiza la cookie
                 var properties = new AuthenticationProperties
                 {
                     AllowRefresh = true,
                     IsPersistent = (HttpContext.Request.Cookies[".AspNetCore.Cookies"] != null)
                 };
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal, properties);
 
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), properties);
+                // Actualiza el HttpContext.User
+                HttpContext.User = claimsPrincipal;
             }
         }
 

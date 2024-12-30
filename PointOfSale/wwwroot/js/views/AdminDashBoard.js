@@ -325,7 +325,7 @@ function SetTopSeler(typeValues, idCategory) {
                 const tableDataSales = responseJson.object.map(value => {
                     return (
                         `<tr>
-                       <td><h4 style="color: darkgray;">${value.product}&nbsp;</h4></td>
+                       <td><h5 style="color: darkgray;">${value.product}&nbsp;</h5></td>
                        <td style="text-align: right;"><h5>&nbsp;${value.quantity}</h5></td>
                     </tr>`
                     );
