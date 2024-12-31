@@ -74,10 +74,10 @@ async function healthcheck() {
     isHealthySaleHistory = await getHealthcheck();
 
     if (isHealthySaleHistory) {
-        $('#printTicket').prop('disabled', true);
+        $('#printTicket').prop('disabled', false);
         document.getElementById("lblErrorPrintService").style.display = 'none';
     } else {
-        $('#printTicket').prop('disabled', false);
+        $('#printTicket').prop('disabled', true);
         document.getElementById("lblErrorPrintService").style.display = '';
     }
 }
