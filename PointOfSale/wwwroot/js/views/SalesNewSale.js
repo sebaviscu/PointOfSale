@@ -1,4 +1,5 @@
 ﻿let originalTab = document.getElementById('nuevaVenta');
+let dbInstance = null;
 var AllTabsForSale = [];
 let buttonCerrarTab = '<button class="close" type="button" title="Cerrar tab">×</button>';
 let tabID = 0;
@@ -105,13 +106,21 @@ $(document).ready(function () {
     //    }
     //});
 
-    let currentTab = JSON.parse(localStorage.getItem('ventaActual'));
-    if (currentTab != null) {
-        showProducts_Prices(currentTab.idTab, currentTab);
-        AllTabsForSale = [];
-        AllTabsForSale.push(currentTab);
-    }
+    // Inicializar la base de datos y luego recuperar la venta
+    initializeDatabase()
+        .then((db) => {
 
+            getVentaFromIndexedDB(1, (currentTab) => {
+                if (currentTab) {
+                    showProducts_Prices(currentTab.idTab, currentTab);
+                    AllTabsForSale = [];
+                    AllTabsForSale.push(currentTab);
+                }
+            });
+        })
+        .catch((error) => {
+            console.error('Error al inicializar la base de datos:', error);
+        });
 
 })
 
@@ -372,7 +381,8 @@ $(document).on("click", "button.btn-delete", async function () {
     let currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);
 
     currentTab.products.splice(row, 1);
-    localStorage.setItem('ventaActual', JSON.stringify(currentTab));
+    //localStorage.setItem('ventaActual', JSON.stringify(currentTab));
+    deleteVentaFromIndexedDB(currentTab.idTab);
 
     showProducts_Prices(currentTabId, currentTab);
 
@@ -668,7 +678,8 @@ function registrationSale(currentTabId) {
         return response.json();
     }).then(responseJson => {
         removeLoading();
-        localStorage.removeItem('ventaActual');
+        //localStorage.removeItem('ventaActual');
+        deleteVentaFromIndexedDB(parseInt(currentTabId));
 
         if (responseJson.state) {
 
@@ -872,7 +883,8 @@ $('#tab-list').on('click', '.close', async function () {
     $(this).parents('li').remove();
     $(tabIndex).remove();
 
-    localStorage.removeItem('ventaActual');
+    //localStorage.removeItem('ventaActual');
+    deleteVentaFromIndexedDB(parseInt(tabId));
 
     AllTabsForSale = AllTabsForSale.filter(p => p.idTab != tabId);
 
@@ -1403,7 +1415,9 @@ function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
     $('#txtPeso' + idTab).val('1');
 
 
-    localStorage.setItem('ventaActual', JSON.stringify(currentTab));
+    //localStorage.setItem('ventaActual', JSON.stringify(currentTab));
+
+    saveVentaToIndexedDB(currentTab);
 }
 
 function formatNumber(num) {
@@ -1547,6 +1561,104 @@ $('#sendEmailBtn').on("click", function () {
         swal("Error", "Debe ingresar un email válido", "error");
     }
 });
+
+function initializeDatabase(version = 1) {
+    return new Promise((resolve, reject) => {
+        if (dbInstance) {
+            resolve(dbInstance);
+            return;
+        }
+
+        const request = indexedDB.open('VentasDB', version);
+
+        request.onupgradeneeded = function (event) {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains('ventas')) {
+                db.createObjectStore('ventas', { keyPath: 'idTab' });
+            }
+        };
+
+        request.onsuccess = function (event) {
+            dbInstance = event.target.result;
+            resolve(dbInstance);
+        };
+
+        request.onerror = function (event) {
+            reject(event.target.error);
+        };
+    });
+}
+
+
+function saveVentaToIndexedDB(venta) {
+    initializeDatabase()
+        .then((db) => {
+            const transaction = db.transaction('ventas', 'readwrite');
+            const store = transaction.objectStore('ventas');
+            store.put(venta);
+
+            transaction.oncomplete = function () {
+            };
+
+            transaction.onerror = function (event) {
+            };
+        })
+        .catch((error) => {
+            console.error('Error al inicializar la base de datos para guardar:', error);
+        });
+}
+
+
+
+function getVentaFromIndexedDB(idTab, callback) {
+    initializeDatabase()
+        .then((db) => {
+            const transaction = db.transaction('ventas', 'readonly');
+            const store = transaction.objectStore('ventas');
+            const request = store.get(idTab);
+
+            request.onsuccess = function () {
+                if (request.result) {
+                    callback(request.result);
+                } else {
+                    callback(null);
+                }
+            };
+
+            request.onerror = function (event) {
+                console.error('Error al recuperar la venta:', event.target.error);
+            };
+        })
+        .catch((error) => {
+            console.error('Error al inicializar la base de datos para recuperar:', error);
+        });
+}
+
+function deleteVentaFromIndexedDB(idTab) {
+    if (idTab === undefined || idTab === null || idTab === '') {
+        console.error('Error: idTab no es válido. Debe ser un valor definido.');
+        return;
+    }
+
+    initializeDatabase()
+        .then((db) => {
+            const transaction = db.transaction('ventas', 'readwrite');
+            const store = transaction.objectStore('ventas');
+
+            const request = store.delete(idTab);
+
+            request.onsuccess = function () {
+            };
+
+            request.onerror = function (event) {
+                console.error('Error al eliminar la venta:', event.target.error);
+            };
+        })
+        .catch((error) => {
+            console.error('Error al inicializar la base de datos para eliminar:', error);
+        });
+}
+
 
 class Producto {
     idproduct = 0;
