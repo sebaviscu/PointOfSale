@@ -22,5 +22,7 @@ namespace PointOfSale.Business.Contracts
 
         Task<bool> CheckFirstLogin(string email, string password);
         Task<bool> CheckSuperUser(int idUser);
+
+        Task SaveHistorialLogin(HistorialLogin historialLogin);
     }
 }

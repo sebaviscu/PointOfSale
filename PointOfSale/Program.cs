@@ -47,8 +47,14 @@ public class Program
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(option =>
                 {
-                    option.LoginPath = "/Access/Login";
-                    option.ExpireTimeSpan = timeExpire.TimeOfDay;
+                    option.LoginPath = "/Access/Login"; // Ruta de inicio de sesión
+                    option.ExpireTimeSpan = TimeSpan.FromHours(3); // Tiempo de inactividad permitido
+                    option.SlidingExpiration = true; // Renueva la cookie en cada solicitud activa
+
+                    // Configuración de persistencia de la cookie
+                    option.Cookie.MaxAge = TimeSpan.FromDays(1); // Persistencia de la cookie por 1 día
+                    option.Cookie.HttpOnly = true; // Mejora de seguridad para evitar acceso desde JavaScript
+                    option.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Solo se envía en conexiones HTTPS
                 });
 
             builder.Services.AddDbContext<POINTOFSALEContext>(options =>

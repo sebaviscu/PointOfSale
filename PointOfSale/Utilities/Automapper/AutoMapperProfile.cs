@@ -503,6 +503,7 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<ProductLov, VMProductLov>().ReverseMap();
             CreateMap<BackupProducto, VMBackupProducto>().ReverseMap();
             CreateMap<Product, BackupProducto>().ReverseMap();
+            CreateMap<VMHistorialLogin, HistorialLogin>().ReverseMap();
         }
     }
 }

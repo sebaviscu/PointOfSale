@@ -259,7 +259,7 @@ const openModalProveedor = (model = BASIC_MODEL_PROVEEDOR) => {
             { "data": "registrationUser" }
         ],
         order: [[0, "desc"]],
-        dom: "Bfrtip",
+        dom: "frtip",
         buttons: [
             {
                 text: 'Exportar Excel',
@@ -338,7 +338,7 @@ const openModalProveedor = (model = BASIC_MODEL_PROVEEDOR) => {
             }
         ],
         order: [[1, "asc"]],
-        dom: "Bfrtip",
+        dom: "frtip",
         buttons: [
             {
                 text: 'Exportar Excel',

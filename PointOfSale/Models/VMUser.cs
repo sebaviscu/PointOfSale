@@ -1,4 +1,6 @@
-﻿namespace PointOfSale.Models
+﻿using PointOfSale.Model;
+
+namespace PointOfSale.Models
 {
     public class VMUser
     {
@@ -19,5 +21,6 @@
 		public string? TiendaName { get; set; }
 
         public ICollection<VMHorario> Horarios { get; set; }
+        public ICollection<VMHistorialLogin> HistorialLogins { get; set; }
 	}
 }

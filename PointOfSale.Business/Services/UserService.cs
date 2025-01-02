@@ -3,11 +3,6 @@ using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services
@@ -15,18 +10,24 @@ namespace PointOfSale.Business.Services
     public class UserService : IUserService
     {
         private readonly IGenericRepository<User> _repository;
-        private readonly IGenericRepository<Horario> _repositoryHorario;
+        private readonly IGenericRepository<HistorialLogin> _repositoryHistorialLogin;
 
-        public UserService(IGenericRepository<User> repository, IGenericRepository<Horario> repositoryHorario)
+        public UserService(IGenericRepository<User> repository, IGenericRepository<HistorialLogin> repositoryHistorialLogin)
         {
             _repository = repository;
-            _repositoryHorario = repositoryHorario;
+            _repositoryHistorialLogin = repositoryHistorialLogin;
         }
 
         public async Task<List<User>> List()
         {
             IQueryable<User> query = await _repository.Query(_ => !_.IsSuperAdmin);
-            return query.Include(r => r.IdRolNavigation).Include(r => r.Horarios).Include(t => t.Tienda).OrderBy(_ => _.Name).ToList();
+            return await query
+                .Include(r => r.IdRolNavigation)
+                .Include(r => r.Horarios)
+                .Include(t => t.Tienda)
+                .Include(r => r.HistorialLogins.OrderByDescending(h => h.Fecha).Take(20))
+                .OrderBy(_ => _.Name)
+                .ToListAsync();
         }
 
         public async Task<User> Add(User entity)
@@ -220,7 +221,7 @@ namespace PointOfSale.Business.Services
         public async Task<User> GetById(int IdUser)
         {
             var query = await _repository.Query();
-            return query.Include(_ => _.Horarios).SingleOrDefault(u => u.IdUsers == IdUser);
+            return query.Include(_ => _.Horarios).Include(r => r.HistorialLogins.OrderByDescending(h => h.Fecha).Take(20)).SingleOrDefault(u => u.IdUsers == IdUser);
         }
 
         public async Task<User> GetByIdWithRol(int IdUser)
@@ -240,6 +241,11 @@ namespace PointOfSale.Business.Services
         {
             var superUser = await _repository.First(u => u.IsSuperAdmin);
             return superUser.IdUsers == idUser;
+        }
+
+        public async Task SaveHistorialLogin(HistorialLogin historialLogin)
+        {
+            _ = await  _repositoryHistorialLogin.Add(historialLogin);
         }
     }
 }

@@ -756,3 +756,17 @@ CREATE TABLE VentasPorTipoDeVentaTurno (
 
     CONSTRAINT FK_VentasPorTipoDeVentaTurno_Turno FOREIGN KEY (IdTurno) REFERENCES Turno(IdTurno)
 );
+
+go
+
+CREATE TABLE HistorialLogin (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Informacion NVARCHAR(MAX) NOT NULL,
+    Fecha DATETIME NOT NULL,
+    IdUser INT NOT NULL,
+    UserName NVARCHAR(255) NOT NULL,
+    CONSTRAINT FK_HistorialLogin_User FOREIGN KEY (IdUser)
+        REFERENCES Users(idUsers)
+        ON DELETE CASCADE
+);
+

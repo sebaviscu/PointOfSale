@@ -8,6 +8,7 @@ using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
 using System.Security.Claims;
 using static PointOfSale.Model.Enum;
+using UAParser;
 
 namespace PointOfSale.Controllers
 {
@@ -148,6 +149,20 @@ namespace PointOfSale.Controllers
                 };
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), properties);
+
+                var userAgent = HttpContext.Request.Headers["User-Agent"].ToString();
+                var parser = Parser.GetDefault();
+                var clientInfo = parser.Parse(userAgent);
+
+                var hl = new HistorialLogin()
+                {
+                    Fecha = TimeHelper.GetArgentinaTime(),
+                    IdUser = user_found.IdUsers,
+                    UserName = user_found.Name,
+                    Informacion = clientInfo.ToString()
+                };
+
+                await _userService.SaveHistorialLogin(hl);
 
                 ViewData["Message"] = string.Empty;
 

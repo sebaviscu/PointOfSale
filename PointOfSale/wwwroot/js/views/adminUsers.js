@@ -1,5 +1,6 @@
 ﻿let tableDataUsers;
 let rowSelectedUser;
+let tableDataHistorialLogin;
 
 const BASIC_MODEL_USER = {
     idUsers: 0,
@@ -15,7 +16,8 @@ const BASIC_MODEL_USER = {
     modificationDate: "",
     modificationUser: null,
     horarios: [],
-    sinHorario: 1
+    sinHorario: 1,
+    historialLogins: []
 }
 
 const BASIC_MODEL_HORARIOS = {
@@ -169,6 +171,34 @@ const openModalUser = (model = BASIC_MODEL_USER) => {
         setearHorario("timeRangeDomingo", "08:00", "18:00");  // Miércoles (8:00 AM - 6:00 PM)
     }
 
+    if (tableDataHistorialLogin != null)
+        tableDataHistorialLogin.destroy();
+
+    tableDataHistorialLogin = $("#tbDataHistortialLogin").DataTable({
+        responsive: true,
+        data: model.historialLogins,
+        "columnDefs": [
+            {
+                "targets": [0],
+                "render": function (data, type, row) {
+                    if (type === 'display' || type === 'filter') {
+                        return data ? moment(data).format('DD/MM/YYYY HH:mm') : '';
+                    }
+                    return data;
+                }
+            }
+        ],
+        columns: [
+            { "data": "fecha", "title": "Fecha" },
+            { "data": "informacion", "title": "Información" }
+        ],
+        order: [[0, "desc"]],
+        dom: "frtip",
+        pageLength: 10,
+        rowCallback: function (row, data, index) {
+            $(row).css("font-size", "12px");
+        }
+    });
 
     //let rol = $('#cboRol').val();
     //$("#cboTiendas").prop("disabled", rol == '1');

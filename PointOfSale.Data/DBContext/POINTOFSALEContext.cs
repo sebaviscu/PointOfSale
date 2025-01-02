@@ -64,6 +64,7 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<ProductLov> ProductLov { get; set; }
         public virtual DbSet<BackupProducto> BackupProducto { get; set; }
         public virtual DbSet<VentasPorTipoDeVentaTurno> VentasPorTipoDeVentaTurno { get; set; }
+        public virtual DbSet<HistorialLogin> HistorialLogin { get; set; }
 
         #endregion
 
@@ -73,6 +74,18 @@ namespace PointOfSale.Data.DBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<HistorialLogin>(entity =>
+            {
+
+                entity.ToTable("HistorialLogin");
+
+                modelBuilder.Entity<HistorialLogin>()
+                           .HasOne(h => h.User)
+                           .WithMany(u => u.HistorialLogins)
+                           .HasForeignKey(h => h.IdUser)
+                           .OnDelete(DeleteBehavior.Cascade);
+            }); 
 
             modelBuilder.Entity<VentasPorTipoDeVentaTurno>(entity =>
             {

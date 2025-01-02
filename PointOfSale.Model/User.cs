@@ -28,6 +28,7 @@ namespace PointOfSale.Model
         public int? IdTienda { get; set; }
         public Tienda? Tienda { get; set; }
         public virtual ICollection<Horario>? Horarios { get; set; }
+        public virtual ICollection<HistorialLogin>? HistorialLogins { get; set; }
 
         public bool IsAdmin
         {
