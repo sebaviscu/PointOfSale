@@ -563,7 +563,8 @@ function dibujarAreaTotales() {
     });
 
     productsToDisplay.forEach((a) => {
-        textArea.innerHTML += `· ${a.descriptionProduct}: $${Number.parseFloat(a.price).toFixed(0)} x ${a.quantity} ${a.tipoVenta} = $ ${Number.parseFloat(a.total).toFixed(0)}<br>`;
+        let descrCortada = cortarTextoLargo(a.descriptionProduct, 12, 5);
+        textArea.innerHTML += `· ${descrCortada}: $${Number.parseFloat(a.price).toFixed(0)} x ${a.quantity} ${a.tipoVenta} = $ ${Number.parseFloat(a.total).toFixed(0)}<br>`;
     });
 
 
@@ -586,6 +587,15 @@ function dibujarAreaTotales() {
         pasoEnvioGratis = false;
 
     document.getElementById("btnCompras").innerText = `Total: $ ${total}`;
+}
+
+function cortarTextoLargo(texto, maxLongitudInicio, maxLongitudFinal) {
+    if (texto.length > maxLongitudInicio + maxLongitudFinal + 5) { // 5 es para " ... "
+        const inicio = texto.substring(0, maxLongitudInicio); // Parte inicial
+        const final = texto.substring(texto.length - maxLongitudFinal); // Parte final
+        return `${inicio} ... ${final}`;
+    }
+    return texto; // No cortar si el texto es suficientemente corto
 }
 
 let pasoEnvioGratis = false;
