@@ -399,7 +399,7 @@ namespace PointOfSale.Controllers
 
                     if (!string.IsNullOrEmpty(ticket.Ticket))
                     {
-                        ticketCompleto += ticket.Ticket;
+                        ticketCompleto += ticket.TicketSinFuentes();
                         imagesTicket.AddRange(ticket.ImagesTicket);
                     }
                 }
@@ -433,7 +433,7 @@ namespace PointOfSale.Controllers
 
                 if (!string.IsNullOrEmpty(ticket.Ticket))
                 {
-                    var pdfBytes = _ticketService.PdfTicket(ticket.Ticket, ticket.ImagesTicket);
+                    var pdfBytes = _ticketService.PdfTicket(ticket.TicketSinFuentes(), ticket.ImagesTicket);
 
                     // Enviar el ticket por email
                     await _emailService.EnviarTicketEmail(user.IdTienda, request.Email, pdfBytes);

@@ -38,7 +38,7 @@ namespace PointOfSale.Data.Repository
                     var stockTasks = entity.DetailSales.Select(dv =>
                     {
                         var product = products.First(p => p.IdProduct == dv.IdProduct);
-                        return ControlStock(dv.Quantity.Value, entity.IdTienda, product);
+                        return ControlStock(dv.Quantity, entity.IdTienda, product);
                     }).ToList();
 
                     // Await all stock control tasks concurrently
@@ -140,7 +140,7 @@ namespace PointOfSale.Data.Repository
 
                 foreach (var dv in entity.DetailSales)
                 {
-                    if (products.TryGetValue(dv.IdProduct.Value, out var product))
+                    if (products.TryGetValue(dv.IdProduct, out var product))
                     {
                         dv.TipoVenta = product.TipoVenta;
                         dv.CategoryProducty = product.IdCategoryNavigation.Description;

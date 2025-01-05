@@ -483,7 +483,6 @@ async function editarVentaWeb() {
     $("#tbProducts tbody tr").each(function () {
         const $row = $(this);
         const product = {
-            brandProduct: null,
             categoryProducty: '',
             descriptionProduct: $row.find("td").eq(1).text(),
             idDetailSale: $row.find("td").eq(4).data("idDetailSale"),

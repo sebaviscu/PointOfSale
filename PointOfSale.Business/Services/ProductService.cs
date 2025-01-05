@@ -726,7 +726,7 @@ namespace PointOfSale.Business.Services
             Dictionary<int, string?> resultado = query
             .GroupBy(dv => dv.IdProduct).OrderByDescending(g => g.Sum(_ => _.Quantity))
             .Select(dv => new { product = dv.Key, total = dv.Sum(_ => _.Quantity) })
-            .ToDictionary(keySelector: r => r.product.Value, elementSelector: r => Math.Truncate(r.total.Value).ToString());
+            .ToDictionary(keySelector: r => r.product, elementSelector: r => Math.Truncate(r.total).ToString());
 
             return resultado;
         }

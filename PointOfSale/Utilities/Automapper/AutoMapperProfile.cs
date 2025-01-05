@@ -234,11 +234,11 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<DetailSale, VMDetailSale>()
                 .ForMember(destiny =>
                     destiny.Price,
-                    opt => opt.MapFrom(source => source.Price.Value)
+                    opt => opt.MapFrom(source => source.Price)
                 )
                 .ForMember(destiny =>
                     destiny.Total,
-                    opt => opt.MapFrom(source => source.Total.Value)
+                    opt => opt.MapFrom(source => source.Total)
                 );
 
             CreateMap<VMDetailSale, DetailSale>()

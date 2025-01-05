@@ -99,7 +99,7 @@ namespace PointOfSale.Business.Services
                     IdProducto = _.IdProduct,
                     Lista = ListaDePrecio.Web,
                     PorcentajeProfit = 0,
-                    Precio = _.PriceWeb.HasValue ? _.PriceWeb.Value : _.Price.Value,
+                    Precio = _.PriceWeb.HasValue ? _.PriceWeb.Value : _.Price ?? 0,
                     Producto = _
                 }).ToList();
             }
@@ -198,7 +198,7 @@ namespace PointOfSale.Business.Services
 
             return query.Include(_ => _.ClienteMovimientos).ToList();
         }
-        
+
         public async Task<RegisterSaleOutput> RegisterSale(Sale model, RegistrationSaleInput saleInput)
         {
             var modelResponde = new RegisterSaleOutput();
@@ -245,7 +245,7 @@ namespace PointOfSale.Business.Services
                     FacturaEmitida facturaEmitida = null;
                     try
                     {
-                        if (ajustes.FacturaElectronica.HasValue && ajustes.FacturaElectronica.Value)
+                        if (ajustes.FacturaElectronica.HasValue && ajustes.FacturaElectronica.Value && m.FormaDePago.HasValue)
                         {
                             facturaEmitida = await _afipService.FacturarVenta(sale_created, ajustes, saleInput.CuilFactura, saleInput.IdClienteFactura);
 
@@ -262,7 +262,7 @@ namespace PointOfSale.Business.Services
 
                     if (!string.IsNullOrEmpty(modelResponde.Errores) || !string.IsNullOrEmpty(modelResponde.ErrorFacturacion))
                     {
-                        var notific = new Notifications(sale_created);
+                        var notific = new Notifications(sale_created, string.Concat(modelResponde.Errores, modelResponde.ErrorFacturacion));
                         await _notificationService.Save(notific);
                     }
 
@@ -279,18 +279,27 @@ namespace PointOfSale.Business.Services
                     if (sale_created.TypeDocumentSaleNavigation == null)
                     {
                         sale_created.TypeDocumentSaleNavigation = await _repositoryTypeDocumentSale.Get(_ => _.IdTypeDocumentSale == sale_created.IdTypeDocumentSale);
-
                     }
-                    if (saleInput.MultiplesFormaDePago.Count == 1)
+
+                    if (sale_created.IdTypeDocumentSale != null)
                     {
-                        modelResponde.IdSale = sale_created.IdSale;
-                        modelResponde.TipoVenta = "F" + sale_created.TypeDocumentSaleNavigation.TipoFactura.ToString();
+                        if (saleInput.MultiplesFormaDePago.Count == 1)
+                        {
+                            modelResponde.IdSale = sale_created.IdSale;
+                            modelResponde.TipoVenta = "F" + sale_created.TypeDocumentSaleNavigation.TipoFactura.ToString();
+                        }
+                        else
+                        {
+                            modelResponde.IdSaleMultiple += $"{sale_created.IdSale},";
+                            modelResponde.TipoVenta += $"F{sale_created.TypeDocumentSaleNavigation.TipoFactura.ToString()},";
+                        }
                     }
                     else
                     {
-                        modelResponde.IdSaleMultiple += $"{sale_created.IdSale},";
-                        modelResponde.TipoVenta += $"F{sale_created.TypeDocumentSaleNavigation.TipoFactura.ToString()},";
+                        modelResponde.IdSale = sale_created.IdSale;
+                        modelResponde.TipoVenta = "Mov. Cliente";
                     }
+
                 }
 
             }
@@ -483,7 +492,7 @@ namespace PointOfSale.Business.Services
                     detalle.IdProduct = p.IdProduct;
                     detalle.CategoryProducty = p.IdCategoryNavigation.Description;
                     detalle.DescriptionProduct = p.Description;
-                    detalle.Price = p.Price;
+                    detalle.Price = p.Price ?? 0;
                     detalle.Quantity = random.Next(0, 4);
                     detalle.Total = detalle.Price * detalle.Quantity;
                     listDet.Add(detalle);
@@ -501,7 +510,7 @@ namespace PointOfSale.Business.Services
                     detalle.IdProduct = p.IdProduct;
                     detalle.CategoryProducty = p.IdCategoryNavigation.Description;
                     detalle.DescriptionProduct = p.Description;
-                    detalle.Price = p.Price;
+                    detalle.Price = p.Price ?? 0;
                     detalle.Quantity = random.Next(0, 4);
                     detalle.Total = detalle.Price * detalle.Quantity;
                     listDet.Add(detalle);

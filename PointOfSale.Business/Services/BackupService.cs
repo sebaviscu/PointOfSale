@@ -40,7 +40,7 @@ public class BackupService : ServiceBase<BackupProducto>, IBackupService
         pb.IdCategory = product.IdCategory;
         pb.Category = product.IdCategoryNavigation?.Description;
         pb.Description = product.Description;
-        pb.Price = product.Price;
+        pb.Price = product.Price ?? 0;
         pb.CostPrice = product.CostPrice;
         pb.PriceWeb = product.PriceWeb;
         pb.PorcentajeProfit = product.PorcentajeProfit;

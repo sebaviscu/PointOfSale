@@ -282,7 +282,7 @@ namespace PointOfSale.Business.Services
                  .Take(10)
                  .ToDictionary(
                      keySelector: r => r.product,
-                     elementSelector: r => r.total % 1 == 0 ? Math.Truncate(r.total.Value).ToString() : Math.Round(r.total.Value, 1).ToString()
+                     elementSelector: r => r.total % 1 == 0 ? Math.Truncate(r.total).ToString() : Math.Round(r.total, 1).ToString()
                  );
 
             return resultado;

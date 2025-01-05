@@ -597,11 +597,6 @@ namespace PointOfSale.Data.DBContext
 
                 entity.Property(e => e.IdDetailSale).HasColumnName("idDetailSale");
 
-                entity.Property(e => e.BrandProduct)
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("brandProduct");
-
                 entity.Property(e => e.CategoryProducty)
                     .HasMaxLength(100)
                     .IsUnicode(false)

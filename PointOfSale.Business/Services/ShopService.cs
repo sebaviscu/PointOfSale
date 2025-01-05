@@ -163,7 +163,7 @@ namespace PointOfSale.Business.Services
                 {
                     // Es un nuevo detalle, agregarlo
                     updatedDetail.IdVentaWeb = ventaWebFound.IdVentaWeb;
-                    var prod = await _productService.Get(updatedDetail.IdProduct.Value);
+                    var prod = await _productService.Get(updatedDetail.IdProduct);
                     updatedDetail.CategoryProducty = prod.IdCategoryNavigation.Description;
                     ventaWebFound.DetailSales.Add(updatedDetail);
                 }

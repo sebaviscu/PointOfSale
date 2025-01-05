@@ -397,7 +397,7 @@ namespace PointOfSale.Controllers
                 {
                     var ticket = await _ticketService.TicketTest(listDetailsSale, ajustes);
 
-                    model.Ticket += ticket.Ticket ?? string.Empty;
+                    model.Ticket += ticket.TicketSinFuentes() ?? string.Empty;
                     model.ImagesTicket.AddRange(ticket.ImagesTicket);
                 }
 

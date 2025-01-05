@@ -103,6 +103,7 @@ namespace PointOfSale.Business.Utilities
 
             var tipoVenta = reader.GetValue(3)?.ToString().ToLower() == "kg" ? TipoVenta.Kg : TipoVenta.U;
             var precioWeb = ParseDecimal(reader.GetValue(12), "Precio Web");
+            var iva = ParseDecimal(reader.GetValue(5), "IVA");
 
             Product product = new Product
             {
@@ -120,7 +121,7 @@ namespace PointOfSale.Business.Utilities
                 IdCategoryNavigation = categoria,
                 Destacado = false,
                 ProductoWeb = productoWeb,
-                Iva = ParseDecimal(reader.GetValue(5), "IVA"),
+                Iva = iva != 0 ? iva : 21m,
                 Comentario = string.Empty,
                 FormatoWeb = tipoVenta == TipoVenta.Kg ? 1000 : 1,
                 PrecioFormatoWeb = precioWeb,

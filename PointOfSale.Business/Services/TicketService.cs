@@ -41,7 +41,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<TicketModel> TicketTest(List<DetailSale> detailSales, Ajustes ajustes)
         {
-            var total = detailSales.Any() ? detailSales.Sum(_ => _.Total).Value : 0m;
+            var total = detailSales.Any() ? detailSales.Sum(_ => _.Total) : 0m;
             return await CreateTicket(ajustes, TimeHelper.GetArgentinaTime(), total, detailSales, ajustes.IdTienda, null, null);
         }
 
@@ -80,13 +80,17 @@ namespace PointOfSale.Business.Services
 
             IsMultiplesFormasPago(detailSales, total);
 
+            var ivaAcumulado = 0m;
+
             foreach (var d in detailSales)
             {
                 Ticket.AgregaArticulo(d.DescriptionProduct.ToUpper(),
-                   d.Price.Value,
-                   d.Quantity.Value,
-                   d.Total.Value,
+                   d.Price,
+                   d.Quantity,
+                   d.Total,
                    d.Iva.Value == 0 ? 21.00m : d.Iva.Value);
+
+                ivaAcumulado += d.ImporteIva;
             }
 
             Ticket.TextoIzquierda(" ");
@@ -102,6 +106,9 @@ namespace PointOfSale.Business.Services
             Ticket.LineasTotal();
             Ticket.AgregaTotales("Total", double.Parse(total.ToString()));
             Ticket.LineasTotal();
+
+            Ticket.TextoBetween($"IVA Contenido", "$" + ivaAcumulado.ToString("N2"));
+            Ticket.LineasGuion();
 
 
             Ticket.TextoIzquierda(" ");

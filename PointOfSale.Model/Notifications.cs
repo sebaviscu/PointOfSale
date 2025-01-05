@@ -75,9 +75,9 @@ namespace PointOfSale.Model
             Rols = $"{(int)Roles.Administrador},{(int)Roles.Encargado}";
         }
 
-        public Notifications(Sale sale)
+        public Notifications(Sale sale, string error)
         {
-            Descripcion = $"Ha ocurrido un error al Facturar para la venta Nro: {sale.SaleNumber}.";
+            Descripcion = $"Ha ocurrido un error al Facturar para la venta Nro: {sale.SaleNumber}. Error: {error}";
             IsActive = true;
             RegistrationDate = TimeHelper.GetArgentinaTime();
             Accion = "";

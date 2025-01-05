@@ -38,6 +38,16 @@ namespace PointOfSale.Business.Utilities
 
         public string Ticket => Lineas.ToString();
 
+        public string TicketSinFuentes()
+        {
+
+            var lienas = Lineas.ToString().Replace("[[FontSize]]10 [[FontStyle]]Bold", "");
+            lienas = lienas.Replace("[[FontSize]]8 [[FontStyle]]Bold", "");
+            lienas = lienas.Replace("[[FontSize]]7 [[FontStyle]]Bold", "");
+
+            return lienas;
+        }
+
         public StringBuilder Lineas => line;
 
         public void TextoAgradecimiento(string text)
