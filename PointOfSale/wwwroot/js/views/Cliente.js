@@ -178,7 +178,9 @@ const openModalCliente = (model = BASIC_MODEL_CLIENTE) => {
                 "searchable": false
             },
             { "data": "totalString" },
-            { "data": "sale.saleNumber" },
+            {
+                "data": "sale.saleNumber",
+                "defaultContent": "" },
             { "data": "registrationDate" },
             { "data": "registrationUser" },
             {
@@ -188,25 +190,14 @@ const openModalCliente = (model = BASIC_MODEL_CLIENTE) => {
             }
             ,
             {
-                "defaultContent": '<button class="btn btn-primary btn-open-sale btn-sm me-2"><i class="mdi mdi-eye"></i></button>',
+                "defaultContent": '<button class="btn btn-info btn-open-sale btn-sm me-2"><i class="mdi mdi-eye"></i></button>',
                 "orderable": false,
                 "searchable": false,
                 "width": "40px"
             }
         ],
         order: [[3, "desc"]],
-        dom: "Bfrtip",
-        buttons: [
-            {
-                text: 'Exportar Excel',
-                extend: 'excelHtml5',
-                title: '',
-                filename: 'Reporte Clientes',
-                exportOptions: {
-                    columns: [1, 2]
-                }
-            }, 'pageLength'
-        ]
+        dom: "frtip"
     });
 
     $("#modalData").modal("show")

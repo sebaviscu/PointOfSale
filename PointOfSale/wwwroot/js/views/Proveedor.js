@@ -338,18 +338,7 @@ const openModalProveedor = (model = BASIC_MODEL_PROVEEDOR) => {
             }
         ],
         order: [[1, "asc"]],
-        dom: "frtip",
-        buttons: [
-            {
-                text: 'Exportar Excel',
-                extend: 'excelHtml5',
-                title: '',
-                filename: 'Reporte Pedidos',
-                exportOptions: {
-                    columns: [1, 2, 3, 4, 5, 6]
-                }
-            }, 'pageLength'
-        ]
+        dom: "frtip"
     });
 
     $("#modalData").modal("show")
@@ -424,18 +413,7 @@ function cargarTablaGastosProveedores(isGlobal) {
             }
         ],
         order: [[0, "desc"]],
-        dom: "Bfrtip",
-        buttons: [
-            {
-                text: 'Exportar Excel',
-                extend: 'excelHtml5',
-                title: '',
-                filename: 'Reporte Gastos Proveedores',
-                exportOptions: {
-                    columns: [1, 2, 3, 4, 5, 6]
-                }
-            }, 'pageLength'
-        ]
+        dom: "Bfrtip"
     });
 }
 
