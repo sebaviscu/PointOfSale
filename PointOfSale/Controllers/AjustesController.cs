@@ -156,6 +156,8 @@ namespace PointOfSale.Controllers
                 var turno = await _turnoService.GetTurnoActual(user.IdTienda);
 
                 vmAjuste.ExisteTurno = turno != null;
+                vmAjuste.User = user.UserName;
+
                 gResponse.State = true;
                 gResponse.Object = vmAjuste;
                 return StatusCode(StatusCodes.Status200OK, gResponse);

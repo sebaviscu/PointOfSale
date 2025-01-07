@@ -13,10 +13,6 @@ let selectedRowtbProduct = null;
 let lastSearchTerm = '';
 let searchCache = {};
 
-const ProducstTab = {
-    idTab: 0,
-    products: []
-}
 
 $(document).ready(function () {
     showLoading();
@@ -70,12 +66,37 @@ $(document).ready(function () {
 
                 if (!ajustes.existeTurno) {
                     $('#cboSearchProduct1').select2('close');
-                    //openModalDataAbrirTurno();
-                    $('#bloqueo').show();
 
+                    $('#bloqueo').show();
                 }
                 else {
                     $('#bloqueo').hide();
+
+
+                    newTab();
+                    healthcheck();
+                    inicializarConsultarPrecios();
+
+                    // Inicializar la base de datos y luego recuperar la venta
+                    initializeDatabase()
+                        .then((db) => {
+
+                            getVentaFromIndexedDB(1, (currentTab) => {
+                                if (currentTab) {
+                                    showProducts_Prices(currentTab.idTab, currentTab);
+                                    AllTabsForSale = [];
+                                    AllTabsForSale.push(currentTab);
+
+                                    $("#lblFechaUsuario" + currentTab.idTab).html(currentTab.date + " &nbsp;&nbsp; " + currentTab.user);
+
+                                }
+                            });
+                        })
+                        .catch((error) => {
+                            console.error('Error al inicializar la base de datos:', error);
+                        });
+
+
                 }
 
             } else {
@@ -83,44 +104,7 @@ $(document).ready(function () {
             }
         })
 
-    newTab();
-    healthcheck();
-    inicializarConsultarPrecios();
 
-
-    //$('.sub-menu a.sidenav-item-link, .has-sub a.sidenav-item-link').on('click', function (event) {
-    //    if (!ajustes.needControl) return true;
-
-    //    if (ventaAbierta()) {
-    //        event.preventDefault(); // Prevenir la navegación
-    //        swal({
-    //            title: '',
-    //            text: 'No es posible dejar una venta abierta\n\n',
-    //            icon: 'question',
-    //            showCancelButton: false,
-    //            confirmButtonText: 'Aceptar'
-    //        }, function (value) {
-    //        });
-    //    } else {
-    //        window.location.href = $(this).attr('href');
-    //    }
-    //});
-
-    // Inicializar la base de datos y luego recuperar la venta
-    initializeDatabase()
-        .then((db) => {
-
-            getVentaFromIndexedDB(1, (currentTab) => {
-                if (currentTab) {
-                    showProducts_Prices(currentTab.idTab, currentTab);
-                    AllTabsForSale = [];
-                    AllTabsForSale.push(currentTab);
-                }
-            });
-        })
-        .catch((error) => {
-            console.error('Error al inicializar la base de datos:', error);
-        });
 
 })
 
@@ -915,6 +899,7 @@ function newTab() {
     clone.querySelector("#txtPeso").id = "txtPeso" + tabID;
     clone.querySelector("#btnAgregarProducto").id = "btnAgregarProducto" + tabID;
     clone.querySelector("#lblCantidadProductos").id = "lblCantidadProductos" + tabID;
+    clone.querySelector("#lblFechaUsuario").id = "lblFechaUsuario" + tabID;
     clone.querySelector("#cboListaPrecios").id = "cboListaPrecios" + tabID;
     clone.querySelector("#btnMasCantidad").id = "btnMasCantidad" + tabID;
     clone.querySelector("#btnMenosCantidad").id = "btnMenosCantidad" + tabID;
@@ -935,10 +920,19 @@ function newTab() {
     $("#btnFinalizeSaleParcial" + tabID).attr("tabId", tabID);
     $("#cboDescRec" + tabID).attr("tabId", tabID);
 
+    let fecha = moment().tz('America/Argentina/Buenos_Aires').format('DD/MM/YYYY hh:mm');
+    let userName = ajustes != null ? ajustes.user : '';
+
     let newTab = {
         idTab: tabID,
+        user: userName,
+        date: fecha,
         products: []
     }
+
+
+    $("#lblFechaUsuario" + tabID).html(fecha + " &nbsp;&nbsp; " + userName);
+
     AllTabsForSale.push(newTab);
 
     addFunctions(tabID);

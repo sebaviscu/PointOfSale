@@ -4,7 +4,7 @@ let isLoading = false;
 let hasMoreProducts = true;
 let debounceTimeout;
 let productos = [];
-let primerCargaCache = true;
+//let primerCargaCache = true;
 let montoEnvioGratis = 0;
 let ajustesWeb;
 let descuentoTakeAway = 0;
@@ -45,17 +45,6 @@ $(document).ready(function () {
                 swal("Lo sentimos", responseJson.message, "error");
             }
         })
-
-    //setTimeout(function () {
-
-    //    productos = JSON.parse(localStorage.getItem('productos')) || [];
-    //    productos.forEach(function (p) {
-
-    //        opacityButtonArea(p.quantity, 1, p.idProduct);
-    //        document.getElementById("prod-" + p.idProduct).value = p.quantity;
-    //    });
-    //    dibujarAreaTotales();
-    //}, 5000);
 
     var elem = document.getElementById('switchTakeAway');
     var init = new Switchery(elem, { color: '#1ab394', size: 'small' });
@@ -160,16 +149,17 @@ function fetchProducts(page, pageSize, categoryId, tagId, searchText) {
 
             attachButtonEvents(pageClass);
 
-            if (primerCargaCache) {
-                productos = JSON.parse(localStorage.getItem('productos')) || [];
-                productos.forEach(function (p) {
+            //if (primerCargaCache) {
 
-                    opacityButtonArea(p.quantity, 1, p.idProduct);
-                    document.getElementById("prod-" + p.idProduct).value = p.quantity;
-                });
-                dibujarAreaTotales();
-                primerCargaCache = false;
-            }
+            //    productos = JSON.parse(localStorage.getItem('productos')) || [];
+            //    productos.forEach(function (p) {
+
+            //        opacityButtonArea(p.quantity, 1, p.idProduct);
+            //        document.getElementById("prod-" + p.idProduct).value = p.quantity;
+            //    });
+            //    dibujarAreaTotales();
+            //    primerCargaCache = false;
+            //}
         })
         .catch(error => {
             console.error('Fetch error:', error);
@@ -269,7 +259,7 @@ function clean() {
         let elementArea = document.querySelector('#bottom-area-' + idProd);
         elementArea.style.removeProperty('opacity');
     });
-    localStorage.removeItem('productos');
+    //localStorage.removeItem('productos');
 
 }
 
@@ -442,7 +432,7 @@ function finalizarVenta() {
             );
         }).join('');
 
-        localStorage.removeItem('productos');
+        //localStorage.removeItem('productos');
 
         $("#modalData").modal("hide")
 
@@ -548,7 +538,7 @@ function setValue(event, mult) {
     dibujarAreaTotales();
 
     // chache
-    localStorage.setItem('productos', JSON.stringify(productos));
+    //localStorage.setItem('productos', JSON.stringify(productos));
 }
 
 function dibujarAreaTotales() {

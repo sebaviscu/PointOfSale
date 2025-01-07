@@ -11,5 +11,6 @@ namespace PointOfSale.Models
         public bool NeedControl { get; set; }
         public ListaDePrecio ListaPrecios { get; set; }
         public bool ExisteTurno { get; set; }
+        public string? User { get; set; }
     }
 }
