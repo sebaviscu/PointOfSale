@@ -235,6 +235,8 @@ function formatResults(data) {
     if (data.loading)
         return data.text;
 
+    let tipoVentaString = data.tipoVenta == 1 ? "Kg" : "U.";
+
     let container = $(
         `<table width="90%">
             <tr>
@@ -242,8 +244,7 @@ function formatResults(data) {
                     <img style="height:60px;width:60px;margin-right:10px" src="data:image/png;base64,${data.photoBase64}"/>
                 </td>
                 <td>
-                    <p style="font-weight: bolder;margin:2px">${data.text}</p>
-                    <p>$ ${formatNumber(data.price)}</p>
+                    <p style="font-weight: bolder;margin:2px">${data.text} / ${tipoVentaString}</p>
                 </td>
             </tr>
          </table>`

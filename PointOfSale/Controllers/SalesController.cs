@@ -357,10 +357,16 @@ namespace PointOfSale.Controllers
 
                         model.Ticket += ticket.Ticket ?? string.Empty;
                         model.ImagesTicket.AddRange(ticket.ImagesTicket);
+                        gResponse.State = true;
                     }
+                    else
+                    {
+                        gResponse.State = false;
+                        gResponse.Message = "No hay una Impresora cargada";
+                    }
+
                 }
 
-                gResponse.State = true;
                 gResponse.Object = model;
 
                 return StatusCode(StatusCodes.Status200OK, gResponse);

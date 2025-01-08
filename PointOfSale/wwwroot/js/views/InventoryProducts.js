@@ -108,11 +108,11 @@ $(document).ready(function () {
                     "searchable": false
                 },
                 {
-                    "defaultContent": `<input type="checkbox" class="chkProducto">`,
+                    "defaultContent": `<input type="checkbox" class="chkProducto" style="width: 18px;height: 18px;">`,
                     "orderable": false,
                     "searchable": false,
-                    "width": "40px",
-                    "className": "text-center"
+                    "width": "30px",
+                    "className": "checkboxClass",
                 },
                 { "data": "sku" },
                 { "data": "description" },

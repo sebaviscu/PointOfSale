@@ -37,7 +37,7 @@ insert into Menu([description],idMenuParent,controller,pageAction,isActive) valu
 ('Usuarios',2,'Admin','Users',1), --9
 ('Productos',4,'Inventory','Products',1), --10
 ('Reporte Ventas',6,'Sales','SalesHistory',1), --11
-('Clientes',2,'Admin','Cliente',1), --12
+('Clientes',3,'Admin','Cliente',1), --12
 ('Proveedores',3,'Proveedores','Index',1), --13
 ('Promociones',4,'Inventory','Promociones',1), --14
 ('Gastos',3,'Gastos','Gastos',1), --15

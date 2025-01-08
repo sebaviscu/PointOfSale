@@ -147,10 +147,16 @@ const openModalCliente = (model = BASIC_MODEL_CLIENTE) => {
         $("#txtModificadoUsuario").val(model.modificationUser);
     }
 
+    cargarTablaMovimientos(model.idCliente);
+
+    $("#modalData").modal("show")
+}
+
+function cargarTablaMovimientos(idCliente) {
     if (tableDataMovimientosClientes != null)
         tableDataMovimientosClientes.destroy();
 
-    let url = '/Admin/GetMovimientoCliente?idCliente=' + model.idCliente;
+    let url = '/Admin/GetMovimientoCliente?idCliente=' + idCliente;
 
     tableDataMovimientosClientes = $("#tbMovimientos").DataTable({
         responsive: true,
@@ -180,7 +186,8 @@ const openModalCliente = (model = BASIC_MODEL_CLIENTE) => {
             { "data": "totalString" },
             {
                 "data": "sale.saleNumber",
-                "defaultContent": "" },
+                "defaultContent": ""
+            },
             { "data": "registrationDate" },
             { "data": "registrationUser" },
             {
@@ -199,8 +206,6 @@ const openModalCliente = (model = BASIC_MODEL_CLIENTE) => {
         order: [[3, "desc"]],
         dom: "frtip"
     });
-
-    $("#modalData").modal("show")
 }
 
 $("#btnNew").on("click", function () {
@@ -401,6 +406,9 @@ $(document).on("click", "button.finalizeSale", function () {
         if (responseJson.state) {
 
             $("#cboTypeDocumentSale").val($("#cboTypeDocumentSale option:first").val());
+
+            let idCliente = $("#txtId").val();
+            cargarTablaMovimientos(idCliente);
 
             swal("Registrado!", "success");
 
