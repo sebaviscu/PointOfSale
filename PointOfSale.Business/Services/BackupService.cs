@@ -86,7 +86,7 @@ public class BackupService : ServiceBase<BackupProducto>, IBackupService
 
             foreach (var b in backups)
             {
-                var prod = products.First(_=>_.IdProduct == b.IdProduct);
+                var prod = products.First(_ => _.IdProduct == b.IdProduct);
 
                 await RestoreProduct(modificationUser, prod, b);
             }

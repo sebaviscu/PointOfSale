@@ -14,7 +14,7 @@ namespace PointOfSale.Model.Auditoria
         public int IdProduct { get; set; }
         public string? SKU { get; set; }
         public string? Description { get; set; }
-        public decimal Price { get; set; }
+        public decimal? Price { get; set; }
         public bool IsActive { get; set; }
         public decimal? PriceWeb { get; set; }
         public int? PorcentajeProfit { get; set; }

@@ -7,6 +7,7 @@ $(document).ready(function () {
 
     tableDataBackup = $("#tbDataBackup").DataTable({
         responsive: true,
+        pageLength: 25,
         "ajax": {
             "url": "/Inventory/GetBackups",
             "type": "GET",

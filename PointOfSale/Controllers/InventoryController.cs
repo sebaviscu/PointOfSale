@@ -28,12 +28,12 @@ namespace PointOfSale.Controllers
         private readonly IPromocionService _promocionService;
         private readonly IBackupService _backupService;
 
-        public InventoryController(ICategoryService categoryService, 
-            IProductService productService, 
-            IMapper mapper, 
-            IImportarExcelService excelService, 
-            ILogger<InventoryController> logger, 
-            ITagService tagService, 
+        public InventoryController(ICategoryService categoryService,
+            IProductService productService,
+            IMapper mapper,
+            IImportarExcelService excelService,
+            ILogger<InventoryController> logger,
+            ITagService tagService,
             IPromocionService promocionService,
             IBackupService backupService)
         {
@@ -83,9 +83,6 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetBackups()
         {
-            var vmBackupList = _mapper.Map<List<VMBackupProducto>>(_backupService.List().ToList());
-
-
 
             var backups = _backupService.List().ToList();
 
