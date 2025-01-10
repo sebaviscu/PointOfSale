@@ -274,6 +274,7 @@ function createTable(responseJson) {
                     return data;
                 }
             },
+            { data: "registrationUser" },
             {
                 data: null,
                 render: function (data, type, row) {

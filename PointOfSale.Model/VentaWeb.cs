@@ -34,6 +34,7 @@ namespace PointOfSale.Model
         public decimal? DescuentoRetiroLocal { get; set; }
         public string? CruceCallesDireccion { get; set; }
         public decimal? CostoEnvio { get; set; }
+        public string? ObservacionesUsuario { get; set; }
 
         public virtual TypeDocumentSale? FormaDePago { get; set; }
         public virtual ICollection<DetailSale>? DetailSales { get; set; }

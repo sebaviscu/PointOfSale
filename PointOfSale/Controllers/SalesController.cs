@@ -268,7 +268,7 @@ namespace PointOfSale.Controllers
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
 
-                List<VMSale> vmHistorySale = _mapper.Map<List<VMSale>>(await _saleService.SaleHistory(saleNumber, startDate, endDate, presupuestos));
+                List<VMSale> vmHistorySale = _mapper.Map<List<VMSale>>(await _saleService.SaleHistory(saleNumber, startDate, endDate, presupuestos, user.IdTienda));
 
                 if (vmHistorySale.Any(_ => _.IdClienteMovimiento != null))
                 {

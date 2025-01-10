@@ -67,7 +67,7 @@
             <div class="modal-body">
                 <input type="hidden" value="0" id="txtId">
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-6 d-flex flex-column min-vh-75">
                         <div class="row" id="divSearchproducts">
                             <div class="form-group col-sm-6">
                                 <select class="form-control form-control-sm" id="cboSearchProduct">
@@ -85,6 +85,7 @@
                             <thead>
                                 <tr>
                                     <th></th>
+                                    <th></th>
                                     <th>Producto</th>
                                     <th>Cantidad</th>
                                     <th>Precio</th>
@@ -94,6 +95,14 @@
                             <tbody>
                             </tbody>
                         </table>
+
+                        <div class="mt-auto">
+                            <div class="form-group">
+                                <label for="txtObservaciones">Observaciones</label>
+                                <textarea class="form-control" id="txtObservaciones" rows="3"></textarea>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="col-md-6">
                         <div class="form-row">

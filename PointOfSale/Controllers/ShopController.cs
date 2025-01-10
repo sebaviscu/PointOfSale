@@ -221,7 +221,7 @@ namespace PointOfSale.Controllers
 
                 model.ModificationUser = user.UserName;
 
-                var ajustes = await _ajusteService.GetAjustes(model.IdTienda.Value);
+                var ajustes = model.IdTienda.HasValue ? await _ajusteService.GetAjustes(model.IdTienda.Value) : null;
                 VentaWeb edited_VemntaWeb = await _shopService.Update(ajustes, _mapper.Map<VentaWeb>(model));
 
                 model = _mapper.Map<VMVentaWeb>(edited_VemntaWeb);

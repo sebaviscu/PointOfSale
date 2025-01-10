@@ -235,6 +235,7 @@ const openModalEditVentaWeb = (model = BASIC_MODEL_VENTA_WEB) => {
     document.querySelector('#txtComentario').disabled = true;
     document.querySelector('#txtTakeAway').disabled = true;
     document.querySelector('#txtEnvio').disabled = true;
+    document.querySelector('#txtObservaciones').disabled = model.estado > 0;
     document.querySelector('#txtCruceCallesDireccion').disabled = true;
 
     $("#txtId").val(model.idVentaWeb);
@@ -246,6 +247,7 @@ const openModalEditVentaWeb = (model = BASIC_MODEL_VENTA_WEB) => {
     $("#txtDireccion").val(model.direccion);
     $("#txtFormaPago").val(model.idFormaDePago);
     $("#txtComentario").val(model.comentario);
+    $("#txtObservaciones").val(model.observacionesUsuario);
     $("#cboState").val(model.estado);
     $("#cboTienda").val(model.idTienda);
 
@@ -287,7 +289,11 @@ const openModalEditVentaWeb = (model = BASIC_MODEL_VENTA_WEB) => {
     $("#tbProducts tbody").html("");
 
     model.detailSales.forEach((item) => {
-        addNewProduct(item.idDetailSale, item.descriptionProduct, item.quantity, item.tipoVenta == 2 ? "U" : "Kg", item.price, item.total, item.idProduct);
+        addNewProduct(item.idDetailSale, item.descriptionProduct, item.quantity, item.tipoVenta == 2 ? "U" : "Kg", item.price, item.total, item.idProduct, item.recogido != null ? item.recogido : false);
+    });
+
+    $('.chkRecogido').each(function () {
+        $(this).prop('disabled', model.estado > 0);
     });
 
     $('#modalData').on('shown.bs.modal', function () {
@@ -308,7 +314,7 @@ const openModalEditVentaWeb = (model = BASIC_MODEL_VENTA_WEB) => {
             peso = peso == "" ? 1 : parseFloat(peso);
 
             let precio = Number.parseFloat(productSelectedVentaWeb.price);
-            addNewProduct(0, productSelectedVentaWeb.text, peso, "U", precio, precio * peso, productSelectedVentaWeb.id);
+            addNewProduct(0, productSelectedVentaWeb.text, peso, "U", precio, precio * peso, productSelectedVentaWeb.id, false);
 
             $('#txtPeso').val('');
             const element = document.getElementById("txtPeso");
@@ -348,18 +354,20 @@ function functionAddProducto() {
         return false;
     }
     let precio = Number.parseFloat(productSelectedVentaWeb.price);
-    addNewProduct(0, productSelectedVentaWeb.text, peso, "Kg", precio, precio * peso, productSelectedVentaWeb.id);
+    addNewProduct(0, productSelectedVentaWeb.text, peso, "Kg", precio, precio * peso, productSelectedVentaWeb.id, false);
 
     updateTotal();
     $('#cboSearchProduct').val("").trigger('change');
     $("#txtPeso").val(0)
 }
 
-function addNewProduct(idDetailSale, description, cantidad, tipoVenta, precio, total, idProducto) {
+function addNewProduct(idDetailSale, description, cantidad, tipoVenta, precio, total, idProducto, recogido) {
     const isEditVisible = $('#divSearchproducts').is(':visible');
+    let checkRecogido = recogido ? 'checked' : '';
 
     const newRow = $("<tr>").append(
         $("<td>").html('<button class="btn btn-danger btn-sm delete-row" style="padding-top: 0px;padding-bottom: 0px;">-</button>'),
+        $("<td>").html(`<input class="chkRecogido" type="checkbox" ${checkRecogido} style="width: 18px; height: 18px;">`),
         $("<td>").text(description),
         $("<td>").text(`${cantidad} / ${tipoVenta}`),
         $("<td>").text(`$ ${Number.parseFloat(precio).toFixed(2)}`),
@@ -385,6 +393,10 @@ $("#btnEdit").click(function () {
 
     $('.delete-row').each(function () {
         this.style.display = isHidden ? '' : 'none';
+    });
+
+    $('.chkRecogido').each(function () {
+        $(this).prop('disabled', isHidden);
     });
 });
 
@@ -443,15 +455,15 @@ async function editarVentaWeb() {
     const model = structuredClone(BASIC_MODEL_VENTA_WEB);
     model["idTienda"] = parseInt($("#cboTienda").val());
 
-    if (isNaN(model.idTienda)) {
+    let estadoVenta = parseInt($("#cboState").val());
+
+    if (isNaN(model.idTienda) && estadoVenta == 1) {
         $('#cboTienda').focus();
         toastr.warning(`Debe seleccionar una Tienda`, "");
         return;
     }
 
     model["idVentaWeb"] = parseInt($("#txtId").val());
-
-    let estadoVenta = parseInt($("#cboState").val());
 
     if (estadoVenta == 1) {
         let result = await checkTurnoAbierto()
@@ -465,6 +477,7 @@ async function editarVentaWeb() {
     //model["total"] = parseFloat($("#txtTotal").val());
     model["total"] = parseFloat($("#txtTotal").attr("totalReal"));
     model["comentario"] = $("#txtComentario").val();
+    model["observacionesUsuario"] = $("#txtObservaciones").val();
     model["nombre"] = $("#txtNombre").val();
     model["telefono"] = $("#txtTelefono").val();
     model["direccion"] = $("#txtDireccion").val();
@@ -484,19 +497,20 @@ async function editarVentaWeb() {
         const $row = $(this);
         const product = {
             categoryProducty: '',
-            descriptionProduct: $row.find("td").eq(1).text(),
-            idDetailSale: $row.find("td").eq(4).data("idDetailSale"),
-            idProduct: $row.find("td").eq(4).data("idProducto"),
+            descriptionProduct: $row.find("td").eq(2).text(),
+            idDetailSale: $row.find("td").eq(5).data("idDetailSale"),
+            idProduct: $row.find("td").eq(5).data("idProducto"),
             idSale: null,
             idSaleNavigation: null,
             idVentaWeb: 0,
-            price: parseFloat($row.find("td").eq(3).text().replace('$', '').trim()),
+            price: parseFloat($row.find("td").eq(4).text().replace('$', '').trim()),
             producto: null,
             promocion: null,
-            quantity: parseFloat($row.find("td").eq(2).text().split(' / ')[0]),
-            tipoVenta: $row.find("td").eq(2).text().split(' / ')[1] == "Kg" ? 1 : 2,
-            tipoVentaString: $row.find("td").eq(2).text().split(' / ')[1],
-            total: parseFloat($row.find("td").eq(4).text().replace('$', '').trim())
+            quantity: parseFloat($row.find("td").eq(3).text().split(' / ')[0]),
+            tipoVenta: $row.find("td").eq(3).text().split(' / ')[1] == "Kg" ? 1 : 2,
+            tipoVentaString: $row.find("td").eq(3).text().split(' / ')[1],
+            total: parseFloat($row.find("td").eq(5).text().replace('$', '').trim()),
+            recogido: $row.find("td").eq(1).find(".chkRecogido").prop("checked")
         };
         products.push(product);
     });

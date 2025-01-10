@@ -54,7 +54,7 @@ namespace PointOfSale.Business.Services
         }
 
 
-        public async Task<VentaWeb> Update(Ajustes ajustes, VentaWeb entity)
+        public async Task<VentaWeb> Update(Ajustes? ajustes, VentaWeb entity)
         {
             IQueryable<VentaWeb> query = await _repository.Query(c => c.IdVentaWeb == entity.IdVentaWeb);
             var VentaWeb_found = query.Include(_ => _.DetailSales).Include(_ => _.FormaDePago).First();
@@ -81,6 +81,7 @@ namespace PointOfSale.Business.Services
                 VentaWeb_found.CostoEnvio = entity.CostoEnvio;
                 VentaWeb_found.CruceCallesDireccion = entity.CruceCallesDireccion;
                 VentaWeb_found.DescuentoRetiroLocal= entity.DescuentoRetiroLocal;
+                VentaWeb_found.ObservacionesUsuario = entity.ObservacionesUsuario;
                 await UpdateDetailSales(VentaWeb_found, entity.DetailSales.ToList());
             }
 
@@ -131,7 +132,8 @@ namespace PointOfSale.Business.Services
                                           originalDetail.Quantity != updatedDetail.Quantity ||
                                           originalDetail.Price != updatedDetail.Price ||
                                           originalDetail.TipoVentaString != updatedDetail.TipoVentaString ||
-                                          originalDetail.Total != updatedDetail.Total)
+                                          originalDetail.Total != updatedDetail.Total ||
+                                          originalDetail.Recogido != updatedDetail.Recogido)
                                       );
 
             return ventaWebChanged || detailSalesChanged;
@@ -175,6 +177,7 @@ namespace PointOfSale.Business.Services
                         existingDetail.Price = updatedDetail.Price;
                         existingDetail.Quantity = updatedDetail.Quantity;
                         existingDetail.Total = updatedDetail.Total;
+                        existingDetail.Recogido = updatedDetail.Recogido;
                         // Actualizar otras propiedades necesarias
                     }
                 }
@@ -184,7 +187,8 @@ namespace PointOfSale.Business.Services
         {
             return existingDetail.Price != updatedDetail.Price ||
                    existingDetail.Quantity != updatedDetail.Quantity ||
-                   existingDetail.Total != updatedDetail.Total;
+                   existingDetail.Total != updatedDetail.Total ||
+                   existingDetail.Recogido != updatedDetail.Recogido;
         }
 
         public async Task<VentaWeb> Get(int idVentaWeb)

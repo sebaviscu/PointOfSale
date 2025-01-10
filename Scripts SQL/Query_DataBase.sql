@@ -225,6 +225,7 @@ editText varchar(max) null,
 descuentoRetiroLocal decimal(10,2) null,
 cruceCallesDireccion varchar(max) null,
 CostoEnvio decimal(10,2) null,
+ObservacionesUsuario varchar(max) null,
 idSale int references Sale(idSale) null,
 [registrationDate] datetime not null,
 [modificationDate] datetime null,
@@ -246,7 +247,8 @@ promocion varchar(300) null,
 [total] decimal(10,2),
 tipoVenta int null,
 iva decimal(10,2) null,
-[idVentaWeb] int null references VentaWeb(idVentaWeb)
+[idVentaWeb] int null references VentaWeb(idVentaWeb),
+Recogido bit null
 )
 
 go

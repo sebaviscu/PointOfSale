@@ -332,9 +332,9 @@ namespace PointOfSale.Business.Services
             return await _repositorySale.GetLastSerialNumberSale(idTienda, "Sale");
         }
 
-        public async Task<List<Sale>> SaleHistory(string saleNumber, string startDate, string endDate, string presupuestos)
+        public async Task<List<Sale>> SaleHistory(string saleNumber, string startDate, string endDate, string presupuestos, int idTienda)
         {
-            IQueryable<Sale> query = await _repositorySale.Query(); // Eliminado el await innecesario
+            IQueryable<Sale> query = await _repositorySale.Query(_=>_.IdTienda == idTienda);
             startDate = startDate ?? "";
             endDate = endDate ?? "";
 
