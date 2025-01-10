@@ -67,9 +67,9 @@ namespace PointOfSale.Business.Services
             bool hasChanges = HasChanges(VentaWeb_found, entity);
 
 
-            VentaWeb_found.IsEdit = hasChanges;
             if (hasChanges)
             {
+                VentaWeb_found.IsEdit = true;
                 VentaWeb_found.SetEditVentaWeb(entity.ModificationUser, TimeHelper.GetArgentinaTime());
 
                 VentaWeb_found.Comentario = entity.Comentario;
@@ -80,9 +80,13 @@ namespace PointOfSale.Business.Services
                 VentaWeb_found.Total = entity.Total;
                 VentaWeb_found.CostoEnvio = entity.CostoEnvio;
                 VentaWeb_found.CruceCallesDireccion = entity.CruceCallesDireccion;
-                VentaWeb_found.DescuentoRetiroLocal= entity.DescuentoRetiroLocal;
+                VentaWeb_found.DescuentoRetiroLocal = entity.DescuentoRetiroLocal;
                 VentaWeb_found.ObservacionesUsuario = entity.ObservacionesUsuario;
                 await UpdateDetailSales(VentaWeb_found, entity.DetailSales.ToList());
+            }
+            else if (HasChangesRecogido(VentaWeb_found, entity))
+            {
+                await UpdateRecogido(VentaWeb_found, entity.DetailSales.ToList());
             }
 
             VentaWeb_found.Estado = entity.Estado;
@@ -93,7 +97,7 @@ namespace PointOfSale.Business.Services
             if (entity.Estado == EstadoVentaWeb.Finalizada && entity.IdTienda.HasValue)
             {
                 var turno = await _turnoService.GetTurnoActual(VentaWeb_found.IdTienda.Value);
-                if(turno == null)
+                if (turno == null)
                 {
                     throw new Exception("No existe un turno abierto.");
                 }
@@ -119,8 +123,9 @@ namespace PointOfSale.Business.Services
                                    original.Direccion != updated.Direccion ||
                                    original.Telefono != updated.Telefono ||
                                    original.IdFormaDePago != updated.IdFormaDePago ||
-                                   original.CostoEnvio != updated.CostoEnvio||
+                                   original.CostoEnvio != updated.CostoEnvio ||
                                    original.DescuentoRetiroLocal != updated.DescuentoRetiroLocal ||
+                                   original.ObservacionesUsuario != updated.ObservacionesUsuario ||
                                    original.CruceCallesDireccion != updated.CruceCallesDireccion;
 
             // Verificar cambios en los DetailSales
@@ -132,11 +137,21 @@ namespace PointOfSale.Business.Services
                                           originalDetail.Quantity != updatedDetail.Quantity ||
                                           originalDetail.Price != updatedDetail.Price ||
                                           originalDetail.TipoVentaString != updatedDetail.TipoVentaString ||
-                                          originalDetail.Total != updatedDetail.Total ||
-                                          originalDetail.Recogido != updatedDetail.Recogido)
+                                          originalDetail.Total != updatedDetail.Total)
                                       );
 
             return ventaWebChanged || detailSalesChanged;
+        }
+
+        private bool HasChangesRecogido(VentaWeb original, VentaWeb updated)
+        {
+            bool detailSalesChanged = original.DetailSales.Count != updated.DetailSales.Count ||
+                                      original.DetailSales.Any(originalDetail =>
+                                          updated.DetailSales.FirstOrDefault(d => d.IdDetailSale == originalDetail.IdDetailSale) is var updatedDetail &&
+                                          (updatedDetail == null || originalDetail.Recogido != updatedDetail.Recogido)
+                                      );
+
+            return detailSalesChanged;
         }
 
 
@@ -183,6 +198,21 @@ namespace PointOfSale.Business.Services
                 }
             }
         }
+
+        private async Task UpdateRecogido(VentaWeb ventaWebFound, List<DetailSale> updatedDetailSales)
+        {
+            // Obtener la lista actual de detalles rastreados en la venta
+            var currentDetails = ventaWebFound.DetailSales.ToList();
+
+            // Identificar detalles para agregar o actualizar
+            foreach (var updatedDetail in updatedDetailSales)
+            {
+                var existingDetail = currentDetails.FirstOrDefault(detail => detail.IdDetailSale == updatedDetail.IdDetailSale);
+
+                existingDetail.Recogido = updatedDetail.Recogido;
+            }
+        }
+
         private bool HasChanges(DetailSale existingDetail, DetailSale updatedDetail)
         {
             return existingDetail.Price != updatedDetail.Price ||

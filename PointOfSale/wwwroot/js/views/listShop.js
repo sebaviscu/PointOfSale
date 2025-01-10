@@ -489,7 +489,7 @@ function setValue(event, mult) {
     let inputProd = document.getElementById("prod-" + idProd)
     let priceProd = document.getElementById("price-" + idProd)
     let descProd = document.getElementById("desc-" + idProd)
-
+    let valueString;
     let value = parseFloat(inputProd.value);
     let formatoWeb = 1;
 
@@ -500,6 +500,7 @@ function setValue(event, mult) {
 
     if (inputProd.attributes.typeinput.value === "U") {
         value = value + (1 * mult);
+        valueString = value +" U.";
     }
     else {
 
@@ -507,9 +508,10 @@ function setValue(event, mult) {
         formatoWeb = formatoWeb / 1000;
         value = value + (formatoWeb * mult);
         price = price * (1 / formatoWeb);
+        valueString = value + " Kg";
     }
 
-    inputProd.value = value
+    inputProd.value = valueString
 
     let productFind = productos.find(item => item.idProduct === idProd);
     if (productFind) {
