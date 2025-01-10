@@ -77,25 +77,27 @@ $(document).ready(function () {
                     healthcheck();
                     inicializarConsultarPrecios();
 
-                    // Inicializar la base de datos y luego recuperar la venta
                     initializeDatabase()
                         .then((db) => {
+                            getAllVentasFromIndexedDB((ventas) => {
+                                if (ventas.length > 0) {
+                                    AllTabsForSale = ventas;
 
-                            getVentaFromIndexedDB(1, (currentTab) => {
-                                if (currentTab) {
-                                    showProducts_Prices(currentTab.idTab, currentTab);
-                                    AllTabsForSale = [];
-                                    AllTabsForSale.push(currentTab);
-
-                                    $("#lblFechaUsuario" + currentTab.idTab).html(currentTab.date + " &nbsp;&nbsp; " + currentTab.user);
-
+                                    ventas.forEach((currentTab, index) => {
+                                        if (index > 0) {
+                                            newTab(); // Ejecutar solo a partir de la segunda venta
+                                        }
+                                        showProducts_Prices(currentTab.idTab, currentTab);
+                                        $("#lblFechaUsuario" + currentTab.idTab).html(currentTab.date + " &nbsp;&nbsp; " + currentTab.user);
+                                    });
+                                } else {
+                                    console.log('No hay ventas guardadas.');
                                 }
                             });
                         })
                         .catch((error) => {
                             console.error('Error al inicializar la base de datos:', error);
                         });
-
 
                 }
 
@@ -628,7 +630,7 @@ function getVentaForRegister() {
 $("#btnFinalizarVentaParcial").off("click").on("click", function () {
     $("#btnFinalizarVentaParcial").closest("div.card-body").LoadingOverlay("show")
 
-    if ($(".cboFormaDePago").filter(function () { return $(this).val() === ""; }).length !== 0) {
+    if ($(".cboFormaDePago").filter(function () { return $(this).val() === "" || $(this).val() == null; }).length !== 0) {
         const msg = `Debe completaro el campo Forma de Pago`;
         toastr.warning(msg, "");
         return;
@@ -1603,31 +1605,30 @@ function saveVentaToIndexedDB(venta) {
         });
 }
 
-
-
-function getVentaFromIndexedDB(idTab, callback) {
+function getAllVentasFromIndexedDB(callback) {
     initializeDatabase()
         .then((db) => {
             const transaction = db.transaction('ventas', 'readonly');
             const store = transaction.objectStore('ventas');
-            const request = store.get(idTab);
+            const request = store.getAll(); // Recupera todas las ventas
 
             request.onsuccess = function () {
-                if (request.result) {
-                    callback(request.result);
+                if (request.result && request.result.length > 0) {
+                    callback(request.result); // Devuelve todas las ventas
                 } else {
-                    callback(null);
+                    callback([]); // Devuelve un array vacío si no hay ventas
                 }
             };
 
             request.onerror = function (event) {
-                console.error('Error al recuperar la venta:', event.target.error);
+                console.error('Error al recuperar las ventas:', event.target.error);
             };
         })
         .catch((error) => {
             console.error('Error al inicializar la base de datos para recuperar:', error);
         });
 }
+
 
 function deleteVentaFromIndexedDB(idTab) {
     if (idTab === undefined || idTab === null || idTab === '') {
