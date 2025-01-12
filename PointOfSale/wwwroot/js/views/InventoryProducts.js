@@ -1326,7 +1326,7 @@ function imprimirPrecios() {
 
     document.querySelectorAll('#tbData tr').forEach((row, i) => {
         if (row.querySelector('input[type=checkbox]') != null && row.querySelector('input[type=checkbox]').checked && row.id !== '') {
-            aProductos.push([row.id, row.childNodes[1].textContent, row.childNodes[4].textContent]);
+            aProductos.push([row.id, row.childNodes[2].textContent, row.childNodes[5].textContent]);
         }
     })
 
@@ -1348,7 +1348,7 @@ function imprimirPrecios() {
     $("#modalDataImprimirPrecios").modal("show");
 }
 
-$("#btnImprimir").on("click", function () {
+$("#btnGenerarImprimirPrecios").on("click", function () {
     const model = structuredClone(BASIC_IMPRIMIR_PRECIOS);
     model["idProductos"] = aProductos.map(d => parseInt(d[0]));
     model["listaPrecio"] = parseInt($("#cboListaPrecio").val());
