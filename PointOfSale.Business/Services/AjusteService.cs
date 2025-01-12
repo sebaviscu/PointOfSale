@@ -1,28 +1,25 @@
 ﻿using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
+using PointOfSale.Data.DBContext;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PointOfSale.Business.Services
 {
     public class AjusteService : IAjusteService
     {
-        private readonly IGenericRepository<AjustesWeb> _repositoryWeb;
+        private readonly IUnitOfWork _unitOfWork;
+
         private readonly IGenericRepository<Ajustes> _repositoryAjustes;
         private readonly IGenericRepository<AjustesFacturacion> _repositoryAjustesFacturacion;
+        private readonly IGenericRepository<AjustesWeb> _repositoryAjustesWeb;
 
-        public AjusteService(IGenericRepository<AjustesWeb> repository, IGenericRepository<Ajustes> repositoryAjustes, IGenericRepository<AjustesFacturacion> repositoryAjustesFacturacion)
-
+        public AjusteService(IUnitOfWork unitOfWork)
         {
-            _repositoryWeb = repository;
-            _repositoryAjustes = repositoryAjustes;
-            _repositoryAjustesFacturacion = repositoryAjustesFacturacion;
+            _unitOfWork = unitOfWork;
+            _repositoryAjustes = _unitOfWork.Repository<Ajustes>();
+            _repositoryAjustesFacturacion = _unitOfWork.Repository<AjustesFacturacion>();
+            _repositoryAjustesWeb = _unitOfWork.Repository<AjustesWeb>();
         }
 
         public async Task<AjustesFacturacion> GetAjustesFacturacion(int idTienda)
@@ -45,9 +42,8 @@ namespace PointOfSale.Business.Services
 
         public async Task<AjustesWeb> GetAjustesWeb()
         {
-            return await _repositoryWeb.First();
+            return await _repositoryAjustesWeb.First();
         }
-
 
         public async Task<AjustesWeb> EditWeb(AjustesWeb entity)
         {
@@ -87,7 +83,8 @@ namespace PointOfSale.Business.Services
             Ajustes_found.HabilitarComodin2 = entity.HabilitarComodin2;
             Ajustes_found.HabilitarComodin3 = entity.HabilitarComodin3;
 
-            bool response = await _repositoryWeb.Edit(Ajustes_found);
+            var webRepository = _unitOfWork.Repository<AjustesWeb>();
+            bool response = await webRepository.Edit(Ajustes_found);
 
             if (!response)
                 throw new TaskCanceledException("Ajustes Web no se pudo cambiar.");

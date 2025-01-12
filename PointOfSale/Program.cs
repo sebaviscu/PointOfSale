@@ -73,6 +73,7 @@ public class Program
 
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<ISaleRepository, SaleRepository>();
             builder.Services.AddScoped<IUserService, UserService>();
