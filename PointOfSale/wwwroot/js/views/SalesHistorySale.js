@@ -198,7 +198,9 @@ $("#tbsale tbody").on("click", ".btn-info", function () {
         }
         if (isAdmin) {
             $btnVerFactura.off("click").on("click", function () {
-                window.location.href = `/Admin/FacturacionById?idFacturaEmitida=${d.idFacturaEmitida}`;
+                if (d.idFacturaEmitida != null) {
+                    window.location.href = `/Admin/FacturacionById?idFacturaEmitida=${d.idFacturaEmitida}`;
+                }
             });
         }
     }

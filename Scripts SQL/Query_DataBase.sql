@@ -374,7 +374,7 @@ go
 
 create table Notifications(
 idNotifications int primary key identity(1,1),
-descripcion varchar(100) not null,
+descripcion varchar(max) not null,
 [isActive] bit not null,
 accion varchar(100) null,
 [rols] varchar(20) not null,
