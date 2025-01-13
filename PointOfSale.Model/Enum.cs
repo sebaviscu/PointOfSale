@@ -144,5 +144,10 @@ namespace PointOfSale.Model
             Semestral,
             Anual
         }
+
+        public enum JobTypeEnum
+        {
+            GenerateEmbeddings
+        }
     }
 }

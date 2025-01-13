@@ -33,5 +33,7 @@ namespace PointOfSale.Data.Repository
         Task RollbackTransactionAsync();
         IExecutionStrategy CreateExecutionStrategy();
 
+        IQueryable<TEntity> QueryUnitOfWork(Expression<Func<TEntity, bool>> filter);
+
     }
 }

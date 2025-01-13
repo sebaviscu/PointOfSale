@@ -216,5 +216,10 @@ namespace PointOfSale.Data.Repository
         {
             return _dbcontext.Database.CreateExecutionStrategy();
         }
+
+        public IQueryable<TEntity> QueryUnitOfWork(Expression<Func<TEntity, bool>> filter)
+        {
+            return filter == null ? _dbcontext.Set<TEntity>() : _dbcontext.Set<TEntity>().Where(filter);
+        }
     }
 }
