@@ -1,0 +1,109 @@
+﻿@{
+	ViewData["Title"] = "Chat IA";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@section StylesPOS {
+
+	<link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
+	<link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
+	<link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
+	<link href="~/plugins/select2/css/select2.min.css" rel="stylesheet">
+}
+
+<style>
+	/* Contenedor del chat */
+	#chat {
+		width: 100%;
+		max-height: 400px;
+		border: 1px solid #ccc;
+		overflow-y: scroll;
+		padding: 10px;
+		background-color: #f9f9f9;
+	}
+
+	/* Input del mensaje */
+	#input {
+		width: 100%;
+		padding: 10px;
+	}
+
+	/* Estilo base para las burbujas */
+	.message-bubble {
+		display: inline-block;
+		max-width: 60%;
+		margin: 5px;
+		padding: 10px;
+		border-radius: 15px;
+		clear: both;
+		word-wrap: break-word;
+	}
+
+		/* Burbuja del sistema (izquierda) */
+		.message-bubble.system {
+			float: left;
+			background-color: #e2ebf5;
+		}
+
+		/* Burbuja del usuario (derecha) */
+		.message-bubble.user {
+			float: right;
+			background-color: #f5f5f5;
+			text-align: right;
+		}
+
+	/* Fecha centrada (separada de la burbuja) */
+	.message-date-centered {
+		text-align: center;
+		color: #888;
+		font-size: 0.8rem;
+		margin: 10px auto 5px;
+		width: 100%;
+		clear: both; /* asegura que aparezca en una línea separada */
+		/* Puedes ajustarlo para que tenga línea divisoria, etc. */
+	}
+
+</style>
+
+
+<div class="row">
+	<div class="col-sm-12">
+
+		<div class="card card-default">
+			<div class="card-header d-flex justify-content-between align-items-center card-header-border-bottom">
+				<h4>Chat IA</h4>
+			</div>
+
+			<div class="card-body">
+				<div class="col-sm-12 row">
+
+					<div id="chat"></div>
+					<input type="text" id="input" placeholder="Escribe tu pregunta..." />
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+@section Scripts {
+	<script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
+	<script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
+	<script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
+	<script src="~/plugins/jquery-ui/jquery-ui.js"></script>
+
+
+	<script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
+	<script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
+	<script src="~/plugins/data-tables/jszip.min.js"></script>
+	<script src="~/plugins/data-tables/buttons.html5.min.js"></script>
+	<script src="~/plugins/data-tables/buttons.print.min.js"></script>
+
+	<script src="~/plugins/select2/js/select2.js"></script>
+	<script src="~/plugins/moment.js"></script>
+
+	<script src="~/js/views/chatIA.js"></script>
+}
+

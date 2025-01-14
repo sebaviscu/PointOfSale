@@ -9,6 +9,7 @@ using System.Security.Cryptography.X509Certificates;
 using PointOfSale.Model.Afip.Factura;
 using PointOfSale.Model.Input;
 using PointOfSale.Model.Auditoria;
+using PointOfSale.Model.Embeddings;
 
 namespace PointOfSale.Utilities.Automapper
 {
@@ -504,6 +505,7 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<BackupProducto, VMBackupProducto>().ReverseMap();
             CreateMap<Product, BackupProducto>().ReverseMap();
             CreateMap<VMHistorialLogin, HistorialLogin>().ReverseMap();
+            CreateMap<ChatGPTResponse, VMChatGPTResponse>().ReverseMap();
         }
     }
 }

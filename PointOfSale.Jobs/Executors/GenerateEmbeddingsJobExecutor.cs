@@ -44,8 +44,8 @@ namespace PointOfSale.Jobs.Executors
                 var cliente = string.IsNullOrEmpty(sale.ClientName) ? string.Empty : $"Cliente: {sale.ClientName},";
                 var formaPago = sale.TypeDocumentSaleNavigation == null ? string.Empty : $"Forma de pago: {sale.TypeDocumentSaleNavigation?.Description}, Tipo Factura: {sale.TypeDocumentSaleNavigation.TipoFactura.ToString()},";
 
-                var text = $"Venta #{sale.SaleNumber}, Usuario que la registró: {sale.RegistrationUser},{cliente} {formaPago}" +
-                           $"Total: ${sale.Total}, Fecha: {sale.RegistrationDate:dd/MM/yyyy HH:mm}, Tienda: {sale.Tienda.Nombre}" +
+                var text = $"Venta #{sale.SaleNumber}, Usuario que la registró: {sale.RegistrationUser},{cliente} {formaPago} " +
+                           $"Total: ${sale.Total}, Fecha: {sale.RegistrationDate:dd/MM/yyyy HH:mm}, Tienda: {sale.Tienda.Nombre}, IdTienda: {sale.IdTienda} " +
                            $"Productos: {string.Join(", ", sale.DetailSales.Select(ds => $"{ds.DescriptionProduct} (Cantidad: {ds.Quantity}, Precio: ${ds.Price})"))}";
 
 

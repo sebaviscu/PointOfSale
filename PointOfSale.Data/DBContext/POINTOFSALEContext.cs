@@ -85,6 +85,18 @@ namespace PointOfSale.Data.DBContext
             {
                 entity.HasKey(e => e.ChatResponseId);
                 entity.ToTable("ChatGPTResponse");
+
+                modelBuilder.Entity<ChatGPTResponse>()
+                           .HasOne(h => h.User)
+                           .WithMany(u => u.ChatResponses)
+                           .HasForeignKey(h => h.IdUser)
+                           .OnDelete(DeleteBehavior.Cascade);
+
+                modelBuilder.Entity<ChatGPTResponse>()
+                           .HasOne(h => h.Tienda)
+                           .WithMany(u => u.ChatResponses)
+                           .HasForeignKey(h => h.IdTienda)
+                           .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Embedding>(entity =>

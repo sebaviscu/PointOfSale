@@ -33,6 +33,13 @@ namespace PointOfSale.Business.Embeddings
             _unitOfWork = unitOfWork;
         }
 
+        public async Task<List<ChatGPTResponse>> GetChatByIdUser(int idUser, int idTienda)
+        {
+            var embeddingRepository = _unitOfWork.Repository<ChatGPTResponse>();
+            var list = await embeddingRepository.Query(_ => _.IdUser == idUser && _.IdTienda == idTienda);
+            return list.ToList();
+        }
+
         public async Task<OpenAIEmbeddingResponse> GenerateEmbedding(string text)
         {
             var payload = new
@@ -60,7 +67,7 @@ namespace PointOfSale.Business.Embeddings
             return jsonResponse;
         }
 
-        public async Task<string> GenerateResponseAsync(string userQuestion)
+        public async Task<ChatGPTResponse> GetChatResponseAsync(string userQuestion, int idUser, int idTienda)
         {
             var embeddingQuestion = await GenerateEmbedding(userQuestion);
 
@@ -72,10 +79,11 @@ namespace PointOfSale.Business.Embeddings
                         Aquí tienes información relevante:
                         {context}
 
+                        IdTienda: {idTienda}
                         Pregunta: '{userQuestion}'
                         Por favor, genera una respuesta basada en la información proporcionada.";
 
-            var gptResponse = await GenerateGptResponseAsync(prompt, userQuestion);
+            var gptResponse = await GenerateGptResponseAsync(prompt, userQuestion, idUser, idTienda);
 
             return gptResponse;
         }
@@ -99,7 +107,7 @@ namespace PointOfSale.Business.Embeddings
             await embeddingRepository.AddRange(embeddings);
         }
 
-        private async Task<string> GenerateGptResponseAsync(string prompt, string question)
+        private async Task<ChatGPTResponse> GenerateGptResponseAsync(string prompt, string question, int idUser, int idTienda)
         {
             var payload = new
             {
@@ -125,12 +133,10 @@ namespace PointOfSale.Business.Embeddings
 
             var responseJson = await response.Content.ReadAsStringAsync();
 
-            var chatGPTResponse = ParseChatResponse(responseJson, question);
+            var chatGPTResponse = ParseChatResponse(responseJson, question, idUser, idTienda);
             await SaveChatResponseAsync(chatGPTResponse);
 
-            var jsonResponse = JsonSerializer.Deserialize<OpenAIChatResponse>(responseJson);
-
-            return jsonResponse.Choices[0].Message.Content;
+            return chatGPTResponse;
         }
 
         private async Task SaveChatResponseAsync(ChatGPTResponse response)
@@ -139,7 +145,7 @@ namespace PointOfSale.Business.Embeddings
             await chatResponseRepository.Add(response);
         }
          
-        private ChatGPTResponse ParseChatResponse(string jsonResponse, string question)
+        private ChatGPTResponse ParseChatResponse(string jsonResponse, string question, int idUser, int idTienda)
         {
             var document = JsonDocument.Parse(jsonResponse);
             var root = document.RootElement;
@@ -152,7 +158,9 @@ namespace PointOfSale.Business.Embeddings
                 TotalTokens = root.GetProperty("usage").GetProperty("total_tokens").GetInt32(),
                 PromptTokens = root.GetProperty("usage").GetProperty("prompt_tokens").GetInt32(),
                 CompletionTokens = root.GetProperty("usage").GetProperty("completion_tokens").GetInt32(),
-                Question = question
+                Question = question,
+                IdUser = idUser, 
+                IdTienda = idTienda
             };
         }
 

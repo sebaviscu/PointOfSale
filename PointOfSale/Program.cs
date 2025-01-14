@@ -5,6 +5,7 @@ using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
+using PointOfSale.Business.Embeddings;
 using PointOfSale.Business.Services;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Data.DBContext;
@@ -107,7 +108,7 @@ public class Program
             builder.Services.AddScoped<ILovService, LovService>();
             builder.Services.AddScoped<IPagoEmpresaService, PagoEmpresaService>();
             builder.Services.AddScoped<IBackupService, BackupService>();
-            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            builder.Services.AddScoped<IEmbeddingService, EmbeddingService>();
 
             var cultureInfo = new CultureInfo("es-ES");
             CultureInfo.DefaultThreadCurrentCulture = cultureInfo;

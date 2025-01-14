@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using static PointOfSale.Model.Enum;
 using PointOfSale.Model.Afip.Factura;
+using PointOfSale.Model.Embeddings;
 
 namespace PointOfSale.Model
 {
@@ -24,6 +25,7 @@ namespace PointOfSale.Model
         public IEnumerable<Sale>? Sales { get; set; }
         public IEnumerable<ProveedorMovimiento>? ProveedorMovimientos{ get; set; }
         public IEnumerable<Gastos>? Gastos{ get; set; }
+        public virtual ICollection<ChatGPTResponse>? ChatResponses { get; set; }
         public int? IdAjustes { get; set; }
         public Ajustes? Ajustes { get; set; }
         public int? IdAjustesFacturacion { get; set; }

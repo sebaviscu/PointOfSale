@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PointOfSale.Model;
 
-namespace PointOfSale.Model.Embeddings
+namespace PointOfSale.Models
 {
-    public class ChatGPTResponse
+    public class VMChatGPTResponse
     {
         public int ChatResponseId { get; set; }
         public string Id { get; set; }
@@ -15,11 +11,8 @@ namespace PointOfSale.Model.Embeddings
         public int TotalTokens { get; set; }
         public int PromptTokens { get; set; }
         public int CompletionTokens { get; set; }
-        public string Question {  get; set; }
+        public string Question { get; set; }
         public int IdUser { get; set; }
-        public User? User { get; set; }
-
         public int IdTienda { get; set; }
-        public Tienda? Tienda { get; set; }
     }
 }

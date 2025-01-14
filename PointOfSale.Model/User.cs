@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using PointOfSale.Model.Embeddings;
 
 namespace PointOfSale.Model
 {
@@ -29,6 +30,7 @@ namespace PointOfSale.Model
         public Tienda? Tienda { get; set; }
         public virtual ICollection<Horario>? Horarios { get; set; }
         public virtual ICollection<HistorialLogin>? HistorialLogins { get; set; }
+        public virtual ICollection<ChatGPTResponse>? ChatResponses { get; set; }
 
         public bool IsAdmin
         {
