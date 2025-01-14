@@ -245,7 +245,7 @@ namespace PointOfSale.Business.Services
 
                     sale_created = await _repositorySale.Register(newVMSale, ajustes);
 
-                    sale_created.IdClienteMovimiento = await _clienteService.RegistrarionClient(newVMSale.Total.Value, model.RegistrationUser, model.IdTienda, sale_created.IdSale, saleInput.TipoMovimiento, saleInput.ClientId);
+                    await _clienteService.RegistrarionClient(sale_created, newVMSale.Total.Value, model.RegistrationUser, model.IdTienda, sale_created.IdSale, saleInput.TipoMovimiento, saleInput.ClientId);
                     
                     if(sale_created.IdClienteMovimiento != null)
                     {
