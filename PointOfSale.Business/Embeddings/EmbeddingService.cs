@@ -79,6 +79,7 @@ namespace PointOfSale.Business.Embeddings
 
             return gptResponse;
         }
+
         public Embedding CreateEmbedding(string Reference, string source, float[] embeddingVector, int promptTokens)
         {
             return new Embedding
@@ -107,8 +108,8 @@ namespace PointOfSale.Business.Embeddings
                 {
             new { role = "system", content = "Eres un asistente inteligente que responde preguntas basadas en datos de ventas, gastos y productos." },
             new { role = "user", content = prompt }
-        },
-                max_tokens = 150,
+            },
+                max_tokens = 200,
                 temperature = 0.7
             };
 
