@@ -18,7 +18,7 @@ namespace PointOfSale.Business.Contracts
         Task<ClienteMovimiento> RegistrarMovimiento(int idCliente, decimal total, string registrationUser, int idTienda, int? idSale, TipoMovimientoCliente tipo);
         Task<List<ClienteMovimiento>> ListMovimientoscliente(int idCliente, int idTienda);
         Task<List<ClienteMovimiento>> GetClienteByMovimientos(List<int>? idMovs, int idTienda);
-        Task<int?> RegistrarionClient(decimal importe, string registrationUser, int IdTienda, int idsale, TipoMovimientoCliente? tipoMovimientoCliente, int? ClientId);
+        Task RegistrarionClient(Sale sale, decimal importe, string registrationUser, int IdTienda, int idsale, TipoMovimientoCliente? tipoMovimientoCliente, int? ClientId);
 
     }
 }

@@ -36,12 +36,12 @@ namespace PointOfSale.Jobs.Services
                     await executor.ExecuteAsync(job);
 
                     await _repository.MarkJobAsCompletedAsync(job.JobId);
-                    Console.WriteLine($"JobId {job.JobId} procesado con exito.");
+                    Console.WriteLine($"JobId: {job.JobId}, procesado con exito.");
                 }
                 catch (Exception e)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"Se ha producido un ERROR en JobId {job.JobId}: {e.Message}");
+                    Console.WriteLine($"Se ha producido un ERROR en JobId: {job.JobId}: {e.Message}");
                     await _repository.MarkJobAsErrorAsync(job.JobId, e.Message);
                     Console.ResetColor();
                 }

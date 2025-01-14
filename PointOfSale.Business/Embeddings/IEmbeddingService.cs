@@ -9,10 +9,12 @@ namespace PointOfSale.Business.Embeddings
 {
     public interface IEmbeddingService
     {
-        Task<float[]> GenerateEmbedding(string text);
+        Task<OpenAIEmbeddingResponse> GenerateEmbedding(string text);
 
-        Embedding CreateEmbedding(string Reference, string source, float[] embeddingVector);
+        Embedding CreateEmbedding(string Reference, string source, float[] embeddingVector, int promptTokens);
 
         Task SaveRangeEmbeddingAsync(List<Embedding> embeddings);
+
+        Task<string> GenerateResponseAsync(string userQuestion);
     }
 }

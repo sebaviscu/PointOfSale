@@ -44,10 +44,10 @@ namespace PointOfSale.Jobs.Executors
                            $"Productos: {string.Join(", ", sale.DetailSales.Select(ds => $"{ds.DescriptionProduct} (Cantidad: {ds.Quantity}, Precio: ${ds.Price})"))}";
 
 
-                var embedding = await _embeddingService.GenerateEmbedding(text);
+                //var embedding = await _embeddingService.GenerateEmbedding(text);
 
-                var embNew = _embeddingService.CreateEmbedding($"Sale_Id_{sale.IdSale}","", embedding);
-                listEmbedding.Add(embNew);
+                //var embNew = _embeddingService.CreateEmbedding($"Sale_Id_{sale.IdSale}", text, embedding.Data[0].Embedding, embedding.Usage.TotalTokens);
+                //listEmbedding.Add(embNew);
 
                 Console.WriteLine($"Embedding generado y almacenado para '{text}'.");
             }
@@ -64,7 +64,9 @@ namespace PointOfSale.Jobs.Executors
             var query = saleRepository.QueryUnitOfWork(_ => _.IdTienda == idTienda && _.RegistrationDate >= creationDate)
                                       .Include(dv => dv.DetailSales)
                                       .Include(dv => dv.Tienda)
-                                      .Include(_ => _.TypeDocumentSaleNavigation);
+                                      .Include(_ => _.TypeDocumentSaleNavigation)
+                                      .Include(dv => dv.ClienteMovimiento)
+                                        .ThenInclude(_ => _.Cliente);
 
             return await query.ToListAsync();
         }

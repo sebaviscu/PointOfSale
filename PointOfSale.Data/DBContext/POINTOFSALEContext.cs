@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using PointOfSale.Model;
 using PointOfSale.Model.Afip.Factura;
 using PointOfSale.Model.Auditoria;
+using PointOfSale.Model.Embeddings;
 using PointOfSale.Model.Jobs;
 
 namespace PointOfSale.Data.DBContext
@@ -67,6 +68,7 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<VentasPorTipoDeVentaTurno> VentasPorTipoDeVentaTurno { get; set; }
         public virtual DbSet<HistorialLogin> HistorialLogin { get; set; }
         public virtual DbSet<DeferredJob> DeferredJobs { get; set; }
+        public virtual DbSet<Embedding> Embeddings { get; set; }
 
 
         #endregion
@@ -77,6 +79,12 @@ namespace PointOfSale.Data.DBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<Embedding>(entity =>
+            {
+                entity.HasKey(e => e.EmbeddingId);
+                entity.ToTable("Embeddings");
+            });
 
             modelBuilder.Entity<DeferredJob>(entity =>
             {

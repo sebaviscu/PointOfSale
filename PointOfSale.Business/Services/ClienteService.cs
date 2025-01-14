@@ -113,14 +113,16 @@ namespace PointOfSale.Business.Services
             return result;
         }
 
-        public async Task<int?> RegistrarionClient(decimal importe, string registrationUser, int IdTienda, int idsale, TipoMovimientoCliente? tipoMovimientoCliente, int? ClientId)
+        public async Task RegistrarionClient(Sale sale, decimal importe, string registrationUser, int IdTienda, int idsale, TipoMovimientoCliente? tipoMovimientoCliente, int? ClientId)
         {
             if (ClientId.HasValue)
             {
                 var mov = await RegistrarMovimiento(ClientId.Value, importe, registrationUser, IdTienda, idsale, tipoMovimientoCliente.Value);
-                return mov.IdClienteMovimiento;
+
+                sale.IdClienteMovimiento = mov.IdClienteMovimiento;
+                var client = await _repository.Get(_ => _.IdCliente == ClientId.Value);
+                sale.ClientName = client.Nombre;
             }
-            return null;
         }
     }
 }
