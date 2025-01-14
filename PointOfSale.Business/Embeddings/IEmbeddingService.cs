@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PointOfSale.Business.Embeddings.Models;
 using PointOfSale.Model.Embeddings;
 
 namespace PointOfSale.Business.Embeddings

@@ -2,6 +2,7 @@
 using static PointOfSale.Model.Enum;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using Microsoft.Extensions.Configuration;
 
 namespace PointOfSale.Jobs.Factories
 {

@@ -69,6 +69,7 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<HistorialLogin> HistorialLogin { get; set; }
         public virtual DbSet<DeferredJob> DeferredJobs { get; set; }
         public virtual DbSet<Embedding> Embeddings { get; set; }
+        public virtual DbSet<ChatGPTResponse> ChatGPTResponse { get; set; }
 
 
         #endregion
@@ -79,6 +80,12 @@ namespace PointOfSale.Data.DBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<ChatGPTResponse>(entity =>
+            {
+                entity.HasKey(e => e.ChatResponseId);
+                entity.ToTable("ChatGPTResponse");
+            });
 
             modelBuilder.Entity<Embedding>(entity =>
             {

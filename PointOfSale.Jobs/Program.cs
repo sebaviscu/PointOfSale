@@ -1,18 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
-using PointOfSale.Data;
 using PointOfSale.Data.Repository;
 using PointOfSale.Jobs.Services;
 using PointOfSale.Jobs.Factories;
-using System;
-using System.Threading.Tasks;
 using PointOfSale.Data.DBContext;
-using PointOfSale.Business.Contracts;
-using PointOfSale.Business.Services;
 using PointOfSale.Business.Embeddings;
-using AFIP.Facturacion.Services;
-using PointOfSale.Business.Utilities;
+using PointOfSale.Jobs.Executors;
 
 public class Program
 {
@@ -26,6 +20,7 @@ public class Program
 
         // Configurar el contenedor de dependencias
         var serviceProvider = new ServiceCollection()
+            .AddSingleton<IConfiguration>(configuration) // Registrar IConfiguration
             .AddDbContext<POINTOFSALEContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("SQL_Publich")))
 
@@ -35,6 +30,7 @@ public class Program
             .AddScoped<DeferredJobRepository>()
             .AddScoped<IJobExecutorFactory, JobExecutorFactory>()
             .AddScoped<IEmbeddingService, EmbeddingService>()
+            .AddScoped<GenerateEmbeddingsJobExecutor>()
 
             .AddScoped<DeferredJobService>()
             .BuildServiceProvider();

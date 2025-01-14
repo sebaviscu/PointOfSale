@@ -16,6 +16,7 @@ namespace PointOfSale.Model.Embeddings
         public byte[] Vector { get; set; } // Embedding
         public DateTime CreatedAt { get; set; }
         public int PromptTokens { get; set; }
+        public double Norm { get; set; }
 
     }
 }

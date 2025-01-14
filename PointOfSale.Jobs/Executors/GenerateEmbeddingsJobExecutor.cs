@@ -1,6 +1,5 @@
 ﻿using PointOfSale.Model.Jobs;
 using PointOfSale.Business.Embeddings;
-using PointOfSale.Business.Contracts;
 using System.Text.Json;
 using PointOfSale.Model.Embeddings;
 using PointOfSale.Data.DBContext;
@@ -29,8 +28,11 @@ namespace PointOfSale.Jobs.Executors
             var listEmbedding = new List<Embedding>();
 
             var embJob = JsonSerializer.Deserialize<EmbeddingsJobExecutor>(job.TaskData);
-            //     return JsonSerializer.Serialize(obj);
+            //     return JsonSerializer.Serialize(obj); // para generar un job
 
+
+            // para preguntas del cliente
+            //var embedding = await _embeddingService.GenerateResponseAsync("Cual es el promedio de ventas de la ultima semana");
 
 
             // Sale
@@ -38,16 +40,19 @@ namespace PointOfSale.Jobs.Executors
 
             foreach (var sale in sales)
             {
-                var text = $"Venta #{sale.SaleNumber}, Usuario que la registró: {sale.RegistrationUser}, Cliente: {sale.ClientName ?? string.Empty}, Tipo Factura: {sale.TypeDocumentSaleNavigation.TipoFactura.ToString()}, " +
-                           $"Total: ${sale.Total}, Fecha: {sale.RegistrationDate:dd/MM/yyyy HH:mm}, " +
-                           $"Tienda: {sale.Tienda.Nombre}, Forma de pago: {sale.TypeDocumentSaleNavigation?.Description}, " +
+
+                var cliente = string.IsNullOrEmpty(sale.ClientName) ? string.Empty : $"Cliente: {sale.ClientName},";
+                var formaPago = sale.TypeDocumentSaleNavigation == null ? string.Empty : $"Forma de pago: {sale.TypeDocumentSaleNavigation?.Description}, Tipo Factura: {sale.TypeDocumentSaleNavigation.TipoFactura.ToString()},";
+
+                var text = $"Venta #{sale.SaleNumber}, Usuario que la registró: {sale.RegistrationUser},{cliente} {formaPago}" +
+                           $"Total: ${sale.Total}, Fecha: {sale.RegistrationDate:dd/MM/yyyy HH:mm}, Tienda: {sale.Tienda.Nombre}" +
                            $"Productos: {string.Join(", ", sale.DetailSales.Select(ds => $"{ds.DescriptionProduct} (Cantidad: {ds.Quantity}, Precio: ${ds.Price})"))}";
 
 
-                //var embedding = await _embeddingService.GenerateEmbedding(text);
+                var embedding = await _embeddingService.GenerateEmbedding(text);
 
-                //var embNew = _embeddingService.CreateEmbedding($"Sale_Id_{sale.IdSale}", text, embedding.Data[0].Embedding, embedding.Usage.TotalTokens);
-                //listEmbedding.Add(embNew);
+                var embNew = _embeddingService.CreateEmbedding($"Sale_Id_{sale.IdSale}", text, embedding.Data[0].Embedding, embedding.Usage.TotalTokens);
+                listEmbedding.Add(embNew);
 
                 Console.WriteLine($"Embedding generado y almacenado para '{text}'.");
             }
