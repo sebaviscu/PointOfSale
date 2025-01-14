@@ -273,8 +273,8 @@ function resumenVenta() {
         let tableDataShoop = productos.map(value => {
             return (
                 `<tr>
-                       <td class="table-products" style="border-right-color: #ffffff00;"><span class="text-muted">${value.descriptionProduct} - $ ${parseFloat(value.price).toFixed(0)} x ${value.quantity} ${value.tipoVenta}</span>.</td>
-                       <td class="table-products" style="font-size: 12px; text-align: right;"><strong>$ ${parseFloat(value.total).toFixed(0)}</strong></td>
+                       <td class="table-products" style="border-right-color: #ffffff00;"><span class="text-muted">${value.descriptionProduct} - $${parseFloat(value.price).toFixed(0)} x ${value.quantity} ${value.tipoVenta}</span>.</td>
+                       <td class="table-products" style="font-size: 12px; text-align: right;"><strong>$${parseFloat(value.total).toFixed(0)}</strong></td>
                     </tr>`
             );
         }).join('');
@@ -288,7 +288,7 @@ function resumenVenta() {
 
             tableDataShoop = tableDataShoop.concat(`<tr>
                        <td class="table-products td-discount" style="font-size: 14px; border-right-color: #ffffff00; display: none;"><strong>Descuento ${parseInt(ajustesWeb.takeAwayDescuento)}% por retiro en el local</strong ></td >
-                       <td class="table-products td-discount" style="font-size: 14px; text-align: right; display: none;"><strong>- $ ${descuentoTakeAway.toFixed(0)}</strong></td>
+                       <td class="table-products td-discount" style="font-size: 14px; text-align: right; display: none;"><strong>- $${descuentoTakeAway.toFixed(0)}</strong></td>
                     </tr>`);
         }
 
@@ -320,8 +320,8 @@ function resumenVenta() {
 
         tableDataShoop = tableDataShoop.concat(`<tr>
                        <td class="table-products" style="font-size: 18px; border-right-color: #ffffff00;"><strong>TOTAL</strong></td>
-                       <td class="table-products" id="td-sin-descuento" style="font-size: 18px; text-align: right;"><strong>$ ${totalSinTakeAway.toFixed(0)}</strong></td>
-                       <td class="table-products td-discount" style="font-size: 18px; text-align: right; display: none;"><strong>$ ${(total - descuentoTakeAway).toFixed(0)}</strong></td>
+                       <td class="table-products" id="td-sin-descuento" style="font-size: 18px; text-align: right;"><strong>$${totalSinTakeAway.toFixed(0)}</strong></td>
+                       <td class="table-products td-discount" style="font-size: 18px; text-align: right; display: none;"><strong>$${(total - descuentoTakeAway).toFixed(0)}</strong></td>
                     </tr>`);
 
         const tableBody = document.querySelector("#tableProductos");

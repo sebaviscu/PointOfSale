@@ -23,7 +23,7 @@
                 <li class="dropdown-header" style="padding: 0px;margin: 0;">
                     <div class="d-inline-block" style="width: 100%">
                         <a class="notificacion" id="@n.IdNotifications" accion="@n.Accion" href="#">
-                            @n.Descripcion
+                            @Html.Raw(n.Descripcion)
                             <small class="pt-1">@n.RegistrationDate</small>
                         </a>
                         <span></span>

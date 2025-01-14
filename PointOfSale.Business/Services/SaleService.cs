@@ -205,6 +205,11 @@ namespace PointOfSale.Business.Services
             Sale sale_created = null;
             try
             {
+                if(saleInput.MultiplesFormaDePago.Any(_=>_.FormaDePago == null) && saleInput.ClientId == null)
+                {
+                    throw new Exception("Es necesario Agregar una forma de pago.");
+                }
+
                 var ajustesTask = _ajustesService.GetAjustes(model.IdTienda);
                 var lastNumberTask = GetLastSerialNumberSale(model.IdTienda);
 
@@ -240,7 +245,7 @@ namespace PointOfSale.Business.Services
 
                     sale_created = await _repositorySale.Register(newVMSale, ajustes);
 
-                    await _clienteService.RegistrarionClient(sale_created,newVMSale.Total.Value, model.RegistrationUser, model.IdTienda, sale_created.IdSale, saleInput.TipoMovimiento, saleInput.ClientId);
+                    await _clienteService.RegistrarionClient(sale_created, newVMSale.Total.Value, model.RegistrationUser, model.IdTienda, sale_created.IdSale, saleInput.TipoMovimiento, saleInput.ClientId);
                     
                     if(sale_created.IdClienteMovimiento != null)
                     {
@@ -263,6 +268,8 @@ namespace PointOfSale.Business.Services
                     catch (Exception e)
                     {
                         modelResponde.ErrorFacturacion = e.Message;
+                        sale_created.ResultadoFacturacion = false;
+                        await _repositorySale.Edit(sale_created);
                     }
 
                     if (!string.IsNullOrEmpty(modelResponde.Errores) || !string.IsNullOrEmpty(modelResponde.ErrorFacturacion))

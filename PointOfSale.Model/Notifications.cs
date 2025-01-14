@@ -44,7 +44,7 @@ namespace PointOfSale.Model
 
         public Notifications(AjustesFacturacion ajustes)
         {
-            Descripcion = $"Está proxima la fecha de caducidad ({ajustes.CertificadoFechaCaducidad.Value.ToShortDateString()}) del certificado ({ajustes.CertificadoNombre}) de AFIP.";
+            Descripcion = $"Está proxima la fecha de caducidad ({ajustes.CertificadoFechaCaducidad.Value.ToShortDateString()}) <br> del certificado ({ajustes.CertificadoNombre}) de AFIP.";
             IsActive = true;
             RegistrationDate = TimeHelper.GetArgentinaTime();
             Accion = "Ajustes/Index";
@@ -77,7 +77,7 @@ namespace PointOfSale.Model
 
         public Notifications(Sale sale, string error)
         {
-            Descripcion = $"Ha ocurrido un error al Facturar para la venta Nro: {sale.SaleNumber}. Error: {error}";
+            Descripcion = $"Ha ocurrido un error al Facturar la venta Nro: {sale.SaleNumber}.<br> Error: {error}";
             IsActive = true;
             RegistrationDate = TimeHelper.GetArgentinaTime();
             Accion = "";
