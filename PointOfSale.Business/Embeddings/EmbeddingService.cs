@@ -4,7 +4,6 @@ using System.Text;
 using PointOfSale.Model.Embeddings;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Data.DBContext;
-using System.Text.Json.Serialization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Embeddings.Models;
@@ -88,7 +87,7 @@ namespace PointOfSale.Business.Embeddings
             return gptResponse;
         }
 
-        public Embedding CreateEmbedding(string Reference, string source, float[] embeddingVector, int promptTokens)
+        public Embedding CreateEmbedding(string Reference, string source, float[] embeddingVector, int promptTokens, int idTienda)
         {
             return new Embedding
             {
@@ -98,7 +97,22 @@ namespace PointOfSale.Business.Embeddings
                 CreatedAt = TimeHelper.GetArgentinaTime(),
                 PromptTokens = promptTokens,
                 Norm = CalculateNorm(embeddingVector),
+                IdTienda = idTienda
             };
+        }
+
+        public async Task<int> GetTokensByTienda(int idTienda, DateTime dateFrom)
+        {
+            var chatGPTResponseRepository = _unitOfWork.Repository<ChatGPTResponse>();
+            var list = await chatGPTResponseRepository.Query(_ => _.IdTienda == idTienda && _.CreatedAt.Date >= dateFrom.Date);
+            var sumTokens = list.Sum(_ => _.TotalTokens);
+
+
+            var embeddingRepository = _unitOfWork.Repository<Embedding>();
+            var listEmbeddings = await embeddingRepository.Query(_ => (_.IdTienda == null || _.IdTienda == idTienda) && _.CreatedAt.Date >= dateFrom.Date);
+            var sumTokensembeddings = listEmbeddings.Sum(_ => _.PromptTokens);
+
+            return sumTokens + sumTokensembeddings;
         }
 
         public async Task SaveRangeEmbeddingAsync(List<Embedding> embeddings)
@@ -144,7 +158,7 @@ namespace PointOfSale.Business.Embeddings
             var chatResponseRepository = _unitOfWork.Repository<ChatGPTResponse>();
             await chatResponseRepository.Add(response);
         }
-         
+
         private ChatGPTResponse ParseChatResponse(string jsonResponse, string question, int idUser, int idTienda)
         {
             var document = JsonDocument.Parse(jsonResponse);
@@ -159,7 +173,7 @@ namespace PointOfSale.Business.Embeddings
                 PromptTokens = root.GetProperty("usage").GetProperty("prompt_tokens").GetInt32(),
                 CompletionTokens = root.GetProperty("usage").GetProperty("completion_tokens").GetInt32(),
                 Question = question,
-                IdUser = idUser, 
+                IdUser = idUser,
                 IdTienda = idTienda
             };
         }

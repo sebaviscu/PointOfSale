@@ -17,6 +17,7 @@ namespace PointOfSale.Model.Embeddings
         public DateTime CreatedAt { get; set; }
         public int PromptTokens { get; set; }
         public double Norm { get; set; }
+        public int IdTienda { get; set; }
 
     }
 }

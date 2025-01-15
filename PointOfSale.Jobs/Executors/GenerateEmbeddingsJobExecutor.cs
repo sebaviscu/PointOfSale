@@ -51,7 +51,7 @@ namespace PointOfSale.Jobs.Executors
 
                 var embedding = await _embeddingService.GenerateEmbedding(text);
 
-                var embNew = _embeddingService.CreateEmbedding($"Sale_Id_{sale.IdSale}", text, embedding.Data[0].Embedding, embedding.Usage.TotalTokens);
+                var embNew = _embeddingService.CreateEmbedding($"Sale_Id_{sale.IdSale}", text, embedding.Data[0].Embedding, embedding.Usage.TotalTokens, sale.IdTienda);
                 listEmbedding.Add(embNew);
 
                 Console.WriteLine($"Embedding generado y almacenado para '{text}'.");
