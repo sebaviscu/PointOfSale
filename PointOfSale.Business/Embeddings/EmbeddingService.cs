@@ -7,6 +7,7 @@ using PointOfSale.Data.DBContext;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Embeddings.Models;
+using PointOfSale.Business.SemanticKernel;
 
 namespace PointOfSale.Business.Embeddings
 {
@@ -19,7 +20,9 @@ namespace PointOfSale.Business.Embeddings
         private readonly string _apiUrl;
         private readonly string _apiKey;
 
-        public EmbeddingService(IUnitOfWork unitOfWork, IConfiguration configuration)
+        private readonly ISemanticKernelService _semanticKernelService;
+
+        public EmbeddingService(IUnitOfWork unitOfWork, IConfiguration configuration, ISemanticKernelService semanticKernelService)
         {
             _apiKey = configuration["OpenAI:ApiKey"];
             _modelEmbeddings = configuration["OpenAI:EmbeddingModel"];
@@ -30,10 +33,14 @@ namespace PointOfSale.Business.Embeddings
             _httpClient.DefaultRequestHeaders.Authorization
                 = new AuthenticationHeaderValue("Bearer", _apiKey);
             _unitOfWork = unitOfWork;
+
+            _semanticKernelService = semanticKernelService;
         }
 
         public async Task<List<ChatGPTResponse>> GetChatByIdUser(int idUser, int idTienda)
         {
+            //var resp = await _semanticKernelService.Chat("Cual es el total de la venta con mayor total");
+
             var embeddingRepository = _unitOfWork.Repository<ChatGPTResponse>();
             var list = await embeddingRepository.Query(_ => _.IdUser == idUser && _.IdTienda == idTienda);
             return list.ToList();

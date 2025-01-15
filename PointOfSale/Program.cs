@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Embeddings;
+using PointOfSale.Business.Plugins;
+using PointOfSale.Business.SemanticKernel;
 using PointOfSale.Business.Services;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Data.DBContext;
@@ -109,6 +111,11 @@ public class Program
             builder.Services.AddScoped<IPagoEmpresaService, PagoEmpresaService>();
             builder.Services.AddScoped<IBackupService, BackupService>();
             builder.Services.AddScoped<IEmbeddingService, EmbeddingService>();
+            builder.Services.AddScoped<ISemanticKernelService, SemanticKernelService>();
+
+
+            builder.Services.AddScoped<SalesPlugin>();
+
 
             var cultureInfo = new CultureInfo("es-ES");
             CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
