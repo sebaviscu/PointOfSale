@@ -152,7 +152,7 @@ function changeCboTypeDocumentSaleParcial(idLineaFormaPago, idFormaDePago) {
         $("#cboFactura" + idLineaFormaPago).trigger('change');
     }
 
-    let hayEfectivo = $('#formaDePagoPanel .cboFormaDePago').filter(function () {
+    let hayEfectivo = $('.cboFormaDePago').filter(function () {
         return $(this).val() == '1';
     }).length > 0;
 
@@ -162,7 +162,8 @@ function changeCboTypeDocumentSaleParcial(idLineaFormaPago, idFormaDePago) {
         $("#divVueltoEfectivo").hide();
     }
 
-    if (formaDePago.descuentoRecargo != null && formaDePago.descuentoRecargo != 0) {
+    let formaPagoWithDisc = formaDePago != null && formaDePago.descuentoRecargo != null && formaDePago.descuentoRecargo != 0 && idLineaFormaPago == '';
+    if (formaPagoWithDisc) {
 
         toastr.success(formaDePago.descuentoRecargo + " %", "Forma de pago con Descuento");
 
@@ -171,10 +172,10 @@ function changeCboTypeDocumentSaleParcial(idLineaFormaPago, idFormaDePago) {
         let descuento = parseFloat(total) * (parseInt(formaDePago.descuentoRecargo) / 100);
         let totalWithDisc = parseFloat(total) + descuento;
         $("#txtTotalParcial").val(totalWithDisc);
-        $("#txtTotal" + currentTabid).val(totalWithDisc);
-        $("#txtPromociones" + currentTabid).text("$" + descuento);
-        $("#txtPromociones" + currentTabid).attr("descuento", descuento);
+        $("#txtTotalParcial").attr("descuentoFormaPago", descuento);
     }
+
+    $('#btnAddNuevaFormaDePago' + idLineaFormaPago).prop('hidden', formaPagoWithDisc);
 }
 
 
@@ -350,7 +351,7 @@ function showProducts_Prices(idTab, currentTab) {
     $('#txtTotal' + idTab).val('$ ' + formatNumber(total));
     $("#txtTotal" + idTab).attr("totalReal", parseFloat(total).toFixed(2));
     $('#txtPromociones' + idTab).html('$ ' + formatNumber(totalPromocion));
-    $('#txtPromociones' + idTab).attr('descuento', parseFloat(totalPromocion).toFixed(2));
+    $('#txtPromociones' + idTab).val(totalPromocion);
     $('#txtSubTotal' + idTab).html('$ ' + formatNumber(subTotal));
     $("#txtSubTotal" + idTab).attr("subTotalReal", parseFloat(total).toFixed(2));
 
@@ -501,7 +502,7 @@ $('#modalDividirPago').on('shown.bs.modal', function () {
 
 $('#modalDividirPago').on('hidden.bs.modal', function (e) {
 
-
+    $("#txtTotalParcial").attr("descuentoFormaPago", 0);
 
 });
 
@@ -520,6 +521,8 @@ $(document).on("click", "button.btnAddFormaDePago", function () {
 
     $('#rowDividirPago').append(cloneFP);
     $("#txtTotalParcial" + formaDePagoID).val(0);
+    $('#cboTypeDocumentSaleParcial' + formaDePagoID).val('');
+    $('#cboFactura' + formaDePagoID).val('');
 
     $("#txtTotalParcial" + formaDePagoID).on("change", function (e) {
         calcularSuma();
@@ -587,8 +590,9 @@ function getSumaSubTotales() {
     });
 
     let totFijo = $("#txtTotalView").val();
+    let descFormaPago = $("#txtTotalParcial").attr("descuentoFormaPago");
 
-    return parseFloat(totFijo) - parseFloat(subTotal);
+    return parseFloat(totFijo) - parseFloat(subTotal + Math.abs(descFormaPago));
 }
 
 function getVentaForRegister() {
@@ -599,9 +603,15 @@ function getVentaForRegister() {
 
     const vmDetailSale = currentTab.products;
 
-
-    let descRec = $("#txtDescRec" + currentTabId).attr('totalDescRec');
     let total = $("#txtTotalParcial").val();
+
+    //let descString = $("#txtDescRec" + currentTabId).attr('totalDescRec');
+    //let descRec = parseFloat(descString != undefined && descString != null  ? descString : 0);
+
+    let descProm = parseFloat($("#txtPromociones" + currentTabId).val() != null ? $("#txtPromociones" + currentTabId).val() : 0);
+    let descFormaPago = parseFloat($("#txtTotalParcial").attr("descuentoFormaPago") != null ? $("#txtTotalParcial").attr("descuentoFormaPago") : 0);
+
+    let sumDescuentos = (descFormaPago + descProm).toFixed(2);
 
     let formasDePago = [];
 
@@ -637,7 +647,7 @@ function getVentaForRegister() {
         tipoMovimiento: $("#cboCliente" + currentTabId).val() != '' ? 2 : null,
         imprimirTicket: document.querySelector('#cboImprimirTicket').checked,
         multiplesFormaDePago: formasDePago != [] ? formasDePago : null,
-        descuentorecargo: descRec != undefined ? descRec.replace('.', ',') : null,
+        descuentorecargo: sumDescuentos != undefined && sumDescuentos != null ? sumDescuentos.replace('.', ',') : null,
         idClienteFactura: idClienteParaFactura != '' ? parseInt(idClienteParaFactura) : null,
         cuilFactura: cuilParaFactura != '' ? cuilParaFactura : null,
         observaciones: $("#txtObservaciones" + currentTabId).val()
@@ -742,7 +752,7 @@ function registrationSale(currentTabId) {
 function disableAfterVenta(tabID) {
     $('#btnAgregarProducto' + tabID).prop('disabled', true);
     $('#cboSearchProduct' + tabID).prop('disabled', true);
-    $('#cboDescRec' + tabID).prop('disabled', true);
+    //$('#cboDescRec' + tabID).prop('disabled', true);
     $('#txtPeso' + tabID).prop('disabled', true);
     $('#cboCliente' + tabID).prop('disabled', true);
     $('.delete-item-' + tabID).prop('disabled', true)
@@ -926,10 +936,10 @@ function newTab() {
     clone.querySelector("#btnMasCantidad").id = "btnMasCantidad" + tabID;
     clone.querySelector("#btnMenosCantidad").id = "btnMenosCantidad" + tabID;
 
-    clone.querySelector("#cboDescRec").id = "cboDescRec" + tabID;
+    //clone.querySelector("#cboDescRec").id = "cboDescRec" + tabID;
     clone.querySelector("#txtSubTotal").id = "txtSubTotal" + tabID;
     clone.querySelector("#txtPromociones").id = "txtPromociones" + tabID;
-    clone.querySelector("#txtDescRec").id = "txtDescRec" + tabID;
+    //clone.querySelector("#txtDescRec").id = "txtDescRec" + tabID;
     clone.querySelector("#btnImprimirTicket").id = "btnImprimirTicket" + tabID;
     clone.querySelector("#btnTicketEmail").id = "btnTicketEmail" + tabID;
     clone.querySelector("#btnTicketPdf").id = "btnTicketPdf" + tabID;
@@ -940,7 +950,7 @@ function newTab() {
         $('#cboListaPrecios' + tabID).val(ajustes.listaPrecios);
 
     $("#btnFinalizeSaleParcial" + tabID).attr("tabId", tabID);
-    $("#cboDescRec" + tabID).attr("tabId", tabID);
+    //$("#cboDescRec" + tabID).attr("tabId", tabID);
 
     let fecha = moment().tz('America/Argentina/Buenos_Aires').format('DD/MM/YYYY hh:mm');
     let userName = ajustes != null ? ajustes.user : '';
@@ -1083,23 +1093,23 @@ function addFunctions(idTab) {
         }
     });
 
-    $('#cboDescRec' + idTab).change(function () {
-        let currentTabId = $(this).attr("tabId");
+    //$('#cboDescRec' + idTab).change(function () {
+    //    let currentTabId = $(this).attr("tabId");
 
-        let total = $("#txtSubTotal" + currentTabId).attr("subTotalReal");
+    //    let total = $("#txtSubTotal" + currentTabId).attr("subTotalReal");
 
-        if (total != '') {
-            let descRecAplicar = $("#cboDescRec" + currentTabId).val()
-            let desc = parseFloat(total * (descRecAplicar / 100));
-            $('#txtDescRec' + idTab).html('$ ' + desc.toFixed(2));
-            $("#txtDescRec" + idTab).attr('totalDescRec', desc.toFixed(2));
+    //    if (total != '') {
+    //        let descRecAplicar = $("#cboDescRec" + currentTabId).val()
+    //        let desc = parseFloat(total * (descRecAplicar / 100));
+    //        $('#txtDescRec' + idTab).html('$ ' + desc.toFixed(2));
+    //        $("#txtDescRec" + idTab).attr('totalDescRec', desc.toFixed(2));
 
-            $("#txtTotal" + currentTabId).val('$ ' + parseFloat(parseFloat(total) + desc).toFixed(2));
+    //        $("#txtTotal" + currentTabId).val('$ ' + parseFloat(parseFloat(total) + desc).toFixed(2));
 
-            $("#txtTotal" + currentTabId).attr("totalReal", parseFloat(parseFloat(total) + desc).toFixed(2));
+    //        $("#txtTotal" + currentTabId).attr("totalReal", parseFloat(parseFloat(total) + desc).toFixed(2));
 
-        }
-    })
+    //    }
+    //})
 
     $('#cboCliente' + idTab).select2({
         ajax: {

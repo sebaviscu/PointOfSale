@@ -240,6 +240,7 @@ namespace PointOfSale.Business.Services
                     if (!paso)
                     {
                         newVMSale.DetailSales = model.DetailSales;
+                        newVMSale.DescuentoRecargo = model.DescuentoRecargo;
                         paso = true;
                     }
 

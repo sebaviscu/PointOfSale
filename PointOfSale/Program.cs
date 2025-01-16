@@ -3,6 +3,7 @@ using AFIP.Facturacion.Services;
 using DinkToPdf;
 using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Services;
@@ -127,6 +128,9 @@ public class Program
 
             //builder.Host.UseSerilog();
 
+            var rutaInicioWeb = builder.Configuration["RutaInicioWeb"];
+            bool usarShopIndex = !string.IsNullOrEmpty(rutaInicioWeb) && bool.TryParse(rutaInicioWeb, out bool parsedValue) && parsedValue;
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -141,6 +145,12 @@ public class Program
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.MapGet("/", async context =>
+            {
+                context.Response.Redirect(usarShopIndex ? "/Shop/Index" : "/Access/Login");
+                await Task.CompletedTask;
+            });
 
             app.MapControllerRoute(
                 name: "default",
