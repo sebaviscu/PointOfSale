@@ -63,18 +63,7 @@ $(document).ready(function () {
             }
         ],
         order: [[0, "desc"]],
-        dom: "Bfrtip",
-        buttons: [
-            {
-                text: 'Exportar Excel',
-                extend: 'excelHtml5',
-                title: '',
-                filename: 'Reporte Promociones',
-                exportOptions: {
-                    columns: [1, 2, 3]
-                }
-            }, 'pageLength'
-        ]
+        dom: "frtip"
     });
 
 

@@ -283,7 +283,7 @@
                                                         <th>Description</th>
                                                         <th>Factura</th>
                                                         <th>Web</th>
-                                                        <th>Comision</th>
+                                                        <th>Desc. / Rec.</th>
                                                         <th>Estado</th>
                                                         <th></th>
                                                     </tr>
@@ -798,7 +798,7 @@
 
 <!-- Grid Modal Formas de Pago -->
 <div class="modal fade" id="modalDataFormaPago" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalGridTitle">Detalle Formas de Pago</h5>
@@ -812,11 +812,11 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-row">
-                                <div class="form-group col-sm-4">
+                                <div class="form-group col-sm-7">
                                     <label for="txtNombreFormaPago">Descripción</label>
                                     <input type="text" class="form-control form-control-sm input-validate-forma-pago" id="txtNombreFormaPago" name="Description">
                                 </div>
-                                <div class="form-group col-sm-2">
+                                <div class="form-group col-sm-3">
                                     <label for="cboStateFormaPago">Estado</label>
                                     <select class="form-control form-control-sm" id="cboStateFormaPago">
                                         <option value="1">Activo</option>
@@ -833,7 +833,14 @@
                                         <option value="4">Presu.</option>
                                     </select>
                                 </div>
-                                <div class="form-group col-sm-2">
+                                
+                            </div>
+
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-row">
+                                <div class="form-group col-sm-4">
                                     <label for="txtComision">Comision</label>
                                     <div class="input-group input-group-sm">
                                         <input type="number" step="any" min="0" class="form-control form-control-sm" id="txtComision" name="Comision" value="0">
@@ -842,17 +849,30 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group col-sm-2" style="align-content: center;">
-                                    <div class="form-check">
-                                        <label class="form-label">
-                                            <input type="checkbox" id="cboWeb">
-                                            Web
-                                        </label>
+
+                                <div class="form-group col-sm-5">
+                                    <label for="txtdescuentoRecargo">Descuento / Recargo</label>
+                                    <div class="input-group input-group-sm">
+                                        <input type="number" step="1" class="form-control form-control-sm" id="txtdescuentoRecargo" name="descuento Recargo" value="0">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">%</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
+
+                                <div class="form-group col-sm-3" style="align-content: center;text-align: center;">
+                                    <div class="form-group mt-2" id="divcboWeb" style=" margin-bottom: 0px;">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="cboWeb">
+                                            <label class="form-check-label" for="cboWeb">Web</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
+
                     </div>
 
                 </form>

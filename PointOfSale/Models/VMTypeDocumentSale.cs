@@ -11,5 +11,7 @@ namespace PointOfSale.Models
         public TipoFactura TipoFactura { get; set; }
         public string? TipoFacturaString { get; set; }
         public decimal Comision { get; set; }
+        public int? DescuentoRecargo { get; set; }
+
     }
 }

@@ -162,6 +162,19 @@ function changeCboTypeDocumentSaleParcial(idLineaFormaPago, idFormaDePago) {
         $("#divVueltoEfectivo").hide();
     }
 
+    if (formaDePago.descuentoRecargo != null && formaDePago.descuentoRecargo != 0) {
+
+        toastr.success(formaDePago.descuentoRecargo + " %", "Forma de pago con Descuento");
+
+        let currentTabid = getTabActiveId();
+        let total = $("#txtTotal" + currentTabid).attr("totalReal");
+        let descuento = parseFloat(total) * (parseInt(formaDePago.descuentoRecargo) / 100);
+        let totalWithDisc = parseFloat(total) + descuento;
+        $("#txtTotalParcial").val(totalWithDisc);
+        $("#txtTotal" + currentTabid).val(totalWithDisc);
+        $("#txtPromociones" + currentTabid).text("$" + descuento);
+        $("#txtPromociones" + currentTabid).attr("descuento", descuento);
+    }
 }
 
 
@@ -337,6 +350,7 @@ function showProducts_Prices(idTab, currentTab) {
     $('#txtTotal' + idTab).val('$ ' + formatNumber(total));
     $("#txtTotal" + idTab).attr("totalReal", parseFloat(total).toFixed(2));
     $('#txtPromociones' + idTab).html('$ ' + formatNumber(totalPromocion));
+    $('#txtPromociones' + idTab).attr('descuento', parseFloat(totalPromocion).toFixed(2));
     $('#txtSubTotal' + idTab).html('$ ' + formatNumber(subTotal));
     $("#txtSubTotal" + idTab).attr("subTotalReal", parseFloat(total).toFixed(2));
 
@@ -485,6 +499,11 @@ $('#modalDividirPago').on('shown.bs.modal', function () {
     });
 });
 
+$('#modalDividirPago').on('hidden.bs.modal', function (e) {
+
+
+
+});
 
 $(document).on("click", "button.btnAddFormaDePago", function () {
     formaDePagoID++;

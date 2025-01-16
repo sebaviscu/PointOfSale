@@ -182,8 +182,10 @@ create table TypeDocumentSale(
 web bit null,
 tipoFactura int not null,
 comision decimal(10,2) not null,
+DescuentoRecargo INT null,
 [registrationDate] datetime default getdate()
 )
+
 
 go
 

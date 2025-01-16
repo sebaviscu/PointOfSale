@@ -74,7 +74,8 @@ const BASIC_MODEL_TIPO_VENTA = {
     description: "",
     isActive: 1,
     web: 1,
-    tipoFactura: 0
+    tipoFactura: 0,
+    descuentoRecargo: 0
 }
 
 const BASIC_MODEL_TIPO_DE_GASTOS = {
@@ -406,7 +407,7 @@ $(document).ready(function () {
                 }
             },
             {
-                "data": "comision",
+                "data": "descuentoRecargo",
                 "render": function (data, type, row) {
                     return data ? data + ' %' : '';
                 }
@@ -874,6 +875,7 @@ const openModalTipoVenta = (model = BASIC_MODEL_TIPO_VENTA) => {
     $("#cboTipoFactura").val(model.tipoFactura);
     $("#cboWeb").val(model.web ? 1 : 0);
     $("#txtComision").val(model.comision);
+    $("#txtdescuentoRecargo").val(model.descuentoRecargo);
 
     document.querySelector('#cboWeb').checked = model.web
 
@@ -905,6 +907,7 @@ $("#btnSaveFormaPago").on("click", function () {
     model["web"] = document.querySelector('#cboWeb').checked;
     model["tipoFactura"] = parseInt($("#cboTipoFactura").val());
     model["comision"] = $("#txtComision").val();
+    model["descuentoRecargo"] = $("#txtdescuentoRecargo").val();
 
     $("#modalDataFormaPago").find("div.modal-content").LoadingOverlay("show")
 
