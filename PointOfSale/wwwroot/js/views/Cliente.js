@@ -303,7 +303,7 @@ $('#tbMovimientos tbody').on('click', 'button.btn-open-sale', function (event) {
     let data = tableDataMovimientosClientes.row($(this).parents('tr')).data();
     let saleNumber = data['sale']['saleNumber'];
 
-    let urlString = '/Sales/ReportSale?saleNumber=' + encodeURIComponent(saleNumber);
+    let urlString = '/Reports/ReportSale?saleNumber=' + encodeURIComponent(saleNumber);
 
     window.open(urlString, '_blank');
 });

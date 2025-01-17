@@ -33,6 +33,39 @@ namespace PointOfSale.Controllers
             _ivaService = ivaService;
             _logger = logger;
         }
+
+        public IActionResult SalesReport()
+        {
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Encargado]);
+
+            if (!HttpContext.User.Identity.IsAuthenticated)
+                return RedirectToAction("Login", "Access");
+
+            var vmReport = new VMReportSale()
+            {
+                IsAdmin = user.IdRol == 1
+            };
+
+            return View("SalesReport", vmReport);
+        }
+
+        [HttpGet]
+        public IActionResult ReportSale(int saleNumber)
+        {
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Encargado]);
+
+            if (!HttpContext.User.Identity.IsAuthenticated)
+                return RedirectToAction("Login", "Access");
+
+            var vmReport = new VMReportSale()
+            {
+                IsAdmin = user.IdRol == 1,
+                saleNumber = saleNumber.ToString("D6")
+            };
+
+            return View("SalesReports", vmReport);
+        }
+
         public IActionResult ProductsReport()
         {
             ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Empleado, Roles.Encargado });

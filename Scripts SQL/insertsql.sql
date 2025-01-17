@@ -36,7 +36,7 @@ go
 insert into Menu([description],idMenuParent,controller,pageAction,isActive) values
 ('Usuarios',2,'Admin','Users',1), --9
 ('Productos',4,'Inventory','Products',1), --10
-('Reporte Ventas',6,'Sales','SalesHistory',1), --11
+('Reporte Ventas',6,'Reports','SalesReport',1), --11
 ('Clientes',3,'Admin','Cliente',1), --12
 ('Proveedores',3,'Proveedores','Index',1), --13
 ('Promociones',4,'Inventory','Promociones',1), --14
@@ -57,6 +57,10 @@ insert into Menu([description],idMenuParent,controller,pageAction,isActive) valu
 ('Licencia',5,'Licencia','Index',1) --29
 
 go
+update menu
+set pageaction='SalesReport' where idmenu = 11
+
+select * from Menu
 
 UPDATE Menu SET idMenuParent = idMenu where idMenuParent is null
 

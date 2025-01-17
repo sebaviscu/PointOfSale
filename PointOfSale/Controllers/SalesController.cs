@@ -52,21 +52,6 @@ namespace PointOfSale.Controllers
             return ValidateSesionViewOrLogin();
         }
 
-        public IActionResult SalesHistory()
-        {
-            var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Encargado]);
-
-            if (!HttpContext.User.Identity.IsAuthenticated)
-                return RedirectToAction("Login", "Access");
-
-            var vmReport = new VMReportSale()
-            {
-                IsAdmin = user.IdRol == 1
-            };
-
-            return View("SalesHistory", vmReport);
-        }
-
         [HttpGet]
         public async Task<IActionResult> ListTypeDocumentSale()
         {
@@ -241,23 +226,6 @@ namespace PointOfSale.Controllers
                 return HandleException(ex, "Error al registrar No Cierre de venta", _logger, model);
             }
 
-        }
-
-        [HttpGet]
-        public IActionResult ReportSale(int saleNumber)
-        {
-            var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Encargado]);
-
-            if (!HttpContext.User.Identity.IsAuthenticated)
-                return RedirectToAction("Login", "Access");
-
-            var vmReport = new VMReportSale()
-            {
-                IsAdmin = user.IdRol == 1,
-                saleNumber = saleNumber.ToString("D6")
-            };
-
-            return View("SalesHistory", vmReport);
         }
 
         [HttpGet]

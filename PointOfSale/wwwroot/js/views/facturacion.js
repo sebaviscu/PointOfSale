@@ -224,7 +224,7 @@ $("#tbData tbody").on("click", ".btn-ver", function () {
 
 $("#btnVerVenta").on("click", function () {
     let saleNumber = $(this).attr("sale-number");
-    let urlString = '/Sales/ReportSale?saleNumber=' + encodeURIComponent(saleNumber);
+    let urlString = '/Reports/ReportSale?saleNumber=' + encodeURIComponent(saleNumber);
 
     window.open(urlString, '_blank');
 })
