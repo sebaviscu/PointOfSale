@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<Company>Tecnocode S.A.</Company>
+		<TargetFramework>net9.0</TargetFramework>
+		<!--<Company>Tecnocode S.A.</Company>
 		<Description>AFIP WSFE .NET Standard Client. Manages WSAA Ticket caching and access WSFE operations</Description>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageLicenseExpression></PackageLicenseExpression>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<RepositoryUrl>https://github.com/tecnocode-sa/afipwsfeclient</RepositoryUrl>
-		<PackageProjectUrl>https://github.com/tecnocode-sa/afipwsfeclient</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/tecnocode-sa/afipwsfeclient</PackageProjectUrl>-->
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 		<Version>1.1.0</Version>
 		<AssemblyVersion>1.1.0.0</AssemblyVersion>
