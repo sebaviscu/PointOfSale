@@ -75,14 +75,12 @@ namespace PointOfSale.Controllers
 
         public IActionResult DashBoard()
         {
-            ValidarAutorizacion([Roles.Administrador]);
-            return ValidateSesionViewOrLogin();
+            return ValidateSesionViewOrLogin([Roles.Administrador]);
         }
 
         public IActionResult Users()
         {
-            ValidarAutorizacion([Roles.Administrador]);
-            return ValidateSesionViewOrLogin();
+            return ValidateSesionViewOrLogin([Roles.Administrador]);
         }
 
         [HttpGet]
@@ -818,8 +816,7 @@ namespace PointOfSale.Controllers
 
         public IActionResult Cliente()
         {
-            ValidarAutorizacion([Roles.Administrador]);
-            return ValidateSesionViewOrLogin();
+            return ValidateSesionViewOrLogin([Roles.Administrador]);
         }
 
         /// <summary>

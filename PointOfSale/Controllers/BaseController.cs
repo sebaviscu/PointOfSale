@@ -12,14 +12,27 @@ namespace PointOfSale.Controllers
 {
     public class BaseController : Controller
     {
-        public IActionResult ValidateSesionViewOrLogin()
+        public IActionResult ValidateSesionViewOrLogin(Roles[] rolesPermitidos, object? model = null, string? viewName = null)
         {
             if (!HttpContext.User.Identity.IsAuthenticated)
                 return RedirectToAction("Login", "Access");
             else
             {
+                var user = ValidarAutorizacion(rolesPermitidos);
                 ValidarHorario();
-                return View();
+
+                ViewBag.ControlCierreCaja = user.ControlCierreCaja;
+                //ViewBag.ControlCierreCaja = false;
+
+                if (model == null)
+                    return View();
+                else
+                {
+                    if (viewName == null)
+                        return View(model);
+                    else
+                        return View(viewName, model);
+                }
             }
         }
 
@@ -53,9 +66,9 @@ namespace PointOfSale.Controllers
                 IdListaPrecios = idListaPrecios,
                 IdUsuario = GetClaimValue<int>(claimUser, ClaimTypes.NameIdentifier),
                 IdTurno = GetClaimValue<int>(claimUser, "Turno"),
-                ListaPrecios = listaPrecios
+                ListaPrecios = listaPrecios,
+                ControlCierreCaja = GetClaimValue<bool>(HttpContext.User, "ControlCierreCaja")
             };
-
             userAuth.Result = rolesPermitidos.Contains((Model.Enum.Roles)userAuth.IdRol);
 
             if (!userAuth.Result)

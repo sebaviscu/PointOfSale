@@ -49,20 +49,17 @@ namespace PointOfSale.Controllers
 
         public IActionResult Products()
         {
-            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
-            return ValidateSesionViewOrLogin();
+            return ValidateSesionViewOrLogin([Roles.Administrador, Roles.Encargado]);
         }
 
         public IActionResult Backups()
         {
-            ValidarAutorizacion([Roles.Administrador]);
-            return ValidateSesionViewOrLogin();
+            return ValidateSesionViewOrLogin([Roles.Administrador]);
         }
 
         public IActionResult Stock()
         {
-            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
-            return ValidateSesionViewOrLogin();
+            return ValidateSesionViewOrLogin([Roles.Administrador, Roles.Encargado]);
         }
 
         [HttpGet]
@@ -707,8 +704,7 @@ namespace PointOfSale.Controllers
 
         public IActionResult Promociones()
         {
-            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
-            return ValidateSesionViewOrLogin();
+            return ValidateSesionViewOrLogin([Roles.Administrador, Roles.Encargado]);
         }
 
         /// <summary>

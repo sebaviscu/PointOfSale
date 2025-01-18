@@ -123,7 +123,8 @@ namespace PointOfSale.Controllers
                     new Claim(ClaimTypes.Role,user_found.IdRol.ToString()),
                     new Claim("Email",user_found.Email),
                     new Claim("Tienda",idTienda.ToString()),
-                    new Claim("ListaPrecios", listaPrecio.ToString())
+                    new Claim("ListaPrecios", listaPrecio.ToString()),
+                    new Claim("ControlCierreCaja", "true")
                 };
 
                 if (turnoActual != null)

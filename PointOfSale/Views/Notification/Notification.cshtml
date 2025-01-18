@@ -45,6 +45,56 @@
 </div>
 
 
+<!-- Grid Modal Notificacion -->
+<div class="modal fade" id="modalNotificacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Notificacion</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="col-sm-12">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group col-sm-4">
+                                <label for="cboPorRol">Por Rol</label>
+                                <select class="form-control form-control-sm" id="cboPorRol">
+                                    <option value="-1"></option>
+                                    <option value="1">Admin</option>
+                                    <option value="2">Empleado</option>
+                                    <option value="3">Encargado</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-sm-4">
+                                <label for="cboPorUsuario">Por Usuario</label>
+                                <select class="form-control form-control-sm" id="cboPorUsuario">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-row">
+                                <div class="form-group col-sm-12">
+                                    <label for="txtNotifIndividual">Notificacion</label>
+                                    <textarea class="form-control" id="txtNotifIndividual" rows="4" placeholder="..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="btnSaveNotificacion">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts{
     <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
     <script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>

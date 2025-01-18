@@ -30,8 +30,7 @@ namespace PointOfSale.Controllers
 
         public IActionResult Index()
         {
-            ValidarAutorizacion([Roles.Administrador]);
-            return ValidateSesionViewOrLogin();
+            return ValidateSesionViewOrLogin([Roles.Administrador]);
         }
 
         /// <summary>

@@ -170,6 +170,15 @@ const openModalTurno = (model = BASIC_MODEL_TURNO) => {
                 $("#btnFinalizar").hide();
                 $("#modalDataTurno").modal("show");
 
+                if (responseJson.object.controlCierreCaja) {
+                    $('.input-usuario').css('display', '');
+                    $('#titles-sales').css('display', '');
+                }
+                else {
+                    $('.input-usuario').css('display', 'none');
+                    $('#titles-sales').css('display', 'none');
+                }
+
             } else {
                 swal("Lo sentimos", responseJson.message, "error");
             }
@@ -214,7 +223,7 @@ function crearFilaTabla(contenedor, descripcion, total, totalValidacion, disable
 
     // Crear títulos para las columnas
     let titlesRow = $(
-        '<div class="row" style="width: 100%; margin-bottom: 5px;">' +
+        '<div class="row" id="titles-sales" style="width: 100%; margin-bottom: 5px;">' +
         '   <div class="offset-sm-4 col-sm-5 text-center"><strong>Usuario</strong></div>' +
         '   <div class="col-sm-3 text-center"><strong>Sistema</strong></div>' +
         '</div>'
@@ -236,7 +245,7 @@ function crearFilaTabla(contenedor, descripcion, total, totalValidacion, disable
     let inputDiv = $('<div>', { class: 'col-sm-8 d-flex justify-content-between', style: 'padding-right: 0px; padding-left: 0px;' });
 
     // Grupo para el input total (Usuario)
-    let inputGroupTotal = $('<div>', { class: 'input-group input-group-sm', style: 'width: 48%;' });
+    let inputGroupTotal = $('<div>', { class: 'input-group input-group-sm input-usuario', style: 'width: 48%;' });
 
     let inputGroupPrependTotal = $('<div>', { class: 'input-group-prepend' });
 
@@ -283,7 +292,7 @@ function crearFilaTabla(contenedor, descripcion, total, totalValidacion, disable
     }
 
     // Grupo para el input totalValidacion (Sistemas)
-    let inputGroupValidacion = $('<div>', { class: 'input-group input-group-sm', style: 'width: 48%; margin-left: 20px;' });
+    let inputGroupValidacion = $('<div>', { class: 'input-group input-group-sm input-sistema', style: 'width: 48%; margin-left: 20px;' });
 
     let inputGroupPrependValidacion = $('<div>', { class: 'input-group-prepend' });
 

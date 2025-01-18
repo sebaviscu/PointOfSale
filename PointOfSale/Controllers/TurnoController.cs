@@ -38,8 +38,7 @@ namespace PointOfSale.Controllers
 
         public IActionResult Turno()
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Empleado, Roles.Encargado });
-            return ValidateSesionViewOrLogin();
+            return ValidateSesionViewOrLogin([Roles.Administrador, Roles.Empleado, Roles.Encargado]);
         }
 
         [HttpGet]
@@ -168,6 +167,7 @@ namespace PointOfSale.Controllers
 
                 outout.Turno = vmTurnp;
                 outout.TotalMovimientosCaja = totalMovimiento;
+                outout.ControlCierreCaja = user.ControlCierreCaja;
                 gResponse.Object = outout;
                 gResponse.State = true;
 
@@ -225,8 +225,16 @@ namespace PointOfSale.Controllers
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
 
                 modelTurno.ModificationUser = user.UserName;
+                (Turno TurnoCerrado, Dictionary<string, decimal> VentasRegistradas) result;
 
-                var result = await _turnoService.CerrarTurno(_mapper.Map<Turno>(modelTurno), _mapper.Map<List<VentasPorTipoDeVentaTurno>>(modelTurno.VentasPorTipoVentaPreviaValidacion));
+                if (user.ControlCierreCaja)
+                {
+                    result = await _turnoService.CerrarTurno(_mapper.Map<Turno>(modelTurno));
+                }
+                else
+                {
+                    result = await _turnoService.CerrarTurnoSimple(_mapper.Map<Turno>(modelTurno), _mapper.Map<List<VentasPorTipoDeVentaTurno>>(modelTurno.VentasPorTipoVentaPreviaValidacion));
+                }
 
                 await UpdateClaimAsync("Turno", null);
 

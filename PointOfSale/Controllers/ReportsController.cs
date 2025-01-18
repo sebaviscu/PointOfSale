@@ -46,7 +46,7 @@ namespace PointOfSale.Controllers
                 IsAdmin = user.IdRol == 1
             };
 
-            return View("SalesReport", vmReport);
+            return ValidateSesionViewOrLogin([Roles.Administrador], vmReport);
         }
 
         [HttpGet]
@@ -63,13 +63,12 @@ namespace PointOfSale.Controllers
                 saleNumber = saleNumber.ToString("D6")
             };
 
-            return View("SalesReports", vmReport);
+            return ValidateSesionViewOrLogin([Roles.Administrador], vmReport, "SalesReports");
         }
 
         public IActionResult ProductsReport()
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Empleado, Roles.Encargado });
-            return ValidateSesionViewOrLogin();
+            return ValidateSesionViewOrLogin(new Roles[] { Roles.Administrador, Roles.Empleado, Roles.Encargado });
         }
 
         /// <summary>
@@ -84,8 +83,7 @@ namespace PointOfSale.Controllers
         {
             if (idCategoria == null && startDate == null && endDate == null)
             {
-                ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Empleado, Roles.Encargado });
-                return ValidateSesionViewOrLogin();
+                return ValidateSesionViewOrLogin(new Roles[] { Roles.Administrador, Roles.Empleado, Roles.Encargado });
             }
 
             var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
@@ -121,8 +119,7 @@ namespace PointOfSale.Controllers
 
         public IActionResult PreciosReport()
         {
-            ValidarAutorizacion(new Roles[] { Roles.Administrador, Roles.Empleado, Roles.Encargado });
-            return ValidateSesionViewOrLogin();
+            return ValidateSesionViewOrLogin(new Roles[] { Roles.Administrador, Roles.Empleado, Roles.Encargado });
         }
 
         /// <summary>
@@ -145,7 +142,7 @@ namespace PointOfSale.Controllers
 
         public IActionResult IvaReport()
         {
-            return View();
+            return ValidateSesionViewOrLogin([Roles.Administrador]);
         }
 
         [HttpGet]

@@ -4,5 +4,6 @@
     {
         public VMTurno Turno { get; set; }
         public decimal TotalMovimientosCaja { get; set; }
+        public bool ControlCierreCaja { get; set; }
     }
 }

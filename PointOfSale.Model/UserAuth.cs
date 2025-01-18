@@ -12,5 +12,6 @@ namespace PointOfSale.Model
         public int IdListaPrecios { get; set; }
         public ListaDePrecio ListaPrecios { get; set; }
         public bool Result { get; set; }
+        public bool ControlCierreCaja { get; set; }
     }
 }

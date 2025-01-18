@@ -1,64 +1,106 @@
 ﻿@using PointOfSale.Models;
 @model List<VMNotifications>;
 @{
-    Layout = null;
+	Layout = null;
 }
 
 @section StylesPOS {
 
-    <link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
-    <link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
-    <link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
+	<link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
+	<link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
+	<link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
 }
 
 @if (Model.Any())
 {
-    <ul id="listaNotificaciones" class="dropdown user-menu show" style="align-content: center; margin-right: 20px;">
-        <button href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
-            <i class="mdi mdi-bell mdi-24px"></i>
-        </button>
-        <ul class="dropdown-menu dropdown-menu-right" style="width: fit-content;border-color: lightgray;">
-            @foreach (var n in Model)
-            {
-                <li class="dropdown-header" style="padding: 0px;margin: 0;">
-                    <div class="d-inline-block" style="width: 100%">
-                        <a class="notificacion" id="@n.IdNotifications" accion="@n.Accion" href="#">
-                            @Html.Raw(n.Descripcion)
-                            <small class="pt-1">@n.RegistrationDate</small>
-                        </a>
-                        <span></span>
-                    </div>
-                </li>
-            }
-            @if (ViewData["userRol"] != null && (Convert.ToInt32(ViewData["userRol"]) == 1))
-            {
-                <li style="padding: 0px;width: max-content;margin: 0;">
-                    <a id="limpiarNotificaciones" href="#">
-                        <i class="mdi mdi-delete me-1"></i>Limpiar todo
-                    </a>
-                </li>
-            }
-        </ul>
-    </ul>
+	<ul id="listaNotificaciones" class="dropdown user-menu show" style="align-content: center; margin-right: 20px;">
+		<button href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
+			<i class="mdi mdi-bell mdi-24px"></i>
+		</button>
+		<ul class="dropdown-menu dropdown-menu-right" style="width: fit-content;border-color: lightgray;">
+			@foreach (var n in Model)
+			{
+				<li class="dropdown-header" style="padding: 0px;margin: 0;">
+					<div class="d-inline-block" style="width: 100%">
+						<a class="notificacion" id="@n.IdNotifications" accion="@n.Accion" href="#">
+							@Html.Raw(n.Descripcion)
+							<small class="pt-1">@n.RegistrationDate</small>
+						</a>
+						<span></span>
+					</div>
+				</li>
+			}
+			@if (ViewData["userRol"] != null && (Convert.ToInt32(ViewData["userRol"]) == 1))
+			{
+				<li style="padding: 0px;width: max-content;margin: 0;">
+					<a id="limpiarNotificaciones" href="#">
+						<i class="mdi mdi-delete me-1"></i>Limpiar todo
+					</a>
+				</li>
+			}
+		</ul>
+	</ul>
 }
 
 
+<!-- Grid Modal Notificacion -->
+<div class="modal fade" id="modalNotificacionIndividual" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Notificacion</h5>
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="col-sm-12">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="form-row">
+								<div class="form-group col-sm-6">
+									<label for="txtAutor">Autor</label>
+									<input type="text" class="form-control form-control-sm" id="txtAutor"  disabled>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-12">
+							<div class="form-row">
+								<div class="form-group col-sm-12">
+									<label for="txtNotifIndividual">Notificacion</label>
+									<textarea class="form-control" id="txtNotifIndividual" rows="4" placeholder="..."></textarea>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+				<button type="button" class="btn btn-primary" id="btnLeerNotificacion">Recibido</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
 @section Scripts {
-    <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
-    <script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
-    <script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
+	<script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
+	<script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
+	<script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
 
 
-    <script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
-    <script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
-    <script src="~/plugins/data-tables/jszip.min.js"></script>
-    <script src="~/plugins/data-tables/buttons.html5.min.js"></script>
-    <script src="~/plugins/data-tables/buttons.print.min.js"></script>
+	<script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
+	<script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
+	<script src="~/plugins/data-tables/jszip.min.js"></script>
+	<script src="~/plugins/data-tables/buttons.html5.min.js"></script>
+	<script src="~/plugins/data-tables/buttons.print.min.js"></script>
 
-    <link href="https://cdn.webdatarocks.com/latest/webdatarocks.min.css" rel="stylesheet" />
-    <script src="https://cdn.webdatarocks.com/latest/webdatarocks.toolbar.min.js"></script>
-    <script src="https://cdn.webdatarocks.com/latest/webdatarocks.js"></script>
+	<link href="https://cdn.webdatarocks.com/latest/webdatarocks.min.css" rel="stylesheet" />
+	<script src="https://cdn.webdatarocks.com/latest/webdatarocks.toolbar.min.js"></script>
+	<script src="https://cdn.webdatarocks.com/latest/webdatarocks.js"></script>
 
-    <script src="~/js/views/default.js"></script>
+	<script src="~/js/views/notificationsComponents.js"></script>
 }
 

@@ -26,8 +26,7 @@ namespace PointOfSale.Controllers
 
         public IActionResult Pedido()
         {
-            ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
-            return ValidateSesionViewOrLogin();
+            return ValidateSesionViewOrLogin([Roles.Administrador, Roles.Encargado]);
         }
 
         [HttpGet]

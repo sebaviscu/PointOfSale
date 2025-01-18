@@ -48,8 +48,7 @@ namespace PointOfSale.Controllers
 
         public IActionResult NewSale()
         {
-            ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
-            return ValidateSesionViewOrLogin();
+            return ValidateSesionViewOrLogin([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
         }
 
         [HttpGet]

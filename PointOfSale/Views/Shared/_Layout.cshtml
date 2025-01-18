@@ -186,91 +186,17 @@
 </div>
 
 <input type="hidden" value="0" id="txtIdTurnoLayout">
-<!-- Grid Modal Cerrar Turno-->
-<div class="modal fade" id="modalDataCerrarTurno" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Finalizar Turno</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
 
-                    <div class="col-sm-5">
-                        <div>
-                            <div class="form-group col-sm-7">
-                                <label for="txtInicioTurnoCierre">Fecha</label>
-                                <input type="text" class="form-control form-control-sm" id="txtInicioTurnoCierre" name="Fecha" disabled>
-                            </div>
-                        </div>
-                        <div class="col-md-12 row">
-                            <div class="form-group col-sm-6">
-                                <label for="txtInicioTurnoCierre">Hora de Inicio</label>
-                                <input type="text" class="form-control form-control-sm" id="txtHoraInicioTurnoCierre" name="Hora del turno" disabled>
-                            </div>
-                            <div class="form-group col-sm-6">
-                                <label for="txtInicioTurnoCierre">Hora de Cierre</label>
-                                <input type="text" class="form-control form-control-sm" id="txtCierraTurnoCierre" name="Hora del turno de cierre" disabled>
-                            </div>
-                        </div>
-                        <div class="col-sm-12" style="display:none" id="divObservacionesApertura">
-                            <div class="form-row">
-                                <div class="form-group col-sm-12">
-                                    <label for="txtObservaciones">Observaciones a la apertura</label>
-                                    <textarea class="form-control" id="txtObservacionesApertura" rows="2" placeholder="..." disabled></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="form-row">
-                                <div class="form-group col-sm-12">
-                                    <label for="txtObservaciones">Observaciones al Cierre</label>
-                                    <textarea class="form-control" id="txtObservacionesCierre" rows="4" placeholder="..."></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-7" style="padding-left: 0;">
-                        <div class="form-row">
-                            <div class="card-body" style="padding-top: 0;">
-                                <div>
-                                    <h3 for="contMetodosPagoLayout" class="form-label text-center">Ventas</h3>
-                                </div>
-                                <br />
-                                <div id="contMetodosPagoLayout"></div>
-                                <div class="text-end">
-                                    <button type="button" class="btn-sm btn btn-info" id="btnValidarFinalizarTurno">Validar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12 d-flex justify-content-around" id="divError" style="display: none !important;">
-                        <div class="alert alert alert-warning d-flex align-items-center" style="padding: 10px;margin-bottom: 0;">
-                            <strong>
-                                <span class="mdi mdi-alert-octagon mdi-48px me-2">&nbsp;</span>
-                            </strong>
-                            <span id="txtError"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <div class="form-check form-switch text-center me-3" style="display:none" id="divSwitchCierreCaja">
-                    <input class="form-check-input" type="checkbox" role="switch" id="switchCierreCaja" checked>
-                    <label class="form-check-label" for="switchCierreCaja" style="font-size: large;">Imprimir cierre de caja</label>
-                </div>
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" id="btnFinalizarTurno" style="display:none">Finalizar Turno</button>
-            </div>
-        </div>
-    </div>
-</div>
-
+@{
+    if (ViewBag.ControlCierreCaja)
+    {
+        Html.RenderPartial("CierreTurno/_ControlCierreTurno");
+    }
+    else
+    {
+        Html.RenderPartial("CierreTurno/_SimpleCierreTurno");
+    }
+}
 
 <!-- Grid Modal Cambio Tienda-->
 <div class="modal fade" id="modalCambioTienda" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
@@ -432,7 +358,6 @@
 
 <script src="~/plugins/loadingoverlay/loadingoverlay.min.js"></script>
 <script src="~/js/views/layout.js"></script>
-<script src="~/js/views/cierreTurno.js"></script>
 <script src="~/js/moment.js"></script>
 <script src="~/js/moment-timezone.js"></script>
 <script src="~/plugins/printService.min.js"></script>

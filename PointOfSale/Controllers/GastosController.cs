@@ -27,8 +27,7 @@ namespace PointOfSale.Controllers
 
         public IActionResult Gastos()
         {
-            ValidarAutorizacion([Roles.Administrador]);
-            return ValidateSesionViewOrLogin();
+            return ValidateSesionViewOrLogin([Roles.Administrador]);
         }
 
         /// <summary>
