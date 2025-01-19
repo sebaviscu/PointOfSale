@@ -15,6 +15,25 @@ $(document).ready(function () {
         keyboard: false
     });
 
+    fetch(`/Notification/GetNotificacionesByUser`, {
+        method: "GET",
+        headers: { 'Content-Type': 'application/json;charset=utf-8' }
+    })
+        .then(response => {
+            return response.json();
+        }).then(responseJson => {
+            if (responseJson.state) {
+
+                openIndividualNotifications(responseJson.object);
+
+            } else {
+                swal("Error", responseJson.message, "error");
+            }
+
+        }).catch((error) => {
+        })
+
+
     $("#limpiarNotificaciones").on("click", function () {
 
         fetch(`/Notification/LimpiarTodoNotificacion`, {
@@ -140,6 +159,99 @@ function cargarRazones() {
 
 $("#cboTipoRazonMovimiento").on("change", function () {
     filterRazones();
+});
+
+let currentNotificationIndex = 0;
+let notificationsList = [];
+
+function openIndividualNotifications(list) {
+    notificationsList = list;
+    currentNotificationIndex = 0;
+    $("#btnLeerNotificacion").prop("disabled", true); // Deshabilitar botón inicialmente
+    loadNotification();
+    $("#modalNotificacionIndividual").modal({
+        backdrop: 'static', // Evitar cerrar el modal al hacer clic afuera
+        keyboard: false     // Evitar cerrar el modal con Escape
+    });
+    $("#modalNotificacionIndividual").modal("show")
+}
+
+function loadNotification() {
+    const currentNotification = notificationsList[currentNotificationIndex];
+    $("#txtAutor").val(currentNotification.registrationUser);
+    $("#divNotifIndividual").html(currentNotification.descripcion);
+
+    // Actualizar contador 1/n
+    $(".notification-counter").text(`${currentNotificationIndex + 1}/${notificationsList.length}`);
+
+    // Mostrar u ocultar los botones de navegación según la posición actual
+    if (notificationsList.length === 1) {
+        // Si hay solo una notificación, ocultar ambos botones y habilitar "Recibido"
+        $("#btnAnterior, #btnSiguiente").prop("disabled", true);
+        $("#btnLeerNotificacion").prop("disabled", false);
+    } else {
+        // Mostrar los botones de navegación
+        $("#btnAnterior, #btnSiguiente").prop("disabled", false);
+
+        // Ocultar el botón "<" si estamos en la primera notificación
+        if (currentNotificationIndex === 0) {
+            $("#btnAnterior").prop("disabled", true);
+        } else {
+            $("#btnAnterior").prop("disabled", false);
+        }
+
+        // Ocultar el botón ">" si estamos en la última notificación
+        if (currentNotificationIndex === notificationsList.length - 1) {
+            $("#btnSiguiente").prop("disabled", true);
+            $("#btnLeerNotificacion").prop("disabled", false); // Habilitar "Recibido" en la última
+        } else {
+            $("#btnSiguiente").prop("disabled", false);
+            $("#btnLeerNotificacion").prop("disabled", true); // Deshabilitar "Recibido" en otras
+        }
+    }
+}
+
+
+// Navegar a la notificación anterior
+$("#btnAnterior").on("click", function () {
+    if (currentNotificationIndex > 0) {
+        currentNotificationIndex--;
+        loadNotification();
+    }
+});
+
+// Navegar a la siguiente notificación
+$("#btnSiguiente").on("click", function () {
+    if (currentNotificationIndex < notificationsList.length - 1) {
+        currentNotificationIndex++;
+        loadNotification();
+    }
+});
+
+
+$("#btnLeerNotificacion").on("click", function () {
+    $("#modalNotificacionIndividual").LoadingOverlay("show")
+
+    fetch(`/Notification/LimpiarTodoNotificacionIndividuales`, {
+        method: "PUT",
+        headers: { 'Content-Type': 'application/json;charset=utf-8' }
+    })
+        .then(response => {
+            return response.json();
+        }).then(responseJson => {
+            if (responseJson.state) {
+
+                //removeLoading();
+                $("#modalNotificacionIndividual").modal("hide")
+                location.reload()
+
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+
+        }).catch((error) => {
+        })
+
 });
 
 function filterRazones() {

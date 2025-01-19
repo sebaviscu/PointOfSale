@@ -24,5 +24,11 @@ namespace PointOfSale.Business.Contracts
         Task<bool> CheckSuperUser(int idUser);
 
         Task SaveHistorialLogin(HistorialLogin historialLogin);
+
+        Task<List<User>> GetUsersByRolByTienda(int idRol, int idTienda);
+        Task<List<User>> GetAllUsersByTienda(int idTienda);
+
+        Task<List<User>> GetUsersByRolByTiendaForNotifications(int idRol, int idTienda);
+
     }
 }

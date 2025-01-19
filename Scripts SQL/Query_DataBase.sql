@@ -379,11 +379,14 @@ idNotifications int primary key identity(1,1),
 descripcion varchar(max) not null,
 [isActive] bit not null,
 accion varchar(100) null,
-[rols] varchar(20) not null,
+[rols] varchar(20) null,
+idUser int null,
+registrationUser varchar(50),
 registrationDate [datetime] not null,
 [modificationDate] [datetime] null,
 [modificationUser] varchar(50) null
 )
+
 
 go
 

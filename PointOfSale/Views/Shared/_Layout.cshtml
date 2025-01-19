@@ -1,113 +1,112 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="utf-8" />
-@*     <style>
+	<meta charset="utf-8" />
+	@*     <style>
         html {
             font-size: 11px; /* Ajusta el valor según lo que necesites */
         }
     </style> *@
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Tienda</title>
+	<title>Tienda</title>
 
-    <!-- GOOGLE FONTS -->
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500|Poppins:400,500,600,700|Roboto:400,500" rel="stylesheet" />
+	<!-- GOOGLE FONTS -->
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,500|Poppins:400,500,600,700|Roboto:400,500" rel="stylesheet" />
 
-    <link href="https://cdn.materialdesignicons.com/4.4.95/css/materialdesignicons.min.css" rel="stylesheet" />
+	<link href="https://cdn.materialdesignicons.com/4.4.95/css/materialdesignicons.min.css" rel="stylesheet" />
 
 
-    <link id="sleek-css" rel="stylesheet" href="~/css/sleek.css" />
-    <link href="~/plugins/toastr/toastr.css" rel="stylesheet">
-    <link href="~/plugins/sweetalert/sweetalert.css" rel="stylesheet">
-    <link id="sleek-css" rel="stylesheet" href="~/css/layout.css" />
+	<link id="sleek-css" rel="stylesheet" href="~/css/sleek.css" />
+	<link href="~/plugins/toastr/toastr.css" rel="stylesheet">
+	<link href="~/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+	<link id="sleek-css" rel="stylesheet" href="~/css/layout.css" />
 
-    @*<link href="~/img/favicon.png" rel="shortcut icon" />*@
-    <link rel="icon" href="~/images/favicon.ico" type="image/x-icon" />
+	@*<link href="~/img/favicon.png" rel="shortcut icon" />*@
+	<link rel="icon" href="~/images/favicon.ico" type="image/x-icon" />
 
-    @await RenderSectionAsync("StylesPOS", required: false)
+	@await RenderSectionAsync("StylesPOS", required: false)
 </head>
 <body class="header-fixed sidebar-fixed sidebar-dark header-light" id="body">
 
 
-    <!-- ====================================
-    ——— WRAPPER
-    ===================================== -->
-    <div class="wrapper">
+	<!-- ====================================
+	——— WRAPPER
+	===================================== -->
+	<div class="wrapper">
 
 
-        <!-- ====================================
-          ——— LEFT SIDEBAR WITH OUT FOOTER
-        ===================================== -->
-        <aside class="left-sidebar bg-sidebar">
-            <div id="sidebar" class="sidebar">
-                <!-- Aplication Brand -->
-                @await Component.InvokeAsync("NombreTienda")
+		<!-- ====================================
+		  ——— LEFT SIDEBAR WITH OUT FOOTER
+		===================================== -->
+		<aside class="left-sidebar bg-sidebar">
+			<div id="sidebar" class="sidebar">
+				<!-- Aplication Brand -->
+				@await Component.InvokeAsync("NombreTienda")
 
-                <!-- begin sidebar scrollbar -->
-                <div class="sidebar-container" data-simplebar>
-                    <!-- sidebar menu -->
-                    <ul class="nav sidebar-inner" id="sidebar-menu" style="margin-top: 10px;">
-                        @await Component.InvokeAsync("Menu")
-                    </ul>
-                </div>
-                <button class="btn btn-outline-danger" onclick='generarDatos()' hidden>Generar Datos</button>
+				<!-- begin sidebar scrollbar -->
+				<div class="sidebar-container" data-simplebar>
+					<!-- sidebar menu -->
+					<ul class="nav sidebar-inner" id="sidebar-menu" style="margin-top: 10px;">
+						@await Component.InvokeAsync("Menu")
+					</ul>
+				</div>
+				<button class="btn btn-outline-danger" onclick='generarDatos()' hidden>Generar Datos</button>
 
-            </div>
-        </aside>
+			</div>
+		</aside>
 
 
-        <!-- ====================================
-        ——— PAGE WRAPPER
-        ===================================== -->
-        <div class="page-wrapper">
+		<!-- ====================================
+		——— PAGE WRAPPER
+		===================================== -->
+		<div class="page-wrapper">
 
-            <!-- Header -->
-            <header class="main-header " id="header">
-                <nav class="navbar navbar-static-top" style="padding-right: 0">
-                    <div class="container-fluid">
+			<!-- Header -->
+			<header class="main-header " id="header">
+				<nav class="navbar navbar-static-top" style="padding-right: 0">
+					<div class="container-fluid">
 
-                        <!-- Sidebar toggle button -->
-                        <button id="sidebar-toggler" class="sidebar-toggle">
-                            <span class="visually-hidden">Toggle navigation</span>
-                        </button>
-                        <!-- search form -->
-                        <div class="search-form d-none d-lg-inline-block">
-                        </div>
+						<!-- Sidebar toggle button -->
+						<button id="sidebar-toggler" class="sidebar-toggle">
+							<span class="visually-hidden">Toggle navigation</span>
+						</button>
+						<!-- search form -->
+						<div class="search-form d-none d-lg-inline-block">
+						</div>
 
-                        <div class="navbar-right row">
-                            @await Component.InvokeAsync("NotificacionesComponent")
+						<div class="navbar-right row">
+							@await Component.InvokeAsync("NotificacionesComponent")
 
-                            <ul class="nav navbar-nav">
+							<ul class="nav navbar-nav">
 
-                                <!-- User Account -->
-                                @* <li class="dropdown user-menu">
+								<!-- User Account -->
+								@* <li class="dropdown user-menu">
                                 <button href="#" class="nav-link">
                                 <img src="assets/img/user/user.png" class="user-image" alt="User Image" />
                                 <span class="d-none d-lg-inline-block">Abdus Salam</span>
                                 </button>
                                 </li>*@
-                                @await Component.InvokeAsync("MenuUser")
-                            </ul>
-                        </div>
-                    </div>
-                </nav>
-            </header>
+								@await Component.InvokeAsync("MenuUser")
+							</ul>
+						</div>
+					</div>
+				</nav>
+			</header>
 
 
-            <!-- ====================================
-            ——— CONTENT WRAPPER
-            ===================================== -->
-            <div class="content-wrapper">
-                <div class="content">
-                    @RenderBody()
-                </div> <!-- End Content -->
-            </div> <!-- End Content Wrapper -->
-
-            <!-- Footer -->
-            <footer class="footer mt-auto">
-@*                 <div class="copyright bg-white">
+			<!-- ====================================
+			——— CONTENT WRAPPER
+			===================================== -->
+			<div class="content-wrapper">
+				<div class="content">
+					@RenderBody()
+				</div> <!-- End Content -->
+			</div> <!-- End Content Wrapper -->
+			<!-- Footer -->
+			<footer class="footer mt-auto">
+				@*                 <div class="copyright bg-white">
                     <p>
                         Copyright &copy; <span id="copy-year"></span>.
                     </p>
@@ -117,12 +116,12 @@
                     var year = d.getFullYear();
                     document.getElementById("copy-year").innerHTML = year;
                 </script> *@
-            </footer>
+			</footer>
 
-        </div>
-        <!-- End Page Wrapper -->
-    </div>
-    <!-- End Wrapper -->
+		</div>
+		<!-- End Page Wrapper -->
+	</div>
+	<!-- End Wrapper -->
 
 
 </body>
@@ -131,225 +130,287 @@
 
 <!-- Grid Modal Abrir Turno-->
 <div class="modal fade" id="modalDataAbrirTurno" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Abrir Turno</h5>
-            </div>
-            <div class="modal-body">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Abrir Turno</h5>
+			</div>
+			<div class="modal-body">
 
-                <div class="row">
+				<div class="row">
 
-                    <div class="col-sm-12">
-                        <div class="col-md-12 row">
-                            <div class="form-group col-sm-5">
-                                <label for="txtInicioTurnoAbrir">Fecha</label>
-                                <input type="text" class="form-control form-control-sm" id="txtInicioTurnoAbrir" name="Fecha" disabled>
-                            </div>
+					<div class="col-sm-12">
+						<div class="col-md-12 row">
+							<div class="form-group col-sm-5">
+								<label for="txtInicioTurnoAbrir">Fecha</label>
+								<input type="text" class="form-control form-control-sm" id="txtInicioTurnoAbrir" name="Fecha" disabled>
+							</div>
 
-                            <div class="form-group col-sm-4">
-                                <label for="txtHoraInicioTurnoAbrir">Hora de Inicio</label>
-                                <input type="text" class="form-control form-control-sm" id="txtHoraInicioTurnoAbrir" name="Hora de Inicio" disabled>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label for="txtInicioCajaAbrir">Total Inicio Caja</label>
-                                <div class="input-group input-group-sm">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">$</span>
-                                    </div>
-                                    <input type="number" step="any" class="form-control form-control-sm" min="0" id="txtInicioCajaAbrir" name="Total inicio de caja">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="form-row">
-                                <div class="form-group col-sm-12">
-                                    <label for="txtObservacionesInicioCajaCierre">Observaciones</label>
-                                    <textarea class="form-control" id="txtObservacionesInicioCajaCierre" rows="2" placeholder="..."></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+							<div class="form-group col-sm-4">
+								<label for="txtHoraInicioTurnoAbrir">Hora de Inicio</label>
+								<input type="text" class="form-control form-control-sm" id="txtHoraInicioTurnoAbrir" name="Hora de Inicio" disabled>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label for="txtInicioCajaAbrir">Total Inicio Caja</label>
+								<div class="input-group input-group-sm">
+									<div class="input-group-prepend">
+										<span class="input-group-text">$</span>
+									</div>
+									<input type="number" step="any" class="form-control form-control-sm" min="0" id="txtInicioCajaAbrir" name="Total inicio de caja">
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-12">
+							<div class="form-row">
+								<div class="form-group col-sm-12">
+									<label for="txtObservacionesInicioCajaCierre">Observaciones</label>
+									<textarea class="form-control" id="txtObservacionesInicioCajaCierre" rows="2" placeholder="..."></textarea>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 
 
-            </div>
+			</div>
 
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" id="btnAbrirTurno">Abrir Turno</button>
-            </div>
-        </div>
-    </div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+				<button type="button" class="btn btn-primary" id="btnAbrirTurno">Abrir Turno</button>
+			</div>
+		</div>
+	</div>
 </div>
 
 <input type="hidden" value="0" id="txtIdTurnoLayout">
 
 @{
-    if (ViewBag.ControlCierreCaja)
-    {
-        Html.RenderPartial("CierreTurno/_ControlCierreTurno");
-    }
-    else
-    {
-        Html.RenderPartial("CierreTurno/_SimpleCierreTurno");
-    }
+	if (ViewBag.ControlCierreCaja)
+	{
+		Html.RenderPartial("CierreTurno/_ControlCierreTurno");
+	}
+	else
+	{
+		Html.RenderPartial("CierreTurno/_SimpleCierreTurno");
+	}
 }
 
 <!-- Grid Modal Cambio Tienda-->
 <div class="modal fade" id="modalCambioTienda" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Cambiar Punto de Venta</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="col-sm-12">
-                    <div class="row">
-                        <div class="col-sm-8">
-                            <div class="form-group">
-                                <label for="cboCambiarTiendas">Puntos de venta</label>
-                                <select class="form-control form-control-sm" id="cboCambiarTiendas"></select>
-                            </div>
-                        </div>
-                        <div class="col-sm-4" style="align-content: end;">
-                            <div class="form-group">
-                                <button type="button" class="btn btn-primary" id="btnCambiarTienda">Selecionar</button>
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Cambiar Punto de Venta</h5>
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="col-sm-12">
+					<div class="row">
+						<div class="col-sm-8">
+							<div class="form-group">
+								<label for="cboCambiarTiendas">Puntos de venta</label>
+								<select class="form-control form-control-sm" id="cboCambiarTiendas"></select>
+							</div>
+						</div>
+						<div class="col-sm-4" style="align-content: end;">
+							<div class="form-group">
+								<button type="button" class="btn btn-primary" id="btnCambiarTienda">Selecionar</button>
 
-                            </div>
-                        </div>
-                    </div>
+							</div>
+						</div>
+					</div>
 
-                </div>
-            </div>
+				</div>
+			</div>
 
-        </div>
-    </div>
+		</div>
+	</div>
 </div>
 
 <!-- Grid Modal Movimiento Caja -->
 <div class="modal fade" id="modalMovimientoCaja" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog moda-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalGridTitle">Movimiento de Caja</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
+	<div class="modal-dialog moda-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalGridTitle">Movimiento de Caja</h5>
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
 
-                <input type="hidden" value="0" id="IdMovimientoCaja">
-                <div class="row">
-                    <div class="col-sm-12">
+				<input type="hidden" value="0" id="IdMovimientoCaja">
+				<div class="row">
+					<div class="col-sm-12">
 
-                        <div class="form-row" id="divFechaUsuarioMovimientoCaja">
-                            <div class="form-group col-sm-5">
-                                <label for="txtFechaMovimientoCaja">Fecha</label>
-                                <input type="text" class="form-control form-control-sm" id="txtFechaMovimientoCaja" name="Fecha" disabled>
-                            </div>
-                            <div class="form-group col-sm-4">
-                                <label for="txtUsuarioMovimientoCaja">Usuario</label>
-                                <input type="text" class="form-control form-control-sm" id="txtUsuarioMovimientoCaja" name="Usuario" disabled>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-sm-3">
-                                <label for="cboTipoRazonMovimiento">Tipo</label>
-                                <select class="form-control form-control-sm input-validate-movimientoCaja" id="cboTipoRazonMovimiento">
-                                    <option value="0">Egreso</option>
-                                    <option value="1">Ingreso</option>
-                                </select>
-                            </div>
-                            <div class="form-group col-sm-5">
-                                <label for="cboRazonMovimiento">Razon</label>
-                                <select class="form-control form-control-sm input-validate-movimientoCaja" id="cboRazonMovimiento">
-                                </select>
-                            </div>
-                            <div class="form-group col-sm-4">
-                                <label for="txtImporte">Importe</label>
-                                <div class="input-group input-group-sm">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">$</span>
-                                    </div>
-                                    <input type="number" step="any" class="form-control form-control-sm input-validate-movimientoCaja-movimientoCaja" min="0" id="txtImporteMovimientoCaja" name="Importe">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group col-sm-12">
-                            <label for="txtComentario">Comentario</label>
-                            <textarea class="form-control input-validate" id="txtComentarioMovimientoCaja" rows="4" placeholder="..."></textarea>
-                        </div>
-                    </div>
-                </div>
+						<div class="form-row" id="divFechaUsuarioMovimientoCaja">
+							<div class="form-group col-sm-5">
+								<label for="txtFechaMovimientoCaja">Fecha</label>
+								<input type="text" class="form-control form-control-sm" id="txtFechaMovimientoCaja" name="Fecha" disabled>
+							</div>
+							<div class="form-group col-sm-4">
+								<label for="txtUsuarioMovimientoCaja">Usuario</label>
+								<input type="text" class="form-control form-control-sm" id="txtUsuarioMovimientoCaja" name="Usuario" disabled>
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="form-group col-sm-3">
+								<label for="cboTipoRazonMovimiento">Tipo</label>
+								<select class="form-control form-control-sm input-validate-movimientoCaja" id="cboTipoRazonMovimiento">
+									<option value="0">Egreso</option>
+									<option value="1">Ingreso</option>
+								</select>
+							</div>
+							<div class="form-group col-sm-5">
+								<label for="cboRazonMovimiento">Razon</label>
+								<select class="form-control form-control-sm input-validate-movimientoCaja" id="cboRazonMovimiento">
+								</select>
+							</div>
+							<div class="form-group col-sm-4">
+								<label for="txtImporte">Importe</label>
+								<div class="input-group input-group-sm">
+									<div class="input-group-prepend">
+										<span class="input-group-text">$</span>
+									</div>
+									<input type="number" step="any" class="form-control form-control-sm input-validate-movimientoCaja-movimientoCaja" min="0" id="txtImporteMovimientoCaja" name="Importe">
+								</div>
+							</div>
+						</div>
+						<div class="form-group col-sm-12">
+							<label for="txtComentario">Comentario</label>
+							<textarea class="form-control input-validate" id="txtComentarioMovimientoCaja" rows="4" placeholder="..."></textarea>
+						</div>
+					</div>
+				</div>
 
-            </div>
+			</div>
 
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" id="btnSaveMovimientoCaja">Guardar Cambios</button>
-            </div>
-        </div>
-    </div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+				<button type="button" class="btn btn-primary" id="btnSaveMovimientoCaja">Guardar Cambios</button>
+			</div>
+		</div>
+	</div>
 </div>
 
 <!-- Grid Modal Billetes -->
 <div class="modal fade" id="modalBilletes" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalGridTitle">Contador de Billetes</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalGridTitle">Contador de Billetes</h5>
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
 
-                <div class="row">
-                    <div class="col-sm-6">
+				<div class="row">
+					<div class="col-sm-6">
 
-                        <div id="billetesContainer"></div>
+						<div id="billetesContainer"></div>
 
-                    </div>
-                    <div class="col-sm-6">
-                        <div id="billetesContainer2"></div>
-                    </div>
-                </div>
+					</div>
+					<div class="col-sm-6">
+						<div id="billetesContainer2"></div>
+					</div>
+				</div>
 
-            </div>
+			</div>
 
-            <div class="modal-footer d-flex justify-content-between align-items-center">
-                <!-- Contenedor para centrar el texto TOTAL y el input -->
-                <div class="d-flex mx-auto" style="width: 250px; align-items: center;">
-                    <span class="me-2" style="font-size: 20px;">TOTAL:</span>
-                    <div class="input-group input-group-sm" style="margin-bottom: 0px;">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" style="font-size: 15px;">$</span>
-                        </div>
-                        <input type="text" class="form-control text-end" id="totalSumBilletes" value="0.00" name="Total suma billetes" disabled>
-                    </div>
-                </div>
+			<div class="modal-footer d-flex justify-content-between align-items-center">
+				<!-- Contenedor para centrar el texto TOTAL y el input -->
+				<div class="d-flex mx-auto" style="width: 250px; align-items: center;">
+					<span class="me-2" style="font-size: 20px;">TOTAL:</span>
+					<div class="input-group input-group-sm" style="margin-bottom: 0px;">
+						<div class="input-group-prepend">
+							<span class="input-group-text" style="font-size: 15px;">$</span>
+						</div>
+						<input type="text" class="form-control text-end" id="totalSumBilletes" value="0.00" name="Total suma billetes" disabled>
+					</div>
+				</div>
 
-                <!-- Botones alineados a la derecha -->
-                <div>
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" id="btnGuardarBilletes">Guardar</button>
-                </div>
-            </div>
+				<!-- Botones alineados a la derecha -->
+				<div>
+					<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+					<button type="button" class="btn btn-primary" id="btnGuardarBilletes">Guardar</button>
+				</div>
+			</div>
 
 
-        </div>
-    </div>
+		</div>
+	</div>
 </div>
+
+
+<!-- Grid Modal Notificacion -->
+<div class="modal fade" id="modalNotificacionIndividual" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Notificaciones </h5>
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="col-sm-12 d-flex justify-content-center">
+					<span class="notification-counter">1/1</span>
+				</div>
+				<div class="col-sm-12" style="padding: 0px;">
+					<div class="row" style="
+										border: 1px solid #cccccc6b;
+										margin: 5px 0px 5px 0px;
+										background-color: #e7e9ff6b;
+									">
+						<div class="col-sm-12">
+							<div class="form-row">
+								<div class="form-group col-sm-6">
+									<label for="txtAutor">Autor</label>
+									<input type="text" class="form-control form-control-sm" id="txtAutor" style="border: 1px solid #ccc; " disabled>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-12">
+							<div class="form-row">
+								<div class="form-group col-sm-12">
+									<label for="divNotifIndividual">Notificacion</label>
+									<div id="divNotifIndividual" contenteditable="false"
+										style="
+										padding: 8px;
+										border-radius: 4px;
+										border: 1px solid #ccc; 
+										background-color: #e9ecef;
+										overflow: auto;
+										min-height: 100px;
+										max-height: 300px;
+										font-family: Arial, sans-serif;
+										font-size: 14px; "></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-12 d-flex justify-content-center">
+					<button type="button" class="btn btn-secondary btn-sm me-2" id="btnAnterior">&lt;</button>
+					<button type="button" class="btn btn-secondary btn-sm ms-2" id="btnSiguiente">&gt;</button>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+				<button type="button" class="btn btn-primary" id="btnLeerNotificacion" disabled>Recibido</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 
 <!-- Javascript -->
 <script src="~/plugins/jquery/jquery.min.js"></script>
-<script src="~/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/sleek.js"></script>
 <script src="~/plugins/sweetalert/sweetalert.js"></script>
 
@@ -365,50 +426,50 @@
 
 
 <script>
-    const billetes1 = [
-        { valor: 10, imagen: '@Url.Content("~/images/Billetes/Billete1.png")' },
-        { valor: 20, imagen: '@Url.Content("~/images/Billetes/Billete2.png")' },
-        { valor: 50, imagen: '@Url.Content("~/images/Billetes/Billete3.png")' },
-        { valor: 100, imagen: '@Url.Content("~/images/Billetes/Billete4.png")' },
-        { valor: 200, imagen: '@Url.Content("~/images/Billetes/Billete5.png")' }
-    ];
+	const billetes1 = [
+		{ valor: 10, imagen: '@Url.Content("~/images/Billetes/Billete1.png")' },
+		{ valor: 20, imagen: '@Url.Content("~/images/Billetes/Billete2.png")' },
+		{ valor: 50, imagen: '@Url.Content("~/images/Billetes/Billete3.png")' },
+		{ valor: 100, imagen: '@Url.Content("~/images/Billetes/Billete4.png")' },
+		{ valor: 200, imagen: '@Url.Content("~/images/Billetes/Billete5.png")' }
+	];
 
-    const billetes2 = [
-        { valor: 500, imagen: '@Url.Content("~/images/Billetes/Billete6.png")' },
-        { valor: 1000, imagen: '@Url.Content("~/images/Billetes/Billete7.png")' },
-        { valor: 2000, imagen: '@Url.Content("~/images/Billetes/Billete8.png")' },
-        { valor: 10000, imagen: '@Url.Content("~/images/Billetes/Billete9.png")' },
-        { valor: 20000, imagen: '@Url.Content("~/images/Billetes/Billete10.png")' }
-    ];
+	const billetes2 = [
+		{ valor: 500, imagen: '@Url.Content("~/images/Billetes/Billete6.png")' },
+		{ valor: 1000, imagen: '@Url.Content("~/images/Billetes/Billete7.png")' },
+		{ valor: 2000, imagen: '@Url.Content("~/images/Billetes/Billete8.png")' },
+		{ valor: 10000, imagen: '@Url.Content("~/images/Billetes/Billete9.png")' },
+		{ valor: 20000, imagen: '@Url.Content("~/images/Billetes/Billete10.png")' }
+	];
 
-    $(document).ready(function () {
-        generateBilletesHTML('#billetesContainer', billetes1, 'col1');
-        generateBilletesHTML('#billetesContainer2', billetes2, 'col2');
-    });
+	$(document).ready(function () {
+		generateBilletesHTML('#billetesContainer', billetes1, 'col1');
+		generateBilletesHTML('#billetesContainer2', billetes2, 'col2');
+	});
 
-    function generateBilletesHTML(containerSelector, billetesList, columnPrefix) {
-        const container = $(containerSelector);
-        container.empty();
+	function generateBilletesHTML(containerSelector, billetesList, columnPrefix) {
+		const container = $(containerSelector);
+		container.empty();
 
-        billetesList.forEach((b, index) => {
-            const billeteHTML = `
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-5">
-                                                                        <div class="form-group" style="margin-bottom: 0px;">
-                                                                            <input type="number" style="font-size: 20px;" step="1" min="0" value="0" class="form-control text-center txtCantBillete" data-valor="${b.valor}" id="txtCantBillete_${columnPrefix}_${index}">
-                                                                        </div>
-                                                                        <div class="form-group" style="margin-bottom: 0px;">
-                                                                            <input type="text" class="form-control form-control-sm text-center txtSumaBillete" id="txtSumaBillete_${columnPrefix}_${index}" value="$0" readonly>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-md-7 d-flex align-items-center justify-content-center">
-                                                                                <img style="max-width: 210px;max-height: 88px;" src="${b.imagen}" class="rounded mx-auto d-block" alt="Photo Product">
-                                                                    </div>
-                                                                </div>
-                                                            `;
-            container.append(billeteHTML);
-        });
-    }
+		billetesList.forEach((b, index) => {
+			const billeteHTML = `
+																<div class="row mb-3">
+																	<div class="col-md-5">
+																		<div class="form-group" style="margin-bottom: 0px;">
+																			<input type="number" style="font-size: 20px;" step="1" min="0" value="0" class="form-control text-center txtCantBillete" data-valor="${b.valor}" id="txtCantBillete_${columnPrefix}_${index}">
+																		</div>
+																		<div class="form-group" style="margin-bottom: 0px;">
+																			<input type="text" class="form-control form-control-sm text-center txtSumaBillete" id="txtSumaBillete_${columnPrefix}_${index}" value="$0" readonly>
+																		</div>
+																	</div>
+																	<div class="col-md-7 d-flex align-items-center justify-content-center">
+																				<img style="max-width: 210px;max-height: 88px;" src="${b.imagen}" class="rounded mx-auto d-block" alt="Photo Product">
+																	</div>
+																</div>
+															`;
+			container.append(billeteHTML);
+		});
+	}
 
 </script>
 

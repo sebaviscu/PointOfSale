@@ -17,7 +17,7 @@
 		<button href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
 			<i class="mdi mdi-bell mdi-24px"></i>
 		</button>
-		<ul class="dropdown-menu dropdown-menu-right" style="width: fit-content;border-color: lightgray;">
+		<ul class="dropdown-menu dropdown-menu-right" style="width: fit-content;border-color: lightgray;min-width: 380px;">
 			@foreach (var n in Model)
 			{
 				<li class="dropdown-header" style="padding: 0px;margin: 0;">
@@ -41,48 +41,6 @@
 		</ul>
 	</ul>
 }
-
-
-<!-- Grid Modal Notificacion -->
-<div class="modal fade" id="modalNotificacionIndividual" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">Notificacion</h5>
-				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<div class="col-sm-12">
-					<div class="row">
-						<div class="col-sm-12">
-							<div class="form-row">
-								<div class="form-group col-sm-6">
-									<label for="txtAutor">Autor</label>
-									<input type="text" class="form-control form-control-sm" id="txtAutor"  disabled>
-								</div>
-							</div>
-						</div>
-						<div class="col-sm-12">
-							<div class="form-row">
-								<div class="form-group col-sm-12">
-									<label for="txtNotifIndividual">Notificacion</label>
-									<textarea class="form-control" id="txtNotifIndividual" rows="4" placeholder="..."></textarea>
-								</div>
-							</div>
-						</div>
-					</div>
-
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-				<button type="button" class="btn btn-primary" id="btnLeerNotificacion">Recibido</button>
-			</div>
-		</div>
-	</div>
-</div>
 
 
 @section Scripts {

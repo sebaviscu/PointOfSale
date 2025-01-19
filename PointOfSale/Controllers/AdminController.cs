@@ -667,6 +667,40 @@ namespace PointOfSale.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetUsersByTienda()
+        {
+            var user = ValidarAutorizacion([Roles.Administrador]);
+
+            try
+            {
+                List<VMUser> listUsers = _mapper.Map<List<VMUser>>(await _userService.GetAllUsersByTienda(user.IdTienda));
+                return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error al recuperar los usuarios");
+                return StatusCode(StatusCodes.Status500InternalServerError, new { data = e.Message });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUsersByRolByTienda(int idRol)
+        {
+            var user = ValidarAutorizacion([Roles.Administrador]);
+
+            try
+            {
+                List<VMUser> listUsers = _mapper.Map<List<VMUser>>(await _userService.GetUsersByRolByTienda(idRol, user.IdTienda));
+                return StatusCode(StatusCodes.Status200OK, new { data = listUsers });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error al recuperar los usuarios");
+                return StatusCode(StatusCodes.Status500InternalServerError, new { data = e.Message });
+            }
+        }
+
         /// <summary>
         /// Devuelve los usuarios para un DataTable
         /// </summary>

@@ -29,8 +29,16 @@ namespace PointOfSale.Utilities.ViewComponents
             var notifications = _mapper.Map<List<VMNotifications>>(await _notificationService.GetActive());
 
             var notificationsByRol = notifications
-                .Where(x => x.Rols.Contains(userRol.ToString()))
+                .Where(x => x.Rols!= null && x.Rols.Contains(userRol.ToString()))
                 .ToList();
+
+            var idUser = Convert.ToInt32(claimuser.Claims
+                .Where(c => c.Type == ClaimTypes.NameIdentifier)
+                .Select(c => c.Value).SingleOrDefault());
+
+            var notificationsUser = _mapper.Map<List<VMNotifications>>(await _notificationService.GetByUserByActive(idUser));
+
+            notificationsByRol.AddRange(notificationsUser);
 
             ViewData["userRol"] = userRol;
 

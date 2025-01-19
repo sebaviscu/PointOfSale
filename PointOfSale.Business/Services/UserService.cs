@@ -30,6 +30,18 @@ namespace PointOfSale.Business.Services
                 .ToListAsync();
         }
 
+        public async Task<List<User>> GetUsersByRolByTienda(int idRol, int idTienda)
+        {
+            IQueryable<User> query = await _repository.Query(_ => !_.IsSuperAdmin && _.IdRol == idRol);
+
+            if (idRol != 1)
+            {
+                query = query.Where(_ => _.IdTienda == idTienda || _.IdTienda == null);
+            }
+
+            return await query.OrderBy(_ => _.Name).ToListAsync();
+        }
+
         public async Task<User> Add(User entity)
         {
             User user_exists = await _repository.Get(u => u.Email == entity.Email);
@@ -209,7 +221,7 @@ namespace PointOfSale.Business.Services
 
             if (user_found != null && user_found.Email == "admin" && user_found.Name == "admin" && (string.IsNullOrEmpty(password) || password == "admin"))
             {
-                var cantUsers = await _repository.Query(_=>!_.IsSuperAdmin);
+                var cantUsers = await _repository.Query(_ => !_.IsSuperAdmin);
 
                 if (cantUsers.ToList().Count == 1)
                     return true;
@@ -237,6 +249,24 @@ namespace PointOfSale.Business.Services
             return query.OrderBy(_ => _.Name).ToList();
         }
 
+        public async Task<List<User>> GetAllUsersByTienda(int idTienda)
+        {
+            IQueryable<User> query = await _repository.Query(u => u.IsActive.Value && !u.IsSuperAdmin && (u.IdTienda == idTienda || u.IdTienda == null));
+            return query.OrderBy(_ => _.Name).ToList();
+        }
+
+
+        public async Task<List<User>> GetUsersByRolByTiendaForNotifications(int idRol, int idTienda)
+        {
+            IQueryable<User> query = await _repository.Query(_ => !_.IsSuperAdmin && _.IdRol == idRol);
+
+
+            query = query.Where(_ => _.IdTienda == idTienda || _.IdTienda == null);
+
+
+            return await query.OrderBy(_ => _.Name).ToListAsync();
+
+        }
         public async Task<bool> CheckSuperUser(int idUser)
         {
             var superUser = await _repository.First(u => u.IsSuperAdmin);
@@ -245,7 +275,7 @@ namespace PointOfSale.Business.Services
 
         public async Task SaveHistorialLogin(HistorialLogin historialLogin)
         {
-            _ = await  _repositoryHistorialLogin.Add(historialLogin);
+            _ = await _repositoryHistorialLogin.Add(historialLogin);
         }
     }
 }

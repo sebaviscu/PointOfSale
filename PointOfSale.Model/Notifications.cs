@@ -1,4 +1,5 @@
-﻿using PointOfSale.Business.Utilities;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using PointOfSale.Business.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -84,13 +85,27 @@ namespace PointOfSale.Model
             Rols = $"{(int)Roles.Administrador},{(int)Roles.Encargado},{(int)Roles.Empleado}";
         }
 
+        public Notifications(string registrationUser, int idUser, string nombreUsuario, string mensaje)
+        {
+            Descripcion = $"<strong>{nombreUsuario.ToUpper()}: </strong>{mensaje}.";
+            IsActive = true;
+            RegistrationDate = TimeHelper.GetArgentinaTime();
+            RegistrationUser = registrationUser;
+            Accion = "";
+            Rols = null;
+            IdUser = idUser;
+            registrationUser = registrationUser.ToUpper();
+        }
+
         public int IdNotifications { get; set; }
         public string? Descripcion { get; set; }
         public bool IsActive { get; set; }
+        public string? RegistrationUser { get; set; }
         public DateTime RegistrationDate { get; set; }
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }
         public string? Accion { get; set; }
-        public string Rols { get; set; }
+        public string? Rols { get; set; }
+        public int? IdUser { get; set; }
     }
 }

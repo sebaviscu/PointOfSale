@@ -12,7 +12,17 @@ namespace PointOfSale.Business.Contracts
         Task<List<Notifications>> List();
         Task<List<Notifications>> GetActive();
         Task<Notifications> Save(Notifications notifications);
-        Task<Notifications> Edit(int idNotificacion, string modificationUser);
+        Task<Notifications> RecibirNotificacion(int idNotificacion, string modificationUser);
         Task<bool> LimpiarTodo(string modificationUser);
+
+        Task<List<Notifications>> GetByUserByActive(int idUser);
+
+        Task<bool> LimpiarIndividuales(string modificationUser, int idUser);
+
+        Task<Notifications> Edit(Notifications model);
+
+        Task<bool> Delete(int idNotificacion);
+
+        Task<List<Notifications>> SaveRange(List<Notifications> notificationsList);
     }
 }

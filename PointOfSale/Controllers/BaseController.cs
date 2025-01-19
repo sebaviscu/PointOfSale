@@ -22,7 +22,6 @@ namespace PointOfSale.Controllers
                 ValidarHorario();
 
                 ViewBag.ControlCierreCaja = user.ControlCierreCaja;
-                //ViewBag.ControlCierreCaja = false;
 
                 if (model == null)
                     return View();
