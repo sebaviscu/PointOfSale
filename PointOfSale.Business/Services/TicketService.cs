@@ -97,12 +97,14 @@ namespace PointOfSale.Business.Services
 
             if (descuentoRecargo != null && descuentoRecargo != 0)
             {
+                Ticket.LineasGuion();
+
                 string label = descuentoRecargo > 0 ? "Recargo" : "Descuento";
                 decimal amount = Math.Abs(descuentoRecargo.Value);
-
-                Ticket.TextoIzquierda($" {label}: ${amount}");
+                Ticket.TextoBetween(label, amount.ToString());
                 Ticket.TextoIzquierda(" ");
             }
+
             Ticket.LineasTotal();
             Ticket.AgregaTotales("Total", double.Parse(total.ToString()));
             Ticket.LineasTotal();

@@ -94,7 +94,6 @@ namespace PointOfSale.Model
             Accion = "";
             Rols = null;
             IdUser = idUser;
-            registrationUser = registrationUser.ToUpper();
         }
 
         public int IdNotifications { get; set; }

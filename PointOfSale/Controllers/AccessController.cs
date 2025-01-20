@@ -9,6 +9,7 @@ using PointOfSale.Utilities.Response;
 using System.Security.Claims;
 using static PointOfSale.Model.Enum;
 using UAParser;
+using NuGet.Protocol;
 
 namespace PointOfSale.Controllers
 {
@@ -174,7 +175,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al ingresar al login");
+                _logger.LogError(ex, $"Error al ingresar al login: {model.ToJson()}");
                 ViewData["Message"] = $"Error: {ex.Message}";
                 return View(new VMUserLogin());
             }

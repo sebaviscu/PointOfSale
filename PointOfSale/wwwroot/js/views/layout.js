@@ -57,7 +57,7 @@ $(document).ready(function () {
 
 
     $(".notificacion").on("click", function () {
-        if ($(this).attr('accion') != '') {
+        //if ($(this).attr('accion') != '') {
 
             fetch(`/Notification/UpdateNotificacion?idNotificacion=${$(this)[0].id}`, {
                 method: "PUT",
@@ -67,7 +67,7 @@ $(document).ready(function () {
                     return response.json();
                 }).then(responseJson => {
                     if (responseJson.state) {
-                        window.location.href = responseJson.object.accion;
+                        $(this).remove();
 
                     } else {
                         swal("Lo sentimos", responseJson.message, "error");
@@ -75,7 +75,7 @@ $(document).ready(function () {
 
                 }).catch((error) => {
                 })
-        }
+        //}
     })
 
     $("#btnChangePV").on("click", function () {

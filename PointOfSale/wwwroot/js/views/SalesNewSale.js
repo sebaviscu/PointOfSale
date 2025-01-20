@@ -164,8 +164,8 @@ function changeCboTypeDocumentSaleParcial(idLineaFormaPago, idFormaDePago) {
 
     let formaPagoWithDisc = formaDePago != null && formaDePago.descuentoRecargo != null && formaDePago.descuentoRecargo != 0 && idLineaFormaPago == '';
     if (formaPagoWithDisc) {
-
-        toastr.success(formaDePago.descuentoRecargo + " %", "Forma de pago con Descuento");
+        let descripcionDescRec = formaDePago.descuentoRecargo < 0 ? 'Descuento' : 'Recargo';
+        toastr.success(formaDePago.descuentoRecargo + " %", "Forma de pago con " + descripcionDescRec);
 
         let currentTabid = getTabActiveId();
         let total = $("#txtTotal" + currentTabid).attr("totalReal");
