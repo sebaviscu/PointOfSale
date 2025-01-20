@@ -10,6 +10,7 @@ using System.Security.Claims;
 using static PointOfSale.Model.Enum;
 using UAParser;
 using NuGet.Protocol;
+using PointOfSale.Business.Services;
 
 namespace PointOfSale.Controllers
 {
@@ -22,8 +23,9 @@ namespace PointOfSale.Controllers
         private readonly IProductService _productService;
         private readonly ILogger<AccessController> _logger;
         private readonly IAfipService _afipService;
+        private readonly IAjusteService _ajusteService;
 
-        public AccessController(IUserService userService, ITurnoService turnoService, ITiendaService tiendaService, ISaleService saleService, IProductService productService, ILogger<AccessController> logger, IAfipService afipService)
+        public AccessController(IUserService userService, ITurnoService turnoService, ITiendaService tiendaService, ISaleService saleService, IProductService productService, ILogger<AccessController> logger, IAfipService afipService, IAjusteService ajusteService)
         {
             _userService = userService;
             _turnoService = turnoService;
@@ -32,6 +34,7 @@ namespace PointOfSale.Controllers
             _productService = productService;
             _logger = logger;
             _afipService = afipService;
+            _ajusteService = ajusteService;
         }
 
         public IActionResult Login()
@@ -117,6 +120,8 @@ namespace PointOfSale.Controllers
 
                 await _afipService.CheckVencimientoCertificado(idTienda);
 
+                var ajustes = await _ajusteService.GetAjustes(idTienda);
+
                 List<Claim> claims = new List<Claim>()
                 {
                     new Claim(ClaimTypes.Name, user_found.Name),
@@ -125,7 +130,7 @@ namespace PointOfSale.Controllers
                     new Claim("Email",user_found.Email),
                     new Claim("Tienda",idTienda.ToString()),
                     new Claim("ListaPrecios", listaPrecio.ToString()),
-                    new Claim("ControlCierreCaja", "true")
+                    new Claim("ControlCierreCaja", ajustes.ControlTotalesCierreTurno.HasValue ? ajustes.ControlTotalesCierreTurno.Value.ToString() : "false")
                 };
 
                 if (turnoActual != null)

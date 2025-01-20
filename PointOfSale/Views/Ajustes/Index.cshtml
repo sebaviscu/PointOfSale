@@ -1,744 +1,778 @@
 ﻿@{
-    ViewData["Title"] = "Ajuste";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewData["Title"] = "Ajuste";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 
 @section StylesPOS {
 
-    <link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
-    <link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
-    <link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
-    <link href="~/plugins/jquery-ui/jquery-ui.css" rel="stylesheet">
+	<link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
+	<link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
+	<link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
+	<link href="~/plugins/jquery-ui/jquery-ui.css" rel="stylesheet">
 
 
 }
 <style>
-    .small-row {
-        font-size: 12px;
-        height: 30px;
-    }
+	.small-row {
+		font-size: 12px;
+		height: 30px;
+	}
 
-    .small-cell {
-        padding: 5px;
-    }
+	.small-cell {
+		padding: 5px;
+	}
 
-    .fixed-width {
-        width: 50px;
-        text-align: center;
-    }
+	.fixed-width {
+		width: 50px;
+		text-align: center;
+	}
 
-        .fixed-width button {
-            width: 100%;
-            padding: 2px;
-        }
+		.fixed-width button {
+			width: 100%;
+			padding: 2px;
+		}
 
-    .input-validate-facturacion {
-        background-color: beige;
-    }
+	.input-validate-facturacion {
+		background-color: beige;
+	}
 
-    .password-wrapper {
-        position: relative;
-    }
+	.password-wrapper {
+		position: relative;
+	}
 
-        .password-wrapper input[type="password"],
-        .password-wrapper input[type="text"] {
-            width: 100%;
-            padding-right: 30px;
-        }
+		.password-wrapper input[type="password"],
+		.password-wrapper input[type="text"] {
+			width: 100%;
+			padding-right: 30px;
+		}
 
-        .password-wrapper button {
-            position: absolute;
-            right: 5px;
-            top: 50%;
-            transform: translateY(-50%);
-            border: none;
-            background: none;
-            cursor: pointer;
-        }
+		.password-wrapper button {
+			position: absolute;
+			right: 5px;
+			top: 50%;
+			transform: translateY(-50%);
+			border: none;
+			background: none;
+			cursor: pointer;
+		}
 </style>
 
 <div class="row">
-    <div class="col-sm-12">
+	<div class="col-sm-12">
 
-        <div class="card card-default">
-            <div class="card-header card-header-border-bottom d-flex align-items-center">
-                <h4>Ajustes</h4>
-                <span class="offset-md-2 text-danger" id="lblErrorPrintService" style="display: none;"><i class="mdi mdi-alert mdi-24px"></i>&nbsp; El servicio de impresión no se encuentra conectado</span>
-            </div>
+		<div class="card card-default">
+			<div class="card-header card-header-border-bottom d-flex align-items-center">
+				<h4>Ajustes</h4>
+				<span class="offset-md-2 text-danger" id="lblErrorPrintService" style="display: none;"><i class="mdi mdi-alert mdi-24px"></i>&nbsp; El servicio de impresión no se encuentra conectado</span>
+			</div>
 
-            <input type="hidden" value="0" id="txtId">
+			<input type="hidden" value="0" id="txtId">
 
-            <div class="card-body" style="padding-top: 20px;">
+			<div class="card-body" style="padding-top: 20px;">
 
-                <ul class="nav nav-tabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link active" id="simple-tab-0" data-bs-toggle="tab" href="#simple-tabpanel-0" role="tab" aria-controls="simple-tabpanel-0" aria-selected="true">General</a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="simple-tab-1" data-bs-toggle="tab" href="#simple-tabpanel-1" role="tab" aria-controls="simple-tabpanel-1" aria-selected="false">Web</a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="simple-tab-1" data-bs-toggle="tab" href="#simple-tabpanel-2" role="tab" aria-controls="simple-tabpanel-2" aria-selected="false">Facturacion</a>
-                    </li>
-                </ul>
-                <div class="tab-content pt-5" id="tab-content">
-                    @* General *@
-                    <div class="tab-pane active" id="simple-tabpanel-0" role="tabpanel" aria-labelledby="simple-tab-0">
+				<ul class="nav nav-tabs" role="tablist">
+					<li class="nav-item" role="presentation">
+						<a class="nav-link active" id="simple-tab-0" data-bs-toggle="tab" href="#simple-tabpanel-0" role="tab" aria-controls="simple-tabpanel-0" aria-selected="true">General</a>
+					</li>
+					<li class="nav-item" role="presentation">
+						<a class="nav-link" id="simple-tab-1" data-bs-toggle="tab" href="#simple-tabpanel-1" role="tab" aria-controls="simple-tabpanel-1" aria-selected="false">Web</a>
+					</li>
+					<li class="nav-item" role="presentation">
+						<a class="nav-link" id="simple-tab-1" data-bs-toggle="tab" href="#simple-tabpanel-2" role="tab" aria-controls="simple-tabpanel-2" aria-selected="false">Facturacion</a>
+					</li>
+				</ul>
+				<div class="tab-content pt-5" id="tab-content">
+					@* General *@
+					<div class="tab-pane active" id="simple-tabpanel-0" role="tabpanel" aria-labelledby="simple-tab-0">
 
-                        <div class="row">
-                            <div class="col-sm-4">
-                                <div class="card shadow">
-                                    <div class="card-header py-3" style="background-color: #ebe6e6;">
-                                        <h4>Ventas</h4>
-                                    </div>
-                                    <div class="card-body row" style="padding: 20px">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label for="txtCodigoSeguridad">Codigo de Seguridad</label>
-                                                <div class="password-wrapper">
-                                                    <input type="password" class="form-control form-control-sm" id="txtCodigoSeguridad" name="Codigo de Seguridad">
-                                                    <button id="togglePassword">
-                                                        <span class="mdi mdi-eye mdi-24px" id="eyeIcon" style="width: 20px; height: 20px;"></span>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="form-check form-switch">
-                                                    <input class="form-check-input" type="checkbox" role="switch" id="switchControlEmpleado">
-                                                    <label class="form-check-label" for="switchControlEmpleado">Control Empleados</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Habilita / Deshabilita solicitar codigo de seguridad a los empleados"></span>
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="form-check form-switch">
-                                                    <input class="form-check-input" type="checkbox" role="switch" id="switchControlStock">
-                                                    <label class="form-check-label" for="switchControlStock">Control Stock</label>
-                                                </div>
-                                            </div>
-
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-sm-4">
-                                <div class="card shadow">
-                                    <div class="card-header py-3" style="background-color: #ebe6e6;">
-                                        <h4>Cierre Turno</h4>
-                                    </div>
-                                    <div class="card-body row" style="padding: 20px">
-                                        <div class="col-md-12">
-
-                                            <div class="form-group">
-                                                <div class="form-check form-switch">
-                                                    <input class="form-check-input" type="checkbox" role="switch" id="switchCierreTurno">
-                                                    <label class="form-check-label" for="switchCierreTurno">Notificar cierre de turno</label>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <div class="form-group">
-                                                    <div class="input-group input-group-sm">
-                                                        <input type="email" class="form-control form-control-sm" id="txtEmailReceptor" name="Emails receptores">
-                                                        <div class="input-group-prepend">
-                                                            <button class="btn btn-success" id="txtAddEmailsReceptores">+</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <table id="tbEmailsReceptores" class="table table-sm table-striped">
-                                                <tbody>
-                                                </tbody>
-                                            </table>
-
-                                            <div class="accordion-item">
-                                                <div class="py-1">
-                                                    <!-- Cabecera -->
-                                                    <div class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                                        <h6>Email Emisor &nbsp; <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="También se utilizará este emisor para enviar el ticket por email"></span> <span class="mdi mdi-chevron-down"></span></h6>
-                                                    </div>
-
-                                                </div>
-                                                <div class="card-body" style="padding: 0px;">
-                                                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="padding:10px">
-                                                        <div class="accordion-body">
-
-                                                            <!-- Cuerpo -->
-
-                                                            <div class="row g-3 align-items-center">
-                                                                <div class="col-md-4">
-                                                                    <label for="txtEmailCierreTurno" class="col-form-label">Email</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Solo correo de Gmail"></span>
-                                                                </div>
-                                                                <div class="col-md-8">
-                                                                    <input type="text" class="form-control form-control-sm" id="txtEmailCierreTurno" name="email">
-                                                                </div>
-                                                            </div>
-                                                            <div class="row g-3 align-items-center">
-                                                                <div class="col-md-4">
-                                                                    <label for="txtEmailPassword" class="col-form-label">Contraseña de Aplicacion</label>
-                                                                </div>
-                                                                <div class="col-md-8">
-                                                                    <div class="password-wrapper">
-                                                                        <input type="password" class="form-control form-control-sm" id="txtEmailPassword" name="Contraseña de Aplicacion">
-                                                                        <button id="toggleEmailPassword">
-                                                                            <span class="mdi mdi-eye mdi-24px" id="eyeIcon" style="width: 20px; height: 20px;"></span>
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-12 text-center">
-                                                                    <a href="https://myaccount.google.com/apppasswords" target="_blank">Generar 'Contraseña de Aplicacion'</a>
-                                                                </div>
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
+						<div class="row">
+							<div class="col-sm-4">
+								<div class="card shadow">
+									<div class="card-header py-3" style="background-color: #ebe6e6;">
+										<h4>Ventas</h4>
+									</div>
+									<div class="card-body row" style="padding: 20px">
+										<div class="col-md-12">
+											<div class="form-group">
+												<label for="txtCodigoSeguridad">Codigo de Seguridad</label>
+												<div class="password-wrapper">
+													<input type="password" class="form-control form-control-sm" id="txtCodigoSeguridad" name="Codigo de Seguridad">
+													<button id="togglePassword">
+														<span class="mdi mdi-eye mdi-24px" id="eyeIcon" style="width: 20px; height: 20px;"></span>
+													</button>
+												</div>
+											</div>
+											<div class="form-group">
+												<div class="form-check form-switch">
+													<input class="form-check-input" type="checkbox" role="switch" id="switchControlEmpleado">
+													<label class="form-check-label" for="switchControlEmpleado">Control Empleados</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Habilita / Deshabilita solicitar codigo de seguridad a los empleados"></span>
+												</div>
+											</div>
+											<div class="form-group">
+												<div class="form-check form-switch">
+													<input class="form-check-input" type="checkbox" role="switch" id="switchControlStock">
+													<label class="form-check-label" for="switchControlStock">Control Stock</label>
+												</div>
+											</div>
 
 
-                            </div>
+										</div>
+									</div>
+								</div>
+							</div>
 
-                            <div class="col-sm-4">
-                                <div class="card shadow">
-                                    <div class="card-header py-3" style="background-color: #ebe6e6;">
-                                        <h4>Impresion Tickets</h4>
-                                    </div>
-                                    <div class="card-body row" style="padding: 20px">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <div class="form-check form-switch">
-                                                    <input class="form-check-input" type="checkbox" role="switch" id="switchImprimirDefault">
-                                                    <label class="form-check-label" for="switchImprimirDefault">Imprimir por defecto</label>
-                                                </div>
-                                            </div>
-                                            <div class="">
-                                                <div class="form-group">
-                                                    <label for="txtImpresora">Nombre Impresora</label>
-                                                    <select class="form-control form-control-sm" id="cboNombreImpresora" name="Impresora Ticket"></select>
-                                                </div>
-                                            </div>
+							<div class="col-sm-4">
+								<div class="card shadow">
+									<div class="card-header py-3" style="background-color: #ebe6e6;">
+										<h4>Cierre Turno</h4>
+									</div>
+									<div class="card-body row" style="padding: 20px">
+										<div class="col-md-12">
+											<div class="form-group">
+												<div class="form-check form-switch">
+													<input class="form-check-input" type="checkbox" role="switch" id="switchConmtrolTotalesCierreTurno">
+													<label class="form-check-label" for="switchConmtrolTotalesCierreTurno">Control de totales</label>
+												</div>
+											</div>
 
-                                            <div class="py-1">
-                                                <!-- Cabecera -->
-                                                <div class="d-flex justify-content-between">
-                                                    <div class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTicket" aria-expanded="true" aria-controls="collapseTicket">
-                                                        <h6>Formato del Ticket &nbsp; <span class="mdi mdi-chevron-down"></span></h6>
-                                                    </div>
-                                                    <button class="btn btn-sm btn-secondary" id="btnPruebaTicket">Imprimir Test</button>
-                                                </div>
+											<div class="form-group">
+												<div class="form-check form-switch">
+													<input class="form-check-input" type="checkbox" role="switch" id="switchCierreTurno">
+													<label class="form-check-label" for="switchCierreTurno">Notificar por email</label>
+												</div>
+											</div>
 
-                                            </div>
-                                            <div class="card-body" style="padding: 0px;">
-                                                <div id="collapseTicket" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="padding:10px">
-                                                    <div class="accordion-body">
-                                                        <!-- Cuerpo -->
-                                                        <div class="">
-                                                            <div class="form-group">
-                                                                <label for="txtEncabezado1">Encabezado 1</label><span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="El tamaño de la fuente de este encabezado, es mayor a los demas"></span>
-                                                                <div>
-                                                                    <input type="text" class="form-control form-control-sm" id="txtEncabezado1" name="Encabezado 1" maxlength="22">
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="txtEncabezado2">Encabezado 2</label>
-                                                                <div>
-                                                                    <input type="text" class="form-control form-control-sm" id="txtEncabezado2" name="Encabezado 2" maxlength="27">
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="txtEncabezado3">Encabezado 3</label>
-                                                                <div>
-                                                                    <input type="text" class="form-control form-control-sm" id="txtEncabezado3" name="Encabezado 3" maxlength="27">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="">
-                                                            <div class="form-group">
-                                                                <label for="txtPie1">Pie 1</label>
-                                                                <div>
-                                                                    <input type="text" class="form-control form-control-sm" id="txtPie1" name="Pie 1" maxlength="30">
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="txtPie2">Pie 2</label>
-                                                                <div>
-                                                                    <input type="text" class="form-control form-control-sm" id="txtPie2" name="Pie 2" maxlength="30">
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="txtPie3">Pie 3</label>
-                                                                <div>
-                                                                    <input type="text" class="form-control form-control-sm" id="txtPie3" name="Pie 3" maxlength="30">
-                                                                </div>
-                                                            </div>
-                                                        </div>
+											<div class="form-group">
+												<div class="form-group">
+													<div class="input-group input-group-sm">
+														<input type="email" class="form-control form-control-sm" id="txtEmailReceptor" name="Emails receptores">
+														<div class="input-group-prepend">
+															<button class="btn btn-success" id="txtAddEmailsReceptores">+</button>
+														</div>
+													</div>
+												</div>
+											</div>
 
-                                                    </div>
-                                                </div>
-                                            </div>
+											<table id="tbEmailsReceptores" class="table table-sm table-striped">
+												<tbody>
+												</tbody>
+											</table>
 
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+											<div class="accordion-item">
+												<div class="py-1">
+													<!-- Cabecera -->
+													<div class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+														<h6>Email Emisor &nbsp; <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="También se utilizará este emisor para enviar el ticket por email"></span> <span class="mdi mdi-chevron-down"></span></h6>
+													</div>
 
-                    </div>
+												</div>
+												<div class="card-body" style="padding: 0px;">
+													<div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="padding:10px">
+														<div class="accordion-body">
 
-                    @* Web *@
-                    <div class="tab-pane" id="simple-tabpanel-1" role="tabpanel" aria-labelledby="simple-tab-1">
+															<!-- Cuerpo -->
 
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="row">
-                                    <div class="col-sm-2 text-left" style="align-content: end;">
-                                        <div class="form-group">
-                                            <div class="form-check form-switch text-center">
-                                                <input class="form-check-input" type="checkbox" role="switch" id="switchHabilitarWeb">
-                                                <label class="form-check-label" for="switchHabilitarWeb" style="font-size: large;">Habilitar Web</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label for="txtNombreTienda">Nombre Tienda</label>
-                                            <input type="text" class="form-control form-control-sm" id="txtNombreTienda" name="Nombre Tienda">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-5">
-                                        <div class="form-group">
-                                            <label for="txtDireccion">Direccion</label>
-                                            <input type="text" class="form-control form-control-sm" id="txtDireccion" name="Direccion">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <div class="form-group">
-                                            <label for="txtWhatsApp">WhatsApp</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Numero de WhatsApp donde llegaran los pedidos web"></span>
-                                            <input type="tel" class="form-control form-control-sm" id="txtWhatsApp" name="WhatsApp">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-12" hidden>
+															<div class="row g-3 align-items-center">
+																<div class="col-md-4">
+																	<label for="txtEmailCierreTurno" class="col-form-label">Email</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Solo correo de Gmail"></span>
+																</div>
+																<div class="col-md-8">
+																	<input type="text" class="form-control form-control-sm" id="txtEmailCierreTurno" name="email">
+																</div>
+															</div>
+															<div class="row g-3 align-items-center">
+																<div class="col-md-4">
+																	<label for="txtEmailPassword" class="col-form-label">Contraseña de Aplicacion</label>
+																</div>
+																<div class="col-md-8">
+																	<div class="password-wrapper">
+																		<input type="password" class="form-control form-control-sm" id="txtEmailPassword" name="Contraseña de Aplicacion">
+																		<button id="toggleEmailPassword">
+																			<span class="mdi mdi-eye mdi-24px" id="eyeIcon" style="width: 20px; height: 20px;"></span>
+																		</button>
+																	</div>
+																</div>
+																<div class="col-md-12 text-center">
+																	<a href="https://myaccount.google.com/apppasswords" target="_blank">Generar 'Contraseña de Aplicacion'</a>
+																</div>
+															</div>
 
-                                <div class="row">
-@*                                     <div class="col-sm-2">
-                                        <div class="form-group">
-                                            <label for="txtAumento">Aumento</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Porcentaje que se le aplicará al precio de los productos para mostrar en la web"></span>
-                                            <div class="input-group input-group-sm">
-                                                <input type="number" min="0" class="form-control form-control-sm" id="txtAumento" name="Aumento">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text">%</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div> *@
+														</div>
+													</div>
+												</div>
+											</div>
 
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <div class="d-flex justify-content-start">
-                                                <label for="txtComodin1">Nombre Comodin 1</label>
-                                                <div class="form-group ms-5" style="margin: 0;">
-                                                    <div class="form-check form-switch text-center">
-                                                        <input class="form-check-input" type="checkbox" role="switch" id="switchHabilitarComodin1">
-                                                        <label class="form-check-label" for="switchHabilitarComodin1" style="font-size: large;">Habilitar</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <input type="text" class="form-control form-control-sm" id="txtComodin1" name="comodin 1">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <div class="d-flex justify-content-start">
-                                                <label for="txtComodin2">Nombre Comodin 2</label>
-                                                <div class="form-group ms-5" style="margin: 0;">
-                                                    <div class="form-check form-switch text-center">
-                                                        <input class="form-check-input" type="checkbox" role="switch" id="switchHabilitarComodin2">
-                                                        <label class="form-check-label" for="switchHabilitarComodin2" style="font-size: large;">Habilitar</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <input type="text" class="form-control form-control-sm" id="txtComodin2" name="comodin 2">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <div class="d-flex justify-content-start">
-                                                <label for="txtComodin3">Nombre Comodin 3</label>
-                                                <div class="form-group ms-5" style="margin: 0;">
-                                                    <div class="form-check form-switch text-center">
-                                                        <input class="form-check-input" type="checkbox" role="switch" id="switchHabilitarComodin3">
-                                                        <label class="form-check-label" for="switchHabilitarComodin3" style="font-size: large;">Habilitar</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <input type="text" class="form-control form-control-sm" id="txtComodin3" name="comodin 3">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <div class="form-group" style="margin-bottom:0px;">
-                                    <label>Horario</label>
-                                </div>
-                                <div class="row g-3 align-items-center">
-                                    <div class="col-md-3">
-                                        <label for="txtLunes" class="col-form-label">Lunes</label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <input type="text" class="form-control form-control-sm" id="txtLunes" name="Lunes">
-                                    </div>
-                                </div>
-                                <div class="row g-3 align-items-center">
-                                    <div class="col-md-3">
-                                        <label for="txtMartes" class="col-form-label">Martes</label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <input type="text" class="form-control form-control-sm" id="txtMartes" name="Martes">
-                                    </div>
-                                </div>
-                                <div class="row g-3 align-items-center">
-                                    <div class="col-md-3">
-                                        <label for="txtMiercoles" class="col-form-label">Miercoles</label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <input type="text" class="form-control form-control-sm" id="txtMiercoles" name="Miercoles">
-                                    </div>
-                                </div>
-                                <div class="row g-3 align-items-center">
-                                    <div class="col-md-3">
-                                        <label for="txtJueves" class="col-form-label">Jueves</label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <input type="text" class="form-control form-control-sm" id="txtJueves" name="Jueves">
-                                    </div>
-                                </div>
-                                <div class="row g-3 align-items-center">
-                                    <div class="col-md-3">
-                                        <label for="txtViernes" class="col-form-label">Viernes</label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <input type="text" class="form-control form-control-sm" id="txtViernes" name="Viernes">
-                                    </div>
-                                </div>
-                                <div class="row g-3 align-items-center">
-                                    <div class="col-md-3">
-                                        <label for="txtSabado" class="col-form-label">Sabado</label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <input type="text" class="form-control form-control-sm" id="txtSabado" name="Sabado">
-                                    </div>
-                                </div>
-                                <div class="row g-3 align-items-center">
-                                    <div class="col-md-3">
-                                        <label for="txtDomingo" class="col-form-label">Domingo</label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <input type="text" class="form-control form-control-sm" id="txtDomingo" name="Domingo">
-                                    </div>
-                                </div>
-                                <div class="row g-3 align-items-center">
-                                    <div class="col-md-3">
-                                        <label for="txtFeriados" class="col-form-label">Feriados</label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <input type="text" class="form-control form-control-sm" id="txtFeriados" name="Feriados">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-3">
-                                <div class="form-group" style="margin-bottom:0px">
-                                    <label>Redes Sociales</label>
-                                </div>
-                                <div class="row g-3 align-items-center">
-                                    <div class="col-md-3">
-                                        <label for="txtFacebook" class="col-form-label">Facebook</label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <input type="text" class="form-control form-control-sm" id="txtFacebook" name="Facebook">
-                                    </div>
-                                </div>
-                                <div class="row g-3 align-items-center">
-                                    <div class="col-md-3">
-                                        <label for="txtInstagram" class="col-form-label">Instagram</label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <input type="text" class="form-control form-control-sm" id="txtInstagram" name="Instagram">
-                                    </div>
-                                </div>
-                                <div class="row g-3 align-items-center">
-                                    <div class="col-md-3">
-                                        <label for="txtTikTok" class="col-form-label">TikTok</label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <input type="text" class="form-control form-control-sm" id="txtTikTok" name="Tik Tok">
-                                    </div>
-                                </div>
-                                <div class="row g-3 align-items-center">
-                                    <div class="col-md-3">
-                                        <label for="txtTwitter" class="col-form-label">Twitter</label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <input type="text" class="form-control form-control-sm" id="txtTwitter" name="Twitter">
-                                    </div>
-                                </div>
-                                <div class="row g-3 align-items-center">
-                                    <div class="col-md-3">
-                                        <label for="txtYouTube" class="col-form-label">YouTube</label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <input type="text" class="form-control form-control-sm" id="txtYouTube" name="YouTube">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="col-md-12">
-                                    <div class="row">
-
-                                        <div class="col-sm-4">
-                                            <div class="form-group">
-                                                <label for="txtCostoEnvio">Costo Envio</label>
-                                                <div class="input-group input-group-sm">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">$</span>
-                                                    </div>
-                                                    <input type="number" min="0" class="form-control form-control-sm" id="txtCostoEnvio" name="costo envio">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <div class="form-group">
-                                                <label for="txtEnvioGratis">Min. envio gratis</label>
-                                                <div class="input-group input-group-sm">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">$</span>
-                                                    </div>
-                                                    <input type="number" min="0" class="form-control form-control-sm" id="txtEnvioGratis" name="EnvioGratis">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <div class="form-group">
-                                                <label for="txtCompraMinima">Compra Minima</label>
-                                                <div class="input-group input-group-sm">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">$</span>
-                                                    </div>
-                                                    <input type="number" min="0" class="form-control form-control-sm" id="txtCompraMinima" name="compra minima">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <div class="form-group">
-                                                <div class="d-flex justify-content-start">
-                                                    <label for="txtTakeAway">Retiro en el local</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Porcentaje de descuento al retirar en el local"></span>
-                                                    <div class="form-group ms-5" style="margin: 0;">
-                                                        <div class="form-check form-switch text-center">
-                                                            <input class="form-check-input" type="checkbox" role="switch" id="switchTakeAway">
-                                                            @* <label class="form-check-label" for="switchTakeAway" style="font-size: large;">Habilitar</label> *@
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="input-group input-group-sm">
-                                                    <input type="number" min="0" class="form-control form-control-sm" id="txtTakeAway" name="Take away">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text" >%</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-sm-4">
-                                            <div class="form-group">
-                                                <label for="txtAumento">Aumento</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Porcentaje que se le aplicará al precio de los productos para mostrar en la web"></span>
-                                                <div class="input-group input-group-sm">
-                                                    <input type="number" min="0" class="form-control form-control-sm" id="txtAumento" name="Aumento">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">%</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+										</div>
+									</div>
+								</div>
 
 
-                    </div>
+							</div>
 
-                    @* Facturacion *@
-                    <div class="tab-pane" id="simple-tabpanel-2" role="tabpanel" aria-labelledby="simple-tab-2">
+							<div class="col-sm-4">
+								<div class="card shadow">
+									<div class="card-header py-3" style="background-color: #ebe6e6;">
+										<h4>Impresion Tickets</h4>
+									</div>
+									<div class="card-body row" style="padding: 20px">
+										<div class="col-md-12">
+											<div class="form-group">
+												<div class="form-check form-switch">
+													<input class="form-check-input" type="checkbox" role="switch" id="switchImprimirDefault">
+													<label class="form-check-label" for="switchImprimirDefault">Imprimir por defecto</label>
+												</div>
+											</div>
+											<div class="">
+												<div class="form-group">
+													<label for="txtImpresora">Nombre Impresora</label>
+													<select class="form-control form-control-sm" id="cboNombreImpresora" name="Impresora Ticket"></select>
+												</div>
+											</div>
 
-                        <div class="row">
+											<div class="py-1">
+												<!-- Cabecera -->
+												<div class="d-flex justify-content-between">
+													<div class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTicket" aria-expanded="true" aria-controls="collapseTicket">
+														<h6>Formato del Ticket &nbsp; <span class="mdi mdi-chevron-down"></span></h6>
+													</div>
+													<button class="btn btn-sm btn-secondary" id="btnPruebaTicket">Imprimir Test</button>
+												</div>
 
-                            <input type="hidden" value="0" id="txtIdAjustesFacturacion">
-                            <div class="col-md-12">
+											</div>
+											<div class="card-body" style="padding: 0px;">
+												<div id="collapseTicket" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="padding:10px">
+													<div class="accordion-body">
+														<!-- Cuerpo -->
+														<div class="">
+															<div class="form-group">
+																<label for="txtEncabezado1">Encabezado 1</label><span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="El tamaño de la fuente de este encabezado, es mayor a los demas"></span>
+																<div>
+																	<input type="text" class="form-control form-control-sm" id="txtEncabezado1" name="Encabezado 1" maxlength="22">
+																</div>
+															</div>
+															<div class="form-group">
+																<label for="txtEncabezado2">Encabezado 2</label>
+																<div>
+																	<input type="text" class="form-control form-control-sm" id="txtEncabezado2" name="Encabezado 2" maxlength="27">
+																</div>
+															</div>
+															<div class="form-group">
+																<label for="txtEncabezado3">Encabezado 3</label>
+																<div>
+																	<input type="text" class="form-control form-control-sm" id="txtEncabezado3" name="Encabezado 3" maxlength="27">
+																</div>
+															</div>
+														</div>
+														<div class="">
+															<div class="form-group">
+																<label for="txtPie1">Pie 1</label>
+																<div>
+																	<input type="text" class="form-control form-control-sm" id="txtPie1" name="Pie 1" maxlength="30">
+																</div>
+															</div>
+															<div class="form-group">
+																<label for="txtPie2">Pie 2</label>
+																<div>
+																	<input type="text" class="form-control form-control-sm" id="txtPie2" name="Pie 2" maxlength="30">
+																</div>
+															</div>
+															<div class="form-group">
+																<label for="txtPie3">Pie 3</label>
+																<div>
+																	<input type="text" class="form-control form-control-sm" id="txtPie3" name="Pie 3" maxlength="30">
+																</div>
+															</div>
+														</div>
 
-                                <div class="row">
-                                    <div class="col-md-12 row">
-                                        <div class="col-sm-3 text-left " style="align-content: end;">
-                                            <div class="form-group">
-                                                <div class="form-check form-switch text-center">
-                                                    <input class="form-check-input" type="checkbox" role="switch" id="switchFacturaElectronica">
-                                                    <label class="form-check-label" for="switchFacturaElectronica" style="font-size: large;">Factura Electronica</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="form-group">
-                                                <label for="fileCertificado">Certificado</label>
-                                                <div class="input-group input-group-sm">
-                                                    <input type="file" class="form-control form-control-sm" id="fileCertificado" name="Ruta Certificado" accept=".pfx">
-                                                    <div class="input-group-prepend">
-                                                        <button class="btn btn-info" id="btnCargarCertificado">Cargar</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group col-sm-3" style="margin-bottom: 0px;">
-                                            <label for="txtContraseñaCertificado">Contraseña del certificado</label>
-                                            <div class="input-group input-group-sm">
-                                                <input type="password" class="form-control form-control-sm input-validate-facturacion" id="txtContraseñaCertificado" name="ContraseñaCertificado">
-                                                <div class="input-group-prepend" style="margin-left: 5px;">
-                                                    <button id="togglePasswordCert">
-                                                        <span class="mdi mdi-eye mdi-24px" id="eyeIcon"></span>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12 row">
-                                        <div class="form-group col-sm-3">
-                                            <label for="txtNombreArchivo">Nombre Archivo</label>
-                                            <input type="text" class="form-control form-control-sm input-validate-facturacion" id="txtNombreArchivo" name="nombre archivo" disabled>
-                                        </div>
-                                        <div class="form-group col-sm-3">
-                                            <label for="txtCuilCertificado">CUIT / CUIL Cert.</label>
-                                            <input type="number" class="form-control form-control-sm input-validate-facturacion" id="txtCuilCertificado" name="Cuit" disabled>
-                                        </div>
-                                        <div class="form-group col-sm-3">
-                                            <label for="txtFechaIniCert">Inicio Cert.</label>
-                                            <input type="text" class="form-control form-control-sm input-validate-facturacion" id="txtFechaIniCert" name="FechaIniCert" disabled>
-                                        </div>
-                                        <div class="form-group col-sm-3">
-                                            <label for="txtFechaCadCert">Caducidad Cert.</label>
-                                            <input type="text" class="form-control form-control-sm input-validate-facturacion" id="txtFechaCadCert" name="FechaCadCert" disabled>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12 row">
-                                        <div class="form-group col-sm-3">
-                                            <label for="cboCondicionIva">Condicion IVA</label>
-                                            <select class="fontDetalles form-control form-control-sm" id="cboCondicionIva" style="background-color: beige">
-                                                <option value="0"></option>
-                                                <option value="1">Consumidor Final</option>
-                                                <option value="2">Exento</option>
-                                                <option value="3">Monotributista</option>
-                                                <option value="4">Resp. Inscripto</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group col-sm-2">
-                                            <label for="txtPuntoVenta">Punto de Venta</label>
-                                            <input type="number" step="1" min="1" class="form-control form-control-sm input-validate-facturacion" id="txtPuntoVentaCertificado" name="PuntoVenta">
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <div class="form-group">
-                                                <label for="txtMinimoIdentificarConsumidor">Min. Ident. Consumidor Final</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Importe de una venta, del cual, superandolo, es necesario identificar al consumidor final"></span>
-                                                <div class="input-group input-group-sm">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">$</span>
-                                                    </div>
-                                                    <input type="number" step="1" min="0" class="form-control form-control-sm input-validate-facturacion" id="txtMinimoIdentificarConsumidor" name="Minimo Identificar Consumidor">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12 row">
-                                        <div class="form-group col-sm-3">
-                                            <label for="txtNombreTitular">Nombre Titular</label>
-                                            <input type="text" class="form-control form-control-sm input-validate-facturacion" id="txtNombreTitular" name="NombreTitular">
-                                        </div>
-                                        <div class="form-group col-sm-3">
-                                            <label for="txtIIBB">Ingresos Brutos</label>
-                                            <input type="text" class="form-control form-control-sm input-validate-facturacion" id="txtIIBB" name="IngresosBrutos">
-                                        </div>
-                                        <div class="form-group col-sm-3">
-                                            <label for="txtDireccionFacturacion">Direccion</label>
-                                            <input type="text" class="form-control form-control-sm input-validate-facturacion" id="txtDireccionFacturacion" name="DireccionFacturacion">
-                                        </div>
-                                        <div class="form-group col-sm-3">
-                                            <label for="txtInicioActividad">Inicio de la Actividad</label>
-                                            <input type="date" class="form-control form-control-sm input-validate-facturacion" id="txtInicioActividad" name="InicioActividad">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12 row">
-                                        <div class="col-sm-3 text-left " style="align-content: end;">
-                                            <div class="form-group">
-                                                <div class="form-check form-switch text-center">
-                                                    <input class="form-check-input" type="checkbox" role="switch" id="switchIsProdEnvironment">
-                                                    <label class="form-check-label" for="switchIsProdEnvironment" style="font-size: large;">Entorno Produccion</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Habilita / Deshabilita el entorno de homologacion para pruebas"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+													</div>
+												</div>
+											</div>
 
-                            </div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 
-                        </div>
+					</div>
 
-                    </div>
-                </div>
+					@* Web *@
+					<div class="tab-pane" id="simple-tabpanel-1" role="tabpanel" aria-labelledby="simple-tab-1">
 
-                <div class="col-sm-4" style="margin-top: 40px;">
-                    <div class="form-row" id="divModif">
-                        <div class="form-group col-sm-6">
-                            <label for="txtModificado">Fecha Modificado</label>
-                            <input type="text" class="form-control form-control-sm" id="txtModificado" name="fechaModificado" readonly>
-                        </div>
-                        <div class="form-group col-sm-6">
-                            <label for="txtModificadoUsuario">Por:</label>
-                            <input type="text" class="form-control form-control-sm" id="txtModificadoUsuario" name="usuarioModificado" readonly>
-                        </div>
-                    </div>
-                </div>
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="row">
+									<div class="col-sm-2 text-left" style="align-content: end;">
+										<div class="form-group">
+											<div class="form-check form-switch text-center">
+												<input class="form-check-input" type="checkbox" role="switch" id="switchHabilitarWeb">
+												<label class="form-check-label" for="switchHabilitarWeb" style="font-size: large;">Habilitar Web</label>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-3">
+										<div class="form-group">
+											<label for="txtNombreTienda">Nombre Tienda</label>
+											<input type="text" class="form-control form-control-sm" id="txtNombreTienda" name="Nombre Tienda">
+										</div>
+									</div>
+									<div class="col-sm-5">
+										<div class="form-group">
+											<label for="txtDireccion">Direccion</label>
+											<input type="text" class="form-control form-control-sm" id="txtDireccion" name="Direccion">
+										</div>
+									</div>
+									<div class="col-sm-2">
+										<div class="form-group">
+											<label for="txtWhatsApp">WhatsApp</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Numero de WhatsApp donde llegaran los pedidos web"></span>
+											<input type="tel" class="form-control form-control-sm" id="txtWhatsApp" name="WhatsApp">
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-12" hidden>
+								<div class="row">
+									<div class="col-sm-3">
+										<div class="form-group">
+											<div class="d-flex justify-content-start">
+												<label for="txtComodin1">Nombre Comodin 1</label>
+												<div class="form-group ms-5" style="margin: 0;">
+													<div class="form-check form-switch text-center">
+														<input class="form-check-input" type="checkbox" role="switch" id="switchHabilitarComodin1">
+														<label class="form-check-label" for="switchHabilitarComodin1" style="font-size: large;">Habilitar</label>
+													</div>
+												</div>
+											</div>
+											<input type="text" class="form-control form-control-sm" id="txtComodin1" name="comodin 1">
+										</div>
+									</div>
+									<div class="col-sm-3">
+										<div class="form-group">
+											<div class="d-flex justify-content-start">
+												<label for="txtComodin2">Nombre Comodin 2</label>
+												<div class="form-group ms-5" style="margin: 0;">
+													<div class="form-check form-switch text-center">
+														<input class="form-check-input" type="checkbox" role="switch" id="switchHabilitarComodin2">
+														<label class="form-check-label" for="switchHabilitarComodin2" style="font-size: large;">Habilitar</label>
+													</div>
+												</div>
+											</div>
+											<input type="text" class="form-control form-control-sm" id="txtComodin2" name="comodin 2">
+										</div>
+									</div>
+									<div class="col-sm-3">
+										<div class="form-group">
+											<div class="d-flex justify-content-start">
+												<label for="txtComodin3">Nombre Comodin 3</label>
+												<div class="form-group ms-5" style="margin: 0;">
+													<div class="form-check form-switch text-center">
+														<input class="form-check-input" type="checkbox" role="switch" id="switchHabilitarComodin3">
+														<label class="form-check-label" for="switchHabilitarComodin3" style="font-size: large;">Habilitar</label>
+													</div>
+												</div>
+											</div>
+											<input type="text" class="form-control form-control-sm" id="txtComodin3" name="comodin 3">
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
 
-            </div>
+							<div class="col-md-12">
+								<div class="row">
 
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="btnSave">Guardar Cambios</button>
-            </div>
+									<div class="col-sm-2" style="align-content: center;">
+										<div class="form-group" style="margin: 0;">
+											<div class="form-check form-switch text-center">
+												<input class="form-check-input" type="checkbox" role="switch" id="switchIvaPrecio">
+												<label class="form-check-label" for="switchIvaPrecio" style="font-size: larger;">IVA en precio <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Los precios de los productos en la web, incluirán IVA"></span></label>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-2">
+										<div class="form-group">
+											<label for="txtCostoEnvio">Costo Envio</label>
+											<div class="input-group input-group-sm">
+												<div class="input-group-prepend">
+													<span class="input-group-text">$</span>
+												</div>
+												<input type="number" min="0" class="form-control form-control-sm" id="txtCostoEnvio" name="costo envio">
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-2">
+										<div class="form-group">
+											<label for="txtEnvioGratis">Min. envio gratis</label>
+											<div class="input-group input-group-sm">
+												<div class="input-group-prepend">
+													<span class="input-group-text">$</span>
+												</div>
+												<input type="number" min="0" class="form-control form-control-sm" id="txtEnvioGratis" name="EnvioGratis">
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-2">
+										<div class="form-group">
+											<label for="txtCompraMinima">Compra Minima</label>
+											<div class="input-group input-group-sm">
+												<div class="input-group-prepend">
+													<span class="input-group-text">$</span>
+												</div>
+												<input type="number" min="0" class="form-control form-control-sm" id="txtCompraMinima" name="compra minima">
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-4">
+										<div class="row">
+											<div class="col-sm-5">
+												<div class="form-group">
+													<label for="txtAumento">Aumento</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Porcentaje que se le aplicará al precio de los productos para mostrar en la web"></span>
+													<div class="input-group input-group-sm">
+														<input type="number" min="0" class="form-control form-control-sm" id="txtAumento" name="Aumento">
+														<div class="input-group-prepend">
+															<span class="input-group-text">%</span>
+														</div>
+													</div>
+												</div>
+											</div>
 
-        </div>
-    </div>
+											<div class="col-sm-7">
+												<div class="form-group">
+													<div class="form-group" style="margin: 0;">
+														<div class="form-check form-switch text-center">
+															<input class="form-check-input" type="checkbox" role="switch" id="switchTakeAway">
+															<label class="form-check-label" for="switchTakeAway">
+																Retiro en local
+																<span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Porcentaje de descuento al retirar en el local"></span>
+															</label>
+														</div>
+													</div>
+
+													<div class="d-flex justify-content-start">
+														<div class="input-group input-group-sm">
+															<input type="number" min="0" class="form-control form-control-sm" id="txtTakeAway" name="Take away">
+															<div class="input-group-prepend">
+																<span class="input-group-text">%</span>
+															</div>
+														</div>
+
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+
+								</div>
+
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+
+								<div class="col-sm-5">
+									<div>
+										<div class="form-group">
+											<!-- Cabecera -->
+											<div class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHorario" aria-expanded="true" aria-controls="collapseHorario">
+												<label style="cursor: pointer;">Horario &nbsp; <span class="mdi mdi-chevron-down"></span></label>
+											</div>
+
+										</div>
+										<div class="card-body" style="padding: 0px;">
+											<div id="collapseHorario" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="padding:10px">
+												<div class="accordion-body">
+
+													<div class="row g-3 align-items-center">
+														<div class="col-md-3">
+															<label for="txtLunes" class="col-form-label">Lunes</label>
+														</div>
+														<div class="col-md-9">
+															<input type="text" class="form-control form-control-sm" id="txtLunes" name="Lunes">
+														</div>
+													</div>
+													<div class="row g-3 align-items-center">
+														<div class="col-md-3">
+															<label for="txtMartes" class="col-form-label">Martes</label>
+														</div>
+														<div class="col-md-9">
+															<input type="text" class="form-control form-control-sm" id="txtMartes" name="Martes">
+														</div>
+													</div>
+													<div class="row g-3 align-items-center">
+														<div class="col-md-3">
+															<label for="txtMiercoles" class="col-form-label">Miercoles</label>
+														</div>
+														<div class="col-md-9">
+															<input type="text" class="form-control form-control-sm" id="txtMiercoles" name="Miercoles">
+														</div>
+													</div>
+													<div class="row g-3 align-items-center">
+														<div class="col-md-3">
+															<label for="txtJueves" class="col-form-label">Jueves</label>
+														</div>
+														<div class="col-md-9">
+															<input type="text" class="form-control form-control-sm" id="txtJueves" name="Jueves">
+														</div>
+													</div>
+													<div class="row g-3 align-items-center">
+														<div class="col-md-3">
+															<label for="txtViernes" class="col-form-label">Viernes</label>
+														</div>
+														<div class="col-md-9">
+															<input type="text" class="form-control form-control-sm" id="txtViernes" name="Viernes">
+														</div>
+													</div>
+													<div class="row g-3 align-items-center">
+														<div class="col-md-3">
+															<label for="txtSabado" class="col-form-label">Sabado</label>
+														</div>
+														<div class="col-md-9">
+															<input type="text" class="form-control form-control-sm" id="txtSabado" name="Sabado">
+														</div>
+													</div>
+													<div class="row g-3 align-items-center">
+														<div class="col-md-3">
+															<label for="txtDomingo" class="col-form-label">Domingo</label>
+														</div>
+														<div class="col-md-9">
+															<input type="text" class="form-control form-control-sm" id="txtDomingo" name="Domingo">
+														</div>
+													</div>
+													<div class="row g-3 align-items-center">
+														<div class="col-md-3">
+															<label for="txtFeriados" class="col-form-label">Feriados</label>
+														</div>
+														<div class="col-md-9">
+															<input type="text" class="form-control form-control-sm" id="txtFeriados" name="Feriados">
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div>
+
+										<div class="form-group">
+											<!-- Cabecera -->
+											<div class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRedesSociales" aria-expanded="true" aria-controls="collapseRedesSociales">
+												<label style="cursor: pointer;">Redes Sociales &nbsp; <span class="mdi mdi-chevron-down"></span></label>
+											</div>
+
+										</div>
+										<div class="card-body" style="padding: 0px;">
+											<div id="collapseRedesSociales" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="padding:10px">
+												<div class="accordion-body">
+													<div class="row g-3 align-items-center">
+														<div class="col-md-3">
+															<label for="txtFacebook" class="col-form-label">Facebook</label>
+														</div>
+														<div class="col-md-9">
+															<input type="text" class="form-control form-control-sm" id="txtFacebook" name="Facebook">
+														</div>
+													</div>
+													<div class="row g-3 align-items-center">
+														<div class="col-md-3">
+															<label for="txtInstagram" class="col-form-label">Instagram</label>
+														</div>
+														<div class="col-md-9">
+															<input type="text" class="form-control form-control-sm" id="txtInstagram" name="Instagram">
+														</div>
+													</div>
+													<div class="row g-3 align-items-center">
+														<div class="col-md-3">
+															<label for="txtTikTok" class="col-form-label">TikTok</label>
+														</div>
+														<div class="col-md-9">
+															<input type="text" class="form-control form-control-sm" id="txtTikTok" name="Tik Tok">
+														</div>
+													</div>
+													<div class="row g-3 align-items-center">
+														<div class="col-md-3">
+															<label for="txtTwitter" class="col-form-label">Twitter</label>
+														</div>
+														<div class="col-md-9">
+															<input type="text" class="form-control form-control-sm" id="txtTwitter" name="Twitter">
+														</div>
+													</div>
+													<div class="row g-3 align-items-center">
+														<div class="col-md-3">
+															<label for="txtYouTube" class="col-form-label">YouTube</label>
+														</div>
+														<div class="col-md-9">
+															<input type="text" class="form-control form-control-sm" id="txtYouTube" name="YouTube">
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					@* Facturacion *@
+					<div class="tab-pane" id="simple-tabpanel-2" role="tabpanel" aria-labelledby="simple-tab-2">
+
+						<div class="row">
+
+							<input type="hidden" value="0" id="txtIdAjustesFacturacion">
+							<div class="col-md-12">
+
+								<div class="row">
+									<div class="col-md-12 row">
+										<div class="col-sm-3 text-left " style="align-content: end;">
+											<div class="form-group">
+												<div class="form-check form-switch text-center">
+													<input class="form-check-input" type="checkbox" role="switch" id="switchFacturaElectronica">
+													<label class="form-check-label" for="switchFacturaElectronica" style="font-size: large;">Factura Electronica</label>
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label for="fileCertificado">Certificado</label>
+												<div class="input-group input-group-sm">
+													<input type="file" class="form-control form-control-sm" id="fileCertificado" name="Ruta Certificado" accept=".pfx">
+													<div class="input-group-prepend">
+														<button class="btn btn-info" id="btnCargarCertificado">Cargar</button>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="form-group col-sm-3" style="margin-bottom: 0px;">
+											<label for="txtContraseñaCertificado">Contraseña del certificado</label>
+											<div class="input-group input-group-sm">
+												<input type="password" class="form-control form-control-sm input-validate-facturacion" id="txtContraseñaCertificado" name="ContraseñaCertificado">
+												<div class="input-group-prepend" style="margin-left: 5px;">
+													<button id="togglePasswordCert">
+														<span class="mdi mdi-eye mdi-24px" id="eyeIcon"></span>
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-12 row">
+										<div class="form-group col-sm-3">
+											<label for="txtNombreArchivo">Nombre Archivo</label>
+											<input type="text" class="form-control form-control-sm input-validate-facturacion" id="txtNombreArchivo" name="nombre archivo" disabled>
+										</div>
+										<div class="form-group col-sm-3">
+											<label for="txtCuilCertificado">CUIT / CUIL Cert.</label>
+											<input type="number" class="form-control form-control-sm input-validate-facturacion" id="txtCuilCertificado" name="Cuit" disabled>
+										</div>
+										<div class="form-group col-sm-3">
+											<label for="txtFechaIniCert">Inicio Cert.</label>
+											<input type="text" class="form-control form-control-sm input-validate-facturacion" id="txtFechaIniCert" name="FechaIniCert" disabled>
+										</div>
+										<div class="form-group col-sm-3">
+											<label for="txtFechaCadCert">Caducidad Cert.</label>
+											<input type="text" class="form-control form-control-sm input-validate-facturacion" id="txtFechaCadCert" name="FechaCadCert" disabled>
+										</div>
+									</div>
+									<div class="col-md-12 row">
+										<div class="form-group col-sm-3">
+											<label for="cboCondicionIva">Condicion IVA</label>
+											<select class="fontDetalles form-control form-control-sm" id="cboCondicionIva" style="background-color: beige">
+												<option value="0"></option>
+												<option value="1">Consumidor Final</option>
+												<option value="2">Exento</option>
+												<option value="3">Monotributista</option>
+												<option value="4">Resp. Inscripto</option>
+											</select>
+										</div>
+										<div class="form-group col-sm-2">
+											<label for="txtPuntoVenta">Punto de Venta</label>
+											<input type="number" step="1" min="1" class="form-control form-control-sm input-validate-facturacion" id="txtPuntoVentaCertificado" name="PuntoVenta">
+										</div>
+										<div class="col-sm-3">
+											<div class="form-group">
+												<label for="txtMinimoIdentificarConsumidor">Min. Ident. Consumidor Final</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Importe de una venta, del cual, superandolo, es necesario identificar al consumidor final"></span>
+												<div class="input-group input-group-sm">
+													<div class="input-group-prepend">
+														<span class="input-group-text">$</span>
+													</div>
+													<input type="number" step="1" min="0" class="form-control form-control-sm input-validate-facturacion" id="txtMinimoIdentificarConsumidor" name="Minimo Identificar Consumidor">
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-12 row">
+										<div class="form-group col-sm-3">
+											<label for="txtNombreTitular">Nombre Titular</label>
+											<input type="text" class="form-control form-control-sm input-validate-facturacion" id="txtNombreTitular" name="NombreTitular">
+										</div>
+										<div class="form-group col-sm-3">
+											<label for="txtIIBB">Ingresos Brutos</label>
+											<input type="text" class="form-control form-control-sm input-validate-facturacion" id="txtIIBB" name="IngresosBrutos">
+										</div>
+										<div class="form-group col-sm-3">
+											<label for="txtDireccionFacturacion">Direccion</label>
+											<input type="text" class="form-control form-control-sm input-validate-facturacion" id="txtDireccionFacturacion" name="DireccionFacturacion">
+										</div>
+										<div class="form-group col-sm-3">
+											<label for="txtInicioActividad">Inicio de la Actividad</label>
+											<input type="date" class="form-control form-control-sm input-validate-facturacion" id="txtInicioActividad" name="InicioActividad">
+										</div>
+									</div>
+									<div class="col-md-12 row">
+										<div class="col-sm-3 text-left " style="align-content: end;">
+											<div class="form-group">
+												<div class="form-check form-switch text-center">
+													<input class="form-check-input" type="checkbox" role="switch" id="switchIsProdEnvironment">
+													<label class="form-check-label" for="switchIsProdEnvironment" style="font-size: large;">Entorno Produccion</label> <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Habilita / Deshabilita el entorno de homologacion para pruebas"></span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+
+							</div>
+
+						</div>
+
+					</div>
+				</div>
+
+				<div class="col-sm-4" style="margin-top: 40px;">
+					<div class="form-row" id="divModif">
+						<div class="form-group col-sm-6">
+							<label for="txtModificado">Fecha Modificado</label>
+							<input type="text" class="form-control form-control-sm" id="txtModificado" name="fechaModificado" readonly>
+						</div>
+						<div class="form-group col-sm-6">
+							<label for="txtModificadoUsuario">Por:</label>
+							<input type="text" class="form-control form-control-sm" id="txtModificadoUsuario" name="usuarioModificado" readonly>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" id="btnSave">Guardar Cambios</button>
+			</div>
+
+		</div>
+	</div>
 </div>
 
 
 @section Scripts {
-    <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
-    <script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
-    <script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
-    <script src="~/plugins/jquery-ui/jquery-ui.js"></script>
+	<script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
+	<script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
+	<script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
+	<script src="~/plugins/jquery-ui/jquery-ui.js"></script>
 
 
-    <script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
-    <script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
-    <script src="~/plugins/data-tables/jszip.min.js"></script>
-    <script src="~/plugins/data-tables/buttons.html5.min.js"></script>
-    <script src="~/plugins/data-tables/buttons.print.min.js"></script>
+	<script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
+	<script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
+	<script src="~/plugins/data-tables/jszip.min.js"></script>
+	<script src="~/plugins/data-tables/buttons.html5.min.js"></script>
+	<script src="~/plugins/data-tables/buttons.print.min.js"></script>
 
-    <script src="~/js/views/ajuste.js"></script>
+	<script src="~/js/views/ajuste.js"></script>
 }
 

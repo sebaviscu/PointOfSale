@@ -120,6 +120,7 @@ namespace PointOfSale.Business.Services
             Ajustes_found.PasswordEmailEmisorCierreTurno = !string.IsNullOrEmpty(entity.PasswordEmailEmisorCierreTurno) ? EncryptionHelper.EncryptString(entity.PasswordEmailEmisorCierreTurno) : null;
             Ajustes_found.EmailsReceptoresCierreTurno = entity.EmailsReceptoresCierreTurno; 
             Ajustes_found.NotificarEmailCierreTurno = entity.NotificarEmailCierreTurno;
+            Ajustes_found.ControlTotalesCierreTurno = entity.ControlTotalesCierreTurno;
             Ajustes_found.CodigoSeguridad = entity.CodigoSeguridad;
             Ajustes_found.ImprimirDefault = entity.ImprimirDefault;
             Ajustes_found.FacturaElectronica = entity.FacturaElectronica;

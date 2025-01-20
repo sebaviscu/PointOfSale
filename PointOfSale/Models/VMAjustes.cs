@@ -19,6 +19,7 @@
         public int IdTienda { get; set; }
 
         public bool? NotificarEmailCierreTurno { get; set; }
+        public bool? ControlTotalesCierreTurno { get; set; }
         public string? EmailEmisorCierreTurno { get; set; }
         public string? PasswordEmailEmisorCierreTurno { get; set; }
         public string? EmailsReceptoresCierreTurno { get; set; }

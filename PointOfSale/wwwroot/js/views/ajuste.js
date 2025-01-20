@@ -16,6 +16,7 @@
     facturaElectronica: false,
     controlEmpleado: false,
     notificarEmailCierreTurno: false,
+    controlTotalesCierreTurno: false,
     emailsReceptores: "",
     emailEmisorCierreTurno: "",
     passwordEmailEmisorCierreTurno: "",
@@ -101,6 +102,7 @@ $(document).ready(function () {
                 document.getElementById('switchFacturaElectronica').checked = model.facturaElectronica;
                 document.getElementById('switchControlEmpleado').checked = model.controlEmpleado;
                 document.getElementById('switchCierreTurno').checked = model.notificarEmailCierreTurno;
+                document.getElementById('switchConmtrolTotalesCierreTurno').checked = model.controlTotalesCierreTurno;
 
 
                 if (model.modificationUser == null)
@@ -387,6 +389,9 @@ $("#btnSave").on("click", function () {
 
     let checkboxSwitchCierreTurno = document.getElementById('switchCierreTurno');
     model["notificarEmailCierreTurno"] = checkboxSwitchCierreTurno.checked;
+
+    let checkboxswitchConmtrolTotalesCierreTurno = document.getElementById('switchConmtrolTotalesCierreTurno');
+    model["controlTotalesCierreTurno"] = checkboxswitchConmtrolTotalesCierreTurno.checked;
 
     let emailsReceptores = getEmailsFromTable();
     model["emailEmisorCierreTurno"] = $("#txtEmailCierreTurno").val();
