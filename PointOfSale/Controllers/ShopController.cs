@@ -187,9 +187,9 @@ namespace PointOfSale.Controllers
             var products = _mapper.Map<List<VMProduct>>(await _productService.ListActiveByDescriptionWeb(text));
             return PartialView("PVProducts", products);
         }
-        public async Task<IActionResult> VentaWeb()
+        public IActionResult VentaWeb()
         {
-            return View();
+            return ValidateSesionViewOrLogin([Roles.Administrador]);
         }
 
         [HttpGet]
