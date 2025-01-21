@@ -6,6 +6,7 @@ let debounceTimeout;
 let productos = [];
 //let primerCargaCache = true;
 let montoEnvioGratis = 0;
+let estadoHorario = false;
 let ajustesWeb;
 let descuentoTakeAway = 0;
 
@@ -32,6 +33,7 @@ $(document).ready(function () {
 
     loadMoreProducts();
     montoEnvioGratis = $('#txtMontoEnvioGratis').text().trim() != null ? parseFloat($('#txtMontoEnvioGratis').text().trim()) : null;
+    estadoHorario = $('#txtOpen').val();
 
     fetch("/Ajustes/GetAjustesWeb")
         .then(response => {
@@ -328,6 +330,8 @@ function resumenVenta() {
         tableBody.innerHTML = tableDataShoop;
 
         $("#modalData").modal("show");
+        
+        $('#btnFinalizar').prop('disabled', !estadoHorario);
 
         document.getElementById("switchTakeAway").checked = false;
     }

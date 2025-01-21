@@ -331,67 +331,14 @@
 									</div>
 								</div>
 							</div>
-							<div class="col-sm-12" hidden>
-								<div class="row">
-									<div class="col-sm-3">
-										<div class="form-group">
-											<div class="d-flex justify-content-start">
-												<label for="txtComodin1">Nombre Comodin 1</label>
-												<div class="form-group ms-5" style="margin: 0;">
-													<div class="form-check form-switch text-center">
-														<input class="form-check-input" type="checkbox" role="switch" id="switchHabilitarComodin1">
-														<label class="form-check-label" for="switchHabilitarComodin1" style="font-size: large;">Habilitar</label>
-													</div>
-												</div>
-											</div>
-											<input type="text" class="form-control form-control-sm" id="txtComodin1" name="comodin 1">
-										</div>
-									</div>
-									<div class="col-sm-3">
-										<div class="form-group">
-											<div class="d-flex justify-content-start">
-												<label for="txtComodin2">Nombre Comodin 2</label>
-												<div class="form-group ms-5" style="margin: 0;">
-													<div class="form-check form-switch text-center">
-														<input class="form-check-input" type="checkbox" role="switch" id="switchHabilitarComodin2">
-														<label class="form-check-label" for="switchHabilitarComodin2" style="font-size: large;">Habilitar</label>
-													</div>
-												</div>
-											</div>
-											<input type="text" class="form-control form-control-sm" id="txtComodin2" name="comodin 2">
-										</div>
-									</div>
-									<div class="col-sm-3">
-										<div class="form-group">
-											<div class="d-flex justify-content-start">
-												<label for="txtComodin3">Nombre Comodin 3</label>
-												<div class="form-group ms-5" style="margin: 0;">
-													<div class="form-check form-switch text-center">
-														<input class="form-check-input" type="checkbox" role="switch" id="switchHabilitarComodin3">
-														<label class="form-check-label" for="switchHabilitarComodin3" style="font-size: large;">Habilitar</label>
-													</div>
-												</div>
-											</div>
-											<input type="text" class="form-control form-control-sm" id="txtComodin3" name="comodin 3">
-										</div>
-									</div>
-								</div>
-							</div>
+
 						</div>
+						
 						<div class="row">
 
 							<div class="col-md-12">
 								<div class="row">
-
-									<div class="col-sm-2" style="align-content: center;">
-										<div class="form-group" style="margin: 0;">
-											<div class="form-check form-switch text-center">
-												<input class="form-check-input" type="checkbox" role="switch" id="switchIvaPrecio">
-												<label class="form-check-label" for="switchIvaPrecio">IVA en precio <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Los precios de los productos en la web, incluirán IVA"></span></label>
-											</div>
-										</div>
-									</div>
-									<div class="col-sm-2">
+									<div class="col-sm-3">
 										<div class="form-group">
 											<label for="txtCostoEnvio">Costo Envio</label>
 											<div class="input-group input-group-sm">
@@ -402,7 +349,7 @@
 											</div>
 										</div>
 									</div>
-									<div class="col-sm-2">
+									<div class="col-sm-3">
 										<div class="form-group">
 											<label for="txtEnvioGratis">Min. envio gratis</label>
 											<div class="input-group input-group-sm">
@@ -466,6 +413,55 @@
 
 							</div>
 						</div>
+						
+						<div class="row" hidden>
+							<div class="col-sm-12">
+								<div class="row">
+									<div class="col-sm-2" style="align-content: center;">
+										<div class="form-group" style="margin: 0;">
+											<div class="form-check form-switch text-center">
+												<input class="form-check-input" type="checkbox" role="switch" id="switchIvaPrecio">
+												<label class="form-check-label" for="switchIvaPrecio">IVA en precio <span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Los precios de los productos en la web, incluirán IVA"></span></label>
+											</div>
+										</div>
+									</div>
+									<div class="offset-md-1 col-sm-3">
+										<div class="form-group">
+											<div class="form-group" style="margin-bottom: 5px;">
+												<div class="form-check form-switch text-center" style="padding-left: 0px;">
+													<input class="form-check-input" type="checkbox" role="switch" id="switchHabilitarComodin1">
+													<label class="form-check-label" for="switchHabilitarComodin1">Nombre Comodin 1</label>
+												</div>
+											</div>
+											<input type="text" class="form-control form-control-sm" id="txtComodin1" name="comodin 1">
+										</div>
+									</div>
+									<div class="col-sm-3">
+										<div class="form-group">
+											<div class="form-group" style="margin-bottom: 5px;">
+												<div class="form-check form-switch text-center" style="padding-left: 0px;">
+													<input class="form-check-input" type="checkbox" role="switch" id="switchHabilitarComodin2">
+													<label class="form-check-label" for="switchHabilitarComodin2">Nombre Comodin 2</label>
+												</div>
+											</div>
+											<input type="text" class="form-control form-control-sm" id="txtComodin2" name="comodin 2">
+										</div>
+									</div>
+									<div class="col-sm-3">
+										<div class="form-group">
+											<div class="form-group" style="margin-bottom: 5px;">
+												<div class="form-check form-switch text-center" style="padding-left: 0px;">
+													<input class="form-check-input" type="checkbox" role="switch" id="switchHabilitarComodin3">
+													<label class="form-check-label" for="switchHabilitarComodin3">Nombre Comodin 3</label>
+												</div>
+											</div>
+											<input type="text" class="form-control form-control-sm" id="txtComodin3" name="comodin 3">
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
 						<div class="row">
 							<div class="col-sm-12">
 								<div class="row">
@@ -484,64 +480,78 @@
 													<div class="accordion-body">
 
 														<div id="horariosContainer">
-															
+
 															<div class="mb-3" data-dia="Lunes">
 																<div class="d-flex justify-content-between align-items-center">
-																	<label class="col-form-label">Lunes</label>
-																	<button type="button" class="btn btn-success btn-sm btn-agregar-horario">+</button>
+																	<h4>Lunes</h4>
+																	<button type="button" class="btn-agregar-horario">
+																		<span class="mdi-24px text-success mdi mdi-plus-circle"></span>
+																	</button>
 																</div>
 																<div class="horarios-dia">
 																</div>
 															</div>
 															<div class="mb-3" data-dia="Martes">
 																<div class="d-flex justify-content-between align-items-center">
-																	<label class="col-form-label">Martes</label>
-																	<button type="button" class="btn btn-success btn-sm btn-agregar-horario">+</button>
+																	<h4>Martes</h4>
+																	<button type="button" class="btn-agregar-horario">
+																		<span class="mdi-24px text-success mdi mdi-plus-circle"></span>
+																	</button>
 																</div>
 																<div class="horarios-dia">
 																</div>
 															</div>
 															<div class="mb-3" data-dia="Miercoles">
 																<div class="d-flex justify-content-between align-items-center">
-																	<label class="col-form-label">Miercoles</label>
-																	<button type="button" class="btn btn-success btn-sm btn-agregar-horario">+</button>
+																	<h4>Miercoles</h4>
+																	<button type="button" class="btn-agregar-horario">
+																		<span class="mdi-24px text-success mdi mdi-plus-circle"></span>
+																	</button>
 																</div>
 																<div class="horarios-dia">
 																</div>
 															</div>
 															<div class="mb-3" data-dia="Jueves">
 																<div class="d-flex justify-content-between align-items-center">
-																	<label class="col-form-label">Jueves</label>
-																	<button type="button" class="btn btn-success btn-sm btn-agregar-horario">+</button>
+																	<h4>Jueves</h4>
+																	<button type="button" class="btn-agregar-horario">
+																		<span class="mdi-24px text-success mdi mdi-plus-circle"></span>
+																	</button>
 																</div>
 																<div class="horarios-dia">
 																</div>
 															</div>
 															<div class="mb-3" data-dia="Viernes">
 																<div class="d-flex justify-content-between align-items-center">
-																	<label class="col-form-label">Viernes</label>
-																	<button type="button" class="btn btn-success btn-sm btn-agregar-horario">+</button>
+																	<h4>Viernes</h4>
+																	<button type="button" class="btn-agregar-horario">
+																		<span class="mdi-24px text-success mdi mdi-plus-circle"></span>
+																	</button>
 																</div>
 																<div class="horarios-dia">
 																</div>
 															</div>
 															<div class="mb-3" data-dia="Sabado">
 																<div class="d-flex justify-content-between align-items-center">
-																	<label class="col-form-label">Sabado</label>
-																	<button type="button" class="btn btn-success btn-sm btn-agregar-horario">+</button>
+																	<h4>Sabado</h4>
+																	<button type="button" class="btn-agregar-horario">
+																		<span class="mdi-24px text-success mdi mdi-plus-circle"></span>
+																	</button>
 																</div>
 																<div class="horarios-dia">
 																</div>
 															</div>
 															<div class="mb-3" data-dia="Domingo">
 																<div class="d-flex justify-content-between align-items-center">
-																	<label class="col-form-label">Domingo</label>
-																	<button type="button" class="btn btn-success btn-sm btn-agregar-horario">+</button>
+																	<h4>Domingo</h4>
+																	<button type="button" class="btn-agregar-horario">
+																		<span class="mdi-24px text-success mdi mdi-plus-circle"></span>
+																	</button>
 																</div>
 																<div class="horarios-dia">
 																</div>
 															</div>
-															
+
 														</div>
 
 													</div>
@@ -562,7 +572,7 @@
 												<div id="collapseRedesSociales" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="padding:10px">
 													<div class="accordion-body">
 														<div class="row g-3 align-items-center">
-															<div class="col-md-3">
+															<div class="col-md-3" style="padding-left: 2px;">
 																<label for="txtFacebook" class="col-form-label">Facebook</label>
 															</div>
 															<div class="col-md-9">
@@ -570,7 +580,7 @@
 															</div>
 														</div>
 														<div class="row g-3 align-items-center">
-															<div class="col-md-3">
+															<div class="col-md-3" style="padding-left: 2px;">
 																<label for="txtInstagram" class="col-form-label">Instagram</label>
 															</div>
 															<div class="col-md-9">
@@ -578,7 +588,7 @@
 															</div>
 														</div>
 														<div class="row g-3 align-items-center">
-															<div class="col-md-3">
+															<div class="col-md-3" style="padding-left: 2px;">
 																<label for="txtTikTok" class="col-form-label">TikTok</label>
 															</div>
 															<div class="col-md-9">
@@ -586,7 +596,7 @@
 															</div>
 														</div>
 														<div class="row g-3 align-items-center">
-															<div class="col-md-3">
+															<div class="col-md-3" style="padding-left: 2px;">
 																<label for="txtTwitter" class="col-form-label">Twitter</label>
 															</div>
 															<div class="col-md-9">
@@ -594,7 +604,7 @@
 															</div>
 														</div>
 														<div class="row g-3 align-items-center">
-															<div class="col-md-3">
+															<div class="col-md-3" style="padding-left: 2px;">
 																<label for="txtYouTube" class="col-form-label">YouTube</label>
 															</div>
 															<div class="col-md-9">

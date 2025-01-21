@@ -8,5 +8,10 @@ namespace PointOfSale.Models
         public DiasSemana DiaSemana { get; set; }
         public TimeSpan HoraInicio { get; set; }
         public TimeSpan HoraFin { get; set; }
+
+        public override string ToString()
+        {
+            return $"{DiaSemana.ToString()}: de {HoraInicio.ToString(@"hh\:mm")} a {HoraFin.ToString(@"hh\:mm")}";
+        }
     }
 }

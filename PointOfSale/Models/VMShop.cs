@@ -12,34 +12,26 @@ namespace PointOfSale.Models
             if (ajustes != null)
             {
                 Ajustes = ajustes;
-                //Horarios = $"· Lunes: {ajustes.Lunes} \n· Martes: {ajustes.Martes} \n· Miercoles: {ajustes.Miercoles} \n· Jueves: {ajustes.Jueves}\n· Viernes: {ajustes.Viernes}\n· Sabado: {ajustes.Sabado}\n· Domingo: {ajustes.Domingo}\n· Feriados: {ajustes.Feriado}";
+                var todavy = TimeHelper.GetArgentinaTime();
 
-                //int day = (int)TimeHelper.GetArgentinaTime().DayOfWeek;
-                //switch (day)
-                //{
-                //    case 1:
-                //        HorariosToday = "Lunes: " + ajustes.Lunes;
-                //        break;
-                //    case 2:
-                //        HorariosToday = "Martes: " + ajustes.Martes;
-                //        break;
-                //    case 3:
-                //        HorariosToday = "Miercoles: " + ajustes.Miercoles;
-                //        break;
-                //    case 4:
-                //        HorariosToday = "Jueves: " + ajustes.Jueves;
-                //        break;
-                //    case 5:
-                //        HorariosToday = "Viernes: " + ajustes.Viernes;
-                //        break;
-                //    case 6:
-                //        HorariosToday = "Sabado: " + ajustes.Sabado;
-                //        break;
-                //    case 0:
-                //        HorariosToday = "Domingo: " + ajustes.Domingo;
-                //        break;
-                //}
+                int day = (int)todavy.DayOfWeek;
 
+                if (ajustes.HorariosWeb != null)
+                {
+                    var horariosDiaActual = ajustes.HorariosWeb.Where(_ => (int)_.DiaSemana == day).ToList();
+                    foreach (var item in horariosDiaActual)
+                    {
+                        if (!string.IsNullOrEmpty(HorariosToday))
+                        {
+                            HorariosToday += $" - {item.HoraInicio.ToString(@"hh\:mm")} {item.HoraFin.ToString(@"hh\:mm")}";
+                        }
+                        else
+                        {
+                            HorariosToday = item.ToString();
+                        }
+                    }
+                    Open = horariosDiaActual.Any(_ => _.HoraInicio < todavy.TimeOfDay && _.HoraFin > todavy.TimeOfDay);
+                }
             }
         }
 
@@ -58,5 +50,6 @@ namespace PointOfSale.Models
         public List<VMTypeDocumentSale> FormasDePago { get; set; }
 
         public VMAjustesWeb Ajustes { get; set; }
+        public bool Open { get; set; } = false;
     }
 }

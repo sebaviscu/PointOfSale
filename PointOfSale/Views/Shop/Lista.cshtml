@@ -1,8 +1,8 @@
 ﻿@using PointOfSale.Models;
 @model VMShop;
 @{
-    ViewData["Title"] = "Lista";
-    Layout = "";
+	ViewData["Title"] = "Lista";
+	Layout = "";
 }
 
 <link href="https://cdn.materialdesignicons.com/4.4.95/css/materialdesignicons.min.css" rel="stylesheet" />
@@ -23,256 +23,273 @@
 
 <html lang="es">
 <head>
-    <title>@Model.Ajustes.Nombre</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>@Model.Ajustes.Nombre</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 </head>
 <body class="goto-here" style="overflow-x: hidden">
 
 
-    <div id="txtMontoEnvioGratis" style="display:none">
-        @Model.Ajustes.MontoEnvioGratis
-    </div>
+	<div id="txtMontoEnvioGratis" style="display:none">
+		@Model.Ajustes.MontoEnvioGratis
+	</div>
+	<div id="txtOpen" style="display:none">
+		@Model.Open
+	</div>
 
-    <div class="py-1 bg-primary" id="div-cabecera">
-        <div class="container">
-            <div class="row no-gutters d-flex align-items-start align-items-center px-md-0">
-                <div class="col-lg-12 d-block" id="header">
-                    <div class="row d-flex">
-                        <div class="col-md pr-4 d-flex topper" style="text-align: center;align-items: center;">
-                            <div class="icon mr-2 d-flex justify-content-center align-items-center"></div>
-                            <span class="text" phoneNumber="@Model.Ajustes.Whatsapp" id="txtPhone"><i class="icon-phone2"></i>&nbsp; @Model.Ajustes.Whatsapp</span>
-                        </div>
-                        <div class="col-md pr-4 d-flex topper" style="text-align: center;align-items: center;">
-                            <div class="icon mr-2 d-flex justify-content-center align-items-center"></div>
-                            <span class="text"><i class="icon-paper-plane"></i>&nbsp; @Model.Ajustes.Direccion</span>
-                        </div>
-                        <div class="col-md pr-4 d-flex topper" style="text-align: center;align-items: center;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="@Model.Horarios">
-                            <div class="icon mr-2 d-flex justify-content-center align-items-center"></div>
-                            <span class="text"><i class="mdi mdi-calendar-today mdi-18px"></i>&nbsp; @Model.HorariosToday</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div>
-        <text name="textarea" id="text-area-products" disabled style="display: none;"></text>
-        <p><button class="btn btn-primary" id="btnCompras">Total: $0</button></p>
-        <p><button class="btn" id="btnTrash" style="display: none;"><i class="mdi mdi-trash-can mdi-18px"></i></button></p>
-    </div>
+	<div class="py-1 bg-primary" id="div-cabecera">
+		<div class="container">
+			<div class="row no-gutters d-flex align-items-start align-items-center px-md-0">
+				<div class="col-lg-12 d-block" id="header">
+					<div class="row d-flex">
+						<div class="col-md pr-4 d-flex topper" style="text-align: center;align-items: center;">
+							<div class="icon mr-2 d-flex justify-content-center align-items-center"></div>
+							<span class="text" phoneNumber="@Model.Ajustes.Whatsapp" id="txtPhone"><i class="icon-phone2"></i>&nbsp; @Model.Ajustes.Whatsapp</span>
+						</div>
+						<div class="col-md pr-4 d-flex topper" style="text-align: center;align-items: center;">
+							<div class="icon mr-2 d-flex justify-content-center align-items-center"></div>
+							<span class="text"><i class="icon-paper-plane"></i>&nbsp; @Model.Ajustes.Direccion</span>
+						</div>
+						<div class="col-md pr-4 d-flex topper" style="text-align: center;align-items: center;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="@Model.Horarios">
+							<div class="icon mr-2 d-flex justify-content-center align-items-center"></div>
+							<span class="text"><i class="mdi mdi-calendar-today mdi-18px"></i>&nbsp; @Model.HorariosToday</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div>
+		<text name="textarea" id="text-area-products" disabled style="display: none;"></text>
+		<p><button class="btn btn-primary" id="btnCompras">Total: $0</button></p>
+		<p><button class="btn" id="btnTrash" style="display: none;"><i class="mdi mdi-trash-can mdi-18px"></i></button></p>
+	</div>
 
-    <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+	<nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
 
 
-        <div class="container justify-content-center align-items-center">
-            @if (Model.IsLogin)
-            {
-                <div>
-                    <a href="/Access/Login" class="btn btn-info" style="style=" margin-right: 30px""><i class="mdi mdi-login-variant mdi-18px mdi-rotate-180"></i></a>
-                </div>
-            }
-            <a href="/Shop/Index" class="navbar-brand" style="white-space: normal;text-align: center;">@Model.Ajustes.Nombre</a>
-        </div>
-    </nav>
-    <hr />
+		<div class="container justify-content-center align-items-center">
+			@if (Model.IsLogin)
+			{
+				<div>
+					<a href="/Access/Login" class="btn btn-info" style="style=" margin-right: 30px""><i class="mdi mdi-login-variant mdi-18px mdi-rotate-180"></i></a>
+				</div>
+			}
+			<a href="/Shop/Index" class="navbar-brand" style="white-space: normal;text-align: center;">@Model.Ajustes.Nombre</a>
+		</div>
+	</nav>
+	<hr />
 
-    <div class="d-flex justify-content-center">
-        <div class="row justify-content-center" style="padding: 10px;">
-            <div class="search-wrapper">
-                <div class="input-holder">
-                    <input id="input-search" type="text" class="search-input input-search" placeholder="Buscar producto..." />
-                    <button class="search-icon" id="search-icon" style="border-radius: 40%;border: solid;border-color: #d3d3d370;">
-                        <span></span>
-                    </button>
-                </div>
-                <span class="close" id="btnCloseSearchText" onclick="searchToggle(this, event);"></span>
-            </div>
-            <a class="btn btnCategoria active" cat-id="0" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">Todo</a>
+	<div>
+		@{
+			if (!@Model.Open)
+			{
+				<div class="alert d-flex alert alert-warning d-flex align-items-center" style="justify-content: center;">
+					<div class="text-center">
+						A esta hora, estamos cerrados, nuestro horario es <strong> @Model.HorariosToday </strong>.
+					</div>
+				</div>
+			}
+		}
+	</div>
 
-            <a class="btn btnCategoria active" cat-id="-3" tag-id="-3" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">Destacados</a>
+	<div class="d-flex justify-content-center">
+		<div class="row justify-content-center" style="padding: 10px;">
+			<div class="search-wrapper">
+				<div class="input-holder">
+					<input id="input-search" type="text" class="search-input input-search" placeholder="Buscar producto..." />
+					<button class="search-icon" id="search-icon" style="border-radius: 40%;border: solid;border-color: #d3d3d370;">
+						<span></span>
+					</button>
+				</div>
+				<span class="close" id="btnCloseSearchText" onclick="searchToggle(this, event);"></span>
+			</div>
+			<a class="btn btnCategoria active" cat-id="0" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">Todo</a>
 
-            @foreach (var cat in Model.CategoriaWebs.OrderBy(_ => _.Descripcion))
-            {
-                <a class="btn btnCategoria" cat-id="@cat.IdCategoria" tag-id="@cat.IdTag" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">@cat.Descripcion</a>
-            }
-        </div>
-    </div>
+			<a class="btn btnCategoria active" cat-id="-3" tag-id="-3" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">Destacados</a>
 
-    <section class="ftco-section">
-        <div class="container text-center">
-            <div id="dvCategoryResults" style="margin: 10px;">
+			@foreach (var cat in Model.CategoriaWebs.OrderBy(_ => _.Descripcion))
+			{
+				<a class="btn btnCategoria" cat-id="@cat.IdCategoria" tag-id="@cat.IdTag" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">@cat.Descripcion</a>
+			}
+		</div>
+	</div>
 
-                @{
-                    Html.RenderPartial("PVProducts", Model.Products);
-                }
-            </div>
-            <div id="loader" class="mt-1" style="display: none;">Cargando productos...</div>
-        </div>
-    </section>
+	<section class="ftco-section">
+		<div class="container text-center">
+			<div id="dvCategoryResults" style="margin: 10px;">
 
-    <hr>
+				@{
+					Html.RenderPartial("PVProducts", Model.Products);
+				}
+			</div>
+			<div id="loader" class="mt-1" style="display: none;">Cargando productos...</div>
+		</div>
+	</section>
 
-    <footer class="ftco-footer ftco-section" style="padding: 0;">
-        <div class="container">
-            @*             <div class="row">
+	<hr>
+
+	<footer class="ftco-footer ftco-section" style="padding: 0;">
+		<div class="container">
+			@*             <div class="row">
             <div class="mouse">
             <a href="#" class="mouse-icon">
             <div class="mouse-wheel"><span class="ion-ios-arrow-up"></span></div>
             </a>
             </div>
             </div> *@
-            <div class="row mb-5">
-                <div class="col-md">
-                    <div class="ftco-footer-widget mb-4">
-                        <ul class="ftco-footer-social list-unstyled float-md-left float-lft mt-5">
-                            @{
-                                if (!string.IsNullOrWhiteSpace(@Model.Ajustes.Twitter))
-                                {
-                                    <li class="ftco-animate"><a href="https://twitter.com/@Model.Ajustes.Twitter" target=”_blank”><span class="icon-twitter"></span></a></li>
-                                }
+			<div class="row mb-5">
+				<div class="col-md">
+					<div class="ftco-footer-widget mb-4">
+						<ul class="ftco-footer-social list-unstyled float-md-left float-lft mt-5">
+							@{
+								if (!string.IsNullOrWhiteSpace(@Model.Ajustes.Twitter))
+								{
+									<li class="ftco-animate"><a href="https://twitter.com/@Model.Ajustes.Twitter" target=”_blank”><span class="icon-twitter"></span></a></li>
+								}
 
-                                if (!string.IsNullOrWhiteSpace(@Model.Ajustes.Facebook))
-                                {
-                                    <li class="ftco-animate"><a href="https://www.facebook.com/@Model.Ajustes.Facebook" target=”_blank”><span class="icon-facebook"></span></a></li>
-                                }
+								if (!string.IsNullOrWhiteSpace(@Model.Ajustes.Facebook))
+								{
+									<li class="ftco-animate"><a href="https://www.facebook.com/@Model.Ajustes.Facebook" target=”_blank”><span class="icon-facebook"></span></a></li>
+								}
 
-                                if (!string.IsNullOrWhiteSpace(@Model.Ajustes.Instagram))
-                                {
-                                    <li class="ftco-animate"><a href="https://www.instagram.com/@Model.Ajustes.Instagram" target=”_blank”><span class="icon-instagram"></span></a></li>
-                                }
+								if (!string.IsNullOrWhiteSpace(@Model.Ajustes.Instagram))
+								{
+									<li class="ftco-animate"><a href="https://www.instagram.com/@Model.Ajustes.Instagram" target=”_blank”><span class="icon-instagram"></span></a></li>
+								}
 
-                                if (!string.IsNullOrWhiteSpace(@Model.Ajustes.Tiktok))
-                                {
-                                    <li class="ftco-animate"><a href="https://www.tiktok.com/@Model.Ajustes.Tiktok" target="_blank" style="align-content: center;text-align: center;"><img src="~/images/tiktok.png" alt="TikTok" width="24" height="24" /></a></li>
-                                }
+								if (!string.IsNullOrWhiteSpace(@Model.Ajustes.Tiktok))
+								{
+									<li class="ftco-animate"><a href="https://www.tiktok.com/@Model.Ajustes.Tiktok" target="_blank" style="align-content: center;text-align: center;"><img src="~/images/tiktok.png" alt="TikTok" width="24" height="24" /></a></li>
+								}
 
-                                if (!string.IsNullOrWhiteSpace(@Model.Ajustes.Youtube))
-                                {
-                                    <li class="ftco-animate"><a href="https://www.youtube.com/@Model.Ajustes.Youtube" target=”_blank”><span class="icon-youtube"></span></a></li>
-                                }
-                            }
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-
-
-    <!-- Grid Modal -->
-    <div class="modal fade" id="modalData" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalGridTitle">Detalles del pedido</h5>
-                    <button type="button" class="close btnClose" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="row justify-content-center">
-                            <div class="col-sm-10" style="text-align: -webkit-center;">
-                                <table border="1" style="border-color: darkgray;" class="col-md-12">
-                                    <tbody id="tableProductos">
-                                    </tbody>
-                                </table>
-                                <text id="txtTotal" disabled></text>
-                            </div>
-                            <div class="col-sm-12">
-                                <hr />
-                                <div class="form-row">
-                                    <div class="form-group col-sm-8">
-                                        <label for="txtNombre">Nombre y Apellido <b>*</b></label>
-                                        <input type="text" class="form-control form-control-sm input-validate" id="txtNombre" name="Nombre">
-                                    </div>
-                                    <div class="form-group col-sm-4">
-                                        <label for="txtNombre">Telefono <b>*</b></label>
-                                        <input type="tel" class="form-control form-control-sm input-validate" id="txtTelefono" name="Telefono">
-                                    </div>
-                                </div>
-                                @{
-                                    if (Model.Ajustes.HabilitarTakeAway.HasValue && Model.Ajustes.HabilitarTakeAway.Value)
-                                    {
-                                        var takeAway = $"Retiro en el local {Convert.ToInt32(@Model.Ajustes.TakeAwayDescuento)}% de descuento";
-                                        <div class="text-center">
-                                            <div class="form-check form-switch">
-                                                <input type="checkbox" id="switchTakeAway">
-                                                <label class="form-check-label" for="switchTakeAway">@takeAway</label>
-                                            </div>
-                                        </div>
-                                    }
-                                }
-                                <div class="form-row">
-                                    <div class="form-group col-sm-8">
-                                        <label for="txtNombre">Direccion de entrega <b">*</b></label>
-                                        <input type="text" class="form-control form-control-sm input-validate" id="txtDireccion" name="Direccion">
-                                    </div>
-                                    <div class="form-group col-sm-4">
-                                        <label for="txtNombre">Medio de pago <b">*</b></label>
-
-                                        <select class="form-control" id="cboFormaPago">
-                                            <option value=""></option>
-                                            @foreach (var i in Model.FormasDePago)
-                                            {
-                                                <option value="@i.IdTypeDocumentSale">@i.Description</option>
-                                            }
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-sm-12">
-                                        <label for="txtCruceCallesDireccion">Calles que cruzan la dirección</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtCruceCallesDireccion" name="Calles que cruzan la dirección">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-sm-12">
-                                        <label for="txtComentario">Comentario</label>
-                                        <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario">
-                                    </div>
-                                </div>
-                            </div>
+								if (!string.IsNullOrWhiteSpace(@Model.Ajustes.Youtube))
+								{
+									<li class="ftco-animate"><a href="https://www.youtube.com/@Model.Ajustes.Youtube" target=”_blank”><span class="icon-youtube"></span></a></li>
+								}
+							}
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</footer>
 
 
-                            <div class="col-12">
-                                <div id="divMensajeEnvio" class="alert d-flex" style="justify-content: center;">
-                                    <div class="text-center">
-                                        <strong id="alertTitle"></strong>
-                                    </div>
-                                </div>
-                            </div>
+
+	<!-- Grid Modal -->
+	<div class="modal fade" id="modalData" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalGridTitle">Detalles del pedido</h5>
+					<button type="button" class="close btnClose" data-bs-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="row justify-content-center">
+							<div class="col-sm-10" style="text-align: -webkit-center;">
+								<table border="1" style="border-color: darkgray;" class="col-md-12">
+									<tbody id="tableProductos">
+									</tbody>
+								</table>
+								<text id="txtTotal" disabled></text>
+							</div>
+							<div class="col-sm-12">
+								<hr />
+								<div class="form-row">
+									<div class="form-group col-sm-8">
+										<label for="txtNombre">Nombre y Apellido <b>*</b></label>
+										<input type="text" class="form-control form-control-sm input-validate" id="txtNombre" name="Nombre">
+									</div>
+									<div class="form-group col-sm-4">
+										<label for="txtNombre">Telefono <b>*</b></label>
+										<input type="tel" class="form-control form-control-sm input-validate" id="txtTelefono" name="Telefono">
+									</div>
+								</div>
+								@{
+									if (Model.Ajustes.HabilitarTakeAway.HasValue && Model.Ajustes.HabilitarTakeAway.Value)
+									{
+										var descuentoTakeAway = Model.Ajustes.TakeAwayDescuento != 0 ? $" {Convert.ToInt32(@Model.Ajustes.TakeAwayDescuento)}% de descuento" : "";
+										var takeAway = $"Retiro en el local";
+										<div class="text-center">
+											<div class="form-check form-switch">
+												<input type="checkbox" id="switchTakeAway">
+												<label class="form-check-label" for="switchTakeAway">@takeAway</label>
+											</div>
+										</div>
+									}
+								}
+								<div class="form-row">
+									<div class="form-group col-sm-8">
+										<label for="txtNombre">Direccion de entrega <b">*</b></label>
+										<input type="text" class="form-control form-control-sm input-validate" id="txtDireccion" name="Direccion">
+									</div>
+									<div class="form-group col-sm-4">
+										<label for="txtNombre">Medio de pago <b">*</b></label>
+
+										<select class="form-control" id="cboFormaPago">
+											<option value=""></option>
+											@foreach (var i in Model.FormasDePago)
+											{
+												<option value="@i.IdTypeDocumentSale">@i.Description</option>
+											}
+										</select>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="form-group col-sm-12">
+										<label for="txtCruceCallesDireccion">Calles que cruzan la dirección</label>
+										<input type="text" class="form-control form-control-sm" id="txtCruceCallesDireccion" name="Calles que cruzan la dirección">
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="form-group col-sm-12">
+										<label for="txtComentario">Comentario</label>
+										<input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario">
+									</div>
+								</div>
+							</div>
 
 
-                        </div>
-
-                    </form>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger btnClose" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" id="btnFinalizar">Enviar</button>
-                </div>
-            </div>
-        </div>
-    </div>
+							<div class="col-12">
+								<div id="divMensajeEnvio" class="alert d-flex" style="justify-content: center;">
+									<div class="text-center">
+										<strong id="alertTitle"></strong>
+									</div>
+								</div>
+							</div>
 
 
-    <!-- loader -->
-    <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee" /><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00" /></svg></div>
+						</div>
 
-    <script src="~/plugins/switchery/switchery.min.js"></script>
-    <script src="~/js/shop/jquery.min.js"></script>
-    <script src="~/js/shop/jquery.waypoints.min.js"></script>
-    <script src="~/js/shop/jquery.magnific-popup.min.js"></script>
-    <script src="~/js/shop/aos.js"></script>
-    <script src="~/plugins/sweetalert/sweetalert.js"></script>
-    <script src="~/plugins/toastr/toastr.min.js"></script>
+					</form>
 
-    <script src="~/js/views/listShop.js"></script>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger btnClose" data-bs-dismiss="modal">Cerrar</button>
+					<button type="button" class="btn btn-primary" id="btnFinalizar">Enviar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- loader -->
+	<div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee" /><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00" /></svg></div>
+
+	<script src="~/plugins/switchery/switchery.min.js"></script>
+	<script src="~/js/shop/jquery.min.js"></script>
+	<script src="~/js/shop/jquery.waypoints.min.js"></script>
+	<script src="~/js/shop/jquery.magnific-popup.min.js"></script>
+	<script src="~/js/shop/aos.js"></script>
+	<script src="~/plugins/sweetalert/sweetalert.js"></script>
+	<script src="~/plugins/toastr/toastr.min.js"></script>
+
+	<script src="~/js/views/listShop.js"></script>
 </body>
 </html>
