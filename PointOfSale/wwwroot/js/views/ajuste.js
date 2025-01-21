@@ -1,4 +1,6 @@
-﻿const BASIC_MODEL_AJUSTE = {
+﻿const diasSemana = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"];
+
+const BASIC_MODEL_AJUSTE = {
     idAjuste: 0,
     modificationDate: null,
     modificationUser: null,
@@ -29,14 +31,6 @@ const BASIC_MODEL_AJUSTE_WEB = {
     compraMinima: 0,
     aumentoWeb: 0,
     whatsapp: "",
-    lunes: "",
-    martes: "",
-    miercoles: "",
-    jueves: "",
-    viernes: "",
-    sabado: "",
-    domingo: "",
-    feriado: "",
     facebook: "",
     instagram: "",
     twitter: "",
@@ -50,7 +44,10 @@ const BASIC_MODEL_AJUSTE_WEB = {
     habilitarComodin2: false,
     habilitarComodin3: false,
     takeAwayDescuento: 0,
-    habilitarTakeAway: false
+    habilitarTakeAway: false,
+    horariosWeb: [],
+    direccion: '',
+    nombre: ''
 }
 
 
@@ -134,19 +131,22 @@ $(document).ready(function () {
                 $("#txtCompraMinima").val(model.compraMinima);
                 $("#txtAumento").val(model.aumentoWeb);
                 $("#txtWhatsApp").val(model.whatsapp);
-                $("#txtLunes").val(model.lunes);
-                $("#txtMartes").val(model.martes);
-                $("#txtMiercoles").val(model.miercoles);
-                $("#txtJueves").val(model.jueves);
-                $("#txtViernes").val(model.viernes);
-                $("#txtSabado").val(model.sabado);
-                $("#txtDomingo").val(model.domingo);
-                $("#txtFeriados").val(model.feriado);
                 $("#txtFacebook").val(model.facebook);
                 $("#txtInstagram").val(model.instagram);
                 $("#txtTikTok").val(model.tiktok);
                 $("#txtTwitter").val(model.twitter);
                 $("#txtYouTube").val(model.youtube);
+
+                diasSemana.forEach(dia => {
+                    const horariosDia = model.horariosWeb.filter(h => h.diaSemana === diasSemana.indexOf(dia) + 1);
+                    const diaContainer = $(`[data-dia="${dia}"] .horarios-dia`);
+
+                    horariosDia.forEach(horario => {
+                        agregarFilaHorario(diaContainer, horario.id, horario.horaInicio, horario.horaFin);
+                    });
+                });
+
+
 
                 document.getElementById('switchTakeAway').checked = model.habilitarTakeAway;
                 $("#txtTakeAway").val(model.takeAwayDescuento);
@@ -156,6 +156,7 @@ $(document).ready(function () {
                 document.getElementById('switchHabilitarComodin1').checked = model.habilitarComodin1;
                 document.getElementById('switchHabilitarComodin2').checked = model.habilitarComodin2;
                 document.getElementById('switchHabilitarComodin3').checked = model.habilitarComodin3;
+                document.getElementById('switchIvaPrecio').checked = model.ivaEnPrecio;
                 $("#txtComodin1").val(model.nombreComodin1);
                 $("#txtComodin2").val(model.nombreComodin2);
                 $("#txtComodin3").val(model.nombreComodin3);
@@ -204,9 +205,58 @@ $(document).ready(function () {
     setupPasswordToggle($('#txtContraseñaCertificado'), $('#togglePasswordCert'));
     setupPasswordToggle($('#txtEmailPassword'), $('#toggleEmailPassword'));
 
+
     healthcheck();
 
 })
+
+function agregarFilaHorario(diaContainer, id = "", horaInicio = "", horaFin = "") {
+
+    const filaHtml = `
+            <div class="d-flex justify-content-between align-items-center mb-2 horario-row" id="${id}">
+                <div class="">
+                    <input type="time" class="form-control form-control-sm horario-inicio" value="${horaInicio}">
+                </div>
+                <div class="">
+                    <input type="time" class="form-control form-control-sm horario-fin" value="${horaFin}">
+                </div>
+            </div>
+        `;
+
+    diaContainer.append(filaHtml);
+}
+
+$(".btn-agregar-horario").on("click", function () {
+    const diaContainer = $(this).closest("[data-dia]").find(".horarios-dia");
+    agregarFilaHorario(diaContainer);
+});
+
+function obtenerHorarios() {
+    let horarios = [];
+
+    // Recorremos cada día de la semana
+    $("#horariosContainer > div").each(function () {
+        let diaSemana = $(this).data("dia"); // Obtenemos el día de la semana
+        let filasHorario = $(this).find(".horarios-dia .horario-row");
+
+        filasHorario.each(function () {
+            let horarioInicio = $(this).find(".horario-inicio").val();
+            let horarioFin = $(this).find(".horario-fin").val();
+            let horarioId = $(this).attr("id") || 0; // Si hay un ID existente, lo usamos; si no, es null
+
+            if (horarioInicio && horarioFin) {
+                horarios.push({
+                    id: horarioId,
+                    diaSemana: diaSemana,
+                    horaInicio: horarioInicio,
+                    horaFin: horarioFin
+                });
+            }
+        });
+    });
+
+    return horarios;
+}
 
 $("#txtAddEmailsReceptores").on("click", function () {
     let email = $("#txtEmailReceptor").val();
@@ -328,7 +378,7 @@ $("#btnSave").on("click", function () {
 
     let email = $('#txtEmailCierreTurno').val();
 
-    if (email!= '' && !email.endsWith('@gmail.com')) {
+    if (email != '' && !email.endsWith('@gmail.com')) {
 
         const msg = `El correo del emisor de Cierre de Turno, debe ser de Gmail.`;
         toastr.warning(msg, "");
@@ -341,14 +391,6 @@ $("#btnSave").on("click", function () {
     modelWeb["costoEnvio"] = $("#txtCostoEnvio").val();
     modelWeb["aumentoWeb"] = $("#txtAumento").val();
     modelWeb["whatsapp"] = $("#txtWhatsApp").val();
-    modelWeb["lunes"] = $("#txtLunes").val();
-    modelWeb["martes"] = $("#txtMartes").val();
-    modelWeb["miercoles"] = $("#txtMiercoles").val();
-    modelWeb["jueves"] = $("#txtJueves").val();
-    modelWeb["viernes"] = $("#txtViernes").val();
-    modelWeb["sabado"] = $("#txtSabado").val();
-    modelWeb["domingo"] = $("#txtDomingo").val();
-    modelWeb["feriado"] = $("#txtFeriados").val();
     modelWeb["facebook"] = $("#txtFacebook").val();
     modelWeb["instagram"] = $("#txtInstagram").val();
     modelWeb["tiktok"] = $("#txtTikTok").val();
@@ -356,6 +398,8 @@ $("#btnSave").on("click", function () {
     modelWeb["youtube"] = $("#txtYouTube").val();
     modelWeb["nombre"] = $("#txtNombreTienda").val();
     modelWeb["direccion"] = $("#txtDireccion").val();
+
+    modelWeb["horariosWeb"] = obtenerHorarios();
 
     let checkboxSwitchTakeAway = document.getElementById('switchTakeAway');
     modelWeb["habilitarTakeAway"] = checkboxSwitchTakeAway.checked;
@@ -374,6 +418,8 @@ $("#btnSave").on("click", function () {
     modelWeb["habilitarComodin2"] = habilitarComodin2.checked;
     let habilitarComodin3 = document.getElementById('switchHabilitarComodin3');
     modelWeb["habilitarComodin3"] = habilitarComodin3.checked;
+    let habilitarIvaEnPrecio = document.getElementById('switchIvaPrecio');
+    modelWeb["IvaEnPrecio"] = habilitarIvaEnPrecio.checked;
 
     const model = structuredClone(BASIC_MODEL_AJUSTE);
     model["idAjuste"] = parseInt($("#txtId").val());

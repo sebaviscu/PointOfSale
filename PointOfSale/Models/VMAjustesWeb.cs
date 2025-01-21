@@ -1,4 +1,6 @@
-﻿namespace PointOfSale.Models
+﻿using PointOfSale.Model;
+
+namespace PointOfSale.Models
 {
     public class VMAjustesWeb
     {
@@ -14,13 +16,6 @@
         public decimal? AumentoWeb { get; set; }
 
         public string? Whatsapp { get; set; }
-        public string? Lunes { get; set; }
-        public string? Martes { get; set; }
-        public string? Miercoles { get; set; }
-        public string? Jueves { get; set; }
-        public string? Viernes { get; set; }
-        public string? Sabado { get; set; }
-        public string? Domingo { get; set; }
         public string? Feriado { get; set; }
         public string? Facebook { get; set; }
         public string? Instagram { get; set; }
@@ -37,5 +32,7 @@
         public bool? HabilitarComodin2 { get; set; }
         public string? NombreComodin3 { get; set; }
         public bool? HabilitarComodin3 { get; set; }
+        public bool? IvaEnPrecio { get; set; }
+        public ICollection<VMHorarioWeb>? HorariosWeb { get; set; }
     }
 }

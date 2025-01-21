@@ -458,14 +458,6 @@ CompraMinima decimal(10,2) null,
 TakeAwayDescuento decimal(10,2) null,
 HabilitarTakeAway BIT NULL,
 Whatsapp varchar(50) null,
-Lunes varchar(100) null,
-Martes varchar(100) null,
-Miercoles varchar(100) null,
-Jueves varchar(100) null,
-Viernes varchar(100) null,
-Sabado varchar(100) null,
-Domingo varchar(100) null,
-Feriado varchar(100) null,
 Facebook varchar(50) null,
 Instagram varchar(50) null,
 Tiktok varchar(50) null,
@@ -481,6 +473,7 @@ NombreComodin2 varchar(150) null,
 HabilitarComodin2 BIT NULL,
 NombreComodin3 varchar(150) null,
 HabilitarComodin3 BIT NULL,
+IvaEnPrecio BIT NULL,
 [modificationDate] [datetime] null,
 [modificationUser] varchar(50) null
 )
@@ -778,3 +771,14 @@ CREATE TABLE HistorialLogin (
         ON DELETE CASCADE
 );
 
+go
+
+CREATE TABLE HorariosWeb (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    DiaSemana int NOT NULL,
+    HoraInicio TIME NOT NULL,
+    HoraFin TIME NOT NULL,
+	idAjusteWeb INT NOT NULL,
+    CONSTRAINT FK_HorariosWeb_AjustesWeb FOREIGN KEY (idAjusteWeb)
+    REFERENCES AjustesWeb(idAjusteWeb) ON DELETE CASCADE
+);

@@ -1,4 +1,5 @@
-﻿using PointOfSale.Business.Contracts;
+﻿using Microsoft.EntityFrameworkCore;
+using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Data.DBContext;
 using PointOfSale.Data.Repository;
@@ -42,7 +43,8 @@ namespace PointOfSale.Business.Services
 
         public async Task<AjustesWeb> GetAjustesWeb()
         {
-            return await _repositoryAjustesWeb.First();
+            var query = await _repositoryAjustesWeb.Query();
+            return query.Include(_=> _.HorariosWeb).First();
         }
 
         public async Task<AjustesWeb> EditWeb(AjustesWeb entity)
@@ -61,20 +63,13 @@ namespace PointOfSale.Business.Services
             Ajustes_found.Twitter = entity.Twitter;
             Ajustes_found.Tiktok = entity.Tiktok;
             Ajustes_found.Youtube = entity.Youtube;
-            Ajustes_found.Lunes = entity.Lunes;
-            Ajustes_found.Martes = entity.Martes;
-            Ajustes_found.Miercoles = entity.Miercoles;
-            Ajustes_found.Jueves = entity.Jueves;
-            Ajustes_found.Viernes = entity.Viernes;
-            Ajustes_found.Sabado = entity.Sabado;
-            Ajustes_found.Domingo = entity.Domingo;
-            Ajustes_found.Feriado = entity.Feriado;
             Ajustes_found.MontoEnvioGratis = entity.MontoEnvioGratis;
             Ajustes_found.CompraMinima = entity.CompraMinima;
             Ajustes_found.CostoEnvio = entity.CostoEnvio;
             Ajustes_found.HabilitarWeb = entity.HabilitarWeb;
             Ajustes_found.TakeAwayDescuento = entity.TakeAwayDescuento;
             Ajustes_found.HabilitarTakeAway = entity.HabilitarTakeAway;
+            Ajustes_found.IvaEnPrecio = entity.IvaEnPrecio;
 
             Ajustes_found.NombreComodin1 = entity.NombreComodin1;
             Ajustes_found.NombreComodin2 = entity.NombreComodin2;
@@ -82,6 +77,16 @@ namespace PointOfSale.Business.Services
             Ajustes_found.HabilitarComodin1 = entity.HabilitarComodin1;
             Ajustes_found.HabilitarComodin2 = entity.HabilitarComodin2;
             Ajustes_found.HabilitarComodin3 = entity.HabilitarComodin3;
+
+            if (entity.HorariosWeb.Any())
+            {
+                foreach (var h in entity.HorariosWeb)
+                {
+                    h.IdAjusteWeb = Ajustes_found.IdAjusteWeb;
+                }
+
+                Ajustes_found.HorariosWeb = entity.HorariosWeb;
+            }
 
             var webRepository = _unitOfWork.Repository<AjustesWeb>();
             bool response = await webRepository.Edit(Ajustes_found);
@@ -118,7 +123,7 @@ namespace PointOfSale.Business.Services
 
             Ajustes_found.EmailEmisorCierreTurno = entity.EmailEmisorCierreTurno;
             Ajustes_found.PasswordEmailEmisorCierreTurno = !string.IsNullOrEmpty(entity.PasswordEmailEmisorCierreTurno) ? EncryptionHelper.EncryptString(entity.PasswordEmailEmisorCierreTurno) : null;
-            Ajustes_found.EmailsReceptoresCierreTurno = entity.EmailsReceptoresCierreTurno; 
+            Ajustes_found.EmailsReceptoresCierreTurno = entity.EmailsReceptoresCierreTurno;
             Ajustes_found.NotificarEmailCierreTurno = entity.NotificarEmailCierreTurno;
             Ajustes_found.ControlTotalesCierreTurno = entity.ControlTotalesCierreTurno;
             Ajustes_found.CodigoSeguridad = entity.CodigoSeguridad;

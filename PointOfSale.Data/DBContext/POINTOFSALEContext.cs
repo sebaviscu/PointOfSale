@@ -65,6 +65,7 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<BackupProducto> BackupProducto { get; set; }
         public virtual DbSet<VentasPorTipoDeVentaTurno> VentasPorTipoDeVentaTurno { get; set; }
         public virtual DbSet<HistorialLogin> HistorialLogin { get; set; }
+        public virtual DbSet<HorarioWeb> HorariosWeb { get; set; }
 
         #endregion
 
@@ -74,6 +75,12 @@ namespace PointOfSale.Data.DBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<HorarioWeb>(entity =>
+            {
+                entity.ToTable("HorariosWeb");
+                entity.HasKey(h => h.Id);
+            });
 
             modelBuilder.Entity<HistorialLogin>(entity =>
             {
@@ -85,7 +92,7 @@ namespace PointOfSale.Data.DBContext
                            .WithMany(u => u.HistorialLogins)
                            .HasForeignKey(h => h.IdUser)
                            .OnDelete(DeleteBehavior.Cascade);
-            }); 
+            });
 
             modelBuilder.Entity<VentasPorTipoDeVentaTurno>(entity =>
             {
@@ -93,18 +100,18 @@ namespace PointOfSale.Data.DBContext
                 entity.ToTable("VentasPorTipoDeVentaTurno");
 
                 entity.HasOne(e => e.Turno)
-                .WithMany(_=>_.VentasPorTipoDeVenta)
+                .WithMany(_ => _.VentasPorTipoDeVenta)
                 .HasForeignKey(e => e.IdTurno)
                     .OnDelete(DeleteBehavior.Cascade);
-            });   
+            });
 
             modelBuilder.Entity<BackupProducto>(entity =>
             {
 
                 entity.ToTable("BackupProducto");
 
-            });   
-            
+            });
+
             modelBuilder.Entity<ProductLov>(entity =>
             {
                 entity.HasKey(pl => new { pl.ProductId, pl.LovId, pl.LovType });
@@ -279,6 +286,11 @@ namespace PointOfSale.Data.DBContext
                 entity.HasKey(e => e.IdAjusteWeb);
 
                 entity.ToTable("AjustesWeb");
+
+                entity.HasMany(a => a.HorariosWeb)
+                    .WithOne(h => h.AjustesWeb)
+                    .HasForeignKey(h => h.IdAjusteWeb)
+                    .OnDelete(DeleteBehavior.Cascade);
 
             });
 
