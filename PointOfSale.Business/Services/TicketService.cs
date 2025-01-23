@@ -88,7 +88,7 @@ namespace PointOfSale.Business.Services
                    d.Price,
                    d.Quantity,
                    d.Total,
-                   d.Iva.Value == 0 ? 21.00m : d.Iva.Value);
+                   d.Iva.HasValue ? d.Iva.Value : 21.00m);
 
                 ivaAcumulado += d.ImporteIva;
             }

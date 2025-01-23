@@ -10,7 +10,7 @@ namespace PointOfSale.Model
         public int IdDetailSale { get; set; }
         public int? IdSale { get; set; }
         public int IdProduct { get; set; }
-        public string? DescriptionProduct { get; set; }
+        public string DescriptionProduct { get; set; } = string.Empty;
         public string? CategoryProducty { get; set; }
         public decimal Quantity { get; set; }
         public decimal Price { get; set; }
