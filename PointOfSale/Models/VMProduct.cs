@@ -40,6 +40,7 @@ namespace PointOfSale.Models
         public bool? ModificarPrecio { get; set; }
         public bool? PrecioAlMomento { get; set; }
         public bool? ExcluirPromociones { get; set; }
+        public bool? IncluirIvaEnPrecio { get; set; }
 
         public virtual ICollection<Stock>? Stocks { get; set; }
         public virtual ICollection<VMTag>? Tags { get; set; }

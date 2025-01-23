@@ -26,6 +26,7 @@ namespace PointOfSale.Model
         public bool? ModificarPrecio { get; set; }
         public bool? PrecioAlMomento { get; set; }
         public bool? ExcluirPromociones { get; set; }
+        public bool? IncluirIvaEnPrecio { get; set; }
 
         public int? IdCategory { get; set; }
         public virtual Category? IdCategoryNavigation { get; set; }

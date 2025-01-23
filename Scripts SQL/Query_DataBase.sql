@@ -154,6 +154,7 @@ ExcluirPromociones bit null,
 [idCategory] int references Category(idCategory),
 [idProveedor] int references Proveedor(idProveedor) null,
 sku varchar(50) null,
+IncluirIvaEnPrecio bit null,
 [modificationDate] datetime null,
 [modificationUser] varchar(50) null,
 [registrationDate] datetime null

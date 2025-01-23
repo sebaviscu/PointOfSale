@@ -2,11 +2,12 @@
 <html lang="es">
 <head>
 	<meta charset="utf-8" />
-	@*     <style>
-        html {
-            font-size: 11px; /* Ajusta el valor según lo que necesites */
-        }
-    </style> *@
+	<style>
+		/* Ajusta el valor según lo que necesites */
+/* 		html {
+			font-size: 11px; 
+		} */
+	</style>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 
@@ -23,7 +24,6 @@
 	<link href="~/plugins/sweetalert/sweetalert.css" rel="stylesheet">
 	<link id="sleek-css" rel="stylesheet" href="~/css/layout.css" />
 
-	@*<link href="~/img/favicon.png" rel="shortcut icon" />*@
 	<link rel="icon" href="~/images/favicon.ico" type="image/x-icon" />
 
 	@await RenderSectionAsync("StylesPOS", required: false)
@@ -380,10 +380,10 @@
 								<div class="form-group col-sm-12">
 									<label for="divNotifIndividual">Notificacion</label>
 									<div id="divNotifIndividual" contenteditable="false"
-										style="
+										 style="
 										padding: 8px;
 										border-radius: 4px;
-										border: 1px solid #ccc; 
+										border: 1px solid #ccc;
 										background-color: #e9ecef;
 										overflow: auto;
 										min-height: 100px;

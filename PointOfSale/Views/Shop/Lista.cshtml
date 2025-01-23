@@ -1,7 +1,7 @@
 ﻿@using PointOfSale.Models;
 @model VMShop;
 @{
-	ViewData["Title"] = "Lista";
+	ViewData["Title"] = "Lista de productos";
 	Layout = "";
 }
 
@@ -85,9 +85,16 @@
 		@{
 			if (!@Model.Open)
 			{
-				<div class="alert d-flex alert alert-warning d-flex align-items-center" style="justify-content: center;">
+				<div class="alert d-flex alert-warning d-flex align-items-center" style="justify-content: center;">
 					<div class="text-center">
-						A esta hora, estamos cerrados, nuestro horario es <strong> @Model.HorariosToday </strong>.
+						@if (string.IsNullOrEmpty(Model.HorariosToday))
+						{
+							<text>A esta hora, estamos cerrados.</text>
+						}
+						else
+						{
+							<text>A esta hora, estamos cerrados, nuestro horario es <strong>@Model.HorariosToday</strong>.</text>
+						}
 					</div>
 				</div>
 			}

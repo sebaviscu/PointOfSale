@@ -376,6 +376,19 @@ $("#btnSave").on("click", function () {
         }
     }
 
+    let checkboxSwitchHabilitarWeb = document.getElementById('switchHabilitarWeb');
+    
+    if (checkboxSwitchHabilitarWeb.checked) {
+
+        let nroWA = $("#txtWhatsApp").val();
+
+        if (nroWA == '') {
+            const msg = `Si la web esta habilitada, es necesario agregar un numero de WhstaApp para recibir pedidos.`;
+            toastr.warning(msg, "");
+            return;
+        }
+    }
+
     let email = $('#txtEmailCierreTurno').val();
 
     if (email != '' && !email.endsWith('@gmail.com')) {
@@ -405,7 +418,6 @@ $("#btnSave").on("click", function () {
     modelWeb["habilitarTakeAway"] = checkboxSwitchTakeAway.checked;
     modelWeb["takeAwayDescuento"] = $("#txtTakeAway").val();
 
-    let checkboxSwitchHabilitarWeb = document.getElementById('switchHabilitarWeb');
     modelWeb["habilitarWeb"] = checkboxSwitchHabilitarWeb.checked;
 
     modelWeb["nombreComodin1"] = $("#txtComodin1").val();

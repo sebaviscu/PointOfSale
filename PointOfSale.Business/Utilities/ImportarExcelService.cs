@@ -62,6 +62,7 @@ namespace PointOfSale.Business.Utilities
 
                             if(string.IsNullOrEmpty(reader.GetValue(1)?.ToString()) || 
                                 string.IsNullOrEmpty(reader.GetValue(3)?.ToString())|| 
+                                string.IsNullOrEmpty(reader.GetValue(5)?.ToString())|| 
                                 string.IsNullOrEmpty(reader.GetValue(7)?.ToString()))
                             {
                                 throw new FormatException("Valores obligatorios no completados.");
@@ -120,7 +121,7 @@ namespace PointOfSale.Business.Utilities
                 IdCategoryNavigation = categoria,
                 Destacado = false,
                 ProductoWeb = productoWeb,
-                Iva = reader.GetValue(5) != null ? ParseDecimal(reader.GetValue(5), "IVA") : null,
+                Iva = ParseDecimal(reader.GetValue(5), "IVA"),
                 Comentario = string.Empty,
                 FormatoWeb = tipoVenta == TipoVenta.Kg ? 1000 : 1,
                 PrecioFormatoWeb = precioWeb,

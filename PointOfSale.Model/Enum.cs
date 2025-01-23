@@ -74,6 +74,8 @@ namespace PointOfSale.Model
         public enum EstadoVentaWeb
         {
             Nueva,
+            PendienteRetiro,
+            PendienteEnvio,
             Finalizada,
             Cerrada
         }

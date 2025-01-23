@@ -100,7 +100,6 @@ $(document).ready(function () {
             { "data": "registrationDate" },
             { "data": "nombre" },
             { "data": "direccion" },
-            { "data": "telefono" },
             {
                 "data": "totalConEnvio", render: function (data) {
                     return '$' + data;
@@ -123,8 +122,12 @@ $(document).ready(function () {
                     if (data == 0)
                         return '<span class="badge badge-info">Nueva</span>';
                     else if (data == 1)
-                        return '<span class="badge badge-success">Finalizada</span>';
+                        return '<span class="badge badge-secondary">Pendiente de Retiro</span>';
                     else if (data == 2)
+                        return '<span class="badge badge-warning">Pendiente de Envio</span>';
+                    else if (data == 3)
+                        return '<span class="badge badge-success">Finalizada</span>';
+                    else if (data == 4)
                         return '<span class="badge badge-danger">Cerrada</span>';
                 }
             },
@@ -235,7 +238,7 @@ const openModalEditVentaWeb = (model = BASIC_MODEL_VENTA_WEB) => {
     document.querySelector('#txtComentario').disabled = true;
     document.querySelector('#txtTakeAway').disabled = true;
     document.querySelector('#txtEnvio').disabled = true;
-    document.querySelector('#txtObservaciones').disabled = model.estado > 0;
+    document.querySelector('#txtObservaciones').disabled = model.estado > 2;
     document.querySelector('#txtCruceCallesDireccion').disabled = true;
 
     $("#txtId").val(model.idVentaWeb);
@@ -271,10 +274,10 @@ const openModalEditVentaWeb = (model = BASIC_MODEL_VENTA_WEB) => {
         document.getElementById("popoverEdit").style.display = 'none';
     }
 
-    document.querySelector('#cboState').disabled = model.estado > 0;
-    document.querySelector('#cboTienda').disabled = model.estado > 0;
-    document.querySelector('#btnEdit').disabled = model.estado > 0;
-    document.querySelector('#btnSave').disabled = model.estado > 0;
+    document.querySelector('#cboState').disabled = model.estado > 2;
+    document.querySelector('#cboTienda').disabled = model.estado > 2;
+    document.querySelector('#btnEdit').disabled = model.estado > 2;
+    document.querySelector('#btnSave').disabled = model.estado > 2;
 
     if (model.modificationUser === null) {
         document.getElementById("divModif").style.display = 'none';
@@ -293,7 +296,7 @@ const openModalEditVentaWeb = (model = BASIC_MODEL_VENTA_WEB) => {
     });
 
     $('.chkRecogido').each(function () {
-        $(this).prop('disabled', model.estado > 0);
+        $(this).prop('disabled', model.estado > 2);
     });
 
     $('#modalData').on('shown.bs.modal', function () {

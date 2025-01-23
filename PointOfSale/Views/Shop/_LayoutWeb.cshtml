@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+	<title>@Model.Ajustes.Nombre</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Lora:400,400i,700,700i&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700&display=swap" rel="stylesheet">
+	<link href="https://cdn.materialdesignicons.com/4.4.95/css/materialdesignicons.min.css" rel="stylesheet" />
+
+	<link rel="stylesheet" href="~/css/shop/open-iconic-bootstrap.min.css">
+	<link rel="stylesheet" href="~/css/shop/animate.css">
+
+	<link rel="stylesheet" href="~/css/shop/owl.carousel.min.css">
+	<link rel="stylesheet" href="~/css/shop/owl.theme.default.min.css">
+	<link rel="stylesheet" href="~/css/shop/magnific-popup.css">
+
+	<link rel="stylesheet" href="~/css/shop/aos.css">
+
+	<link rel="stylesheet" href="~/css/shop/ionicons.min.css">
+
+	<link rel="stylesheet" href="~/css/shop/bootstrap-datepicker.css">
+	<link rel="stylesheet" href="~/css/shop/jquery.timepicker.css">
+
+
+	<link rel="stylesheet" type="text/css" href="~/css/shop/flaticon.css">
+	<link rel="stylesheet" type="text/css" href="~/css/shop/icomoon.css">
+	<link rel="stylesheet" type="text/css" href="~/css/shop/style.css">
+	<link rel="icon" href="~/images/favicon.ico" type="image/x-icon" />
+
+
+</head>
+<body class="goto-here" style="overflow-x: hidden">
+
+	<div class="content-wrapper">
+		<div class="content">
+			@RenderBody()
+		</div> <!-- End Content -->
+	</div> <!-- End Content Wrapper -->
+	<!-- Footer -->
+	<footer class="footer mt-auto row" style="background-color: black;text-align-last: center;">
+		<div class="col-md-12 row" style="padding: 20px;">
+
+			<div class="col-md-4">
+				<div class="col-md topper">
+					<span class="text" phoneNumber="@Model.Ajustes.Whatsapp" id="txtPhone"><i class="icon-phone2"></i>&nbsp; 2432423</span>
+				</div>
+				<div class="col-md topper">
+					<span class="text"><i class="icon-paper-plane"></i>&nbsp; zxczx</span>
+				</div>
+				<div class="col-md topper">
+					<span class="text"><i class="mdi mdi-calendar-today mdi-18px"></i>&nbsp; fsdfsd</span>
+				</div>
+			</div>
+
+			<div class="col-md-4">
+				<div class="col-md topper">
+					<span class="text" phoneNumber="@Model.Ajustes.Whatsapp" id="txtPhone">Legal</span>
+				</div>
+				<div class="col-md topper">
+					<span class="text">POLÍTICAS DE PRIVACIDAD & COOKIES</span>
+				</div>
+				<div class="col-md topper">
+					<span class="text">TÉRMINOS Y CONDICIONES</span>
+				</div>
+
+			</div>
+
+			<div class="col-md-4">
+				imagen
+			</div>
+		</div>
+		<div class="col-md-12 row">
+
+			<div class="copyright bg-white">
+				<p>
+					Copyright &copy; <span id="copy-year"></span>.
+				</p>
+			</div>
+
+		</div>
+
+	</footer>
+
+	<script>
+		var d = new Date();
+		var year = d.getFullYear();
+		document.getElementById("copy-year").innerHTML = year;
+	</script>
+</body>
+</html>

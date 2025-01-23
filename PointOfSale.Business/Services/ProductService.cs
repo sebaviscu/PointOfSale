@@ -56,8 +56,8 @@ namespace PointOfSale.Business.Services
         public async Task<List<Product>> List()
         {
             IQueryable<Product> query = await _repository.Query();
-            return getIncludes(query).ToList();
-            //return getIncludes(query).Take(10).ToList();
+            //return getIncludes(query).ToList();
+            return getIncludes(query).Take(10).ToList();
         }
 
         public async Task<List<Product>> ListActive()
@@ -307,6 +307,7 @@ namespace PointOfSale.Business.Services
                 product.PrecioAlMomento = entity.PrecioAlMomento;
                 product.ExcluirPromociones = entity.ExcluirPromociones;
                 product.SKU = entity.SKU;
+                product.IncluirIvaEnPrecio = entity.IncluirIvaEnPrecio;
 
                 if (entity.Photo != null && entity.Photo.Length > 0)
                     product.Photo = entity.Photo;

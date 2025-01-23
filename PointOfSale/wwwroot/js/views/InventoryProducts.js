@@ -31,7 +31,7 @@ const BASIC_MODEL_PRODUCTOS = {
     porcentajeProfit2: 0,
     porcentajeProfit3: 0,
     vencimientos: [],
-    iva: null,
+    iva: 0,
     codigoBarras: [],
     formatoWeb: '',
     precioFormatoWeb: 0,
@@ -44,7 +44,8 @@ const BASIC_MODEL_PRODUCTOS = {
     modificarPrecio: 0,
     precioAlMomento: 0,
     excluirPromociones: 0,
-    sku: null
+    sku: null,
+    incluirIvaEnPrecio: false
 }
 
 const BASIC_MASSIVE_EDIT = {
@@ -449,6 +450,7 @@ const openModalProduct = (model = BASIC_MODEL_PRODUCTOS) => {
     document.getElementById('switchPuedeModificar').checked = model.modificarPrecio;
     document.getElementById('switchPrecioAlMomento').checked = model.precioAlMomento;
     document.getElementById('switchExcluirPromocion').checked = model.excluirPromociones;
+    document.getElementById('cboIvaEnCosto').checked = model.incluirIvaEnPrecio;
 
     if (model.photoBase64 != null) {
         $("#imgProduct").attr("src", `data:image/png;base64,${model.photoBase64}`);
@@ -986,7 +988,7 @@ $("#btnSave").on("click", async function () {
     model["modificarPrecio"] = document.getElementById('switchPuedeModificar').checked;
     model["precioAlMomento"] = document.getElementById('switchPrecioAlMomento').checked;
     model["excluirPromociones"] = document.getElementById('switchExcluirPromocion').checked;
-
+    model["incluirIvaEnPrecio"] = document.getElementById('cboIvaEnCosto').checked;
     model["productoWeb"] = document.getElementById('switchProductoWeb').checked;
 
     model["precioFormatoWeb"] = processNumericValue("#txtPriceFormatoWeb") || processNumericValue("#txtPrice");
@@ -1240,8 +1242,14 @@ function calcularPrecio() {
     let costo = $("#txtCosto").val();
     let roundingDigits = $("#roundingParticular").val();
 
-    iva = iva == '' || iva == null ? 0 : parseFloat(iva);
-
+    let incluirIva = document.querySelector('#cboIvaEnCosto').checked;
+     
+    iva = incluirIva == true ?
+        iva == '' || iva == null
+            ? 0
+            : parseFloat(iva)
+        : 0;
+    
 
     if (costo !== '') {
         costo = parseFloat(costo) * (1 + (iva / 100));
