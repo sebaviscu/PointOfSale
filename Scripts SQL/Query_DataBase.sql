@@ -452,6 +452,7 @@ go
 
 create table AjustesWeb(
 idAjusteWeb int primary key identity(1,1),
+email VARCHAR(200) NULL,
 MontoEnvioGratis decimal(10,2) null,
 AumentoWeb decimal(10,2) null,
 CostoEnvio decimal(10,2) null,
@@ -475,6 +476,8 @@ HabilitarComodin2 BIT NULL,
 NombreComodin3 varchar(150) null,
 HabilitarComodin3 BIT NULL,
 IvaEnPrecio BIT NULL,
+SobreNosotros NVARCHAR(MAX) NULL,
+logoImagenNombre VARCHAR(50) NULL,
 [modificationDate] [datetime] null,
 [modificationUser] varchar(50) null
 )

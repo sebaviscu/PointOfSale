@@ -1,7 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@using PointOfSale.Models;
+@model VMShop;
+
+<!DOCTYPE html>
 <html lang="es">
 <head>
-	<title>@Model.Ajustes.Nombre</title>
+	<title>@Model.Nombre</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -34,53 +37,103 @@
 </head>
 <body class="goto-here" style="overflow-x: hidden">
 
+	<nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+
+		<div class="container justify-content-center align-items-center">
+			@if (Model.IsLogin)
+			{
+				<div>
+					<a href="/Access/Login" class="btn btn-info" style="margin-right: 30px"><i class="mdi mdi-login-variant mdi-18px mdi-rotate-180"></i></a>
+				</div>
+			}
+			<a href="/Shop/Index" class="navbar-brand" style="white-space: normal;text-align: center;">@Model.Nombre</a>
+		</div>
+	</nav>
+
+	<hr style="margin-top: 0px;" />
+
 	<div class="content-wrapper">
 		<div class="content">
 			@RenderBody()
-		</div> <!-- End Content -->
-	</div> <!-- End Content Wrapper -->
+		</div> 
+	</div> 
+
 	<!-- Footer -->
 	<footer class="footer mt-auto row" style="background-color: black;text-align-last: center;">
-		<div class="col-md-12 row" style="padding: 20px;">
+		<div class="col-md-12 row" style="padding: 30px;">
 
-			<div class="col-md-4">
-				<div class="col-md topper">
-					<span class="text" phoneNumber="@Model.Ajustes.Whatsapp" id="txtPhone"><i class="icon-phone2"></i>&nbsp; 2432423</span>
+			<div class="offset-md-1 col-md-3">
+				<div style="text-align-last: start;">
+					<div class="col-md topper">
+						<span class="text" phoneNumber="@Model.Whatsapp" id="txtPhone"><i class="icon-phone2"></i>&nbsp;  @Model.Whatsapp</span>
+					</div>
+					<div class="col-md topper">
+						<span class="text"><i class="icon-paper-plane"></i>&nbsp; @Model.Direccion</span>
+					</div>
+					<div class="col-md topper">
+						<span class="text"><i class="mdi mdi-calendar-today mdi-18px"></i>&nbsp; @Model.Email</span>
+					</div>
 				</div>
-				<div class="col-md topper">
-					<span class="text"><i class="icon-paper-plane"></i>&nbsp; zxczx</span>
+
+				<div class="">
+					@{
+						if (!string.IsNullOrWhiteSpace(@Model.Twitter))
+						{
+							<a style="margin-right: 15px;" href="https://twitter.com/@Model.Twitter" target=”_blank”><span class="mdi mdi-twitter mdi-light mdi-48px"></span></a>
+						}
+
+						if (!string.IsNullOrWhiteSpace(@Model.Facebook))
+						{
+							<a style="margin-right: 15px;" href="https://www.facebook.com/@Model.Facebook" target=”_blank”><span class="mdi mdi-facebook mdi-light mdi-48px"></span></a>
+						}
+
+						if (!string.IsNullOrWhiteSpace(@Model.Instagram))
+						{
+							<a style="margin-right: 15px;" href="https://www.instagram.com/@Model.Instagram" target=”_blank”><span class="mdi mdi-instagram mdi-light mdi-48px"></span></a>
+						}
+
+						if (!string.IsNullOrWhiteSpace(@Model.Tiktok))
+						{
+							<a href="https://www.tiktok.com/@Model.Tiktok" target="_blank" style="margin-right: 15px;align-content: center;text-align: center; color: white">
+								<img src="~/images/tiktok.png" alt="TikTok" width="45" height="45" style="vertical-align: initial;" />
+							</a>
+						}
+
+						if (!string.IsNullOrWhiteSpace(@Model.Youtube))
+						{
+							<a style="margin-right: 15px;" href="https://www.youtube.com/@Model.Youtube" target=”_blank”><span class="mdi mdi-youtube mdi-light mdi-48px"></span></a>
+						}
+					}
 				</div>
+			</div>
+
+			<div class="col-md-4 d-flex flex-column min-vh-75">
 				<div class="col-md topper">
-					<span class="text"><i class="mdi mdi-calendar-today mdi-18px"></i>&nbsp; fsdfsd</span>
+					<a href="#">
+						<span class="text">POLÍTICAS DE PRIVACIDAD & COOKIES</span>
+					</a>
+					<a href="#">
+						<span class="text">TÉRMINOS Y CONDICIONES</span>
+					</a>
+				</div>
+
+				<div class="d-flex justify-content-center mt-auto">
+
+					<div class="copyright text-white">
+						<p>
+							Copyright &copy; <span id="copy-year"></span>.
+						</p>
+					</div>
+
 				</div>
 			</div>
 
 			<div class="col-md-4">
-				<div class="col-md topper">
-					<span class="text" phoneNumber="@Model.Ajustes.Whatsapp" id="txtPhone">Legal</span>
-				</div>
-				<div class="col-md topper">
-					<span class="text">POLÍTICAS DE PRIVACIDAD & COOKIES</span>
-				</div>
-				<div class="col-md topper">
-					<span class="text">TÉRMINOS Y CONDICIONES</span>
-				</div>
-
+				<img src="~/Shop/logo.jpeg" style="max-width:200px;" class="rounded mx-auto d-block" alt="Logo" />
 			</div>
 
-			<div class="col-md-4">
-				imagen
-			</div>
 		</div>
-		<div class="col-md-12 row">
 
-			<div class="copyright bg-white">
-				<p>
-					Copyright &copy; <span id="copy-year"></span>.
-				</p>
-			</div>
-
-		</div>
 
 	</footer>
 

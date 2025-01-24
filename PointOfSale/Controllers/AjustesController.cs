@@ -78,7 +78,12 @@ namespace PointOfSale.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateAjuste([FromForm] IFormFile Certificado, [FromForm] string modelFacturacion, [FromForm] string modelAjustes, [FromForm] string ModelWeb)
+        public async Task<IActionResult> UpdateAjuste(
+            [FromForm] IFormFile Certificado,
+            [FromForm] string modelFacturacion,
+            [FromForm] string modelAjustes,
+            [FromForm] string ModelWeb,
+            [FromForm] IFormFile ImagenLogo)
         {
             var gResponse = new GenericResponse<string>();
             try
@@ -96,6 +101,11 @@ namespace PointOfSale.Controllers
 
                 modelWeb.ModificationUser = user.UserName;
                 modelWeb.IdTienda = user.IdTienda;
+
+                if (ImagenLogo != null)
+                {
+                    modelWeb.LogoImagenNombre = await _ajusteService.SaveLogoImage(ImagenLogo);
+                }
 
                 _ = await _ajusteService.EditWeb(_mapper.Map<AjustesWeb>(modelWeb));
 

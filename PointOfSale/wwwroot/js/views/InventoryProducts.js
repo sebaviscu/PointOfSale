@@ -1128,32 +1128,18 @@ function obtenerComosinesSeleccionados(comodinSelector, lovType, idProduct) {
     return comodinesArray;
 }
 
-function compressImage(file, quality, maxWidth, maxHeight) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = event => {
-            const img = new Image();
-            img.src = event.target.result;
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
 
-                const ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
-                canvas.width = img.width * ratio;
-                canvas.height = img.height * ratio;
-
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-                canvas.toBlob(blob => {
-                    resolve(blob);
-                }, 'image/jpeg', quality);
-            };
-            img.onerror = reject;
+$('#txtPhoto').on('change', function (event) {
+    const file = event.target.files[0]; // Obtener el archivo seleccionado
+    if (file) {
+        const reader = new FileReader(); // Crear un lector de archivos
+        reader.onload = function (e) {
+            // Establecer el src de la imagen en la previsualización
+            $('#imgProduct').attr('src', e.target.result);
         };
-        reader.onerror = reject;
-    });
-}
+        reader.readAsDataURL(file); // Leer el archivo como URL base64
+    }
+});
 
 $("#tbData tbody").on("click", ".btn-edit", function () {
 

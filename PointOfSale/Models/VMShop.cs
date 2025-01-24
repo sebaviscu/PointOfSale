@@ -11,7 +11,20 @@ namespace PointOfSale.Models
         {
             if (ajustes != null)
             {
-                Ajustes = ajustes;
+
+                Nombre = ajustes.Nombre;
+                Direccion = ajustes.Direccion;
+                Whatsapp = ajustes.Whatsapp;
+                SobreNosotros = ajustes.SobreNosotros;
+                MontoEnvioGratis = ajustes.MontoEnvioGratis;
+                Twitter = ajustes.Twitter;
+                Facebook = ajustes.Facebook;
+                Youtube = ajustes.Youtube;
+                Tiktok = ajustes.Tiktok;
+                Instagram = ajustes.Instagram;
+                HabilitarTakeAway = ajustes.HabilitarTakeAway;
+                TakeAwayDescuento = ajustes.TakeAwayDescuento;
+
                 var todavy = TimeHelper.GetArgentinaTime();
 
                 int day = (int)todavy.DayOfWeek;
@@ -49,7 +62,21 @@ namespace PointOfSale.Models
 
         public List<VMTypeDocumentSale> FormasDePago { get; set; }
 
-        public VMAjustesWeb Ajustes { get; set; }
+        //public VMAjustesWeb Ajustes { get; set; }
         public bool Open { get; set; } = false;
+
+        public string? SobreNosotros { get; set; }
+        public string? Nombre { get; set; }
+        public string? Whatsapp { get; set; }
+        public string? Direccion { get; set; }
+        public string? Email { get; set; }
+        public decimal? MontoEnvioGratis { get; set; }
+        public string? Facebook { get; set; }
+        public string? Instagram { get; set; }
+        public string? Tiktok { get; set; }
+        public string? Twitter { get; set; }
+        public string? Youtube { get; set; }
+        public bool? HabilitarTakeAway { get; set; }
+        public decimal? TakeAwayDescuento { get; set; }
     }
 }

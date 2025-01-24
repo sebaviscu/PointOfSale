@@ -1,8 +1,9 @@
 ﻿@using PointOfSale.Models;
 @model VMShop;
 @{
-	ViewData["Title"] = "Lista de productos";
-	Layout = "";
+	ViewData["Title"] = "Shop";
+	// Layout = "";
+	Layout = "~/Views/Shop/_LayoutWeb.cshtml";
 }
 
 <link href="https://cdn.materialdesignicons.com/4.4.95/css/materialdesignicons.min.css" rel="stylesheet" />
@@ -23,7 +24,7 @@
 
 <html lang="es">
 <head>
-	<title>@Model.Ajustes.Nombre</title>
+	<title>@Model.Nombre</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -32,54 +33,18 @@
 
 
 	<div id="txtMontoEnvioGratis" style="display:none">
-		@Model.Ajustes.MontoEnvioGratis
+		@Model.MontoEnvioGratis
 	</div>
 	<div id="txtOpen" style="display:none">
 		@Model.Open
 	</div>
 
-	<div class="py-1 bg-primary" id="div-cabecera">
-		<div class="container">
-			<div class="row no-gutters d-flex align-items-start align-items-center px-md-0">
-				<div class="col-lg-12 d-block" id="header">
-					<div class="row d-flex">
-						<div class="col-md pr-4 d-flex topper" style="text-align: center;align-items: center;">
-							<div class="icon mr-2 d-flex justify-content-center align-items-center"></div>
-							<span class="text" phoneNumber="@Model.Ajustes.Whatsapp" id="txtPhone"><i class="icon-phone2"></i>&nbsp; @Model.Ajustes.Whatsapp</span>
-						</div>
-						<div class="col-md pr-4 d-flex topper" style="text-align: center;align-items: center;">
-							<div class="icon mr-2 d-flex justify-content-center align-items-center"></div>
-							<span class="text"><i class="icon-paper-plane"></i>&nbsp; @Model.Ajustes.Direccion</span>
-						</div>
-						<div class="col-md pr-4 d-flex topper" style="text-align: center;align-items: center;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="@Model.Horarios">
-							<div class="icon mr-2 d-flex justify-content-center align-items-center"></div>
-							<span class="text"><i class="mdi mdi-calendar-today mdi-18px"></i>&nbsp; @Model.HorariosToday</span>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+
 	<div>
 		<text name="textarea" id="text-area-products" disabled style="display: none;"></text>
 		<p><button class="btn btn-primary" id="btnCompras">Total: $0</button></p>
 		<p><button class="btn" id="btnTrash" style="display: none;"><i class="mdi mdi-trash-can mdi-18px"></i></button></p>
 	</div>
-
-	<nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
-
-
-		<div class="container justify-content-center align-items-center">
-			@if (Model.IsLogin)
-			{
-				<div>
-					<a href="/Access/Login" class="btn btn-info" style="style=" margin-right: 30px""><i class="mdi mdi-login-variant mdi-18px mdi-rotate-180"></i></a>
-				</div>
-			}
-			<a href="/Shop/Index" class="navbar-brand" style="white-space: normal;text-align: center;">@Model.Ajustes.Nombre</a>
-		</div>
-	</nav>
-	<hr />
 
 	<div>
 		@{
@@ -135,56 +100,6 @@
 		</div>
 	</section>
 
-	<hr>
-
-	<footer class="ftco-footer ftco-section" style="padding: 0;">
-		<div class="container">
-			@*             <div class="row">
-            <div class="mouse">
-            <a href="#" class="mouse-icon">
-            <div class="mouse-wheel"><span class="ion-ios-arrow-up"></span></div>
-            </a>
-            </div>
-            </div> *@
-			<div class="row mb-5">
-				<div class="col-md">
-					<div class="ftco-footer-widget mb-4">
-						<ul class="ftco-footer-social list-unstyled float-md-left float-lft mt-5">
-							@{
-								if (!string.IsNullOrWhiteSpace(@Model.Ajustes.Twitter))
-								{
-									<li class="ftco-animate"><a href="https://twitter.com/@Model.Ajustes.Twitter" target=”_blank”><span class="icon-twitter"></span></a></li>
-								}
-
-								if (!string.IsNullOrWhiteSpace(@Model.Ajustes.Facebook))
-								{
-									<li class="ftco-animate"><a href="https://www.facebook.com/@Model.Ajustes.Facebook" target=”_blank”><span class="icon-facebook"></span></a></li>
-								}
-
-								if (!string.IsNullOrWhiteSpace(@Model.Ajustes.Instagram))
-								{
-									<li class="ftco-animate"><a href="https://www.instagram.com/@Model.Ajustes.Instagram" target=”_blank”><span class="icon-instagram"></span></a></li>
-								}
-
-								if (!string.IsNullOrWhiteSpace(@Model.Ajustes.Tiktok))
-								{
-									<li class="ftco-animate"><a href="https://www.tiktok.com/@Model.Ajustes.Tiktok" target="_blank" style="align-content: center;text-align: center;"><img src="~/images/tiktok.png" alt="TikTok" width="24" height="24" /></a></li>
-								}
-
-								if (!string.IsNullOrWhiteSpace(@Model.Ajustes.Youtube))
-								{
-									<li class="ftco-animate"><a href="https://www.youtube.com/@Model.Ajustes.Youtube" target=”_blank”><span class="icon-youtube"></span></a></li>
-								}
-							}
-						</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-	</footer>
-
-
-
 	<!-- Grid Modal -->
 	<div class="modal fade" id="modalData" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
 		<div class="modal-dialog modal-lg" role="document">
@@ -218,9 +133,9 @@
 									</div>
 								</div>
 								@{
-									if (Model.Ajustes.HabilitarTakeAway.HasValue && Model.Ajustes.HabilitarTakeAway.Value)
+									if (Model.HabilitarTakeAway.HasValue && Model.HabilitarTakeAway.Value)
 									{
-										var descuentoTakeAway = Model.Ajustes.TakeAwayDescuento != 0 ? $" {Convert.ToInt32(@Model.Ajustes.TakeAwayDescuento)}% de descuento" : "";
+										var descuentoTakeAway = Model.TakeAwayDescuento != 0 ? $" {Convert.ToInt32(@Model.TakeAwayDescuento)}% de descuento" : "";
 										var takeAway = $"Retiro en el local";
 										<div class="text-center">
 											<div class="form-check form-switch">

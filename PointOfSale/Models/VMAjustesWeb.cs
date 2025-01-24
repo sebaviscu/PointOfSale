@@ -8,6 +8,8 @@ namespace PointOfSale.Models
         public int IdTienda { get; set; }
         public string? Nombre { get; set; }
         public string? Direccion { get; set; }
+        public string? Email { get; set; }
+
         public decimal? MontoEnvioGratis { get; set; }
         public decimal? CostoEnvio { get; set; }
         public decimal? CompraMinima { get; set; }
@@ -33,6 +35,8 @@ namespace PointOfSale.Models
         public string? NombreComodin3 { get; set; }
         public bool? HabilitarComodin3 { get; set; }
         public bool? IvaEnPrecio { get; set; }
+        public string? SobreNosotros { get; set; }
+        public string? LogoImagenNombre { get; set; }
         public ICollection<VMHorarioWeb>? HorariosWeb { get; set; }
     }
 }

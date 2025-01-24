@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Data.DBContext;
@@ -14,13 +16,14 @@ namespace PointOfSale.Business.Services
         private readonly IGenericRepository<Ajustes> _repositoryAjustes;
         private readonly IGenericRepository<AjustesFacturacion> _repositoryAjustesFacturacion;
         private readonly IGenericRepository<AjustesWeb> _repositoryAjustesWeb;
-
-        public AjusteService(IUnitOfWork unitOfWork)
+        private readonly ILogger<AjusteService> _logger;
+        public AjusteService(IUnitOfWork unitOfWork, ILogger<AjusteService> logger)
         {
             _unitOfWork = unitOfWork;
             _repositoryAjustes = _unitOfWork.Repository<Ajustes>();
             _repositoryAjustesFacturacion = _unitOfWork.Repository<AjustesFacturacion>();
             _repositoryAjustesWeb = _unitOfWork.Repository<AjustesWeb>();
+            _logger = logger;
         }
 
         public async Task<AjustesFacturacion> GetAjustesFacturacion(int idTienda)
@@ -44,7 +47,56 @@ namespace PointOfSale.Business.Services
         public async Task<AjustesWeb> GetAjustesWeb()
         {
             var query = await _repositoryAjustesWeb.Query();
-            return query.Include(_=> _.HorariosWeb).First();
+            return query.Include(_ => _.HorariosWeb).First();
+        }
+
+        public async Task<string> SaveLogoImage(IFormFile imagenLogo)
+        {
+            if (imagenLogo == null || imagenLogo.Length == 0)
+            {
+                throw new Exception("No se proporcionó una imagen.");
+            }
+
+            // Validar que sea un archivo de imagen
+            var formatosPermitidos = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+            var extension = Path.GetExtension(imagenLogo.FileName).ToLowerInvariant();
+
+            if (!formatosPermitidos.Contains(extension))
+            {
+                throw new Exception("Solo se permiten archivos de imagen (.jpg, .jpeg, .png, .gif).");
+            }
+
+            var nombreLogo = "logo" + extension;
+            // Ruta donde se guardará la imagen
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Shop");
+            var filePath = Path.Combine(folderPath, nombreLogo);
+
+            try
+            {
+                // Crear el directorio si no existe
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+
+                // Guardar la imagen
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await imagenLogo.CopyToAsync(stream);
+                }
+                return nombreLogo;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Ocurrió un error al guardar la imagen: " + ex.Message);
+                return string.Empty;
+            }
         }
 
         public async Task<AjustesWeb> EditWeb(AjustesWeb entity)
@@ -70,6 +122,8 @@ namespace PointOfSale.Business.Services
             Ajustes_found.TakeAwayDescuento = entity.TakeAwayDescuento;
             Ajustes_found.HabilitarTakeAway = entity.HabilitarTakeAway;
             Ajustes_found.IvaEnPrecio = entity.IvaEnPrecio;
+            Ajustes_found.SobreNosotros = RichTextHelper.SanitizeHtml(entity.SobreNosotros);
+            Ajustes_found.LogoImagenNombre = entity.LogoImagenNombre;
 
             Ajustes_found.NombreComodin1 = entity.NombreComodin1;
             Ajustes_found.NombreComodin2 = entity.NombreComodin2;

@@ -1,4 +1,5 @@
-﻿using PointOfSale.Model;
+﻿using Microsoft.AspNetCore.Http;
+using PointOfSale.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,8 @@ namespace PointOfSale.Business.Contracts
         Task<AjustesFacturacion> EditFacturacion(AjustesFacturacion entity);
 
         Task CreateAjsutes(int idTienda);
-        
+        Task<string> SaveLogoImage(IFormFile imagenLogo);
+
+
     }
 }

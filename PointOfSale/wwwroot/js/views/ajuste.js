@@ -47,7 +47,8 @@ const BASIC_MODEL_AJUSTE_WEB = {
     habilitarTakeAway: false,
     horariosWeb: [],
     direccion: '',
-    nombre: ''
+    nombre: '',
+    sobreNosotros: ''
 }
 
 
@@ -67,10 +68,31 @@ const BASIC_MODEL_AJUSTES_FACTURACION = {
     isProdEnvironment: false
 }
 
+const toolbarOptions = [
+    [{ 'font': [] }],
+    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ 'color': [] }, { 'background': [] }],
+    [{ 'script': 'sub' }, { 'script': 'super' }],
+    [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+    [{ 'align': [] }],
+    ['link', 'image', 'video'],
+    ['blockquote', 'code-block'],
+    ['clean']
+];
+
+let quill = null;
 
 let isHealthyAjustes = false;
 $(document).ready(function () {
     showLoading();
+
+    quill = new Quill("#editor-container", {
+        theme: "snow",
+        modules: {
+            toolbar: toolbarOptions
+        }
+    });
 
     fetch("/Ajustes/GetAjuste")
         .then(response => {
@@ -136,6 +158,8 @@ $(document).ready(function () {
                 $("#txtTikTok").val(model.tiktok);
                 $("#txtTwitter").val(model.twitter);
                 $("#txtYouTube").val(model.youtube);
+
+                quill.clipboard.dangerouslyPasteHTML(quill.getLength(), model.sobreNosotros);
 
                 diasSemana.forEach(dia => {
                     const horariosDia = model.horariosWeb.filter(h => h.diaSemana === diasSemana.indexOf(dia) + 1);
@@ -235,7 +259,7 @@ function obtenerHorarios() {
     let horarios = [];
 
     // Recorremos cada día de la semana
-    $("#horariosContainer > div").each(function () {
+    $("#horariosContainer > div  > div > div").each(function () {
         let diaSemana = $(this).data("dia"); // Obtenemos el día de la semana
         let filasHorario = $(this).find(".horarios-dia .horario-row");
 
@@ -359,7 +383,20 @@ $("#btnCargarCertificado").on("click", function () {
 
 })
 
-$("#btnSave").on("click", function () {
+$('#imagenLogo').on('change', function (event) {
+    const file = event.target.files[0]; // Obtener el archivo seleccionado
+    if (file) {
+        const reader = new FileReader(); // Crear un lector de archivos
+        reader.onload = function (e) {
+            // Establecer el src de la imagen en la previsualización
+            $('#imgLogoPreview').attr('src', e.target.result);
+        };
+        reader.readAsDataURL(file); // Leer el archivo como URL base64
+    }
+});
+
+
+$("#btnSave").on("click", async function () {
 
 
     let checkboxSwitchFacturaElectronica = document.getElementById('switchFacturaElectronica');
@@ -377,7 +414,7 @@ $("#btnSave").on("click", function () {
     }
 
     let checkboxSwitchHabilitarWeb = document.getElementById('switchHabilitarWeb');
-    
+
     if (checkboxSwitchHabilitarWeb.checked) {
 
         let nroWA = $("#txtWhatsApp").val();
@@ -398,6 +435,18 @@ $("#btnSave").on("click", function () {
         return;
     }
 
+    let sobreNosotrosText = quill.root.innerHTML;
+
+    if (sobreNosotrosText.startsWith("<p><br></p>")) {
+        sobreNosotrosText = sobreNosotrosText.substring(11);
+    }
+
+    if (sobreNosotrosText.length > 50000) {
+        const msg = `El texto 'Sobre Nosotros', no puede ser tan largo.`;
+        toastr.warning(msg, "");
+        return;
+    }
+
     const modelWeb = structuredClone(BASIC_MODEL_AJUSTE_WEB);
     modelWeb["montoEnvioGratis"] = $("#txtEnvioGratis").val();
     modelWeb["compraMinima"] = $("#txtCompraMinima").val();
@@ -411,6 +460,7 @@ $("#btnSave").on("click", function () {
     modelWeb["youtube"] = $("#txtYouTube").val();
     modelWeb["nombre"] = $("#txtNombreTienda").val();
     modelWeb["direccion"] = $("#txtDireccion").val();
+    modelWeb["sobreNosotros"] = sobreNosotrosText;
 
     modelWeb["horariosWeb"] = obtenerHorarios();
 
@@ -483,11 +533,21 @@ $("#btnSave").on("click", function () {
 
     const inputCertificado = document.getElementById('fileCertificado');
 
+    const inputLogo = document.getElementById('imagenLogo');
+
     const formData = new FormData();
     formData.append('modelWeb', JSON.stringify(modelWeb));
     formData.append('modelFacturacion', JSON.stringify(modelFacturacion));
     formData.append('modelAjustes', JSON.stringify(model));
-    formData.append('Certificado', inputCertificado.files[0]);
+
+    if (inputCertificado.files.length > 0) {
+        formData.append('Certificado', inputCertificado.files[0]);
+    }
+
+    if (inputLogo.files.length > 0) {
+        let compressedImage = await compressImage(inputLogo.files, 0.7, 300, 300);
+        formData.append('ImagenLogo', compressedImage);
+    }
 
     showLoading();
 
