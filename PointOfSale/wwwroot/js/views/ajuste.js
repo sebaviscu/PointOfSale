@@ -146,6 +146,7 @@ $(document).ready(function () {
             if (responseJson.state) {
 
                 let model = responseJson.object;
+                document.getElementById("imgLogoPreview").src = model.logoImagenNombre;
 
                 $("#txtNombreTienda").val(model.nombre);
                 $("#txtDireccion").val(model.direccion);

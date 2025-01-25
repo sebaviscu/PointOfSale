@@ -84,7 +84,7 @@ namespace PointOfSale.Controllers
 
             var shop = new VMShop(ajuste);
 
-            return View("politicas-de-privacidad-y-cookies", shop);
+            return View("Componentes/politicas-de-privacidad-y-cookies", shop);
         }
 
         public async Task<IActionResult> TerminosCondiciones()

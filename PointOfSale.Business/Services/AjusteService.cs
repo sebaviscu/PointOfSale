@@ -89,7 +89,7 @@ namespace PointOfSale.Business.Services
                 {
                     await imagenLogo.CopyToAsync(stream);
                 }
-                return nombreLogo;
+                return $"/Shop/{nombreLogo}";
 
             }
             catch (Exception ex)
@@ -98,6 +98,7 @@ namespace PointOfSale.Business.Services
                 return string.Empty;
             }
         }
+
 
         public async Task<AjustesWeb> EditWeb(AjustesWeb entity)
         {

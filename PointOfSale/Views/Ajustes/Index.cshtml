@@ -501,8 +501,8 @@
 															<input class="form-control-file" type="file" id="imagenLogo" accept="jpg, .jpeg, .png, .gif" />
 														</div>
 													</div>
-													<div class="form-row">	
-														<img id="imgLogoPreview" style="max-width:300px;" src="" class="rounded mx-auto d-block" alt="Logo de la empresa">
+													<div class="form-row">
+														<img id="imgLogoPreview" style="max-width:200px;" src="" class="rounded mx-auto d-block" alt="Logo de la empresa">
 													</div>
 												</div>
 											</div>
@@ -515,13 +515,11 @@
 
 									<div class="tab-pane" id="web-tabpanel-1" role="tabpanel" aria-labelledby="web-tab-1" style="padding: 15px;">
 										<div class="col-md-12">
-											<div id="toolbar">
-											</div>
-											<div id="editor-wrapper" style="height: 210px;">
-												<div id="editor-container"></div>
+											<div id="toolbar"></div>
+											<div id="editor-wrapper" style="height: auto;">
+												<div id="editor-container" style="resize: vertical; overflow: auto; min-height: 200px"></div>
 											</div>
 										</div>
-
 									</div>
 
 									<div class="tab-pane" id="web-tabpanel-2" role="tabpanel" aria-labelledby="web-tab-2" style="padding: 15px;">
@@ -656,7 +654,7 @@
 						</div>
 					</div>
 
-					@* Facturacion *@
+												@* Facturacion *@
 					<div class="tab-pane" id="simple-tabpanel-2" role="tabpanel" aria-labelledby="simple-tab-2">
 
 						<div class="row">
@@ -781,11 +779,11 @@
 
 				<div class="col-sm-4" style="margin-top: 40px;">
 					<div class="form-row" id="divModif">
-						<div class="form-group col-sm-6">
+						<div class="form-group col-sm-7">
 							<label for="txtModificado">Fecha Modificado</label>
 							<input type="text" class="form-control form-control-sm" id="txtModificado" name="fechaModificado" readonly>
 						</div>
-						<div class="form-group col-sm-6">
+						<div class="form-group col-sm-5">
 							<label for="txtModificadoUsuario">Por:</label>
 							<input type="text" class="form-control form-control-sm" id="txtModificadoUsuario" name="usuarioModificado" readonly>
 						</div>
