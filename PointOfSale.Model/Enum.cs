@@ -146,5 +146,12 @@ namespace PointOfSale.Model
             Semestral,
             Anual
         }
+
+        public enum FormaPagoProveedores
+        {
+            Efectivo,
+            Transferencia,
+            Tarjeta
+        }
     }
 }

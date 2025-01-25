@@ -55,74 +55,94 @@
 	<div class="content-wrapper">
 		<div class="content">
 			@RenderBody()
-		</div> 
-	</div> 
+		</div>
+	</div>
 
 	<!-- Footer -->
 	<footer class="footer mt-auto row" style="background-color: black;text-align-last: center;">
-		<div class="col-md-12 row" style="padding: 30px;">
+		<div class="col-md-12 row" style="padding: 30px 10px 10px 10px;">
 
-			<div class="offset-md-1 col-md-3">
-				<div style="text-align-last: start;">
-					<div class="col-md topper">
-						<span class="text" phoneNumber="@Model.Whatsapp" id="txtPhone"><i class="icon-phone2"></i>&nbsp;  @Model.Whatsapp</span>
-					</div>
-					<div class="col-md topper">
-						<span class="text"><i class="icon-paper-plane"></i>&nbsp; @Model.Direccion</span>
-					</div>
-					<div class="col-md topper">
-						<span class="text"><i class="mdi mdi-calendar-today mdi-18px"></i>&nbsp; @Model.Email</span>
+			<div class="col-md-4 d-flex flex-column">
+
+				<div class="d-flex justify-content-center">
+					<div style="text-align-last: start;">
+						<div class="col-md topper">
+							<span class="text" phoneNumber="@Model.Whatsapp" id="txtPhone"><i class="mdi mdi-whatsapp mdi-18px"></i>&nbsp;  @Model.Whatsapp</span>
+						</div>
+						@if (!string.IsNullOrWhiteSpace(@Model.Direccion))
+						{
+							<div class="col-md topper">
+								<span class="text"><i class="mdi mdi-map-marker mdi-18px"></i>&nbsp; @Model.Direccion</span>
+							</div>
+						}
+						@if (!string.IsNullOrWhiteSpace(@Model.Email))
+						{
+							<div class="col-md topper">
+								<span class="text"><i class="mdi mdi-email mdi-18px"></i>&nbsp; @Model.Email</span>
+							</div>
+						}
 					</div>
 				</div>
 
-				<div class="">
-					@{
-						if (!string.IsNullOrWhiteSpace(@Model.Twitter))
-						{
-							<a style="margin-right: 15px;" href="https://twitter.com/@Model.Twitter" target=”_blank”><span class="mdi mdi-twitter mdi-light mdi-48px"></span></a>
-						}
 
-						if (!string.IsNullOrWhiteSpace(@Model.Facebook))
-						{
-							<a style="margin-right: 15px;" href="https://www.facebook.com/@Model.Facebook" target=”_blank”><span class="mdi mdi-facebook mdi-light mdi-48px"></span></a>
-						}
+				<div class="d-flex justify-content-center mt-auto">
 
-						if (!string.IsNullOrWhiteSpace(@Model.Instagram))
-						{
-							<a style="margin-right: 15px;" href="https://www.instagram.com/@Model.Instagram" target=”_blank”><span class="mdi mdi-instagram mdi-light mdi-48px"></span></a>
-						}
+					<div class="">
+						@{
+							if (!string.IsNullOrWhiteSpace(@Model.Facebook))
+							{
+								<a style="margin-right: 15px;" href="https://www.facebook.com/@Model.Facebook" target=”_blank”><span class="mdi mdi-facebook mdi-light mdi-48px"></span></a>
+							}
 
-						if (!string.IsNullOrWhiteSpace(@Model.Tiktok))
-						{
-							<a href="https://www.tiktok.com/@Model.Tiktok" target="_blank" style="margin-right: 15px;align-content: center;text-align: center; color: white">
-								<img src="~/images/tiktok.png" alt="TikTok" width="45" height="45" style="vertical-align: initial;" />
-							</a>
-						}
+							if (!string.IsNullOrWhiteSpace(@Model.Twitter))
+							{
+								<a style="margin-right: 20px;" href="https://twitter.com/@Model.Twitter" target=”_blank”><span class="mdi mdi-twitter mdi-light mdi-48px"></span></a>
+							}
 
-						if (!string.IsNullOrWhiteSpace(@Model.Youtube))
-						{
-							<a style="margin-right: 15px;" href="https://www.youtube.com/@Model.Youtube" target=”_blank”><span class="mdi mdi-youtube mdi-light mdi-48px"></span></a>
+							if (!string.IsNullOrWhiteSpace(@Model.Instagram))
+							{
+								<a style="margin-right: 20px;" href="https://www.instagram.com/@Model.Instagram" target=”_blank”><span class="mdi mdi-instagram mdi-light mdi-48px"></span></a>
+							}
+
+							if (!string.IsNullOrWhiteSpace(@Model.Tiktok))
+							{
+								<a href="https://www.tiktok.com/@Model.Tiktok" target="_blank" style="margin-right: 20px;align-content: center;text-align: center;">
+									<img src="~/images/tiktok.png" alt="TikTok" width="42" height="42" style="vertical-align: initial;" />
+								</a>
+							}
+
+							if (!string.IsNullOrWhiteSpace(@Model.Youtube))
+							{
+								<a style="margin-right: 20px;" href="https://www.youtube.com/@Model.Youtube" target=”_blank”><span class="mdi mdi-youtube mdi-light mdi-48px"></span></a>
+							}
 						}
-					}
+					</div>
+
 				</div>
 			</div>
 
-			<div class="col-md-4 d-flex flex-column min-vh-75">
-				<div class="col-md topper">
-					<a href="#">
-						<span class="text">POLÍTICAS DE PRIVACIDAD & COOKIES</span>
-					</a>
-					<a href="#">
-						<span class="text">TÉRMINOS Y CONDICIONES</span>
-					</a>
+			<div class="col-md-4 d-flex flex-column">
+
+				<div class="d-flex justify-content-center">
+					<div style="text-align-last: start;">
+						<div class="col-md topper">
+							<a href="/Shop/PoliticasPrivacidadCookies" target="_blank">
+								<span class="text" style="font-size: 12px">POLÍTICAS DE PRIVACIDAD & COOKIES</span>
+							</a>
+						</div>
+						<div class="col-md topper">
+							<a href="/Shop/TerminosCondiciones" target="_blank">
+								<span class="text" style="font-size: 12px">TÉRMINOS Y CONDICIONES</span>
+							</a>
+						</div>
+					</div>
 				</div>
+
 
 				<div class="d-flex justify-content-center mt-auto">
 
 					<div class="copyright text-white">
-						<p>
-							Copyright &copy; <span id="copy-year"></span>.
-						</p>
+						Copyright © <span id="copy-year">2025</span>.
 					</div>
 
 				</div>

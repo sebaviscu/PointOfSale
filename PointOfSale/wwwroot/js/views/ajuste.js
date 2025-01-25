@@ -48,7 +48,8 @@ const BASIC_MODEL_AJUSTE_WEB = {
     horariosWeb: [],
     direccion: '',
     nombre: '',
-    sobreNosotros: ''
+    sobreNosotros: '',
+    email: null
 }
 
 
@@ -158,6 +159,7 @@ $(document).ready(function () {
                 $("#txtTikTok").val(model.tiktok);
                 $("#txtTwitter").val(model.twitter);
                 $("#txtYouTube").val(model.youtube);
+                $("#txtEmail").val(model.email);
 
                 quill.clipboard.dangerouslyPasteHTML(quill.getLength(), model.sobreNosotros);
 
@@ -460,6 +462,7 @@ $("#btnSave").on("click", async function () {
     modelWeb["youtube"] = $("#txtYouTube").val();
     modelWeb["nombre"] = $("#txtNombreTienda").val();
     modelWeb["direccion"] = $("#txtDireccion").val();
+    modelWeb["email"] = $("#txtEmail").val();
     modelWeb["sobreNosotros"] = sobreNosotrosText;
 
     modelWeb["horariosWeb"] = obtenerHorarios();
@@ -544,9 +547,10 @@ $("#btnSave").on("click", async function () {
         formData.append('Certificado', inputCertificado.files[0]);
     }
 
-    if (inputLogo.files.length > 0) {
-        let compressedImage = await compressImage(inputLogo.files, 0.7, 300, 300);
-        formData.append('ImagenLogo', compressedImage);
+    if (inputLogo.files && inputLogo.files.length > 0) {
+        let compressedImage = await compressImage(inputLogo.files[0], 0.7, 300, 300);
+        formData.append('ImagenLogo', compressedImage, inputLogo.files[0].name
+);
     }
 
     showLoading();

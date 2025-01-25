@@ -109,6 +109,7 @@ namespace PointOfSale.Business.Services
             Ajustes_found.Nombre = entity.Nombre;
             Ajustes_found.Direccion = entity.Direccion;
             Ajustes_found.AumentoWeb = entity.AumentoWeb;
+            Ajustes_found.Email = entity.Email;
             Ajustes_found.Whatsapp = entity.Whatsapp;
             Ajustes_found.Facebook = entity.Facebook;
             Ajustes_found.Instagram = entity.Instagram;

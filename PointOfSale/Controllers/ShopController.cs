@@ -73,6 +73,34 @@ namespace PointOfSale.Controllers
             return View("Index", shop);
         }
 
+        public async Task<IActionResult> PoliticasPrivacidadCookies()
+        {
+            var ajuste = _mapper.Map<VMAjustesWeb>(await _ajusteService.GetAjustesWeb());
+
+            if (ajuste.HabilitarWeb.HasValue && !ajuste.HabilitarWeb.Value)
+            {
+                return View("ErrorWeb");
+            }
+
+            var shop = new VMShop(ajuste);
+
+            return View("politicas-de-privacidad-y-cookies", shop);
+        }
+
+        public async Task<IActionResult> TerminosCondiciones()
+        {
+            var ajuste = _mapper.Map<VMAjustesWeb>(await _ajusteService.GetAjustesWeb());
+
+            if (ajuste.HabilitarWeb.HasValue && !ajuste.HabilitarWeb.Value)
+            {
+                return View("ErrorWeb");
+            }
+
+            var shop = new VMShop(ajuste);
+
+            return View("terminos-y-condiciones", shop);
+        }
+
         [HttpGet]
         public async Task<IActionResult> Lista(int page = 1, int pageSize = 6)
         {

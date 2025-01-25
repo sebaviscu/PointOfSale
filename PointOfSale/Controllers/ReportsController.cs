@@ -63,7 +63,7 @@ namespace PointOfSale.Controllers
                 saleNumber = saleNumber.ToString("D6")
             };
 
-            return ValidateSesionViewOrLogin([Roles.Administrador], vmReport, "SalesReports");
+            return ValidateSesionViewOrLogin([Roles.Administrador], vmReport, "SalesReport");
         }
 
         public IActionResult ProductsReport()

@@ -163,6 +163,7 @@ namespace PointOfSale.Business.Services
                 Proveedor_edit.NroFactura = entity.NroFactura;
                 Proveedor_edit.TipoFactura = entity.TipoFactura;
                 Proveedor_edit.IdProveedor = entity.IdProveedor;
+                Proveedor_edit.FormaPago = entity.FormaPago;
 
 
                 bool response = await _proveedorMovimiento.Edit(Proveedor_edit);

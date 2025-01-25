@@ -322,6 +322,7 @@ create table ProveedorMovimiento(
 	idTienda int not null,
 	EstadoPago int not null,
 	FacturaPendiente bit not null,
+	FormaPago int null,
 	[modificationDate] [datetime] null,
 	[modificationUser] varchar(50) null,
 	[registrationDate] datetime not null,

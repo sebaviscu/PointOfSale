@@ -14,6 +14,7 @@ namespace PointOfSale.Models
 
                 Nombre = ajustes.Nombre;
                 Direccion = ajustes.Direccion;
+                Email = ajustes.Email;
                 Whatsapp = ajustes.Whatsapp;
                 SobreNosotros = ajustes.SobreNosotros;
                 MontoEnvioGratis = ajustes.MontoEnvioGratis;

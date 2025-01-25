@@ -74,6 +74,9 @@ function cargarTablaGastos(isGlobal) {
 
     let url = `/Gastos/GetGastos?visionGlobal=${isGlobal}`;
 
+    if (tableDataGastos != null)
+        tableDataGastos.destroy();
+
     tableDataGastos = $("#tbData").DataTable({
         responsive: true,
         "rowCallback": function (row, data) {

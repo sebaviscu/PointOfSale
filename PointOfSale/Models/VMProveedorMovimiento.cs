@@ -35,6 +35,7 @@ namespace PointOfSale.Models
         public bool FacturaPendiente { get; set; }
         public DateTime? ModificationDate { get; set; }
         public string? ModificationUser { get; set; }
+        public FormaPagoProveedores? FormaPago { get; set; }
 
     }
 }

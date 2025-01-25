@@ -39,7 +39,8 @@ const BASIC_MODEL_PAGO = {
     estadoPago: 0,
     facturaPendiente: 0,
     modificationDate: null,
-    modificationUser: null
+    modificationUser: null,
+    formaPago: null
 }
 
 $(document).ready(function () {
@@ -512,6 +513,7 @@ const openModalPago = (model = BASIC_MODEL_PAGO) => {
     $("#txtComentarioPago").val(model.comentario);
     $("#cboEstado").val(model.estadoPago);
     $("#cboProveedor").val(model.idProveedor);
+    $("#cboFormaPago").val(model.formaPago != null ? model.formaPago : '');
 
     document.getElementById("cbxFacturaPendiente").checked = model.facturaPendiente;
 
@@ -696,6 +698,7 @@ $("#btnSavePago").on("click", function () {
     model["importeSinIva"] = $("#txtImporteSinIva").val() != '' ? $("#txtImporteSinIva").val() : 0;
     model["comentario"] = $("#txtComentarioPago").val();
     model["estadoPago"] = parseInt($("#cboEstado").val());
+    model["formaPago"] = $("#cboFormaPago").val() != '' ?  parseInt($("#cboFormaPago").val()) : null;
     model["facturaPendiente"] = document.querySelector('#cbxFacturaPendiente').checked;
 
     $("#modalPago").find("div.modal-content").LoadingOverlay("show")
