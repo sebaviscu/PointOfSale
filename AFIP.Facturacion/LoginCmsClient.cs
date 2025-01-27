@@ -97,7 +97,7 @@ namespace AFIP.Facturacion
                     return ticket;
             }
 
-            const string ID_FNC = "[ObtenerLoginTicketResponse]";
+            var ID_FNC = $"[ObtenerLoginTicketResponse] Path: {x509CertificateFilePath}. ";
             CertificatePath = x509CertificateFilePath;
             VerboseMode = verbose;
             X509CertificateManager.VerboseMode = verbose;

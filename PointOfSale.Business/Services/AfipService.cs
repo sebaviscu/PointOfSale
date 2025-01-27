@@ -241,6 +241,7 @@ namespace PointOfSale.Business.Services
         public string ValidateCertificate(AjustesFacturacion? ajustes)
         {
             var resp = string.Empty;
+            var path = string.Empty;
             try
             {
                 if (ajustes == null || !ajustes.IsValid)
@@ -248,12 +249,12 @@ namespace PointOfSale.Business.Services
                     throw new Exception("Los ajustes de facturación no existen o estan incorrectos");
                 }
 
-                var path = FileStorageService.ObtenerRutaCertificado(ajustes);
+                path = FileStorageService.ObtenerRutaCertificado(ajustes);
                 FileStorageService.ExistCertificate(path);
             }
             catch (Exception e)
             {
-                resp = e.Message;
+                resp = $"{e.Message}. Path: {path}";
             }
 
             return resp;
