@@ -869,6 +869,7 @@ $('#cboProveedor').change(function () {
     $("#txtIva").val('');
     $('#txtImporteSinIva').val('');
     $('#txtImporteIva').val('');
+    $('#cboFormaPago').val('');
 
     if (proveedor != null) {
         $("#txtCuilPago").val(proveedor.cuil);
@@ -968,6 +969,8 @@ $("#btnSavePagoProveedor").on("click", function () {
         model["comentario"] = $("#txtComentario").val();
         model["estadoPago"] = parseInt($("#cboEstado").val());
         model["facturaPendiente"] = document.querySelector('#cbxFacturaPendiente').checked;
+        model["formaPago"] = parseInt($("#cboFormaPago").val());
+
     }
 
 

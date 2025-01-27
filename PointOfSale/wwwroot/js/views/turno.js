@@ -464,6 +464,8 @@ $("#btnImprimirCierreCaja").click(function () {
     let idTurno = parseInt($("#txtIdTurnoLayout").val());
 
     fetch(`/Turno/ImprimirTicketCierre?idTurno=${idTurno}`, {
+        method: "GET"
+
     }).then(response => {
 
         return response.json();

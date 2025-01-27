@@ -326,7 +326,8 @@ namespace PointOfSale.Controllers
 
         }
 
-        private async Task<IActionResult> ImprimirTicketCierre(int idTurno)
+        [HttpGet]
+        public async Task<IActionResult> ImprimirTicketCierre(int idTurno)
         {
             var gResponse = new GenericResponse<VMImprimir>();
 
@@ -334,7 +335,7 @@ namespace PointOfSale.Controllers
             {
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Empleado]);
                 var ajustes = await _ajustesService.GetAjustes(user.IdTienda);
-                var turno = await _turnoService.GetTurno(idTurno);
+                var turno = await _turnoService.GetTurno(2);
 
                 var listaVentas = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, turno.IdTurno, user.IdTienda, turno.FechaInicio, false);
 
