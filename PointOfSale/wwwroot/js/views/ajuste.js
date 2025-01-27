@@ -49,6 +49,8 @@ const BASIC_MODEL_AJUSTE_WEB = {
     direccion: '',
     nombre: '',
     sobreNosotros: '',
+    temrinosCondiciones: '',
+    politicaPrivacidad: '',
     email: null
 }
 
@@ -82,13 +84,27 @@ const toolbarOptions = [
     ['clean']
 ];
 
-let quill = null;
+let quillSobreNosotros = null;
+let quillTermino = null;
+let quillPrivacidad = null;
 
 let isHealthyAjustes = false;
 $(document).ready(function () {
     showLoading();
 
-    quill = new Quill("#editor-container", {
+    quillSobreNosotros = new Quill("#editor-container-sobre-nosotros", {
+        theme: "snow",
+        modules: {
+            toolbar: toolbarOptions
+        }
+    });
+    quillTermino = new Quill("#editor-container-terminos", {
+        theme: "snow",
+        modules: {
+            toolbar: toolbarOptions
+        }
+    });
+    quillPrivacidad = new Quill("#editor-container-privacidad", {
         theme: "snow",
         modules: {
             toolbar: toolbarOptions
@@ -162,7 +178,9 @@ $(document).ready(function () {
                 $("#txtYouTube").val(model.youtube);
                 $("#txtEmail").val(model.email);
 
-                quill.clipboard.dangerouslyPasteHTML(quill.getLength(), model.sobreNosotros);
+                quillSobreNosotros.clipboard.dangerouslyPasteHTML(quillSobreNosotros.getLength(), model.sobreNosotros);
+                quillTermino.clipboard.dangerouslyPasteHTML(quillTermino.getLength(), model.temrinosCondiciones);
+                quillPrivacidad.clipboard.dangerouslyPasteHTML(quillPrivacidad.getLength(), model.politicaPrivacidad);
 
                 diasSemana.forEach(dia => {
                     const horariosDia = model.horariosWeb.filter(h => h.diaSemana === diasSemana.indexOf(dia) + 1);
@@ -438,18 +456,6 @@ $("#btnSave").on("click", async function () {
         return;
     }
 
-    let sobreNosotrosText = quill.root.innerHTML;
-
-    if (sobreNosotrosText.startsWith("<p><br></p>")) {
-        sobreNosotrosText = sobreNosotrosText.substring(11);
-    }
-
-    if (sobreNosotrosText.length > 50000) {
-        const msg = `El texto 'Sobre Nosotros', no puede ser tan largo.`;
-        toastr.warning(msg, "");
-        return;
-    }
-
     const modelWeb = structuredClone(BASIC_MODEL_AJUSTE_WEB);
     modelWeb["montoEnvioGratis"] = $("#txtEnvioGratis").val();
     modelWeb["compraMinima"] = $("#txtCompraMinima").val();
@@ -464,7 +470,9 @@ $("#btnSave").on("click", async function () {
     modelWeb["nombre"] = $("#txtNombreTienda").val();
     modelWeb["direccion"] = $("#txtDireccion").val();
     modelWeb["email"] = $("#txtEmail").val();
-    modelWeb["sobreNosotros"] = sobreNosotrosText;
+    modelWeb["sobreNosotros"] = FormatearQuill(quillSobreNosotros.root.innerHTML, "Sobre Nosotros");
+    modelWeb["temrinosCondiciones"] = FormatearQuill(quillTermino.root.innerHTML, "Terminos y condiciones");
+    modelWeb["politicaPrivacidad"] = FormatearQuill(quillPrivacidad.root.innerHTML, "Sobre Nosotros");
 
     modelWeb["horariosWeb"] = obtenerHorarios();
 
@@ -585,6 +593,20 @@ async function healthcheck() {
     } else {
         document.getElementById("lblErrorPrintService").style.display = '';
     }
+}
+
+function FormatearQuill(texto, textoAlerta) {
+    if (texto.startsWith("<p><br></p>")) {
+        texto = texto.substring(11);
+    }
+
+    if (texto.length > 50000) {
+        const msg = `El texto '${textoAlerta}', no puede ser tan largo.`;
+        toastr.warning(msg, "");
+        return;
+
+    }
+    return texto;
 }
 
 async function getPrintersTienda() {

@@ -14296,13 +14296,21 @@ textarea.form-control {
 
 @media all and (max-width: 770px) and (min-width: 50px) {
 
+    .product-description {
+        position: relative;
+        z-index: 999;
+        font-size: 15px;
+        text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white;
+    }
+
     .product .img-prod .tags-container {
         transform: none;
         display: block;
         margin: 10px 0;
         z-index: 10;
         top: -13px; /* Ajusta según sea necesario */
-        left: 87px;
+        left: 76px;
+        opacity:0.7;
     }
 
         .product .img-prod .tags-container .status {

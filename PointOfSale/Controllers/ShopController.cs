@@ -63,7 +63,7 @@ namespace PointOfSale.Controllers
 
             if (ajuste.HabilitarWeb.HasValue && !ajuste.HabilitarWeb.Value)
             {
-                return View("ErrorWeb");
+                return View("Componentes/ErrorWeb");
             }
 
             var shop = new VMShop(ajuste);
@@ -79,7 +79,7 @@ namespace PointOfSale.Controllers
 
             if (ajuste.HabilitarWeb.HasValue && !ajuste.HabilitarWeb.Value)
             {
-                return View("ErrorWeb");
+                return View("Componentes/ErrorWeb");
             }
 
             var shop = new VMShop(ajuste);
@@ -98,7 +98,7 @@ namespace PointOfSale.Controllers
 
             var shop = new VMShop(ajuste);
 
-            return View("terminos-y-condiciones", shop);
+            return View("Componentes/terminos-y-condiciones", shop);
         }
 
         [HttpGet]

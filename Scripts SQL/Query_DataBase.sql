@@ -478,6 +478,8 @@ NombreComodin3 varchar(150) null,
 HabilitarComodin3 BIT NULL,
 IvaEnPrecio BIT NULL,
 SobreNosotros NVARCHAR(MAX) NULL,
+TemrinosCondiciones NVARCHAR(MAX) NULL,
+PoliticaPrivacidad NVARCHAR(MAX) NULL,
 logoImagenNombre VARCHAR(50) NULL,
 [modificationDate] [datetime] null,
 [modificationUser] varchar(50) null

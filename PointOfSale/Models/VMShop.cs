@@ -25,7 +25,9 @@ namespace PointOfSale.Models
                 Instagram = ajustes.Instagram;
                 HabilitarTakeAway = ajustes.HabilitarTakeAway;
                 TakeAwayDescuento = ajustes.TakeAwayDescuento;
-
+                TemrinosCondiciones = ajustes.TemrinosCondiciones;
+                PoliticaPrivacidad = ajustes.PoliticaPrivacidad;
+                
                 var todavy = TimeHelper.GetArgentinaTime();
 
                 int day = (int)todavy.DayOfWeek;
@@ -67,6 +69,8 @@ namespace PointOfSale.Models
         public bool Open { get; set; } = false;
 
         public string? SobreNosotros { get; set; }
+        public string? TemrinosCondiciones { get; set; }
+        public string? PoliticaPrivacidad { get; set; }
         public string? Nombre { get; set; }
         public string? Whatsapp { get; set; }
         public string? Direccion { get; set; }

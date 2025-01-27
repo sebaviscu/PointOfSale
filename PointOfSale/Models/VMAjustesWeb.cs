@@ -36,6 +36,8 @@ namespace PointOfSale.Models
         public bool? HabilitarComodin3 { get; set; }
         public bool? IvaEnPrecio { get; set; }
         public string? SobreNosotros { get; set; }
+        public string? TemrinosCondiciones { get; set; }
+        public string? PoliticaPrivacidad { get; set; }
         public string? LogoImagenNombre { get; set; }
         public ICollection<VMHorarioWeb>? HorariosWeb { get; set; }
     }

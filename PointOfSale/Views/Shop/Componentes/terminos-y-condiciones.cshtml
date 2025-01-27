@@ -1,7 +1,7 @@
 ﻿@using PointOfSale.Models;
 @model VMShop;
 @{
-	ViewData["Title"] = "Politicas de privacidad y cookies";
+	ViewData["Title"] = "Terminos y condiciones";
 	Layout = "~/Views/Shop/Componentes/_LayoutWeb.cshtml";
 }
 
@@ -12,7 +12,7 @@
 			<div class="row justify-content-center mb-3 pb-3">
 				<div class="col-md-12 heading-section text-center">
 					<h2 class="mb-4">
-						Politicas de privacidad y cookies
+						Terminos y condiciones
 					</h2>
 				</div>
 			</div>
@@ -21,11 +21,10 @@
 			<div class="row justify-content-center">
 				<div class="col-md-8">
 					<div class="">
-						@Html.Raw(Model.PoliticaPrivacidad)
+						@Html.Raw(Model.TemrinosCondiciones)
 					</div>
 				</div>
 			</div>
 		</div>
 	</section>
-
 </body>

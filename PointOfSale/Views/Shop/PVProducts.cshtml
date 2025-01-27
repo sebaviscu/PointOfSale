@@ -33,8 +33,8 @@
                     }
                     <div class="div-text-price-container" style="height:@altura;">
                         <div class="div-text-price">
-                            <h3 class="product-description">
-                                <a href="javascript:void(0)" descProd="@prod.Description" id="desc-@prod.IdProduct">@prod.Description</a>
+                            <h3>
+                                <a href="javascript:void(0)" class="product-description" descProd="@prod.Description" id="desc-@prod.IdProduct">@prod.Description</a>
                             </h3>
                             <div class="product-pricing">
                                 <div class="pricing">
@@ -47,9 +47,11 @@
                                             > 1000 => $"{prod.FormatoWeb / 1000}Kg",
                                             _ => $"{prod.FormatoWeb}gr"
                                         };
+                                        var precioSinDecimales = Math.Floor(Convert.ToDecimal(precio));
+
                                     }
                                     <p class="price">
-                                        <span class="price-sale" id="price-@prod.IdProduct" precio="@precio">$@precio</span><small> / @tipoVenta</small>
+                                        <span class="price-sale" id="price-@prod.IdProduct" precio="@precioSinDecimales">$@precioSinDecimales</span><small> / @tipoVenta</small>
                                     </p>
                                 </div>
                             </div>

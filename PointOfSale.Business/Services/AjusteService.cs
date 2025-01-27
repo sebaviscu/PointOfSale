@@ -125,6 +125,8 @@ namespace PointOfSale.Business.Services
             Ajustes_found.HabilitarTakeAway = entity.HabilitarTakeAway;
             Ajustes_found.IvaEnPrecio = entity.IvaEnPrecio;
             Ajustes_found.SobreNosotros = RichTextHelper.SanitizeHtml(entity.SobreNosotros);
+            Ajustes_found.TemrinosCondiciones = RichTextHelper.SanitizeHtml(entity.TemrinosCondiciones);
+            Ajustes_found.PoliticaPrivacidad = RichTextHelper.SanitizeHtml(entity.PoliticaPrivacidad);
             Ajustes_found.LogoImagenNombre = entity.LogoImagenNombre;
 
             Ajustes_found.NombreComodin1 = entity.NombreComodin1;
