@@ -90,8 +90,6 @@ $(document).ready(function () {
                                         showProducts_Prices(currentTab.idTab, currentTab);
                                         $("#lblFechaUsuario" + currentTab.idTab).html(currentTab.date + " &nbsp;&nbsp; " + currentTab.user);
                                     });
-                                } else {
-                                    console.log('No hay ventas guardadas.');
                                 }
                             });
                         })
