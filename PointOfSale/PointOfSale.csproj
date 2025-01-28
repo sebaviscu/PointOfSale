@@ -1,53 +1,58 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<SatelliteResourceLanguages>es</SatelliteResourceLanguages>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Content Remove="wwwroot\plugins\printService.js" />
-  </ItemGroup>
+	<ItemGroup>
+		<Content Remove="wwwroot\plugins\printService.js" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="wwwroot\plugins\printService.js" />
-  </ItemGroup>
+	<ItemGroup>
+		<_ContentIncludedByDefault Remove="wwwroot\plugins\printService.js" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\.editorconfig" Link=".editorconfig" />
-    <None Include="wwwroot\css\fonts\flaticon\.DS_Store" />
-    <None Include="wwwroot\css\fonts\flaticon\font\.DS_Store" />
-    <None Include="wwwroot\css\fonts\flaticon\font\Flaticon.svg" />
-    <None Include="wwwroot\css\fonts\flaticon\font\Flaticon.woff2" />
-    <None Include="wwwroot\css\fonts\flaticon\font\_flaticon.scss" />
-    <None Include="wwwroot\css\fonts\flaticon\license\license.pdf" />
-    <None Include="wwwroot\css\fonts\icomoon\icomoon.svg" />
-    <None Include="wwwroot\css\fonts\ionicons\css\_ionicons.scss" />
-    <None Include="wwwroot\css\fonts\ionicons\fonts\.DS_Store" />
-    <None Include="wwwroot\css\fonts\ionicons\fonts\ionicons.svg" />
-    <None Include="wwwroot\css\fonts\ionicons\fonts\ionicons.woff2" />
-    <None Include="wwwroot\css\fonts\open-iconic\open-iconic.svg" />
-    <None Include="wwwroot\plugins\printService.js" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\.editorconfig" Link=".editorconfig" />
+		<None Include="wwwroot\css\fonts\flaticon\.DS_Store" />
+		<None Include="wwwroot\css\fonts\flaticon\font\.DS_Store" />
+		<None Include="wwwroot\css\fonts\flaticon\font\Flaticon.svg" />
+		<None Include="wwwroot\css\fonts\flaticon\font\Flaticon.woff2" />
+		<None Include="wwwroot\css\fonts\flaticon\font\_flaticon.scss" />
+		<None Include="wwwroot\css\fonts\flaticon\license\license.pdf" />
+		<None Include="wwwroot\css\fonts\icomoon\icomoon.svg" />
+		<None Include="wwwroot\css\fonts\ionicons\css\_ionicons.scss" />
+		<None Include="wwwroot\css\fonts\ionicons\fonts\.DS_Store" />
+		<None Include="wwwroot\css\fonts\ionicons\fonts\ionicons.svg" />
+		<None Include="wwwroot\css\fonts\ionicons\fonts\ionicons.woff2" />
+		<None Include="wwwroot\css\fonts\open-iconic\open-iconic.svg" />
+		<None Include="wwwroot\plugins\printService.js" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
-    <PackageReference Include="DinkToPdf" Version="1.0.8" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.6" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
-    <PackageReference Include="Neodynamic.SDK.WebClientPrint" Version="6.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-    <PackageReference Include="UAParser" Version="3.1.47" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+		<PackageReference Include="DinkToPdf" Version="1.0.8" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.6" />
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
+		<PackageReference Include="Neodynamic.SDK.WebClientPrint" Version="6.0.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+		<PackageReference Include="UAParser" Version="3.1.47" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\AFIP.Facturacion\AFIP.Facturacion.csproj" />
-    <ProjectReference Include="..\PointOfSale.Business\PointOfSale.Business.csproj" />
-    <ProjectReference Include="..\PointOfSale.Data\PointOfSale.Data.csproj" />
-    <ProjectReference Include="..\PointOfSale.Model\PointOfSale.Model.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\AFIP.Facturacion\AFIP.Facturacion.csproj" />
+		<ProjectReference Include="..\PointOfSale.Business\PointOfSale.Business.csproj" />
+		<ProjectReference Include="..\PointOfSale.Data\PointOfSale.Data.csproj" />
+		<ProjectReference Include="..\PointOfSale.Model\PointOfSale.Model.csproj" />
+	</ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+	<ProjectExtensions>
+		<VisualStudio>
+			<UserProperties appsettings_1json__JsonSchema="" />
+		</VisualStudio>
+	</ProjectExtensions>
 
 </Project>
