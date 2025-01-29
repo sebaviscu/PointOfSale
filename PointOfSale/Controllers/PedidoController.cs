@@ -56,7 +56,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al recuperar lista de pedidos.", _logger, null);
+                return HandleException(ex, "Error al recuperar lista de pedidos.", _logger);
             }
 
         }
@@ -75,7 +75,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al recuperar lista de pedidos.", _logger, null);
+                return HandleException(ex, "Error al recuperar lista de pedidos.", _logger);
             }
 
         }

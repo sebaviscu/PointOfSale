@@ -200,7 +200,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al  limpiar todas las  notificaciones.", _logger, null);
+                return HandleException(ex, "Error al  limpiar todas las  notificaciones.", _logger);
             }
 
         }
@@ -220,7 +220,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al  limpiar todas las  notificaciones.", _logger, null);
+                return HandleException(ex, "Error al  limpiar todas las  notificaciones.", _logger);
             }
 
         }

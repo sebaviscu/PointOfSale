@@ -186,8 +186,9 @@ namespace PointOfSale.Controllers
 
                 var result = await _saleService.RegisterSale(_mapper.Map<Sale>(model), inouinput);
 
+                var errores = $"{result.ErrorFacturacion} {result.Errores}";
                 gResponse.State = string.IsNullOrEmpty(result.Errores);
-                gResponse.Message = $"{result.ErrorFacturacion} {result.Errores}";
+                gResponse.Message = errores.Trim();
                 gResponse.Object = _mapper.Map<VMSaleResult>(result);
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
@@ -256,7 +257,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al recuperar reporte de ventas por turno", _logger, null);
+                return HandleException(ex, "Error al recuperar reporte de ventas por turno", _logger);
             }
         }
 

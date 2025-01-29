@@ -161,7 +161,7 @@ namespace PointOfSale.Business.Services
             return ultimoComprobanteResponse.CbteNro + 1;
         }
 
-        private FacturaEmitida CrearFacturaEmitida(FacturacionResponse response, int nroFactura, int? idCliente, string registrationUser, FacturaAFIP factura, int idTienda, int? idSale)
+        private FacturaEmitida CrearFacturaEmitida(FacturacionResponse response, int nroFactura, int? idCliente, string registrationUser, FacturaAFIP factura, int idTienda, int? idSale = null)
         {
 
             var facturaEmitida = FacturaExtension.ToFacturaEmitida(response.FECAEDetResponse.FirstOrDefault());

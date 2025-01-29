@@ -183,14 +183,14 @@ function renderVentasPorTipoVenta_OLIVA(contenedor, ventasPorTipoVenta, importeI
         let id = 'txt' + venta.descripcion;
         let totalVenta = turnoCerrado ? totalFormaPAgo : '';
 
-        crearFilaTablaTurno(contenedor, venta.descripcion, totalVenta, turnoCerrado, id);
+        crearFilaTablaTurno(contenedor, venta.descripcion, totalVenta, turnoCerrado, id, totalMovimientosCaja);
     });
 
     return total;
 }
 
 
-function crearFilaTablaTurno(contenedor, descripcion, total, disabled, inputId = null) {
+function crearFilaTablaTurno(contenedor, descripcion, total, disabled, inputId, totalMovimientosCaja = null) {
     let formGroup = $('<div>', { class: 'form-group row align-items-center', style: 'margin-bottom:2px' });
 
     let label = $('<label>', {
@@ -233,6 +233,11 @@ function crearFilaTablaTurno(contenedor, descripcion, total, disabled, inputId =
     }
 
     let input = $('<input>', inputAttributes);
+
+    if (totalMovimientosCaja != 0 && descripcion.toLowerCase() == "efectivo") {
+        let movCajaAlert = '<span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="El total en efectivo incluye los movimientos de caja"></span>';
+        inputGroupPrepend.append($(movCajaAlert));
+    }
 
     inputGroupPrepend.append(span);
     inputGroup.append(inputGroupPrepend).append(input);

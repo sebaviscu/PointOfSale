@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
@@ -289,7 +290,7 @@ namespace PointOfSale.Business.Services
 
         }
 
-        public async Task<Dictionary<string, decimal>> GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard typeValues, int turno, int idTienda, DateTime dateStart, bool visionGlobal)
+        public async Task<Dictionary<string, decimal>> GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard typeValues, int turno, int idTienda, DateTime dateStart)
         {
             FechasParaQuery(typeValues, dateStart, out DateTime end, out DateTime start);
 
@@ -297,16 +298,10 @@ namespace PointOfSale.Business.Services
 
             query = query.Include(v => v.TypeDocumentSaleNavigation)
                 .Where(vd => vd.RegistrationDate.Value.Date >= start.Date && vd.RegistrationDate.Value.Date < end.Date
-                        && vd.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
-                        && (vd.IdClienteMovimiento != null && vd.TipoFactura != null)
+                        && vd.TipoFactura != TipoFactura.Presu
                         && !vd.IsDelete
-                        && vd.IdTypeDocumentSale != null
-                        && vd.IdTurno == turno);
-
-            if (!visionGlobal)
-            {
-                query = query.Where(v => v.IdTienda == idTienda);
-            }
+                        && vd.IdTurno == turno
+                        && vd.TipoFactura != null);
 
             Dictionary<string, decimal> resultado = query
                 .GroupBy(v => v.TypeDocumentSaleNavigation.Description).OrderByDescending(g => g.Sum(_ => _.Total))

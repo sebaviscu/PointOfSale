@@ -160,7 +160,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al recuperar fechas para iva report.", _logger, null);
+                return HandleException(ex, "Error al recuperar fechas para iva report.", _logger);
             }
         }
 

@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AngleSharp.Dom;
+using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
+using PointOfSale.Model.Auditoria;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services
@@ -14,14 +16,16 @@ namespace PointOfSale.Business.Services
         private readonly IEmailService _emailService;
         private readonly IAjusteService _ajusteService;
         private readonly IDashBoardService _dashBoardService;
+        private readonly IMovimientoCajaService _movimientoCajaService;
 
-        public TurnoService(IGenericRepository<Turno> repository, IEmailService emailService, IAjusteService ajusteService, IDashBoardService dashBoardService, IGenericRepository<VentasPorTipoDeVentaTurno> repositoryVentasPorTipoDeVentaTurno)
+        public TurnoService(IGenericRepository<Turno> repository, IEmailService emailService, IAjusteService ajusteService, IDashBoardService dashBoardService, IGenericRepository<VentasPorTipoDeVentaTurno> repositoryVentasPorTipoDeVentaTurno, IMovimientoCajaService movimientoCajaService)
         {
             _repository = repository;
             _emailService = emailService;
             _ajusteService = ajusteService;
             _dashBoardService = dashBoardService;
             _repositoryVentasPorTipoDeVentaTurno = repositoryVentasPorTipoDeVentaTurno;
+            _movimientoCajaService = movimientoCajaService;
         }
 
         public async Task<List<Turno>> List(int idtienda)
@@ -152,7 +156,7 @@ namespace PointOfSale.Business.Services
         public async Task<(Turno TurnoCerrado, Dictionary<string, decimal> VentasRegistradas)> CerrarTurno(Turno entity)
         {
             var turno = await _repository.Get(_ => _.IdTurno == entity.IdTurno);
-            var ventasRegistradas = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, turno.IdTurno, turno.IdTienda, TimeHelper.GetArgentinaTime(), false);
+            var ventasRegistradas = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, turno.IdTurno, turno.IdTienda, TimeHelper.GetArgentinaTime());
 
             turno.ModificationUser = entity.ModificationUser;
             turno.ObservacionesCierre = entity.ObservacionesCierre;
@@ -201,24 +205,34 @@ namespace PointOfSale.Business.Services
 
         public async Task<Turno> ValidarCierreTurno(Turno entity, List<VentasPorTipoDeVentaTurno> ventasPorTipoDeVentasReales)
         {
-            var ventasRegistradasSistema = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, entity.IdTurno, entity.IdTienda, TimeHelper.GetArgentinaTime(), false);
-            return await ValidarVentas(ventasPorTipoDeVentasReales, ventasRegistradasSistema, entity.IdTurno, entity.BilletesEfectivo);
-        }
-
-        private async Task<Turno> ValidarVentas(List<VentasPorTipoDeVentaTurno> ventasPorTipoDeVentasReales, Dictionary<string, decimal> ventasRegistradasSistema, int idTurno, string? billetes)
-        {
+            var listaVentas = new List<VentasPorTipoDeVentaTurno>();
             var totalVentaUsuario = 0m;
             var diferenciaTotales = 0m;
             var respError = string.Empty;
-            List<VentasPorTipoDeVentaTurno> listaVentas = new List<VentasPorTipoDeVentaTurno>();
+
+            var ventasRegistradasSistema = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, entity.IdTurno, entity.IdTienda, TimeHelper.GetArgentinaTime());
+
+            var movimientos = await _movimientoCajaService.GetMovimientoCajaByTurno(entity.IdTurno);
+            var totalMovimiento = movimientos != null && movimientos.Any() ? movimientos.Sum(_ => _.Importe) : 0m;
+
+            if (!ventasRegistradasSistema.Any(_ => _.Key == "Efectivo") && totalMovimiento > 0)
+            {
+                ventasRegistradasSistema.Add("Efectivo", 0);
+            }
 
             foreach (KeyValuePair<string, decimal> itemSistema in ventasRegistradasSistema.OrderBy(_ => _.Key))
             {
                 var ventaUsuario = ventasPorTipoDeVentasReales.FirstOrDefault(_ => _.Descripcion == itemSistema.Key);
 
+                var totalSistema = (int)itemSistema.Value;
+                if (itemSistema.Key == "Efectivo" && totalMovimiento > 0)
+                {
+                    totalSistema += (int)totalMovimiento;
+                }
+
                 if (ventaUsuario != null)
                 {
-                    var diferencia = (int)ventaUsuario.TotalUsuario - (int)itemSistema.Value;
+                    var diferencia = (int)ventaUsuario.TotalUsuario - totalSistema;
                     totalVentaUsuario += ventaUsuario.TotalUsuario.Value;
                     if (diferencia != 0)
                     {
@@ -227,8 +241,8 @@ namespace PointOfSale.Business.Services
                     }
 
                     ventaUsuario.Error = respError;
-                    ventaUsuario.IdTurno = idTurno;
-                    ventaUsuario.TotalSistema = itemSistema.Value;
+                    ventaUsuario.IdTurno = entity.IdTurno;
+                    ventaUsuario.TotalSistema = totalSistema;
                     listaVentas.Add(ventaUsuario);
                 }
             }
@@ -238,7 +252,7 @@ namespace PointOfSale.Business.Services
                 respError += $"<br> La diferencia total es de $ {diferenciaTotales}. <br>";
             }
 
-            var turno = await _repository.Get(_ => _.IdTurno == idTurno);
+            var turno = await _repository.Get(_ => _.IdTurno == entity.IdTurno);
             if (!turno.ValidacionRealizada.HasValue || (turno.ValidacionRealizada.HasValue && !turno.ValidacionRealizada.Value))
             {
                 if (listaVentas.Any())
@@ -248,7 +262,7 @@ namespace PointOfSale.Business.Services
                 turno.TotalCierreCajaReal = totalVentaUsuario;
                 turno.TotalCierreCajaSistema = ventasRegistradasSistema.Sum(_ => _.Value);
                 turno.ValidacionRealizada = true;
-                turno.BilletesEfectivo = billetes ?? string.Empty;
+                turno.BilletesEfectivo = entity.BilletesEfectivo ?? string.Empty;
                 await _repository.Edit(turno);
             }
 

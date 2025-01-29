@@ -215,7 +215,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al lista de stock.", _logger, null);
+                return HandleException(ex, "Error al lista de stock.", _logger);
             }
         }
 
@@ -234,7 +234,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al lista de producto.", _logger, null);
+                return HandleException(ex, "Error al lista de producto.", _logger);
             }
         }
 
@@ -254,7 +254,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al lista de producto active.", _logger, null);
+                return HandleException(ex, "Error al lista de producto active.", _logger);
             }
         }
 
@@ -370,7 +370,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al crear producto.", _logger, model: null, ("model", model), ("vencimientos", vencimientos));
+                return HandleException(ex, "Error al crear producto.", _logger, ("model", model), ("vencimientos", vencimientos));
             }
 
         }
@@ -572,7 +572,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al cargar productos a importar.", _logger, null);
+                return HandleException(ex, "Error al cargar productos a importar.", _logger);
             }
 
             return StatusCode(StatusCodes.Status200OK, gResponse);
@@ -914,7 +914,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al recuperar lista de vencimientos.", _logger, null);
+                return HandleException(ex, "Error al recuperar lista de vencimientos.", _logger);
             }
 
         }

@@ -232,7 +232,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al recuperar todos los usuarios.", _logger, null);
+                return HandleException(ex, "Error al recuperar todos los usuarios.", _logger);
             }
         }
 

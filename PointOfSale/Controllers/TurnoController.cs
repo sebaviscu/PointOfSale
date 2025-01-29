@@ -92,7 +92,7 @@ namespace PointOfSale.Controllers
                         var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
                         var dateActual = TimeHelper.GetArgentinaTime();
 
-                        var ventas = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, user.IdTienda, dateActual, false);
+                        var ventas = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, user.IdTienda, dateActual);
                         foreach (KeyValuePair<string, decimal> item in ventas.OrderBy(_ => _.Key))
                         {
                             VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
@@ -106,20 +106,30 @@ namespace PointOfSale.Controllers
 
                     var movimientos = await _movimientoCajaService.GetMovimientoCajaByTurno(user.IdTurno);
 
-                    decimal totalMovimiento = 0;
-                    foreach (var m in movimientos)
+                    var totalMovimiento = movimientos != null && movimientos.Any() ? movimientos.Sum(_ => _.Importe) : 0m;
+
+                    var efectivo = vmTurnp.VentasPorTipoVentaPreviaValidacion.FirstOrDefault(_ => _.Descripcion == "Efectivo");
+
+                    if (efectivo != null && totalMovimiento > 0)
                     {
-                        totalMovimiento += m.Importe;
+                        efectivo.Total += totalMovimiento;
+                    }
+                    else if (efectivo == null && totalMovimiento > 0)
+                    {
+                        var ventaEfectivo = new VMVentasPorTipoDeVenta()
+                        {
+                            Descripcion = "Efectivo",
+                            Total = totalMovimiento
+                        };
+                        vmTurnp.VentasPorTipoVentaPreviaValidacion.Add(ventaEfectivo);
                     }
 
-                    outout.Turno = vmTurnp;
                     outout.TotalMovimientosCaja = totalMovimiento;
-
-                    gResponse.Object = outout;
+                    outout.Turno = vmTurnp;
                 }
-                else
-                    gResponse.Object = outout;
 
+
+                gResponse.Object = outout;
                 gResponse.State = true;
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
@@ -142,7 +152,7 @@ namespace PointOfSale.Controllers
                 var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurno(idturno));
 
                 var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
-                var datos = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, user.IdTienda, vmTurnp.FechaInicio.Value, false);
+                var datos = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, user.IdTienda, vmTurnp.FechaInicio.Value);
                 foreach (KeyValuePair<string, decimal> item in datos)
                 {
                     VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
@@ -337,7 +347,7 @@ namespace PointOfSale.Controllers
                 var ajustes = await _ajustesService.GetAjustes(user.IdTienda);
                 var turno = await _turnoService.GetTurno(2);
 
-                var listaVentas = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, turno.IdTurno, user.IdTienda, turno.FechaInicio, false);
+                var listaVentas = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, turno.IdTurno, user.IdTienda, turno.FechaInicio);
 
                 var model = new VMImprimir
                 {

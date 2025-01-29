@@ -94,7 +94,7 @@ namespace PointOfSale.Controllers
             return (T)Convert.ChangeType(claim, typeof(T));
         }
 
-        public async Task UpdateClaimAsync(string claimType, string newValue)
+        public async Task UpdateClaimAsync(string claimType, string? newValue = null)
         {
             var user = HttpContext.User;
 

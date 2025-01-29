@@ -127,7 +127,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al recuperar productos paginados para la web.", _logger, null);
+                return HandleException(ex, "Error al recuperar productos paginados para la web.", _logger);
             }
         }
 
@@ -179,7 +179,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al recuperar más productos paginados para la web", _logger, null);
+                return HandleException(ex, "Error al recuperar más productos paginados para la web", _logger);
             }
         }
 
