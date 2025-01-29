@@ -9,8 +9,8 @@ namespace PointOfSale.Business.Contracts
 {
     public interface INotificationService
     {
-        Task<List<Notifications>> List();
-        Task<List<Notifications>> GetActive();
+        Task<List<Notifications>> List(int idTienda);
+        Task<List<Notifications>> GetActive(int idTienda);
         Task<Notifications> Save(Notifications notifications);
         Task<Notifications> RecibirNotificacion(int idNotificacion, string modificationUser);
         Task<bool> LimpiarTodo(string modificationUser);

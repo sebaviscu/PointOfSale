@@ -37,13 +37,22 @@ namespace PointOfSale.Controllers
             _ajusteService = ajusteService;
         }
 
-        public IActionResult Login()
+        public async Task<IActionResult> Login()
         {
             try
             {
                 ClaimsPrincipal claimuser = HttpContext.User;
                 if (claimuser.Identity.IsAuthenticated)
                 {
+                    var idTienda = claimuser.Claims.Where(c => c.Type == "Tienda").Select(c => c.Value).SingleOrDefault();
+                    var turnoLogin = claimuser.Claims.Where(c => c.Type == "Turno").Select(c => c.Value).SingleOrDefault();
+                    var turnoActual = await _turnoService.GetTurnoActual(Convert.ToInt32(idTienda));
+
+                    if (turnoActual.IdTurno != Convert.ToInt32(turnoLogin))
+                    {
+                        await UpdateClaimAsync("Turno", turnoActual.IdTurno.ToString());
+                    }
+
                     var rol = claimuser.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).SingleOrDefault();
                     if (rol != "1")
                         return RedirectToAction("NewSale", "Sales");

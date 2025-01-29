@@ -17,11 +17,12 @@ namespace PointOfSale.Business.Services
 
         private readonly IGenericRepository<Cliente> _repository;
         private readonly IGenericRepository<ClienteMovimiento> _clienteMovimiento;
-
-        public ClienteService(IGenericRepository<Cliente> repository, IGenericRepository<ClienteMovimiento> clienteMovimiento)
+        private readonly ITypeDocumentSaleService _typeDocumentSaleService;
+        public ClienteService(IGenericRepository<Cliente> repository, IGenericRepository<ClienteMovimiento> clienteMovimiento, ITypeDocumentSaleService typeDocumentSaleService)
         {
             _repository = repository;
             _clienteMovimiento = clienteMovimiento;
+            _typeDocumentSaleService = typeDocumentSaleService;
         }
 
         public async Task<List<Cliente>> List(int idTienda)
@@ -119,8 +120,14 @@ namespace PointOfSale.Business.Services
             {
                 var mov = await RegistrarMovimiento(ClientId.Value, importe, registrationUser, IdTienda, idsale, tipoMovimientoCliente.Value);
 
-                sale.IdClienteMovimiento = mov.IdClienteMovimiento;
+                if(tipoMovimientoCliente == TipoMovimientoCliente.Pagos)
+                {
+                    var tipoVenta = await _typeDocumentSaleService.Get(sale.IdTypeDocumentSale.Value);
+                    sale.TipoFactura = tipoVenta.TipoFactura;
+                }
+
                 var client = await _repository.Get(_ => _.IdCliente == ClientId.Value);
+                sale.IdClienteMovimiento = mov.IdClienteMovimiento;
                 sale.ClientName = client.Nombre;
             }
         }

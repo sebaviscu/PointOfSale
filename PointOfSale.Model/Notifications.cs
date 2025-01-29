@@ -32,6 +32,7 @@ namespace PointOfSale.Model
             RegistrationDate = TimeHelper.GetArgentinaTime();
             Accion = "/Shop/VentaWeb";
             Rols = $"{(int)Roles.Administrador},{(int)Roles.Encargado},{(int)Roles.Empleado}";
+            IdTienda = sale.IdTienda;
         }
 
         public Notifications(Vencimiento vencimiento)
@@ -41,6 +42,7 @@ namespace PointOfSale.Model
             RegistrationDate = TimeHelper.GetArgentinaTime();
             Accion = "/Inventory/Stock";
             Rols = $"{(int)Roles.Administrador},{(int)Roles.Encargado}";
+            IdTienda = vencimiento.IdTienda;
         }
 
         public Notifications(AjustesFacturacion ajustes)
@@ -50,19 +52,21 @@ namespace PointOfSale.Model
             RegistrationDate = TimeHelper.GetArgentinaTime();
             Accion = "Ajustes/Index";
             Rols = $"{(int)Roles.Administrador}";
+            IdTienda = ajustes.IdTienda;
         }
 
         /// <summary>
         /// Notifiacacion cuando un usuario utiliza el Codigo de Seguridad en una venta
         /// </summary>
         /// <param name="usuario"></param>
-        public Notifications(string usuario, string detalle)
+        public Notifications(int idTienda, string usuario, string detalle)
         {
             Descripcion = $"El usuario {usuario} ha utilizado el Codigo de Seguridad para {detalle}.";
             IsActive = true;
             RegistrationDate = TimeHelper.GetArgentinaTime();
             Accion = "";
             Rols = $"{(int)Roles.Administrador},{(int)Roles.Encargado}";
+            IdTienda = idTienda;
         }
 
         public Notifications(MovimientoCaja movCaja)
@@ -74,6 +78,7 @@ namespace PointOfSale.Model
             RegistrationDate = TimeHelper.GetArgentinaTime();
             Accion = "/MovimientoCaja/Index";
             Rols = $"{(int)Roles.Administrador},{(int)Roles.Encargado}";
+            IdTienda = movCaja.IdTienda;
         }
 
         public Notifications(Sale sale, string error)
@@ -83,8 +88,16 @@ namespace PointOfSale.Model
             RegistrationDate = TimeHelper.GetArgentinaTime();
             Accion = "";
             Rols = $"{(int)Roles.Administrador},{(int)Roles.Encargado},{(int)Roles.Empleado}";
+            IdTienda=sale.IdTienda;
         }
 
+        /// <summary>
+        /// Notificacion personalizada
+        /// </summary>
+        /// <param name="registrationUser"></param>
+        /// <param name="idUser"></param>
+        /// <param name="nombreUsuario"></param>
+        /// <param name="mensaje"></param>
         public Notifications(string registrationUser, int idUser, string nombreUsuario, string mensaje)
         {
             Descripcion = $"<strong>{nombreUsuario.ToUpper()}: </strong>{mensaje}.";
@@ -106,5 +119,6 @@ namespace PointOfSale.Model
         public string? Accion { get; set; }
         public string? Rols { get; set; }
         public int? IdUser { get; set; }
+        public int? IdTienda { get; set; }
     }
 }

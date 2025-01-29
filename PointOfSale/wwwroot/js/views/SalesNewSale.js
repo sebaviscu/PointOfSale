@@ -258,7 +258,8 @@ function formatResults(data) {
                     <img style="height:60px;width:60px;margin-right:10px" src="data:image/png;base64,${data.photoBase64}"/>
                 </td>
                 <td>
-                    <p style="font-weight: bolder;margin:2px">${data.text} / ${tipoVentaString}</p>
+                    <p style="font-weight: bolder;margin:2px">${data.text}</p>
+                    <p>$ ${formatNumber(data.price)} / ${tipoVentaString}</p>
                 </td>
             </tr>
          </table>`
@@ -618,7 +619,9 @@ function getVentaForRegister() {
         $(".cboFormaDePago").each(function (index) {
             let subTotal = {
                 total: parseFloat(index === 0 ? $("#txtTotalParcial").val() : $("#txtTotalParcial" + index).val()).toFixed(2),
-                formaDePago: index === 0 ? $("#cboTypeDocumentSaleParcial").val() : $("#cboTypeDocumentSaleParcial" + index).val()
+                formaDePago: index === 0 ? $("#cboTypeDocumentSaleParcial").val() : $("#cboTypeDocumentSaleParcial" + index).val(),
+                tipoFactura: index === 0 ? $("#cboFactura").val() : $("#cboFactura" + index).val()
+
             };
             formasDePago.push(subTotal);
         });
@@ -768,29 +771,31 @@ document.onkeyup = async function (e) {
 
     if (e.altKey && e.which == 78) { // alt + N
         newTab();
-        return false;
 
     } else if (e.which == 113) { // F2
         $('#cboSearchProduct' + currentTabId).select2('close');
         $('#btnFinalizeSaleParcial' + currentTabId).click();
-        return false;
 
     } else if (e.which == 114) { // alt + F3
         registrarVentaEfectivo(currentTabId);
-        return false;
 
     } else if (e.which == 120) { // F9
+        $('#cboSearchProduct' + currentTabId).select2('close');
         $("#modalConsultarPrecio").modal("show")
-        return false;
 
     } else if (e.altKey && e.which == 66) { // alt + B
 
         $('#cboSearchProduct' + currentTabId).val("").trigger('change');
         $('#cboSearchProduct' + currentTabId).select2('open');
 
-        return false;
     }
+    return false;
 };
+
+$('#modalConsultarPrecio').on('hidden.bs.modal', function () {
+    let currentTabId = getTabActiveId();
+    $('#cboSearchProduct' + currentTabId).select2('open');
+});
 
 function registrarVentaEfectivo(currentTabId) {
     let currentTab = AllTabsForSale.find(item => item.idTab == currentTabId);

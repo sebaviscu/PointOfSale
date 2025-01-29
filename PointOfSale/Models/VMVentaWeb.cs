@@ -6,11 +6,6 @@ namespace PointOfSale.Models
 {
     public class VMVentaWeb
     {
-        public VMVentaWeb()
-        {
-            ImagesTicket = new List<Images>();
-            Ticket = string.Empty;
-        }
 
         public int IdVentaWeb { get; set; }
         public string? SaleNumber { get; set; }
@@ -38,14 +33,15 @@ namespace PointOfSale.Models
         public string? CuilFactura { get; set; }
 
         public string? NombreImpresora { get; set; }
-        public string? Ticket { get; set; }
-        public List<Images> ImagesTicket { get; set; }
+        public string? Ticket { get; set; } = string.Empty;
+        public List<Images> ImagesTicket { get; set; } = new List<Images>();
 
         public bool ImprimirTicket { get; set; }
         public decimal? DescuentoRetiroLocal { get; set; }
         public string? CruceCallesDireccion { get; set; }
         public decimal? CostoEnvio { get; set; }
         public string? ObservacionesUsuario { get; set; }
+        public TipoFactura? TipoFactura { get; set; }
 
 
         public decimal? TotalConEnvio => Total + (CostoEnvio != null ? CostoEnvio : 0);

@@ -298,7 +298,7 @@ namespace PointOfSale.Business.Services
             query = query.Include(v => v.TypeDocumentSaleNavigation)
                 .Where(vd => vd.RegistrationDate.Value.Date >= start.Date && vd.RegistrationDate.Value.Date < end.Date
                         && vd.TypeDocumentSaleNavigation.TipoFactura != TipoFactura.Presu
-                        && vd.IdClienteMovimiento == null
+                        && (vd.IdClienteMovimiento != null && vd.TipoFactura != null)
                         && !vd.IsDelete
                         && vd.IdTypeDocumentSale != null
                         && vd.IdTurno == turno);

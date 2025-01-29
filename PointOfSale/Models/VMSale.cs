@@ -10,7 +10,6 @@ namespace PointOfSale.Models
         public string? SaleNumber { get; set; }
         public int? IdTypeDocumentSale { get; set; }
         public string? TypeDocumentSale { get; set; }
-        public string? TipoFactura { get; set; }
         public int? IdUsers { get; set; }
         public string? CustomerDocument { get; set; }
         public string? ClientName { get; set; }
@@ -40,6 +39,8 @@ namespace PointOfSale.Models
         public bool IsDelete { get; set; }
         public bool? ResultadoFacturacion { get; set; }
         public int? IdFacturaEmitida { get; set; }
+        public TipoFactura? TipoFactura { get; set; }
+        public string? TipoFacturaString => TipoFactura.HasValue ? TipoFactura.Value.ToString() : string.Empty;
 
 
     }

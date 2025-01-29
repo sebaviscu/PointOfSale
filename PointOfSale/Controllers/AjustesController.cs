@@ -164,7 +164,7 @@ namespace PointOfSale.Controllers
                 vmAjuste.ListaPrecios = user.ListaPrecios;
                 var turno = await _turnoService.GetTurnoActual(user.IdTienda);
 
-                vmAjuste.ExisteTurno = turno != null;
+                vmAjuste.ExisteTurno = turno != null && turno.ValidacionRealizada.HasValue && !turno.ValidacionRealizada.Value;
                 vmAjuste.User = user.UserName;
 
                 gResponse.State = true;
@@ -213,7 +213,7 @@ namespace PointOfSale.Controllers
 
                 var codigo = ajuste.CodigoSeguridad != null ? ajuste.CodigoSeguridad : string.Empty;
 
-                var notific = new Notifications(user.UserName, detalle);
+                var notific = new Notifications(user.IdTienda, user.UserName, detalle);
                 await _notificationService.Save(notific);
 
                 gResponse.State = true;

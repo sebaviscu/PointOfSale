@@ -191,9 +191,9 @@ namespace PointOfSale.Business.Services
             return query.Include(_ => _.ClienteMovimientos).ToList();
         }
 
-        public async Task<List<Cliente>> GetClients(string search)
+        public async Task<List<Cliente>> GetClients(string search, int idTienda)
         {
-            IQueryable<Cliente> query = await _repositoryCliente.Query(p => p.IsActive &&
+            IQueryable<Cliente> query = await _repositoryCliente.Query(p => p.IsActive && p.IdTienda == idTienda &&
            string.Concat(p.Cuil, p.Nombre).Contains(search));
 
             return query.Include(_ => _.ClienteMovimientos).ToList();
@@ -234,7 +234,8 @@ namespace PointOfSale.Business.Services
                         RegistrationUser = model.RegistrationUser,
                         SaleNumber = lastNumber,
                         IsWeb = false,
-                        Observaciones = model.Observaciones
+                        Observaciones = model.Observaciones,
+                        TipoFactura = m.TipoFactura
                     };
 
                     if (!paso)
@@ -256,7 +257,7 @@ namespace PointOfSale.Business.Services
                     FacturaEmitida facturaEmitida = null;
                     try
                     {
-                        if (ajustes.FacturaElectronica.HasValue && ajustes.FacturaElectronica.Value && m.FormaDePago.HasValue)
+                        if (ajustes.FacturaElectronica.HasValue && ajustes.FacturaElectronica.Value)
                         {
                             facturaEmitida = await _afipService.FacturarVenta(sale_created, ajustes, saleInput.CuilFactura, saleInput.IdClienteFactura);
 
@@ -289,22 +290,17 @@ namespace PointOfSale.Business.Services
                         }
                     }
 
-                    if (sale_created.TypeDocumentSaleNavigation == null)
-                    {
-                        sale_created.TypeDocumentSaleNavigation = await _repositoryTypeDocumentSale.Get(_ => _.IdTypeDocumentSale == sale_created.IdTypeDocumentSale);
-                    }
-
                     if (sale_created.IdTypeDocumentSale != null)
                     {
                         if (saleInput.MultiplesFormaDePago.Count == 1)
                         {
                             modelResponde.IdSale = sale_created.IdSale;
-                            modelResponde.TipoVenta = "F" + sale_created.TypeDocumentSaleNavigation.TipoFactura.ToString();
+                            modelResponde.TipoVenta = "F" + sale_created.TipoFactura.ToString();
                         }
                         else
                         {
                             modelResponde.IdSaleMultiple += $"{sale_created.IdSale},";
-                            modelResponde.TipoVenta += $"F{sale_created.TypeDocumentSaleNavigation.TipoFactura.ToString()},";
+                            modelResponde.TipoVenta += $"F{sale_created.TipoFactura.ToString()},";
                         }
                     }
                     else

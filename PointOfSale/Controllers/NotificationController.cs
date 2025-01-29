@@ -34,14 +34,17 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetNotificaciones()
         {
-            List<VMNotifications> vmNotificationsList = _mapper.Map<List<VMNotifications>>(await _notificationService.List());
+            var user = ValidarAutorizacion();
+
+            List<VMNotifications> vmNotificationsList = _mapper.Map<List<VMNotifications>>(await _notificationService.List(user.IdTienda));
             return StatusCode(StatusCodes.Status200OK, new { data = vmNotificationsList });
         }
 
         [HttpGet]
         public async Task<IActionResult> GetNotificacionesActivas()
         {
-            List<VMNotifications> vmNotificationsList = _mapper.Map<List<VMNotifications>>(await _notificationService.GetActive());
+            var user = ValidarAutorizacion();
+            List<VMNotifications> vmNotificationsList = _mapper.Map<List<VMNotifications>>(await _notificationService.GetActive(user.IdTienda));
             return StatusCode(StatusCodes.Status200OK, new { data = vmNotificationsList });
         }
 

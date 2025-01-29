@@ -21,6 +21,7 @@ namespace PointOfSale.Model.Input
     {
         public decimal Total { get; set; }
         public int? FormaDePago { get; set; }
+        public TipoFactura? TipoFactura { get; set; }
 
     }
 

@@ -529,3 +529,25 @@ function openModalDataAbrirTurno() {
         });
     }
 }
+
+$("#btnGuardarBilletes").on("click", function () {
+    let totalBilletes = $("#totalSumBilletes").val();
+
+    $("#txtEfectivo").val(parseInt(totalBilletes));
+
+    actualizarTotal();
+
+
+    $(".txtCantBillete").each(function () {
+
+        const cantidad = $(this).val();
+        const valorNominal = $(this).data('valor');
+
+        if (cantidad > 0) {
+            billetesArray.push({ valorNominal, cantidad });
+        }
+    });
+
+    $("#modalBilletes").modal("hide");
+
+})

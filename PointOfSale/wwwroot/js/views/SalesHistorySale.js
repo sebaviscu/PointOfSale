@@ -169,7 +169,7 @@ $("#tbsale tbody").on("click", ".btn-info", function () {
     $("#txtRegistrationDate").val(formattedDate)
     $("#txtSaleNumber").val(d.saleNumber)
     $("#txtRegisterUser").val(d.registrationUser)
-    $("#txtDocumentType").val(d.typeDocumentSale)
+    $("#txtDocumentType").val(d.typeDocumentSale != '' ? d.typeDocumentSale + " - F" + d.tipoFacturaString : '')
     $("#txtClientName").val(d.clientName)
     $("#txtTotal").val(d.total)
     $("#txtDescRec").val(d.descuentoRecargo)
@@ -341,7 +341,7 @@ function createTable(responseJson) {
 
         const groupedSales = responseJson.reduce((acc, sale) => {
             if (!acc[sale.tipoFactura]) {
-                acc[sale.tipoFactura] = { tipoFactura: sale.tipoFactura, total: 0 };
+                acc[sale.tipoFactura] = { tipoFactura: sale.tipoFacturaString, total: 0 };
             }
             acc[sale.tipoFactura].total += sale.total;
             return acc;

@@ -66,7 +66,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al chequear turno abierto.", _logger, null);
+                return HandleException(ex, "Error al chequear turno abierto.", _logger);
             }
 
         }
@@ -125,7 +125,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al recuperar turno actual.", _logger, null);
+                return HandleException(ex, "Error al recuperar turno actual.", _logger);
             }
 
         }

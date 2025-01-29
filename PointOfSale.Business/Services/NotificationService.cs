@@ -15,15 +15,15 @@ namespace PointOfSale.Business.Services
             _repository = genericRepository;
         }
 
-        public async Task<List<Notifications>> List()
+        public async Task<List<Notifications>> List(int idTienda)
         {
-            IQueryable<Notifications> query = await _repository.Query();
+            IQueryable<Notifications> query = await _repository.Query(_=>_.IdTienda == idTienda);
             return query.ToList();
         }
 
-        public async Task<List<Notifications>> GetActive()
+        public async Task<List<Notifications>> GetActive(int idTienda)
         {
-            IQueryable<Notifications> query = await _repository.Query(_ => _.IsActive);
+            IQueryable<Notifications> query = await _repository.Query(_ => _.IsActive && _.IdTienda == idTienda);
             return query.ToList();
         }
         public async Task<List<Notifications>> GetByUserByActive(int idUser)

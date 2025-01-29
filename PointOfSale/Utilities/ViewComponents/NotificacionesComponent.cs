@@ -26,7 +26,11 @@ namespace PointOfSale.Utilities.ViewComponents
                 .Where(c => c.Type == ClaimTypes.Role)
                 .Select(c => c.Value).SingleOrDefault());
 
-            var notifications = _mapper.Map<List<VMNotifications>>(await _notificationService.GetActive());
+            var idTienda = Convert.ToInt32(claimuser.Claims
+                .Where(c => c.Type == "Tienda")
+                .Select(c => c.Value).SingleOrDefault());
+
+            var notifications = _mapper.Map<List<VMNotifications>>(await _notificationService.GetActive(Convert.ToInt32(idTienda)));
 
             var notificationsByRol = notifications
                 .Where(x => x.Rols!= null && x.Rols.Contains(userRol.ToString()))

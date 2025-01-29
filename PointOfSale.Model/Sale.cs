@@ -1,17 +1,13 @@
-﻿using PointOfSale.Model.Afip.Factura;
+﻿using Microsoft.EntityFrameworkCore.Diagnostics;
+using PointOfSale.Model.Afip.Factura;
 using System;
 using System.Collections.Generic;
+using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Model
 {
     public partial class Sale
     {
-        public Sale()
-        {
-            DetailSales = new HashSet<DetailSale>();
-            IsDelete = false;
-        }
-
         public int IdSale { get; set; }
         public string? SaleNumber { get; set; }
         public int? IdTypeDocumentSale { get; set; }
@@ -23,7 +19,7 @@ namespace PointOfSale.Model
         public string RegistrationUser { get; set; }
 
         public virtual TypeDocumentSale? TypeDocumentSaleNavigation { get; set; }
-        public virtual ICollection<DetailSale> DetailSales { get; set; }
+        public virtual ICollection<DetailSale> DetailSales { get; set; } = new HashSet<DetailSale>();
         public int IdTurno { get; set; }
         public Turno Turno { get; set; }
         public int? IdClienteMovimiento { get; set; }
@@ -35,7 +31,8 @@ namespace PointOfSale.Model
         public virtual FacturaEmitida FacturaEmitida { get; set; }
         public bool? IsWeb { get; set; }
         public string? Observaciones { get; set; }
-        public bool IsDelete { get; set; }
+        public bool IsDelete { get; set; } = false;
         public bool? ResultadoFacturacion {  get; set; }
+        public TipoFactura? TipoFactura { get; set; }
     }
 }

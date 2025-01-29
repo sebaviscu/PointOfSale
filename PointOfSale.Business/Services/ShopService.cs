@@ -99,8 +99,9 @@ namespace PointOfSale.Business.Services
                 var turno = await _turnoService.GetTurnoActual(VentaWeb_found.IdTienda.Value);
                 if (turno == null)
                 {
-                    throw new Exception("No existe un turno abierto.");
+                    throw new Exception("No existe un turno abierto para la tienda seleccionada.");
                 }
+
                 var sale = await _saleRepository.CreatSaleFromVentaWeb(VentaWeb_found, turno, ajustes);
                 VentaWeb_found.IdSale = sale.IdSale;
             }

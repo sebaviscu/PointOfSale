@@ -128,7 +128,9 @@ namespace PointOfSale.Controllers
             var gResponse = new GenericResponse<List<VMCliente>>();
             try
             {
-                List<VMCliente> vmListClients = _mapper.Map<List<VMCliente>>(await _saleService.GetClients(search));
+                var user = ValidarAutorizacion();
+
+                List<VMCliente> vmListClients = _mapper.Map<List<VMCliente>>(await _saleService.GetClients(search, user.IdTienda));
                 return StatusCode(StatusCodes.Status200OK, vmListClients);
             }
             catch (Exception ex)
@@ -184,8 +186,8 @@ namespace PointOfSale.Controllers
 
                 var result = await _saleService.RegisterSale(_mapper.Map<Sale>(model), inouinput);
 
-                gResponse.State = true;
-                gResponse.Message = result.ErrorFacturacion;
+                gResponse.State = string.IsNullOrEmpty(result.Errores);
+                gResponse.Message = $"{result.ErrorFacturacion} {result.Errores}";
                 gResponse.Object = _mapper.Map<VMSaleResult>(result);
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
@@ -193,38 +195,6 @@ namespace PointOfSale.Controllers
             {
                 return HandleException(ex, "Error al registrar la venta", _logger, model);
             }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> RegisterNoCierreSale([FromBody] VMSale model)
-        {
-
-            GenericResponse<VMSale> gResponse = new GenericResponse<VMSale>();
-            try
-            {
-                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
-
-                ClaimsPrincipal claimuser = HttpContext.User;
-
-                string idUsuario = claimuser.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).Select(c => c.Value).SingleOrDefault();
-                string idTurno = claimuser.Claims.Where(c => c.Type == "Turno").Select(c => c.Value).SingleOrDefault();
-
-                model.IdUsers = int.Parse(idUsuario);
-                model.IdTurno = int.Parse(idTurno);
-                model.IdTienda = user.IdTienda;
-
-
-                //model = _mapper.Map<VMSale>(sale_created);
-
-                gResponse.State = true;
-                gResponse.Object = model;
-                return StatusCode(StatusCodes.Status200OK, gResponse);
-            }
-            catch (Exception ex)
-            {
-                return HandleException(ex, "Error al registrar No Cierre de venta", _logger, model);
-            }
-
         }
 
         [HttpGet]

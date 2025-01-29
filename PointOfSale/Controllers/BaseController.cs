@@ -35,7 +35,7 @@ namespace PointOfSale.Controllers
             }
         }
 
-        public UserAuth ValidarAutorizacion(Roles[] rolesPermitidos)
+        public UserAuth ValidarAutorizacion(Roles[]? rolesPermitidos = null)
         {
             var claimUser = HttpContext.User;
 
@@ -68,13 +68,18 @@ namespace PointOfSale.Controllers
                 ListaPrecios = listaPrecios,
                 ControlCierreCaja = GetClaimValue<bool>(HttpContext.User, "ControlCierreCaja")
             };
-            userAuth.Result = rolesPermitidos.Contains((Model.Enum.Roles)userAuth.IdRol);
 
-            if (!userAuth.Result)
+            if (rolesPermitidos != null)
             {
-                StatusCode(StatusCodes.Status404NotFound);
-                //throw new AccessViolationException("USUARIO CON PERMISOS INSUFICIENTES");
+                userAuth.Result = rolesPermitidos.Contains((Model.Enum.Roles)userAuth.IdRol);
+
+                if (!userAuth.Result)
+                {
+                    StatusCode(StatusCodes.Status404NotFound);
+                    //throw new AccessViolationException("USUARIO CON PERMISOS INSUFICIENTES");
+                }
             }
+
 
             return userAuth;
         }

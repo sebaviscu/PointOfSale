@@ -159,7 +159,6 @@ IncluirIvaEnPrecio bit null,
 [modificationUser] varchar(50) null,
 [registrationDate] datetime null
 )
-
 go
 
 create table CorrelativeNumber(
@@ -206,6 +205,7 @@ isWeb bit null,
 isDelete bit not null,
 Observaciones varchar(max),
 ResultadoFacturacion bit null,
+tipoFactura int null,
 [registrationDate] datetime default getdate(),
 [registrationUser] varchar(50) not null
 )
@@ -229,6 +229,7 @@ descuentoRetiroLocal decimal(10,2) null,
 cruceCallesDireccion varchar(max) null,
 CostoEnvio decimal(10,2) null,
 ObservacionesUsuario varchar(max) null,
+tipoFactura int null,
 idSale int references Sale(idSale) null,
 [registrationDate] datetime not null,
 [modificationDate] datetime null,
@@ -383,12 +384,12 @@ descripcion varchar(max) not null,
 accion varchar(100) null,
 [rols] varchar(20) null,
 idUser int null,
+idTienda int null,
 registrationUser varchar(50),
 registrationDate [datetime] not null,
 [modificationDate] [datetime] null,
 [modificationUser] varchar(50) null
 )
-
 
 go
 
@@ -789,3 +790,12 @@ CREATE TABLE HorariosWeb (
     CONSTRAINT FK_HorariosWeb_AjustesWeb FOREIGN KEY (idAjusteWeb)
     REFERENCES AjustesWeb(idAjusteWeb) ON DELETE CASCADE
 );
+
+select * from cliente
+
+select * from sale
+order by idsale desc
+
+select * from turno
+order by idturno desc
+

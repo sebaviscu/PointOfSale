@@ -176,6 +176,7 @@ namespace PointOfSale.Data.Repository
             sale.RegistrationUser = entity.ModificationUser;
             sale.DescuentoRecargo = entity.DescuentoRetiroLocal;
             sale.IsWeb = true;
+            sale.TipoFactura = entity.FormaDePago.TipoFactura;
             sale.Observaciones = entity.CostoEnvio != null && entity.CostoEnvio > 0 ? $"Envio: ${entity.CostoEnvio}" : "";
             sale.Observaciones += entity.DescuentoRetiroLocal != null && entity.DescuentoRetiroLocal > 0 ? $"\n Retiro en persona: -${entity.DescuentoRetiroLocal}" : "";
             sale.Observaciones += !string.IsNullOrEmpty(entity.CruceCallesDireccion) ? $"\n Cruce de calles de la direccion: {entity.CruceCallesDireccion}" : "";

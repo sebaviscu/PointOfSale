@@ -283,13 +283,10 @@ namespace PointOfSale.Business.Services
             }
 
             FacturaEmitida facturaEmitida = null;
-            var tipoVenta = await _typeDocumentSaleService.Get(sale.IdTypeDocumentSale.Value);
 
-            if ((int)tipoVenta.TipoFactura < 3)
+            if ((int)sale.TipoFactura < 3)
             {
                 var ajustesFacturacion = await _ajusteService.GetAjustesFacturacion(sale.IdTienda);
-
-                sale.TypeDocumentSaleNavigation = tipoVenta;
 
                 facturaEmitida = await Facturar(sale, cuil, idCliente, sale.RegistrationUser, ajustesFacturacion);
 
