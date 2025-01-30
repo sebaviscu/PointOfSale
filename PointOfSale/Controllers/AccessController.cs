@@ -48,7 +48,7 @@ namespace PointOfSale.Controllers
                     var turnoLogin = claimuser.Claims.Where(c => c.Type == "Turno").Select(c => c.Value).SingleOrDefault();
                     var turnoActual = await _turnoService.GetTurnoActual(Convert.ToInt32(idTienda));
 
-                    if (turnoActual.IdTurno != Convert.ToInt32(turnoLogin))
+                    if (turnoActual != null && turnoActual.IdTurno != Convert.ToInt32(turnoLogin))
                     {
                         await UpdateClaimAsync("Turno", turnoActual.IdTurno.ToString());
                     }

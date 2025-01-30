@@ -7,29 +7,6 @@ $(document).ready(function () {
 })
 
 
-
-$(document).on('input', '.txtCantBillete', function () {
-    const idParts = $(this).attr('id').split('_');
-    const columnPrefix = idParts[1];
-    const index = idParts[2];
-    const cantidad = $(this).val();
-    const valorNominal = $(this).data('valor');
-    const total = cantidad * valorNominal;
-
-    $(`#txtSumaBillete_${columnPrefix}_${index}`).val(`$${total}`);
-    calcularTotal();
-});
-
-function calcularTotal() {
-    let totalSum = 0;
-    $('.txtCantBillete').each(function () {
-        const cantidad = parseInt($(this).val(), 10);
-        const valorNominal = parseInt($(this).data('valor'), 10);
-        totalSum += cantidad * valorNominal;
-    });
-    $('#totalSumBilletes').val(`${totalSum}`);
-}
-
 $("#btnAbrirCerrarTurno").on("click", function () {
     showLoading();
 
@@ -101,20 +78,6 @@ $("#btnAbrirCerrarTurno").on("click", function () {
             $("div.container-fluid").LoadingOverlay("hide")
         });
 })
-
-//function openModalDataAbrirTurno() {
-//    $("#modalDataAbrirTurno").modal("show");
-
-//    if (moment.tz != null) {
-
-//        let dateTimeArgentina = moment().tz('America/Argentina/Buenos_Aires');
-
-//        $('#modalDataAbrirTurno').on('shown.bs.modal', function () {
-//            $("#txtInicioTurnoAbrir").val(dateTimeArgentina.format('DD/MM/YYYY'));
-//            $("#txtHoraInicioTurnoAbrir").val(dateTimeArgentina.format('HH:mm'));
-//        });
-//    }
-//}
 
 function horaActual() {
     let dateTimeModifHoy = new Date();

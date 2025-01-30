@@ -31,12 +31,15 @@ namespace PointOfSale.Models
         public string? ErroresCierreCaja { get; set; }
         public bool? ValidacionRealizada { get; set; }
 
-        public int? DiferenciaCierreCaja => (int)((TotalCierreCajaReal != null ? TotalCierreCajaReal.Value : 0) - (TotalCierreCajaSistema != null ? TotalCierreCajaSistema.Value : 0));
+        public int? DiferenciaCierreCaja => (int)((TotalCierreCajaReal != null ? TotalCierreCajaReal.Value : 0) 
+                                            - (TotalCierreCajaSistema != null ? TotalCierreCajaSistema.Value : 0));
 
         public bool? ImpirmirCierreCaja { get; set; }
         public string? BilletesEfectivo { get; set; }
 
         public ICollection<VentasPorTipoDeVentaTurno>? VentasPorTipoDeVenta { get; set; }
+        public ICollection<VMMovimientoCaja>? MovimientosCaja { get; set; }
+
 
     }
 }

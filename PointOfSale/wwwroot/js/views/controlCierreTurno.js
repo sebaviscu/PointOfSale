@@ -11,29 +11,6 @@ $(document).ready(function () {
 })
 
 
-
-$(document).on('input', '.txtCantBillete', function () {
-    const idParts = $(this).attr('id').split('_');
-    const columnPrefix = idParts[1];
-    const index = idParts[2];
-    const cantidad = $(this).val();
-    const valorNominal = $(this).data('valor');
-    const total = cantidad * valorNominal;
-
-    $(`#txtSumaBillete_${columnPrefix}_${index}`).val(`$${total}`);
-    calcularTotal();
-});
-
-function calcularTotal() {
-    let totalSum = 0;
-    $('.txtCantBillete').each(function () {
-        const cantidad = parseInt($(this).val(), 10);
-        const valorNominal = parseInt($(this).data('valor'), 10);
-        totalSum += cantidad * valorNominal;
-    });
-    $('#totalSumBilletes').val(`${totalSum}`);
-}
-
 $("#btnAbrirCerrarTurno").on("click", function () {
     showLoading();
 
@@ -126,20 +103,6 @@ $("#btnAbrirCerrarTurno").on("click", function () {
         });
 })
 
-//function openModalDataAbrirTurno() {
-//    $("#modalDataAbrirTurno").modal("show");
-
-//    if (moment.tz != null) {
-
-//        let dateTimeArgentina = moment().tz('America/Argentina/Buenos_Aires');
-
-//        $('#modalDataAbrirTurno').on('shown.bs.modal', function () {
-//            $("#txtInicioTurnoAbrir").val(dateTimeArgentina.format('DD/MM/YYYY'));
-//            $("#txtHoraInicioTurnoAbrir").val(dateTimeArgentina.format('HH:mm'));
-//        });
-//    }
-//}
-
 function horaActual() {
     let dateTimeModifHoy = new Date();
 
@@ -174,6 +137,8 @@ function renderVentasPorTipoVenta_OLIVA(contenedor, ventasPorTipoVenta, importeI
         crearFilaTablaTurno(contenedor, "MOV. DE CAJA", totalMovimientosCaja, true, 'txtMovimientoCaja');
     }
 
+    let alertaTotalEfectivo = (totalMovimientosCaja != null && totalMovimientosCaja > 0) || importeInicioCaja > 0;
+
     contenedor.append($('<hr style="margin-top: 0px;">'));
 
     let total = 0;
@@ -190,7 +155,7 @@ function renderVentasPorTipoVenta_OLIVA(contenedor, ventasPorTipoVenta, importeI
 }
 
 
-function crearFilaTablaTurno(contenedor, descripcion, total, disabled, inputId, totalMovimientosCaja = null) {
+function crearFilaTablaTurno(contenedor, descripcion, total, disabled, inputId, alertaTotalEfectivo) {
     let formGroup = $('<div>', { class: 'form-group row align-items-center', style: 'margin-bottom:2px' });
 
     let label = $('<label>', {
@@ -234,9 +199,9 @@ function crearFilaTablaTurno(contenedor, descripcion, total, disabled, inputId, 
 
     let input = $('<input>', inputAttributes);
 
-    if (totalMovimientosCaja != 0 && descripcion.toLowerCase() == "efectivo") {
-        let movCajaAlert = '<span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="El total en efectivo incluye los movimientos de caja"></span>';
-        inputGroupPrepend.append($(movCajaAlert));
+    if (alertaTotalEfectivo && descripcion.toLowerCase() == "efectivo") {
+        let efectivoAlert = '<span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="El total en efectivo incluye los movimientos de caja y el inicio de caja"></span>';
+        inputGroupPrepend.append($(efectivoAlert));
     }
 
     inputGroupPrepend.append(span);

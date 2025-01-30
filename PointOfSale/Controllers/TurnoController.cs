@@ -14,7 +14,6 @@ namespace PointOfSale.Controllers
         private readonly ITurnoService _turnoService;
         private readonly IMapper _mapper;
         private readonly IDashBoardService _dashBoardService;
-        private readonly IMovimientoCajaService _movimientoCajaService;
         private readonly ILogger<TurnoController> _logger;
         private readonly ITicketService _ticketService;
         private readonly IAjusteService _ajustesService;
@@ -23,7 +22,6 @@ namespace PointOfSale.Controllers
             IMapper mapper,
             IDashBoardService dashBoardService,
             ILogger<TurnoController> logger,
-            IMovimientoCajaService movimientoCajaService,
             ITicketService ticketService,
             IAjusteService ajusteService)
         {
@@ -31,7 +29,6 @@ namespace PointOfSale.Controllers
             _mapper = mapper;
             _dashBoardService = dashBoardService;
             _logger = logger;
-            _movimientoCajaService = movimientoCajaService;
             _ticketService = ticketService;
             _ajustesService = ajusteService;
         }
@@ -104,17 +101,15 @@ namespace PointOfSale.Controllers
                         vmTurnp.VentasPorTipoVentaPreviaValidacion = VentasPorTipoVenta;
                     }
 
-                    var movimientos = await _movimientoCajaService.GetMovimientoCajaByTurno(user.IdTurno);
-
-                    var totalMovimiento = movimientos != null && movimientos.Any() ? movimientos.Sum(_ => _.Importe) : 0m;
+                    var totalMovimiento = turno.MovimientosCaja != null && turno.MovimientosCaja.Any() ? turno.MovimientosCaja.Sum(_ => _.Importe) : 0m;
 
                     var efectivo = vmTurnp.VentasPorTipoVentaPreviaValidacion.FirstOrDefault(_ => _.Descripcion == "Efectivo");
 
-                    if (efectivo != null && totalMovimiento > 0)
+                    if (efectivo != null && totalMovimiento != 0)
                     {
                         efectivo.Total += totalMovimiento;
                     }
-                    else if (efectivo == null && totalMovimiento > 0)
+                    else if (efectivo == null && totalMovimiento != 0)
                     {
                         var ventaEfectivo = new VMVentasPorTipoDeVenta()
                         {
@@ -149,30 +144,36 @@ namespace PointOfSale.Controllers
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Empleado]);
 
                 var outout = new VMTurnoOutput();
-                var vmTurnp = _mapper.Map<VMTurno>(await _turnoService.GetTurno(idturno));
+                var turno = await _turnoService.GetTurno(idturno);
+                var vmTurnp = _mapper.Map<VMTurno>(turno);
 
                 var VentasPorTipoVenta = new List<VMVentasPorTipoDeVenta>();
-                var datos = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, user.IdTienda, vmTurnp.FechaInicio.Value);
-                foreach (KeyValuePair<string, decimal> item in datos)
-                {
-                    VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
-                    {
-                        Descripcion = item.Key,
-                        Total = item.Value
-                    });
-                }
 
                 vmTurnp.VentasPorTipoVentaPreviaValidacion = VentasPorTipoVenta;
 
-                var movimientos = await _movimientoCajaService.GetMovimientoCajaByTurno(idturno);
+                decimal totalMovimiento = turno.MovimientosCaja != null && turno.MovimientosCaja.Any() ? turno.MovimientosCaja.Sum(_ => _.Importe) : 0m;
 
-                decimal totalMovimiento = 0;
-                foreach (var m in movimientos)
+                var datos = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, vmTurnp.IdTurno, user.IdTienda, vmTurnp.FechaInicio.Value);
+
+                if (!datos.Any(_ => _.Key == "Efectivo") && (totalMovimiento !=  0 || turno.TotalInicioCaja > 0))
                 {
-                    if (m.RazonMovimientoCaja.Tipo == TipoMovimientoCaja.Egreso)
-                        totalMovimiento -= m.Importe;
-                    else
-                        totalMovimiento += m.Importe;
+                    datos.Add("Efectivo", 0);
+                }
+
+                foreach (KeyValuePair<string, decimal> item in datos)
+                {
+                    var total = item.Value;
+                    if (item.Key == "Efectivo" && (totalMovimiento != 0 || turno.TotalInicioCaja > 0))
+                    {
+                        total += (int)totalMovimiento;
+                        total += (int)turno.TotalInicioCaja;
+                    }
+
+                    VentasPorTipoVenta.Add(new VMVentasPorTipoDeVenta()
+                    {
+                        Descripcion = item.Key,
+                        Total = total
+                    });
                 }
 
                 outout.Turno = vmTurnp;

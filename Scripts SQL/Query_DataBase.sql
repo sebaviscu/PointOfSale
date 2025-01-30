@@ -443,12 +443,10 @@ lote varchar(100) null,
 vencimiento datetime null,
 cantidadProductoRecibida int  null,
 idProducto int references Product(idProduct) not null,
-idPedido int references Pedidos(idPedido) not null,
+idPedido int references Pedidos(idPedido) null,
 )
 
 go
-
-alter table [dbo].[ProveedorMovimiento] add IdPedido int references Pedidos(IdPedido) null
 
 go
 
@@ -614,7 +612,9 @@ CREATE TABLE MovimientoCaja (
     IdRazonMovimientoCaja INT NOT NULL,
 	idTienda int not null,
 	idTurno int not null,
-    CONSTRAINT FK_MovimientoCaja_RazonMovimientoCaja FOREIGN KEY (IdRazonMovimientoCaja) REFERENCES RazonMovimientoCaja(IdRazonMovimientoCaja)
+    CONSTRAINT FK_MovimientoCaja_RazonMovimientoCaja FOREIGN KEY (IdRazonMovimientoCaja) REFERENCES RazonMovimientoCaja(IdRazonMovimientoCaja) ON DELETE CASCADE,
+    CONSTRAINT FK_MovimientoCaja_Turno FOREIGN KEY (idTurno) REFERENCES Turno(idTurno) ON DELETE CASCADE,
+
 );
 
 go

@@ -43,6 +43,7 @@ namespace PointOfSale.Model
 
         public string? BilletesEfectivo { get; set; }
         public ICollection<VentasPorTipoDeVentaTurno>? VentasPorTipoDeVenta { get; set; }
+        public ICollection<MovimientoCaja>? MovimientosCaja { get; set; }
 
     }
 }

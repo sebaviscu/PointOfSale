@@ -224,7 +224,13 @@ namespace PointOfSale.Data.DBContext
                 entity.HasOne(d => d.RazonMovimientoCaja)
                     .WithMany(p => p.MovimientoCajas)
                     .HasForeignKey(d => d.IdRazonMovimientoCaja)
-                    .OnDelete(DeleteBehavior.Restrict);
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // Relación con RazonMovimientoCaja
+                entity.HasOne(d => d.Turno)
+                    .WithMany(p => p.MovimientosCaja)
+                    .HasForeignKey(d => d.IdTurno)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<CodigoBarras>(entity =>

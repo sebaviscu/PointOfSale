@@ -17,6 +17,7 @@ namespace PointOfSale.Model
         public int IdRazonMovimientoCaja { get; set; }
         public int IdTienda { get; set; }
         public int IdTurno { get; set; }
+        public Turno? Turno { get; set; }
         public virtual RazonMovimientoCaja? RazonMovimientoCaja { get; set; }
     }
 

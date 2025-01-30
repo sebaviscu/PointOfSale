@@ -551,3 +551,25 @@ $("#btnGuardarBilletes").on("click", function () {
     $("#modalBilletes").modal("hide");
 
 })
+
+$(document).on('input', '.txtCantBillete', function () {
+    const idParts = $(this).attr('id').split('_');
+    const columnPrefix = idParts[1];
+    const index = idParts[2];
+    const cantidad = $(this).val();
+    const valorNominal = $(this).data('valor');
+    const total = cantidad * valorNominal;
+
+    $(`#txtSumaBillete_${columnPrefix}_${index}`).val(`$${total}`);
+    calcularTotal();
+});
+
+function calcularTotal() {
+    let totalSum = 0;
+    $('.txtCantBillete').each(function () {
+        const cantidad = parseInt($(this).val(), 10);
+        const valorNominal = parseInt($(this).data('valor'), 10);
+        totalSum += cantidad * valorNominal;
+    });
+    $('#totalSumBilletes').val(`${totalSum}`);
+}
