@@ -16,12 +16,10 @@ namespace PointOfSale.Business.Services
     public class CategoryService : ICategoryService
     {
         private readonly IGenericRepository<Category> _repository;
-        private readonly IAuditoriaService _auditoriaService;
 
-        public CategoryService(IGenericRepository<Category> repository, IAuditoriaService auditoriaService)
+        public CategoryService(IGenericRepository<Category> repository)
         {
             _repository = repository;
-            _auditoriaService = auditoriaService;
         }
 
         public async Task<Category> Get(int idCategory)

@@ -16,21 +16,23 @@ insert into Rol(description,isActive) values
 
 insert into Users(name,email,idRol,password,isActive, sinHorario, IsSuperAdmin) values
 ('admin','admin',1,'',1, 1,0),
-('SuperAdmin','sebaviscusso',1,'aBtloYrF4Hs6fEWVq0EW7A==:J61S+Sb5u+7YBcoiGM4SiQ==',1, 1,1);
+('SuperAdmin','sebaviscusso',1,'aBtloYrF4Hs6fEWVq0EW7A==:J61S+Sb5u+7YBcoiGM4SiQ==',1, 1,1) -- Viscu.92
 
 
 
 insert into Menu(description,icon,isActive, orden, controller, pageAction) values
-('Dashboard','mdi mdi-view-dashboard-outline',1,1,'Admin','DashBoard'),
-('Admin','mdi mdi-account',1,2,null,null), 
-('Gestion','mdi mdi-chart-pie',1,3,null,null), 
-('Inventario','mdi mdi-package-variant-closed',1,3,null,null), 
-('Configuracion','mdi mdi-settings',1,4,null,null), 
-('Reportes','mdi mdi-chart-bar',1,5,null,null), 
+('Dashboard','mdi mdi-view-dashboard-outline',1,1,'Admin','DashBoard'), --1
+('Admin','mdi mdi-account',1,2,null,null), --2
+('Gestion','mdi mdi-chart-pie',1,3,null,null), --3
+('Inventario','mdi mdi-package-variant-closed',1,3,null,null), --4
+('Configuracion','mdi mdi-settings',1,4,null,null), --5
+('Reportes','mdi mdi-chart-bar',1,5,null,null), --6
 ('Web','mdi mdi-web',1,6,null,null), --7
-('Venta','mdi mdi-shopping',1,7,'Sales','NewSale');
+('Venta','mdi mdi-shopping',1,7,'Sales','NewSale') --8
 
 
+
+--*menu child - Admin
 insert into Menu(description,idMenuParent,controller,pageAction,isActive) values
 ('Usuarios',2,'Admin','Users',1),
 ('Productos',4,'Inventory','Products',1), 
@@ -52,14 +54,19 @@ insert into Menu(description,idMenuParent,controller,pageAction,isActive) values
 ('Movimientos Caja',2,'MovimientoCaja','Index',1), 
 ('Tablas',5,'Tablas','Index',1), 
 ('Reporte Precios',6,'Reports','PreciosReport',1),
-('Licencia',5,'Licencia','Index',1);
+('Licencia',5,'Licencia','Index',1) --29
 
 
-UPDATE Menu SET idMenuParent = idMenu where idMenuParent is null;
 
-update Menu set idMenuParent=null where idMenu=1;
-update Menu set idMenuParent=null where idMenu=8;
+UPDATE Menu SET idMenuParent = idMenu where idMenuParent is null
 
+update Menu set idMenuParent=null where idMenu=1 -- dashboard
+update Menu set idMenuParent=null where idMenu=8 -- ventas
+
+
+--________________________________ INSERT MENU ROLE ________________________________
+
+--*Admin
 INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (1,1,1),
 (1,2,1),
@@ -90,17 +97,19 @@ INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (1,26,1),
 (1,27,1),
 (1,28,1),
-(1,29,1);
+(1,29,1)
 
 
+--*empleado
 INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (2,8,1),
 (2,6,1),
 (2,11,1),
 (2,17,1),
 (2,18,1),
-(2,28,1);
+(2,28,1)
 
+--*encargado
 INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (3,4,1),
 (3,5,1),
@@ -112,14 +121,19 @@ INSERT INTO RolMenu(idRol,idMenu,isActive) values
 (3,17,1),
 (3,18,1),
 (3,24,1),
-(3,28,1);
+(3,28,1)
 
+
+--________________________________ INSERT CATERIES ________________________________
 
 INSERT INTO Category(description,isActive) values
 ('Frutas',1),
 ('Congelados',1),
-('Almacen',1);
+('Almacen',1)
 
+
+
+--________________________________ INSERT TYPEDOCUMENTSALE ________________________________
 
 insert into TypeDocumentSale(description,isActive, tipoFactura, web,comision) values
 ('Efectivo',1,3,1,0),
@@ -127,69 +141,71 @@ insert into TypeDocumentSale(description,isActive, tipoFactura, web,comision) va
 ('Tarjeta de Credito',1,1,1,0),
 ('Mercado Pa',1,1,1,0),
 ('Modo',1,1,1,0),
-('Transferencia',1,1,1,0);
+('Transferencia',1,1,1,0)
 
 
--- Para ajustar valores por fuera de un procedimiento almacenado
-SET @NuevoIdAjuste = NULL;
+--________________________________ INSERT Ajustes ________________________________
+
+DECLARE @NuevoIdAjuste INT;
 
 INSERT INTO Ajustes (MinimoIdentificarConsumidor, IdTienda)
 VALUES (500000, 1);
 
--- Obtener el último ID insertado
-SET @NuevoIdAjuste = LAST_INSERT_ID();
+SET @NuevoIdAjuste = SCOPE_IDENTITY();
 
 UPDATE Tienda 
-SET idAjustes = @NuevoIdAjuste;
+SET idAjustes = @NuevoIdAjuste
 
 
 
--- Para ajustar valores por fuera de un procedimiento almacenado
-SET @NuevoIdAjusteFacturacion = NULL;
+DECLARE @NuevoIdAjusteFacturacion INT;
 
 INSERT INTO AjustesFacturacion (IdTienda, IsProdEnvironment)
-VALUES (1, 0);
+VALUES (1,0);
 
--- Obtener el último ID insertado
-SET @NuevoIdAjusteFacturacion = LAST_INSERT_ID();
+SET @NuevoIdAjusteFacturacion = SCOPE_IDENTITY();
 
 UPDATE Tienda 
 SET idAjustesFacturacion = @NuevoIdAjusteFacturacion
-WHERE IdTienda = 1;
-
+WHERE IdTienda = 1; 
 
 
 
 
 insert into AjustesWeb(MontoEnvioGratis,AumentoWeb,Whatsapp,Facebook,Instagram,Tiktok,
 Twitter,Youtube, direccion, telefono,nombre) 
-values (0,0,'','','','','','','','','Mercado');
+values (0,0,'','','','','','','','','Mercado')
 
 
+--________________________________ INSERT CORRELATIVE NUMBER ________________________________
 
--- 000001
-SET @NuevoIdCorrelativeNumber = NULL;
+--000001
+DECLARE @NuevoIdCorrelativeNumber INT;
 
 INSERT INTO CorrelativeNumber (lastNumber, quantityDigits, management, idTienda, dateUpdate)
-VALUES (0, 6, 'Sale', 1, NOW());
+VALUES (0, 6, 'Sale', 1, GETDATE());
 
--- Obtener el último ID insertado
-SET @NuevoIdCorrelativeNumber = LAST_INSERT_ID();
+SET @NuevoIdCorrelativeNumber = SCOPE_IDENTITY();
 
 UPDATE Tienda 
-SET idCorrelativeNumber = @NuevoIdCorrelativeNumber;
+SET idCorrelativeNumber = @NuevoIdCorrelativeNumber
 
 
 
-INSERT INTO CorrelativeNumber (lastNumber, quantityDigits, management, idTienda, dateUpdate)
-VALUES (0, 6, 'SaleWeb', 1, NOW());
+INSERT INTO CorrelativeNumber (lastNumber, quantityDigits, management,idTienda,  dateUpdate)
+VALUES (0, 6, 'SaleWeb',1, GETDATE());
 
-INSERT INTO CorrelativeNumber (lastNumber, quantityDigits, management, dateUpdate)
-VALUES (0, 4, 'EdicionMasivaBackup', NOW());
+
+
+INSERT INTO CorrelativeNumber (lastNumber, quantityDigits, management,  dateUpdate)
+VALUES (0, 4, 'EdicionMasivaBackup', GETDATE());
+
 
 
 insert into TipoGastos (gastoPArticular, descripcion, iva) values 
-(0, 'Sueldos', 0);
+(0, 'Sueldos', 0)
+
+
 
 insert into FormatosVenta (formato, valor, estado) values 
 ('Unidad', 1, 1),
@@ -198,6 +214,6 @@ insert into FormatosVenta (formato, valor, estado) values
 ('250 gr', 250,1),
 ('500 gr', 500,1),
 ('750 gr', 750,1),
-('1 kg', 1000,1);
+('1 kg', 1000,1)
 
 

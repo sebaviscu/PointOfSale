@@ -92,7 +92,6 @@ public class Program
             builder.Services.AddScoped<IGastosService, GastosService>();
             builder.Services.AddScoped<ITicketService, TicketService>();
             builder.Services.AddScoped<IShopService, ShopService>();
-            builder.Services.AddScoped<IAuditoriaService, AuditoriaService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<IImportarExcelService, ImportarExcelService>();
             builder.Services.AddScoped<IPedidoService, PedidoService>();

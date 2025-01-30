@@ -41,7 +41,6 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<Gastos> Gastos { get; set; } = null!;
         public virtual DbSet<TipoDeGasto> TipoDeGasto { get; set; } = null!;
         public virtual DbSet<VentaWeb> VentaWeb { get; set; } = null!;
-        public virtual DbSet<AuditoriaModificaciones> AuditoriaModificaciones { get; set; } = null!;
         public virtual DbSet<Notifications> Notificaciones { get; set; } = null!;
         public virtual DbSet<ListaPrecio> ListaPrecios { get; set; } = null!;
         public virtual DbSet<Pedido> Pedido { get; set; } = null!;
@@ -392,13 +391,6 @@ namespace PointOfSale.Data.DBContext
                 entity.HasKey(e => e.IdNotifications);
 
                 entity.ToTable("Notifications");
-            });
-
-            modelBuilder.Entity<AuditoriaModificaciones>(entity =>
-            {
-                entity.HasKey(e => e.IdAuditoriaModificaciones);
-
-                entity.ToTable("AuditoriaModificaciones");
             });
 
             modelBuilder.Entity<VentaWeb>(entity =>
