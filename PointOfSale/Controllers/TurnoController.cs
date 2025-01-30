@@ -76,6 +76,7 @@ namespace PointOfSale.Controllers
             {
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Empleado]);
 
+                var ajustes = await _ajustesService.GetAjustes(user.IdTienda);
                 var turno = await _turnoService.GetTurnoConVentasPorTipoDeVentaTurno(user.IdTurno);
                 var outout = new VMTurnoOutput();
 
@@ -117,6 +118,14 @@ namespace PointOfSale.Controllers
                             Total = totalMovimiento
                         };
                         vmTurnp.VentasPorTipoVentaPreviaValidacion.Add(ventaEfectivo);
+                    }
+
+                    if(ajustes.ControlTotalesCierreTurno.HasValue && ajustes.ControlTotalesCierreTurno.Value)
+                    {
+                        foreach (var item in vmTurnp.VentasPorTipoVentaPreviaValidacion)
+                        {
+                            item.Total = 0;
+                        }
                     }
 
                     outout.TotalMovimientosCaja = totalMovimiento;

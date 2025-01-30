@@ -1,4 +1,24 @@
 ﻿function applyPromociones(totalQuantity, data, currentTab) {
+    
+
+    if (data.idproduct) {
+        data = {
+            id: data.idproduct,
+            text: data.descriptionproduct,
+            categoryProducty: data.categoryProducty,
+            category: data.category || null, // Ajustar si es necesario
+            iva: data.iva,
+            tipoVenta: data.tipoVenta,
+            modificarPrecio: data.modificarPrecio,
+            precioAlMomento: data.precioAlMomento,
+            price: parseFloat(data.price),
+            excluirPromociones: data.excluirPromociones,
+            promocion: data.promocion
+        };
+    }
+
+
+
     let currentdate = new Date();
     let today = currentdate.getDay().toString();
 

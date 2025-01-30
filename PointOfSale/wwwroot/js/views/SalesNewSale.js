@@ -1367,10 +1367,30 @@ function adjustQuantity(idTab, increment) {
             let row = selectedRowtbProduct.find('.btn-delete').data('row');
 
             let currentTab = AllTabsForSale.find(item => item.idTab == idTab);
-            let productRow = currentTab.products.filter(prod => prod.row == row);
+            let productRow = currentTab.products.filter(prod => prod.row == row)[0];
 
-            productRow[0].quantity = newCantidad;
-            productRow[0].total = (parseFloat(productRow[0].price) * newCantidad).toFixed(2);
+
+            //if (!productRow) return;
+
+            //let totalQuantity = newCantidad;
+
+            //if (!productRow.excluirPromociones) {
+            //    let updatedData = applyPromociones(totalQuantity, productRow, currentTab);
+
+            //    productRow.quantity = updatedData.quantity;
+            //    productRow.price = updatedData.price.toFixed(2);
+            //    productRow.total = updatedData.total.toFixed(2);
+            //    productRow.promocion = updatedData.promocion || null;
+            //    productRow.diferenciapromocion = updatedData.diferenciapromocion ? updatedData.diferenciapromocion.toFixed(2) : null;
+            //} else {
+            //    productRow.quantity = totalQuantity;
+            //    productRow.total = (parseFloat(productRow.price) * totalQuantity).toFixed(2);
+            //}
+
+
+
+            productRow.quantity = newCantidad;
+            productRow.total = (parseFloat(productRow.price) * newCantidad).toFixed(2);
 
             showProducts_Prices(idTab, currentTab);
         }
