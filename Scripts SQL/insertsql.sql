@@ -5,8 +5,6 @@ insert into Tienda (nombre, idListaPrecio, color) values('Mercado', 1, '#4c84ff'
 insert into Empresa(RazonSocial,Licencia, RegistrationUser) values
 ('Mercado',1,'Sistema');
 
-
-
 insert into Rol(description,isActive) values
 ('Admin',1),
 ('Empleado',1),
@@ -17,8 +15,6 @@ insert into Rol(description,isActive) values
 insert into Users(name,email,idRol,password,isActive, sinHorario, IsSuperAdmin) values
 ('admin','admin',1,'',1, 1,0),
 ('SuperAdmin','sebaviscusso',1,'aBtloYrF4Hs6fEWVq0EW7A==:J61S+Sb5u+7YBcoiGM4SiQ==',1, 1,1);
-
-
 
 insert into Menu(description,icon,isActive, orden, controller, pageAction) values
 ('Dashboard','mdi mdi-view-dashboard-outline',1,1,'Admin','DashBoard'),
@@ -125,7 +121,7 @@ insert into TypeDocumentSale(description,isActive, tipoFactura, web,comision) va
 ('Efectivo',1,3,1,0),
 ('Tarjeta de Debito',1,1,1,0),
 ('Tarjeta de Credito',1,1,1,0),
-('Mercado Pa',1,1,1,0),
+('Mercado Pago',1,1,1,0),
 ('Modo',1,1,1,0),
 ('Transferencia',1,1,1,0);
 
@@ -153,21 +149,6 @@ insert into FormatosVenta (formato, valor, estado) values
 ('1 kg', 1000,1);
 
 
-
-
-
-
-
--- Para ajustar valores por fuera de un procedimiento almacenado
-SET @NuevoIdAjuste = NULL;
-INSERT INTO Ajustes (MinimoIdentificarConsumidor, IdTienda)
-VALUES (500000, 1);
-SET @NuevoIdAjuste = LAST_INSERT_ID();
-UPDATE Tienda 
-SET idAjustes = @NuevoIdAjuste;
-
-
-
 -- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ALTERNATIVA SQL SERVER 2016
 DECLARE @NuevoIdAjuste INT;
 INSERT INTO Ajustes (MinimoIdentificarConsumidor, IdTienda)
@@ -175,18 +156,6 @@ VALUES (500000, 1);
 SET @NuevoIdAjuste = SCOPE_IDENTITY();
 UPDATE Tienda 
 SET idAjustes = @NuevoIdAjuste;
-
-
-
--- Para ajustar valores por fuera de un procedimiento almacenado
-SET @NuevoIdAjusteFacturacion = NULL;
-INSERT INTO AjustesFacturacion (IdTienda, IsProdEnvironment)
-VALUES (1, 0);
-SET @NuevoIdAjusteFacturacion = LAST_INSERT_ID();
-UPDATE Tienda 
-SET idAjustesFacturacion = @NuevoIdAjusteFacturacion
-WHERE IdTienda = 1;
-
 
 
 -- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ALTERNATIVA SQL SERVER 2016
@@ -198,14 +167,6 @@ UPDATE Tienda
 SET idAjustesFacturacion = @NuevoIdAjusteFacturacion
 WHERE IdTienda = 1;
 
-
--- 000001
-SET @NuevoIdCorrelativeNumber = NULL;
-INSERT INTO CorrelativeNumber (lastNumber, quantityDigits, management, idTienda, dateUpdate)
-VALUES (0, 6, 'Sale', 1, NOW());
-SET @NuevoIdCorrelativeNumber = LAST_INSERT_ID();
-UPDATE Tienda 
-SET idCorrelativeNumber = @NuevoIdCorrelativeNumber;
 
 -- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ALTERNATIVA SQL SERVER 2016
 DECLARE @NuevoIdCorrelativeNumber INT;
