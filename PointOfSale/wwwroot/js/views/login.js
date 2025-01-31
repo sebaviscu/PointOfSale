@@ -9,7 +9,6 @@
             return response.json();
         })
         .then(responseJson => {
-            console.log(responseJson);
             if (responseJson.data.length > 1) {
                 $("#cboTiendas").append(
                     $("<option>").val('-1').text('')

@@ -66,9 +66,12 @@
 
 				<div class="d-flex justify-content-center">
 					<div style="text-align-last: start;">
-						<div class="col-md topper">
-							<span class="text" phoneNumber="@Model.Whatsapp" id="txtPhone"><i class="mdi mdi-whatsapp mdi-18px"></i>&nbsp;  @Model.Whatsapp</span>
-						</div>
+						@if (!string.IsNullOrWhiteSpace(@Model.Direccion))
+						{
+							<div class="col-md topper">
+								<span class="text" phoneNumber="@Model.Whatsapp" id="txtPhone"><i class="mdi mdi-whatsapp mdi-18px"></i>&nbsp;  @Model.Whatsapp</span>
+							</div>
+						}
 						@if (!string.IsNullOrWhiteSpace(@Model.Direccion))
 						{
 							<div class="col-md topper">
