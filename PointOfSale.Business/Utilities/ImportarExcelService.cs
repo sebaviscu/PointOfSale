@@ -45,9 +45,9 @@ namespace PointOfSale.Business.Utilities
 
                     int rowCount = sheet.Rows.Count;
 
-                    if(rowCount > 75)
+                    if(rowCount > 100)
                     {
-                        throw new Exception("No es posible cargar mas de 75 productos al mismo tiempo.");
+                        throw new Exception("No es posible cargar mas de 100 productos al mismo tiempo.");
                     }
 
                     int rowIndex = 0; // Para identificar el número de fila

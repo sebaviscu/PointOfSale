@@ -10,9 +10,7 @@ Logo varbinary(max) null,
 Color NVARCHAR(7) NOT NULL,
 modificationDate datetime null,
 modificationUser varchar(50) null,
-)
-
-go
+);
 
 CREATE TABLE Turno (
 idTurno INT PRIMARY KEY IDENTITY(1,1),
@@ -35,7 +33,6 @@ CONSTRAINT FK_Turno_Tienda FOREIGN KEY (idTienda)
 REFERENCES Tienda(idTienda) ON DELETE CASCADE
 );
 
-go
 
 create table Menu(
 idMenu int primary key identity(1,1),
@@ -47,29 +44,31 @@ pageAction varchar(30),
 isActive bit,
 orden int null,
 registrationDate datetime default getdate()
-)
-
-go
-
+);
 
 create table Rol(
 idRol int primary key identity(1,1),
 description varchar(30),
 isActive bit,
 registrationDate datetime default getdate()
-)
+);
 
- go
- 
  create table RolMenu(
  idRolMenu int primary key identity(1,1),
  idRol int references Rol(idRol),
  idMenu int references Menu(idMenu),
  isActive bit,
  registrationDate datetime default getdate()
- )
+ );
 
- go
+
+
+
+
+
+
+
+
 
 
 create table Users(
@@ -87,9 +86,7 @@ registrationDate datetime default getdate(),
 modificationDate datetime null,
 modificationUser varchar(50) null,
 idTienda int references Tienda(idTienda) null
-)
-
-go
+);
 
 create table Category(
 idCategory int primary key identity(1,1),
@@ -98,8 +95,7 @@ isActive bit,
 registrationDate datetime default getdate(),
 modificationDate datetime null,
 modificationUser varchar(50) null
-)
-go
+);
 
 create table Proveedor(
 	idProveedor int primary key identity(1,1),
@@ -118,9 +114,8 @@ create table Proveedor(
 	registrationDate datetime not null,
 	modificationDate datetime null,
 	modificationUser varchar(50) null
-)
+);
 
-go
 
 CREATE TABLE FormatosVenta (
     id INT PRIMARY KEY IDENTITY(1,1),
@@ -129,7 +124,7 @@ CREATE TABLE FormatosVenta (
 	estado BIT not null
 );
 
-go 
+
 create table Product(
 idProduct int primary key identity(1,1),
 description varchar(100),
@@ -156,8 +151,8 @@ IncluirIvaEnPrecio bit null,
 modificationDate datetime null,
 modificationUser varchar(50) null,
 registrationDate datetime null
-)
-go
+);
+
 
 create table CorrelativeNumber(
 idCorrelativeNumber int primary key identity(1,1),
@@ -169,9 +164,7 @@ dateUpdate datetime
 CONSTRAINT FK_CorrelativeNumber_Tienda FOREIGN KEY (idTienda)
     REFERENCES Tienda(idTienda)
     ON DELETE CASCADE,
-)
-
-go
+);
 
 create table TypeDocumentSale(
 idTypeDocumentSale int primary key identity(1,1),
@@ -182,10 +175,8 @@ tipoFactura int not null,
 comision decimal(10,2) not null,
 DescuentoRecargo INT null,
 registrationDate datetime default getdate()
-)
+);
 
-
-go
 
 create table Sale(
 idSale int primary key identity(1,1),
@@ -206,9 +197,8 @@ ResultadoFacturacion bit null,
 tipoFactura int null,
 registrationDate datetime default getdate(),
 registrationUser varchar(50) not null
-)
+);
 
-go
 
 create table VentaWeb(
 idVentaWeb int primary key identity(1,1),
@@ -232,9 +222,8 @@ idSale int references Sale(idSale) null,
 registrationDate datetime not null,
 modificationDate datetime null,
 modificationUser varchar(50) null,
-)
+);
 
-go
 
 create table DetailSale(
 idDetailSale int primary key identity(1,1),
@@ -251,9 +240,7 @@ tipoVenta int null,
 iva decimal(10,2) null,
 idVentaWeb int null references VentaWeb(idVentaWeb),
 Recogido bit null
-)
-
-go
+);
 
 
 create table Cliente(
@@ -270,9 +257,8 @@ create table Cliente(
 	registrationDate datetime not null,
 	modificationDate datetime null,
 	modificationUser varchar(50) null
-)
+);
 
-go
 
 create table ClienteMovimiento(
 	idClienteMovimiento int primary key identity(1,1),
@@ -283,11 +269,8 @@ create table ClienteMovimiento(
 	TipoMovimiento int not null,
 	registrationDate datetime not null,
 	registrationUser varchar(50) not null
-)
+);
 
-
-
-go
 
 create table Promocion(
 	idPromocion int primary key identity(1,1),
@@ -304,9 +287,8 @@ create table Promocion(
 	registrationDate datetime not null,
 	modificationDate datetime null,
 	modificationUser varchar(50) null,
-)
+);
 
-go
 
 create table ProveedorMovimiento(
 	idProveedorMovimiento int primary key identity(1,1),
@@ -326,9 +308,8 @@ create table ProveedorMovimiento(
 	modificationUser varchar(50) null,
 	registrationDate datetime not null,
 	registrationUser varchar(50) not null
-)
+);
 
-go
 
 create table TipoGastos(
 	idTipoGastos int primary key identity(1,1),
@@ -336,9 +317,8 @@ create table TipoGastos(
 	descripcion varchar(150) not null,
 	iva decimal(10,2) null,
 	tipoFactura int null
-)
+);
 
-go
 
 create table Gastos(
 	idGastos int primary key identity(1,1),
@@ -358,9 +338,8 @@ create table Gastos(
 	registrationUser varchar(50) not null,
 	modificationDate datetime null,
 	modificationUser varchar(50) null
-)
+);
 
-go
 
 create table AuditoriaModificaciones(
 idAuditoriaModificaciones int primary key identity(1,1),
@@ -371,9 +350,8 @@ entidadAntes varchar(max) not null,
 entidadDespues varchar(max) not null,
 modificationDate datetime null,
 modificationUser varchar(50) null,
-)
+);
 
-go
 
 create table Notifications(
 idNotifications int primary key identity(1,1),
@@ -387,9 +365,8 @@ registrationUser varchar(50),
 registrationDate datetime not null,
 modificationDate datetime null,
 modificationUser varchar(50) null
-)
+);
 
-go
 
 create table ListaPrecios(
 idListaPrecios int primary key identity(1,1),
@@ -398,9 +375,7 @@ idProducto int references Product(idProduct) not null,
 precio decimal(10,2) not null,
 porcentajeProfit int not null,
 registrationDate datetime default getdate()
-)
-
-go
+);
 
 create table Vencimientos(
 idVencimiento int primary key identity(1,1),
@@ -412,9 +387,7 @@ idProducto int references Product(idProduct) not null,
 idTienda int references Tienda(idTienda) not null,
 registrationDate datetime default getdate(),
 registrationUser varchar(50),
-)
-
-go
+);
 
 create table Pedidos(
 idPedido int primary key identity(1,1),
@@ -430,9 +403,7 @@ usuarioFechaCerrado varchar(100)  null,
 importeFinal decimal(10,2)  null,
 registrationDate datetime default getdate(),
 registrationUser varchar(50) not null
-)
-
-go
+);
 
 create table PedidoProducto(
 IdPedidoProducto int primary key identity(1,1),
@@ -442,9 +413,8 @@ vencimiento datetime null,
 cantidadProductoRecibida int  null,
 idProducto int references Product(idProduct) not null,
 idPedido int references Pedidos(idPedido) null,
-)
+);
 
-go
 
 create table AjustesWeb(
 idAjusteWeb int primary key identity(1,1),
@@ -478,9 +448,8 @@ PoliticaPrivacidad NVARCHAR(MAX) NULL,
 logoImagenNombre VARCHAR(50) NULL,
 modificationDate datetime null,
 modificationUser varchar(50) null
-)
+);
 
-go
 
 CREATE TABLE Ajustes (
 idAjuste INT PRIMARY KEY IDENTITY(1,1),
@@ -509,7 +478,7 @@ CONSTRAINT FK_Ajustes_Tienda FOREIGN KEY (idTienda)
     REFERENCES Tienda(idTienda)
     ON DELETE CASCADE
 );
-go
+
 
 CREATE TABLE AjustesFacturacion (
 idAjustesFacturacion INT PRIMARY KEY IDENTITY(1,1),
@@ -533,13 +502,12 @@ CONSTRAINT FK_AjustesFacturacion_Tienda FOREIGN KEY (idTienda)
     ON DELETE CASCADE
 );
 
-go
 
 alter table Tienda add idAjustes int references Ajustes(idAjuste) null;
 alter table Tienda add IdAjustesFacturacion int references AjustesFacturacion(IdAjustesFacturacion) null;
 alter table Tienda add IdCorrelativeNumber int references CorrelativeNumber(IdCorrelativeNumber) null;
 
-go
+
 
 create table Stock(
 idStock int primary key identity(1,1),
@@ -547,9 +515,7 @@ StockActual decimal(10,2) not null,
 StockMinimo int not null,
 idProducto int references Product(idProduct) not null,
 idTienda int references Tienda(idTienda) not null,
-)
-
-go
+);
 
 
 CREATE TABLE FacturasEmitidas (
@@ -577,7 +543,6 @@ CREATE TABLE FacturasEmitidas (
     RegistrationDate DATETIME
 );
 
-go
 
 CREATE TABLE CodigoBarras (
     IdCodigoBarras INT IDENTITY(1,1) PRIMARY KEY,
@@ -586,7 +551,6 @@ CREATE TABLE CodigoBarras (
 	idProducto int references Product(idProduct) not null
 );
 
-go
 
 CREATE TABLE RazonMovimientoCaja (
     IdRazonMovimientoCaja INT PRIMARY KEY IDENTITY(1,1),
@@ -595,7 +559,6 @@ CREATE TABLE RazonMovimientoCaja (
 	estado BIT not null
 );
 
-go
 
 CREATE TABLE MovimientoCaja (
     IdMovimientoCaja INT PRIMARY KEY IDENTITY(1,1),
@@ -611,15 +574,12 @@ CREATE TABLE MovimientoCaja (
 
 );
 
-go
-
 CREATE TABLE Tags (
     IdTag INT PRIMARY KEY IDENTITY(1,1),
     Nombre NVARCHAR(20) NOT NULL,
     Color NVARCHAR(7) NOT NULL
 );
 
-go
 
 CREATE TABLE ProductTags (
     ProductId INT NOT NULL,
@@ -640,7 +600,6 @@ CREATE TABLE Lov (
 	modificationUser varchar(50) null
 );
 
-go
 
 CREATE TABLE Horario (
     Id INT PRIMARY KEY IDENTITY(1,1),  
@@ -654,8 +613,6 @@ CREATE TABLE Horario (
     ModificationUser varchar(150),           
 	FOREIGN KEY (IdUsuario) REFERENCES Users(idUsers) ON DELETE CASCADE
 );
-
-go 
 
 CREATE TABLE Empresa (
     Id INT PRIMARY KEY IDENTITY(1,1),  
@@ -671,8 +628,6 @@ CREATE TABLE Empresa (
     ModificationDate DATETIME,                
     ModificationUser varchar(150)
 );
-
-go 
 
 CREATE TABLE PagoEmpresa (
     Id INT PRIMARY KEY IDENTITY(1,1),  
@@ -694,8 +649,6 @@ CREATE TABLE PagoEmpresa (
 	FOREIGN KEY (IdEmpresa) REFERENCES Empresa(Id) ON DELETE CASCADE
 );
 
-go 
-
 CREATE TABLE ProductLov
 (
     ProductId INT NOT NULL,
@@ -710,8 +663,6 @@ CREATE TABLE ProductLov
     CONSTRAINT FK_ProductLov_Lov FOREIGN KEY (LovId) 
         REFERENCES Lov(Id) ON DELETE CASCADE
 );
-
-go 
 
 create table BackupProducto(
 Id int primary key identity(1,1), 
@@ -747,8 +698,6 @@ PorcentajeProfit3 int null,
 sku varchar(50) null
 )
 
-go
-
 CREATE TABLE VentasPorTipoDeVentaTurno (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     Descripcion NVARCHAR(MAX) NULL,
@@ -760,7 +709,6 @@ CREATE TABLE VentasPorTipoDeVentaTurno (
     CONSTRAINT FK_VentasPorTipoDeVentaTurno_Turno FOREIGN KEY (IdTurno) REFERENCES Turno(IdTurno)
 );
 
-go
 
 CREATE TABLE HistorialLogin (
     Id INT IDENTITY(1,1) PRIMARY KEY,
@@ -773,7 +721,6 @@ CREATE TABLE HistorialLogin (
         ON DELETE CASCADE
 );
 
-go
 
 CREATE TABLE HorariosWeb (
     Id INT PRIMARY KEY IDENTITY(1,1),

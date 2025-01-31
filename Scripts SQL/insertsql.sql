@@ -129,63 +129,15 @@ insert into TypeDocumentSale(description,isActive, tipoFactura, web,comision) va
 ('Modo',1,1,1,0),
 ('Transferencia',1,1,1,0);
 
-
--- Para ajustar valores por fuera de un procedimiento almacenado
-SET @NuevoIdAjuste = NULL;
-
-INSERT INTO Ajustes (MinimoIdentificarConsumidor, IdTienda)
-VALUES (500000, 1);
-
--- Obtener el último ID insertado
-SET @NuevoIdAjuste = LAST_INSERT_ID();
-
-UPDATE Tienda 
-SET idAjustes = @NuevoIdAjuste;
-
-
-
--- Para ajustar valores por fuera de un procedimiento almacenado
-SET @NuevoIdAjusteFacturacion = NULL;
-
-INSERT INTO AjustesFacturacion (IdTienda, IsProdEnvironment)
-VALUES (1, 0);
-
--- Obtener el último ID insertado
-SET @NuevoIdAjusteFacturacion = LAST_INSERT_ID();
-
-UPDATE Tienda 
-SET idAjustesFacturacion = @NuevoIdAjusteFacturacion
-WHERE IdTienda = 1;
-
-
-
-
-
 insert into AjustesWeb(MontoEnvioGratis,AumentoWeb,Whatsapp,Facebook,Instagram,Tiktok,
 Twitter,Youtube, direccion, telefono,nombre) 
 values (0,0,'','','','','','','','','Mercado');
 
-
-
--- 000001
-SET @NuevoIdCorrelativeNumber = NULL;
-
 INSERT INTO CorrelativeNumber (lastNumber, quantityDigits, management, idTienda, dateUpdate)
-VALUES (0, 6, 'Sale', 1, NOW());
-
--- Obtener el último ID insertado
-SET @NuevoIdCorrelativeNumber = LAST_INSERT_ID();
-
-UPDATE Tienda 
-SET idCorrelativeNumber = @NuevoIdCorrelativeNumber;
-
-
-
-INSERT INTO CorrelativeNumber (lastNumber, quantityDigits, management, idTienda, dateUpdate)
-VALUES (0, 6, 'SaleWeb', 1, NOW());
+VALUES (0, 6, 'SaleWeb', 1, GETDATE());
 
 INSERT INTO CorrelativeNumber (lastNumber, quantityDigits, management, dateUpdate)
-VALUES (0, 4, 'EdicionMasivaBackup', NOW());
+VALUES (0, 4, 'EdicionMasivaBackup', GETDATE());
 
 
 insert into TipoGastos (gastoPArticular, descripcion, iva) values 
@@ -200,4 +152,67 @@ insert into FormatosVenta (formato, valor, estado) values
 ('750 gr', 750,1),
 ('1 kg', 1000,1);
 
+
+
+
+
+
+
+-- Para ajustar valores por fuera de un procedimiento almacenado
+SET @NuevoIdAjuste = NULL;
+INSERT INTO Ajustes (MinimoIdentificarConsumidor, IdTienda)
+VALUES (500000, 1);
+SET @NuevoIdAjuste = LAST_INSERT_ID();
+UPDATE Tienda 
+SET idAjustes = @NuevoIdAjuste;
+
+
+
+-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ALTERNATIVA SQL SERVER 2016
+DECLARE @NuevoIdAjuste INT;
+INSERT INTO Ajustes (MinimoIdentificarConsumidor, IdTienda)
+VALUES (500000, 1);
+SET @NuevoIdAjuste = SCOPE_IDENTITY();
+UPDATE Tienda 
+SET idAjustes = @NuevoIdAjuste;
+
+
+
+-- Para ajustar valores por fuera de un procedimiento almacenado
+SET @NuevoIdAjusteFacturacion = NULL;
+INSERT INTO AjustesFacturacion (IdTienda, IsProdEnvironment)
+VALUES (1, 0);
+SET @NuevoIdAjusteFacturacion = LAST_INSERT_ID();
+UPDATE Tienda 
+SET idAjustesFacturacion = @NuevoIdAjusteFacturacion
+WHERE IdTienda = 1;
+
+
+
+-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ALTERNATIVA SQL SERVER 2016
+DECLARE @NuevoIdAjusteFacturacion INT;
+INSERT INTO AjustesFacturacion (IdTienda, IsProdEnvironment)
+VALUES (1, 0);
+SET @NuevoIdAjusteFacturacion = SCOPE_IDENTITY();
+UPDATE Tienda 
+SET idAjustesFacturacion = @NuevoIdAjusteFacturacion
+WHERE IdTienda = 1;
+
+
+-- 000001
+SET @NuevoIdCorrelativeNumber = NULL;
+INSERT INTO CorrelativeNumber (lastNumber, quantityDigits, management, idTienda, dateUpdate)
+VALUES (0, 6, 'Sale', 1, NOW());
+SET @NuevoIdCorrelativeNumber = LAST_INSERT_ID();
+UPDATE Tienda 
+SET idCorrelativeNumber = @NuevoIdCorrelativeNumber;
+
+-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ALTERNATIVA SQL SERVER 2016
+DECLARE @NuevoIdCorrelativeNumber INT;
+INSERT INTO CorrelativeNumber (lastNumber, quantityDigits, management, idTienda, dateUpdate)
+VALUES (0, 6, 'Sale', 1, GETDATE());
+SET @NuevoIdCorrelativeNumber = SCOPE_IDENTITY();
+UPDATE Tienda 
+SET idCorrelativeNumber = @NuevoIdCorrelativeNumber
+WHERE idTienda = 1;
 
