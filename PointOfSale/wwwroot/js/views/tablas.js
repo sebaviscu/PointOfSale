@@ -75,7 +75,8 @@ const BASIC_MODEL_TIPO_VENTA = {
     isActive: 1,
     web: 1,
     tipoFactura: 0,
-    descuentoRecargo: 0
+    descuentoRecargo: 0,
+    comision: 0
 }
 
 const BASIC_MODEL_TIPO_DE_GASTOS = {
@@ -1337,10 +1338,6 @@ $("#btnSaveRazonMovimientoCaja").on("click", function () {
         return;
     }
 
-    if ($("#txtDescripcionRazonMovimientoCaja").val().length < 10) {
-        toastr.warning("La descripción debe ser mayor a 10 caracteres", "");
-    }
-
     const model = structuredClone(BASIC_MODEL_RAZON_MOVIMIENTIO_CAJA);
     model["idRazonMovimientoCaja"] = parseInt($("#txtIdRazon").val());
     model["descripcion"] = $("#txtDescripcionRazonMovimientoCaja").val();
@@ -1440,7 +1437,7 @@ $('#tbRazonMovCaja').on('click', '.btn-delete-razon-mov-caja', function () {
 
                 $(".showSweetAlert").LoadingOverlay("show")
 
-                fetch(`/MovimientoCaja/DeleteRazonMovimientoCaja?idRazonMovimientoCaja=${data.idTag}`, {
+                fetch(`/MovimientoCaja/DeleteRazonMovimientoCaja?idRazonMovimientoCaja=${data.idRazonMovimientoCaja}`, {
                     method: "DELETE"
                 }).then(response => {
                     $(".showSweetAlert").LoadingOverlay("hide")

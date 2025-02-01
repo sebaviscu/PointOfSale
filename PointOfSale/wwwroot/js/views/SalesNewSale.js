@@ -71,6 +71,7 @@ $(document).ready(function () {
                 }
                 else {
                     $('#bloqueo').hide();
+                    $('#btn-add-tab').show();
 
 
                     newTab();
@@ -768,6 +769,9 @@ function disableAfterVenta(tabID) {
 
 document.onkeyup = async function (e) {
     let currentTabId = getTabActiveId();
+
+    if (currentTabId == null)
+        return;
 
     if (e.altKey && e.which == 78) { // alt + N
         newTab();
@@ -1493,13 +1497,16 @@ function ventaAbierta() {
 }
 
 function getTabActiveId() {
+    if (document.getElementsByClassName(" nav-link tab-venta active")[0] == null) {
+        return null;
+    }
     let idTab = document.getElementsByClassName(" nav-link tab-venta active")[0].id;
 
     return idTab[idTab.length - 1];
 }
 
 async function validateCode(detalle) {
-    if (!ajustes.needControl) return true;
+    if (!ajustes.needControl) return true
 
     return new Promise((resolve, reject) => {
         swal({

@@ -22,7 +22,8 @@ public class BackupService : ServiceBase<BackupProducto>, IBackupService
     public async Task SaveBackup(string modificationUser, DateTime registrationDate, string? correlativeNumberMasivo, Product product)
     {
 
-        var pbOld = await _repository.First(_ => _.IdProduct == product.IdProduct);
+        var pbOldQuery = await _repository.Query();
+        var pbOld = pbOldQuery.FirstOrDefault(_ => _.IdProduct == product.IdProduct);
 
         if (pbOld != null)
         {

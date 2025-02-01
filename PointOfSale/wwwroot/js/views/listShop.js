@@ -49,7 +49,7 @@ $(document).ready(function () {
         })
 
     var elem = document.getElementById('switchTakeAway');
-    //var init = new Switchery(elem, { color: '#1ab394', size: 'small' });
+    var init = new Switchery(elem, { color: '#1ab394', size: 'small' });
 
     $(".btnCategoria").on("click", function () {
         page = 1;

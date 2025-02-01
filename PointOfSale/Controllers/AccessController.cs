@@ -104,7 +104,7 @@ namespace PointOfSale.Controllers
                     }
                     else
                     {
-                        if (model.TiendaId == null && user_found.IdRol == 1)
+                        if ((model.TiendaId == null && user_found.IdRol == 1) || (model.TiendaId.HasValue &&  model.TiendaId == -1))
                         {
                             model.IsAdmin = true;
                             model.PassWord = model.PassWord;
