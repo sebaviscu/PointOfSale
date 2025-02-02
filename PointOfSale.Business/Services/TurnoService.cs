@@ -164,13 +164,11 @@ namespace PointOfSale.Business.Services
             turno.FechaFin = TimeHelper.GetArgentinaTime();
             turno.BilletesEfectivo = entity.BilletesEfectivo;
 
-            //var turnoCerrado = await Edit(turno);
+            var turnoCerrado = await Edit(turno);
 
-            await NotificarTurnoCerrado(turno);
-            //await NotificarTurnoCerrado(turnoCerrado);
+            await NotificarTurnoCerrado(turnoCerrado);
 
-            return turno;
-            //return turnoCerrado;
+            return turnoCerrado;
         }
 
         public async Task<Turno> CerrarTurnoSimple(Turno entity, List<VentasPorTipoDeVentaTurno> ventasPorTipoDeVentas)

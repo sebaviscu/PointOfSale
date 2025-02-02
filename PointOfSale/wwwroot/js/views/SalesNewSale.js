@@ -83,13 +83,15 @@ $(document).ready(function () {
                             getAllVentasFromIndexedDB((ventas) => {
                                 if (ventas.length > 0) {
                                     AllTabsForSale = ventas;
-
+                                    let idTab = 1;
                                     ventas.forEach((currentTab, index) => {
                                         if (index > 0) {
                                             newTab(); // Ejecutar solo a partir de la segunda venta
                                         }
+                                        currentTab.idTab = idTab;
                                         showProducts_Prices(currentTab.idTab, currentTab);
                                         $("#lblFechaUsuario" + currentTab.idTab).html(currentTab.date + " &nbsp;&nbsp; " + currentTab.user);
+                                        idTab++;
                                     });
                                 }
                             });
@@ -347,6 +349,9 @@ function showProducts_Prices(idTab, currentTab) {
 
         row++;
     })
+
+    var contenedor = $('#tbProduct' + idTab).parent();
+    contenedor.scrollTop(contenedor.prop("scrollHeight"));
 
     $('#txtTotal' + idTab).val('$ ' + formatNumber(total));
     $("#txtTotal" + idTab).attr("totalReal", parseFloat(total).toFixed(2));

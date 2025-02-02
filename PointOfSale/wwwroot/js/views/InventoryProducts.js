@@ -1410,6 +1410,7 @@ function cargarTabla(productosFiltrados) {
             'data-profit': producto.porcentajeProfit,
             'data-web': 0,
             'data-iva': producto.iva,
+            'data-incluye-iva': producto.incluirIvaEnPrecio,
             'contenteditable': true,
             'inputmode': 'numeric',
             'pattern': '[0-9]*',
@@ -1419,6 +1420,7 @@ function cargarTabla(productosFiltrados) {
             'data-profit': producto.porcentajeProfit2,
             'data-web': 0,
             'data-iva': producto.iva,
+            'data-incluye-iva': producto.incluirIvaEnPrecio,
             'contenteditable': true,
             'inputmode': 'numeric',
             'pattern': '[0-9]*',
@@ -1428,6 +1430,7 @@ function cargarTabla(productosFiltrados) {
             'data-profit': producto.porcentajeProfit3,
             'data-web': 0,
             'data-iva': producto.iva,
+            'data-incluye-iva': producto.incluirIvaEnPrecio,
             'contenteditable': true,
             'inputmode': 'numeric',
             'pattern': '[0-9]*',
@@ -1437,6 +1440,7 @@ function cargarTabla(productosFiltrados) {
             'data-profit': producto.porcentajeProfit,
             'data-web': ajustesWeb.aumentoWeb,
             'data-iva': producto.iva,
+            'data-incluye-iva': producto.incluirIvaEnPrecio,
             'contenteditable': true,
             'inputmode': 'numeric',
             'pattern': '[0-9]*',
@@ -1525,8 +1529,9 @@ function recalculatePrices() {
             let costo = parseFloat(costoText) || 0;
             let profit = parseFloat($(this).attr('data-profit'));
             let iva = parseFloat($(this).attr('data-iva'));
+            let incluirIvaEnPrecio = $(this).attr('data-incluye-iva') == 'true';
             let web = parseFloat($(this).attr('data-web'));
-            iva = iva == '' || isNaN(iva) ? 0 : iva;
+            iva = iva == '' || isNaN(iva) || incluirIvaEnPrecio ? iva : 0;
             web = web == '' ? 0 : web;
 
             if (profit != 0 && costo != 0) {

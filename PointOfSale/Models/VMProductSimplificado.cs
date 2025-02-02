@@ -36,6 +36,7 @@ namespace PointOfSale.Models
         public int? PorcentajeProfit3 { get; set; }
         public decimal? PrecioFormatoWeb { get; set; }
         public int? FormatoWeb { get; set; }
+        public bool? IncluirIvaEnPrecio { get; set; }
 
         public List<VMVencimiento>? Vencimientos { get; set; }
         public List<VMListaPrecio>? ListaPrecios { get; set; }
