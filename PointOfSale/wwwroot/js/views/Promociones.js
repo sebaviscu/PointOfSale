@@ -372,9 +372,13 @@ function cargarSelect2() {
         allowHTML: true
     });
 
+    showLoading();
+
     fetch('/Inventory/GetProductsActive')
         .then(response => response.json())
         .then(data => {
+            removeLoading();
+
             const prods = data.data.map(prod => ({
                 value: prod.idProduct,
                 label: `${prod.description}&nbsp;&nbsp;&nbsp;&nbsp;$${prod.price}`

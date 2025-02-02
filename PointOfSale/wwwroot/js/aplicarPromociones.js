@@ -1,12 +1,11 @@
 ﻿function applyPromociones(totalQuantity, data, currentTab) {
     
-
     if (data.idproduct) {
         data = {
             id: data.idproduct,
             text: data.descriptionproduct,
             categoryProducty: data.categoryProducty,
-            category: data.category || null, // Ajustar si es necesario
+            category: data.category || null,
             iva: data.iva,
             tipoVenta: data.tipoVenta,
             modificarPrecio: data.modificarPrecio,
@@ -17,14 +16,14 @@
         };
     }
 
-
-
     let currentdate = new Date();
     let today = currentdate.getDay().toString();
 
     let promPorDia = promociones.find(item => item.dias.includes(today) && !item.idProducto && item.idCategory.length === 0);
     let promPorCat = promociones.find(item => item.idCategory.includes(data.category) && !item.idProducto && (!item.dias.length || item.dias.includes(today)));
     let promPorProducto = promociones.find(item => parseInt(item.idProducto) === data.id);
+
+    data.promocion = '';
 
     if (promPorProducto) {
         data = applyForProduct(promPorProducto, totalQuantity, data, currentTab);

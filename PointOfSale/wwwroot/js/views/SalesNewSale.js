@@ -338,7 +338,7 @@ function showProducts_Prices(idTab, currentTab) {
                 $("<td>").text(item.quantity).addClass("cantidad"),
                 $("<td>").text("$ " + item.price),
                 $("<td>").text("$ " + item.total),
-                $("<td>").append(item.promocion != null ?
+                $("<td>").append(item.promocion != null && item.promocion != '' ?
                     $("<i>").addClass("mdi mdi-percent").attr("data-toggle", "tooltip").attr("title", item.promocion) : "")
             )
         )
@@ -1207,7 +1207,8 @@ function addFunctions(idTab) {
                     categoryProducty: item.categoryProducty,
                     modificarPrecio: item.modificarPrecio,
                     precioAlMomento: item.precioAlMomento,
-                    excluirPromociones: item.excluirPromociones
+                    excluirPromociones: item.excluirPromociones,
+                    originalPrice: item.price
                 }));
 
                 // Si es un código de barras, selecciona automáticamente el primer producto
@@ -1378,30 +1379,35 @@ function adjustQuantity(idTab, increment) {
             let currentTab = AllTabsForSale.find(item => item.idTab == idTab);
             let productRow = currentTab.products.filter(prod => prod.row == row)[0];
 
+            if (!productRow) return;
 
-            //if (!productRow) return;
+            if (!productRow.excluirPromociones) {
+                let updatedData = applyPromociones(newCantidad, productRow, currentTab);
 
-            //let totalQuantity = newCantidad;
-
-            //if (!productRow.excluirPromociones) {
-            //    let updatedData = applyPromociones(totalQuantity, productRow, currentTab);
-
-            //    productRow.quantity = updatedData.quantity;
-            //    productRow.price = updatedData.price.toFixed(2);
-            //    productRow.total = updatedData.total.toFixed(2);
-            //    productRow.promocion = updatedData.promocion || null;
-            //    productRow.diferenciapromocion = updatedData.diferenciapromocion ? updatedData.diferenciapromocion.toFixed(2) : null;
-            //} else {
-            //    productRow.quantity = totalQuantity;
-            //    productRow.total = (parseFloat(productRow.price) * totalQuantity).toFixed(2);
-            //}
-
-
+                if (!updatedData.promocion) {
+                    // Si no hay promoción, restaurar el precio original
+                    productRow.price = parseFloat(productRow.originalPrice);
+                    productRow.total = (productRow.originalPrice * newCantidad).toFixed(2);
+                    productRow.diferenciapromocion = null;
+                    productRow.promocion = '';
+                }
+                else {
+                    productRow.price = updatedData.price.toFixed(2);
+                    productRow.total = updatedData.total.toFixed(2);
+                    productRow.promocion = updatedData.promocion || null;
+                    productRow.diferenciapromocion = updatedData.diferenciapromocion ? updatedData.diferenciapromocion.toFixed(2) : null;
+                }
+                productRow.quantity = updatedData.quantity;
+            } else {
+                productRow.quantity = newCantidad;
+                productRow.total = (parseFloat(productRow.price) * newCantidad).toFixed(2);
+            }
 
             productRow.quantity = newCantidad;
             productRow.total = (parseFloat(productRow.price) * newCantidad).toFixed(2);
 
             showProducts_Prices(idTab, currentTab);
+            saveVentaToIndexedDB(currentTab);
         }
     }
 }
@@ -1442,7 +1448,8 @@ function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
     data.total = totalQuantity * parseFloat(data.price);
     data.quantity = Math.trunc(totalQuantity * 10000) / 10000;
 
-    //let currentTab = AllTabsForSale.find(item => item.idTab == idTab);
+    let originalPrice = data.price;
+
     if (!data.excluirPromociones) {
         data = applyPromociones(totalQuantity, data, currentTab);
     }
@@ -1459,6 +1466,7 @@ function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
     product.modificarPrecio = data.modificarPrecio;
     product.precioAlMomento = data.precioAlMomento;
     product.excluirPromociones = data.excluirPromociones;
+    product.originalPrice = parseFloat(originalPrice);
 
     if (data.promocion) {
         product.promocion = data.promocion;
@@ -1734,4 +1742,5 @@ class Producto {
     modificarPrecio = 1;
     precioAlMomento = 0;
     excluirPromociones = 0;
+    originalPrice = 0;
 }

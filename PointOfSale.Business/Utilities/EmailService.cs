@@ -56,7 +56,8 @@ namespace PointOfSale.Business.Utilities
                         // Adjuntar el ticket en PDF
                         if (attachment != null)
                         {
-                            mailMessage.Attachments.Add(new Attachment(new MemoryStream(attachment), "Ticket.pdf", "application/pdf"));
+                            var fecha = TimeHelper.GetArgentinaTime().ToShortDateString().Replace("/","");
+                            mailMessage.Attachments.Add(new Attachment(new MemoryStream(attachment), $"Ticket_{fecha}.pdf", "application/pdf"));
                         }
 
                         smtpClient.Send(mailMessage);
