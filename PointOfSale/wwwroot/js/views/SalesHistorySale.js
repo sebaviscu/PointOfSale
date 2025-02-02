@@ -299,7 +299,7 @@ function createTable(responseJson) {
                 render: function (data, type, row) {
                     let button = row.typeDocumentSale === "Presupuesto" ?
                         `<button class="btn btn-success btn-sm btn-pago"><i class="mdi mdi-cash-usd"></i></button>` : "";
-                    return `${row.typeDocumentSale} ${button}`;
+                    return `${row.typeDocumentSale} - F${row.tipoFacturaString} ${button}`;
                 }
             },
             { data: "cantidadProductos" },
