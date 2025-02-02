@@ -69,18 +69,16 @@ namespace PointOfSale.Business.Utilities
             }
         }
 
-        public async Task NotificarCierreCaja(Turno turno, Dictionary<string, decimal> datosVentas, Ajustes ajustes)
+        public async Task NotificarCierreCaja(Turno turno, Ajustes ajustes)
         {
             var emailsReceptores = ajustes.EmailsReceptoresCierreTurno.Split(';').ToList();
 
             var fecha = TimeHelper.GetArgentinaTime();
             string subject = $"[Cierre de Caja] {fecha.ToString()}";
 
-            var movimientos = await _movimientoCajaService.GetMovimientoCajaByTurno(turno.IdTurno);
-
             decimal totalMovimientoEgreso = 0;
             decimal totalMovimientoIngreso = 0;
-            foreach (var m in movimientos)
+            foreach (var m in turno.MovimientosCaja)
             {
                 if (m.RazonMovimientoCaja.Tipo == TipoMovimientoCaja.Egreso)
                     totalMovimientoEgreso -= m.Importe;
@@ -91,8 +89,8 @@ namespace PointOfSale.Business.Utilities
             string body =
                 $"<h1>{ajustes.Encabezado1}</h1>" +
                 $"<h3>Cierre de Caja {fecha.Date.ToString("dd/MM/yyyy")}</h3>" +
-                $"<p><strong>Fecha de Inicio del Turno:</strong> {turno.FechaInicio}</p>" +
-                $"<p><strong>Fecha de Fin del Turno:</strong> {turno.FechaFin}</p>" +
+                $"<p><strong>Inicio:</strong> {turno.FechaInicio.ToShortTimeString()}</p>" +
+                $"<p><strong>Fin:</strong> {turno.FechaFin.Value.ToShortTimeString()}</p>" +
                 $"<p><strong>Empleado del cierre de caja:</strong> {turno.ModificationUser}</p>";
 
             if (turno.TotalInicioCaja > 0)
@@ -110,47 +108,90 @@ namespace PointOfSale.Business.Utilities
                 body += $"<p><strong>Ingresos de Caja:</strong> $ {totalMovimientoIngreso}</p>";
             }
 
+            body += "<hr>";
+
+
+            body += $"<p><strong>TOTAL Sistema:</strong> $ {turno.TotalCierreCajaSistema.Value.ToString("0")}</p>";
+
             body +=
-                $"<h4>Resumen:</h4>" +
                 $"<table border='1' cellpadding='5' cellspacing='0' style='border-collapse: collapse; width: 50%;'>" +
                 $"<thead>" +
                 $"<tr><th>Metodo de pago</th><th>Importe</th></tr>" +
                 $"</thead>" +
                 $"<tbody>";
 
-            var totalCaja = 0m;
-
-
-            foreach (KeyValuePair<string, decimal> item in datosVentas)
+            foreach (var item in turno.VentasPorTipoDeVenta)
             {
-                var descripcion = item.Key;
-                var total = item.Value;
-                totalCaja += total;
-
-                body += $"<tr><td>{descripcion}</td><td style=\"text-align: right;\">${total}</td></tr>";
+                body += $"<tr><td>{item.Descripcion}</td><td style=\"text-align: right;\">${item.TotalSistema.Value.ToString("0")}</td></tr>";
             }
 
-            body += $"<p style='font-size: 22px;'><strong>TOTAL CAJA:</strong> $ {totalCaja}</p>";
-            body += "<br>";
+            body += "</tbody></table><br>";
 
+            if (ajustes.ControlTotalesCierreTurno.HasValue && ajustes.ControlTotalesCierreTurno.Value)
+            {
+                body += $"<p><strong>TOTAL Usuario:</strong> $ {turno.TotalCierreCajaReal.Value.ToString("0")}</p>";
+
+                body +=
+                    $"<table border='1' cellpadding='5' cellspacing='0' style='border-collapse: collapse; width: 50%;'>" +
+                    $"<thead>" +
+                    $"<tr><th>Metodo de pago</th><th>Importe</th></tr>" +
+                    $"</thead>" +
+                    $"<tbody>";
+
+                foreach (var item in turno.VentasPorTipoDeVenta)
+                {
+                    body += $"<tr><td>{item.Descripcion}</td><td style=\"text-align: right;\">${item.TotalUsuario.Value.ToString("0")}</td></tr>";
+                }
+                body += "</tbody></table><br>";
+            }
+
+            // Diferencias de caja
+            if (!string.IsNullOrEmpty(turno.ErroresCierreCaja))
+            {
+                var diferenciasArray = turno.ErroresCierreCaja.Split(new string[] { "<br>" }, StringSplitOptions.RemoveEmptyEntries);
+
+                var difCaja = string.Empty;
+                var montoDiferencia = System.Text.RegularExpressions.Regex.Match(diferenciasArray[diferenciasArray.Length - 1], @"\$ -?(\d+)");
+                if (montoDiferencia.Success)
+                {
+                    difCaja = montoDiferencia.Groups[0].Value.Replace(" ", "");
+                }
+                body += $"<p><strong>DIFERENCIA de Caja:</strong> {difCaja}</p>";
+
+
+                // Iniciar la tabla de diferencias
+                body += "<table border='1' cellpadding='5' cellspacing='0' style='border-collapse: collapse; width: 50%;'>" +
+                         "<thead><tr><th>Metodo de pago</th><th>Importe</th></tr></thead><tbody>";
+
+                foreach (var diferencia in diferenciasArray)
+                {
+                    var descripcionMatch = System.Text.RegularExpressions.Regex.Match(diferencia, @"'(.+?)'");
+                    var montoMatch = System.Text.RegularExpressions.Regex.Match(diferencia, @"\$ -?(\d+)");
+
+                    if (descripcionMatch.Success && montoMatch.Success)
+                    {
+                        body += $"<tr><td>{descripcionMatch.Groups[1].Value}</td><td style=\"text-align: right;\">{montoMatch.Groups[0].Value.Replace(" ", "")}</td></tr>";
+                    }
+                }
+
+                body += "</tbody></table><br>";
+            }
+
+            // Observaciones del cierre
             if (!string.IsNullOrEmpty(turno.ObservacionesApertura))
             {
-                body +=
-                    $"</tbody>" +
-                    $"</table>" +
-                    $"<br><p><strong>Observaciones del Apertura:</strong> {turno.ObservacionesApertura}</p>";
+                body += $"<p><strong>Observaciones del Apertura:</strong> {turno.ObservacionesApertura}</p>";
             }
 
             if (!string.IsNullOrEmpty(turno.ObservacionesCierre))
             {
-                body +=
-                    $"</tbody>" +
-                    $"</table>" +
-                    $"<br><p><strong>Observaciones del Cierre:</strong> {turno.ObservacionesCierre}</p>";
+                body += $"<p><strong>Observaciones del Cierre:</strong> {turno.ObservacionesCierre}</p>";
             }
 
+            // Enviar el correo
             SendEmail(ajustes.EmailEmisorCierreTurno, ajustes.PasswordEmailEmisorCierreTurno, emailsReceptores, subject, body);
         }
+
 
 
         public async Task EnviarTicketEmail(int idTienda, string emailReceptor, byte[] attachment)

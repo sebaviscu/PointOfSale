@@ -66,6 +66,14 @@ namespace PointOfSale.Business.Utilities
             line.AppendLine(textoFormateado);
         }
 
+        public void TextoSaltoLineaPorMaxCaracteres(string text)
+        {
+            for (int i = 0; i < text.Length; i += MAX)
+            {
+                line.AppendLine(text.Substring(i, Math.Min(MAX, text.Length - i)));
+            }
+        }
+
         public void ChangeFont(int fontSize, FontStyle fontStyle)
         {
             line.AppendLine($"[[FontSize]]{fontSize} [[FontStyle]]{fontStyle}");
@@ -158,13 +166,13 @@ namespace PointOfSale.Business.Utilities
             line.AppendLine(lineaArticulo);
         }
 
-        public void BetweenCierreTurno(string texto, int valor)
+        public void BetweenCierreTurno(string texto, string valor)
         {
             string articuloCortado = CortarTextoMax(texto, MAX - 10);
 
-            int nroEspacios = MAX - articuloCortado.Length - valor.ToString().Length;
+            int nroEspacios = MAX - articuloCortado.Length - valor.Length;
 
-            string lineaArticulo = articuloCortado + new string(' ', nroEspacios) + "$" + valor.ToString();
+            string lineaArticulo = articuloCortado + new string(' ', nroEspacios) + valor;
             line.AppendLine(lineaArticulo);
         }
     }

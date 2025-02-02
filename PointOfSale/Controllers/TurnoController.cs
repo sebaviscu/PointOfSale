@@ -245,7 +245,7 @@ namespace PointOfSale.Controllers
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
 
                 modelTurno.ModificationUser = user.UserName;
-                (Turno TurnoCerrado, Dictionary<string, decimal> VentasRegistradas) result;
+                Turno result;
 
                 if (user.ControlCierreCaja)
                 {
@@ -263,9 +263,9 @@ namespace PointOfSale.Controllers
 
                 if (modelTurno.ImpirmirCierreCaja.HasValue && modelTurno.ImpirmirCierreCaja.Value)
                 {
-                    var ticket = await _ticketService.CierreTurno(result.TurnoCerrado, result.VentasRegistradas);
-
                     var ajustes = await _ajustesService.GetAjustes(user.IdTienda);
+
+                    var ticket = await _ticketService.CierreTurno(result, ajustes);
 
                     model.NombreImpresora = ajustes.NombreImpresora;
                     model.ImagesTicket = new List<Images>();
@@ -355,7 +355,7 @@ namespace PointOfSale.Controllers
             {
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Empleado]);
                 var ajustes = await _ajustesService.GetAjustes(user.IdTienda);
-                var turno = await _turnoService.GetTurno(2);
+                var turno = await _turnoService.GetTurno(idTurno);
 
                 var listaVentas = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, turno.IdTurno, user.IdTienda, turno.FechaInicio);
 
@@ -367,7 +367,7 @@ namespace PointOfSale.Controllers
 
                 if (!string.IsNullOrEmpty(ajustes.NombreImpresora))
                 {
-                    var ticket = await _ticketService.CierreTurno(turno, listaVentas);
+                    var ticket = await _ticketService.CierreTurno(turno, ajustes);
 
                     model.Ticket += ticket.Ticket ?? string.Empty;
                     model.ImagesTicket.AddRange(ticket.ImagesTicket);

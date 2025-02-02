@@ -155,26 +155,27 @@ namespace PointOfSale.Business.Services
                         .SingleOrDefault(_ => _.IdTurno == idTurno);
         }
 
-        public async Task<(Turno TurnoCerrado, Dictionary<string, decimal> VentasRegistradas)> CerrarTurno(Turno entity)
+        public async Task<Turno> CerrarTurno(Turno entity)
         {
-            var turno = await _repository.Get(_ => _.IdTurno == entity.IdTurno);
-            var ventasRegistradas = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, turno.IdTurno, turno.IdTienda, TimeHelper.GetArgentinaTime());
+            var turno = await GetTurno(entity.IdTurno);
 
             turno.ModificationUser = entity.ModificationUser;
             turno.ObservacionesCierre = entity.ObservacionesCierre;
             turno.FechaFin = TimeHelper.GetArgentinaTime();
             turno.BilletesEfectivo = entity.BilletesEfectivo;
 
-            var turnoCerrado = await Edit(turno);
+            //var turnoCerrado = await Edit(turno);
 
-            await NotificarTurnoCerrado(turnoCerrado, ventasRegistradas);
+            await NotificarTurnoCerrado(turno);
+            //await NotificarTurnoCerrado(turnoCerrado);
 
-            return (turnoCerrado, ventasRegistradas);
+            return turno;
+            //return turnoCerrado;
         }
 
-        public async Task<(Turno TurnoCerrado, Dictionary<string, decimal> VentasRegistradas)> CerrarTurnoSimple(Turno entity, List<VentasPorTipoDeVentaTurno> ventasPorTipoDeVentas)
+        public async Task<Turno> CerrarTurnoSimple(Turno entity, List<VentasPorTipoDeVentaTurno> ventasPorTipoDeVentas)
         {
-            var turno = await _repository.First(_ => _.IdTurno == entity.IdTurno);
+            var turno = await GetTurno(entity.IdTurno);
 
             turno.ModificationUser = entity.ModificationUser;
             turno.ObservacionesCierre = entity.ObservacionesCierre;
@@ -185,14 +186,12 @@ namespace PointOfSale.Business.Services
             turno.ErroresCierreCaja = $"Diferencia de caja de <strong>'${entity.TotalCierreCajaReal - entity.TotalCierreCajaSistema}'</strong>. <br>";
             bool response = await _repository.Edit(turno);
 
-            var diccionarioVentas = ventasPorTipoDeVentas.ToDictionary(_ => _.Descripcion, _ => _.TotalUsuario.Value);
+            await NotificarTurnoCerrado(turno);
 
-            await NotificarTurnoCerrado(turno, diccionarioVentas);
-
-            return (turno, diccionarioVentas);
+            return turno;
         }
 
-        private async Task NotificarTurnoCerrado(Turno turnoCerrado, Dictionary<string, decimal> ventasRegistradas)
+        private async Task NotificarTurnoCerrado(Turno turnoCerrado)
         {
             var ajustes = await _ajusteService.GetAjustes(turnoCerrado.IdTienda);
 
@@ -201,7 +200,7 @@ namespace PointOfSale.Business.Services
                         && !string.IsNullOrEmpty(ajustes.PasswordEmailEmisorCierreTurno)
                         && !string.IsNullOrEmpty(ajustes.EmailsReceptoresCierreTurno))
             {
-                await _emailService.NotificarCierreCaja(turnoCerrado, ventasRegistradas, ajustes);
+                await _emailService.NotificarCierreCaja(turnoCerrado, ajustes);
             }
         }
 

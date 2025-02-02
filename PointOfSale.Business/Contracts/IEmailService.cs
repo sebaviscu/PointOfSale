@@ -9,7 +9,7 @@ namespace PointOfSale.Business.Contracts
 {
     public interface IEmailService
     {
-        Task NotificarCierreCaja(Turno turno,Dictionary<string,decimal> ventasRegistradas, Ajustes ajustes);
+        Task NotificarCierreCaja(Turno turno, Ajustes ajustes);
 
         Task EnviarTicketEmail(int idTienda, string emailReceptor, byte[] attachment);
     }

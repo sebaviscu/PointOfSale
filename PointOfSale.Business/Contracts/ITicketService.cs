@@ -11,7 +11,7 @@ namespace PointOfSale.Business.Contracts
 
         byte[] PdfTicket(string ticket, List<Images> ImagesTicket);
 
-        Task<TicketModel> CierreTurno(Turno turno, Dictionary<string, decimal> VentasRegistradas);
+        Task<TicketModel> CierreTurno(Turno turno, Ajustes ajustes);
 
         Task<TicketModel> TicketTest(List<DetailSale> detailSales, Ajustes ajustes);
     }
