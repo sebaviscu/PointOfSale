@@ -33,7 +33,7 @@ $(document).ready(function () {
 
     loadMoreProducts();
     montoEnvioGratis = $('#txtMontoEnvioGratis').text().trim() != null ? parseFloat($('#txtMontoEnvioGratis').text().trim()) : null;
-    estadoHorario = $('#txtOpen').val();
+    estadoHorario = $('#txtOpen').text().trim() === 'True';
 
     fetch("/Ajustes/GetAjustesWeb")
         .then(response => {
@@ -267,6 +267,13 @@ function clean() {
 
 function resumenVenta() {
     if (productos.length > 0) {
+
+        if (!estadoHorario) {
+            $('#btnFinalizar').prop('disabled', !estadoHorario);
+            toastr.warning("", "A esta hora, estamos cerrados.");
+            return;
+        }
+
         let sum = 0;
         productos.forEach(value => {
             sum += value.total;
@@ -330,8 +337,6 @@ function resumenVenta() {
         tableBody.innerHTML = tableDataShoop;
 
         $("#modalData").modal("show");
-        
-        $('#btnFinalizar').prop('disabled', !estadoHorario);
 
         document.getElementById("switchTakeAway").checked = false;
     }
@@ -406,7 +411,7 @@ function finalizarVenta() {
         let checkTakeAway = document.getElementById("switchTakeAway").checked;
 
         if (checkTakeAway) {
-            totalWS -=  descuentoTakeAway;
+            totalWS -= descuentoTakeAway;
             envio = "Retiro en persona";
         }
         else {
@@ -504,7 +509,7 @@ function setValue(event, mult) {
 
     if (inputProd.attributes.typeinput.value === "U") {
         value = value + (1 * mult);
-        valueString = value +" U.";
+        valueString = value + " U.";
     }
     else {
 
