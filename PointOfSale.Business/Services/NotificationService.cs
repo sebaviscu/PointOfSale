@@ -17,13 +17,13 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<Notifications>> List(int idTienda)
         {
-            IQueryable<Notifications> query = await _repository.Query(_=>_.IdTienda == idTienda);
+            IQueryable<Notifications> query = await _repository.Query(_=> !_.IdTienda.HasValue || _.IdTienda == idTienda);
             return query.ToList();
         }
 
         public async Task<List<Notifications>> GetActive(int idTienda)
         {
-            IQueryable<Notifications> query = await _repository.Query(_ => _.IsActive && _.IdTienda == idTienda);
+            IQueryable<Notifications> query = await _repository.Query(_ => _.IsActive && (!_.IdTienda.HasValue || _.IdTienda == idTienda));
             return query.ToList();
         }
         public async Task<List<Notifications>> GetByUserByActive(int idUser)
