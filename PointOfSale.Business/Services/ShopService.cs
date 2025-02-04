@@ -1,10 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
-using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
-using PointOfSale.Model.Afip.Factura;
-using PointOfSale.Model.Auditoria;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services
@@ -13,27 +10,21 @@ namespace PointOfSale.Business.Services
     {
         private readonly IGenericRepository<DetailSale> _repositoryDetailsSale;
         private readonly IGenericRepository<VentaWeb> _repository;
-        private readonly ITiendaService _tiendaService;
         private readonly IProductService _productService;
         private readonly ITurnoService _turnoService;
         private readonly ISaleRepository _saleRepository;
         private readonly INotificationService _notificationService;
-        private readonly IAjusteService _ajusteService;
         private readonly ITypeDocumentSaleService _typeDocumentSaleService;
-        private readonly IAfipService _afipService;
 
-        public ShopService(ITiendaService tiendaService, IProductService productService, IGenericRepository<VentaWeb> repository, ITurnoService turnoService, ISaleRepository saleRepository, INotificationService notificationService, IGenericRepository<DetailSale> repositoryDetailsSale, IAjusteService ajusteService, ITypeDocumentSaleService typeDocumentSaleService, IAfipService afipService)
+        public ShopService(IProductService productService, IGenericRepository<VentaWeb> repository, ITurnoService turnoService, ISaleRepository saleRepository, INotificationService notificationService, IGenericRepository<DetailSale> repositoryDetailsSale, ITypeDocumentSaleService typeDocumentSaleService)
         {
-            _tiendaService = tiendaService;
             _productService = productService;
             _repository = repository;
             _turnoService = turnoService;
             _saleRepository = saleRepository;
             _notificationService = notificationService;
             _repositoryDetailsSale = repositoryDetailsSale;
-            _ajusteService = ajusteService;
             _typeDocumentSaleService = typeDocumentSaleService;
-            _afipService = afipService;
         }
 
         public async Task<List<VentaWeb>> List()
@@ -54,23 +45,36 @@ namespace PointOfSale.Business.Services
         }
 
 
-        public async Task<VentaWeb> Update(Ajustes? ajustes, VentaWeb entity)
+        public async Task<VentaWeb> Update(Ajustes? ajustes, VentaWeb entity, int? idTurno)
         {
             IQueryable<VentaWeb> query = await _repository.Query(c => c.IdVentaWeb == entity.IdVentaWeb);
             var VentaWeb_found = query.Include(_ => _.DetailSales).Include(_ => _.FormaDePago).First();
 
-            if (VentaWeb_found.Estado == Model.Enum.EstadoVentaWeb.Finalizada)
+            if (VentaWeb_found.Estado == EstadoVentaWeb.Finalizada)
             {
-                throw new TaskCanceledException("No es posible modificar una Venta Web finalizada.");
+                throw new TaskCanceledException("No es posible modificar una Venta Web ya finalizada.");
+            }
+
+            if (entity.Estado == EstadoVentaWeb.Finalizada)
+            {
+                if (!idTurno.HasValue)
+                    throw new TaskCanceledException("No es posible finalizar una Venta Web sin un Turno abierto.");
+                else if (!entity.IdTienda.HasValue)
+                    throw new TaskCanceledException("No es posible finalizar una Venta Web sin Punto de Venta");
             }
 
             bool hasChanges = HasChanges(VentaWeb_found, entity);
 
-
             if (hasChanges)
             {
-                VentaWeb_found.IsEdit = true;
-                VentaWeb_found.SetEditVentaWeb(entity.ModificationUser, TimeHelper.GetArgentinaTime());
+                if (entity.IdFormaDePago.HasValue)
+                {
+                    var formaPago = await _typeDocumentSaleService.Get(entity.IdFormaDePago.Value);
+                    entity.FormaDePago = formaPago;
+                }
+
+                VentaWeb_found.SetEditVentaWeb(entity);
+                await UpdateDetailSales(VentaWeb_found, entity.DetailSales.ToList());
 
                 VentaWeb_found.Comentario = entity.Comentario;
                 VentaWeb_found.Nombre = entity.Nombre;
@@ -82,16 +86,15 @@ namespace PointOfSale.Business.Services
                 VentaWeb_found.CruceCallesDireccion = entity.CruceCallesDireccion;
                 VentaWeb_found.DescuentoRetiroLocal = entity.DescuentoRetiroLocal;
                 VentaWeb_found.ObservacionesUsuario = entity.ObservacionesUsuario;
-                await UpdateDetailSales(VentaWeb_found, entity.DetailSales.ToList());
             }
-            else if (HasChangesRecogido(VentaWeb_found, entity))
+            else if (HasChangesCheckRecogido(VentaWeb_found, entity))
             {
-                await UpdateRecogido(VentaWeb_found, entity.DetailSales.ToList());
+                await UpdateCheckRecogido(VentaWeb_found, entity.DetailSales.ToList());
             }
 
             VentaWeb_found.Estado = entity.Estado;
             VentaWeb_found.IdTienda = entity.IdTienda;
-            VentaWeb_found.ModificationDate = TimeHelper.GetArgentinaTime();
+            VentaWeb_found.ModificationDate = entity.ModificationDate;
             VentaWeb_found.ModificationUser = entity.ModificationUser;
 
             if (entity.Estado == EstadoVentaWeb.Finalizada && entity.IdTienda.HasValue)
@@ -119,6 +122,7 @@ namespace PointOfSale.Business.Services
         {
             // Verificar cambios en los campos de VentaWeb
             bool ventaWebChanged =
+                                   original.Estado != updated.Estado ||
                                    original.Comentario != updated.Comentario ||
                                    original.Nombre != updated.Nombre ||
                                    original.Direccion != updated.Direccion ||
@@ -144,7 +148,7 @@ namespace PointOfSale.Business.Services
             return ventaWebChanged || detailSalesChanged;
         }
 
-        private bool HasChangesRecogido(VentaWeb original, VentaWeb updated)
+        private bool HasChangesCheckRecogido(VentaWeb original, VentaWeb updated)
         {
             bool detailSalesChanged = original.DetailSales.Count != updated.DetailSales.Count ||
                                       original.DetailSales.Any(originalDetail =>
@@ -154,7 +158,6 @@ namespace PointOfSale.Business.Services
 
             return detailSalesChanged;
         }
-
 
         private async Task UpdateDetailSales(VentaWeb ventaWebFound, List<DetailSale> updatedDetailSales)
         {
@@ -166,12 +169,16 @@ namespace PointOfSale.Business.Services
                 .Where(existingDetail => !updatedDetailSales.Any(updated => updated.IdDetailSale == existingDetail.IdDetailSale))
                 .ToList();
 
+            ventaWebFound.SetEditProductoVentaWeb("Productos eliminados", detailsToRemove);
+
             foreach (var detail in detailsToRemove)
             {
                 ventaWebFound.DetailSales.Remove(detail);
                 await _repositoryDetailsSale.Delete(detail); // Asegura eliminación del repositorio
             }
 
+            var productosAgregados = new List<DetailSale>();
+            var productosModificados = new List<DetailSale>();
             // Identificar detalles para agregar o actualizar
             foreach (var updatedDetail in updatedDetailSales)
             {
@@ -184,23 +191,27 @@ namespace PointOfSale.Business.Services
                     var prod = await _productService.Get(updatedDetail.IdProduct);
                     updatedDetail.CategoryProducty = prod.IdCategoryNavigation.Description;
                     ventaWebFound.DetailSales.Add(updatedDetail);
+                    productosAgregados.Add(updatedDetail);
                 }
                 else
                 {
                     // Actualizar detalles existentes si hay cambios
-                    if (HasChanges(existingDetail, updatedDetail))
-                    {
-                        existingDetail.Price = updatedDetail.Price;
-                        existingDetail.Quantity = updatedDetail.Quantity;
-                        existingDetail.Total = updatedDetail.Total;
-                        existingDetail.Recogido = updatedDetail.Recogido;
-                        // Actualizar otras propiedades necesarias
-                    }
+                    //if (existingDetail.Recogido != updatedDetail.Recogido)
+                    //{
+                    //    //existingDetail.Price = updatedDetail.Price;
+                    //    //existingDetail.Quantity = updatedDetail.Quantity;
+                    //    //existingDetail.Total = updatedDetail.Total;
+                    //    existingDetail.Recogido = updatedDetail.Recogido;
+                    //    productosModificados.Add(updatedDetail);
+                    //}
                 }
             }
+            //ventaWebFound.SetEditProductoVentaWeb("Productos modificados", productosModificados);
+            ventaWebFound.SetEditProductoVentaWeb("Productos agregados", productosAgregados);
+
         }
 
-        private async Task UpdateRecogido(VentaWeb ventaWebFound, List<DetailSale> updatedDetailSales)
+        private async Task UpdateCheckRecogido(VentaWeb ventaWebFound, List<DetailSale> updatedDetailSales)
         {
             // Obtener la lista actual de detalles rastreados en la venta
             var currentDetails = ventaWebFound.DetailSales.ToList();

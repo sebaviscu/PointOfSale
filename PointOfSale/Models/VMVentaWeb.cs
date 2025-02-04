@@ -15,7 +15,8 @@ namespace PointOfSale.Models
         public string? Comentario { get; set; }
         public int? IdFormaDePago { get; set; }
         public int? IdUsers { get; set; }
-        public decimal? Total { get; set; }
+        public decimal? Total { get; set; } = 0m;
+
         public string? TotalString { get; set; }
         public EstadoVentaWeb? Estado { get; set; }
         public int? IdTienda { get; set; }
@@ -37,13 +38,14 @@ namespace PointOfSale.Models
         public List<Images> ImagesTicket { get; set; } = new List<Images>();
 
         public bool ImprimirTicket { get; set; }
-        public decimal? DescuentoRetiroLocal { get; set; }
+        public decimal? DescuentoRetiroLocal { get; set; } = 0m;
         public string? CruceCallesDireccion { get; set; }
-        public decimal? CostoEnvio { get; set; }
+        public decimal? CostoEnvio { get; set; } = 0m;
         public string? ObservacionesUsuario { get; set; }
         public TipoFactura? TipoFactura { get; set; }
 
 
+        public decimal? TotalFinal => Total + CostoEnvio - DescuentoRetiroLocal;
         public decimal? TotalConEnvio => Total + (CostoEnvio != null ? CostoEnvio : 0);
     }
 }

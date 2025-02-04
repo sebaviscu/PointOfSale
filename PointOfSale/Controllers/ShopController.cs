@@ -248,9 +248,10 @@ namespace PointOfSale.Controllers
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
 
                 model.ModificationUser = user.UserName;
+                model.ModificationDate = TimeHelper.GetArgentinaTime();
 
                 var ajustes = model.IdTienda.HasValue ? await _ajusteService.GetAjustes(model.IdTienda.Value) : null;
-                VentaWeb edited_VemntaWeb = await _shopService.Update(ajustes, _mapper.Map<VentaWeb>(model));
+                VentaWeb edited_VemntaWeb = await _shopService.Update( ajustes, _mapper.Map<VentaWeb>(model), user.IdTurno);
 
                 model = _mapper.Map<VMVentaWeb>(edited_VemntaWeb);
                 if (model.Estado == EstadoVentaWeb.Finalizada && model.IdTienda.HasValue)

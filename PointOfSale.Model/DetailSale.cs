@@ -23,7 +23,7 @@ namespace PointOfSale.Model
         public decimal ImporteIva => Total * ((Iva != null ? Iva.Value : 21m) / 100);
         public int? IdVentaWeb { get; set; }
         public virtual VentaWeb? VentaWeb { get; set; }
-        public bool? Recogido { get; set; }
+        public bool? Recogido { get; set; } = false;
 
         public string TipoVentaString => System.Enum.GetName(typeof(TipoVenta), TipoVenta);
     }

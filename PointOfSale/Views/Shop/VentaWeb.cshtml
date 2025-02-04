@@ -1,330 +1,339 @@
 ﻿@{
-    ViewData["Title"] = "Venta Web";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewData["Title"] = "Venta Web";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 
 @section StylesPOS {
 
-    <link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
-    <link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
-    <link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
-    <link href="~/plugins/select2/css/select2.min.css" rel="stylesheet">
+	<link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
+	<link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
+	<link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
+	<link href="~/plugins/select2/css/select2.min.css" rel="stylesheet">
 }
 
 <style>
-    .select2 {
-        width: 100% !important;
-    }
+	.select2 {
+		width: 100% !important;
+	}
+
+	.custom-popover {
+		max-width: 500px; /* Ajusta el ancho máximo del popover */
+		word-wrap: break-word; /* Permite el ajuste de las palabras */
+	}
+
+		.custom-popover .popover-body {
+			white-space: pre-wrap; /* Mantén los saltos de línea y espacios */
+		}
 </style>
 
 <div class="row">
-    <div class="col-md-12">
+	<div class="col-md-12">
 
-        <div class="card card-default">
-            <div class="card-header card-header-border-bottom d-flex align-items-center">
-                <h4>Ventas Web</h4>
-                <span class="offset-md-2 text-danger" id="lblErrorPrintService" style="display: none;"><i class="mdi mdi-alert mdi-24px"></i>&nbsp; El servicio de impresión no se encuentra conectado</span>
-            </div>
+		<div class="card card-default">
+			<div class="card-header card-header-border-bottom d-flex align-items-center">
+				<h4>Ventas Web</h4>
+				<span class="offset-md-2 text-danger" id="lblErrorPrintService" style="display: none;"><i class="mdi mdi-alert mdi-24px"></i>&nbsp; El servicio de impresión no se encuentra conectado</span>
+			</div>
 
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <table id="tbData" class="table" style="width:100%">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Nro Venta</th>
-                                    <th>Fecha</th>
-                                    <th>Nombre</th>
-                                    <th>Direccion</th>
-                                    <th>Total</th>
-                                    <th>Envio</th>
-                                    <th>Estado</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+			<div class="card-body">
+				<div class="row">
+					<div class="col-md-12">
+						<table id="tbData" class="table" style="width:100%">
+							<thead>
+								<tr>
+									<th></th>
+									<th>Nro Venta</th>
+									<th>Fecha</th>
+									<th>Nombre</th>
+									<th>Direccion</th>
+									<th>Total</th>
+									<th>Envio</th>
+									<th>Estado</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody></tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <!-- Grid Modal -->
 <div class="modal fade" id="modalData" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalGridTitle">Detalle Venta Web</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" value="0" id="txtId">
-                <div class="row">
-                    <div class="col-md-6 d-flex flex-column min-vh-75">
-                        <div class="row" id="divSearchproducts">
-                            <div class="form-group col-sm-6">
-                                <select class="form-control form-control-sm" id="cboSearchProduct">
-                                    <option value=""></option>
-                                </select>
-                            </div>
-                            <div class="form-group offset-md-1  col-sm-3">
-                                <input type="number" step="any" min="0" class="form-control form-control-sm" id="txtPeso" name="Peso" autofocus style="border-color: darkgray;">
-                            </div>
-                            <div class="form-group col-sm-2">
-                                <button class="btn btn-info btn-sm" id="btnAgregarProducto">Agregar</button>
-                            </div>
-                        </div>
-                        <table id="tbProducts" class="table table-sm table-striped">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th></th>
-                                    <th>Producto</th>
-                                    <th>Cantidad</th>
-                                    <th>Precio</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
+	<div class="modal-dialog" role="document" style="max-width:65%">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalGridTitle">Detalle Venta Web</h5>
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<input type="hidden" value="0" id="txtId">
+				<div class="row">
+					<div class="col-md-7 d-flex flex-column min-vh-75">
+						<div class="row" id="divSearchproducts">
+							<div class="form-group col-sm-6">
+								<select class="form-control form-control-sm" id="cboSearchProduct">
+									<option value=""></option>
+								</select>
+							</div>
+							<div class="form-group offset-md-1  col-sm-3">
+								<input type="number" step="any" min="0" class="form-control form-control-sm" id="txtPeso" name="Peso" autofocus style="border-color: darkgray;">
+							</div>
+							<div class="form-group col-sm-2">
+								<button class="btn btn-info btn-sm" id="btnAgregarProducto">Agregar</button>
+							</div>
+						</div>
+						<table id="tbProducts" class="table table-sm table-striped">
+							<thead>
+								<tr>
+									<th></th>
+									<th></th>
+									<th>Producto</th>
+									<th>Cantidad</th>
+									<th>Precio</th>
+									<th>Total</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
 
-                        <div class="mt-auto">
-                            <div class="form-group">
-                                <label for="txtObservaciones">Observaciones</label>
-                                <textarea class="form-control" id="txtObservaciones" rows="3"></textarea>
-                            </div>
-                        </div>
+						<div class="mt-auto">
+							<div class="form-group">
+								<label for="txtObservaciones">Observaciones</label>
+								<textarea class="form-control" id="txtObservaciones" rows="3"></textarea>
+							</div>
+						</div>
 
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-row">
-                            <div class="form-group col-md-3">
-                                <label for="txtTotal">Total</label><span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Incluye Envio y descuentos por retiro en el local"></span>
-                                <div class="input-group input-group-sm">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">$</span>
-                                    </div>
-                                    <input type="text" class="form-control form-control-sm input-validate" id="txtTotal" name="Total" disabled>
-                                </div>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="txtFecha">Fecha</label>
-                                <input type="text" class="form-control form-control-sm input-validate" id="txtFecha" name="Fecha" disabled>
-                            </div>
-                            <div class="form-group offset-md-2 col-md-2 text-end row" style="align-content: center;">
-                                <div class="col-md-6">
-                                    <button class="btn btn-primary btn-sm" id="btnEdit"><i class="mdi mdi-pencil"></i></button>
-                                </div>
-                                <div class="col-md-6">
-                                    <button type="button" id="popoverEdit" class="btn btn-info btn-sm" data-toggle="popover" data-bs-content="">
-                                        Editado
-                                    </button>
-                                </div>
+					</div>
+					<div class="col-md-5">
+						<div class="form-row">
+							<div class="form-group col-md-3">
+								<label for="txtTotal">Total</label><span class="mdi mdi-information text-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Incluye Envio y descuentos por retiro en el local"></span>
+								<div class="input-group input-group-sm">
+									<div class="input-group-prepend">
+										<span class="input-group-text">$</span>
+									</div>
+									<input type="text" class="form-control form-control-sm input-validate" id="txtTotal" name="Total" disabled>
+								</div>
+							</div>
+							<div class="form-group col-md-4">
+								<label for="txtFecha">Fecha</label>
+								<input type="text" class="form-control form-control-sm input-validate" id="txtFecha" name="Fecha" disabled>
+							</div>
+							<div class="form-group offset-md-2 col-md-2 text-end row" style="align-content: center;">
+								<div class="col-md-6">
+									<button class="btn btn-primary btn-sm" id="btnEdit"><i class="mdi mdi-pencil"></i></button>
+								</div>
+								<div class="col-md-6">
+									<button type="button" id="popoverEdit" class="btn btn-info btn-sm" data-toggle="popover" data-bs-content="">
+										Editado
+									</button>
+								</div>
 
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-8">
-                                <label for="txtNombre">Nombre y Apellido</label>
-                                <input type="text" class="form-control form-control-sm input-validate" id="txtNombre" name="Nombre" disabled>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="txtTelefono">Telefono</label>
-                                <input type="text" class="form-control form-control-sm input-validate" id="txtTelefono" name="Telefono" disabled>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-6 mb-0">
-                                <label for="txtEnvio">Envio</label>
-                                <div class="input-group input-group-sm">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">$</span>
-                                    </div>
-                                    <input type="number" min="0" step="1" class="form-control form-control-sm input-validate" id="txtEnvio" name="Envio" disabled>
-                                </div>
-                            </div>
-                            <div class="form-group col-md-6 mb-0">
-                                <div class="form-check form-switch mb-2">
-                                    <input class="form-check-input" type="checkbox" role="switch" id="switchTakeAway" disabled>
-                                    <label class="form-check-label" for="switchTakeAway">Retiro en el local</label>
-                                </div>
-                                <div class="input-group input-group-sm">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">-$</span>
-                                    </div>
-                                    <input type="text" class="form-control form-control-sm input-validate" id="txtTakeAway" name="Take Away" disabled>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-8">
-                                <label for="txtDireccion">Direccion de entrega</label>
-                                <input type="text" class="form-control form-control-sm input-validate" id="txtDireccion" name="Direccion" disabled>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="txtFormaPago">Medio de pago</label>
-                                <select class="form-control form-control-sm cboFormaDePago" id="txtFormaPago" tabindex="0" name="Forma de pago" disabled>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-sm-12">
-                                <label for="txtCruceCallesDireccion">Calles que cruzan la dirección</label>
-                                <input type="text" class="form-control form-control-sm" id="txtCruceCallesDireccion" name="Calles que cruzan la dirección" disabled>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <label for="txtNombre">Comentario</label>
-                                <input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario" disabled>
-                            </div>
-                        </div>
-                        <div class="form-row" id="divModif">
-                            <div class="form-group col-md-6">
-                                <label for="txtModificado">Fecha Modificado</label>
-                                <input type="text" class="form-control form-control-sm" id="txtModificado" name="fechaModificado" readonly>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="txtModificadoUsuario">Por:</label>
-                                <input type="text" class="form-control form-control-sm" id="txtModificadoUsuario" name="usuarioModificado" readonly>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-5">
-                                <label for="cboState">Estado</label>
-                                <select class="form-control form-control-sm" id="cboState">
-                                    <option value="0">Nueva</option>
-                                    <option value="1">Pendiente de Retiro</option>
-                                    <option value="2">Pendiente de Envío</option>
-                                    <option value="3">Finalizada</option>
-                                    <option value="4">Cerrada</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 offset-sm-1">
-                                <div class="form-group">
-                                    <label for="cboTienda">Punto de Venta</label>
-                                    <select class="form-control form-control-sm" id="cboTienda" name="Tienda"></select>
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="form-group col-md-8">
+								<label for="txtNombre">Nombre y Apellido</label>
+								<input type="text" class="form-control form-control-sm input-validate" id="txtNombre" name="Nombre" disabled>
+							</div>
+							<div class="form-group col-md-4">
+								<label for="txtTelefono">Telefono</label>
+								<input type="text" class="form-control form-control-sm input-validate" id="txtTelefono" name="Telefono" disabled>
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="form-group col-md-6 mb-0">
+								<label for="txtEnvio">Envio</label>
+								<div class="input-group input-group-sm">
+									<div class="input-group-prepend">
+										<span class="input-group-text">$</span>
+									</div>
+									<input type="number" min="0" step="1" class="form-control form-control-sm input-validate" id="txtEnvio" name="Envio" disabled>
+								</div>
+							</div>
+							<div class="form-group col-md-6 mb-0">
+								<div class="form-check form-switch mb-2">
+									<input class="form-check-input" type="checkbox" role="switch" id="switchTakeAway" disabled>
+									<label class="form-check-label" for="switchTakeAway">Retiro en el local</label>
+								</div>
+								<div class="input-group input-group-sm">
+									<div class="input-group-prepend">
+										<span class="input-group-text">-$</span>
+									</div>
+									<input type="text" class="form-control form-control-sm input-validate" id="txtTakeAway" name="Take Away" disabled>
+								</div>
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="form-group col-md-8">
+								<label for="txtDireccion">Direccion de entrega</label>
+								<input type="text" class="form-control form-control-sm input-validate" id="txtDireccion" name="Direccion" disabled>
+							</div>
+							<div class="form-group col-md-4">
+								<label for="txtFormaPago">Medio de pago</label>
+								<select class="form-control form-control-sm cboFormaDePago" id="txtFormaPago" tabindex="0" name="Forma de pago" disabled>
+								</select>
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="form-group col-sm-12">
+								<label for="txtCruceCallesDireccion">Calles que cruzan la dirección</label>
+								<input type="text" class="form-control form-control-sm" id="txtCruceCallesDireccion" name="Calles que cruzan la dirección" disabled>
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="form-group col-md-12">
+								<label for="txtNombre">Comentario</label>
+								<input type="text" class="form-control form-control-sm" id="txtComentario" name="Comentario" disabled>
+							</div>
+						</div>
+						<div class="form-row" id="divModif">
+							<div class="form-group col-md-6">
+								<label for="txtModificado">Fecha Modificado</label>
+								<input type="text" class="form-control form-control-sm" id="txtModificado" name="fechaModificado" readonly>
+							</div>
+							<div class="form-group col-md-6">
+								<label for="txtModificadoUsuario">Por:</label>
+								<input type="text" class="form-control form-control-sm" id="txtModificadoUsuario" name="usuarioModificado" readonly>
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="form-group col-md-5">
+								<label for="cboState">Estado</label>
+								<select class="form-control form-control-sm" id="cboState">
+									<option value="0">Nueva</option>
+									<option value="1">Pendiente de Retiro</option>
+									<option value="2">Pendiente de Envío</option>
+									<option value="3">Finalizada</option>
+									<option value="4">Cerrada</option>
+								</select>
+							</div>
+							<div class="col-md-6 offset-sm-1">
+								<div class="form-group">
+									<label for="cboTienda">Punto de Venta</label>
+									<select class="form-control form-control-sm" id="cboTienda" name="Tienda"></select>
 
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 
-            </div>
+			</div>
 
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                <button class="btn btn-info" type="button" id="printTicket">Ticket</button>
-                <button type="button" class="btn btn-primary" id="btnSave">Guardar Cambios</button>
-            </div>
-        </div>
-    </div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+				<button class="btn btn-info" type="button" id="printTicket">Ticket</button>
+				<button type="button" class="btn btn-primary" id="btnSave">Guardar Cambios</button>
+			</div>
+		</div>
+	</div>
 </div>
 
 <!-- Modal Dividir pago-->
 <div class="modal fade" id="modalPago" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header d-flex justify-content-between">
-                <div class="p-2 bd-highlight">
-                    <h5 class="modal-title">Finalizar</h5>
-                </div>
-                <div class="p-2 bd-highlight">
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            </div>
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header d-flex justify-content-between">
+				<div class="p-2 bd-highlight">
+					<h5 class="modal-title">Finalizar</h5>
+				</div>
+				<div class="p-2 bd-highlight">
+					<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			</div>
 
-            <div class="modal-body">
-                <div class="row" id="rowDividirPago">
-                    <div class="col-sm-12" id="formaDePagoPanel">
-                        <div class="form-row" style="padding:0px 12px 4px 12px;">
-                            <div class="form-group col-sm-5" style="padding-top:10px">
-                                <label for="cboTypeDocumentSale">Forma de Pago</label>
-                                <select class="form-control form-control-sm cboFormaDePago" id="cboTypeDocumentSale" tabindex="0">
-                                </select>
-                            </div>
-                            <div class="form-group col-sm-2" style="padding-top:10px">
-                                <label for="cboFactura">Factura</label>
-                                <select class="form-control form-control-sm cboFactura" id="cboFactura" tabindex="0">
-                                    <option value="0">A</option>
-                                    <option value="1">B</option>
-                                    <option value="2">C</option>
-                                    <option value="3">X</option>
-                                    <option value="4">Presu</option>
-                                </select>
-                            </div>
-                            <div class="form-group col-sm-4" style="padding-top:10px">
-                                <label for="txtTotalParcial">Total</label>
-                                <div class="input-group input-group-sm">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">$</span>
-                                    </div>
-                                    <input type="number" min="0" class="form-control form-control-sm text-end inputSubtotal" tabindex="-1" aria-label="Small" aria-describedby="inputGroupTotal" id="txtTotalFinalizarVenta">
-                                </div>
-                            </div>
+			<div class="modal-body">
+				<div class="row" id="rowDividirPago">
+					<div class="col-sm-12" id="formaDePagoPanel">
+						<div class="form-row" style="padding:0px 12px 4px 12px;">
+							<div class="form-group col-sm-5" style="padding-top:10px">
+								<label for="cboTypeDocumentSale">Forma de Pago</label>
+								<select class="form-control form-control-sm cboFormaDePago" id="cboTypeDocumentSale" tabindex="0">
+								</select>
+							</div>
+							<div class="form-group col-sm-2" style="padding-top:10px">
+								<label for="cboFactura">Factura</label>
+								<select class="form-control form-control-sm cboFactura" id="cboFactura" tabindex="0">
+									<option value="0">A</option>
+									<option value="1">B</option>
+									<option value="2">C</option>
+									<option value="3">X</option>
+									<option value="4">Presu</option>
+								</select>
+							</div>
+							<div class="form-group col-sm-4" style="padding-top:10px">
+								<label for="txtTotalParcial">Total</label>
+								<div class="input-group input-group-sm">
+									<div class="input-group-prepend">
+										<span class="input-group-text">$</span>
+									</div>
+									<input type="number" min="0" class="form-control form-control-sm text-end inputSubtotal" tabindex="-1" aria-label="Small" aria-describedby="inputGroupTotal" id="txtTotalFinalizarVenta">
+								</div>
+							</div>
 
-                        </div>
+						</div>
 
-                    </div>
-                </div>
-                <div>
-                    <span id="txtMinimoIdentificarConsumidor" class="text-danger" style="display: none;">El total supera el minimo para identificar al consumidor. Debe ingresar el CUIL / CUIT / DNI si va a facturarlo.</span>
-                </div>
-                <div id="divClienteSeleccionado" class="text-center">
-                    <div class="row col-sm-12 ms-1">
-                        <label>Cliente: </label>
-                        <div class="input-group input-group-sm">
-                            <input type="text" class="form-control form-control-sm" id="txtClienteParaFactura" disabled>
-                            <div class="input-group-prepend">
-                                <button class="btn btn-sm btn-outline-info" id="btnBuscarCliente"><i class="mdi mdi-magnify"></i>Seleccionar</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+					</div>
+				</div>
+				<div>
+					<span id="txtMinimoIdentificarConsumidor" class="text-danger" style="display: none;">El total supera el minimo para identificar al consumidor. Debe ingresar el CUIL / CUIT / DNI si va a facturarlo.</span>
+				</div>
+				<div id="divClienteSeleccionado" class="text-center">
+					<div class="row col-sm-12 ms-1">
+						<label>Cliente: </label>
+						<div class="input-group input-group-sm">
+							<input type="text" class="form-control form-control-sm" id="txtClienteParaFactura" disabled>
+							<div class="input-group-prepend">
+								<button class="btn btn-sm btn-outline-info" id="btnBuscarCliente"><i class="mdi mdi-magnify"></i>Seleccionar</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 
-            <div class="modal-footer d-flex bd-highlight">
-                <div class="me-auto p-2 bd-highlight">
-                    <label class="form-label">
-                        <input type="checkbox" id="cboImprimirTicket" tabindex="-1" checked>
-                        Imprimir Ticket
-                    </label>
-                </div>
-                <div class="bd-highlight">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" tabindex="-1">Cerrar</button>
-                    <button type="button" class="btn btn-primary" id="btnFinalizarVenta" tabindex="0">Finalizar venta</button>
-                </div>
-            </div>
-        </div>
-    </div>
+			<div class="modal-footer d-flex bd-highlight">
+				<div class="me-auto p-2 bd-highlight">
+					<label class="form-label">
+						<input type="checkbox" id="cboImprimirTicket" tabindex="-1" checked>
+						Imprimir Ticket
+					</label>
+				</div>
+				<div class="bd-highlight">
+					<button type="button" class="btn btn-danger" data-bs-dismiss="modal" tabindex="-1">Cerrar</button>
+					<button type="button" class="btn btn-primary" id="btnFinalizarVenta" tabindex="0">Finalizar venta</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 @await Component.InvokeAsync("Facturar")
 
 @section Scripts {
-    <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
-    <script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
-    <script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
+	<script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
+	<script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
+	<script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
 
-    <script src="~/plugins/popper.min.js"></script>
-    <script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
-    <script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
-    <script src="~/plugins/data-tables/jszip.min.js"></script>
-    <script src="~/plugins/data-tables/buttons.html5.min.js"></script>
-    <script src="~/plugins/data-tables/buttons.print.min.js"></script>
-    <script src="~/plugins/select2/js/select2.js"></script>
-    <script src="~/plugins/moment.js"></script>
+	<script src="~/plugins/popper.min.js"></script>
+	<script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
+	<script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
+	<script src="~/plugins/data-tables/jszip.min.js"></script>
+	<script src="~/plugins/data-tables/buttons.html5.min.js"></script>
+	<script src="~/plugins/data-tables/buttons.print.min.js"></script>
+	<script src="~/plugins/select2/js/select2.js"></script>
+	<script src="~/plugins/moment.js"></script>
 
-    <script src="~/js/views/ventaWeb.js"></script>
+	<script src="~/js/views/ventaWeb.js"></script>
 }
 

@@ -101,7 +101,7 @@ $(document).ready(function () {
             { "data": "nombre" },
             { "data": "direccion" },
             {
-                "data": "totalConEnvio", render: function (data) {
+                "data": "totalFinal", render: function (data) {
                     return '$' + data;
                 }
             },
@@ -112,7 +112,7 @@ $(document).ready(function () {
                     else if (row.costoEnvio == null || (row.costoEnvio != null && row.costoEnvio == 0))
                         return 'Envio Gratis';
                     else if (row.costoEnvio != null && row.costoEnvio > 0)
-                        return '$' + row.costoEnvio;
+                        return 'Con cargo';
                     else
                         return '';
                 }
@@ -243,7 +243,7 @@ const openModalEditVentaWeb = (model = BASIC_MODEL_VENTA_WEB) => {
 
     $("#txtId").val(model.idVentaWeb);
     $("#txtFecha").val(model.fecha);
-    $("#txtTotal").val(model.total + model.costoEnvio);
+    $("#txtTotal").val(model.total);
     $("#txtTotal").attr("totalReal", model.total);
     $("#txtNombre").val(model.nombre);
     $("#txtTelefono").val(model.telefono);
@@ -265,7 +265,8 @@ const openModalEditVentaWeb = (model = BASIC_MODEL_VENTA_WEB) => {
         $('#popoverEdit').attr('data-bs-content', model.editText);
 
         let popover = new bootstrap.Popover(document.getElementById('popoverEdit'), {
-            html: true
+            html: true,
+            template: '<div class="popover custom-popover" role="tooltip"><div class="popover-arrow"></div><h3 class="popover-header"></h3><div class="popover-body"></div></div>'
         });
         popover.setContent({
             '.popover-body': model.editText
@@ -295,6 +296,8 @@ const openModalEditVentaWeb = (model = BASIC_MODEL_VENTA_WEB) => {
         addNewProduct(item.idDetailSale, item.descriptionProduct, item.quantity, item.tipoVenta == 2 ? "U" : "Kg", item.price, item.total, item.idProduct, item.recogido != null ? item.recogido : false);
     });
 
+    updateTotal();
+
     $('.chkRecogido').each(function () {
         $(this).prop('disabled', model.estado > 2);
     });
@@ -306,24 +309,6 @@ const openModalEditVentaWeb = (model = BASIC_MODEL_VENTA_WEB) => {
     $('#cboSearchProduct').on('select2:select', function (e) {
         let data = e.params.data;
         productSelectedVentaWeb = data;
-
-        if (data.tipoVenta == 2) {
-            var peso = $("#txtPeso").val();
-
-            if (peso != "") {
-                if (peso === false || isNaN(peso)) return false;
-            }
-
-            peso = peso == "" ? 1 : parseFloat(peso);
-
-            let precio = Number.parseFloat(productSelectedVentaWeb.price);
-            addNewProduct(0, productSelectedVentaWeb.text, peso, "U", precio, precio * peso, productSelectedVentaWeb.id, false);
-
-            $('#txtPeso').val('');
-            const element = document.getElementById("txtPeso");
-            window.setTimeout(() => element.focus(), 0);
-            return;
-        }
 
         const element = document.getElementById("txtPeso");
         window.setTimeout(() => element.focus(), 0);
@@ -356,8 +341,17 @@ function functionAddProducto() {
     if (productSelectedVentaWeb === null) {
         return false;
     }
+
+    if (productSelectedVentaWeb.tipoVenta == 2 && !Number.isInteger(peso)) {
+        toastr.warning('No se puede agregar DECIMALES a este producto', "");
+        $("#txtPeso").val('')
+        return;
+    }
+
+    let tipoVenta = productSelectedVentaWeb.tipoVenta == 2 ? "U." : "Kg";
+
     let precio = Number.parseFloat(productSelectedVentaWeb.price);
-    addNewProduct(0, productSelectedVentaWeb.text, peso, "Kg", precio, precio * peso, productSelectedVentaWeb.id, false);
+    addNewProduct(0, productSelectedVentaWeb.text, peso, tipoVenta, precio, precio * peso, productSelectedVentaWeb.id, false);
 
     updateTotal();
     $('#cboSearchProduct').val("").trigger('change');
@@ -373,8 +367,8 @@ function addNewProduct(idDetailSale, description, cantidad, tipoVenta, precio, t
         $("<td>").html(`<input class="chkRecogido" type="checkbox" ${checkRecogido} style="width: 18px; height: 18px;">`),
         $("<td>").text(description),
         $("<td>").text(`${cantidad} / ${tipoVenta}`),
-        $("<td>").text(`$ ${Number.parseFloat(precio).toFixed(2)}`),
-        $("<td>").text(`$ ${Number.parseFloat(total).toFixed(2)}`).data("idDetailSale", idDetailSale).data("idProducto", idProducto)
+        $("<td>").text(`$ ${Number.parseFloat(precio).toFixed(0)}`),
+        $("<td>").text(`$ ${Number.parseFloat(total).toFixed(0)}`).data("idDetailSale", idDetailSale).data("idProducto", idProducto)
     );
 
     if (!isEditVisible) {
@@ -413,18 +407,22 @@ function updateTotal() {
     let totalAmount = 0;
 
     $("#tbProducts tbody tr").each(function () {
-        const total = parseFloat($(this).find("td").eq(4).text().replace('$', '').trim());
-        totalAmount += total;
+        let prodsTotal = parseFloat($(this).find("td").eq(5).text().replace('$', '').trim());
+        totalAmount += prodsTotal;
     });
+    let envio = parseInt($("#txtEnvio").val());
+    let takeAway = parseInt($("#txtTakeAway").val());
 
-    $("#txtTotal").val(`${totalAmount.toFixed(2)}`);
-    $("#txtTotal").attr("totalReal", totalAmount.toFixed(2));
+    let total = totalAmount + envio - takeAway;
+
+    $("#txtTotal").val(`${total.toFixed(0)}`);
+    $("#txtTotal").attr("totalReal", totalAmount.toFixed(0));
 }
 
 $("#btnSave").on("click", function () {
 
     let estadoVenta = parseInt($("#cboState").val());
-    if (estadoVenta == 1) { // finalizar
+    if (estadoVenta == 3) { // finalizar
         $("#modalData").modal("hide");
         $('#modalPago').modal('show');
 
@@ -460,7 +458,7 @@ async function editarVentaWeb() {
 
     let estadoVenta = parseInt($("#cboState").val());
 
-    if (isNaN(model.idTienda) && estadoVenta == 1) {
+    if (isNaN(model.idTienda) && estadoVenta == 3) {
         $('#cboTienda').focus();
         toastr.warning(`Debe seleccionar una Tienda`, "");
         return;
@@ -468,14 +466,14 @@ async function editarVentaWeb() {
 
     model["idVentaWeb"] = parseInt($("#txtId").val());
 
-    if (estadoVenta == 1) {
+    if (estadoVenta == 3) {
         let result = await checkTurnoAbierto()
         if (!result)
             return;
     }
 
     model["estado"] = estadoVenta;
-    model["idFormaDePago"] = estadoVenta == 1 ? $("#cboTypeDocumentSale").val() : parseInt($("#txtFormaPago").val());
+    model["idFormaDePago"] = estadoVenta == 3 ? $("#cboTypeDocumentSale").val() : parseInt($("#txtFormaPago").val());
     model["imprimirTicket"] = document.querySelector('#cboImprimirTicket').checked;
     //model["total"] = parseFloat($("#txtTotal").val());
     model["total"] = parseFloat($("#txtTotal").attr("totalReal"));
@@ -538,7 +536,7 @@ async function editarVentaWeb() {
             tableDataVentaWeb.row(rowSelectedVentaWeb).data(responseJson.object).draw(false);
             rowSelectedVentaWeb = null;
             $("#modalData").modal("hide");
-            if (isHealthySaleWeb && responseJson.object.nombreImpresora != '' && estadoVenta == 1 && responseJson.object.ticket != '') {
+            if (isHealthySaleWeb && responseJson.object.nombreImpresora != '' && estadoVenta == 3 && responseJson.object.ticket != '') {
                 printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora, responseJson.object.imagesTicket);
 
             } else {
@@ -606,6 +604,7 @@ function select2Modal() {
     function formatResults(data) {
         if (data.loading)
             return data.text;
+        let tipoVentaString = data.tipoVenta == 1 ? "Kg" : "U.";
 
         let container = $(
             `<table width="90%">
@@ -615,7 +614,7 @@ function select2Modal() {
                     </td>
                     <td>
                         <p style="font-weight: bolder;margin:2px">${data.text}</p>
-                        <p>$ ${parseFloat(data.price).toFixed(2)}</p>
+                        <p>$ ${parseFloat(data.price).toFixed(0)} / ${tipoVentaString}</p>
                     </td>
                 </tr>
              </table>`
@@ -664,7 +663,7 @@ async function checkTurnoAbierto() {
 $("#cboState").on("change", function () {
     let val = $(this).val();
 
-    if (val == "1") {
+    if (val == "3") {
         $("#btnSave").text("Finalizar Venta");
     } else {
         $("#btnSave").text("Guardar Cambios");
@@ -674,24 +673,26 @@ $("#cboState").on("change", function () {
 $("#switchTakeAway").on("change", function () {
     let chequeado = document.getElementById('switchTakeAway').checked;
     let total;
+    let totalParcial = parseInt($("#txtTotal").attr("totalReal"));
 
     if (chequeado) {
         if (ventaWebModal.descuentoRetiroLocal > 0) {
-            total = ventaWebModal.total;
+            total = totalParcial;
+
             $("#txtTakeAway").val(ventaWebModal.descuentoRetiroLocal);
         }
         else if (ajustesWeb.takeAwayDescuento != null && ajustesWeb.takeAwayDescuento > 0) {
-            let descuento = (ventaWebModal.total * (ajustesWeb.takeAwayDescuento / 100));
+            let descuento = (totalParcial * (ajustesWeb.takeAwayDescuento / 100));
             $("#txtTakeAway").val(descuento);
-            total = (ventaWebModal.total - descuento).toFixed(2);
+            total = (totalParcial - descuento).toFixed(0);
         }
     }
     else {
         if (ventaWebModal.descuentoRetiroLocal > 0) {
-            total = ventaWebModal.total + ventaWebModal.descuentoRetiroLocal;
+            total = totalParcial + ventaWebModal.descuentoRetiroLocal;
         }
         else {
-            total = ventaWebModal.total;
+            total = totalParcial;
         }
         $("#txtTakeAway").val(0);
     }
@@ -701,9 +702,7 @@ $("#switchTakeAway").on("change", function () {
 });
 
 $("#txtEnvio").on("change", function () {
-    let envio = parseInt($("#txtEnvio").val());
-
-    $("#txtTotal").val(ventaWebModal.total + envio);
+    updateTotal();
 });
 
 $('#cboTypeDocumentSale').change(function () {
