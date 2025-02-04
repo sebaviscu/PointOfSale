@@ -1,17 +1,22 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using NuGet.Protocol;
+using NuGet.Protocol.Core.Types;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Reportes;
 using PointOfSale.Business.Services;
 using PointOfSale.Business.Utilities;
+using PointOfSale.Data.Repository;
 using PointOfSale.Model;
 using PointOfSale.Model.Auditoria;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
+using PointOfSale.Web.Models.Paginado;
 using System.Globalization;
+using System.Linq;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Controllers
@@ -27,6 +32,7 @@ namespace PointOfSale.Controllers
         private readonly ITagService _tagService;
         private readonly IPromocionService _promocionService;
         private readonly IBackupService _backupService;
+        private readonly IGenericRepository<Product> _repository;
 
         public InventoryController(ICategoryService categoryService,
             IProductService productService,
@@ -35,7 +41,8 @@ namespace PointOfSale.Controllers
             ILogger<InventoryController> logger,
             ITagService tagService,
             IPromocionService promocionService,
-            IBackupService backupService)
+            IBackupService backupService,
+            IGenericRepository<Product> repository)
         {
             _categoryService = categoryService;
             _productService = productService;
@@ -45,6 +52,7 @@ namespace PointOfSale.Controllers
             _tagService = tagService;
             _promocionService = promocionService;
             _backupService = backupService;
+            _repository = repository;
         }
 
         public IActionResult Products()
@@ -1017,4 +1025,6 @@ namespace PointOfSale.Controllers
 
         }
     }
+
+
 }

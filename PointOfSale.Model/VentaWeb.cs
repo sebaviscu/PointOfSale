@@ -47,7 +47,7 @@ namespace PointOfSale.Model
             IsEdit = true;
 
             if (!string.IsNullOrEmpty(EditText))
-                EditText += "<br>------------------------------------------------------ <br><br>";
+                EditText += "------------------------------------------------------ <br><br>";
 
             EditText += $"<b>· {newVentaWeb.ModificationUser} {newVentaWeb.ModificationDate} </b> <br>";
 

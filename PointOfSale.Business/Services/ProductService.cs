@@ -56,7 +56,24 @@ namespace PointOfSale.Business.Services
         public async Task<List<Product>> List()
         {
             IQueryable<Product> query = await _repository.Query();
-            return await query.AsNoTracking().ToListAsync();
+            return await query.Include(_=>_.Proveedor).Include(_ => _.IdCategoryNavigation).Include(_ => _.ListaPrecios).AsNoTracking().ToListAsync();
+
+            //IQueryable<Product> query = await _repository.Query();
+
+            //var productos = await query
+            //    .AsNoTracking()
+            //    .Select(p => new Product
+            //    {
+            //        IdProduct = p.Id,
+            //        SKU = p.Name,
+            //        Description = p.Price,
+            //        Stock = p.Stock
+            //        // No incluimos p.Photo
+            //    })
+            //    .ToListAsync();
+
+            //return productos;
+
         }
 
         public async Task<List<Product>> ListActive()
