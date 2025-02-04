@@ -132,7 +132,7 @@ namespace PointOfSale.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPreciosReport(string categoria, string? modificationDate)
         {
-            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
+            var user = ValidarAutorizacion();
 
             var products = await _productService.ProdctuosPreciosByCategory(categoria, modificationDate, user.ListaPrecios);
             var productsMapper = _mapper.Map<List<VMProductReport>>(products);

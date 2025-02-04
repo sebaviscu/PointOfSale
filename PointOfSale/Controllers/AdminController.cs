@@ -417,7 +417,6 @@ namespace PointOfSale.Controllers
                 var tiendaId = Convert.ToInt32(((ClaimsIdentity)HttpContext.User.Identity).FindFirst("Tienda").Value);
 
                 var ProductListWeek = new List<VMProductsWeek>();
-                var prods = await _productService.List();
                 int i = 0;
                 var dateActual = TimeHelper.GetArgentinaTime();
                 if (dateFilter != null)
@@ -426,18 +425,27 @@ namespace PointOfSale.Controllers
                     dateActual = new DateTime(Convert.ToInt32(dateSplit[2]), Convert.ToInt32(dateSplit[1]), Convert.ToInt32(dateSplit[0]), 0, 0, 0);
                 }
 
-                foreach (KeyValuePair<string, string?> item in await _dashboardService.ProductsTopByCategory(typeValues, idCategoria, tiendaId, dateActual, visionGlobal))
-                {
-                    var prod = prods.FirstOrDefault(_ => _.Description == item.Key);
-                    if (prod != null)
-                    {
-                        ProductListWeek.Add(new VMProductsWeek()
-                        {
-                            Product = $"{++i}. {item.Key} ",
-                            Quantity = $" {item.Value} {(prod.TipoVenta == Model.Enum.TipoVenta.U ? "U." : prod.TipoVenta)}"
-                        });
-                    }
+                var datos = await _dashboardService.ProductsTopByCategory(typeValues, idCategoria, tiendaId, dateActual, visionGlobal);
 
+                if (datos!= null && datos.Any())
+                {
+                    var prodsId = datos.Select(_ => _.IdProduct).ToList();
+
+                    var prods = await _productService.ListByIds(prodsId);
+
+                    foreach (var item in datos)
+                    {
+                        var prod = prods.FirstOrDefault(_ => _.IdProduct == item.IdProduct);
+                        if (prod != null)
+                        {
+                            ProductListWeek.Add(new VMProductsWeek()
+                            {
+                                Product = $"{++i}. {item.Key} ",
+                                Quantity = $" {item.Total} {(prod.TipoVenta == Model.Enum.TipoVenta.U ? "U." : prod.TipoVenta)}"
+                            });
+                        }
+
+                    }
                 }
 
                 gResponse.State = true;

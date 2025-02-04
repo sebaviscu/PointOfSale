@@ -769,7 +769,7 @@ namespace PointOfSale.Controllers
             var gResponse = new GenericResponse<List<VMPromocion>>();
             try
             {
-                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
+                var user = ValidarAutorizacion();
 
                 var listPromocion = _mapper.Map<List<VMPromocion>>(await _promocionService.Activas(user.IdTienda));
 
@@ -907,7 +907,7 @@ namespace PointOfSale.Controllers
             var gResponse = new GenericResponse<List<VMVencimiento>>();
             try
             {
-                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
+                var user = ValidarAutorizacion();
 
                 List<VMVencimiento> vmVencimientos = _mapper.Map<List<VMVencimiento>>(await _productService.GetProximosVencimientos(user.IdTienda));
                 return StatusCode(StatusCodes.Status200OK, new { data = vmVencimientos.OrderBy(_ => _.Estado).ThenBy(_ => _.FechaVencimiento) });

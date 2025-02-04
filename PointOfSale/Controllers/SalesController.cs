@@ -23,6 +23,7 @@ namespace PointOfSale.Controllers
         private readonly IAfipService _afipFacturacionService;
         private readonly IAjusteService _ajustesService;
         private readonly IEmailService _emailService;
+        private readonly ITurnoService _turnoService;
 
         public SalesController(
             ITypeDocumentSaleService typeDocumentSaleService,
@@ -33,7 +34,8 @@ namespace PointOfSale.Controllers
             IAfipService afipFacturacionService,
             ILogger<SalesController> logger,
             IAjusteService ajustesService,
-            IEmailService emailService)
+            IEmailService emailService,
+            ITurnoService turnoService)
         {
             _typeDocumentSaleService = typeDocumentSaleService;
             _saleService = saleService;
@@ -44,11 +46,12 @@ namespace PointOfSale.Controllers
             _logger = logger;
             _ajustesService = ajustesService;
             _emailService = emailService;
+            _turnoService = turnoService;
         }
 
         public IActionResult NewSale()
         {
-            return ValidateSesionViewOrLogin([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
+            return ValidateSesionViewOrLogin();
         }
 
         [HttpGet]
@@ -168,8 +171,14 @@ namespace PointOfSale.Controllers
             var gResponse = new GenericResponse<VMSaleResult>();
             try
             {
-                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
+                var user = ValidarAutorizacion();
 
+                var turnoAbierto = await _turnoService.CheckTurnoAbierto(user.IdTienda);
+                if(!turnoAbierto)
+                {
+                    throw new Exception("Debe haber un turno abierto");
+                }
+                
                 var inouinput = new RegistrationSaleInput()
                 {
                     MultiplesFormaDePago = _mapper.Map<List<MultiplesFormaPago>>(model.MultiplesFormaDePago),

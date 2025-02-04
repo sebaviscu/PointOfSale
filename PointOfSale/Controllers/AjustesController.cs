@@ -164,7 +164,7 @@ namespace PointOfSale.Controllers
                 vmAjuste.ListaPrecios = user.ListaPrecios;
                 var turno = await _turnoService.GetTurnoActual(user.IdTienda);
 
-                vmAjuste.ExisteTurno = turno != null && turno.ValidacionRealizada.HasValue && !turno.ValidacionRealizada.Value;
+                vmAjuste.ExisteTurno = await _turnoService.CheckTurnoAbierto(user.IdTienda);
                 vmAjuste.User = user.UserName;
 
                 gResponse.State = true;

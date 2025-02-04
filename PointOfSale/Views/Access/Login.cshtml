@@ -1,83 +1,92 @@
 ﻿@model PointOfSale.Models.VMUserLogin;
 @{
-    Layout = null;
+	Layout = null;
 }
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Login - Administrador</title>
+	<title>Login - Administrador</title>
 
-    <!-- GOOGLE FONTS -->
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500|Poppins:400,500,600,700|Roboto:400,500" rel="stylesheet" />
-    <link href="https://cdn.materialdesignicons.com/4.4.95/css/materialdesignicons.min.css" rel="stylesheet" />
+	<!-- GOOGLE FONTS -->
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,500|Poppins:400,500,600,700|Roboto:400,500" rel="stylesheet" />
+	<link href="https://cdn.materialdesignicons.com/4.4.95/css/materialdesignicons.min.css" rel="stylesheet" />
 
-    <!-- SLEEK CSS -->
-    <link id="sleek-css" rel="stylesheet" href="~/css/sleek.css" />
+	<!-- SLEEK CSS -->
+	<link id="sleek-css" rel="stylesheet" href="~/css/sleek.css" />
 
 </head>
 
 <body class="" id="body">
-    <div class="container d-flex align-items-center justify-content-center vh-100">
-        <div class="row justify-content-center">
-            <div class="col-lg-6 col-md-10">
-                <div class="card">
-                    <div class="card-header bg-primary">
-                        <div class="app-brand">
-                            <a href="#">
-                                <h2 style="color:whitesmoke" class="brand-name"><i class="mdi mdi-account-key mdi-24px"></i> Administración</h2>
-                            </a>
-                        </div>
-                    </div>
+	<div class="container d-flex align-items-center justify-content-center vh-100">
+		<div class="row justify-content-center">
+			<div class="col-lg-6 col-md-10">
+				<div class="card">
+					<div class="card-header bg-primary">
+						<div class="app-brand">
+							<a href="#">
+								<h2 style="color:whitesmoke" class="brand-name"><i class="mdi mdi-account-key mdi-24px"></i> Administración</h2>
+							</a>
+						</div>
+					</div>
 
-                    <div class="card-body p-5">
+					@{
+						var firstLoginView = ViewData["FirstLogin"] != null && (bool)ViewData["FirstLogin"];
+					}
+					<div class="card-body p-5" id="firstLoginData" data-first-login="@firstLoginView">
 
-                        @if (Model != null && Model.FirstLogin)
-                        {
-                            <h4 class="text-dark mb-5">Actualizar primer usuario</h4>
-                            <form asp-controller="Access" asp-action="ChangeFirsUser" method="post">
-                                <div class="row">
-                                    <div class="form-group col-md-12 mb-4">
-                                        <input type="text" class="form-control input-lg" asp-for="Name" placeholder="Nombre" value="">
-                                    </div>
-                                    <div class="form-group col-md-12 mb-4">
-                                        <input type="text" class="form-control input-lg" asp-for="Email" placeholder="Nuevo Usuario" value="">
-                                    </div>
-                                    <div class="form-group col-md-12">
-                                        <input type="password" class="form-control input-lg" asp-for="PassWord" placeholder="Nuevo Password" value="">
-                                    </div>
-                                    <div class="col-md-12">
-                                        <button type="submit" class="btn btn-lg btn-primary w-100 mb-4">Cambiar</button>
-                                    </div>
-                                </div>
-                            </form>
-                        }
-                        else
-                        {
-                            <h4 class="text-dark mb-5">Login</h4>
-                            <form asp-controller="Access" asp-action="Login" method="post">
-                                <div class="row">
-                                    <div class="form-group col-md-12 mb-4">
-                                        <input type="text" class="form-control input-lg" asp-for="Email" placeholder="Usuario" value="@Model.Email">
-                                    </div>
-                                    <div class="form-group col-md-12">
-                                        <input type="password" class="form-control input-lg" asp-for="PassWord" placeholder="Password" value="@Model.PassWord">
-                                    </div>
-                                    @if (Model != null && Model.IsAdmin)
-                                    {
-                                        <div class="input-group input-group-sm mb-3 col-md-12">
-                                            <div class="input-group-prepend">
-                                                <label class="input-group-text" for="cboTiendas">Punto de Venta</label>
-                                            </div>
-                                            <select class="form-control" id="cboTiendas" asp-for="TiendaId"></select>
-                                        </div>
-                                    }
-                                    <div class="col-md-12">
-@*                                         <div class="d-flex my-2 justify-content-between">
+
+						@if (ViewData["FirstLogin"] != null && (bool)ViewData["FirstLogin"])
+						{
+							<h4 class="text-dark mb-5">Actualizar primer usuario</h4>
+							<form asp-controller="Access" asp-action="ChangeFirsUser" method="post">
+								<div class="row">
+
+									<div class="form-group col-md-12 mb-4">
+										<input type="text" class="form-control input-lg" asp-for="Name" placeholder="Nombre" value="">
+									</div>
+									<div class="form-group col-md-12 mb-4">
+										<input type="text" class="form-control input-lg" asp-for="Email" placeholder="Nuevo Usuario" value="">
+										<span class="text-danger" asp-validation-for="Email"></span>
+									</div>
+									<div class="form-group col-md-12">
+										<input type="password" class="form-control input-lg" asp-for="PassWord" placeholder="Nuevo Password" value="">
+										<span class="text-danger" asp-validation-for="PassWord"></span>
+									</div>
+									<div class="col-md-12">
+										<button type="submit" class="btn btn-lg btn-primary w-100 mb-4">Cambiar</button>
+									</div>
+								</div>
+							</form>
+						}
+						else
+						{
+							<h4 class="text-dark mb-5">Login</h4>
+							<form asp-controller="Access" asp-action="Login" method="post">
+								<div class="row">
+									<div class="form-group col-md-12 mb-4">
+										<input type="text" class="form-control input-lg" asp-for="Email" placeholder="Usuario" value="@Model.Email">
+										<span class="text-danger" asp-validation-for="Email"></span>
+									</div>
+									<div class="form-group col-md-12">
+										<input type="password" class="form-control input-lg" asp-for="PassWord" placeholder="Password" value="@Model.PassWord">
+										<span class="text-danger" asp-validation-for="PassWord"></span>
+									</div>
+									@if (Model != null && Model.IsAdmin)
+									{
+										<div class="input-group input-group-sm mb-3 col-md-12">
+											<div class="input-group-prepend">
+												<label class="input-group-text" for="cboTiendas">Punto de Venta</label>
+											</div>
+											<select class="form-control" id="cboTiendas" asp-for="TiendaId"></select>
+										</div>
+									}
+									<div class="col-md-12">
+										@*                                         <div class="d-flex my-2 justify-content-between">
                                             <div class="d-inline-block me-3">
                                                 <label class="control control-checkbox">
                                                     Mantener sesion abierta.
@@ -86,27 +95,33 @@
                                                 </label>
                                             </div>
                                         </div> *@
-                                        <button type="submit" class="btn btn-lg btn-primary w-100 mb-4">Ingresar</button>
-                                    </div>
-                                </div>
-                            </form>
-                        }
-                        <div>
-                            <span class="text-danger">@ViewData["Message"]</span>
-                        </div>
+										<button type="submit" class="btn btn-lg btn-primary w-100 mb-4">Ingresar</button>
+									</div>
+								</div>
+							</form>
+						}
+						<div>
+							@if (ViewData["Message"] != null)
+							{
+								<span class="text-danger">@Html.Raw(ViewData["Message"])</span>
+							}
+						</div>
 
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
 
 
-    <!-- Javascript -->
-    <script src="~/plugins/jquery/jquery.min.js"></script>
-    <script src="~/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/views/login.js"></script>
+	<!-- Javascript -->
+	<script src="~/plugins/jquery/jquery.min.js"></script>
+	<script src="~/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+
+	<script src="~/js/views/login.js"></script>
 
 </body>
 </html>

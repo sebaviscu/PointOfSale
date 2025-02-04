@@ -243,7 +243,7 @@ namespace PointOfSale.Business.Services
                 .ToDictionary(keySelector: r => r.date, elementSelector: r => r.total);
         }
 
-        public async Task<Dictionary<string, string?>> ProductsTopByCategory(TypeValuesDashboard typeValues, string category, int idTienda, DateTime dateStart, bool visionGlobal)
+        public async Task<List<TopProducts>?> ProductsTopByCategory(TypeValuesDashboard typeValues, string category, int idTienda, DateTime dateStart, bool visionGlobal)
         {
             FechasParaQuery(typeValues, dateStart, out DateTime end, out DateTime start);
 
@@ -276,15 +276,27 @@ namespace PointOfSale.Business.Services
                 query = query.Where(v => v.IdSaleNavigation.IdTienda == idTienda);
             }
 
-            Dictionary<string, string?> resultado = query
-                 .GroupBy(dv => dv.DescriptionProduct)
-                 .OrderByDescending(g => g.Sum(_ => _.Quantity))
-                 .Select(dv => new { product = dv.Key, total = dv.Sum(_ => _.Quantity) })
-                 .Take(10)
-                 .ToDictionary(
-                     keySelector: r => r.product,
-                     elementSelector: r => r.total % 1 == 0 ? Math.Truncate(r.total).ToString() : Math.Round(r.total, 1).ToString()
-                 );
+            //Dictionary<string, string?> resultado = query
+            //     .GroupBy(dv => dv.DescriptionProduct)
+            //     .OrderByDescending(g => g.Sum(_ => _.Quantity))
+            //     .Select(dv => new { product = dv.Key, total = dv.Sum(_ => _.Quantity) })
+            //     .Take(10)
+            //     .ToDictionary(
+            //         keySelector: r => r.product,
+            //         elementSelector: r => r.total % 1 == 0 ? Math.Truncate(r.total).ToString() : Math.Round(r.total, 1).ToString(),
+            //     );
+
+            var resultado = query
+                .GroupBy(dv => new { dv.DescriptionProduct, dv.IdProduct })
+                .OrderByDescending(g => g.Sum(_ => _.Quantity))
+                .Select(dv => new TopProducts
+                {
+                    Key = dv.Key.DescriptionProduct,
+                    Total = dv.Sum(_ => _.Quantity) % 1 == 0 ? Math.Truncate(dv.Sum(_ => _.Quantity)).ToString() : Math.Round(dv.Sum(_ => _.Quantity), 1).ToString(),
+                    IdProduct = dv.Key.IdProduct
+                })
+                .Take(10)
+                .ToList();
 
             return resultado;
 
@@ -483,5 +495,12 @@ namespace PointOfSale.Business.Services
         public Dictionary<string, decimal> VentasPorTipoVenta { get; set; }
 
         public int CantidadClientes { get; set; }
+    }
+
+    public class TopProducts
+    {
+        public string Key { get; set; }
+        public string Total { get; set; }
+        public int IdProduct { get; set; }
     }
 }

@@ -46,7 +46,7 @@ namespace PointOfSale.Utilities.ViewComponents
 
             ViewData["userRol"] = userRol;
 
-            return View(notificationsByRol);
+            return View(notificationsByRol.OrderByDescending(_=>_.RegistrationDate).ToList());
         }
     }
 }

@@ -13,7 +13,7 @@ namespace PointOfSale.Business.Contracts
     {
         Task<GraficoVentasConComparacion> GetSales(TypeValuesDashboard typeValues, int idTienda, DateTime dateStart, bool visionGlobal);
         Task<Dictionary<string, decimal>> GetSalesByTypoVenta(TypeValuesDashboard typeValues, int idTienda, DateTime dateStart, bool visionGlobal);
-        Task<Dictionary<string, string?>> ProductsTopByCategory(TypeValuesDashboard typeValues, string category, int idTienda, DateTime dateStart, bool visionGlobal);
+        Task<List<TopProducts>?> ProductsTopByCategory(TypeValuesDashboard typeValues, string category, int idTienda, DateTime dateStart, bool visionGlobal);
         Task<Dictionary<string, decimal>> GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard typeValues, int turno, int idTienda, DateTime dateStart);
         Task<Dictionary<string, decimal>> GetMovimientosProveedores(TypeValuesDashboard typeValues, int idTienda, DateTime dateStart, bool visionGlobal);
         Task<Dictionary<string, decimal>> GetGastos(TypeValuesDashboard typeValues, int idTienda, DateTime dateStart, bool visionGlobal);

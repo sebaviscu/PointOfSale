@@ -595,7 +595,7 @@ function getSumaSubTotales() {
     });
 
     let totFijo = $("#txtTotalView").val();
-    let descFormaPago = $("#txtTotalParcial").attr("descuentoFormaPago");
+    let descFormaPago = parseFloat($("#txtTotalParcial").attr("descuentoFormaPago") != null ? $("#txtTotalParcial").attr("descuentoFormaPago") : 0);
 
     return parseFloat(totFijo) - parseFloat(subTotal + Math.abs(descFormaPago));
 }
@@ -1727,6 +1727,27 @@ function deleteVentaFromIndexedDB(idTab) {
         });
 }
 
+$('#modalDataCerrarTurno').on('hidden.bs.modal', function () {
+
+    showLoading();
+
+    fetch("/Turno/CheckTurnoAbierto")
+        .then(response => {
+            removeLoading();
+            return response.json();
+        }).then(responseJson => {
+
+            if (responseJson.state) {
+                if (!responseJson.object) {
+                    $('#bloqueo').show();
+                }
+
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
+            }
+
+        });
+});
 
 class Producto {
     idproduct = 0;

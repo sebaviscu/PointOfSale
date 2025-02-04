@@ -79,7 +79,10 @@
 			</div>
 			<a class="btn btnCategoria active" cat-id="0" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">Todo</a>
 
-			<a class="btn btnCategoria active" cat-id="-3" tag-id="-3" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">Destacados</a>
+			@if (ViewData["HasDestacados"] != null && (bool)ViewData["HasDestacados"])
+			{
+				<a class="btn btnCategoria" cat-id="-3" tag-id="-3" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">Destacados</a>
+			}
 
 			@foreach (var cat in Model.CategoriaWebs.OrderBy(_ => _.Descripcion))
 			{

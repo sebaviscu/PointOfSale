@@ -123,6 +123,10 @@ namespace PointOfSale.Controllers
                 shop.FormasDePago = _mapper.Map<List<VMTypeDocumentSale>>(await _typeDocumentSaleService.ListWeb());
                 shop.CategoriaWebs = _mapper.Map<List<VMCategoriaWeb>>(await _categoryService.List());
                 shop.CategoriaWebs.AddRange(_mapper.Map<List<VMCategoriaWeb>>(await _tagService.List()));
+
+                var destacados = await _productService.GetProductosDestacadosWeb();
+                ViewData["HasDestacados"] = destacados.Any();
+
                 return View("Lista", shop);
             }
             catch (Exception ex)
@@ -149,7 +153,7 @@ namespace PointOfSale.Controllers
                 else if (categoryId == -3 && tagId == -3)
                 {
                     products = _mapper.Map<List<VMProduct>>(
-                        await _productService.ListDestacados()
+                        await _productService.GetProductosDestacadosWeb()
                     );
                 }
                 else
@@ -225,7 +229,7 @@ namespace PointOfSale.Controllers
         {
             try
             {
-                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
+                var user = ValidarAutorizacion();
                 var ventasWeb = await _shopService.GetAllByDate(user.IdRol == 1 ? null : TimeHelper.GetArgentinaTime());
                 var vmCategoryList = _mapper.Map<List<VMVentaWeb>>(ventasWeb);
                 return StatusCode(StatusCodes.Status200OK, new { data = vmCategoryList });
@@ -245,13 +249,13 @@ namespace PointOfSale.Controllers
 
             try
             {
-                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
+                var user = ValidarAutorizacion();
 
                 model.ModificationUser = user.UserName;
                 model.ModificationDate = TimeHelper.GetArgentinaTime();
 
                 var ajustes = model.IdTienda.HasValue ? await _ajusteService.GetAjustes(model.IdTienda.Value) : null;
-                VentaWeb edited_VemntaWeb = await _shopService.Update( ajustes, _mapper.Map<VentaWeb>(model), user.IdTurno);
+                VentaWeb edited_VemntaWeb = await _shopService.Update(ajustes, _mapper.Map<VentaWeb>(model));
 
                 model = _mapper.Map<VMVentaWeb>(edited_VemntaWeb);
                 if (model.Estado == EstadoVentaWeb.Finalizada && model.IdTienda.HasValue)

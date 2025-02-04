@@ -50,31 +50,31 @@ namespace PointOfSale.Business.Services
         public async Task<Product> Get(int idProducto)
         {
             IQueryable<Product> queryProduct = await _repository.Query(u => u.IdProduct == idProducto);
-            return getIncludes(queryProduct).Include(_ => _.IdCategoryNavigation).First();
+            return getIncludes(queryProduct).First();
         }
 
         public async Task<List<Product>> List()
         {
             IQueryable<Product> query = await _repository.Query();
-            return getIncludes(query).ToList();
-            //return getIncludes(query).Take(10).ToList();
+            return await query.AsNoTracking().ToListAsync();
         }
 
         public async Task<List<Product>> ListActive()
         {
             IQueryable<Product> query = await _repository.Query(_ => _.IsActive);
-            return getIncludes(query).ToList();
-        }
-        public async Task<List<Product>> ListDestacados()
-        {
-            IQueryable<Product> query = await _repository.Query(_ => _.Destacado);
-            return getIncludes(query).ToList();
+            return await query.AsNoTracking().ToListAsync();
         }
 
         public async Task<List<Stock>> ListStock(int idTienda)
         {
             IQueryable<Stock> query = await _repositoryStock.Query();
             return await query.Include(_ => _.Producto).Where(_ => _.IdTienda == idTienda).ToListAsync();
+        }
+
+        public async Task<List<Product>?> ListByIds(List<int>? idsProducts)
+        {
+            IQueryable<Product> query = await _repository.Query(_=> idsProducts.Contains(_.IdProduct));
+            return await query.AsNoTracking().ToListAsync();
         }
 
         public async Task<Stock?> GetStockByIdProductIdTienda(int idProducto, int idTienda)
@@ -648,19 +648,9 @@ namespace PointOfSale.Business.Services
             }
         }
 
-
-        public async Task<List<Product>> GetRandomProducts()
-        {
-            var prods = await ListActive();
-            Random random = new Random();
-            var randomProds = prods.OrderBy(x => random.Next()).Take(8).ToList();
-            return randomProds;
-        }
-
-
         public async Task<List<Product>> GetProductosDestacadosWeb()
         {
-            IQueryable<Product> query = await _repository.Query(_ => _.Destacado && _.ProductoWeb);
+            IQueryable<Product> query = await _repository.Query(_ => _.IsActive && _.Destacado && _.ProductoWeb);
             return query.Include(c => c.IdCategoryNavigation).Include(_ => _.Proveedor).Include(_ => _.ListaPrecios).Include(_ => _.Vencimientos).Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
                 .OrderBy(_ => _.Description).ToList();
         }

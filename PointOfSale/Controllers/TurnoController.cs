@@ -55,10 +55,8 @@ namespace PointOfSale.Controllers
             {
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Empleado]);
 
-                var turno = await _turnoService.GetTurnoActual(user.IdTienda);
-
+                gResponse.Object = await _turnoService.CheckTurnoAbierto(user.IdTienda);
                 gResponse.State = true;
-                gResponse.Object = turno != null;
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
@@ -206,7 +204,7 @@ namespace PointOfSale.Controllers
             var gResponse = new GenericResponse<VMTurno>();
             try
             {
-                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
+                var user = ValidarAutorizacion();
                 var model = new VMTurno()
                 {
                     RegistrationUser = user.UserName,
@@ -232,7 +230,7 @@ namespace PointOfSale.Controllers
             }
             catch (Exception ex)
             {
-                return HandleException(ex, "Error al cerrar turno.", _logger, modelTurno);
+                return HandleException(ex, "Error al abrir turno.", _logger, modelTurno);
             }
         }
 
@@ -242,7 +240,7 @@ namespace PointOfSale.Controllers
             var gResponse = new GenericResponse<VMImprimir>();
             try
             {
-                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
+                var user = ValidarAutorizacion();
 
                 modelTurno.ModificationUser = user.UserName;
                 Turno result;
@@ -295,7 +293,7 @@ namespace PointOfSale.Controllers
             var gResponse = new GenericResponse<Turno>();
             try
             {
-                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
+                var user = ValidarAutorizacion();
 
                 modelTurno.IdTienda = user.IdTienda;
 

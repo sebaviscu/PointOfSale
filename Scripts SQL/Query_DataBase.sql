@@ -536,6 +536,7 @@ CREATE TABLE FacturasEmitidas (
 	ImporteIva decimal(10,2) not null,
 	IdFacturaAnulada int null,
     FacturaAnulada varchar(50) null,
+    FacturaRefacturada varchar(50) null,
 	idSale int references Sale(idSale) not null,
 	idCliente int references Cliente(idCliente) null,
 	IdTienda int references Tienda(IdTienda) not null,

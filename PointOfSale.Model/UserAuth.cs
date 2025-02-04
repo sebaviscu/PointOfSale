@@ -8,7 +8,7 @@ namespace PointOfSale.Model
         public int IdTurno { get; set; }
         public int IdRol { get; set; }
         public int IdTienda { get; set; }
-        public string UserName { get; set; }
+        public string UserName { get; set; } = string.Empty;
         public int IdListaPrecios { get; set; }
         public ListaDePrecio ListaPrecios { get; set; }
         public bool Result { get; set; }

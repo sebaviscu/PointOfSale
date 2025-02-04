@@ -10,7 +10,6 @@ using System.Security.Claims;
 using static PointOfSale.Model.Enum;
 using UAParser;
 using NuGet.Protocol;
-using PointOfSale.Business.Services;
 
 namespace PointOfSale.Controllers
 {
@@ -19,18 +18,16 @@ namespace PointOfSale.Controllers
         private readonly IUserService _userService;
         private readonly ITurnoService _turnoService;
         private readonly ITiendaService _tiendaService;
-        private readonly ISaleService _saleService;
         private readonly IProductService _productService;
         private readonly ILogger<AccessController> _logger;
         private readonly IAfipService _afipService;
         private readonly IAjusteService _ajusteService;
 
-        public AccessController(IUserService userService, ITurnoService turnoService, ITiendaService tiendaService, ISaleService saleService, IProductService productService, ILogger<AccessController> logger, IAfipService afipService, IAjusteService ajusteService)
+        public AccessController(IUserService userService, ITurnoService turnoService, ITiendaService tiendaService, IProductService productService, ILogger<AccessController> logger, IAfipService afipService, IAjusteService ajusteService)
         {
             _userService = userService;
             _turnoService = turnoService;
             _tiendaService = tiendaService;
-            _saleService = saleService;
             _productService = productService;
             _logger = logger;
             _afipService = afipService;
@@ -76,10 +73,14 @@ namespace PointOfSale.Controllers
         {
             try
             {
+                if (!ModelState.IsValid)
+                    return View("Login", model);
+
                 var result = await _userService.CheckFirstLogin(model.Email, model.PassWord);
+                ViewData["FirstLogin"] = result;
                 if (result)
                 {
-                    return View(new VMUserLogin() { FirstLogin = true });
+                    return View(new VMUserLogin());
                 }
 
                 var resultado = await _userService.GetByCredentials(model.Email, model.PassWord);
@@ -104,7 +105,7 @@ namespace PointOfSale.Controllers
                     }
                     else
                     {
-                        if ((model.TiendaId == null && user_found.IdRol == 1) || (model.TiendaId.HasValue &&  model.TiendaId == -1))
+                        if ((model.TiendaId == null && user_found.IdRol == 1) || (model.TiendaId.HasValue && model.TiendaId == -1))
                         {
                             model.IsAdmin = true;
                             model.PassWord = model.PassWord;
@@ -198,26 +199,42 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<IActionResult> ChangeFirsUser(VMUserLogin model)
         {
-
-            if (model.Email.ToLower() == "admin")
+            try
             {
-                ViewData["Message"] = "Usuario no puede ser 'admin'";
+                if (!ModelState.IsValid)
+                {
+                    ViewData["FirstLogin"] = true;
+                    return View("Login", model);
+                }
+
+                if (model.Email.ToLower() == "admin")
+                {
+                    ViewData["Message"] = "Usuario no puede ser 'admin'";
+                    ViewData["FirstLogin"] = true;
+                    return View("Login", new VMUserLogin());
+                }
+
+                var user_list = await _userService.List();
+                var user_found = user_list.Single();
+
+                user_found.Email = model.Email;
+                user_found.Name = model.Name;
+                user_found.Password = EncryptionHelper.EncryptString(model.PassWord);
+
+                var user_edit = await _userService.Edit(user_found);
+
+                model.IsAdmin = true;
+                model.PassWord = model.PassWord;
+                model.Email = model.Email;
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                ViewData["FirstLogin"] = true;
+                ViewData["Message"] = $"Error: {ex.Message}";
                 return View(new VMUserLogin());
             }
 
-            var user_list = await _userService.List();
-            var user_found = user_list.Single();
-
-            user_found.Email = model.Email;
-            user_found.Name = model.Name;
-            user_found.Password = EncryptionHelper.EncryptString(model.PassWord);
-
-            var user_edit = await _userService.Edit(user_found);
-
-            model.IsAdmin = true;
-            model.PassWord = model.PassWord;
-            model.Email = model.Email;
-            return View(model);
         }
 
         [HttpGet]
@@ -234,19 +251,6 @@ namespace PointOfSale.Controllers
             {
                 return HandleException(ex, "Error al recuperar todos los usuarios.", _logger);
             }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult?> GenerarDatos()
-        {
-            var user = ValidarAutorizacion([Roles.Administrador]);
-            ClaimsPrincipal claimuser = HttpContext.User;
-
-            var result = await _saleService.GenerarVentas(user.IdTienda);
-
-            GenericResponse<VMUser> gResponse = new GenericResponse<VMUser>();
-
-            return StatusCode(result ? StatusCodes.Status200OK : StatusCodes.Status500InternalServerError, gResponse);
         }
     }
 }

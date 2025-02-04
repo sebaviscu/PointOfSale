@@ -25,5 +25,6 @@ namespace PointOfSale.Business.Contracts
 
         Task<Turno?> GetTurnoConVentasPorTipoDeVentaTurno(int idTurno);
 
+        Task<bool> CheckTurnoAbierto(int idTienda);
     }
 }

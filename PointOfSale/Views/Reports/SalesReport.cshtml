@@ -42,22 +42,22 @@
             <div class="form-row">
                 <div class="form-group col-sm-3">
                     <label for="cboSearchBy">Search by</label>
-                    <select class="form-control" id="cboSearchBy">
+                    <select class="form-control" id="cboSearchBy" name="Buscar por numero de venta o por fecha">
                         <option value="date">Dia</option>
                         <option value="number">Num. de venta</option>
                     </select>
                 </div>
                 <div class="form-group col-sm-2 search-date">
                     <label for="txtStartDate">Fecha Inicio</label>
-                    <input type="text" class="form-control" id="txtStartDate">
+                    <input type="date" class="form-control" id="txtStartDate" name="fecha de inicio de la venta" autocomplete="off">
                 </div>
                 <div class="form-group col-sm-2 search-date">
                     <label for="txtEndDate">Fecha Fin</label>
-                    <input type="text" class="form-control" id="txtEndDate">
+                    <input type="date" class="form-control" id="txtEndDate" name="fecha de fin de la venta" autocomplete="off">
                 </div>
                 <div class="form-group col-sm-4 search-sale">
                     <label for="txtSaleNumberSearch">Numero de Venta</label>
-                    <input type="text" class="form-control" id="txtSaleNumberSearch">
+                    <input type="number" class="form-control" id="txtSaleNumberSearch" name="numero de venta" autocomplete="off" inputmode="numeric">
                 </div>
                 @* <div class="form-group col-sm-3 search-date" style="text-align: center;"> *@
                 <div class="form-group col-sm-3" style="text-align: center;display: none;">

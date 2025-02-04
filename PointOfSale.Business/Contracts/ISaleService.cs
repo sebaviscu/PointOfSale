@@ -21,7 +21,6 @@ namespace PointOfSale.Business.Contracts
         Task<Sale> Detail(string SaleNumber);
 
         Task<Sale> Edit(Sale entity);
-        Task<bool> GenerarVentas(int idTienda);
         Task<Sale> GetSale(int idSale);
 
         Task<List<ListaPrecio>> GetProductsSearchAndIdLista(string search, ListaDePrecio listaPrecios);

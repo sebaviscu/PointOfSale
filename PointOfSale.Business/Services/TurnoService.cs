@@ -135,6 +135,12 @@ namespace PointOfSale.Business.Services
             return turno;
         }
 
+        public async Task<bool> CheckTurnoAbierto(int idTienda)
+        {
+            var turno = await GetTurnoActual(idTienda);
+            return turno != null && turno.ValidacionRealizada.HasValue && !turno.ValidacionRealizada.Value;
+        }
+
         public async Task CheckTurnosViejos(int idtienda)
         {
             var query = await _repository.Query();

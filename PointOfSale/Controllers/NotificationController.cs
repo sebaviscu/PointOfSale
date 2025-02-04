@@ -52,7 +52,7 @@ namespace PointOfSale.Controllers
         public async Task<IActionResult> GetNotificacionesByUser()
         {
             var gResponse = new GenericResponse<List<VMNotifications>>();
-            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
+            var user = ValidarAutorizacion();
 
             try
             {
@@ -212,7 +212,7 @@ namespace PointOfSale.Controllers
 
             try
             {
-                var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado, Roles.Empleado]);
+                var user = ValidarAutorizacion();
                 var result = await _notificationService.LimpiarIndividuales(user.UserName, user.IdUsuario);
 
                 gResponse.State = true;

@@ -14,7 +14,7 @@ insert into Rol(description,isActive) values
 
 insert into Users(name,email,idRol,password,isActive, sinHorario, IsSuperAdmin) values
 ('admin','admin',1,'',1, 1,0),
-('SuperAdmin','sebaviscusso',1,'aBtloYrF4Hs6fEWVq0EW7A==:J61S+Sb5u+7YBcoiGM4SiQ==',1, 1,1);
+('','sebaviscusso',1,'aBtloYrF4Hs6fEWVq0EW7A==:J61S+Sb5u+7YBcoiGM4SiQ==',1, 1,1);
 
 insert into Menu(description,icon,isActive, orden, controller, pageAction) values
 ('Dashboard','mdi mdi-view-dashboard-outline',1,1,'Admin','DashBoard'),

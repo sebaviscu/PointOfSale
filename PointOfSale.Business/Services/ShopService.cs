@@ -45,7 +45,7 @@ namespace PointOfSale.Business.Services
         }
 
 
-        public async Task<VentaWeb> Update(Ajustes? ajustes, VentaWeb entity, int? idTurno)
+        public async Task<VentaWeb> Update(Ajustes? ajustes, VentaWeb entity)
         {
             IQueryable<VentaWeb> query = await _repository.Query(c => c.IdVentaWeb == entity.IdVentaWeb);
             var VentaWeb_found = query.Include(_ => _.DetailSales).Include(_ => _.FormaDePago).First();
@@ -57,10 +57,12 @@ namespace PointOfSale.Business.Services
 
             if (entity.Estado == EstadoVentaWeb.Finalizada)
             {
-                if (!idTurno.HasValue)
-                    throw new TaskCanceledException("No es posible finalizar una Venta Web sin un Turno abierto.");
-                else if (!entity.IdTienda.HasValue)
+                if (!entity.IdTienda.HasValue)
                     throw new TaskCanceledException("No es posible finalizar una Venta Web sin Punto de Venta");
+
+                var turnoAbierto = await _turnoService.CheckTurnoAbierto(entity.IdTienda.Value);
+                if (!turnoAbierto)
+                    throw new TaskCanceledException("No es posible finalizar una Venta Web sin un Turno abierto.");
             }
 
             bool hasChanges = HasChanges(VentaWeb_found, entity);

@@ -328,47 +328,6 @@ function disablesMovimientoCajaModal(type) {
 
 }
 
-//function horaActual() {
-//    let dateTimeModifHoy = new Date();
-
-//    let options = {
-//        timeZone: 'America/Argentina/Buenos_Aires',
-//        year: 'numeric',
-//        month: '2-digit',
-//        day: '2-digit',
-//        hour: '2-digit',
-//        minute: '2-digit',
-//        second: '2-digit'
-//    };
-
-//    let formatter = new Intl.DateTimeFormat('es-AR', options);
-//    let dateTimeArgentina = formatter.format(dateTimeModifHoy);
-
-//    return dateTimeArgentina;
-//}
-
-function generarDatos() {
-    showLoading();
-
-    fetch(`/Access/GenerarDatos`, {
-        method: "POST"
-
-    }).then(responseJson => {
-
-        removeLoading();
-        if (responseJson.status == 200) {
-            swal("Exitoso!", "Datos cerados", "success");
-
-        } else {
-            swal("Lo sentimos", "", "error");
-        }
-    })
-        .catch((error) => {
-            $("div.container-fluid").LoadingOverlay("hide")
-        });
-
-}
-
 function showLoading() {
     if (document.getElementById("divLoadingFrame") != null) {
         return;
@@ -494,6 +453,7 @@ $("#btnAbrirTurno").on("click", function () {
         TotalInicioCaja: parseFloat(importeInicioTurno != '' ? importeInicioTurno : 0),
     };
     $("#modalDataAbrirTurno").find("div.modal-content").LoadingOverlay("show")
+    showLoading();
 
     fetch("/Turno/AbrirTurno", {
         method: "POST",
@@ -504,7 +464,7 @@ $("#btnAbrirTurno").on("click", function () {
         return response.json();
     }).then(responseJson => {
         if (responseJson.state) {
-
+            removeLoading();
             $("#modalDataAbrirTurno").modal("hide");
             location.reload();
 

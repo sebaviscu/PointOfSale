@@ -12,7 +12,7 @@ namespace PointOfSale.Controllers
 {
     public class BaseController : Controller
     {
-        public IActionResult ValidateSesionViewOrLogin(Roles[] rolesPermitidos, object? model = null, string? viewName = null)
+        public IActionResult ValidateSesionViewOrLogin(Roles[]? rolesPermitidos = null, object? model = null, string? viewName = null)
         {
             if (!HttpContext.User.Identity.IsAuthenticated)
                 return RedirectToAction("Login", "Access");
@@ -57,10 +57,12 @@ namespace PointOfSale.Controllers
                     throw new ArgumentException("Invalid ListaDePrecio value");
             }
 
+            var userName = GetClaimValue<string>(claimUser, ClaimTypes.Name) ?? string.Empty;
+
             var userAuth = new UserAuth
             {
                 IdRol = GetClaimValue<int>(claimUser, ClaimTypes.Role),
-                UserName = GetClaimValue<string>(claimUser, ClaimTypes.Name),
+                UserName = userName,
                 IdTienda = GetClaimValue<int>(claimUser, "Tienda"),
                 IdListaPrecios = idListaPrecios,
                 IdUsuario = GetClaimValue<int>(claimUser, ClaimTypes.NameIdentifier),
