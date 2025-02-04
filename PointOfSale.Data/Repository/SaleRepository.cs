@@ -107,25 +107,6 @@ namespace PointOfSale.Data.Repository
             return saleNumber;
         }
 
-
-        public async Task<CorrelativeNumber> CreateSerialNumberSale(int idTienda)
-        {
-            var c = new CorrelativeNumber()
-            {
-                LastNumber = 0,
-                IdTienda = idTienda,
-                QuantityDigits = 6,
-                Management = "Sale",
-                DateUpdate = TimeHelper.GetArgentinaTime()
-            };
-            
-            await _dbcontext.CorrelativeNumbers.AddAsync(c);
-            await _dbcontext.SaveChangesAsync();
-
-          
-            return c;
-        }
-
         public async Task<VentaWeb> RegisterWeb(VentaWeb entity)
         {
             try

@@ -251,7 +251,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<User>> GetAllUsersByTienda(int idTienda)
         {
-            IQueryable<User> query = await _repository.Query(u => u.IsActive.Value && !u.IsSuperAdmin && (u.IdTienda == idTienda || u.IdTienda == null));
+            IQueryable<User> query = await _repository.Query(u => u.IsActive.Value && !u.IsSuperAdmin && (u.IdTienda == idTienda || u.IdTienda == null) || (u.IdRol == 1 && !u.IsSuperAdmin));
             return query.OrderBy(_ => _.Name).ToList();
         }
 

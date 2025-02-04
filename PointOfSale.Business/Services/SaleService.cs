@@ -1,7 +1,4 @@
-﻿using iText.StyledXmlParser.Jsoup.Nodes;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
@@ -10,7 +7,6 @@ using PointOfSale.Model.Afip.Factura;
 using PointOfSale.Model.Input;
 using PointOfSale.Model.Output;
 using System.Globalization;
-using static iText.IO.Util.IntHashtable;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services
@@ -21,24 +17,17 @@ namespace PointOfSale.Business.Services
         private readonly IGenericRepository<Cliente> _repositoryCliente;
         private readonly IGenericRepository<ListaPrecio> _repositoryListaPrecio;
         private readonly IGenericRepository<FacturaEmitida> _repositoryFacturaEmitida;
-        private readonly IGenericRepository<TypeDocumentSale> _repositoryTypeDocumentSale;
         private readonly ISaleRepository _repositorySale;
-        private readonly ITypeDocumentSaleService _rTypeNumber;
-        private readonly IProductService _rProduct;
-        private readonly ITurnoService _turnoService;
         private readonly IAfipService _afipService;
         private readonly INotificationService _notificationService;
         private readonly IClienteService _clienteService;
         private readonly IAjusteService _ajustesService;
         private readonly ITicketService _ticketService;
-
+        private readonly ICorrelativeNumberService _correlativeNumberService;
         public SaleService(
             IGenericRepository<Product> repositoryProduct,
             ISaleRepository repositorySale,
             IGenericRepository<Cliente> repositoryCliente,
-            ITypeDocumentSaleService rTypeNumber,
-            IProductService rProduct,
-            ITurnoService turnoService,
             IGenericRepository<ListaPrecio> repositoryListaPrecio,
             IAfipService afipService,
             IGenericRepository<FacturaEmitida> repositoryFacturaEmitida,
@@ -46,14 +35,11 @@ namespace PointOfSale.Business.Services
             IClienteService clienteService,
             IAjusteService ajusteService,
             ITicketService ticketService,
-            IGenericRepository<TypeDocumentSale> repositoryTypeDocumentSale)
+            ICorrelativeNumberService correlativeNumberService)
         {
             _repositoryProduct = repositoryProduct;
             _repositorySale = repositorySale;
             _repositoryCliente = repositoryCliente;
-            _rTypeNumber = rTypeNumber;
-            _rProduct = rProduct;
-            _turnoService = turnoService;
             _repositoryListaPrecio = repositoryListaPrecio;
             _afipService = afipService;
             _repositoryFacturaEmitida = repositoryFacturaEmitida;
@@ -61,7 +47,7 @@ namespace PointOfSale.Business.Services
             _clienteService = clienteService;
             _ticketService = ticketService;
             _ajustesService = ajusteService;
-            _repositoryTypeDocumentSale = repositoryTypeDocumentSale;
+            _correlativeNumberService = correlativeNumberService;
         }
 
 
@@ -333,7 +319,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<string> GetLastSerialNumberSale(int idTienda)
         {
-            return await _repositorySale.GetLastSerialNumberSale(idTienda, "Sale");
+            return await _correlativeNumberService.GetSerialNumberAndSave(idTienda, "Sale");
         }
 
         public async Task<List<Sale>> SaleHistory(string saleNumber, string startDate, string endDate, string presupuestos, int idTienda)
@@ -468,7 +454,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<CorrelativeNumber> CreateSerialNumberSale(int idTienda)
         {
-            return await _repositorySale.CreateSerialNumberSale(idTienda);
+            return await _correlativeNumberService.CreateSerialNumberSale(idTienda);
         }
 
     }

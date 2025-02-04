@@ -15,8 +15,8 @@ namespace PointOfSale.Business.Services
         private readonly ISaleRepository _saleRepository;
         private readonly INotificationService _notificationService;
         private readonly ITypeDocumentSaleService _typeDocumentSaleService;
-
-        public ShopService(IProductService productService, IGenericRepository<VentaWeb> repository, ITurnoService turnoService, ISaleRepository saleRepository, INotificationService notificationService, IGenericRepository<DetailSale> repositoryDetailsSale, ITypeDocumentSaleService typeDocumentSaleService)
+        private readonly ICorrelativeNumberService _correlativeNumberService;
+        public ShopService(IProductService productService, IGenericRepository<VentaWeb> repository, ITurnoService turnoService, ISaleRepository saleRepository, INotificationService notificationService, IGenericRepository<DetailSale> repositoryDetailsSale, ITypeDocumentSaleService typeDocumentSaleService, ICorrelativeNumberService correlativeNumberService)
         {
             _productService = productService;
             _repository = repository;
@@ -25,6 +25,7 @@ namespace PointOfSale.Business.Services
             _notificationService = notificationService;
             _repositoryDetailsSale = repositoryDetailsSale;
             _typeDocumentSaleService = typeDocumentSaleService;
+            _correlativeNumberService = correlativeNumberService;
         }
 
         public async Task<List<VentaWeb>> List()
@@ -227,13 +228,13 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        private bool HasChanges(DetailSale existingDetail, DetailSale updatedDetail)
-        {
-            return existingDetail.Price != updatedDetail.Price ||
-                   existingDetail.Quantity != updatedDetail.Quantity ||
-                   existingDetail.Total != updatedDetail.Total ||
-                   existingDetail.Recogido != updatedDetail.Recogido;
-        }
+        //private bool HasChanges(DetailSale existingDetail, DetailSale updatedDetail)
+        //{
+        //    return existingDetail.Price != updatedDetail.Price ||
+        //           existingDetail.Quantity != updatedDetail.Quantity ||
+        //           existingDetail.Total != updatedDetail.Total ||
+        //           existingDetail.Recogido != updatedDetail.Recogido;
+        //}
 
         public async Task<VentaWeb> Get(int idVentaWeb)
         {
@@ -244,10 +245,11 @@ namespace PointOfSale.Business.Services
         public async Task<VentaWeb> RegisterWeb(VentaWeb entity)
         {
             entity.IdTienda = null;
-            entity.SaleNumber = await _saleRepository.GetLastSerialNumberSale(null, "SaleWeb");
+            entity.SaleNumber = await _correlativeNumberService.GetSerialNumberAndSave(null, "SaleWeb");
             var sale = await _saleRepository.RegisterWeb(entity);
             _ = _notificationService.Save(new Notifications(sale));
             return sale;
         }
     }
 }
+    

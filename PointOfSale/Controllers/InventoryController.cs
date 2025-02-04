@@ -14,7 +14,6 @@ using PointOfSale.Model;
 using PointOfSale.Model.Auditoria;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
-using PointOfSale.Web.Models.Paginado;
 using System.Globalization;
 using System.Linq;
 using static PointOfSale.Model.Enum;
@@ -32,7 +31,6 @@ namespace PointOfSale.Controllers
         private readonly ITagService _tagService;
         private readonly IPromocionService _promocionService;
         private readonly IBackupService _backupService;
-        private readonly IGenericRepository<Product> _repository;
 
         public InventoryController(ICategoryService categoryService,
             IProductService productService,
@@ -41,8 +39,7 @@ namespace PointOfSale.Controllers
             ILogger<InventoryController> logger,
             ITagService tagService,
             IPromocionService promocionService,
-            IBackupService backupService,
-            IGenericRepository<Product> repository)
+            IBackupService backupService)
         {
             _categoryService = categoryService;
             _productService = productService;
@@ -52,7 +49,6 @@ namespace PointOfSale.Controllers
             _tagService = tagService;
             _promocionService = promocionService;
             _backupService = backupService;
-            _repository = repository;
         }
 
         public IActionResult Products()
@@ -565,7 +561,7 @@ namespace PointOfSale.Controllers
             GenericResponse<List<VMProduct>> gResponse = new GenericResponse<List<VMProduct>>();
             try
             {
-                var (exito, products, errores) = await _excelService.ImportarProductoAsync(file, false, false);
+                var (exito, products, errores) = await _excelService.ImportarProductoAsync(file, false, false, false);
 
                 if (errores.Any())
                 {
@@ -595,7 +591,7 @@ namespace PointOfSale.Controllers
             {
                 ValidarAutorizacion([Roles.Administrador]);
 
-                var (exito, productos, errores) = await _excelService.ImportarProductoAsync(file, modificarPrecio, productoWeb);
+                var (exito, productos, errores) = await _excelService.ImportarProductoAsync(file, modificarPrecio, productoWeb, true);
 
                 if (errores.Any())
                 {

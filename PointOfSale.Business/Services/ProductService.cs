@@ -23,6 +23,7 @@ namespace PointOfSale.Business.Services
         private readonly IGenericRepository<Stock> _repositoryStock;
         private readonly IBackupService _backupService;
         private readonly ISaleRepository _saleRepository;
+        private readonly ICorrelativeNumberService _correlativeNumberService;
 
         public ProductService(IGenericRepository<Product> repository,
             IGenericRepository<ListaPrecio> repositoryListaPrecios,
@@ -33,7 +34,8 @@ namespace PointOfSale.Business.Services
             IGenericRepository<Notifications> notificationRepository,
             IGenericRepository<CodigoBarras> repositoryCodigosBarras,
             IBackupService backupService,
-            ISaleRepository saleRepository)
+            ISaleRepository saleRepository,
+            ICorrelativeNumberService correlativeNumberService)
         {
             _repository = repository;
             _repositoryListaPrecios = repositoryListaPrecios;
@@ -45,6 +47,7 @@ namespace PointOfSale.Business.Services
             _repositoryCodigosBarras = repositoryCodigosBarras;
             _backupService = backupService;
             _saleRepository = saleRepository;
+            _correlativeNumberService = correlativeNumberService;
         }
 
         public async Task<Product> Get(int idProducto)
@@ -56,7 +59,8 @@ namespace PointOfSale.Business.Services
         public async Task<List<Product>> List()
         {
             IQueryable<Product> query = await _repository.Query();
-            return await query.Include(_=>_.Proveedor).Include(_ => _.IdCategoryNavigation).Include(_ => _.ListaPrecios).AsNoTracking().ToListAsync();
+            return await query.Include(_ => _.Proveedor).Include(_ => _.IdCategoryNavigation).Include(_ => _.ListaPrecios).AsNoTracking().ToListAsync();
+            //return await query.Include(_=>_.Proveedor).Include(_ => _.IdCategoryNavigation).Include(_ => _.ListaPrecios).Take(300).AsNoTracking().ToListAsync();
 
             //IQueryable<Product> query = await _repository.Query();
 
@@ -140,6 +144,7 @@ namespace PointOfSale.Business.Services
                 .Include(_ => _.Proveedor)
                 .Include(_ => _.ListaPrecios)
                 .Include(_ => _.Vencimientos)
+                .Include(_ => _.CodigoBarras)
                 .Include(p => p.ProductTags)
                     .ThenInclude(pt => pt.Tag)
                 .Include(p => p.ProductLovs)
@@ -169,6 +174,8 @@ namespace PointOfSale.Business.Services
 
             UpdateProductTags(entity, tags.Select(_ => _.IdTag).ToList());
             UpdateProductComodin(entity, comodines);
+
+            entity.SKU = await _correlativeNumberService.GetSerialNumberAndSave(null, "Sku");
 
             Product product_created = await _repository.Add(entity);
 
@@ -511,7 +518,7 @@ namespace PointOfSale.Business.Services
             try
             {
                 var modificationDate = TimeHelper.GetArgentinaTime();
-                var lastSerialNumber = await _saleRepository.GetLastSerialNumberSale(null, "EdicionMasivaBackup");
+                var lastSerialNumber = await _correlativeNumberService.GetSerialNumberAndSave(null, "EdicionMasivaBackup");
                 foreach (var p in data.idProductos)
                 {
 
@@ -573,7 +580,7 @@ namespace PointOfSale.Business.Services
             try
             {
                 var modificationDate = TimeHelper.GetArgentinaTime();
-                var lastSerialNumber = await _saleRepository.GetLastSerialNumberSale(null, "EdicionMasivaBackup");
+                var lastSerialNumber = await _correlativeNumberService.GetSerialNumberAndSave(null, "EdicionMasivaBackup");
 
                 foreach (var p in data)
                 {

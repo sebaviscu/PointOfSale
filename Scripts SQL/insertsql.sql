@@ -135,6 +135,9 @@ VALUES (0, 6, 'SaleWeb', 1, GETDATE());
 INSERT INTO CorrelativeNumber (lastNumber, quantityDigits, management, dateUpdate)
 VALUES (0, 4, 'EdicionMasivaBackup', GETDATE());
 
+INSERT INTO CorrelativeNumber (lastNumber, quantityDigits, management, dateUpdate)
+VALUES (0, 4, 'Sku', GETDATE());
+
 
 insert into TipoGastos (gastoPArticular, descripcion, iva) values 
 (0, 'Sueldos', 0);

@@ -5,6 +5,7 @@ let isHealthySaleWeb = false;
 let formasDePagosListVentaWeb = [];
 let ventaWebModal = null;
 let ajustesWeb;
+let precioEnvio = 0;
 
 const BASIC_MODEL_VENTA_WEB = {
     idVentaWeb: 0,
@@ -376,6 +377,13 @@ function addNewProduct(idDetailSale, description, cantidad, tipoVenta, precio, t
     }
 
     $("#tbProducts tbody").append(newRow);
+
+    calcularCantProductos();
+}
+
+function calcularCantProductos() {
+    let rowCount = $("#tbProducts tbody tr").length;
+    $("#lblCantidadProductosWeb").html("Cantidad de articulos: <strong> " + rowCount + "</strong>");
 }
 
 $("#btnEdit").click(function () {
@@ -401,6 +409,7 @@ $(document).on('click', '.delete-row', function () {
     $(this).closest('tr').remove();
     updateTotal();
 
+    calcularCantProductos();
 });
 
 function updateTotal() {
@@ -410,8 +419,12 @@ function updateTotal() {
         let prodsTotal = parseFloat($(this).find("td").eq(5).text().replace('$', '').trim());
         totalAmount += prodsTotal;
     });
-    let envio = parseInt($("#txtEnvio").val());
-    let takeAway = parseInt($("#txtTakeAway").val());
+
+    let entioTxt = $("#txtEnvio").val();
+    let takeAwayTxt = $("#txtTakeAway").val();
+
+    let envio = parseInt(entioTxt != null && entioTxt != '' ? entioTxt : 0);
+    let takeAway = parseInt(takeAwayTxt != null && takeAwayTxt != '' ? takeAwayTxt : 0);
 
     let total = totalAmount + envio - takeAway;
 
@@ -672,33 +685,29 @@ $("#cboState").on("change", function () {
 
 $("#switchTakeAway").on("change", function () {
     let chequeado = document.getElementById('switchTakeAway').checked;
-    let total;
     let totalParcial = parseInt($("#txtTotal").attr("totalReal"));
 
     if (chequeado) {
         if (ventaWebModal.descuentoRetiroLocal > 0) {
-            total = totalParcial;
-
             $("#txtTakeAway").val(ventaWebModal.descuentoRetiroLocal);
         }
         else if (ajustesWeb.takeAwayDescuento != null && ajustesWeb.takeAwayDescuento > 0) {
             let descuento = (totalParcial * (ajustesWeb.takeAwayDescuento / 100));
             $("#txtTakeAway").val(descuento);
-            total = (totalParcial - descuento).toFixed(0);
         }
+        precioEnvio = $("#txtEnvio").val();
+        $("#txtEnvio").val(0);
     }
     else {
-        if (ventaWebModal.descuentoRetiroLocal > 0) {
-            total = totalParcial + ventaWebModal.descuentoRetiroLocal;
-        }
-        else {
-            total = totalParcial;
-        }
+        $("#txtEnvio").val(precioEnvio);
         $("#txtTakeAway").val(0);
     }
 
-    $("#txtEnvio").val(0);
-    $("#txtTotal").val(total);
+    updateTotal();
+});
+
+$("#txtTakeAway").on("change", function () {
+    updateTotal();
 });
 
 $("#txtEnvio").on("change", function () {

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
 using NuGet.Protocol;
 using PointOfSale.Business.Contracts;
@@ -13,6 +14,7 @@ using PointOfSale.Model.Auditoria;
 using PointOfSale.Models;
 using PointOfSale.Utilities;
 using PointOfSale.Utilities.Response;
+using System;
 using System.Globalization;
 using System.Runtime.ConstrainedExecution;
 using System.Security.Claims;
@@ -438,9 +440,15 @@ namespace PointOfSale.Controllers
                         var prod = prods.FirstOrDefault(_ => _.IdProduct == item.IdProduct);
                         if (prod != null)
                         {
-                            ProductListWeek.Add(new VMProductsWeek()
+                            var descr = item.Key;
+                            if (item.Key.Length > 23)
                             {
-                                Product = $"{++i}. {item.Key} ",
+                                descr = item.Key.Substring(0, 20) + "...";
+                            }
+
+                                ProductListWeek.Add(new VMProductsWeek()
+                            {
+                                Product = $"{++i}. {descr} ",
                                 Quantity = $" {item.Total} {(prod.TipoVenta == Model.Enum.TipoVenta.U ? "U." : prod.TipoVenta)}"
                             });
                         }

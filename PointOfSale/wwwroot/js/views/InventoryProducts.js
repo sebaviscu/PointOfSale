@@ -863,7 +863,6 @@ $("#btnCargarImportar").on("click", function () {
                 $("#tableImportarProductos tbody").append(
                     $("<tr>").append(
                         $("<td>").text(++i),
-                        $("<td>").text(product.sku),
                         $("<td>").text(product.description),
                         $("<td>").text(product.codigoBarras != null && product.codigoBarras.length > 0 ? product.codigoBarras[0].codigo : ''),
                         $("<td>").text(product.tipoVenta == '1' ? 'Kg' : 'U'),
@@ -983,7 +982,7 @@ $("#btnSave").on("click", async function () {
     model["comentario"] = $("#txtComentario").val();
     model["iva"] = $("#txtIva").val();
     model["formatoWeb"] = $("#cboFormatoVenta").val();
-    model["sku"] = $("#txtSku").val();
+    //model["sku"] = $("#txtSku").val();
     model["destacado"] = document.getElementById('switchProductoDescatado').checked;
     model["modificarPrecio"] = document.getElementById('switchPuedeModificar').checked;
     model["precioAlMomento"] = document.getElementById('switchPrecioAlMomento').checked;

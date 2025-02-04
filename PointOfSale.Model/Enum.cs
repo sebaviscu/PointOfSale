@@ -77,7 +77,7 @@ namespace PointOfSale.Model
             PendienteRetiro,
             PendienteEnvio,
             Finalizada,
-            Cerrada
+            Cancelada
         }
 
         public enum ListaDePrecio
