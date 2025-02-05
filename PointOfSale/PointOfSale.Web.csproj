@@ -16,6 +16,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Include="Properties\launchSettings.json" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Include="..\.editorconfig" Link=".editorconfig" />
 		<None Include="wwwroot\css\fonts\flaticon\.DS_Store" />
 		<None Include="wwwroot\css\fonts\flaticon\font\.DS_Store" />
