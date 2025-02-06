@@ -148,6 +148,8 @@ idCategory int references Category(idCategory),
 idProveedor int references Proveedor(idProveedor) null,
 sku varchar(50) null,
 IncluirIvaEnPrecio bit null,
+CategoriaDescripcion varchar(200) null,
+ProveedorNombre varchar(200) null,
 modificationDate datetime null,
 modificationUser varchar(50) null,
 registrationDate datetime null
@@ -304,12 +306,12 @@ create table ProveedorMovimiento(
 	EstadoPago int not null,
 	FacturaPendiente bit not null,
 	FormaPago int null,
+	IdPedido int null,
 	modificationDate datetime null,
 	modificationUser varchar(50) null,
 	registrationDate datetime not null,
 	registrationUser varchar(50) not null
 );
-
 
 create table TipoGastos(
 	idTipoGastos int primary key identity(1,1),
@@ -446,6 +448,9 @@ SobreNosotros NVARCHAR(MAX) NULL,
 TemrinosCondiciones NVARCHAR(MAX) NULL,
 PoliticaPrivacidad NVARCHAR(MAX) NULL,
 logoImagenNombre VARCHAR(50) NULL,
+palabrasClave VARCHAR(200) NULL,
+descripcionWeb VARCHAR(200) NULL,
+UrlSitio VARCHAR(200) NULL,
 modificationDate datetime null,
 modificationUser varchar(50) null
 );

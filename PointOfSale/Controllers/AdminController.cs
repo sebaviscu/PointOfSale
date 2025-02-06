@@ -429,7 +429,7 @@ namespace PointOfSale.Controllers
 
                 var datos = await _dashboardService.ProductsTopByCategory(typeValues, idCategoria, tiendaId, dateActual, visionGlobal);
 
-                if (datos!= null && datos.Any())
+                if (datos != null && datos.Any())
                 {
                     var prodsId = datos.Select(_ => _.IdProduct).ToList();
 
@@ -441,15 +441,13 @@ namespace PointOfSale.Controllers
                         if (prod != null)
                         {
                             var descr = item.Key;
-                            if (item.Key.Length > 23)
-                            {
-                                descr = item.Key.Substring(0, 20) + "...";
-                            }
+                            if (item.Key.Length > 21)
+                                descr = item.Key.Substring(0, 21) + "...";
 
-                                ProductListWeek.Add(new VMProductsWeek()
+                            ProductListWeek.Add(new VMProductsWeek()
                             {
                                 Product = $"{++i}. {descr} ",
-                                Quantity = $" {item.Total} {(prod.TipoVenta == Model.Enum.TipoVenta.U ? "U." : prod.TipoVenta)}"
+                                Quantity = $" {item.Total} {(prod.TipoVenta == TipoVenta.U ? "U." : prod.TipoVenta)}"
                             });
                         }
 

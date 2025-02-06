@@ -30,9 +30,12 @@ namespace PointOfSale.Model
 
         public int? IdCategory { get; set; }
         public virtual Category? IdCategoryNavigation { get; set; }
+        public string? CategoriaDescripcion { get; set; }
 
         public int? IdProveedor { get; set; }
         public Proveedor? Proveedor { get; set; }
+        public string? ProveedorNombre { get; set; }
+
 
         public virtual List<DetailSale>? DetalleVentas { get; set; } = new List<DetailSale>();
         public virtual List<ListaPrecio>? ListaPrecios { get; set; } = new List<ListaPrecio>();

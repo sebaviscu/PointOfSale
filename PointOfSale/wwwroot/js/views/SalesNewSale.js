@@ -1444,14 +1444,15 @@ function agregarProductoEvento(idTab) {
 }
 
 function setNewProduct(cant, quantity_product_found, data, currentTab, idTab) {
-    let totalQuantity = parseFloat(cant) + parseFloat(quantity_product_found);
-    data.total = totalQuantity * parseFloat(data.price);
-    data.quantity = Math.trunc(totalQuantity * 10000) / 10000;
+    let totalQuantity = cant + quantity_product_found;
+
+    data.quantity = parseFloat((totalQuantity).toFixed(2));
+    data.total = data.quantity * parseFloat(data.price);
 
     let originalPrice = data.price;
 
     if (!data.excluirPromociones) {
-        data = applyPromociones(totalQuantity, data, currentTab);
+        data = applyPromociones(data.quantity, data, currentTab);
     }
 
     let product = new Producto();

@@ -234,11 +234,31 @@ namespace PointOfSale.Controllers
             try
             {
                 var productosQuery = await _productService.List();
-                return Ok(new { data = _mapper.Map<List<VMProductSimplificado>>(productosQuery) });
+                //return Ok(new { data = _mapper.Map<List<VMProductSimplificado>>(productosQuery) });
+                return Ok(new { data = productosQuery });
             }
             catch (Exception ex)
             {
                 return HandleException(ex, "Error al lista de producto.", _logger);
+            }
+        }
+
+        /// <summary>
+        /// Retorna una lista de productos
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetProductsByIds(List<int> idsProducts)
+        {
+            var gResponse = new GenericResponse<VMProductSimplificado>();
+            try
+            {
+                var productosQuery = await _productService.Gets(idsProducts);
+                return Ok(new { data = _mapper.Map<List<VMProductSimplificado>>(productosQuery) });
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al recuperar lista de productos desde ids productos.", _logger, idsProducts);
             }
         }
 
@@ -253,6 +273,7 @@ namespace PointOfSale.Controllers
             try
             {
                 var productosQuery = await _productService.ListActive();
+                var d = _mapper.Map<List<VMProductSimplificado>>(productosQuery);
 
                 return Ok(new { data = _mapper.Map<List<VMProductSimplificado>>(productosQuery) });
             }

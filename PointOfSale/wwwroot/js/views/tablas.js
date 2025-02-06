@@ -596,6 +596,17 @@ function cargarTablaComodin(lovType, tableId, btnEditClass, btnDeleteClass) {
     });
 }
 
+$("#btnAddTipoGasto").on("click", function () {
+    openModalTipoDeGasto()
+})
+
+const openModalTipoDeGasto = (model = BASIC_MODEL_TIPO_DE_GASTOS) => {
+    $("#txtIdTipoGastos").val(model.IdTipoGastos);
+    $("#cboTipoDeGasto").val(model.gastoParticular);
+    $("#txtDescripcionTipoDeGasto").val(model.descripcion);
+
+    $("#modalDataTipoDeGasto").modal("show")
+}
 
 $('#tbTipoGastos').on('click', '.btn-delete-tipo-gastos', function () {
     let row;

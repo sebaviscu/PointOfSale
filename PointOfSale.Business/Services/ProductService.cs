@@ -1,19 +1,18 @@
 ﻿using System.Globalization;
+using System.Linq.Expressions;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
+using PointOfSale.Data.DBContext;
 using PointOfSale.Data.Repository;
 using PointOfSale.Model;
-using PointOfSale.Model.Auditoria;
-using static iText.IO.Util.IntHashtable;
 using static PointOfSale.Model.Enum;
 
 namespace PointOfSale.Business.Services
 {
     public class ProductService : IProductService
     {
-        private readonly IGenericRepository<Notifications> _notificationRepository;
         private readonly IGenericRepository<Product> _repository;
         private readonly IGenericRepository<ListaPrecio> _repositoryListaPrecios;
         private readonly IGenericRepository<DetailSale> _repositoryDetailSale;
@@ -22,32 +21,29 @@ namespace PointOfSale.Business.Services
         private readonly INotificationService _notificationService;
         private readonly IGenericRepository<Stock> _repositoryStock;
         private readonly IBackupService _backupService;
-        private readonly ISaleRepository _saleRepository;
         private readonly ICorrelativeNumberService _correlativeNumberService;
-
-        public ProductService(IGenericRepository<Product> repository,
-            IGenericRepository<ListaPrecio> repositoryListaPrecios,
-            IGenericRepository<DetailSale> repositoryDetailSale,
-            IGenericRepository<Vencimiento> repositoryVencimientos,
+        private readonly IProveedorService _proveedorService;
+        private readonly ICategoryService _categoryService;
+        public ProductService(
             INotificationService notificationService,
-            IGenericRepository<Stock> repositoryStock,
-            IGenericRepository<Notifications> notificationRepository,
-            IGenericRepository<CodigoBarras> repositoryCodigosBarras,
             IBackupService backupService,
-            ISaleRepository saleRepository,
-            ICorrelativeNumberService correlativeNumberService)
+            ICorrelativeNumberService correlativeNumberService,
+            IUnitOfWork unitOfWork,
+            IProveedorService proveedorService,
+            ICategoryService categoryService)
         {
-            _repository = repository;
-            _repositoryListaPrecios = repositoryListaPrecios;
-            _repositoryDetailSale = repositoryDetailSale;
-            _repositoryVencimientos = repositoryVencimientos;
+            _repository = unitOfWork.Repository<Product>();
+            _repositoryListaPrecios = unitOfWork.Repository<ListaPrecio>();
+            _repositoryDetailSale = unitOfWork.Repository<DetailSale>();
+            _repositoryVencimientos = unitOfWork.Repository<Vencimiento>();
+            _repositoryCodigosBarras = unitOfWork.Repository<CodigoBarras>();
+            _repositoryStock = unitOfWork.Repository<Stock>();
+
             _notificationService = notificationService;
-            _repositoryStock = repositoryStock;
-            _notificationRepository = notificationRepository;
-            _repositoryCodigosBarras = repositoryCodigosBarras;
             _backupService = backupService;
-            _saleRepository = saleRepository;
             _correlativeNumberService = correlativeNumberService;
+            _proveedorService = proveedorService;
+            _categoryService = categoryService;
         }
 
         public async Task<Product> Get(int idProducto)
@@ -56,34 +52,39 @@ namespace PointOfSale.Business.Services
             return getIncludes(queryProduct).First();
         }
 
+        public async Task<List<Product>> Gets(List<int> idsProducto)
+        {
+            var query = await _repository.Query(u => idsProducto.Contains(u.IdProduct));
+            return getIncludes(query).ToList();
+        }
         public async Task<List<Product>> List()
         {
-            IQueryable<Product> query = await _repository.Query();
-            return await query.Include(_ => _.Proveedor).Include(_ => _.IdCategoryNavigation).Include(_ => _.ListaPrecios).AsNoTracking().ToListAsync();
-            //return await query.Include(_=>_.Proveedor).Include(_ => _.IdCategoryNavigation).Include(_ => _.ListaPrecios).Take(300).AsNoTracking().ToListAsync();
-
-            //IQueryable<Product> query = await _repository.Query();
-
-            //var productos = await query
-            //    .AsNoTracking()
-            //    .Select(p => new Product
-            //    {
-            //        IdProduct = p.Id,
-            //        SKU = p.Name,
-            //        Description = p.Price,
-            //        Stock = p.Stock
-            //        // No incluimos p.Photo
-            //    })
-            //    .ToListAsync();
-
-            //return productos;
-
+            return await GetProducts();
         }
 
         public async Task<List<Product>> ListActive()
         {
-            IQueryable<Product> query = await _repository.Query(_ => _.IsActive);
-            return await query.AsNoTracking().ToListAsync();
+            return await GetProducts(p => p.IsActive);
+        }
+
+        private async Task<List<Product>> GetProducts(Expression<Func<Product, bool>>? filter = null)
+        {
+            var query = filter != null ? await _repository.Query(filter) : await _repository.Query();
+
+            return await query
+                .AsNoTracking()
+                .Select(p => new Product
+                {
+                    IdProduct = p.IdProduct,
+                    SKU = p.SKU,
+                    Description = p.Description,
+                    CategoriaDescripcion = p.CategoriaDescripcion,
+                    ProveedorNombre = p.ProveedorNombre,
+                    Price = p.Price,
+                    ModificationDate = p.ModificationDate,
+                    IsActive = p.IsActive
+                })
+                .ToListAsync();
         }
 
         public async Task<List<Stock>> ListStock(int idTienda)
@@ -94,7 +95,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<Product>?> ListByIds(List<int>? idsProducts)
         {
-            IQueryable<Product> query = await _repository.Query(_=> idsProducts.Contains(_.IdProduct));
+            IQueryable<Product> query = await _repository.Query(_ => idsProducts.Contains(_.IdProduct));
             return await query.AsNoTracking().ToListAsync();
         }
 
@@ -177,16 +178,32 @@ namespace PointOfSale.Business.Services
 
             entity.SKU = await _correlativeNumberService.GetSerialNumberAndSave(null, "Sku");
 
+            if (stock != null)
+            {
+                entity.Stocks = new List<Stock>()
+                {
+                    stock
+                };
+            }
+
+            var cat = await _categoryService.Get(entity.IdCategory.Value);
+            entity.CategoriaDescripcion = cat.Description;
+
+            if(entity.IdProveedor.HasValue)
+            {
+                var prov = await _proveedorService.Get(entity.IdProveedor.Value);
+                entity.ProveedorNombre = prov.Nombre;
+            }
+
+            if(listaPrecios.Any())
+            {
+                entity.Price = listaPrecios[0].Precio;
+            }
+
             Product product_created = await _repository.Add(entity);
 
             if (product_created.IdProduct == 0)
                 throw new TaskCanceledException("Error al crear el producto");
-
-            if (stock != null)
-            {
-                stock.IdProducto = product_created.IdProduct;
-                _ = await _repositoryStock.Add(stock);
-            }
 
             listaPrecios[0].IdProducto = product_created.IdProduct;
             listaPrecios[1].IdProducto = product_created.IdProduct;
@@ -201,13 +218,13 @@ namespace PointOfSale.Business.Services
 
             IQueryable<Product> query = await _repository.Query(p => p.IdProduct == product_created.IdProduct);
             product_created = await query.Include(p => p.IdCategoryNavigation)
-                                                    .Include(p => p.Proveedor)
-                                                    .Include(p => p.ListaPrecios)
-                                                    .Include(p => p.Vencimientos)
-                                                    .Include(p => p.CodigoBarras)
-                                                    .Include(p => p.ProductTags)
-                                                    .ThenInclude(pt => pt.Tag)
-                                                   .FirstOrDefaultAsync();
+                                        .Include(p => p.Proveedor)
+                                        .Include(p => p.ListaPrecios)
+                                        .Include(p => p.Vencimientos)
+                                        .Include(p => p.CodigoBarras)
+                                        .Include(p => p.ProductTags)
+                                            .ThenInclude(pt => pt.Tag)
+                                        .FirstOrDefaultAsync();
 
             return product_created;
         }
@@ -297,7 +314,7 @@ namespace PointOfSale.Business.Services
                 var prodQuery = await _repository.Query(p => p.IdProduct == entity.IdProduct);
 
                 var product = await prodQuery.Include(p => p.ListaPrecios)
-                                    .Include(_=>_.IdCategoryNavigation)
+                                    .Include(_ => _.IdCategoryNavigation)
                                     .Include(p => p.ProductTags)
                                        .ThenInclude(pt => pt.Tag)
                                     .Include(p => p.ProductLovs)
@@ -312,7 +329,6 @@ namespace PointOfSale.Business.Services
                 // Actualizar campos del producto
                 product.Description = entity.Description;
                 product.IdCategory = entity.IdCategory;
-                product.Price = entity.Price;
                 product.CostPrice = entity.CostPrice;
                 product.PriceWeb = entity.PriceWeb;
                 product.PorcentajeProfit = entity.PorcentajeProfit;
@@ -330,8 +346,22 @@ namespace PointOfSale.Business.Services
                 product.ModificarPrecio = entity.ModificarPrecio;
                 product.PrecioAlMomento = entity.PrecioAlMomento;
                 product.ExcluirPromociones = entity.ExcluirPromociones;
-                product.SKU = entity.SKU;
                 product.IncluirIvaEnPrecio = entity.IncluirIvaEnPrecio;
+                //product.SKU = entity.SKU;
+
+                var cat = await _categoryService.Get(entity.IdCategory.Value);
+                product.CategoriaDescripcion = cat.Description;
+
+                if (entity.IdProveedor.HasValue)
+                {
+                    var prov = await _proveedorService.Get(entity.IdProveedor.Value);
+                    product.ProveedorNombre = prov.Nombre;
+                }
+
+                if (listaPrecios.Any())
+                {
+                    product.Price = listaPrecios[0].Precio;
+                }
 
                 if (entity.Photo != null && entity.Photo.Length > 0)
                     product.Photo = entity.Photo;
@@ -549,6 +579,7 @@ namespace PointOfSale.Business.Services
                     product_edit.Iva = data.Iva;
                     product_edit.ModificationUser = user;
                     product_edit.ModificationDate = modificationDate;
+
 
                     bool response = await _repository.Edit(product_edit);
                     if (!response)

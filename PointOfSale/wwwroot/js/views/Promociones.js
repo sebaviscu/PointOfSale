@@ -127,15 +127,16 @@ $("#btnSave").on("click", function () {
         $(`input[name="${inputs_without_value[0].name}"]`).focus();
         return;
     }
+    let productSelected = productSelector.getValue(true);
 
-    //if ($("#cboProducto").val() != null && ($("#cboOperador").val() == '' || $("#txtCantidad").val() == '')) { 
-    //    const msg = `Debe completar los campos Operador y Cantidad`;
-    //    toastr.warning(msg, "");
-    //    return;
-    //}
+    if (productSelected != null && ($("#cboOperador").val() == '' || $("#txtCantidad").val() == '')) { 
+        const msg = `Debe completar los campos Operador y Cantidad`;
+        toastr.warning(msg, "");
+        return;
+    }
 
 
-    if ($("#cboProducto").val() == null) {
+    if (productSelected == null) {
         $("#cboOperador").val('');
         $("#txtCantidad").val('');
     }
@@ -158,7 +159,7 @@ $("#btnSave").on("click", function () {
     model["isActive"] = $("#cboState").val() === '1' ? true : false;
     model["operador"] = $("#cboOperador").val() != '' ? $("#cboOperador").val() : null;
     model["cantidadProducto"] = $("#txtCantidad").val() != '' ? $("#txtCantidad").val() : null;
-    model["idProducto"] = productSelector.getValue(true);
+    model["idProducto"] = productSelected;
     model["idCategory"] = $("#cboCategoria").val() != '' ? $("#cboCategoria").val() : null;
     model["dias"] = $("#cboDias").val() != '' ? $("#cboDias").val() : null;
     model["precio"] = $("#txtPrecio").val() != '' ? $("#txtPrecio").val() : null;

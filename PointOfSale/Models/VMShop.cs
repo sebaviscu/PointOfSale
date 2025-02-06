@@ -27,7 +27,10 @@ namespace PointOfSale.Models
                 TakeAwayDescuento = ajustes.TakeAwayDescuento;
                 TemrinosCondiciones = ajustes.TemrinosCondiciones;
                 PoliticaPrivacidad = ajustes.PoliticaPrivacidad;
-                
+                PalabrasClave = ajustes.PalabrasClave;
+                DescripcionWeb = ajustes.DescripcionWeb;
+                UrlSitio = ajustes.UrlSitio;
+
                 var todavy = TimeHelper.GetArgentinaTime();
 
                 int day = (int)todavy.DayOfWeek;
@@ -65,16 +68,15 @@ namespace PointOfSale.Models
 
         public List<VMTypeDocumentSale> FormasDePago { get; set; }
 
-        //public VMAjustesWeb Ajustes { get; set; }
         public bool Open { get; set; } = false;
 
         public string? SobreNosotros { get; set; }
         public string? TemrinosCondiciones { get; set; }
         public string? PoliticaPrivacidad { get; set; }
-        public string? Nombre { get; set; }
-        public string? Whatsapp { get; set; }
-        public string? Direccion { get; set; }
-        public string? Email { get; set; }
+        public string? Nombre { get; set; } = string.Empty;
+        public string? Whatsapp { get; set; } = string.Empty;
+        public string? Direccion { get; set; } = string.Empty;
+        public string? Email { get; set; } = string.Empty;
         public decimal? MontoEnvioGratis { get; set; }
         public string? Facebook { get; set; }
         public string? Instagram { get; set; }
@@ -83,5 +85,9 @@ namespace PointOfSale.Models
         public string? Youtube { get; set; }
         public bool? HabilitarTakeAway { get; set; }
         public decimal? TakeAwayDescuento { get; set; }
+        public string? PalabrasClave { get; set; } = string.Empty;
+        public string? DescripcionWeb { get; set; } = string.Empty;
+        public string? UrlSitio { get; set; } = string.Empty;
+        public string? SiteMap => !string.IsNullOrEmpty(UrlSitio) ? UrlSitio + "/sitemap.xml" : string.Empty;
     }
 }

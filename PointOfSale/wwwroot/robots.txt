@@ -1,6 +1,6 @@
 User-agent: *
-Disallow: /admin/
-Disallow: /private/
+Disallow: /Access/
+Disallow: /Admin/
 Allow: /
 
 Sitemap: https://www.mercado-pos.somee.com/sitemap.xml

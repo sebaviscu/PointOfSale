@@ -41,11 +41,13 @@ namespace PointOfSale.Models
         public bool? PrecioAlMomento { get; set; }
         public bool? ExcluirPromociones { get; set; }
         public bool? IncluirIvaEnPrecio { get; set; }
+        public string? CategoriaDescripcion { get; set; }
+        public string? ProveedorNombre { get; set; }
 
-        public virtual ICollection<Stock>? Stocks { get; set; }
+        public virtual ICollection<VMStock>? Stocks { get; set; }
         public virtual ICollection<VMTag>? Tags { get; set; }
-        public List<VMVencimiento>? Vencimientos { get; set; }
-        public List<VMListaPrecio>? ListaPrecios { get; set; }
+        public ICollection<VMVencimiento>? Vencimientos { get; set; }
+        public ICollection<VMListaPrecio>? ListaPrecios { get; set; }
         public virtual ICollection<VMCodigoBarras>? CodigoBarras { get; set; }
         public VMProveedor? Proveedor { get; set; }
         public virtual VMCategory? IdCategoryNavigation { get; set; }

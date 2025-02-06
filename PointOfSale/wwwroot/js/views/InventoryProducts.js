@@ -118,22 +118,38 @@ $(document).ready(function () {
                 { "data": "sku" },
                 { "data": "description" },
                 {
-                    "data": "idCategoryNavigation.description",
+                    "data": "categoriaDescripcion",
                     "defaultContent": ""
                 },
                 {
-                    "data": "proveedor.nombre",
+                    "data": "proveedorNombre",
                     "render": function (data, type, row) {
                         return data ? data : '';
                     }
                 },
                 {
-                    "data": "listaPrecios",
+                    "data": "price",
                     "render": function (data, type, row) {
-                        return data && data.length > 0 ? `$ ${data[0].precio}` : '';
-                    },
-                    "defaultContent": ""
+                        return data ? '$' + data : '';
+                    }
                 },
+                //{
+                //    "data": "idCategoryNavigation.description",
+                //    "defaultContent": ""
+                //},
+                //{
+                //    "data": "proveedor.nombre",
+                //    "render": function (data, type, row) {
+                //        return data ? data : '';
+                //    }
+                //},
+                //{
+                //    "data": "listaPrecios",
+                //    "render": function (data, type, row) {
+                //        return data && data.length > 0 ? `$ ${data[0].precio}` : '';
+                //    },
+                //    "defaultContent": ""
+                //},
                 { "data": "modificationDate" },
                 {
                     "data": "isActive",
@@ -399,26 +415,34 @@ function editAll() {
     let ul = document.createElement('ul');
     ul.setAttribute('style', 'padding: 0; margin: 0;');
     ul.setAttribute('id', 'theList');
-    //ul.classList.add("list-group");
 
     for (i = 0; i <= aProductos.length - 1; i++) {
         let li = document.createElement('li');
         li.innerHTML = aProductos[i][1] + ": " + aProductos[i][2];
         li.setAttribute('style', 'display: block;');
-        //li.classList.add("list-group-item");
         ul.appendChild(li);
     }
     cont.appendChild(ul);
 
-    let productos = tableDataProduct.ajax.json().data;
+    //let productos = tableDataProduct.ajax.json().data;
 
     let idsProductos = aProductos.map(item => parseInt(item[0]));
 
-    let productosFiltrados = productos.filter(producto => idsProductos.includes(producto.idProduct));
+    //let productosFiltrados = productos.filter(producto => idsProductos.includes(producto.idProduct));
 
-    cargarTabla(productosFiltrados);
+    let queryString = idsProductos.map(id => `idsProducts=${id}`).join('&');
 
-    $("#modalDataMasivo").modal("show")
+    fetch(`/Inventory/GetProductsByIds?${queryString}`)
+        .then(response => response.json())
+        .then(responseJson => {
+            if (responseJson.data.length > 0) {
+                cargarTabla(responseJson.data);
+                $("#modalDataMasivo").modal("show");
+            }
+        })
+        .catch(error => {
+            console.error('Error al recuperar productos:', error);
+        });
 }
 
 const openModalProduct = (model = BASIC_MODEL_PRODUCTOS) => {
@@ -1228,13 +1252,13 @@ function calcularPrecio() {
     let roundingDigits = $("#roundingParticular").val();
 
     let incluirIva = document.querySelector('#cboIvaEnCosto').checked;
-     
+
     iva = incluirIva == true ?
         iva == '' || iva == null
             ? 0
             : parseFloat(iva)
         : 0;
-    
+
 
     if (costo !== '') {
         costo = parseFloat(costo) * (1 + (iva / 100));

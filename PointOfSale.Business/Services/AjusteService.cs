@@ -146,8 +146,7 @@ namespace PointOfSale.Business.Services
                 Ajustes_found.HorariosWeb = entity.HorariosWeb;
             }
 
-            var webRepository = _unitOfWork.Repository<AjustesWeb>();
-            bool response = await webRepository.Edit(Ajustes_found);
+            bool response = await _repositoryAjustesWeb.Edit(Ajustes_found);
 
             if (!response)
                 throw new TaskCanceledException("Ajustes Web no se pudo cambiar.");

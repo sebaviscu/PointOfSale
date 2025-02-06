@@ -17,6 +17,7 @@ namespace PointOfSale.Business.Contracts
         Task<bool> Delete(int idProduct);
         Task<bool> EditMassive(string usuario, EditeMassiveProducts data, List<ListaPrecio> listaPrecios);
         Task<Product> Get(int idProducto);
+        Task<List<Product>> Gets(List<int> idsProducto);
         Task<List<Product>> ListActive();
         Task<List<Product>> ListByIds(List<int> idsProducts);
         Task<List<Product>> ListActiveByCategoryWeb(int categoryId, int page, int pageSize, string searchText = "");

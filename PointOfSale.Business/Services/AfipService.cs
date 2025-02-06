@@ -46,7 +46,10 @@ namespace PointOfSale.Business.Services
 
         private async Task<FacturaEmitida> Facturar(Sale sale, string? nroDocumento, int? idCliente, string registrationUser, AjustesFacturacion ajustes)
         {
-            ValidarSale(sale);
+            if (sale.TipoFactura == null)
+            {
+                throw new Exception("El tipo de documento no existe");
+            }
 
             var validCert = ValidateCertificate(ajustes);
             if (validCert != string.Empty)
@@ -54,7 +57,7 @@ namespace PointOfSale.Business.Services
                 throw new Exception(validCert);
             }
 
-            var tipoFactura = ObtenerTipoFactura(sale.TypeDocumentSaleNavigation.TipoFactura, nroDocumento);
+            var tipoFactura = ObtenerTipoFactura(sale.TipoFactura.Value, nroDocumento);
 
             var tipoDoc = TipoComprobante.ConvertTipoFactura(tipoFactura);
             var documentoAFacturar = ObtenerDocumentoAFacturar(tipoDoc, nroDocumento);
@@ -129,14 +132,6 @@ namespace PointOfSale.Business.Services
             }
 
             return tipoDoc;
-        }
-
-        private void ValidarSale(Sale sale)
-        {
-            if (sale.TypeDocumentSaleNavigation == null)
-            {
-                throw new Exception("El tipo de documento no existe");
-            }
         }
 
         private TipoFactura ObtenerTipoFactura(TipoFactura tipoFactura, string? nroDocumento)

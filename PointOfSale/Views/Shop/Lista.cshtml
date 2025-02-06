@@ -22,21 +22,13 @@
 <link href="~/plugins/toastr/toastr.css" rel="stylesheet">
 <link rel="icon" href="~/images/favicon.ico" type="image/x-icon" />
 
-<html lang="es">
-<head>
-	<title>@Model.Nombre</title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-</head>
-<body class="goto-here" style="overflow-x: hidden">
 
 
 	<div id="txtMontoEnvioGratis" style="display:none">
-		@Model.MontoEnvioGratis
+	@Model.MontoEnvioGratis
 	</div>
 	<div id="txtOpen" style="display:none">
-		@Model.Open
+	@Model.Open
 	</div>
 
 
@@ -47,23 +39,23 @@
 	</div>
 
 	<div>
-		@{
-			if (!@Model.Open)
-			{
-				<div class="alert d-flex alert-warning d-flex align-items-center" style="justify-content: center;">
-					<div class="text-center">
-						@if (string.IsNullOrEmpty(Model.HorariosToday))
-						{
-							<text>A esta hora, estamos cerrados.</text>
-						}
-						else
-						{
-							<text>A esta hora, estamos cerrados, nuestro horario es <strong>@Model.HorariosToday</strong>.</text>
-						}
-					</div>
-				</div>
-			}
+	@{
+		if (!@Model.Open)
+		{
+								<div class="alert d-flex alert-warning d-flex align-items-center" style="justify-content: center;">
+									<div class="text-center">
+					@if (string.IsNullOrEmpty(Model.HorariosToday))
+					{
+						<text>A esta hora, estamos cerrados.</text>
+					}
+					else
+					{
+						<text>A esta hora, estamos cerrados, nuestro horario es <strong>@Model.HorariosToday</strong>.</text>
+					}
+									</div>
+								</div>
 		}
+	}
 	</div>
 
 	<div class="d-flex justify-content-center">
@@ -79,15 +71,15 @@
 			</div>
 			<a class="btn btnCategoria active" cat-id="0" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">Todo</a>
 
-			@if (ViewData["HasDestacados"] != null && (bool)ViewData["HasDestacados"])
-			{
-				<a class="btn btnCategoria" cat-id="-3" tag-id="-3" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">Destacados</a>
-			}
+		@if (ViewData["HasDestacados"] != null && (bool)ViewData["HasDestacados"])
+		{
+						<a class="btn btnCategoria" cat-id="-3" tag-id="-3" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">Destacados</a>
+		}
 
-			@foreach (var cat in Model.CategoriaWebs.OrderBy(_ => _.Descripcion))
-			{
-				<a class="btn btnCategoria" cat-id="@cat.IdCategoria" tag-id="@cat.IdTag" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">@cat.Descripcion</a>
-			}
+		@foreach (var cat in Model.CategoriaWebs.OrderBy(_ => _.Descripcion))
+		{
+						<a class="btn btnCategoria" cat-id="@cat.IdCategoria" tag-id="@cat.IdTag" style="box-shadow: 0px 2px 8px 4px rgba(0,0,0,0.2); margin:5px;">@cat.Descripcion</a>
+		}
 		</div>
 	</div>
 
@@ -95,11 +87,14 @@
 		<div class="container text-center">
 			<div id="dvCategoryResults" style="margin: 10px;">
 
-				@{
-					Html.RenderPartial("PVProducts", Model.Products);
-				}
+			@{
+				Html.RenderPartial("PVProducts", Model.Products);
+			}
 			</div>
-			<div id="loader" class="mt-1" style="display: none;">Cargando productos...</div>
+			<div id="loader" style="display: none;padding: 25px;">
+				<span class="mdi mdi-reload mdi-spin"></span>
+				Cargando productos...
+			</div>
 		</div>
 	</section>
 
@@ -135,19 +130,19 @@
 										<input type="tel" class="form-control form-control-sm input-validate" id="txtTelefono" name="Telefono">
 									</div>
 								</div>
-								@{
-									if (Model.HabilitarTakeAway.HasValue && Model.HabilitarTakeAway.Value)
-									{
-										var descuentoTakeAway = Model.TakeAwayDescuento != 0 ? $" {Convert.ToInt32(@Model.TakeAwayDescuento)}% de descuento" : "";
-										var takeAway = $"Retiro en el local";
-										<div class="text-center">
-											<div class="form-check form-switch">
-												<input type="checkbox" id="switchTakeAway">
-												<label class="form-check-label" for="switchTakeAway">@takeAway</label>
-											</div>
-										</div>
-									}
+							@{
+								if (Model.HabilitarTakeAway.HasValue && Model.HabilitarTakeAway.Value)
+								{
+									var descuentoTakeAway = Model.TakeAwayDescuento != 0 ? $" {Convert.ToInt32(@Model.TakeAwayDescuento)}% de descuento" : "";
+									var takeAway = $"Retiro en el local";
+														<div class="text-center">
+															<div class="form-check form-switch">
+																<input type="checkbox" id="switchTakeAway">
+																<label class="form-check-label" for="switchTakeAway">@takeAway</label>
+															</div>
+														</div>
 								}
+							}
 								<div class="form-row">
 									<div class="form-group col-sm-8">
 										<label for="txtNombre">Direccion de entrega <b">*</b></label>
@@ -158,10 +153,10 @@
 
 										<select class="form-control" id="cboFormaPago">
 											<option value=""></option>
-											@foreach (var i in Model.FormasDePago)
-											{
-												<option value="@i.IdTypeDocumentSale">@i.Description</option>
-											}
+										@foreach (var i in Model.FormasDePago)
+										{
+														<option value="@i.IdTypeDocumentSale">@i.Description</option>
+										}
 										</select>
 									</div>
 								</div>
@@ -216,5 +211,3 @@
 	<script src="~/plugins/toastr/toastr.min.js"></script>
 
 	<script src="~/js/views/listShop.js"></script>
-</body>
-</html>

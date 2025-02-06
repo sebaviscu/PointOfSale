@@ -23,6 +23,11 @@ namespace PointOfSale.Business.Services
             _proveedorMovimiento = proveedorMovimiento;
         }
 
+        public async Task<Proveedor> Get(int idProveedor)
+        {
+            return await _repository.Get(p => p.IdProveedor == idProveedor);
+        }
+
         public async Task<List<Proveedor>> List()
         {
             IQueryable<Proveedor> query = await _repository.Query();

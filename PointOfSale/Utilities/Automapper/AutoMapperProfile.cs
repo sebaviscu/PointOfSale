@@ -438,10 +438,10 @@ namespace PointOfSale.Utilities.Automapper
 
             CreateMap<Product, VMProductSimplificado>()
             .ForMember(destiny =>
-                destiny.Price,
+                destiny.Price1,
                 opt => opt.MapFrom(source => source.ListaPrecios.Any() && source.ListaPrecios.Count > 0 ? source.ListaPrecios[0].Precio.ToString() : "0"))
             .ForMember(destiny =>
-                destiny.PorcentajeProfit,
+                destiny.PorcentajeProfit1,
                 opt => opt.MapFrom(source => source.ListaPrecios.Any() && source.ListaPrecios.Count > 0 ? source.ListaPrecios[0].PorcentajeProfit : 0))
             .ForMember(destiny =>
                 destiny.Precio2,

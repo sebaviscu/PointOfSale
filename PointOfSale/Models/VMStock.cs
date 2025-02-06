@@ -8,8 +8,8 @@ namespace PointOfSale.Models
         public decimal StockActual { get; set; }
         public int StockMinimo { get; set; }
         public int IdProducto { get; set; }
-        public Product? Producto { get; set; }
+        //public VMProduct? Producto { get; set; }
         public int IdTienda { get; set; }
-        public Tienda? Tienda { get; set; }
+        //public VMTienda? Tienda { get; set; }
     }
 }

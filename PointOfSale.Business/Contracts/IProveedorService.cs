@@ -9,6 +9,7 @@ namespace PointOfSale.Business.Contracts
 {
     public interface IProveedorService
     {
+        Task<Proveedor> Get(int idProveedor);
         Task<List<Proveedor>> List();
         Task<Proveedor> Add(Proveedor entity);
         Task<Proveedor> Edit(Proveedor entity);

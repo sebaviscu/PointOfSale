@@ -4,9 +4,19 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-	<title>@Model.Nombre</title>
+	<title> @Model.Nombre </title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="icon" href="~/images/favicon.ico" type="image/x-icon">
+	<meta name="sitemap" content="@Model.SiteMap">
+
+	<meta property="og:title" content="@Model.Nombre">
+	<meta property="og:description" content="@Model.DescripcionWeb">
+	<meta property="og:image" content="~/Shop/logo.jpeg">
+	@* entre 5 y 10 palabras, maximo 160 caracteres *@
+	<meta name="keywords" content="@Model.PalabrasClave">
+
+
 
 	<link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&display=swap" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Lora:400,400i,700,700i&display=swap" rel="stylesheet">
@@ -43,7 +53,7 @@
 			@if (Model.IsLogin)
 			{
 				<div>
-					<a href="/Access/Login" class="btn btn-info" style="margin-right: 10px"><i class="mdi mdi-login-variant mdi-18px mdi-rotate-180"></i></a>
+					<a id="btnBackAdmin" href="/Access/Login" class="btn btn-info"><i class="mdi mdi-login-variant mdi-18px mdi-rotate-180"></i></a>
 				</div>
 			}
 			<a href="/Shop/Index" class="navbar-brand" style="white-space: normal;text-align: center;font-size: 30px;">@Model.Nombre</a>
@@ -80,7 +90,7 @@
 						}
 						@if (!string.IsNullOrWhiteSpace(@Model.Email))
 						{
-							<div class="col-md topper">
+							<div class="col-md topper" style="font-size: 13px;">
 								<span class="text"><i class="mdi mdi-email mdi-18px"></i>&nbsp; @Model.Email</span>
 							</div>
 						}
@@ -152,7 +162,7 @@
 			</div>
 
 			<div class="col-md-4">
-				<img src="~/Shop/logo.jpeg" style="max-width:200px;" class="rounded mx-auto d-block" alt="Logo" />
+				<img src="~/Shop/logo.jpeg" style="max-width:200px;" class="rounded mx-auto d-block" alt="Logo de la empresa @Model.Nombre" />
 			</div>
 
 		</div>

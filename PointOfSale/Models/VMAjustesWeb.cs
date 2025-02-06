@@ -39,6 +39,9 @@ namespace PointOfSale.Models
         public string? TemrinosCondiciones { get; set; }
         public string? PoliticaPrivacidad { get; set; }
         public string? LogoImagenNombre { get; set; }
+        public string? PalabrasClave { get; set; } = string.Empty;
+        public string? DescripcionWeb { get; set; } = string.Empty;
+        public string? UrlSitio { get; set; } = string.Empty;
         public ICollection<VMHorarioWeb>? HorariosWeb { get; set; }
     }
 }

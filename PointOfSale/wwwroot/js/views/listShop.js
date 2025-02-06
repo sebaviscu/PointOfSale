@@ -21,12 +21,19 @@ const BASIC_MODEL_SHOP = {
     costoEnvio: 0
 }
 
-$(window).scroll(function () {
-    if ($(window).scrollTop() + $(window).height() >= $(document).height() - 50 && hasMoreProducts && !isLoading) {
+function checkScroll() {
+    let scrollTop = window.scrollY || document.documentElement.scrollTop;
+    let windowHeight = window.innerHeight;
+    let documentHeight = document.documentElement.scrollHeight;
+
+    if (scrollTop + windowHeight >= documentHeight - 500 && hasMoreProducts && !isLoading) {
         page++;
         loadMoreProducts();
     }
-});
+}
+
+$(window).on("scroll touchmove", checkScroll);
+
 //ajustarDivTextPrice();
 
 $(document).ready(function () {
@@ -119,11 +126,14 @@ function fetchProducts(page, pageSize, categoryId, tagId, searchText) {
     isLoading = true;
     $('#loader').show();
 
+    let tag = tagId != null ? tagId : 0;
+    let category = categoryId != null ? categoryId : 0;
+
     const productsQuantity = Object.fromEntries(
         productos.map(product => [product.idProduct, product.quantity])
     );
 
-    fetch(`/Shop/GetMoreProducts?page=${page}&pageSize=${pageSize}&categoryId=${categoryId}&searchText=${searchText}&tagId=${tagId}`, {
+    fetch(`/Shop/GetMoreProducts?page=${page}&pageSize=${pageSize}&categoryId=${category}&searchText=${searchText}&tagId=${tag}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -564,7 +574,7 @@ function dibujarAreaTotales() {
     });
 
     productsToDisplay.forEach((a) => {
-        let descrCortada = cortarTextoLargo(a.descriptionProduct, 12, 5);
+        let descrCortada = cortarTextoLargo(a.descriptionProduct, 16, 5);
         textArea.innerHTML += `· ${descrCortada}: $${Number.parseFloat(a.price).toFixed(0)} x ${a.quantity} ${a.tipoVenta} = $ ${Number.parseFloat(a.total).toFixed(0)}<br>`;
     });
 

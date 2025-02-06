@@ -14,14 +14,15 @@ namespace PointOfSale.Models
         public int? IdCategory { get; set; }
         public string? NameCategory { get; set; }
         public decimal? Quantity { get; set; }
-        public string? Price { get; set; }
+        public decimal? Price { get; set; }
+        public string? Price1 { get; set; }
         public string? PriceString { get; set; }
         public string? PhotoBase64 { get; set; }
         public int? IsActive { get; set; }
         public string? ModificationUser { get; set; }
         public DateTime? ModificationDate { get; set; }
         public decimal? PriceWeb { get; set; }
-        public int? PorcentajeProfit { get; set; }
+        public int? PorcentajeProfit1 { get; set; }
         public decimal? CostPrice { get; set; }
         public TipoVenta TipoVenta { get; set; }
         public string NameProveedor { get; set; }
@@ -37,6 +38,8 @@ namespace PointOfSale.Models
         public decimal? PrecioFormatoWeb { get; set; }
         public int? FormatoWeb { get; set; }
         public bool? IncluirIvaEnPrecio { get; set; }
+        public string? CategoriaDescripcion { get; set; }
+        public string? ProveedorNombre { get; set; }
 
         public List<VMVencimiento>? Vencimientos { get; set; }
         public List<VMListaPrecio>? ListaPrecios { get; set; }
