@@ -531,6 +531,7 @@ function setValue(event, mult) {
     }
 
     inputProd.value = valueString
+    let iva = descProd.attributes.iva != null ? parseFloat(descProd.attributes.iva.value.replace(',', '.')) : 21;
 
     let productFind = productos.find(item => item.idProduct === idProd);
     if (productFind) {
@@ -549,7 +550,8 @@ function setValue(event, mult) {
             descriptionProduct: descProd.attributes.descProd.value,
             total: value * price,
             tipoVenta: inputProd.attributes.typeinput.value,
-            formatoWeb: formatoWeb
+            formatoWeb: formatoWeb,
+            iva: iva
         }
 
         productos.push(prod);

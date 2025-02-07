@@ -13,7 +13,7 @@ namespace AfipServiceReference
     
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FEAuthRequest", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FEAuthRequest : object
     {
@@ -65,7 +65,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FECAERequest", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAERequest : object
     {
@@ -102,14 +102,14 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FECAECabRequest", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAECabRequest : AfipServiceReference.FECabRequest
     {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FECAEDetRequest", Namespace="http://ar.gov.afip.dif.FEV1/")]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(AfipServiceReference.FECompConsResponse))]
     public partial class FECAEDetRequest : AfipServiceReference.FEDetRequest
@@ -117,7 +117,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FECabRequest", Namespace="http://ar.gov.afip.dif.FEV1/")]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(AfipServiceReference.FECAEACabRequest))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(AfipServiceReference.FECAECabRequest))]
@@ -171,14 +171,14 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FECAEACabRequest", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAEACabRequest : AfipServiceReference.FECabRequest
     {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FEDetRequest", Namespace="http://ar.gov.afip.dif.FEV1/")]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(AfipServiceReference.FECAEADetRequest))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(AfipServiceReference.FECAEDetRequest))]
@@ -220,6 +220,10 @@ namespace AfipServiceReference
         
         private double MonCotizField;
         
+        private string CanMisMonExtField;
+        
+        private int CondicionIVAReceptorIdField;
+        
         private System.Collections.Generic.List<AfipServiceReference.CbteAsoc> CbtesAsocField;
         
         private System.Collections.Generic.List<AfipServiceReference.Tributo> TributosField;
@@ -229,6 +233,10 @@ namespace AfipServiceReference
         private System.Collections.Generic.List<AfipServiceReference.Opcional> OpcionalesField;
         
         private System.Collections.Generic.List<AfipServiceReference.Comprador> CompradoresField;
+        
+        private AfipServiceReference.Periodo PeriodoAsocField;
+        
+        private System.Collections.Generic.List<AfipServiceReference.Actividad> ActividadesField;
         
         [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
         public int Concepto
@@ -438,7 +446,7 @@ namespace AfipServiceReference
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=16)]
+        [System.Runtime.Serialization.DataMemberAttribute(Order=16)]
         public double MonCotiz
         {
             get
@@ -452,6 +460,32 @@ namespace AfipServiceReference
         }
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=17)]
+        public string CanMisMonExt
+        {
+            get
+            {
+                return this.CanMisMonExtField;
+            }
+            set
+            {
+                this.CanMisMonExtField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Order=18)]
+        public int CondicionIVAReceptorId
+        {
+            get
+            {
+                return this.CondicionIVAReceptorIdField;
+            }
+            set
+            {
+                this.CondicionIVAReceptorIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=19)]
         public System.Collections.Generic.List<AfipServiceReference.CbteAsoc> CbtesAsoc
         {
             get
@@ -464,7 +498,7 @@ namespace AfipServiceReference
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=18)]
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=20)]
         public System.Collections.Generic.List<AfipServiceReference.Tributo> Tributos
         {
             get
@@ -477,7 +511,7 @@ namespace AfipServiceReference
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=19)]
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=21)]
         public System.Collections.Generic.List<AfipServiceReference.AlicIva> Iva
         {
             get
@@ -490,7 +524,7 @@ namespace AfipServiceReference
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=20)]
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=22)]
         public System.Collections.Generic.List<AfipServiceReference.Opcional> Opcionales
         {
             get
@@ -503,7 +537,7 @@ namespace AfipServiceReference
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=21)]
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=23)]
         public System.Collections.Generic.List<AfipServiceReference.Comprador> Compradores
         {
             get
@@ -515,10 +549,73 @@ namespace AfipServiceReference
                 this.CompradoresField = value;
             }
         }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=24)]
+        public AfipServiceReference.Periodo PeriodoAsoc
+        {
+            get
+            {
+                return this.PeriodoAsocField;
+            }
+            set
+            {
+                this.PeriodoAsocField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=25)]
+        public System.Collections.Generic.List<AfipServiceReference.Actividad> Actividades
+        {
+            get
+            {
+                return this.ActividadesField;
+            }
+            set
+            {
+                this.ActividadesField = value;
+            }
+        }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="Periodo", Namespace="http://ar.gov.afip.dif.FEV1/")]
+    public partial class Periodo : object
+    {
+        
+        private string FchDesdeField;
+        
+        private string FchHastaField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public string FchDesde
+        {
+            get
+            {
+                return this.FchDesdeField;
+            }
+            set
+            {
+                this.FchDesdeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public string FchHasta
+        {
+            get
+            {
+                return this.FchHastaField;
+            }
+            set
+            {
+                this.FchHastaField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FECAEADetRequest", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAEADetRequest : AfipServiceReference.FEDetRequest
     {
@@ -555,7 +652,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FECompConsResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECompConsResponse : AfipServiceReference.FECAEDetRequest
     {
@@ -682,7 +779,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="CbteAsoc", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class CbteAsoc : object
     {
@@ -764,7 +861,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="Tributo", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class Tributo : object
     {
@@ -846,7 +943,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="AlicIva", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class AlicIva : object
     {
@@ -898,7 +995,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="Opcional", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class Opcional : object
     {
@@ -935,7 +1032,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="Comprador", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class Comprador : object
     {
@@ -987,7 +1084,29 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="Actividad", Namespace="http://ar.gov.afip.dif.FEV1/")]
+    public partial class Actividad : object
+    {
+        
+        private long IdField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public long Id
+        {
+            get
+            {
+                return this.IdField;
+            }
+            set
+            {
+                this.IdField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="Obs", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class Obs : object
     {
@@ -1024,7 +1143,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FECAEResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAEResponse : object
     {
@@ -1091,14 +1210,14 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FECAECabResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAECabResponse : AfipServiceReference.FECabResponse
     {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FECAEDetResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAEDetResponse : AfipServiceReference.FEDetResponse
     {
@@ -1135,7 +1254,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="Evt", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class Evt : object
     {
@@ -1172,7 +1291,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="Err", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class Err : object
     {
@@ -1209,7 +1328,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FECabResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(AfipServiceReference.FECAEACabResponse))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(AfipServiceReference.FECAECabResponse))]
@@ -1323,14 +1442,14 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FECAEACabResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAEACabResponse : AfipServiceReference.FECabResponse
     {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FEDetResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(AfipServiceReference.FECAEADetResponse))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(AfipServiceReference.FECAEDetResponse))]
@@ -1459,7 +1578,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FECAEADetResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAEADetResponse : AfipServiceReference.FEDetResponse
     {
@@ -1481,7 +1600,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FERegXReqResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FERegXReqResponse : object
     {
@@ -1533,7 +1652,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="DummyResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class DummyResponse : object
     {
@@ -1585,7 +1704,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FERecuperaLastCbteResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FERecuperaLastCbteResponse : object
     {
@@ -1667,7 +1786,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FECompConsultaReq", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECompConsultaReq : object
     {
@@ -1719,7 +1838,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FECompConsultaResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECompConsultaResponse : object
     {
@@ -1771,7 +1890,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FECAEARequest", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAEARequest : object
     {
@@ -1808,7 +1927,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FECAEAResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAEAResponse : object
     {
@@ -1875,7 +1994,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FECAEAGetResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAEAGetResponse : object
     {
@@ -1927,7 +2046,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FECAEAGet", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAEAGet : object
     {
@@ -2054,7 +2173,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FECAEASinMovConsResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAEASinMovConsResponse : object
     {
@@ -2106,7 +2225,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FECAEASinMov", Namespace="http://ar.gov.afip.dif.FEV1/")]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(AfipServiceReference.FECAEASinMovResponse))]
     public partial class FECAEASinMov : object
@@ -2159,7 +2278,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FECAEASinMovResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAEASinMovResponse : AfipServiceReference.FECAEASinMov
     {
@@ -2211,7 +2330,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FECotizacionResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECotizacionResponse : object
     {
@@ -2263,7 +2382,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="Cotizacion", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class Cotizacion : object
     {
@@ -2315,7 +2434,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FETributoResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FETributoResponse : object
     {
@@ -2367,7 +2486,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="TributoTipo", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class TributoTipo : object
     {
@@ -2434,7 +2553,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="MonedaResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class MonedaResponse : object
     {
@@ -2486,7 +2605,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="Moneda", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class Moneda : object
     {
@@ -2553,7 +2672,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="IvaTipoResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class IvaTipoResponse : object
     {
@@ -2605,7 +2724,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="IvaTipo", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class IvaTipo : object
     {
@@ -2672,7 +2791,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="OpcionalTipoResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class OpcionalTipoResponse : object
     {
@@ -2724,7 +2843,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="OpcionalTipo", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class OpcionalTipo : object
     {
@@ -2791,7 +2910,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="ConceptoTipoResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class ConceptoTipoResponse : object
     {
@@ -2843,7 +2962,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="ConceptoTipo", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class ConceptoTipo : object
     {
@@ -2910,7 +3029,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FEPtoVentaResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FEPtoVentaResponse : object
     {
@@ -2962,7 +3081,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="PtoVenta", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class PtoVenta : object
     {
@@ -3029,7 +3148,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="CbteTipoResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class CbteTipoResponse : object
     {
@@ -3081,7 +3200,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="CbteTipo", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class CbteTipo : object
     {
@@ -3148,7 +3267,111 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CondicionIvaReceptorResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
+    public partial class CondicionIvaReceptorResponse : object
+    {
+        
+        private System.Collections.Generic.List<AfipServiceReference.CondicionIvaReceptor> ResultGetField;
+        
+        private System.Collections.Generic.List<AfipServiceReference.Err> ErrorsField;
+        
+        private System.Collections.Generic.List<AfipServiceReference.Evt> EventsField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public System.Collections.Generic.List<AfipServiceReference.CondicionIvaReceptor> ResultGet
+        {
+            get
+            {
+                return this.ResultGetField;
+            }
+            set
+            {
+                this.ResultGetField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=1)]
+        public System.Collections.Generic.List<AfipServiceReference.Err> Errors
+        {
+            get
+            {
+                return this.ErrorsField;
+            }
+            set
+            {
+                this.ErrorsField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=2)]
+        public System.Collections.Generic.List<AfipServiceReference.Evt> Events
+        {
+            get
+            {
+                return this.EventsField;
+            }
+            set
+            {
+                this.EventsField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CondicionIvaReceptor", Namespace="http://ar.gov.afip.dif.FEV1/")]
+    public partial class CondicionIvaReceptor : object
+    {
+        
+        private int IdField;
+        
+        private string DescField;
+        
+        private string Cmp_ClaseField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public int Id
+        {
+            get
+            {
+                return this.IdField;
+            }
+            set
+            {
+                this.IdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=1)]
+        public string Desc
+        {
+            get
+            {
+                return this.DescField;
+            }
+            set
+            {
+                this.DescField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=2)]
+        public string Cmp_Clase
+        {
+            get
+            {
+                return this.Cmp_ClaseField;
+            }
+            set
+            {
+                this.Cmp_ClaseField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="DocTipoResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class DocTipoResponse : object
     {
@@ -3200,7 +3423,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="DocTipo", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class DocTipo : object
     {
@@ -3267,7 +3490,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="FEPaisResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FEPaisResponse : object
     {
@@ -3319,7 +3542,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="PaisTipo", Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class PaisTipo : object
     {
@@ -3355,7 +3578,111 @@ namespace AfipServiceReference
         }
     }
     
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="FEActividadesResponse", Namespace="http://ar.gov.afip.dif.FEV1/")]
+    public partial class FEActividadesResponse : object
+    {
+        
+        private System.Collections.Generic.List<AfipServiceReference.ActividadesTipo> ResultGetField;
+        
+        private System.Collections.Generic.List<AfipServiceReference.Err> ErrorsField;
+        
+        private System.Collections.Generic.List<AfipServiceReference.Evt> EventsField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
+        public System.Collections.Generic.List<AfipServiceReference.ActividadesTipo> ResultGet
+        {
+            get
+            {
+                return this.ResultGetField;
+            }
+            set
+            {
+                this.ResultGetField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=1)]
+        public System.Collections.Generic.List<AfipServiceReference.Err> Errors
+        {
+            get
+            {
+                return this.ErrorsField;
+            }
+            set
+            {
+                this.ErrorsField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=2)]
+        public System.Collections.Generic.List<AfipServiceReference.Evt> Events
+        {
+            get
+            {
+                return this.EventsField;
+            }
+            set
+            {
+                this.EventsField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ActividadesTipo", Namespace="http://ar.gov.afip.dif.FEV1/")]
+    public partial class ActividadesTipo : object
+    {
+        
+        private long IdField;
+        
+        private short OrdenField;
+        
+        private string DescField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public long Id
+        {
+            get
+            {
+                return this.IdField;
+            }
+            set
+            {
+                this.IdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public short Orden
+        {
+            get
+            {
+                return this.OrdenField;
+            }
+            set
+            {
+                this.OrdenField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=2)]
+        public string Desc
+        {
+            get
+            {
+                return this.DescField;
+            }
+            set
+            {
+                this.DescField = value;
+            }
+        }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ServiceModel.ServiceContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/", ConfigurationName="AfipServiceReference.ServiceSoap")]
     public interface ServiceSoap
     {
@@ -3414,15 +3741,21 @@ namespace AfipServiceReference
         [System.ServiceModel.OperationContractAttribute(Action="http://ar.gov.afip.dif.FEV1/FEParamGetTiposCbte", ReplyAction="*")]
         System.Threading.Tasks.Task<AfipServiceReference.FEParamGetTiposCbteResponse> FEParamGetTiposCbteAsync(AfipServiceReference.FEParamGetTiposCbteRequest request);
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://ar.gov.afip.dif.FEV1/FEParamGetCondicionIvaReceptor", ReplyAction="*")]
+        System.Threading.Tasks.Task<AfipServiceReference.FEParamGetCondicionIvaReceptorResponse> FEParamGetCondicionIvaReceptorAsync(AfipServiceReference.FEParamGetCondicionIvaReceptorRequest request);
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://ar.gov.afip.dif.FEV1/FEParamGetTiposDoc", ReplyAction="*")]
         System.Threading.Tasks.Task<AfipServiceReference.FEParamGetTiposDocResponse> FEParamGetTiposDocAsync(AfipServiceReference.FEParamGetTiposDocRequest request);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://ar.gov.afip.dif.FEV1/FEParamGetTiposPaises", ReplyAction="*")]
         System.Threading.Tasks.Task<AfipServiceReference.FEParamGetTiposPaisesResponse> FEParamGetTiposPaisesAsync(AfipServiceReference.FEParamGetTiposPaisesRequest request);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://ar.gov.afip.dif.FEV1/FEParamGetActividades", ReplyAction="*")]
+        System.Threading.Tasks.Task<AfipServiceReference.FEParamGetActividadesResponse> FEParamGetActividadesAsync(AfipServiceReference.FEParamGetActividadesRequest request);
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FECAESolicitarRequest
@@ -3442,7 +3775,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAESolicitarRequestBody
@@ -3466,7 +3799,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FECAESolicitarResponse
@@ -3486,7 +3819,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAESolicitarResponseBody
@@ -3506,7 +3839,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FECompTotXRequestRequest
@@ -3526,7 +3859,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECompTotXRequestRequestBody
@@ -3546,7 +3879,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FECompTotXRequestResponse
@@ -3566,7 +3899,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECompTotXRequestResponseBody
@@ -3586,7 +3919,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FEDummyRequest
@@ -3606,7 +3939,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute()]
     public partial class FEDummyRequestBody
@@ -3618,7 +3951,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FEDummyResponse
@@ -3638,7 +3971,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FEDummyResponseBody
@@ -3658,7 +3991,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FECompUltimoAutorizadoRequest
@@ -3678,7 +4011,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECompUltimoAutorizadoRequestBody
@@ -3706,7 +4039,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FECompUltimoAutorizadoResponse
@@ -3726,7 +4059,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECompUltimoAutorizadoResponseBody
@@ -3746,7 +4079,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FECompConsultarRequest
@@ -3766,7 +4099,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECompConsultarRequestBody
@@ -3790,7 +4123,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FECompConsultarResponse
@@ -3810,7 +4143,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECompConsultarResponseBody
@@ -3830,7 +4163,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FECAEARegInformativoRequest
@@ -3850,7 +4183,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAEARegInformativoRequestBody
@@ -3874,7 +4207,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FECAEARegInformativoResponse
@@ -3894,7 +4227,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAEARegInformativoResponseBody
@@ -3914,7 +4247,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FECAEASolicitarRequest
@@ -3934,7 +4267,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAEASolicitarRequestBody
@@ -3962,7 +4295,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FECAEASolicitarResponse
@@ -3982,7 +4315,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAEASolicitarResponseBody
@@ -4002,7 +4335,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FECAEASinMovimientoConsultarRequest
@@ -4022,7 +4355,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAEASinMovimientoConsultarRequestBody
@@ -4050,7 +4383,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FECAEASinMovimientoConsultarResponse
@@ -4070,7 +4403,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAEASinMovimientoConsultarResponseBody
@@ -4090,7 +4423,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FECAEASinMovimientoInformarRequest
@@ -4110,7 +4443,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAEASinMovimientoInformarRequestBody
@@ -4138,7 +4471,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FECAEASinMovimientoInformarResponse
@@ -4158,7 +4491,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAEASinMovimientoInformarResponseBody
@@ -4178,7 +4511,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FECAEAConsultarRequest
@@ -4198,7 +4531,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAEAConsultarRequestBody
@@ -4226,7 +4559,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FECAEAConsultarResponse
@@ -4246,7 +4579,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FECAEAConsultarResponseBody
@@ -4266,7 +4599,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FEParamGetCotizacionRequest
@@ -4286,7 +4619,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FEParamGetCotizacionRequestBody
@@ -4298,19 +4631,23 @@ namespace AfipServiceReference
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=1)]
         public string MonId;
         
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=2)]
+        public string FchCotiz;
+        
         public FEParamGetCotizacionRequestBody()
         {
         }
         
-        public FEParamGetCotizacionRequestBody(AfipServiceReference.FEAuthRequest Auth, string MonId)
+        public FEParamGetCotizacionRequestBody(AfipServiceReference.FEAuthRequest Auth, string MonId, string FchCotiz)
         {
             this.Auth = Auth;
             this.MonId = MonId;
+            this.FchCotiz = FchCotiz;
         }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FEParamGetCotizacionResponse
@@ -4330,7 +4667,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FEParamGetCotizacionResponseBody
@@ -4350,7 +4687,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FEParamGetTiposTributosRequest
@@ -4370,7 +4707,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FEParamGetTiposTributosRequestBody
@@ -4390,7 +4727,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FEParamGetTiposTributosResponse
@@ -4410,7 +4747,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FEParamGetTiposTributosResponseBody
@@ -4430,7 +4767,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FEParamGetTiposMonedasRequest
@@ -4450,7 +4787,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FEParamGetTiposMonedasRequestBody
@@ -4470,7 +4807,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FEParamGetTiposMonedasResponse
@@ -4490,7 +4827,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FEParamGetTiposMonedasResponseBody
@@ -4510,7 +4847,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FEParamGetTiposIvaRequest
@@ -4530,7 +4867,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FEParamGetTiposIvaRequestBody
@@ -4550,7 +4887,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FEParamGetTiposIvaResponse
@@ -4570,7 +4907,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FEParamGetTiposIvaResponseBody
@@ -4590,7 +4927,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FEParamGetTiposOpcionalRequest
@@ -4610,7 +4947,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FEParamGetTiposOpcionalRequestBody
@@ -4630,7 +4967,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FEParamGetTiposOpcionalResponse
@@ -4650,7 +4987,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FEParamGetTiposOpcionalResponseBody
@@ -4670,7 +5007,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FEParamGetTiposConceptoRequest
@@ -4690,7 +5027,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FEParamGetTiposConceptoRequestBody
@@ -4710,7 +5047,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FEParamGetTiposConceptoResponse
@@ -4730,7 +5067,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FEParamGetTiposConceptoResponseBody
@@ -4750,7 +5087,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FEParamGetPtosVentaRequest
@@ -4770,7 +5107,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FEParamGetPtosVentaRequestBody
@@ -4790,7 +5127,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FEParamGetPtosVentaResponse
@@ -4810,7 +5147,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FEParamGetPtosVentaResponseBody
@@ -4830,7 +5167,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FEParamGetTiposCbteRequest
@@ -4850,7 +5187,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FEParamGetTiposCbteRequestBody
@@ -4870,7 +5207,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FEParamGetTiposCbteResponse
@@ -4890,7 +5227,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FEParamGetTiposCbteResponseBody
@@ -4910,7 +5247,91 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class FEParamGetCondicionIvaReceptorRequest
+    {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="FEParamGetCondicionIvaReceptor", Namespace="http://ar.gov.afip.dif.FEV1/", Order=0)]
+        public AfipServiceReference.FEParamGetCondicionIvaReceptorRequestBody Body;
+        
+        public FEParamGetCondicionIvaReceptorRequest()
+        {
+        }
+        
+        public FEParamGetCondicionIvaReceptorRequest(AfipServiceReference.FEParamGetCondicionIvaReceptorRequestBody Body)
+        {
+            this.Body = Body;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
+    public partial class FEParamGetCondicionIvaReceptorRequestBody
+    {
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public AfipServiceReference.FEAuthRequest Auth;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=1)]
+        public string ClaseCmp;
+        
+        public FEParamGetCondicionIvaReceptorRequestBody()
+        {
+        }
+        
+        public FEParamGetCondicionIvaReceptorRequestBody(AfipServiceReference.FEAuthRequest Auth, string ClaseCmp)
+        {
+            this.Auth = Auth;
+            this.ClaseCmp = ClaseCmp;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class FEParamGetCondicionIvaReceptorResponse
+    {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="FEParamGetCondicionIvaReceptorResponse", Namespace="http://ar.gov.afip.dif.FEV1/", Order=0)]
+        public AfipServiceReference.FEParamGetCondicionIvaReceptorResponseBody Body;
+        
+        public FEParamGetCondicionIvaReceptorResponse()
+        {
+        }
+        
+        public FEParamGetCondicionIvaReceptorResponse(AfipServiceReference.FEParamGetCondicionIvaReceptorResponseBody Body)
+        {
+            this.Body = Body;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
+    public partial class FEParamGetCondicionIvaReceptorResponseBody
+    {
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public AfipServiceReference.CondicionIvaReceptorResponse FEParamGetCondicionIvaReceptorResult;
+        
+        public FEParamGetCondicionIvaReceptorResponseBody()
+        {
+        }
+        
+        public FEParamGetCondicionIvaReceptorResponseBody(AfipServiceReference.CondicionIvaReceptorResponse FEParamGetCondicionIvaReceptorResult)
+        {
+            this.FEParamGetCondicionIvaReceptorResult = FEParamGetCondicionIvaReceptorResult;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FEParamGetTiposDocRequest
@@ -4930,7 +5351,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FEParamGetTiposDocRequestBody
@@ -4950,7 +5371,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FEParamGetTiposDocResponse
@@ -4970,7 +5391,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FEParamGetTiposDocResponseBody
@@ -4990,7 +5411,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FEParamGetTiposPaisesRequest
@@ -5010,7 +5431,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FEParamGetTiposPaisesRequestBody
@@ -5030,7 +5451,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class FEParamGetTiposPaisesResponse
@@ -5050,7 +5471,7 @@ namespace AfipServiceReference
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
     public partial class FEParamGetTiposPaisesResponseBody
@@ -5069,13 +5490,93 @@ namespace AfipServiceReference
         }
     }
     
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class FEParamGetActividadesRequest
+    {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="FEParamGetActividades", Namespace="http://ar.gov.afip.dif.FEV1/", Order=0)]
+        public AfipServiceReference.FEParamGetActividadesRequestBody Body;
+        
+        public FEParamGetActividadesRequest()
+        {
+        }
+        
+        public FEParamGetActividadesRequest(AfipServiceReference.FEParamGetActividadesRequestBody Body)
+        {
+            this.Body = Body;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
+    public partial class FEParamGetActividadesRequestBody
+    {
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public AfipServiceReference.FEAuthRequest Auth;
+        
+        public FEParamGetActividadesRequestBody()
+        {
+        }
+        
+        public FEParamGetActividadesRequestBody(AfipServiceReference.FEAuthRequest Auth)
+        {
+            this.Auth = Auth;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class FEParamGetActividadesResponse
+    {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="FEParamGetActividadesResponse", Namespace="http://ar.gov.afip.dif.FEV1/", Order=0)]
+        public AfipServiceReference.FEParamGetActividadesResponseBody Body;
+        
+        public FEParamGetActividadesResponse()
+        {
+        }
+        
+        public FEParamGetActividadesResponse(AfipServiceReference.FEParamGetActividadesResponseBody Body)
+        {
+            this.Body = Body;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://ar.gov.afip.dif.FEV1/")]
+    public partial class FEParamGetActividadesResponseBody
+    {
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public AfipServiceReference.FEActividadesResponse FEParamGetActividadesResult;
+        
+        public FEParamGetActividadesResponseBody()
+        {
+        }
+        
+        public FEParamGetActividadesResponseBody(AfipServiceReference.FEActividadesResponse FEParamGetActividadesResult)
+        {
+            this.FEParamGetActividadesResult = FEParamGetActividadesResult;
+        }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     public interface ServiceSoapChannel : AfipServiceReference.ServiceSoap, System.ServiceModel.IClientChannel
     {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.1-preview-30422-0661")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     public partial class ServiceSoapClient : System.ServiceModel.ClientBase<AfipServiceReference.ServiceSoap>, AfipServiceReference.ServiceSoap
     {
         
@@ -5270,12 +5771,13 @@ namespace AfipServiceReference
             return base.Channel.FEParamGetCotizacionAsync(request);
         }
         
-        public System.Threading.Tasks.Task<AfipServiceReference.FEParamGetCotizacionResponse> FEParamGetCotizacionAsync(AfipServiceReference.FEAuthRequest Auth, string MonId)
+        public System.Threading.Tasks.Task<AfipServiceReference.FEParamGetCotizacionResponse> FEParamGetCotizacionAsync(AfipServiceReference.FEAuthRequest Auth, string MonId, string FchCotiz)
         {
             AfipServiceReference.FEParamGetCotizacionRequest inValue = new AfipServiceReference.FEParamGetCotizacionRequest();
             inValue.Body = new AfipServiceReference.FEParamGetCotizacionRequestBody();
             inValue.Body.Auth = Auth;
             inValue.Body.MonId = MonId;
+            inValue.Body.FchCotiz = FchCotiz;
             return ((AfipServiceReference.ServiceSoap)(this)).FEParamGetCotizacionAsync(inValue);
         }
         
@@ -5378,6 +5880,21 @@ namespace AfipServiceReference
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<AfipServiceReference.FEParamGetCondicionIvaReceptorResponse> AfipServiceReference.ServiceSoap.FEParamGetCondicionIvaReceptorAsync(AfipServiceReference.FEParamGetCondicionIvaReceptorRequest request)
+        {
+            return base.Channel.FEParamGetCondicionIvaReceptorAsync(request);
+        }
+        
+        public System.Threading.Tasks.Task<AfipServiceReference.FEParamGetCondicionIvaReceptorResponse> FEParamGetCondicionIvaReceptorAsync(AfipServiceReference.FEAuthRequest Auth, string ClaseCmp)
+        {
+            AfipServiceReference.FEParamGetCondicionIvaReceptorRequest inValue = new AfipServiceReference.FEParamGetCondicionIvaReceptorRequest();
+            inValue.Body = new AfipServiceReference.FEParamGetCondicionIvaReceptorRequestBody();
+            inValue.Body.Auth = Auth;
+            inValue.Body.ClaseCmp = ClaseCmp;
+            return ((AfipServiceReference.ServiceSoap)(this)).FEParamGetCondicionIvaReceptorAsync(inValue);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         System.Threading.Tasks.Task<AfipServiceReference.FEParamGetTiposDocResponse> AfipServiceReference.ServiceSoap.FEParamGetTiposDocAsync(AfipServiceReference.FEParamGetTiposDocRequest request)
         {
             return base.Channel.FEParamGetTiposDocAsync(request);
@@ -5405,14 +5922,23 @@ namespace AfipServiceReference
             return ((AfipServiceReference.ServiceSoap)(this)).FEParamGetTiposPaisesAsync(inValue);
         }
         
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<AfipServiceReference.FEParamGetActividadesResponse> AfipServiceReference.ServiceSoap.FEParamGetActividadesAsync(AfipServiceReference.FEParamGetActividadesRequest request)
+        {
+            return base.Channel.FEParamGetActividadesAsync(request);
+        }
+        
+        public System.Threading.Tasks.Task<AfipServiceReference.FEParamGetActividadesResponse> FEParamGetActividadesAsync(AfipServiceReference.FEAuthRequest Auth)
+        {
+            AfipServiceReference.FEParamGetActividadesRequest inValue = new AfipServiceReference.FEParamGetActividadesRequest();
+            inValue.Body = new AfipServiceReference.FEParamGetActividadesRequestBody();
+            inValue.Body.Auth = Auth;
+            return ((AfipServiceReference.ServiceSoap)(this)).FEParamGetActividadesAsync(inValue);
+        }
+        
         public virtual System.Threading.Tasks.Task OpenAsync()
         {
             return System.Threading.Tasks.Task.Factory.FromAsync(((System.ServiceModel.ICommunicationObject)(this)).BeginOpen(null, null), new System.Action<System.IAsyncResult>(((System.ServiceModel.ICommunicationObject)(this)).EndOpen));
-        }
-        
-        public virtual System.Threading.Tasks.Task CloseAsync()
-        {
-            return System.Threading.Tasks.Task.Factory.FromAsync(((System.ServiceModel.ICommunicationObject)(this)).BeginClose(null, null), new System.Action<System.IAsyncResult>(((System.ServiceModel.ICommunicationObject)(this)).EndClose));
         }
         
         private static System.ServiceModel.Channels.Binding GetBindingForEndpoint(EndpointConfiguration endpointConfiguration)

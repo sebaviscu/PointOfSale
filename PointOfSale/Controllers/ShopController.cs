@@ -230,7 +230,7 @@ namespace PointOfSale.Controllers
             try
             {
                 var user = ValidarAutorizacion();
-                var ventasWeb = await _shopService.GetAllByDate(user.IdRol == 1 ? null : TimeHelper.GetArgentinaTime());
+                var ventasWeb = await _shopService.GetAllByDate(user.IdRol == 1 ? null : TimeHelper.GetArgentinaTime()); // para empelados devuelve solo las del dia
                 var vmCategoryList = _mapper.Map<List<VMVentaWeb>>(ventasWeb);
                 return StatusCode(StatusCodes.Status200OK, new { data = vmCategoryList });
             }

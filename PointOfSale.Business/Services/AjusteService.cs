@@ -128,6 +128,9 @@ namespace PointOfSale.Business.Services
             Ajustes_found.TemrinosCondiciones = RichTextHelper.SanitizeHtml(entity.TemrinosCondiciones);
             Ajustes_found.PoliticaPrivacidad = RichTextHelper.SanitizeHtml(entity.PoliticaPrivacidad);
             Ajustes_found.LogoImagenNombre = entity.LogoImagenNombre;
+            Ajustes_found.DescripcionWeb = entity.DescripcionWeb;
+            Ajustes_found.UrlSitio = entity.UrlSitio;
+            Ajustes_found.PalabrasClave = entity.PalabrasClave;
 
             Ajustes_found.NombreComodin1 = entity.NombreComodin1;
             Ajustes_found.NombreComodin2 = entity.NombreComodin2;

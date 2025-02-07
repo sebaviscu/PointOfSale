@@ -1,9 +1,4 @@
-﻿{
-  "ProviderId": "Microsoft.VisualStudio.ConnectedService.Wcf",
-  "Version": "15.0.30423.811",
-  "GettingStartedDocument": {
-    "Uri": "https://go.microsoft.com/fwlink/?linkid=858517"
-  },
+{
   "ExtendedData": {
     "inputs": [
       "https://wswhomo.afip.gov.ar/wsfev1/service.asmx?wsdl"
@@ -15,7 +10,61 @@
     "namespaceMappings": [
       "*, AfipServiceReference"
     ],
-    "targetFramework": "netstandard2.0",
+    "references": [
+      "Azure.Core, {Azure.Core, 1.35.0}",
+      "Azure.Identity, {Azure.Identity, 1.10.3}",
+      "D:\\Repositorios\\PointOfSale\\AFIP.Facturacion\\bin\\Debug\\net9.0\\PointOfSale.Model.dll",
+      "Microsoft.Bcl.AsyncInterfaces, {Microsoft.Bcl.AsyncInterfaces, 1.1.1}",
+      "Microsoft.Data.SqlClient, {Microsoft.Data.SqlClient, 5.1.5}",
+      "Microsoft.EntityFrameworkCore, {Microsoft.EntityFrameworkCore, 8.0.6}",
+      "Microsoft.EntityFrameworkCore.Abstractions, {Microsoft.EntityFrameworkCore.Abstractions, 8.0.6}",
+      "Microsoft.EntityFrameworkCore.Relational, {Microsoft.EntityFrameworkCore.Relational, 8.0.6}",
+      "Microsoft.EntityFrameworkCore.SqlServer, {Microsoft.EntityFrameworkCore.SqlServer, 8.0.6}",
+      "Microsoft.Extensions.Caching.Abstractions, {Microsoft.Extensions.Caching.Abstractions, 8.0.0}",
+      "Microsoft.Extensions.Caching.Memory, {Microsoft.Extensions.Caching.Memory, 8.0.0}",
+      "Microsoft.Extensions.Configuration.Abstractions, {Microsoft.Extensions.Configuration.Abstractions, 8.0.0}",
+      "Microsoft.Extensions.Configuration.Binder, {Microsoft.Extensions.Configuration.Binder, 8.0.0}",
+      "Microsoft.Extensions.DependencyInjection, {Microsoft.Extensions.DependencyInjection, 8.0.0}",
+      "Microsoft.Extensions.DependencyInjection.Abstractions, {Microsoft.Extensions.DependencyInjection.Abstractions, 8.0.1}",
+      "Microsoft.Extensions.Logging, {Microsoft.Extensions.Logging, 8.0.0}",
+      "Microsoft.Extensions.Logging.Abstractions, {Microsoft.Extensions.Logging.Abstractions, 8.0.0}",
+      "Microsoft.Extensions.ObjectPool, {Microsoft.Extensions.ObjectPool, 6.0.16}",
+      "Microsoft.Extensions.Options, {Microsoft.Extensions.Options, 8.0.0}",
+      "Microsoft.Extensions.Options.ConfigurationExtensions, {Microsoft.Extensions.Options.ConfigurationExtensions, 8.0.0}",
+      "Microsoft.Extensions.Primitives, {Microsoft.Extensions.Primitives, 8.0.0}",
+      "Microsoft.Identity.Client, {Microsoft.Identity.Client, 4.56.0}",
+      "Microsoft.Identity.Client.Extensions.Msal, {Microsoft.Identity.Client.Extensions.Msal, 4.56.0}",
+      "Microsoft.IdentityModel.Abstractions, {Microsoft.IdentityModel.Abstractions, 6.35.0}",
+      "Microsoft.IdentityModel.JsonWebTokens, {Microsoft.IdentityModel.JsonWebTokens, 6.35.0}",
+      "Microsoft.IdentityModel.Logging, {Microsoft.IdentityModel.Logging, 6.35.0}",
+      "Microsoft.IdentityModel.Protocols, {Microsoft.IdentityModel.Protocols, 6.35.0}",
+      "Microsoft.IdentityModel.Protocols.OpenIdConnect, {Microsoft.IdentityModel.Protocols.OpenIdConnect, 6.35.0}",
+      "Microsoft.IdentityModel.Tokens, {Microsoft.IdentityModel.Tokens, 6.35.0}",
+      "Microsoft.SqlServer.Server, {Microsoft.SqlServer.Server, 1.0.0}",
+      "Newtonsoft.Json, {Newtonsoft.Json, 13.0.3}",
+      "System.Diagnostics.DiagnosticSource, {System.Diagnostics.DiagnosticSource, 6.0.1}",
+      "System.IdentityModel.Tokens.Jwt, {System.IdentityModel.Tokens.Jwt, 6.35.0}",
+      "System.IO.FileSystem.AccessControl, {System.IO.FileSystem.AccessControl, 5.0.0}",
+      "System.Memory.Data, {System.Memory.Data, 1.0.2}",
+      "System.Runtime, {System.Runtime, 4.3.0}",
+      "System.Runtime.CompilerServices.Unsafe, {System.Runtime.CompilerServices.Unsafe, 6.0.0}",
+      "System.Security.AccessControl, {System.Security.AccessControl, 6.0.0}",
+      "System.Security.Cryptography.Cng, {System.Security.Cryptography.Cng, 5.0.0}",
+      "System.Security.Cryptography.Pkcs, {System.Security.Cryptography.Pkcs, 9.0.1}",
+      "System.Security.Cryptography.ProtectedData, {System.Security.Cryptography.ProtectedData, 6.0.0}",
+      "System.Security.Cryptography.Xml, {System.Security.Cryptography.Xml, 6.0.1}",
+      "System.Security.Principal.Windows, {System.Security.Principal.Windows, 5.0.0}",
+      "System.ServiceModel.Duplex, {System.ServiceModel.Duplex, 6.0.0}",
+      "System.ServiceModel.Http, {System.ServiceModel.Http, 8.0.0}",
+      "System.ServiceModel.NetFramingBase, {System.ServiceModel.NetFramingBase, 8.0.0}",
+      "System.ServiceModel.NetTcp, {System.ServiceModel.NetTcp, 8.0.0}",
+      "System.ServiceModel.Primitives, {System.ServiceModel.Primitives, 8.0.0}",
+      "System.ServiceModel.Security, {System.ServiceModel.Security, 6.0.0}",
+      "System.Text.Encoding, {System.Text.Encoding, 4.3.0}",
+      "System.Text.Encodings.Web, {System.Text.Encodings.Web, 6.0.0}",
+      "System.Text.Json, {System.Text.Json, 4.7.2}"
+    ],
+    "targetFramework": "net9.0",
     "typeReuseMode": "All"
   }
 }

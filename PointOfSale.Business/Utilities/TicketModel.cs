@@ -13,7 +13,7 @@ namespace PointOfSale.Business.Utilities
             MAX = tamanio switch
             {
                 7 => 31,
-                8=> 27,
+                8 => 27,
                 9 => 24,
                 10 => 22,
                 11 => 20,
@@ -58,7 +58,7 @@ namespace PointOfSale.Business.Utilities
 
         public void LineasGuion() => line.AppendLine(new string('-', MAX));
 
-        public void LineasTotal() => line.AppendLine(new string ('=', MAX));
+        public void LineasTotal() => line.AppendLine(new string('=', MAX));
 
         public void TextoIzquierda(string text)
         {
@@ -114,14 +114,11 @@ namespace PointOfSale.Business.Utilities
 
         public void AgregaArticulo(string articulo, decimal precio, decimal cant, decimal subtotalDecimal, decimal? iva)
         {
-            string articuloCortado = CortarTextoMax(articulo, MAX - 5) + (articulo.Length > MAX - 5 ? "..." : "");
+            string articuloCortado = DividirTextoEnProducto(articulo);
             line.AppendLine(articuloCortado);
 
             string elementos = $" {MostrarNumeroConDecimales(cant)} x ${MostrarNumeroConDecimales(precio)}";
-            if (iva != null && iva > 0)
-            {
-                elementos += $" ({iva}%)";
-            }
+            elementos += $" ({iva}%)";
 
             string subtotal = $"${MostrarNumeroConDecimales(subtotalDecimal)}";
             int nroEspacios = MAX - elementos.Length - subtotal.Length;
@@ -149,6 +146,52 @@ namespace PointOfSale.Business.Utilities
         private string CortarTextoMax(string texto, int maxLen)
         {
             return texto.Length > maxLen ? texto.Substring(0, maxLen) : texto;
+        }
+
+        private string DividirTextoEnProducto(string texto)
+        {
+            var maxLen = MAX - 3;
+            StringBuilder resultado = new StringBuilder();
+            int longitudTexto = texto.Length;
+            int posicion = 0;
+
+            while (posicion < longitudTexto)
+            {
+                int longitudRestante = longitudTexto - posicion;
+                int longitudLinea = Math.Min(maxLen, longitudRestante);
+                string linea = texto.Substring(posicion, longitudLinea);
+
+                // Intentar no cortar palabras a la mitad
+                if (posicion + longitudLinea < longitudTexto && !char.IsWhiteSpace(texto[posicion + longitudLinea]))
+                {
+                    int ultimoEspacio = linea.LastIndexOf(' ');
+                    if (ultimoEspacio > -1)
+                    {
+                        linea = linea.Substring(0, ultimoEspacio);
+                        posicion += ultimoEspacio + 1; // Saltar el espacio
+                    }
+                    else
+                    {
+                        posicion += longitudLinea;
+                    }
+                }
+                else
+                {
+                    posicion += longitudLinea;
+                }
+
+                // Verificar si es la última parte del texto
+                if (posicion < longitudTexto)
+                {
+                    resultado.AppendLine(linea);
+                }
+                else
+                {
+                    resultado.Append(linea);
+                }
+            }
+
+            return resultado.ToString();
         }
 
         static string MostrarNumeroConDecimales(decimal numero)

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using PointOfSale.Model;
-using AFIP.Facturacion.Model;
+﻿using AFIP.Facturacion.Model;
 using PointOfSale.Business.Utilities;
 
 namespace PointOfSale.Model.Afip.Factura
@@ -133,7 +128,8 @@ namespace PointOfSale.Model.Afip.Factura
                 ImporteIVA = (double)importeIVA,
                 ImporteTributos = 0,
                 Moneda = TipoMoneda.PesoArgentino,
-                CotizacionMoneda = 1
+                CotizacionMoneda = 1,
+                CondicionIVAReceptorId = 15 // 1 =>IVA Responsable Inscripto, 6 => Responsable Monotributo, 15 => IVA No Alcanzado
             };
             Detalle.Add(detalleNew);
         }

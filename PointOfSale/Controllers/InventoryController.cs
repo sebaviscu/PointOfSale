@@ -224,13 +224,12 @@ namespace PointOfSale.Controllers
         }
 
         /// <summary>
-        /// Tabla de productos
+        /// Tabla de productos y select2
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetProducts()
         {
-            var gResponse = new GenericResponse<VMProductSimplificado>();
             try
             {
                 var productosQuery = await _productService.List();

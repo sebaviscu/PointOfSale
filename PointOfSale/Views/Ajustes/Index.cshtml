@@ -11,6 +11,7 @@
 	<link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
 	<link href="~/plugins/jquery-ui/jquery-ui.css" rel="stylesheet">
 	<link href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css" rel="stylesheet">
+	<link href="~/plugins/select2/css/select2.min.css" rel="stylesheet">
 
 
 }
@@ -491,6 +492,9 @@
 									<li class="nav-item" role="presentation">
 										<a class="nav-link" id="web-tab-5" data-bs-toggle="tab" href="#web-tabpanel-5" role="tab" aria-controls="web-tabpanel-5" aria-selected="false">Politica de privacidad</a>
 									</li>
+									<li class="nav-item" role="presentation">
+										<a class="nav-link" id="web-tab-6" data-bs-toggle="tab" href="#web-tabpanel-6" role="tab" aria-controls="web-tabpanel-6" aria-selected="false">SEO</a>
+									</li>
 								</ul>
 
 								<div class="tab-content pt-2" id="tab-content" style="min-height: 300px; background-color: #F5F6FA">
@@ -556,47 +560,13 @@
 
 										<div id="horariosContainer">
 
-											<div class="col-md-12 row">
+											<div class="d-flex justify-content-around">
 
-												<div class="me-5">
+												<div class="">
 
 													<div class="mb-3" data-dia="Lunes">
 														<div class="d-flex justify-content-between align-items-center">
 															<h4>Lunes</h4>
-															<button type="button" class="btn-agregar-horario">
-																<span class="mdi-24px text-success mdi mdi-plus-circle"></span>
-															</button>
-														</div>
-														<div class="horarios-dia">
-														</div>
-													</div>
-													<div class="mb-3" data-dia="Martes">
-														<div class="d-flex justify-content-between align-items-center">
-															<h4>Martes</h4>
-															<button type="button" class="btn-agregar-horario">
-																<span class="mdi-24px text-success mdi mdi-plus-circle"></span>
-															</button>
-														</div>
-														<div class="horarios-dia">
-														</div>
-													</div>
-													<div class="mb-3" data-dia="Miercoles">
-														<div class="d-flex justify-content-between align-items-center">
-															<h4>Miercoles</h4>
-															<button type="button" class="btn-agregar-horario">
-																<span class="mdi-24px text-success mdi mdi-plus-circle"></span>
-															</button>
-														</div>
-														<div class="horarios-dia">
-														</div>
-													</div>
-
-												</div>
-												<div class=" me-5">
-
-													<div class="mb-3" data-dia="Jueves">
-														<div class="d-flex justify-content-between align-items-center">
-															<h4>Jueves</h4>
 															<button type="button" class="btn-agregar-horario">
 																<span class="mdi-24px text-success mdi mdi-plus-circle"></span>
 															</button>
@@ -615,13 +585,36 @@
 														</div>
 													</div>
 
+
 												</div>
 
-												<div class=" me-5">
-
+												<div class="">
+													<div class="mb-3" data-dia="Martes">
+														<div class="d-flex justify-content-between align-items-center">
+															<h4>Martes</h4>
+															<button type="button" class="btn-agregar-horario">
+																<span class="mdi-24px text-success mdi mdi-plus-circle"></span>
+															</button>
+														</div>
+														<div class="horarios-dia">
+														</div>
+													</div>
 													<div class="mb-3" data-dia="Sabado">
 														<div class="d-flex justify-content-between align-items-center">
 															<h4>Sabado</h4>
+															<button type="button" class="btn-agregar-horario">
+																<span class="mdi-24px text-success mdi mdi-plus-circle"></span>
+															</button>
+														</div>
+														<div class="horarios-dia">
+														</div>
+													</div>
+
+												</div>
+												<div class="">
+													<div class="mb-3" data-dia="Miercoles">
+														<div class="d-flex justify-content-between align-items-center">
+															<h4>Miercoles</h4>
 															<button type="button" class="btn-agregar-horario">
 																<span class="mdi-24px text-success mdi mdi-plus-circle"></span>
 															</button>
@@ -642,6 +635,19 @@
 
 												</div>
 
+												<div class="">
+													<div class="mb-3" data-dia="Jueves">
+														<div class="d-flex justify-content-between align-items-center">
+															<h4>Jueves</h4>
+															<button type="button" class="btn-agregar-horario">
+																<span class="mdi-24px text-success mdi mdi-plus-circle"></span>
+															</button>
+														</div>
+														<div class="horarios-dia">
+														</div>
+													</div>
+												</div>
+
 											</div>
 										</div>
 									</div>
@@ -654,7 +660,7 @@
 											</div>
 										</div>
 									</div>
-									
+
 									<div class="tab-pane" id="web-tabpanel-4" role="tabpanel" aria-labelledby="web-tab-4" style="padding: 15px;">
 										<div class="col-md-12">
 											<div id="toolbarTerminos"></div>
@@ -669,6 +675,55 @@
 											<div id="toolbarPrivacidad"></div>
 											<div id="editor-wrapper" style="height: auto;">
 												<div id="editor-container-privacidad" style="resize: vertical; overflow: auto; min-height: 200px"></div>
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane" id="web-tabpanel-6" role="tabpanel" aria-labelledby="web-tab-6" style="padding: 15px;">
+										<div class="col-sm-12">
+											<div class="form-row">
+												<div class="form-group col-sm-6">
+													<label for="txtUrl">URL</label>
+													<input type="text" class="form-control" id="txtUrl"></input>
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-12">
+											<div class="form-row">
+												<div class="form-group col-sm-12">
+													<label for="txtDescripcionWeb">
+														Descripcion de la web
+														<button data-bs-container="body" data-bs-toggle="popover" data-bs-placement="left" data-bs-html="true" data-bs-content="
+																<b>Concisión y Claridad: </b> Mantén la descripción entre 150 y 160 caracteres. Describe claramente de qué trata tu página. <br />
+																<b>Palabras Clave: </b> Usa términos relevantes que reflejen el contenido de tu página para mejorar la visibilidad en buscadores. <br />
+																<b>Engancha al Usuario: </b> Utiliza un lenguaje atractivo que despierte el interés del usuario desde el primer momento. <br />
+																<b>Información Precisa: </b>  Ofrece información clara y precisa sobre lo que el usuario encontrará en tu página. <br />
+																">
+															<i class="mdi mdi-information text-info"></i>
+														</button>
+														</label>
+													<input type="text" class="form-control" id="txtDescripcionWeb"></input>
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-12">
+											<div class="form-row">
+												<div class="form-group col-sm-12">
+													<label for="keywords">
+														Palabras clave
+														<button data-bs-container="body" data-bs-toggle="popover" data-bs-placement="left" data-bs-html="true" data-bs-content="
+																<b>Cantidad Máxima:</b> Puedes agregar hasta 10 palabras clave. <br />
+																<b>Límite de Caracteres: </b> El total de caracteres no debe superar los 160 caracteres, incluyendo los separadores (comas). <br />
+																<b>Relevancia:</b>  Elige palabras clave que sean directamente relevantes al contenido de tu página. Pregunta: ¿Qué términos utilizarían los usuarios para encontrar tu contenido? <br />
+																<b>Especificidad y Variedad: </b> Incluye tanto palabras clave específicas como términos generales para abarcar una variedad de búsquedas. <br />
+																<b>Evita Redundancia:</b>  No repitas palabras similares o sinónimos que no aporten valor adicional. <br />
+																<b>Evita el Exceso de Palabras Clave: </b> No intentes llenar el límite con palabras clave irrelevantes. La calidad es más importante que la cantidad.
+																">
+															<i class="mdi mdi-information text-info"></i>
+														</button>
+													</label>
+													<select id="keywords" name="keywords[]" multiple="multiple" style="width: 100%;">
+													</select>
+												</div>
 											</div>
 										</div>
 									</div>
@@ -742,9 +797,9 @@
 										<div class="form-group col-sm-3">
 											<label for="cboCondicionIva">Condicion IVA</label>
 											<select class="fontDetalles form-control form-control-sm" id="cboCondicionIva" style="background-color: beige">
-												<option value="0"></option>
-												<option value="1">Consumidor Final</option>
-												<option value="2">Exento</option>
+												@* <option value="0"></option> *@
+												@* <option value="1">Consumidor Final</option> *@
+												@* <option value="2">Exento</option> *@
 												<option value="3">Monotributista</option>
 												<option value="4">Resp. Inscripto</option>
 											</select>
@@ -831,7 +886,7 @@
 	<script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
 	<script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
 	<script src="~/plugins/jquery-ui/jquery-ui.js"></script>
-
+	<script src="~/plugins/select2/js/select2.js"></script>
 
 	<script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
 	<script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>

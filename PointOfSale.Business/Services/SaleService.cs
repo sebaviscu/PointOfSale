@@ -249,7 +249,7 @@ namespace PointOfSale.Business.Services
 
                             if (facturaEmitida != null && facturaEmitida.Resultado != "A")
                             {
-                                modelResponde.Errores = facturaEmitida.Observaciones;
+                                modelResponde.ErrorFacturacion = facturaEmitida.Observaciones;
                             }
                         }
                     }
@@ -260,7 +260,7 @@ namespace PointOfSale.Business.Services
                         await _repositorySale.Edit(sale_created);
                     }
 
-                    if (!string.IsNullOrEmpty(modelResponde.Errores) || !string.IsNullOrEmpty(modelResponde.ErrorFacturacion))
+                    if (!string.IsNullOrEmpty(modelResponde.ErrorFacturacion))
                     {
                         var notific = new Notifications(sale_created, string.Concat(modelResponde.Errores, modelResponde.ErrorFacturacion));
                         await _notificationService.Save(notific);

@@ -64,6 +64,7 @@ namespace PointOfSale.Business.Services
             var nroFactura = await ObtenerNuevoNumeroFactura(ajustes, tipoDoc);
 
             var factura = new FacturaAFIP(sale.Total.Value, sale.RegistrationDate.Value, tipoDoc, nroFactura, ajustes.PuntoVenta.Value, documentoAFacturar);
+
             var response = await _afipFacturacionService.FacturarAsync(ajustes, factura);
 
             var facturaEmitida = CrearFacturaEmitida(response, nroFactura, idCliente, registrationUser, factura, sale.IdTienda, sale.IdSale);

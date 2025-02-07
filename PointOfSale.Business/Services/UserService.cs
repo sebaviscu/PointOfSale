@@ -30,18 +30,6 @@ namespace PointOfSale.Business.Services
                 .ToListAsync();
         }
 
-        public async Task<List<User>> GetUsersByRolByTienda(int idRol, int idTienda)
-        {
-            IQueryable<User> query = await _repository.Query(_ => !_.IsSuperAdmin && _.IdRol == idRol);
-
-            if (idRol != 1)
-            {
-                query = query.Where(_ => _.IdTienda == idTienda || _.IdTienda == null);
-            }
-
-            return await query.OrderBy(_ => _.Name).ToListAsync();
-        }
-
         public async Task<User> Add(User entity)
         {
             User user_exists = await _repository.Get(u => u.Email == entity.Email);

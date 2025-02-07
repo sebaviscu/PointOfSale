@@ -294,7 +294,7 @@ const openModalEditVentaWeb = (model = BASIC_MODEL_VENTA_WEB) => {
     $("#tbProducts tbody").html("");
 
     model.detailSales.forEach((item) => {
-        addNewProduct(item.idDetailSale, item.descriptionProduct, item.quantity, item.tipoVenta == 2 ? "U" : "Kg", item.price, item.total, item.idProduct, item.recogido != null ? item.recogido : false);
+        addNewProduct(item.idDetailSale, item.descriptionProduct, item.quantity, item.tipoVenta == 2 ? "U" : "Kg", item.price, item.total, item.idProduct ,item.iva , item.recogido != null ? item.recogido : false);
     });
 
     updateTotal();
@@ -352,14 +352,14 @@ function functionAddProducto() {
     let tipoVenta = productSelectedVentaWeb.tipoVenta == 2 ? "U." : "Kg";
 
     let precio = Number.parseFloat(productSelectedVentaWeb.price);
-    addNewProduct(0, productSelectedVentaWeb.text, peso, tipoVenta, precio, precio * peso, productSelectedVentaWeb.id, false);
+    addNewProduct(0, productSelectedVentaWeb.text, peso, tipoVenta, precio, precio * peso, productSelectedVentaWeb.id, productSelectedVentaWeb.iva, false);
 
     updateTotal();
     $('#cboSearchProduct').val("").trigger('change');
     $("#txtPeso").val(0)
 }
 
-function addNewProduct(idDetailSale, description, cantidad, tipoVenta, precio, total, idProducto, recogido) {
+function addNewProduct(idDetailSale, description, cantidad, tipoVenta, precio, total, idProducto,iva, recogido) {
     const isEditVisible = $('#divSearchproducts').is(':visible');
     let checkRecogido = recogido ? 'checked' : '';
 
@@ -369,7 +369,7 @@ function addNewProduct(idDetailSale, description, cantidad, tipoVenta, precio, t
         $("<td>").text(description),
         $("<td>").text(`${cantidad} / ${tipoVenta}`),
         $("<td>").text(`$ ${Number.parseFloat(precio).toFixed(0)}`),
-        $("<td>").text(`$ ${Number.parseFloat(total).toFixed(0)}`).data("idDetailSale", idDetailSale).data("idProducto", idProducto)
+        $("<td>").text(`$ ${Number.parseFloat(total).toFixed(0)}`).data("idDetailSale", idDetailSale).data("idProducto", idProducto).data("iva", iva)
     );
 
     if (!isEditVisible) {
@@ -524,7 +524,8 @@ async function editarVentaWeb() {
             tipoVenta: $row.find("td").eq(3).text().split(' / ')[1] == "Kg" ? 1 : 2,
             tipoVentaString: $row.find("td").eq(3).text().split(' / ')[1],
             total: parseFloat($row.find("td").eq(5).text().replace('$', '').trim()),
-            recogido: $row.find("td").eq(1).find(".chkRecogido").prop("checked")
+            recogido: $row.find("td").eq(1).find(".chkRecogido").prop("checked"),
+            iva: $row.find("td").eq(5).data("iva")
         };
         products.push(product);
     });
@@ -601,7 +602,8 @@ function select2Modal() {
                             category: item.idCategory,
                             photoBase64: item.photoBase64,
                             price: item.price,
-                            tipoVenta: item.tipoVenta
+                            tipoVenta: item.tipoVenta,
+                            iva: item.iva
                         }
                     ))
                 };

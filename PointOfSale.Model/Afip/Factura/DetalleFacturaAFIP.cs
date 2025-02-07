@@ -100,5 +100,7 @@ namespace PointOfSale.Model.Afip.Factura
         /// </summary>
         public double CotizacionMoneda { get; set; }
 
+        public int CondicionIVAReceptorId { get; set; }
+
     }
 }

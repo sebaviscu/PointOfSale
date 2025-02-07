@@ -708,9 +708,6 @@ function registrationSale(currentTabId) {
 
             if (responseJson.message != null && responseJson.message != '') {
                 swal("Error al Facturar", "La venta fué registrada correctamente, pero no se ha podido facturar.\n", "warning");
-                console.error("ERROR AL FACTURAR");
-                console.error(responseJson.message);
-
             } else if (responseJson.object.errores != null && responseJson.object.errores != '') {
                 swal("Error", responseJson.object.errores, "warning");
             }

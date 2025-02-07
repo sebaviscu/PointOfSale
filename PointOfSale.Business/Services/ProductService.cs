@@ -82,7 +82,8 @@ namespace PointOfSale.Business.Services
                     ProveedorNombre = p.ProveedorNombre,
                     Price = p.Price,
                     ModificationDate = p.ModificationDate,
-                    IsActive = p.IsActive
+                    IsActive = p.IsActive,
+                    Iva = p.Iva
                 })
                 .ToListAsync();
         }

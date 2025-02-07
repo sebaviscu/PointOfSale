@@ -9,15 +9,20 @@ namespace PointOfSale.Business.Services
     public class NotificationService : INotificationService
     {
         private readonly IGenericRepository<Notifications> _repository;
+        private readonly IUserService _userService;
 
-        public NotificationService(IGenericRepository<Notifications> genericRepository)
+        public NotificationService(IGenericRepository<Notifications> genericRepository, IUserService userService)
         {
             _repository = genericRepository;
+            _userService = userService;
         }
 
         public async Task<List<Notifications>> List(int idTienda)
         {
-            IQueryable<Notifications> query = await _repository.Query(_=> !_.IdTienda.HasValue || _.IdTienda == idTienda);
+            var usesrs = await _userService.GetAllUsersByTienda(idTienda);
+            var usersIds = usesrs.Select(_=>_.IdUsers).ToList();
+            IQueryable<Notifications> query = await _repository.Query(_=> (!_.IdTienda.HasValue || _.IdTienda == idTienda) && (_.IdUser == null || (_.IdUser.HasValue && usersIds.Contains(_.IdUser.Value))));
+
             return query.ToList();
         }
 

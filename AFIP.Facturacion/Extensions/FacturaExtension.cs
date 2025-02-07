@@ -45,12 +45,13 @@ namespace AFIP.Facturacion.Extensions
                         FchServHasta = detalle.FechaServicioHasta?.ToAFIPDateString(),
                         FchVtoPago = detalle.FechaVencimientoPago?.ToAFIPDateString(),
                         MonId = detalle.Moneda.Id,
-                        MonCotiz = detalle.CotizacionMoneda
+                        MonCotiz = detalle.CotizacionMoneda,
+                        CondicionIVAReceptorId = detalle.CondicionIVAReceptorId
                     }
                 }
             };
 
-            if(facturaAFIP.ComprobanteAsociado != null)
+            if (facturaAFIP.ComprobanteAsociado != null)
             {
                 facturaFinal.FeDetReq.First().CbtesAsoc = new List<CbteAsoc>()
                 {
@@ -113,7 +114,8 @@ namespace AFIP.Facturacion.Extensions
                         FchServHasta = detalle.FechaServicioHasta?.ToAFIPDateString(),
                         FchVtoPago = detalle.FechaVencimientoPago?.ToAFIPDateString(),
                         MonId = detalle.Moneda.Id,
-                        MonCotiz = detalle.CotizacionMoneda
+                        MonCotiz = detalle.CotizacionMoneda,
+                        CondicionIVAReceptorId = detalle.CondicionIVAReceptorId
                     }
                 }
             };

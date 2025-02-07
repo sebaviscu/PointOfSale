@@ -51,7 +51,10 @@ const BASIC_MODEL_AJUSTE_WEB = {
     sobreNosotros: '',
     temrinosCondiciones: '',
     politicaPrivacidad: '',
-    email: null
+    email: null,
+    palabrasClave: "",
+    descripcionWeb: "",
+    urlSitio: ""
 }
 
 
@@ -108,6 +111,24 @@ $(document).ready(function () {
         theme: "snow",
         modules: {
             toolbar: toolbarOptions
+        }
+    });
+
+    $('#keywords').select2({
+        theme: "classic",
+        tags: true,
+        tokenSeparators: [','],
+        maximumSelectionLength: 10,
+        createTag: function (params) {
+            var term = $.trim(params.term);
+            if (term === '') {
+                return null;
+            }
+            return {
+                id: term,
+                text: term,
+                newTag: true // add additional parameters
+            };
         }
     });
 
@@ -191,6 +212,21 @@ $(document).ready(function () {
                     });
                 });
 
+                if (model.palabrasClave) {
+                    var palabrasClaveArray = model.palabrasClave.split(',');
+
+                    // Agregar opciones al select
+                    palabrasClaveArray.forEach(function (palabra) {
+                        var newOption = new Option(palabra, palabra, false, false);
+                        $('#keywords').append(newOption).trigger('change');
+                    });
+
+                    // Seleccionar opciones
+                    $('#keywords').val(palabrasClaveArray).trigger('change');
+                }
+
+                $("#txtDescripcionWeb").val(model.descripcionWeb);
+                $("#txtUrl").val(model.urlSitio);
 
 
                 document.getElementById('switchTakeAway').checked = model.habilitarTakeAway;
@@ -254,6 +290,20 @@ $(document).ready(function () {
     healthcheck();
 
 })
+
+$('#keywords').on('change', function () {
+    var totalCharacters = $(this).val().reduce((acc, curr) => acc + curr.length, 0);
+    if (totalCharacters > 160) {
+        alert("El total de caracteres de las palabras clave no debe exceder los 160.");
+    }
+});
+
+$('#txtDescripcionWeb').on('input', function () {
+    var input = $(this).val();
+    if (input.length > 160) {
+        alert("La descripción web no puede exceder los 160 caracteres.");
+    }
+});
 
 function agregarFilaHorario(diaContainer, id = "", horaInicio = "", horaFin = "") {
 
@@ -427,7 +477,9 @@ $("#btnSave").on("click", async function () {
         const inputs = $("input.input-validate-facturacion").serializeArray();
         const inputs_without_value = inputs.filter((item) => item.value.trim() == "")
 
-        if (inputs_without_value.length > 0) {
+        let condicionIva = $("#cboCondicionIva").val();
+
+        if (inputs_without_value.length > 0 || condicionIva == null) {
             const msg = `Si selecciona FACTURA ELECTRONICA, debe completar todos los campos de la sección Facturacion.`;
             toastr.warning(msg, "");
             return;
@@ -495,6 +547,30 @@ $("#btnSave").on("click", async function () {
     let habilitarIvaEnPrecio = document.getElementById('switchIvaPrecio');
     modelWeb["IvaEnPrecio"] = habilitarIvaEnPrecio.checked;
 
+    let palabrasClave = $('#keywords').val();
+    if (palabrasClave && palabrasClave.length > 0) {
+
+        if (palabrasClave > 160) {
+            const msg = `El total de caracteres de las palabras clave no debe exceder los 160.`;
+            toastr.warning(msg, "");
+            return;
+        }
+
+        modelWeb["palabrasClave"] = palabrasClave.join(','); // Combinar las palabras clave en una cadena separada por comas
+    }
+
+    let descrWeb = $("#txtDescripcionWeb").val();
+
+    if (descrWeb.length > 160) {
+        const msg = `La descripción web no puede exceder los 160 caracteres.`;
+        toastr.warning(msg, "");
+        return;
+    }
+
+    modelWeb["descripcionWeb"] = descrWeb
+    modelWeb["urlSitio"] = $("#txtUrl").val();
+
+
     const model = structuredClone(BASIC_MODEL_AJUSTE);
     model["idAjuste"] = parseInt($("#txtId").val());
 
@@ -559,7 +635,7 @@ $("#btnSave").on("click", async function () {
     if (inputLogo.files && inputLogo.files.length > 0) {
         let compressedImage = await compressImage(inputLogo.files[0], 0.7, 300, 300);
         formData.append('ImagenLogo', compressedImage, inputLogo.files[0].name
-);
+        );
     }
 
     showLoading();
