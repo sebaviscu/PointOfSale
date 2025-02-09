@@ -1,4 +1,6 @@
 ﻿using PointOfSale.Model;
+using PointOfSale.Model.Afip.Factura;
+using PointOfSale.Web.Models;
 
 namespace PointOfSale.Models
 {
@@ -35,6 +37,8 @@ namespace PointOfSale.Models
 
         public int? IdTienda { get; set; }
         public VMTienda? Tienda { get; set; }
+
+        public ICollection<VMDetalleFacturaIva>? DetalleFacturaIvas { get; set; }
 
         public string NumeroFacturaString => NroFactura.HasValue && NroFactura.Value != 0 && PuntoVenta != 0 ? $"{PuntoVenta.Value.ToString("D4")}-{NroFactura.Value.ToString("D8")}" : "";
 

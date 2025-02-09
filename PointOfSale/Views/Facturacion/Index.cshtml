@@ -1,206 +1,222 @@
 ﻿@{
-    ViewData["Title"] = "Facturacion";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewData["Title"] = "Facturacion";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 
 @section StylesPOS {
 
-    <link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
-    <link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
-    <link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
+	<link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
+	<link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
+	<link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
 
 
 }
 
 <div id="txtIdSaleViewData" style="display:none">
-    @ViewData["IdPedido"]
+	@ViewData["IdPedido"]
 </div>
 
 <div class="row">
-    <div class="col-sm-12">
+	<div class="col-sm-12">
 
-        <div class="card card-default">
-            <div class="card-header card-header-border-bottom">
-                <div class="">
-                    <h4>Facturacion</h4>
-                </div>
-            </div>
+		<div class="card card-default">
+			<div class="card-header card-header-border-bottom">
+				<div class="">
+					<h4>Facturacion</h4>
+				</div>
+			</div>
 
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <table id="tbData" class="table table-striped" style="width:100%">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th></th>
-                                    <th>Fecha</th>
-                                    <th>Tipo</th>
-                                    <th>Nro Factura</th>
-                                    <th>Forma de Pago</th>
-                                    <th>Total</th>
-                                    <th>CAE</th>
-                                    <th>Vencimiento CAE</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+			<div class="card-body">
+				<div class="row">
+					<div class="col-sm-12">
+						<table id="tbData" class="table table-striped" style="width:100%">
+							<thead>
+								<tr>
+									<th></th>
+									<th></th>
+									<th>Fecha</th>
+									<th>Tipo</th>
+									<th>Nro Factura</th>
+									<th>Forma de Pago</th>
+									<th>Total</th>
+									<th>CAE</th>
+									<th>Vencimiento CAE</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody></tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <!-- Grid Modal -->
 <div class="modal fade" id="modalData" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalGridTitle">Detalle Factura</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" style="padding-bottom: 0px;">
-                <input type="hidden" value="0" id="txtIdFacturacion">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="row mb-3">
-                            <div class="form-group col-md-3">
-                                <label for="txtFechaEmision">Fecha</label>
-                                <input type="text" class="form-control form-control-sm" id="txtFechaEmision" name="Fecha Factura" disabled>
-                            </div>
-                            <div class="form-group col-md-2">
-                                <label for="txtTipoFactura">Tipo</label>
-                                <input type="text" class="form-control form-control-sm" id="txtTipoFactura" name="Tipo Factura" disabled>
-                            </div>
-                            <div class="form-group col-md-2">
-                                <label for="txtPuntoVenta">Punto Venta</label>
-                                <input type="text" class="form-control form-control-sm" id="txtPuntoVenta" name="Punto de Venta" disabled>
-                            </div>
-                            <div class="form-group col-md-2">
-                                <label for="txtNumeroFactura">Nro Factura</label>
-                                <input type="text" class="form-control form-control-sm" id="txtNumeroFactura" name="Número Factura" disabled>
-                            </div>
-                            <div class="form-group col-md-3" id="divFormaPago">
-                                <label for="txtFormaPago">Forma de Pago</label>
-                                <input type="text" class="form-control form-control-sm" id="txtFormaPago" name="Forma de Pago" disabled>
-                            </div>
-                            <div class="form-group col-md-3" style="accent-color" id="divFacuraAnulada">
-                                <label for="txtFacuraAnulada">Factura anulada</label>
-                                <input type="text" class="form-control form-control-sm" id="txtFacuraAnulada" name="Factura Anulada" disabled>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="form-group col-md-3">
-                                <label for="txtCuil">Doc. Cliente</label>
-                                <input type="text" class="form-control form-control-sm" id="txtCuil" name="Cuil Cliente" disabled>
-                            </div>
-                            <div class="form-group col-md-2">
-                                <label for="txtCae">CAE</label>
-                                <input type="text" class="form-control form-control-sm" id="txtCae" name="CAE" disabled>
-                            </div>
-                            <div class="form-group col-md-2">
-                                <label for="txtVencimientoCae">Vencimiento CAE</label>
-                                <input type="text" class="form-control form-control-sm" id="txtVencimientoCae" name="Vencimiento CAE" disabled>
-                            </div>
-                            <div class="form-group col-md-2">
-                                <label for="txtNumeroVenta">Nro Venta</label>
-                                <input type="text" class="form-control form-control-sm" id="txtNumeroVenta" name="Numero de Venta" disabled>
-                            </div>
-                            <div class="form-group col-md-3">
-                                <label for="txtRegistrationUser">Registrado por</label>
-                                <input type="text" class="form-control form-control-sm" id="txtRegistrationUser" name="Nombre Registro" disabled>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="form-group col-md-3">
-                                <label for="txtImporteTotal">Importe Total</label>
-                                <div class="input-group input-group-sm">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">$</span>
-                                    </div>
-                                    <input type="text" class="form-control form-control-sm" id="txtImporteTotal" name="importe Total" disabled>
-                                </div>
-                            </div>
-                            <div class="form-group col-md-3">
-                                <label for="txtImporteNeto">Importe Neto</label>
-                                <div class="input-group input-group-sm">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">$</span>
-                                    </div>
-                                    <input type="text" class="form-control form-control-sm" id="txtImporteNeto" name="txtImporteNeto" disabled>
-                                </div>
-                            </div>
-                            <div class="form-group col-md-3">
-                                <label for="txtImporteIva">Importe IVA</label>
-                                <div class="input-group input-group-sm">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">$</span>
-                                    </div>
-                                    <input type="text" class="form-control form-control-sm" id="txtImporteIva" name="txtImporteIva" disabled>
-                                </div>
-                            </div>
-                            <div class="form-group col-md-3 d-flex justify-content-around align-items-center">
-                                <button class="btn btn-sm btn-danger" id="btnAnularFactura"><i class="mdi mdi-cancel"></i> Anular</button>
-                                <button type="button" class="btn btn-secondary btn-sm" id="bntAfip"><i class="mdi mdi-cash me-1"></i>&nbsp;AFIP</button>
-                                <button type="button" class="btn btn-primary btn-sm" id="btnVerVenta"><i class="mdi mdi-forward me-1"></i>&nbsp;Ver Venta</button>
-                                <button type="button" class="btn btn-info btn-sm" id="btnShowRefacturar" style="display: none"><i class="mdi mdi-reload me-1"></i>&nbsp;Refacturar</button>
-                            </div>
-                        </div>
-                        <div id="divClienteSeleccionado" class="d-flex justify-content-center">
-                            <div class="row col-md-12 d-flex justify-content-center">
-                                <div class="col-sm-5 ms-1">
-                                    <label>Cliente: </label>
-                                    <div class="input-group input-group-sm">
-                                        <input type="text" class="form-control form-control-sm" id="txtClienteParaFactura" disabled>
-                                        <div class="input-group-prepend">
-                                            <button class="btn btn-sm btn-outline-info" id="btnBuscarCliente"><i class="mdi mdi-magnify"></i>Seleccionar</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-2" style=" align-content: center;">
-                                    <button type="button" class="btn btn-secondary btn-sm" id="btnRefacturar"><i class="mdi mdi-reload me-1"></i>&nbsp;Refacturar</button>
-                                </div>
-                            </div>
-                        </div>
+	<div class="modal-dialog modal-xl" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalGridTitle">Detalle Factura</h5>
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body" style="padding-bottom: 0px;">
+				<input type="hidden" value="0" id="txtIdFacturacion">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="row mb-3">
+							<div class="form-group col-md-3">
+								<label for="txtFechaEmision">Fecha</label>
+								<input type="text" class="form-control form-control-sm" id="txtFechaEmision" name="Fecha Factura" disabled>
+							</div>
+							<div class="form-group col-md-2">
+								<label for="txtTipoFactura">Tipo</label>
+								<input type="text" class="form-control form-control-sm" id="txtTipoFactura" name="Tipo Factura" disabled>
+							</div>
+							<div class="form-group col-md-2">
+								<label for="txtPuntoVenta">Punto Venta</label>
+								<input type="text" class="form-control form-control-sm" id="txtPuntoVenta" name="Punto de Venta" disabled>
+							</div>
+							<div class="form-group col-md-2">
+								<label for="txtNumeroFactura">Nro Factura</label>
+								<input type="text" class="form-control form-control-sm" id="txtNumeroFactura" name="Número Factura" disabled>
+							</div>
+							<div class="form-group col-md-3" id="divFormaPago">
+								<label for="txtFormaPago">Forma de Pago</label>
+								<input type="text" class="form-control form-control-sm" id="txtFormaPago" name="Forma de Pago" disabled>
+							</div>
+							<div class="form-group col-md-3" style="accent-color" id="divFacuraAnulada">
+								<label for="txtFacuraAnulada">Factura anulada</label>
+								<input type="text" class="form-control form-control-sm" id="txtFacuraAnulada" name="Factura Anulada" disabled>
+							</div>
+						</div>
+						<div class="row mb-3">
+							<div class="form-group col-md-3">
+								<label for="txtCuil">Doc. Cliente</label>
+								<input type="text" class="form-control form-control-sm" id="txtCuil" name="Cuil Cliente" disabled>
+							</div>
+							<div class="form-group col-md-2">
+								<label for="txtCae">CAE</label>
+								<input type="text" class="form-control form-control-sm" id="txtCae" name="CAE" disabled>
+							</div>
+							<div class="form-group col-md-2">
+								<label for="txtVencimientoCae">Vencimiento CAE</label>
+								<input type="text" class="form-control form-control-sm" id="txtVencimientoCae" name="Vencimiento CAE" disabled>
+							</div>
+							<div class="form-group col-md-2">
+								<label for="txtNumeroVenta">Nro Venta</label>
+								<input type="text" class="form-control form-control-sm" id="txtNumeroVenta" name="Numero de Venta" disabled>
+							</div>
+							<div class="form-group col-md-3">
+								<label for="txtRegistrationUser">Registrado por</label>
+								<input type="text" class="form-control form-control-sm" id="txtRegistrationUser" name="Nombre Registro" disabled>
+							</div>
+						</div>
+						<div class="row mb-3">
+							<div class="form-group col-md-3">
+								<label for="txtImporteTotal">Importe Total</label>
+								<div class="input-group input-group-sm">
+									<div class="input-group-prepend">
+										<span class="input-group-text">$</span>
+									</div>
+									<input type="text" class="form-control form-control-sm" id="txtImporteTotal" name="importe Total" disabled>
+								</div>
+							</div>
+							<div class="form-group col-md-3">
+								<label for="txtImporteNeto">Importe Neto</label>
+								<div class="input-group input-group-sm">
+									<div class="input-group-prepend">
+										<span class="input-group-text">$</span>
+									</div>
+									<input type="text" class="form-control form-control-sm" id="txtImporteNeto" name="txtImporteNeto" disabled>
+								</div>
+							</div>
+							<div class="form-group col-md-3">
+								<label for="txtImporteIva">Importe IVA</label>
+								<div class="input-group input-group-sm">
+									<div class="input-group-prepend">
+										<span class="input-group-text">$</span>
+									</div>
+									<input type="text" class="form-control form-control-sm" id="txtImporteIva" name="txtImporteIva" disabled>
+								</div>
+							</div>
+							<div class="form-group col-md-3 d-flex justify-content-around align-items-center">
+								<button class="btn btn-sm btn-danger" id="btnAnularFactura"><i class="mdi mdi-cancel"></i> Anular</button>
+								<button type="button" class="btn btn-secondary btn-sm" id="bntAfip"><i class="mdi mdi-cash me-1"></i>&nbsp;AFIP</button>
+								<button type="button" class="btn btn-primary btn-sm" id="btnVerVenta"><i class="mdi mdi-forward me-1"></i>&nbsp;Ver Venta</button>
+								<button type="button" class="btn btn-info btn-sm" id="btnShowRefacturar" style="display: none"><i class="mdi mdi-reload me-1"></i>&nbsp;Refacturar</button>
+							</div>
+						</div>
+						<div id="divClienteSeleccionado" class="d-flex justify-content-center">
+							<div class="row col-md-12 d-flex justify-content-center">
+								<div class="col-sm-5 ms-1">
+									<label>Cliente: </label>
+									<div class="input-group input-group-sm">
+										<input type="text" class="form-control form-control-sm" id="txtClienteParaFactura" disabled>
+										<div class="input-group-prepend">
+											<button class="btn btn-sm btn-outline-info" id="btnBuscarCliente"><i class="mdi mdi-magnify"></i>Seleccionar</button>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-2" style=" align-content: center;">
+									<button type="button" class="btn btn-secondary btn-sm" id="btnRefacturar"><i class="mdi mdi-reload me-1"></i>&nbsp;Refacturar</button>
+								</div>
+							</div>
+						</div>
 
-                        <div class="col-12">
-                            <div id="divError" class="alert d-flex align-items-center" style="display: none;">
-                                <div>
-                                    <strong id="alertTitle"></strong><span id="txtError"></span>
-                                </div>
-                            </div>
-                        </div>
+					</div>
 
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-            </div>
-        </div>
-    </div>
+					<div class="col-12">
+						<div id="divError" class="alert d-flex align-items-center" style="display: none;">
+							<div>
+								<strong id="alertTitle"></strong><span id="txtError"></span>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12">
+						<table id="tbDetallesIva" class="table" style="width:100%">
+							<thead>
+								<tr>
+									<th></th>
+									<th>IVA</th>
+									<th>Importe Neto</th>
+									<th>Importe Iva</th>
+									<th>Total Bruto</th>
+								</tr>
+							</thead>
+							<tbody></tbody>
+						</table>
+					</div>
+
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+			</div>
+		</div>
+	</div>
 </div>
 
 @await Component.InvokeAsync("Facturar")
 
 @section Scripts {
-    <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
-    <script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
-    <script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
+	<script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
+	<script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
+	<script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
 
 
-    <script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
-    <script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
-    <script src="~/plugins/data-tables/jszip.min.js"></script>
-    <script src="~/plugins/data-tables/buttons.html5.min.js"></script>
-    <script src="~/plugins/data-tables/buttons.print.min.js"></script>
-    <script src="~/plugins/moment.js"></script>
+	<script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
+	<script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
+	<script src="~/plugins/data-tables/jszip.min.js"></script>
+	<script src="~/plugins/data-tables/buttons.html5.min.js"></script>
+	<script src="~/plugins/data-tables/buttons.print.min.js"></script>
+	<script src="~/plugins/moment.js"></script>
 
-    <script src="~/js/views/facturacion.js"></script>
+	<script src="~/js/views/facturacion.js"></script>
 }
 

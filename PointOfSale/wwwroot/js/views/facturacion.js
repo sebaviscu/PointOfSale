@@ -1,6 +1,7 @@
 ﻿let tableDataFactura;
 let rowSelectedFactura;
 let url_qr = null;
+let tableDataDetallesIVA;
 
 const BASIC_MODEL_FACTURACION = {
     idFacturaEmitida: 0,
@@ -23,7 +24,8 @@ const BASIC_MODEL_FACTURACION = {
     sale: null,
     cliente: null,
     facturaAnulada: null,
-    idFacturaAnulada: null
+    idFacturaAnulada: null,
+    DetalleFacturaIvas: []
 }
 
 
@@ -194,6 +196,8 @@ const openModalFactura = (model = BASIC_MODEL_FACTURACION) => {
         }
     }
 
+    cargarTablaDetallesIva(model.detalleFacturaIvas);
+
     $("#modalData").modal("show")
 }
 
@@ -339,3 +343,57 @@ $("#btnAnularFactura").on("click", function (event) {
             }
         });
 })
+
+function cargarTablaDetallesIva(data) {
+    if (data.length == 0)
+        return;
+
+    if (tableDataDetallesIVA != null)
+        tableDataDetallesIVA.destroy();
+
+    tableDataDetallesIVA = $("#tbDetallesIva").DataTable({
+        responsive: true,
+        pageLength: 5,
+        data: data,
+        "columns": [
+            {
+                "data": "id",
+                "visible": false,
+                "searchable": false
+            },
+            {
+                data: null,
+                render: function (data, type, row) {
+                    if (data.tipoIva == 3)
+                        return '0 %'
+                    else if (data.tipoIva == 4)
+                        return '10.5 %'
+                    else if (data.tipoIva == 5)
+                        return '21 %'
+                    else if (data.tipoIva == 6)
+                        return '27 %'
+                }
+            },
+            {
+                data: "importeNeto",
+                render: function (data, type, row) {
+                    return '$' + data.toFixed(2);
+                }
+            },
+            {
+                data: "importeIVA",
+                render: function (data, type, row) {
+                    return '$' + data.toFixed(2);
+                }
+            },
+            {
+                data: "importeTotal",
+                render: function (data, type, row) {
+                    return '$' + data.toFixed(2);
+                }
+            }
+        ],
+        order: [[4, "desc"]],
+        dom: "rtip"
+    });
+}

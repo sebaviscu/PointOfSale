@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using static PointOfSale.Model.Enum;
 using Microsoft.AspNetCore.Http;
-using Microsoft.IdentityModel.Tokens;
 
 namespace PointOfSale.Business.Services
 {
@@ -25,15 +24,13 @@ namespace PointOfSale.Business.Services
         private readonly IFileStorageService _fileStorageService;
         private readonly INotificationService _notificationRepository;
         private readonly ISaleRepository _saleRepository;
-        private readonly ITypeDocumentSaleService _typeDocumentSaleService;
 
         public AfipService(IGenericRepository<FacturaEmitida> repository,
             IAFIPFacturacionService afipFacturacionService,
             IAjusteService ajusteService,
             IFileStorageService fileStorageService,
             INotificationService notificationRepository,
-            ISaleRepository saleRepository,
-            ITypeDocumentSaleService typeDocumentSaleService)
+            ISaleRepository saleRepository)
         {
             _repository = repository;
             _afipFacturacionService = afipFacturacionService;
@@ -41,7 +38,6 @@ namespace PointOfSale.Business.Services
             _fileStorageService = fileStorageService;
             _notificationRepository = notificationRepository;
             _saleRepository = saleRepository;
-            _typeDocumentSaleService = typeDocumentSaleService;
         }
 
         private async Task<FacturaEmitida> Facturar(Sale sale, string? nroDocumento, int? idCliente, string registrationUser, AjustesFacturacion ajustes)
@@ -63,7 +59,7 @@ namespace PointOfSale.Business.Services
             var documentoAFacturar = ObtenerDocumentoAFacturar(tipoDoc, nroDocumento);
             var nroFactura = await ObtenerNuevoNumeroFactura(ajustes, tipoDoc);
 
-            var factura = new FacturaAFIP(sale.Total.Value, sale.RegistrationDate.Value, tipoDoc, nroFactura, ajustes.PuntoVenta.Value, documentoAFacturar);
+            var factura = new FacturaAFIP(sale.DetailSales.ToList(), sale.RegistrationDate.Value, tipoDoc, nroFactura, ajustes.PuntoVenta.Value, documentoAFacturar);
 
             var response = await _afipFacturacionService.FacturarAsync(ajustes, factura);
 
@@ -85,12 +81,12 @@ namespace PointOfSale.Business.Services
 
             var nroFactura = await ObtenerNuevoNumeroFactura(ajustes, tipoDoc);
 
-            var factura = new FacturaAFIP(tipoDoc, nroFactura, facturaEmitida, documentoAFacturar, isNotaCredito: false);
+            var factura = new FacturaAFIP(facturaEmitida.Sale.DetailSales.ToList(), tipoDoc, nroFactura, facturaEmitida, documentoAFacturar, isNotaCredito: false);
             var response = await _afipFacturacionService.FacturarAsync(ajustes, factura);
 
-            var refactura = CrearFacturaEmitida(response, nroFactura, idCliente, registrationUser, factura, facturaEmitida.IdTienda, facturaEmitida.IdSale);
+            var refactura = CrearFacturaEmitida(response, nroFactura, idCliente, registrationUser, factura, facturaEmitida.IdTienda, facturaEmitida.IdSale.Value);
 
-            return await _repository.Add(refactura);
+                return await _repository.Add(refactura);
         }
 
         private async Task<FacturaEmitida> Credito(string registrationUser, AjustesFacturacion ajustes, FacturaEmitida facturaEmitida)
@@ -105,14 +101,16 @@ namespace PointOfSale.Business.Services
 
             var nroFactura = await ObtenerNuevoNumeroFactura(ajustes, tipoDoc);
 
-            var factura = new FacturaAFIP(tipoDoc, nroFactura, facturaEmitida, facturaEmitida.NroDocumento, isNotaCredito: true);
-            var response = await _afipFacturacionService.FacturarAsync(ajustes, factura);
+            //var factura = new FacturaAFIP(tipoDoc, nroFactura, facturaEmitida, facturaEmitida.NroDocumento, isNotaCredito: true);
+            //var response = await _afipFacturacionService.FacturarAsync(ajustes, factura);
 
-            var creditoEmitido = CrearFacturaEmitida(response, nroFactura, facturaEmitida.IdCliente, registrationUser, factura, facturaEmitida.IdTienda, null);
-            creditoEmitido.IdFacturaAnulada = facturaEmitida.IdFacturaEmitida;
-            creditoEmitido.FacturaAnulada = $"{facturaEmitida.TipoFactura} {facturaEmitida.NumeroFacturaString}";
+            //var creditoEmitido = CrearFacturaEmitida(response, nroFactura, facturaEmitida.IdCliente, registrationUser, factura, facturaEmitida.IdTienda, null);
+            //creditoEmitido.IdFacturaAnulada = facturaEmitida.IdFacturaEmitida;
+            //creditoEmitido.FacturaAnulada = $"{facturaEmitida.TipoFactura} {facturaEmitida.NumeroFacturaString}";
 
-            return await _repository.Add(creditoEmitido);
+            //return await _repository.Add(creditoEmitido);
+
+            return default;
         }
 
         private static TipoComprobante ObtenerTipoNotaCredito(FacturaEmitida facturaEmitida)
@@ -157,7 +155,7 @@ namespace PointOfSale.Business.Services
             return ultimoComprobanteResponse.CbteNro + 1;
         }
 
-        private FacturaEmitida CrearFacturaEmitida(FacturacionResponse response, int nroFactura, int? idCliente, string registrationUser, FacturaAFIP factura, int idTienda, int? idSale = null)
+        private FacturaEmitida CrearFacturaEmitida(FacturacionResponse response, int nroFactura, int? idCliente, string registrationUser, FacturaAFIP factura, int idTienda, int idSale)
         {
 
             var facturaEmitida = FacturaExtension.ToFacturaEmitida(response.FECAEDetResponse.FirstOrDefault());
@@ -169,23 +167,38 @@ namespace PointOfSale.Business.Services
             facturaEmitida.PuntoVenta = factura.Cabecera.PuntoVenta;
             facturaEmitida.IdTienda = idTienda;
             facturaEmitida.TipoFactura = factura.Cabecera.TipoComprobante.Description;
-            facturaEmitida.ImporteTotal = (decimal)factura.Detalle.First().ImporteTotal;
-            facturaEmitida.ImporteNeto = (decimal)factura.Detalle.First().ImporteNeto;
-            facturaEmitida.ImporteIVA = (decimal)factura.Detalle.First().ImporteIVA;
+            facturaEmitida.ImporteTotal = (decimal)factura.ImportesIva.Sum(_ => _.ImporteTotal);
+            facturaEmitida.ImporteNeto = (decimal)factura.ImportesIva.Sum(_ => _.ImporteNeto);
+            facturaEmitida.ImporteIVA = (decimal)factura.ImportesIva.Sum(_ => _.ImporteIVA);
 
+            facturaEmitida.DetalleFacturaIvas = new List<DetalleFacturaIva>();
+            foreach (var i in factura.ImportesIva)
+            {
+                facturaEmitida.DetalleFacturaIvas.Add(new DetalleFacturaIva(i));
+            }
             return facturaEmitida;
         }
 
         public async Task<List<FacturaEmitida>> GetAll(int idTienda)
         {
             var facturas = await _repository.Query(x => x.IdTienda == idTienda);
-            return await facturas.Include(_ => _.Sale).Include(_ => _.Sale.TypeDocumentSaleNavigation).ToListAsync();
+            return await facturas
+                .Include(_ => _.Sale.TypeDocumentSaleNavigation)
+                .Include(_ => _.DetalleFacturaIvas)
+                .Include(_ => _.Sale)
+                    .ThenInclude(_ => _.DetailSales)
+                .ToListAsync();
         }
 
         public async Task<FacturaEmitida> GetById(int idFacturaEmitida)
         {
             var facturas = await _repository.Query(x => x.IdFacturaEmitida == idFacturaEmitida);
-            return facturas.Include(_ => _.Sale).Include(_ => _.Sale.TypeDocumentSaleNavigation).FirstOrDefault();
+            return facturas
+                .Include(_ => _.Sale.TypeDocumentSaleNavigation)
+                .Include(_ => _.DetalleFacturaIvas)
+                .Include(_ => _.Sale)
+                    .ThenInclude(_ => _.DetailSales)
+                .FirstOrDefault();
         }
 
         public async Task<FacturaEmitida> GetBySaleId(int idSale)
@@ -311,7 +324,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<FacturaEmitida?> Refacturar(int idFacturaemitida, string cuil, string registrationUser)
         {
-            var facturaEmitida = await _repository.First(_ => _.IdFacturaEmitida == idFacturaemitida);
+            var facturaEmitida = await GetById(idFacturaemitida);
 
             var ajustesFacturacion = await _ajusteService.GetAjustesFacturacion(facturaEmitida.IdTienda);
             var refacturada = await Refacturar(facturaEmitida, cuil, facturaEmitida.IdCliente, registrationUser, ajustesFacturacion);
@@ -319,7 +332,7 @@ namespace PointOfSale.Business.Services
             facturaEmitida.FacturaRefacturada = refacturada.NumeroFacturaString;
             await _repository.Edit(facturaEmitida);
 
-            var sale = await _saleRepository.First(_ => _.IdSale == facturaEmitida.IdSale.Value);
+            var sale = await _saleRepository.First(_ => _.IdSale == refacturada.IdSale);
 
             sale.IdFacturaEmitida = refacturada?.IdFacturaEmitida;
             sale.ResultadoFacturacion = refacturada?.Resultado == "A";

@@ -102,5 +102,6 @@ namespace PointOfSale.Model.Afip.Factura
 
         public int CondicionIVAReceptorId { get; set; }
 
+        public ImporteIva ImporteIva { get; set; }
     }
 }

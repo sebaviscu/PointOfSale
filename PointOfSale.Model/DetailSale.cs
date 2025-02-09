@@ -20,7 +20,8 @@ namespace PointOfSale.Model
         public virtual Product? Producto { get; set; }
         public string? Promocion { get; set; }
         public decimal? Iva { get; set; } = 21m;
-        public decimal ImporteIva => Total * ((Iva != null ? Iva.Value : 21m) / 100);
+        public decimal ImporteIva => Math.Truncate((Total - (Total / (1 + ((Iva ?? 21m) / 100)))) * 100) / 100;
+        public decimal ImporteNeto => Total - ImporteIva;
         public int? IdVentaWeb { get; set; }
         public virtual VentaWeb? VentaWeb { get; set; }
         public bool? Recogido { get; set; } = false;

@@ -153,12 +153,12 @@ const openModalCliente = (model = BASIC_MODEL_CLIENTE) => {
 }
 
 function cargarTablaMovimientos(idCliente) {
-    if (tableDataMovimientosClientes != null)
-        tableDataMovimientosClientes.destroy();
+    if (tableDataDetallesIVA != null)
+        tableDataDetallesIVA.destroy();
 
     let url = '/Admin/GetMovimientoCliente?idCliente=' + idCliente;
 
-    tableDataMovimientosClientes = $("#tbMovimientos").DataTable({
+    tableDataDetallesIVA = $("#tbMovimientos").DataTable({
         responsive: true,
         pageLength: 5,
         "ajax": {
@@ -300,7 +300,7 @@ $("#tbData tbody").on("click", ".btn-edit", function () {
 
 $('#tbMovimientos tbody').on('click', 'button.btn-open-sale', function (event) {
     event.preventDefault();
-    let data = tableDataMovimientosClientes.row($(this).parents('tr')).data();
+    let data = tableDataDetallesIVA.row($(this).parents('tr')).data();
     let saleNumber = data['sale']['saleNumber'];
 
     let urlString = '/Reports/ReportSale?saleNumber=' + encodeURIComponent(saleNumber);

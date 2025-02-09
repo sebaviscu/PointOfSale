@@ -39,5 +39,7 @@ namespace PointOfSale.Model.Afip.Factura
         public int? IdFacturaAnulada { get; set; }
         public string? FacturaAnulada { get; set; }
         public string? FacturaRefacturada { get; set; }
+
+        public ICollection<DetalleFacturaIva>? DetalleFacturaIvas {  get; set; }
     }
 }

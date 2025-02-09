@@ -13,10 +13,77 @@ namespace AFIP.Facturacion.Extensions
 {
     public static class FacturaExtension
     {
+        //public static FECAERequest ToFECAERequest(FacturaAFIP facturaAFIP)
+        //{
+
+        //    var detalle = facturaAFIP.Detalle.First();
+        //    var facturaFinal = new FECAERequest
+        //    {
+        //        FeCabReq = new FECAECabRequest
+        //        {
+        //            CantReg = facturaAFIP.Detalle.Count,
+        //            CbteTipo = facturaAFIP.Cabecera.TipoComprobante.Id,
+        //            PtoVta = facturaAFIP.Cabecera.PuntoVenta,
+        //        },
+        //        FeDetReq = new List<FECAEDetRequest>()
+        //        {
+        //            new FECAEDetRequest
+        //            {
+        //                Concepto = detalle.Concepto,
+        //                DocTipo = detalle.TipoDocumento.Id,
+        //                DocNro = detalle.NroDocumento,
+        //                CbteDesde = detalle.NroComprobanteDesde,
+        //                CbteHasta = detalle.NroComprobanteHasta,
+        //                CbteFch = detalle.FechaComprobante?.ToAFIPDateString(),
+        //                ImpTotal = detalle.ImporteTotal,
+        //                ImpTotConc = detalle.ImporteTotalConc,
+        //                ImpNeto = detalle.ImporteNeto,
+        //                ImpOpEx = detalle.ImporteOpExento,
+        //                ImpIVA = detalle.ImporteIVA,
+        //                ImpTrib = detalle.ImporteTributos,
+        //                FchServDesde = detalle.FechaServicioDesde?.ToAFIPDateString(),
+        //                FchServHasta = detalle.FechaServicioHasta?.ToAFIPDateString(),
+        //                FchVtoPago = detalle.FechaVencimientoPago?.ToAFIPDateString(),
+        //                MonId = detalle.Moneda.Id,
+        //                MonCotiz = detalle.CotizacionMoneda,
+        //                CondicionIVAReceptorId = detalle.CondicionIVAReceptorId
+        //            }
+        //        }
+        //    };
+
+        //    if (facturaAFIP.ComprobanteAsociado != null)
+        //    {
+        //        facturaFinal.FeDetReq.First().CbtesAsoc = new List<CbteAsoc>()
+        //        {
+        //            new CbteAsoc()
+        //            {
+        //                Tipo = facturaAFIP.ComprobanteAsociado.TipoComprobante,
+        //                Nro = facturaAFIP.ComprobanteAsociado.NroComprobante,
+        //                PtoVta = facturaAFIP.ComprobanteAsociado.PuntoVenta,
+        //                CbteFch = facturaAFIP.ComprobanteAsociado.FechaComprobante?.ToAFIPDateString(),
+        //                Cuit = facturaAFIP.ComprobanteAsociado.Cuil?.ToString()
+        //            }
+        //        };
+        //    }
+
+        //    if (detalle.ImporteIVA > 0)
+        //    {
+        //        facturaFinal.FeDetReq.First().Iva = new List<AlicIva>
+        //                {
+        //                    new AlicIva
+        //                    {
+        //                        Id = 5,
+        //                        BaseImp = detalle.ImporteNeto,
+        //                        Importe = detalle.ImporteIVA
+        //                    }
+        //                };
+        //    }
+
+        //    return facturaFinal;
+        //}
+
         public static FECAERequest ToFECAERequest(FacturaAFIP facturaAFIP)
         {
-
-            var detalle = facturaAFIP.Detalle.First();
             var facturaFinal = new FECAERequest
             {
                 FeCabReq = new FECAECabRequest
@@ -24,32 +91,45 @@ namespace AFIP.Facturacion.Extensions
                     CantReg = facturaAFIP.Detalle.Count,
                     CbteTipo = facturaAFIP.Cabecera.TipoComprobante.Id,
                     PtoVta = facturaAFIP.Cabecera.PuntoVenta,
-                },
-                FeDetReq = new List<FECAEDetRequest>()
-                {
-                    new FECAEDetRequest
-                    {
-                        Concepto = detalle.Concepto,
-                        DocTipo = detalle.TipoDocumento.Id,
-                        DocNro = detalle.NroDocumento,
-                        CbteDesde = detalle.NroComprobanteDesde,
-                        CbteHasta = detalle.NroComprobanteHasta,
-                        CbteFch = detalle.FechaComprobante?.ToAFIPDateString(),
-                        ImpTotal = detalle.ImporteTotal,
-                        ImpTotConc = detalle.ImporteTotalConc,
-                        ImpNeto = detalle.ImporteNeto,
-                        ImpOpEx = detalle.ImporteOpExento,
-                        ImpIVA = detalle.ImporteIVA,
-                        ImpTrib = detalle.ImporteTributos,
-                        FchServDesde = detalle.FechaServicioDesde?.ToAFIPDateString(),
-                        FchServHasta = detalle.FechaServicioHasta?.ToAFIPDateString(),
-                        FchVtoPago = detalle.FechaVencimientoPago?.ToAFIPDateString(),
-                        MonId = detalle.Moneda.Id,
-                        MonCotiz = detalle.CotizacionMoneda,
-                        CondicionIVAReceptorId = detalle.CondicionIVAReceptorId
-                    }
                 }
             };
+
+            var listFeDetReq = new List<FECAEDetRequest>();
+            foreach (var detalle in facturaAFIP.Detalle)
+            {
+                var iva = new AlicIva
+                {
+                    Id = (int)detalle.ImporteIva.TipoIva,
+                    BaseImp = detalle.ImporteIva.ImporteNeto,
+                    Importe = detalle.ImporteIva.ImporteIVA
+                };
+
+                var detalleProduct = new FECAEDetRequest
+                {
+                    Concepto = detalle.Concepto,
+                    DocTipo = detalle.TipoDocumento.Id,
+                    DocNro = detalle.NroDocumento,
+                    CbteDesde = detalle.NroComprobanteDesde,
+                    CbteHasta = detalle.NroComprobanteHasta,
+                    CbteFch = detalle.FechaComprobante?.ToAFIPDateString(),
+                    ImpTotal = detalle.ImporteTotal,
+                    ImpTotConc = detalle.ImporteTotalConc,
+                    ImpNeto = detalle.ImporteNeto,
+                    ImpOpEx = detalle.ImporteOpExento,
+                    ImpIVA = detalle.ImporteIVA,
+                    ImpTrib = detalle.ImporteTributos,
+                    FchServDesde = detalle.FechaServicioDesde?.ToAFIPDateString(),
+                    FchServHasta = detalle.FechaServicioHasta?.ToAFIPDateString(),
+                    FchVtoPago = detalle.FechaVencimientoPago?.ToAFIPDateString(),
+                    MonId = detalle.Moneda.Id,
+                    MonCotiz = detalle.CotizacionMoneda,
+                    CondicionIVAReceptorId = detalle.CondicionIVAReceptorId,
+                    Iva = new List<AlicIva>() { iva }
+                };
+                listFeDetReq.Add(detalleProduct);
+            }
+            facturaFinal.FeDetReq = listFeDetReq;
+
 
             if (facturaAFIP.ComprobanteAsociado != null)
             {
@@ -66,18 +146,21 @@ namespace AFIP.Facturacion.Extensions
                 };
             }
 
-            if (detalle.ImporteIVA > 0)
-            {
-                facturaFinal.FeDetReq.First().Iva = new List<AlicIva>
-                        {
-                            new AlicIva
-                            {
-                                Id = 5,
-                                BaseImp = detalle.ImporteNeto,
-                                Importe = detalle.ImporteIVA
-                            }
-                        };
-            }
+            //if (facturaAFIP.ImportesIva.Any())
+            //{
+            //    var listaIva = new List<AlicIva>();
+            //    foreach (var i in facturaAFIP.ImportesIva)
+            //    {
+            //        var ai = new AlicIva
+            //        {
+            //            Id = (int)i.TipoIva,
+            //            BaseImp = i.ImporteNeto,
+            //            Importe = i.ImporteIVA
+            //        };
+            //        listaIva.Add(ai);
+            //    }
+            //    facturaFinal.FeDetReq.First().Iva = listaIva;
+            //}
 
             return facturaFinal;
         }
@@ -135,18 +218,20 @@ namespace AFIP.Facturacion.Extensions
                 };
             }
 
-            if (detalle.ImporteIVA > 0)
-            {
-                facturaFinal.FeDetReq.First().Iva = new List<AlicIva>
-                        {
-                            new AlicIva
-                            {
-                                Id = 5,
-                                BaseImp = detalle.ImporteNeto,
-                                Importe = detalle.ImporteIVA
-                            }
-                        };
-            }
+            //if (facturaAFIP.ImportesIva.Any())
+            //{
+            //    foreach (var i in facturaAFIP.ImportesIva)
+            //    {
+            //        var ai = new AlicIva
+            //        {
+            //            Id = (int)i.TipoIva,
+            //            BaseImp = i.ImporteNeto,
+            //            Importe = i.ImporteIVA
+            //        };
+
+            //        facturaFinal.FeDetReq.First().Iva.Add(ai);
+            //    }
+            //}
 
             return facturaFinal;
         }
@@ -170,7 +255,7 @@ namespace AFIP.Facturacion.Extensions
 
             if (fECAECabResponse.Observaciones != null && fECAECabResponse.Observaciones.Any())
             {
-                facturaRecibida.Observaciones = string.Join(Environment.NewLine, fECAECabResponse.Observaciones.Select(_=>_.Msg));
+                facturaRecibida.Observaciones = string.Join(Environment.NewLine, fECAECabResponse.Observaciones.Select(_ => _.Msg));
             }
 
             return facturaRecibida;

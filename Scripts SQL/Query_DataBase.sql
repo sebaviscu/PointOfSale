@@ -542,13 +542,23 @@ CREATE TABLE FacturasEmitidas (
 	IdFacturaAnulada int null,
     FacturaAnulada varchar(50) null,
     FacturaRefacturada varchar(50) null,
-	idSale int references Sale(idSale) not null,
+	idSale int references Sale(idSale) null,
 	idCliente int references Cliente(idCliente) null,
 	IdTienda int references Tienda(IdTienda) not null,
     RegistrationUser VARCHAR(200),
     RegistrationDate DATETIME
 );
 
+
+CREATE TABLE DetalleFacturaIva (
+    Id INT PRIMARY KEY IDENTITY,
+    TipoIva INT NOT NULL,
+    ImporteNeto FLOAT NOT NULL,
+    ImporteIVA FLOAT NOT NULL,
+    ImporteTotal FLOAT NOT NULL,
+    IdFacturaEmitida INT NOT NULL,
+    FOREIGN KEY (IdFacturaEmitida) REFERENCES FacturasEmitidas(IdFacturaEmitida)
+);
 
 CREATE TABLE CodigoBarras (
     IdCodigoBarras INT IDENTITY(1,1) PRIMARY KEY,

@@ -11,6 +11,7 @@ namespace PointOfSale.Model.Afip.Factura
         public CabeceraFacturaAFIP Cabecera { get; set; }
         public List<DetalleFacturaAFIP> Detalle { get; set; } = new List<DetalleFacturaAFIP>();
         public ComprobanteAsociado ComprobanteAsociado { get; set; }
+        public List<ImporteIva> ImportesIva { get; set; } = new List<ImporteIva>();
 
         public FacturaAFIP() { }
 
@@ -22,12 +23,11 @@ namespace PointOfSale.Model.Afip.Factura
         /// <param name="nroComprobante"></param>
         /// <param name="ptoVenta"></param>
         /// <param name="documento"></param>
-        public FacturaAFIP(decimal importeTotal, DateTime fechaComprobante, TipoComprobante tipoComprobante, int nroComprobante, int ptoVenta, long documento)
+        public FacturaAFIP(List<DetailSale> detailSale, DateTime fechaComprobante, TipoComprobante tipoComprobante, int nroComprobante, int ptoVenta, long documento)
         {
             Cabecera = CrearCabecera(tipoComprobante, ptoVenta);
-            var (importeNeto, importeIVA) = CalcularImportes(importeTotal, tipoComprobante);
             var tipoDocumento = ObtenerTipoDocumento(tipoComprobante, documento);
-            AgregarDetalle(fechaComprobante, nroComprobante, documento, tipoDocumento, importeNeto, importeIVA);
+            AgregarDetalle(detailSale, fechaComprobante, nroComprobante, documento, tipoDocumento, tipoComprobante);
         }
 
         /// <summary>
@@ -36,14 +36,14 @@ namespace PointOfSale.Model.Afip.Factura
         /// <param name="tipoComprobante"></param>
         /// <param name="nroComprobante"></param>
         /// <param name="facturaEmitida"></param>
-        public FacturaAFIP(TipoComprobante tipoComprobante, int nroComprobante, FacturaEmitida facturaEmitida, long documento, bool isNotaCredito)
+        public FacturaAFIP(List<DetailSale> detailSale, TipoComprobante tipoComprobante, int nroComprobante, FacturaEmitida facturaEmitida, long documento, bool isNotaCredito)
         {
             Cabecera = CrearCabecera(tipoComprobante, facturaEmitida.PuntoVenta);
-            if(isNotaCredito)
+            if (isNotaCredito)
                 ComprobanteAsociado = CrearComprobanteAsociado(tipoComprobante, facturaEmitida);
 
             var tipoDocumento = ObtenerTipoDocumento(tipoComprobante, documento);
-            AgregarDetalle(TimeHelper.GetArgentinaTime(), nroComprobante, documento, tipoDocumento, facturaEmitida.ImporteNeto, facturaEmitida.ImporteIVA);
+            AgregarDetalle(detailSale, TimeHelper.GetArgentinaTime(), nroComprobante, documento, tipoDocumento, tipoComprobante);
         }
 
         private CabeceraFacturaAFIP CrearCabecera(TipoComprobante tipoComprobante, int ptoVenta)
@@ -56,7 +56,50 @@ namespace PointOfSale.Model.Afip.Factura
             };
         }
 
-        private (decimal, decimal) CalcularImportes(decimal total, TipoComprobante tipoComprobante)
+        private ImporteIva CalcularImportes(IGrouping<decimal?, DetailSale> detalle, TipoComprobante tipoComprobante)
+        {
+            var importeIva = new ImporteIva();
+            if (tipoComprobante.Id != TipoComprobante.Factura_C.Id)
+            {
+                var tipoIva = IVA_Afip.IVA_21;
+                switch (detalle.Key.Value)
+                {
+                    case 10.5M:
+                        tipoIva = IVA_Afip.IVA_105;
+                        break;
+                    case 21M:
+                        tipoIva = IVA_Afip.IVA_21;
+                        break;
+                    case 27M:
+                        tipoIva = IVA_Afip.IVA_27;
+                        break;
+                }
+
+                var importeIVA = (double)detalle.Sum(_ => _.ImporteIva);
+                var importeNeto = (double)detalle.Sum(_ => _.ImporteNeto);
+                var importeTotal = (double)detalle.Sum(_ => _.Total);
+
+                if (importeNeto + importeIVA != importeTotal)
+                    importeIVA = importeTotal - importeNeto;
+
+
+                importeIva.TipoIva = tipoIva;
+                importeIva.ImporteIVA = importeIVA;
+                importeIva.ImporteNeto = importeNeto;
+
+                ImportesIva.Add(importeIva);
+            }
+            else
+            {
+                importeIva.TipoIva = IVA_Afip.IVA_0;
+                importeIva.ImporteIVA = 0;
+                importeIva.ImporteNeto = (double)detalle.Sum(_ => _.Total);
+            }
+
+            return importeIva;
+        }
+
+        private (decimal, decimal) CalcularImportes2(decimal total, TipoComprobante tipoComprobante)
         {
             decimal importeNeto = total;
             decimal importeIVA = 0;
@@ -79,15 +122,15 @@ namespace PointOfSale.Model.Afip.Factura
         {
             if (tipoComprobante.Id == TipoComprobante.Factura_C.Id || tipoComprobante.Id == TipoComprobante.Factura_B.Id || tipoComprobante.Id == TipoComprobante.NotaCredito_B.Id)
             {
-                if(documento == 0)
+                if (documento == 0)
                 {
                     return TipoDocumento.DocOtro;
                 }
-                else if(documento.ToString().Length == 8)
+                else if (documento.ToString().Length == 8)
                 {
                     return TipoDocumento.DNI;
                 }
-                else if(documento.ToString().Length == 11)
+                else if (documento.ToString().Length == 11)
                 {
                     return TipoDocumento.CUIL;
                 }
@@ -112,26 +155,39 @@ namespace PointOfSale.Model.Afip.Factura
             };
         }
 
-        private void AgregarDetalle(DateTime fechaComprobante, int nroComprobante, long documento, TipoDocumento tipoDocumento, decimal importeNeto, decimal importeIVA)
+        private void AgregarDetalle(List<DetailSale> detailSale, DateTime fechaComprobante, int nroComprobante, long documento, TipoDocumento tipoDocumento, TipoComprobante tipoComprobante)
         {
-            var detalleNew = new DetalleFacturaAFIP
+            var listaDetalles = new List<DetalleFacturaAFIP>();
+
+            var imporetsIva = detailSale.GroupBy(_ => _.Iva).ToList();
+            int i = 0;
+            // ver numero de comrpobante que onda
+            foreach (var tiposIVA in imporetsIva)
             {
-                Concepto = Concepto.Producto,
-                TipoDocumento = tipoDocumento,
-                NroDocumento = documento,
-                NroComprobanteDesde = nroComprobante,
-                NroComprobanteHasta = nroComprobante,
-                FechaComprobante = fechaComprobante,
-                ImporteTotalConc = 0,
-                ImporteNeto = (double)importeNeto,
-                ImporteOpExento = 0,
-                ImporteIVA = (double)importeIVA,
-                ImporteTributos = 0,
-                Moneda = TipoMoneda.PesoArgentino,
-                CotizacionMoneda = 1,
-                CondicionIVAReceptorId = 15 // 1 =>IVA Responsable Inscripto, 6 => Responsable Monotributo, 15 => IVA No Alcanzado
-            };
-            Detalle.Add(detalleNew);
+                var importeIva = CalcularImportes(tiposIVA, tipoComprobante);
+
+                var detalleNew = new DetalleFacturaAFIP
+                {
+                    Concepto = Concepto.Producto,
+                    TipoDocumento = tipoDocumento,
+                    NroDocumento = documento,
+                    NroComprobanteDesde = nroComprobante + i++,
+                    NroComprobanteHasta = nroComprobante + i++,
+                    FechaComprobante = fechaComprobante,
+                    ImporteTotalConc = 0,
+                    ImporteNeto = importeIva.ImporteNeto,
+                    ImporteOpExento = 0,
+                    ImporteIVA = importeIva.ImporteIVA,
+                    ImporteTributos = 0,
+                    Moneda = TipoMoneda.PesoArgentino,
+                    CotizacionMoneda = 1,
+                    CondicionIVAReceptorId = 15, // 1 =>IVA Responsable Inscripto, 6 => Responsable Monotributo, 15 => IVA No Alcanzado
+                    ImporteIva = importeIva
+                };
+                listaDetalles.Add(detalleNew);
+            }
+
+            Detalle = listaDetalles;
         }
     }
 

@@ -58,7 +58,7 @@
 										<span class="text-danger" asp-validation-for="PassWord"></span>
 									</div>
 									<div class="col-md-12">
-										<button type="submit" class="btn btn-lg btn-primary w-100 mb-4">Cambiar</button>
+										<button type="submit" class="btn btn-lg btn-primary w-100 mb-4 btn-submit">Cambiar</button>
 									</div>
 								</div>
 							</form>
@@ -66,7 +66,7 @@
 						else
 						{
 							<h4 class="text-dark mb-5">Login</h4>
-							<form asp-controller="Access" asp-action="Login" method="post">
+							<form asp-controller="Access" asp-action="Login" method="post" id="formularioLogin">
 								<div class="row">
 									<div class="form-group col-md-12 mb-4">
 										<input type="text" class="form-control input-lg" asp-for="Email" placeholder="Usuario" value="@Model.Email">
@@ -95,7 +95,7 @@
                                                 </label>
                                             </div>
                                         </div> *@
-										<button type="submit" class="btn btn-lg btn-primary w-100 mb-4">Ingresar</button>
+										<button type="submit" class="btn btn-lg btn-primary w-100 mb-4 btn-submit">Ingresar</button>
 									</div>
 								</div>
 							</form>
@@ -120,6 +120,7 @@
 	<script src="~/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+	<script src="~/plugins/loadingoverlay/loadingoverlay.min.js"></script>
 
 	<script src="~/js/views/login.js"></script>
 

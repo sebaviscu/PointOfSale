@@ -9,6 +9,7 @@ using System.Security.Cryptography.X509Certificates;
 using PointOfSale.Model.Afip.Factura;
 using PointOfSale.Model.Input;
 using PointOfSale.Model.Auditoria;
+using PointOfSale.Web.Models;
 
 namespace PointOfSale.Utilities.Automapper
 {
@@ -501,6 +502,7 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<Product, BackupProducto>().ReverseMap();
             CreateMap<VMHistorialLogin, HistorialLogin>().ReverseMap();
             CreateMap<VMHorarioWeb, HorarioWeb>().ReverseMap();
+            CreateMap<VMDetalleFacturaIva, DetalleFacturaIva>().ReverseMap();
         }
     }
 }

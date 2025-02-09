@@ -65,6 +65,7 @@ namespace PointOfSale.Data.DBContext
         public virtual DbSet<VentasPorTipoDeVentaTurno> VentasPorTipoDeVentaTurno { get; set; }
         public virtual DbSet<HistorialLogin> HistorialLogin { get; set; }
         public virtual DbSet<HorarioWeb> HorariosWeb { get; set; }
+        public virtual DbSet<DetalleFacturaIva> DetalleFacturaIva { get; set; }
 
         #endregion
 
@@ -79,6 +80,17 @@ namespace PointOfSale.Data.DBContext
             {
                 entity.ToTable("HorariosWeb");
                 entity.HasKey(h => h.Id);
+            });
+
+            modelBuilder.Entity<DetalleFacturaIva>(entity =>
+            {
+                entity.ToTable("DetalleFacturaIva");
+
+                modelBuilder.Entity<DetalleFacturaIva>()
+                           .HasOne(h => h.FacturaEmitida)
+                           .WithMany(u => u.DetalleFacturaIvas)
+                           .HasForeignKey(h => h.IdFacturaEmitida)
+                           .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<HistorialLogin>(entity =>

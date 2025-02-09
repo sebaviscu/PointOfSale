@@ -26,5 +26,8 @@
             console.error('Fetch error:', error);
         });
 
+    $(".btn-submit").on("click", function () {
+        $(this).LoadingOverlay('show')
 
+    })
 })
