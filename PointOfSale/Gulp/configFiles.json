@@ -5,6 +5,7 @@
         "../wwwroot/js/views/SalesHistorySale.js",
         "../wwwroot/js/views/listShop.js",
         "../wwwroot/js/views/simpleCierreTurno.js",
-        "../wwwroot/js/views/controlCierreTurno.js"
+        "../wwwroot/js/views/controlCierreTurno.js",
+        "../wwwroot/js/views/layout.js"
     ]
 }

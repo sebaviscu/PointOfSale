@@ -7,7 +7,7 @@ const rename = require('gulp-rename');
 // Ruta a los archivos JS en el proyecto web
 //const jsPath = path.join(__dirname, '../wwwroot/js/views/**/*.js');
 
-const config = require('./config.json');
+const config = require('./configFiles.json');
 const jsFiles = config.filesToObfuscate.map(file => path.join(__dirname, file));
 
 const obfuscatedFilesPath = path.join(__dirname, '../wwwroot/js/views/');
