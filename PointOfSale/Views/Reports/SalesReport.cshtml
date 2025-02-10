@@ -1,296 +1,299 @@
 ﻿@using PointOfSale.Models;
 @{
-    ViewData["Title"] = "Reporte de Ventas";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewData["Title"] = "Reporte de Ventas";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 
 @section StylesPOS {
 
-    <link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
-    <link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
-    <link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
+	<link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
+	<link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
+	<link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
 
-    <link href="~/plugins/jquery-ui/jquery-ui.css" rel="stylesheet">
+	<link href="~/plugins/jquery-ui/jquery-ui.css" rel="stylesheet">
 
 }
 
 <style>
-    .text-organe {
-        background-color: orange;
-        color: #ffffff;
-    }
+	.text-organe {
+		background-color: orange;
+		color: #ffffff;
+	}
 
 </style>
 
 <div id="txtSaleNumberByClient" style="display:none">
-    @Model.saleNumber
+	@Model.saleNumber
 </div>
 
 <div id="txtIsAdmin" style="display:none">
-    @Model.IsAdmin
+	@Model.IsAdmin
 </div>
 
 <div class="card card-default">
-    <div class="card-header card-header-border-bottom d-flex align-items-center">
-        <h4 class="col-md-4">Reporte de Ventas</h4>
-        <span class="text-danger" id="lblErrorPrintService" style="display: none;"><i class="mdi mdi-alert mdi-24px"></i>&nbsp; El servicio de impresión no se encuentra conectado</span>
-    </div>
-    <div class="card-body">
-        @if (Model.IsAdmin)
-        {
-            <div class="form-row">
-                <div class="form-group col-sm-3">
-                    <label for="cboSearchBy">Search by</label>
-                    <select class="form-control" id="cboSearchBy" name="Buscar por numero de venta o por fecha">
-                        <option value="date">Dia</option>
-                        <option value="number">Num. de venta</option>
-                    </select>
-                </div>
-                <div class="form-group col-sm-2 search-date">
-                    <label for="txtStartDate">Fecha Inicio</label>
-                    <input type="text" class="form-control" id="txtStartDate" name="fecha de inicio de la venta" autocomplete="off">
-                </div>
-                <div class="form-group col-sm-2 search-date">
-                    <label for="txtEndDate">Fecha Fin</label>
-                    <input type="text" class="form-control" id="txtEndDate" name="fecha de fin de la venta" autocomplete="off">
-                </div>
-                <div class="form-group col-sm-4 search-sale">
-                    <label for="txtSaleNumberSearch">Numero de Venta</label>
-                    <input type="number" class="form-control" id="txtSaleNumberSearch" name="numero de venta" autocomplete="off" inputmode="numeric">
-                </div>
-                @* <div class="form-group col-sm-3 search-date" style="text-align: center;"> *@
-                <div class="form-group col-sm-3" style="text-align: center;display: none;">
-                    <label for="rowFilterDia">Presupuestos</label>
-                    <div class="d-flex justify-content-center" id="rowFilterDia">
-                        <div class="ms-3 h4">
-                            <input type="radio" name="radioButton" id="incluir" class="filtro-presupuesto">
-                            <label for="incluir">
-                                Incluir
-                            </label>
-                        </div>
-                        <div class="ms-3 h4">
-                            <input type="radio" name="radioButton" id="noIncluir" class="filtro-presupuesto" checked>
-                            <label for="noIncluir">
-                                No incluir
-                            </label>
-                        </div>
-                        <div class="ms-3 h4">
-                            <input type="radio" name="radioButton" id="solamente" class="filtro-presupuesto">
-                            <label for="solamente">
-                                Solamente
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group col-sm-2 text-center" style="align-self: end;">
-                    <button class="btn btn-success" type="button" id="btnSearch"><i class="mdi mdi-magnify"></i> Buscar</button>
-                </div>
-            </div>
-        }
-        <div class="d-flex justify-content-center search-date mt-3">
-            @if (Model.IsAdmin)
-            {
-                <button class="btn btn-primary btn-sm mx-2" onclick="setToday()" title="Seleccionar hoy">
-                    <i class="mdi mdi-calendar"></i> Hoy
-                </button>
-            }
-            <button class="btn btn-primary btn-sm mx-2" onclick="turnoActual()" title="Seleccionar turno actual">
-                <i class="mdi mdi-clock"></i> Turno Actual
-            </button>
-        </div>
+	<div class="card-header card-header-border-bottom d-flex align-items-center">
+		<h4 class="col-md-4">Reporte de Ventas</h4>
+		<span class="text-danger" id="lblErrorPrintService" style="display: none;"><i class="mdi mdi-alert mdi-24px"></i>&nbsp; El servicio de impresión no se encuentra conectado</span>
+	</div>
+	<div class="card-body">
+		@if (Model.IsAdmin)
+		{
+			<div class="form-row">
+				<div class="form-group col-sm-3">
+					<label for="cboSearchBy">Search by</label>
+					<select class="form-control" id="cboSearchBy" name="Buscar por numero de venta o por fecha">
+						<option value="date">Dia</option>
+						<option value="number">Num. de venta</option>
+					</select>
+				</div>
+				<div class="form-group col-sm-2 search-date">
+					<label for="txtStartDate">Fecha Inicio</label>
+					<input type="text" class="form-control" id="txtStartDate" name="fecha de inicio de la venta" autocomplete="off">
+				</div>
+				<div class="form-group col-sm-2 search-date">
+					<label for="txtEndDate">Fecha Fin</label>
+					<input type="text" class="form-control" id="txtEndDate" name="fecha de fin de la venta" autocomplete="off">
+				</div>
+				<div class="form-group col-sm-4 search-sale">
+					<label for="txtSaleNumberSearch">Numero de Venta</label>
+					<input type="number" class="form-control" id="txtSaleNumberSearch" name="numero de venta" autocomplete="off" inputmode="numeric">
+				</div>
+				@* <div class="form-group col-sm-3 search-date" style="text-align: center;"> *@
+				<div class="form-group col-sm-3" style="text-align: center;display: none;">
+					<label for="rowFilterDia">Presupuestos</label>
+					<div class="d-flex justify-content-center" id="rowFilterDia">
+						<div class="ms-3 h4">
+							<input type="radio" name="radioButton" id="incluir" class="filtro-presupuesto">
+							<label for="incluir">
+								Incluir
+							</label>
+						</div>
+						<div class="ms-3 h4">
+							<input type="radio" name="radioButton" id="noIncluir" class="filtro-presupuesto" checked>
+							<label for="noIncluir">
+								No incluir
+							</label>
+						</div>
+						<div class="ms-3 h4">
+							<input type="radio" name="radioButton" id="solamente" class="filtro-presupuesto">
+							<label for="solamente">
+								Solamente
+							</label>
+						</div>
+					</div>
+				</div>
+				<div class="form-group col-sm-2 text-center" style="align-self: end;">
+					<button class="btn btn-success" type="button" id="btnSearch"><i class="mdi mdi-magnify"></i> Buscar</button>
+				</div>
+			</div>
+		}
+		<div class="d-flex justify-content-center search-date mt-3">
+			@if (Model.IsAdmin)
+			{
+				<button class="btn btn-primary btn-sm mx-2" onclick="setToday()" title="Seleccionar hoy">
+					<i class="mdi mdi-calendar"></i> Hoy
+				</button>
+			}
+			<button class="btn btn-primary btn-sm mx-2" onclick="turnoActual()" title="Seleccionar turno actual">
+				<i class="mdi mdi-clock"></i> Turno Actual
+			</button>
+		</div>
 
-            <br />
+		<br />
 
-        <div class="d-flex justify-content-around">
-            <div>
-                <label id="lblCantidadVentas" style="font-size: 18px;"></label>
-            </div>
-            <div>
-                <label id="lbltotal" style="font-size: 18px;"></label>
-            </div>
-        </div>
+		<div class="d-flex justify-content-around">
+			<div>
+				<label id="lblCantidadVentas" style="font-size: 18px;"></label>
+			</div>
+			<div>
+				<label id="lbltotal" style="font-size: 18px;"></label>
+			</div>
+		</div>
 
-        <hr />
-        <div class="row">
-            <div class="col-sm-12">
-                <table id="tbsale" class="table table-striped" style="width:100%">
+		<hr />
+		<div class="row">
+			<div class="col-sm-12">
+				<table id="tbsale" class="table table-striped" style="width:100%">
 
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Usuario</th>
-                            <th>Numero de Venta</th>
-                            <th>Forma de Pago</th>
-                            <th>Cant. Productos</th>
-                            <th>Total</th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
+					<thead>
+						<tr>
+							<th>Fecha</th>
+							<th>Usuario</th>
+							<th>Numero de Venta</th>
+							<th>Forma de Pago</th>
+							<th>Cant. Productos</th>
+							<th>Total</th>
+							<th></th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+			</div>
 
-        </div>
-    </div>
+		</div>
+	</div>
 </div>
 
 <!--  Modal-->
 <div class="modal fade" id="modalData" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h6>Detalle de Venta</h6>
-                <button class="close" type="button" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="form-row">
-                            <div class="form-group col-sm-3">
-                                <label for="txtRegistrationDate">Fecha</label>
-                                <input type="text" class="form-control form-control-sm" id="txtRegistrationDate" disabled>
-                            </div>
-                            <div class="form-group col-sm-2">
-                                <label for="txtSaleNumber">Num. Venta</label>
-                                <input type="text" class="form-control form-control-sm" id="txtSaleNumber" disabled>
-                            </div>
-                            <div class="form-group col-sm-4">
-                                <label for="txtRegisterUser">Registrado por</label>
-                                <input type="text" class="form-control form-control-sm" id="txtRegisterUser" disabled>
-                            </div>
-                            <div class="form-group col-sm-3">
-                                <label for="txtClientName">Cliente</label>
-                                <input type="text" class="form-control form-control-sm" id="txtClientName" disabled>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-sm-3">
-                                <label for="txtDocumentType">Forma de Pago</label>
-                                <input type="text" class="form-control form-control-sm" id="txtDocumentType" disabled>
-                            </div>
-                            <div class="form-group col-sm-2">
-                                <label for="txtDocumentType">Desc. / Rec.</label>
-                                <div class="input-group input-group-sm">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">$</span>
-                                    </div>
-                                    <input type="text" class="form-control form-control-sm" id="txtDescRec" style="text-align: right;" disabled>
-                                </div>
-                            </div>
-                            <div class="form-group col-sm-3">
-                                <label for="txtImporteIva">Importe</label>
-                                <div class="input-group input-group-sm">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">$</span>
-                                    </div>
-                                    <input type="text" class="form-control form-control-sm" id="txtTotal" style="text-align: right;" disabled>
-                                </div>
-                            </div>
-                            <div class="offset-sm-1 form-group col-md-3 d-flex justify-content-around align-items-center">
-                                <button class="btn btn-sm btn-danger" id="btnAnular"><i class="mdi mdi-cancel"></i> Anular</button>
-                                <button class="btn btn-sm btn-success" id="btnVerFactura"><i class="mdi mdi-checkbox-marked-circle"></i> Facturado</button>
-                            </div>
-                        </div>
-                        <div class="form-row" id="divObs" style="margin-top: -20px; display: none">
-                            <div class="form-group col-sm-12">
-                                <label for="txtObservaciones">Observaciones: </label>
-                                <label id="txtObservaciones" disabled></label>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <table id="tbProducts" class="table table-sm table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Producto</th>
-                                            <th>Cantidad</th>
-                                            <th>Precio</th>
-                                            <th>Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                @* <a href="#" class="btn btn-primary" target="_blank" id="linkPrint">PDF</a> *@
-                <button class="btn btn-info" type="button" id="printTicket">Ticket</button>
-                <button class="btn btn-danger" type="button" data-bs-dismiss="modal">Cerrar</button>
-            </div>
-        </div>
-    </div>
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h6>Detalle de Venta</h6>
+				<button class="close" type="button" data-bs-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="form-row">
+							<div class="form-group col-sm-3">
+								<label for="txtRegistrationDate">Fecha</label>
+								<input type="text" class="form-control form-control-sm" id="txtRegistrationDate" disabled>
+							</div>
+							<div class="form-group col-sm-2">
+								<label for="txtSaleNumber">Num. Venta</label>
+								<input type="text" class="form-control form-control-sm" id="txtSaleNumber" disabled>
+							</div>
+							<div class="form-group col-sm-4">
+								<label for="txtRegisterUser">Registrado por</label>
+								<input type="text" class="form-control form-control-sm" id="txtRegisterUser" disabled>
+							</div>
+							<div class="form-group col-sm-3">
+								<label for="txtClientName">Cliente</label>
+								<input type="text" class="form-control form-control-sm" id="txtClientName" disabled>
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="form-group col-sm-3">
+								<label for="txtDocumentType">Forma de Pago</label>
+								<input type="text" class="form-control form-control-sm" id="txtDocumentType" disabled>
+							</div>
+							<div class="form-group col-sm-2">
+								<label for="txtDocumentType">Desc. / Rec.</label>
+								<div class="input-group input-group-sm">
+									<div class="input-group-prepend">
+										<span class="input-group-text">$</span>
+									</div>
+									<input type="text" class="form-control form-control-sm" id="txtDescRec" style="text-align: right;" disabled>
+								</div>
+							</div>
+							<div class="form-group col-sm-3">
+								<label for="txtImporteIva">Importe</label>
+								<div class="input-group input-group-sm">
+									<div class="input-group-prepend">
+										<span class="input-group-text">$</span>
+									</div>
+									<input type="text" class="form-control form-control-sm" id="txtTotal" style="text-align: right;" disabled>
+								</div>
+							</div>
+							<div class="offset-sm-1 form-group col-md-3 d-flex justify-content-around align-items-center">
+								@if (@Model.IsAdmin)
+								{
+									<button class="btn btn-sm btn-danger" id="btnAnular"><i class="mdi mdi-cancel"></i> Anular</button>
+								}
+								<button class="btn btn-sm btn-success" id="btnVerFactura"><i class="mdi mdi-checkbox-marked-circle"></i> Facturado</button>
+							</div>
+						</div>
+						<div class="form-row" id="divObs" style="margin-top: -20px; display: none">
+							<div class="form-group col-sm-12">
+								<label for="txtObservaciones">Observaciones: </label>
+								<label id="txtObservaciones" disabled></label>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<table id="tbProducts" class="table table-sm table-striped">
+									<thead>
+										<tr>
+											<th>Producto</th>
+											<th>Cantidad</th>
+											<th>Precio</th>
+											<th>Total</th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				@* <a href="#" class="btn btn-primary" target="_blank" id="linkPrint">PDF</a> *@
+				<button class="btn btn-info" type="button" id="printTicket">Ticket</button>
+				<button class="btn btn-danger" type="button" data-bs-dismiss="modal">Cerrar</button>
+			</div>
+		</div>
+	</div>
 </div>
 
 
 
 <div class="modal fade" id="modalPago" tabindex="-1" role="dialog" aria-labelledby="exampleModalGrid" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
 
-            <div class="modal-body">
-                <form>
-                    <div class="row" id="rowDividirPago">
-                        <div class="col-md-12 d-flex justify-content-center">
-                        </div>
-                        <div class="col-sm-12" id="formaDePagoPanel">
-                            <div class="card-body ">
-                                <div class="card shadow row">
-                                    <div class="form-row" style="padding:0px 12px 4px 12px;">
-                                        <div class="form-group col-sm-5" style="padding-top:10px">
-                                            <label for="cboTypeDocumentSaleParcial">Forma de Pago</label>
-                                            <select class="form-control cboFormaDePago" id="cboTypeDocumentSale">
-                                            </select>
-                                        </div>
-                                        <div class="form-group col-sm-5" style="padding-top:10px">
-                                            <label for="txtTotalParcial">Total</label>
-                                            <div class="input-group mb-3">
-                                                <input class="form-control text-end inputSubtotal" aria-label="Small" aria-describedby="inputGroupTotal" id="txtTotalParcial" disabled>
-                                            </div>
-                                        </div>
+			<div class="modal-body">
+				<form>
+					<div class="row" id="rowDividirPago">
+						<div class="col-md-12 d-flex justify-content-center">
+						</div>
+						<div class="col-sm-12" id="formaDePagoPanel">
+							<div class="card-body ">
+								<div class="card shadow row">
+									<div class="form-row" style="padding:0px 12px 4px 12px;">
+										<div class="form-group col-sm-5" style="padding-top:10px">
+											<label for="cboTypeDocumentSaleParcial">Forma de Pago</label>
+											<select class="form-control cboFormaDePago" id="cboTypeDocumentSale">
+											</select>
+										</div>
+										<div class="form-group col-sm-5" style="padding-top:10px">
+											<label for="txtTotalParcial">Total</label>
+											<div class="input-group mb-3">
+												<input class="form-control text-end inputSubtotal" aria-label="Small" aria-describedby="inputGroupTotal" id="txtTotalParcial" disabled>
+											</div>
+										</div>
 
-                                    </div>
-                                </div>
-                            </div>
+									</div>
+								</div>
+							</div>
 
-                        </div>
-                    </div>
-                </form>
-            </div>
+						</div>
+					</div>
+				</form>
+			</div>
 
-            <div class="modal-footer d-flex bd-highlight">
-                <div class="bd-highlight">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" id="btnFinalizar">Guardar</button>
-                </div>
-            </div>
-        </div>
-    </div>
+			<div class="modal-footer d-flex bd-highlight">
+				<div class="bd-highlight">
+					<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+					<button type="button" class="btn btn-primary" id="btnFinalizar">Guardar</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 
 @section Scripts {
 
-    <script src="~/plugins/jquery-ui/jquery-ui.js"></script>
+	<script src="~/plugins/jquery-ui/jquery-ui.js"></script>
 
-    <script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
-    <script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
-    <script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
-    <script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
-    <script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
-    <script src="~/plugins/data-tables/jszip.min.js"></script>
-    <script src="~/plugins/data-tables/buttons.html5.min.js"></script>
-    <script src="~/plugins/data-tables/buttons.print.min.js"></script>
-    <script src="~/plugins/moment.js"></script>
+	<script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
+	<script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
+	<script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
+	<script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
+	<script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
+	<script src="~/plugins/data-tables/jszip.min.js"></script>
+	<script src="~/plugins/data-tables/buttons.html5.min.js"></script>
+	<script src="~/plugins/data-tables/buttons.print.min.js"></script>
+	<script src="~/plugins/moment.js"></script>
 
-    <script src="~/js/views/layout.js"></script>
-    <script src="~/js/views/SalesHistorySale.js"></script>
+	<script src="~/js/views/layout.js"></script>
+	<script src="~/js/views/SalesHistorySale.js"></script>
 }

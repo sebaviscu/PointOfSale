@@ -182,7 +182,9 @@ $("#tbsale tbody").on("click", ".btn-info", function () {
         divObs.style.display = 'none';
     }
 
-    document.getElementById("btnAnular").style.display = d.isDelete ? 'none' : '';
+    if (isAdmin) {
+        document.getElementById("btnAnular").style.display = d.isDelete ? 'none' : '';
+    }
 
     document.getElementById("btnVerFactura").style.display = d.resultadoFacturacion != null ? '' : 'none';
 

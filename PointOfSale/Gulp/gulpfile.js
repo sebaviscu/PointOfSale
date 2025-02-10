@@ -5,8 +5,14 @@ const javascriptObfuscator = require('gulp-javascript-obfuscator');
 const rename = require('gulp-rename');
 
 // Ruta a los archivos JS en el proyecto web
-const jsPath = path.join(__dirname, '../wwwroot/js/views/**/*.js');
+//const jsPath = path.join(__dirname, '../wwwroot/js/views/**/*.js');
+
+const config = require('./config.json');
+const jsFiles = config.filesToObfuscate.map(file => path.join(__dirname, file));
+
 const obfuscatedFilesPath = path.join(__dirname, '../wwwroot/js/views/');
+
+
 
 // Tarea para limpiar archivos .min.js o .obf.js antes de generar nuevos
 gulp.task('clean', function (done) {
@@ -25,7 +31,7 @@ gulp.task('clean', function (done) {
 
 // Tarea para ofuscar archivos JS individualmente usando JavaScript Obfuscator
 gulp.task('scripts', gulp.series('clean', function () {
-    return gulp.src(jsPath)
+    return gulp.src(jsFiles)
         .pipe(javascriptObfuscator({
             compact: true,
             controlFlowFlattening: true,
@@ -51,7 +57,7 @@ gulp.task('scripts', gulp.series('clean', function () {
 
 // Tarea para observar cambios en los archivos JS
 gulp.task('watch', function () {
-    gulp.watch(jsPath, gulp.series('scripts'));
+    gulp.watch(jsFiles, gulp.series('scripts'));
 });
 
 // Tarea por defecto

@@ -401,7 +401,7 @@ function loadTableFromEmailsString(emailsString) {
 function rowTableFromEmails(email) {
     return "<tr class='small-row'>" +
         "<td class='small-cell'>" + email + "</td>" +
-        "<td class='fixed-width'><button class='btn btn-danger btn-sm delete-row'>" +
+        "<td class='delete-button-email'><button class='btn btn-danger btn-sm delete-row'>" +
         "<span class='mdi mdi-delete'></span></button></td></tr>";
 }
 

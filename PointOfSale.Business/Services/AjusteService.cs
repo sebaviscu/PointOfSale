@@ -196,7 +196,7 @@ namespace PointOfSale.Business.Services
             Ajustes_found.Pie1 = entity.Pie1;
             Ajustes_found.Pie2 = entity.Pie2;
             Ajustes_found.Pie3 = entity.Pie3;
-            Ajustes_found.NombreImpresora = entity.NombreImpresora;
+            Ajustes_found.NombreImpresora = string.IsNullOrEmpty(entity.NombreImpresora) ? Ajustes_found.NombreImpresora : entity.NombreImpresora;
             Ajustes_found.MinimoIdentificarConsumidor = entity.MinimoIdentificarConsumidor;
             Ajustes_found.ControlEmpleado = entity.ControlEmpleado;
 

@@ -1,0 +1,10 @@
+{
+    "filesToObfuscate": [
+        "../wwwroot/js/views/ventaWeb.js",
+        "../wwwroot/js/views/SalesNewSale.js",
+        "../wwwroot/js/views/SalesHistorySale.js",
+        "../wwwroot/js/views/listShop.js",
+        "../wwwroot/js/views/simpleCierreTurno.js",
+        "../wwwroot/js/views/controlCierreTurno.js"
+    ]
+}

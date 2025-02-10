@@ -6,10 +6,47 @@
 
 @section StylesPOS {
 
-	<link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
 	<link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
-	<link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
 }
+
+<style>
+	.notification-class {
+		max-width: 600px;
+		min-width: 380px;
+		border-color: lightgray;
+		max-height: 450px;
+		overflow-y: auto; /* Permite el scroll vertical */
+		overflow-x: hidden; /* Elimina el scroll horizontal */
+		white-space: normal;
+		word-wrap: break-word;
+		word-break: break-word;
+		padding: 10px;
+	}
+
+		.notification-class a.notificacion {
+			display: block;
+			padding: 10px;
+			border-bottom: 1px solid #ddd;
+			white-space: normal; /* Permite que el texto se ajuste en varias líneas */
+		}
+
+		.notification-class .dropdown-menu {
+			position: absolute;
+			left: auto;
+			right: 0;
+			width: auto;
+			min-width: 380px;
+			max-width: 600px;
+			overflow-wrap: break-word; /* Asegura que el texto largo se ajuste */
+		}
+
+		.notification-class a.notificacion small {
+			display: block;
+			margin-top: 5px;
+			color: gray;
+			font-size: 12px;
+		}
+</style>
 
 @if (Model.Any())
 {
@@ -21,7 +58,7 @@
 
 			<i class="mdi mdi-bell mdi-24px"></i>
 		</button>
-		<ul class="dropdown-menu dropdown-menu-right" style="width: fit-content; border-color: lightgray; min-width: 380px; max-height: 450px; overflow-y: auto;max-width: 600px">
+		<ul class="dropdown-menu dropdown-menu-right notification-class">
 			@foreach (var n in Model)
 			{
 				<li class="dropdown-header" style="padding: 0px;margin: 0;">
@@ -36,7 +73,7 @@
 			}
 			@if (ViewData["userRol"] != null && (Convert.ToInt32(ViewData["userRol"]) == 1))
 			{
-				<li style="padding: 0px;width: max-content;margin: 0;">
+				<li style="padding: 0px;width: 100%;margin: 0;text-align: center;">
 					<a id="limpiarNotificaciones" href="#">
 						<i class="mdi mdi-delete me-1"></i>Limpiar todo
 					</a>
@@ -46,23 +83,5 @@
 	</ul>
 }
 
-
-@section Scripts {
-	<script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
-	<script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
-	<script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
-
-
-	<script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
-	<script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
-	<script src="~/plugins/data-tables/jszip.min.js"></script>
-	<script src="~/plugins/data-tables/buttons.html5.min.js"></script>
-	<script src="~/plugins/data-tables/buttons.print.min.js"></script>
-
-	<link href="https://cdn.webdatarocks.com/latest/webdatarocks.min.css" rel="stylesheet" />
-	<script src="https://cdn.webdatarocks.com/latest/webdatarocks.toolbar.min.js"></script>
-	<script src="https://cdn.webdatarocks.com/latest/webdatarocks.js"></script>
-
-	<script src="~/js/views/notificationsComponents.js"></script>
-}
-
+<script src="~/plugins/jquery/jquery.min.js"></script>
+<script src="~/js/views/notificationsComponents.js"></script>

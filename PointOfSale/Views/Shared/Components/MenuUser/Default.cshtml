@@ -1,39 +1,43 @@
 ﻿@{
-    Layout = null;
+	Layout = null;
 }
 
 <li class="dropdown user-menu show">
-    <button href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
-        <span class="d-none d-lg-inline-block">@ViewData["userName"]</span>
-    </button>
-    <ul class="dropdown-menu dropdown-menu-right">
-        <!-- User image -->
-        <li class="dropdown-header">
-            @*<img src="@($"data:image/png;base64,{ViewData["photoUser"]}")" class="img-circle" alt="User Image">*@
-            <div class="mb-2 ms-2 row">
-                @ViewData["rolUser"]: &nbsp;
-                <small class="pt-1">@ViewData["emailUser"]</small>
-            </div>
-            <div class="mb-2 ms-2 row">
-                Tienda: &nbsp;
-                <small class="pt-1">@ViewData["tienda"] &nbsp; &nbsp;</small>
-                @if (Convert.ToInt32(@ViewData["cantTiendas"]) > 1)
-                {
-                    <button class="btn btn-sm btn-success" id="btnChangePV"><span class="mdi mdi-reload"></span></button>
-                }
+	<button href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
+		<span class="d-none d-lg-inline-block">@ViewData["userName"]</span>
+	</button>
+	<ul class="dropdown-menu dropdown-menu-right">
+		<!-- User image -->
+		<li class="dropdown-header" style="margin: 0;">
+			<div class="mb-2 ms-2 row">
+				@ViewData["rolUser"]: &nbsp;
+				<small class="pt-1">@ViewData["emailUser"]</small>
+			</div>
+			<div class="mb-2 ms-2 row">
+				Tienda: &nbsp;
+				<small class="pt-1">@ViewData["tienda"]</small>
 
-            </div>
-            <div class="mb-2 ms-2 row">
-                Turno: &nbsp;
-                <small class="pt-1">@ViewData["turno"]</small>
-            </div>
-            <div class="row ms-2">
-                Lista precios: &nbsp;
-                <small class="pt-1">@ViewData["listaPrecios"]</small>
-            </div>
-        </li>
-        <li class="">
-            <a asp-controller="Home" asp-action="LogOut"> <i class="mdi mdi-logout"></i> Cerrar Sesión </a>
-        </li>
-    </ul>
+			</div>
+			<div class="mb-2 ms-2 row">
+				Turno: &nbsp;
+				<small class="pt-1">@ViewData["turno"]</small>
+			</div>
+			<div class="row ms-2">
+				Lista precios: &nbsp;
+				<small class="pt-1">@ViewData["listaPrecios"]</small>
+			</div>
+		</li>
+		@if (Convert.ToInt32(@ViewData["cantTiendas"]) > 1)
+		{
+			<li style="padding: 0px;width: 100%;margin: 0;">
+				<a id="btnChangePV" href="#">
+					<i class="mdi mdi-reload me-1 text-success"></i>&nbsp; Cambiar Punto de Venta
+				</a>
+			</li>
+			<hr style="margin: 0px;" />
+		}
+		<li class="">
+			<a asp-controller="Home" asp-action="LogOut"> <i class="mdi mdi-logout"></i>&nbsp; Cerrar Sesión </a>
+		</li>
+	</ul>
 </li>

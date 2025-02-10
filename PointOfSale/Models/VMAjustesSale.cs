@@ -12,5 +12,6 @@ namespace PointOfSale.Models
         public ListaDePrecio ListaPrecios { get; set; }
         public bool ExisteTurno { get; set; }
         public string? User { get; set; }
+        public string? NombreImpresora { get; set; }
     }
 }

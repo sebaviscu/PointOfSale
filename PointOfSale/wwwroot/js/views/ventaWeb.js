@@ -486,7 +486,7 @@ async function editarVentaWeb() {
     }
 
     model["estado"] = estadoVenta;
-    model["idFormaDePago"] = estadoVenta == 3 ? $("#cboTypeDocumentSale").val() : parseInt($("#txtFormaPago").val());
+    model["idFormaDePago"] = estadoVenta == 3 ? parseInt($("#cboTypeDocumentSale").val()) : parseInt($("#txtFormaPago").val());
     model["imprimirTicket"] = document.querySelector('#cboImprimirTicket').checked;
     //model["total"] = parseFloat($("#txtTotal").val());
     model["total"] = parseFloat($("#txtTotal").attr("totalReal"));

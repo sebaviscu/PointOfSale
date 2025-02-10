@@ -34,49 +34,6 @@ $(document).ready(function () {
         })
 
 
-    $("#limpiarNotificaciones").on("click", function () {
-
-        fetch(`/Notification/LimpiarTodoNotificacion`, {
-            method: "PUT",
-            headers: { 'Content-Type': 'application/json;charset=utf-8' }
-        })
-            .then(response => {
-                return response.json();
-            }).then(responseJson => {
-                if (responseJson.state) {
-                    $(".dropdown-menu .dropdown-header").remove();
-                    $("#listaNotificaciones").remove();
-
-                } else {
-                    swal("Lo sentimos", responseJson.message, "error");
-                }
-
-            }).catch((error) => {
-            })
-    })
-
-
-    $(".notificacion").on("click", function () {
-        //if ($(this).attr('accion') != '') {
-
-            fetch(`/Notification/UpdateNotificacion?idNotificacion=${$(this)[0].id}`, {
-                method: "PUT",
-                headers: { 'Content-Type': 'application/json;charset=utf-8' }
-            })
-                .then(response => {
-                    return response.json();
-                }).then(responseJson => {
-                    if (responseJson.state) {
-                        $(this).remove();
-
-                    } else {
-                        swal("Lo sentimos", responseJson.message, "error");
-                    }
-
-                }).catch((error) => {
-                })
-        //}
-    })
 
     $("#btnChangePV").on("click", function () {
 
@@ -409,11 +366,11 @@ function removeLoading() {
 };
 
 function setupPasswordToggle($passwordInput, $toggleButton) {
-    $toggleButton.on('mousedown', function () {
+    $toggleButton.on('mousedown touchstart', function () {
         $passwordInput.attr('type', 'text');
     });
 
-    $toggleButton.on('mouseup mouseleave', function () {
+    $toggleButton.on('mouseup mouseleave touchend', function () {
         $passwordInput.attr('type', 'password');
     });
 
@@ -422,6 +379,22 @@ function setupPasswordToggle($passwordInput, $toggleButton) {
         e.preventDefault();
     });
 }
+
+
+//function setupPasswordToggle($passwordInput, $toggleButton) {
+//    $toggleButton.on('mousedown', function () {
+//        $passwordInput.attr('type', 'text');
+//    });
+
+//    $toggleButton.on('mouseup mouseleave', function () {
+//        $passwordInput.attr('type', 'password');
+//    });
+
+//    // Evitar que el botón reciba el foco
+//    $toggleButton.on('click', function (e) {
+//        e.preventDefault();
+//    });
+//}
 
 function formatCuil(value) {
     value = value.replace(/\D/g, '');

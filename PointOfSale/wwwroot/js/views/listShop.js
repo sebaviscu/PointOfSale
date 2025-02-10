@@ -34,8 +34,6 @@ function checkScroll() {
 
 $(window).on("scroll touchmove", checkScroll);
 
-//ajustarDivTextPrice();
-
 $(document).ready(function () {
 
     loadMoreProducts();
@@ -99,6 +97,18 @@ $(document).ready(function () {
 
     $("#btnFinalizar").on("click", function () {
         finalizarVenta();
+    });
+
+    $(window).scroll(function () {
+        if ($(this).scrollTop() > 600) {
+            $("#scrollTopButton").fadeIn().addClass("bouncing");
+        } else {
+            $("#scrollTopButton").fadeOut().removeClass("bouncing");
+        }
+    });
+
+    $("#scrollTopButton").click(function () {
+        $("html, body").animate({ scrollTop: 0 }, "smooth");
     });
 
     otrasFunciones();
@@ -347,6 +357,7 @@ function resumenVenta() {
         tableBody.innerHTML = tableDataShoop;
 
         $("#modalData").modal("show");
+        $('#scrollTopButton').hide();
 
         document.getElementById("switchTakeAway").checked = false;
     }
@@ -577,7 +588,7 @@ function dibujarAreaTotales() {
 
     productsToDisplay.forEach((a) => {
         let descrCortada = cortarTextoLargo(a.descriptionProduct, 16, 5);
-        textArea.innerHTML += `· ${descrCortada}: $${Number.parseFloat(a.price).toFixed(0)} x ${a.quantity} ${a.tipoVenta} = $ ${Number.parseFloat(a.total).toFixed(0)}<br>`;
+        textArea.innerHTML += `· ${descrCortada}: $${Number.parseFloat(a.price).toFixed(0)} x ${a.quantity} ${a.tipoVenta} = $${Number.parseFloat(a.total).toFixed(0)}<br>`;
     });
 
 

@@ -134,6 +134,10 @@ async function healthcheck() {
     isHealthySale = await getHealthcheck();
 
     if (isHealthySale) {
+        if (ajustes.nombreImpresora == null || ajustes.nombreImpresora == '') {
+            swal("Advertencia", "No existe impresora asignada en ajustes.", "warning");
+        }
+
         document.getElementById("lblErrorPrintService").style.display = 'none';
     } else {
         document.getElementById("lblErrorPrintService").style.display = '';

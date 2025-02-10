@@ -14317,9 +14317,9 @@ textarea.form-control {
         display: block;
         margin: 10px 0;
         z-index: 10;
-        top: -13px; /* Ajusta según sea necesario */
-        left: 76px;
-        opacity:0.7;
+        top: -12px; /* Ajusta según sea necesario */
+        left: 70px;
+        opacity:0.5;
     }
 
         .product .img-prod .tags-container .status {
@@ -14456,3 +14456,49 @@ html, body {
         box-shadow: 0 0 20px rgba(255, 215, 0, 0.9); /* Aumenta la sombra al pasar el ratón */
         transform: scale(1.1); /* Aumenta el tamaño al pasar el ratón */
     }
+
+.active.btnCategoria {
+    background-color: #a9d9ff; /* Color de fondo azul */
+    border: 2px solid #a9d9ff; /* Borde a juego */
+    box-shadow: 0px 4px 8px rgba(33, 150, 243, 0.5); /* Efecto de resplandor */
+    font-weight: bold; /* Texto en negrita para mayor visibilidad */
+    transform: scale(1.1); /* Aumenta ligeramente el tamaño del producto */
+}
+
+.scroll-top {
+    z-index: 9999;
+    position: fixed;
+    bottom: 50%;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    cursor: pointer;
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+    .scroll-top:hover {
+        background-color: #0056b3;
+    }
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+.scroll-top.bouncing {
+    animation: bounce 1s infinite;
+}

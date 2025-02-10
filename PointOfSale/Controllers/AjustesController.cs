@@ -166,6 +166,7 @@ namespace PointOfSale.Controllers
 
                 vmAjuste.ExisteTurno = await _turnoService.CheckTurnoAbierto(user.IdTienda);
                 vmAjuste.User = user.UserName;
+                vmAjuste.NombreImpresora = ajuste.NombreImpresora;
 
                 gResponse.State = true;
                 gResponse.Object = vmAjuste;
@@ -245,72 +246,6 @@ namespace PointOfSale.Controllers
                 return HandleException(ex, "Error al recuperar ajuste de facturacion", _logger);
             }
         }
-
-        //[HttpGet]
-        //public async Task<IActionResult> GetValidateCertificate()
-        //{
-        //    var gResponse = new GenericResponse<string>();
-        //    try
-        //    {
-        //        var user = ValidarAutorizacion([Roles.Administrador, Roles.Empleado, Roles.Encargado]);
-        //        var ajustes = await _ajusteService.GetAjustesFacturacion(user.IdTienda);
-        //        var resp = _afipService.ValidateCertificate(ajustes);
-
-        //        gResponse.Object = resp;
-        //        gResponse.State = resp == string.Empty;
-        //        return StatusCode(StatusCodes.Status200OK, gResponse);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return HandleException(ex, "Error en el certificado", _logger);
-        //    }
-        //}
-
-        //[HttpPut]
-        //public async Task<IActionResult> UpdateAjustesFacturacion([FromForm] IFormFile Certificado, [FromForm] string model)
-        //{
-
-        //    GenericResponse<VMAjustesFacturacion> gResponse = new GenericResponse<VMAjustesFacturacion>();
-        //    try
-        //    {
-        //        var vmModel = JsonConvert.DeserializeObject<VMAjustesFacturacion>(model);
-        //        var user = ValidarAutorizacion([Roles.Administrador]);
-
-        //        if (Certificado != null)
-        //        {
-        //            var oldAjustes = await _ajusteService.GetAjustesFacturacion(user.IdTienda);
-
-        //            var pathFile = await _afipService.ReplaceCertificateAsync(Certificado, user.IdTienda, oldAjustes.CertificadoNombre);
-
-        //            vmModel.CertificadoNombre = Certificado.FileName;
-        //            if (!string.IsNullOrEmpty(vmModel.CertificadoPassword))
-        //            {
-        //                var cert = _afipService.GetCertificateAfipInformation(pathFile, vmModel.CertificadoPassword);
-        //                if (cert != null)
-        //                {
-        //                    vmModel.CertificadoFechaCaducidad = cert.FechaCaducidad;
-        //                    vmModel.CertificadoFechaInicio = cert.FechaInicio;
-        //                    vmModel.Cuit = Convert.ToInt64(cert.Cuil);
-        //                }
-        //            }
-        //        }
-
-        //        vmModel.ModificationUser = user.UserName;
-        //        vmModel.IdTienda = user.IdTienda;
-        //        var ajustes = await _ajusteService.EditFacturacion(_mapper.Map<AjustesFacturacion>(vmModel));
-
-        //        gResponse.State = true;
-        //        gResponse.Object = _mapper.Map<VMAjustesFacturacion>(ajustes);
-        //        gResponse.Message = string.Empty;
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return HandleException(ex, "Error al actualizar ajustes de facturación", _logger, model);
-        //    }
-
-        //    return StatusCode(StatusCodes.Status200OK, gResponse);
-        //}
 
         [HttpPut]
         public async Task<IActionResult> UpdateCertificateInformation([FromForm] IFormFile Certificado, [FromForm] string password)
