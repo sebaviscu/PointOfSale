@@ -138,11 +138,7 @@ namespace AFIP.Facturacion
                 var securePassword = new NetworkCredential("", password).SecurePassword;
                 securePassword.MakeReadOnly();
 
-                if (!File.Exists(CertificatePath))
-                {
-                    throw new Exception($"El certificado no existe en la ruta: {CertificatePath}");
-                }
-
+                pasos += $"*1.5**Leyendo certificado.\n";
                 var certFirmante = X509CertificateManager.GetCertificateFromFile(CertificatePath, securePassword);
                 pasos += $"*2**GetCertificateFromFile ";
 

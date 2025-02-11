@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Security;
+using System.Security.Cryptography;
 using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
 using PointOfSale.Model;
@@ -33,28 +35,26 @@ namespace AFIP.Facturacion
                     throw new Exception("El certificado no tiene clave privada.");
                 }
 
-                // Pongo el mensaje en un objeto ContentInfo (requerido para construir el obj SignedCms)
-                var contentInfo = new ContentInfo(messageBytes);
-                var signedCms = new SignedCms(contentInfo);
-                pasos += $"*4.1**intermedio 4.1 ";
-
-                // Creo objeto CmsSigner que tiene las caracteristicas del firmante
-                var cmsSigner = new CmsSigner(signerCertificate)
-                {
-                    IncludeOption = X509IncludeOption.EndCertOnly
-                };
-
                 if (VerboseMode) Console.WriteLine(ID_FNC + "***Firmando bytes del mensaje...");
-                pasos += $"*4.22**Firmando bytes del mensaje 4.2 ";
 
-                // Firmo el mensaje PKCS #7
-                signedCms.ComputeSignature(cmsSigner);
+                using (RSA privateKey = signerCertificate.GetRSAPrivateKey())
+                {
+                    if (privateKey == null)
+                        throw new Exception("No se pudo obtener la clave privada.");
 
-                if (VerboseMode) Console.WriteLine(ID_FNC + "***OK mensaje firmado");
-                pasos += $"*4.3**OK mensaje firmado 4.3 ";
 
-                // Encodeo el mensaje PKCS #7.
-                return signedCms.Encode();
+                    var contentInfo = new ContentInfo(messageBytes);
+                    var signedCms = new SignedCms(contentInfo);
+                    var cmsSigner = new CmsSigner(signerCertificate)
+                    {
+                        IncludeOption = X509IncludeOption.EndCertOnly
+                    };
+
+                    signedCms.ComputeSignature(cmsSigner);
+
+                    return signedCms.Encode();
+                }
+
             }
             catch (Exception ex)
             {
@@ -70,19 +70,44 @@ namespace AFIP.Facturacion
         /// <remarks></remarks>
         public static X509Certificate2 GetCertificateFromFile(string file, SecureString password)
         {
-            const string ID_FNC = "[ObtieneCertificadoDesdeArchivo]";
+            string ID_FNC = "[ObtieneCertificadoDesdeArchivo]";
+
             try
             {
-                var objCert = new X509Certificate2(file, password,
-                                X509KeyStorageFlags.UserKeySet |
-                                X509KeyStorageFlags.PersistKeySet |
-                                X509KeyStorageFlags.Exportable);
+                if (!File.Exists(file))
+                {
+                    throw new Exception($"{ID_FNC} ***Error:6 El archivo no existe en la ruta: {file}");
+                }
+
+                byte[] rawData = File.ReadAllBytes(file);
+                if (rawData.Length == 0)
+                {
+                    throw new Exception($"{ID_FNC} ***Error:7 El archivo está vacío.");
+                }
+
+                ID_FNC += $"--- *1.5**Leyendo certificado. --";
+
+                var objCert = new X509Certificate2(rawData, password,
+                                    X509KeyStorageFlags.UserKeySet |
+                                    X509KeyStorageFlags.PersistKeySet |
+                                    X509KeyStorageFlags.Exportable);
+
+                if (!objCert.HasPrivateKey)
+                {
+                    throw new Exception($"{ID_FNC} ***Error:8 El certificado no tiene clave privada.");
+                }
+
                 return objCert;
+            }
+            catch (CryptographicException ex)
+            {
+                throw new Exception($"{ID_FNC} ***Error9 criptográfico al leer el certificado: {ex.Message}");
             }
             catch (Exception ex)
             {
-                throw new Exception(ID_FNC + "***Error al leer certificado: " + ex.ToString());
+                throw new Exception($"{ID_FNC} ***Error10 general al leer certificado: {ex.Message}");
             }
         }
+
     }
 }
