@@ -75,7 +75,10 @@ ALTER TABLE Turno WITH CHECK CHECK CONSTRAINT ALL
 --DBCC CHECKIDENT (Product, RESEED, 0) 
 --ALTER TABLE Product WITH CHECK CHECK CONSTRAINT ALL
 
-update CorrelativeNumber set [lastNumber] = 0
+UPDATE CorrelativeNumber 
+SET [lastNumber] = 0
+WHERE management IS NOT 'sku';
+
 
 --lo que se borra:
 --- ventas

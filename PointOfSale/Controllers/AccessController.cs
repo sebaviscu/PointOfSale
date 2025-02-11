@@ -162,6 +162,7 @@ namespace PointOfSale.Controllers
                 AuthenticationProperties properties = new AuthenticationProperties()
                 {
                     AllowRefresh = true,
+                    ExpiresUtc = DateTime.UtcNow.AddMinutes(120),
                     IsPersistent = true // model.KeepLoggedIn
                 };
 

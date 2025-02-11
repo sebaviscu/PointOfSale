@@ -44,13 +44,13 @@ public class Program
                 });
             });
 
-            var timeExpire = TimeHelper.GetArgentinaTime().AddHours(2);
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(option =>
                 {
                     option.LoginPath = "/Access/Login"; // Ruta de inicio de sesión
-                    option.ExpireTimeSpan = TimeSpan.FromHours(3); // Tiempo de inactividad permitido
                     option.SlidingExpiration = true; // Renueva la cookie en cada solicitud activa
+                    option.ExpireTimeSpan = TimeSpan.FromMinutes(120); // Tiempo de inactividad permitido
+                    option.Cookie.MaxAge = TimeSpan.FromMinutes(120);
 
                     // Configuración de persistencia de la cookie
                     option.Cookie.MaxAge = TimeSpan.FromDays(1); // Persistencia de la cookie por 1 día

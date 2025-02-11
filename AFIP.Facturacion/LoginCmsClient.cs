@@ -127,11 +127,13 @@ namespace AFIP.Facturacion
                 throw new Exception(ID_FNC + "***Error GENERANDO el LoginTicketRequest : " + ex.ToString() + ex.StackTrace);
             }
 
+            string pasos = string.Empty;
             string base64SignedCms;
             // PASO 2: Firmo el Login Ticket Request
             try
             {
                 if (VerboseMode) Console.WriteLine(ID_FNC + "***Leyendo certificado: {0}", CertificatePath);
+                pasos += $"*1**Leyendo certificado: {CertificatePath}.\n";
 
                 var securePassword = new NetworkCredential("", password).SecurePassword;
                 securePassword.MakeReadOnly();
@@ -142,22 +144,27 @@ namespace AFIP.Facturacion
                 }
 
                 var certFirmante = X509CertificateManager.GetCertificateFromFile(CertificatePath, securePassword);
+                pasos += $"*2**GetCertificateFromFile ";
 
                 if (VerboseMode)
                 {
                     Console.WriteLine(ID_FNC + "***Firmando: ");
                     Console.WriteLine(XmlLoginTicketRequest.OuterXml);
                 }
+                pasos += $"*3**Firmandoo: {XmlLoginTicketRequest.OuterXml} ";
 
                 // Convierto el Login Ticket Request a bytes, firmo el msg y lo convierto a Base64
                 var msgEncoding = Encoding.UTF8;
                 var msgBytes = msgEncoding.GetBytes(XmlLoginTicketRequest.OuterXml);
+                pasos += $"*4**intermedio 4. ";
+
                 var encodedSignedCms = X509CertificateManager.SignMessageBytes(msgBytes, certFirmante);
+                pasos += $"*5**intermedio 5. ";
                 base64SignedCms = Convert.ToBase64String(encodedSignedCms);
             }
             catch (Exception ex)
             {
-                throw new Exception(ID_FNC + "***Error FIRMANDO el LoginTicketRequest : " + ex.ToString());
+                throw new Exception(ID_FNC + "\n" + pasos + "\n***Error FIRMANDO el LoginTicketRequest : " + ex.ToString());
             }
 
             string loginTicketResponse;

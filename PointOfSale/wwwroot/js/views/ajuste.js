@@ -150,7 +150,6 @@ $(document).ready(function () {
                 $("#txtPie2").val(model.pie2);
                 $("#txtPie3").val(model.pie3);
                 $("#txtMinimoIdentificarConsumidor").val(model.minimoIdentificarConsumidor);
-                $("#cboNombreImpresora").val(model.nombreImpresora);
                 loadTableFromEmailsString(model.emailsReceptoresCierreTurno);
                 $("#txtEmailCierreTurno").val(model.emailEmisorCierreTurno);
                 $("#txtEmailPassword").val(model.passwordEmailEmisorCierreTurno);
@@ -161,6 +160,14 @@ $(document).ready(function () {
                 document.getElementById('switchCierreTurno').checked = model.notificarEmailCierreTurno;
                 document.getElementById('switchConmtrolTotalesCierreTurno').checked = model.controlTotalesCierreTurno;
 
+
+                if (model.nombreImpresora != null && model.nombreImpresora != '' && $("#cboNombreImpresora").val() == null) {
+                    $("#cboNombreImpresora").append(
+                        $("<option>").val(model.nombreImpresora).text(model.nombreImpresora)
+                    );
+                }
+                else
+                    $("#cboNombreImpresora").val(model.nombreImpresora);
 
                 if (model.modificationUser == null)
                     document.getElementById("divModif").style.display = 'none';
