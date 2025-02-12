@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using static PointOfSale.Model.Enum;
 using Microsoft.AspNetCore.Http;
+using PointOfSale.Business.Externos.PrintServices;
 
 namespace PointOfSale.Business.Services
 {
@@ -24,13 +25,15 @@ namespace PointOfSale.Business.Services
         private readonly IFileStorageService _fileStorageService;
         private readonly INotificationService _notificationRepository;
         private readonly ISaleRepository _saleRepository;
+        private readonly IPrintService _printService;
 
         public AfipService(IGenericRepository<FacturaEmitida> repository,
             IAFIPFacturacionService afipFacturacionService,
             IAjusteService ajusteService,
             IFileStorageService fileStorageService,
             INotificationService notificationRepository,
-            ISaleRepository saleRepository)
+            ISaleRepository saleRepository,
+            IPrintService printService)
         {
             _repository = repository;
             _afipFacturacionService = afipFacturacionService;
@@ -38,6 +41,7 @@ namespace PointOfSale.Business.Services
             _fileStorageService = fileStorageService;
             _notificationRepository = notificationRepository;
             _saleRepository = saleRepository;
+            _printService = printService;
         }
 
         private async Task<FacturaEmitida> Facturar(Sale sale, string? nroDocumento, int? idCliente, string registrationUser, AjustesFacturacion ajustes)
@@ -57,7 +61,9 @@ namespace PointOfSale.Business.Services
 
             var tipoDoc = TipoComprobante.ConvertTipoFactura(tipoFactura);
             var documentoAFacturar = ObtenerDocumentoAFacturar(tipoDoc, nroDocumento);
-            var nroFactura = await ObtenerNuevoNumeroFactura(ajustes, tipoDoc);
+            var nroFactura = await _printService.GetLastAuthorizedReceiptAsync(ajustes.PuntoVenta.Value, tipoDoc.Id);
+
+            //var nroFactura = await ObtenerNuevoNumeroFactura(ajustes, tipoDoc);
 
             var factura = new FacturaAFIP(sale.DetailSales.ToList(), sale.RegistrationDate.Value, tipoDoc, nroFactura, ajustes.PuntoVenta.Value, documentoAFacturar);
 

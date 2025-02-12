@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
+using PointOfSale.Business.Externos.PrintServices;
 using PointOfSale.Business.Services;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Data.DBContext;
@@ -28,6 +29,8 @@ public class Program
         {
 
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddHttpClient();
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
@@ -108,6 +111,7 @@ public class Program
             builder.Services.AddScoped<IBackupService, BackupService>();
             builder.Services.AddScoped<ICorrelativeNumberService, CorrelativeNumberService>();
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            builder.Services.AddScoped<IPrintService, PrintService>();
 
             var cultureInfo = new CultureInfo("es-ES");
             CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
