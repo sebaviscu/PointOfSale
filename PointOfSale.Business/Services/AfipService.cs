@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using static PointOfSale.Model.Enum;
 using Microsoft.AspNetCore.Http;
-using PointOfSale.Business.Externos.PrintServices;
 
 namespace PointOfSale.Business.Services
 {
@@ -61,13 +60,12 @@ namespace PointOfSale.Business.Services
 
             var tipoDoc = TipoComprobante.ConvertTipoFactura(tipoFactura);
             var documentoAFacturar = ObtenerDocumentoAFacturar(tipoDoc, nroDocumento);
-            var nroFactura = await _printService.GetLastAuthorizedReceiptAsync(ajustes.PuntoVenta.Value, tipoDoc.Id);
 
-            //var nroFactura = await ObtenerNuevoNumeroFactura(ajustes, tipoDoc);
+            var nroFactura = await ObtenerNuevoNumeroFactura(ajustes, tipoDoc);
 
             var factura = new FacturaAFIP(sale.DetailSales.ToList(), sale.RegistrationDate.Value, tipoDoc, nroFactura, ajustes.PuntoVenta.Value, documentoAFacturar);
 
-            var response = await _afipFacturacionService.FacturarAsync(ajustes, factura);
+            var response = await Facturar(factura);
 
             var facturaEmitida = CrearFacturaEmitida(response, nroFactura, idCliente, registrationUser, factura, sale.IdTienda, sale.IdSale);
 
@@ -157,8 +155,15 @@ namespace PointOfSale.Business.Services
 
         private async Task<int> ObtenerNuevoNumeroFactura(AjustesFacturacion ajustes, TipoComprobante tipoDoc)
         {
-            var ultimoComprobanteResponse = await _afipFacturacionService.GetUltimoComprobanteAutorizadoAsync(ajustes, ajustes.PuntoVenta.Value, tipoDoc);
-            return ultimoComprobanteResponse.CbteNro + 1;
+            var ultimoComprobanteResponse = await _printService.GetLastAuthorizedReceiptAsync(ajustes.PuntoVenta.Value, tipoDoc.Id);
+            return ultimoComprobanteResponse + 1;
+        }
+
+        private async Task<FacturacionResponse> Facturar(FacturaAFIP factura)
+        {
+            var comprobante = await _printService.FacturarAsync(factura);
+
+            return comprobante;
         }
 
         private FacturaEmitida CrearFacturaEmitida(FacturacionResponse response, int nroFactura, int? idCliente, string registrationUser, FacturaAFIP factura, int idTienda, int idSale)

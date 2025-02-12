@@ -7,15 +7,9 @@ using System.Threading.Tasks;
 
 namespace PointOfSale.Business.Externos.PrintServices.ResponseModel
 {
-    public class LastAuthorizedReceiptResponse
+    public class HealthcheckResponse
     {
         [JsonPropertyName("success")]
         public bool Success { get; set; }
-
-        [JsonPropertyName("error")]
-        public string? Error { get; set; }
-
-        [JsonPropertyName("numeroComprobante")]
-        public int NumeroComprobante { get; set; }
     }
 }

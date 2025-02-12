@@ -64,6 +64,9 @@ namespace PointOfSale.Model.Afip.Factura
                 var tipoIva = IVA_Afip.IVA_21;
                 switch (detalle.Key.Value)
                 {
+                    case 0M:
+                        tipoIva = IVA_Afip.IVA_0;
+                        break;
                     case 10.5M:
                         tipoIva = IVA_Afip.IVA_105;
                         break;
@@ -171,8 +174,8 @@ namespace PointOfSale.Model.Afip.Factura
                     Concepto = Concepto.Producto,
                     TipoDocumento = tipoDocumento,
                     NroDocumento = documento,
-                    NroComprobanteDesde = nroComprobante + i++,
-                    NroComprobanteHasta = nroComprobante + i++,
+                    NroComprobanteDesde = nroComprobante + i,
+                    NroComprobanteHasta = nroComprobante + i,
                     FechaComprobante = fechaComprobante,
                     ImporteTotalConc = 0,
                     ImporteNeto = importeIva.ImporteNeto,
@@ -185,6 +188,7 @@ namespace PointOfSale.Model.Afip.Factura
                     ImporteIva = importeIva
                 };
                 listaDetalles.Add(detalleNew);
+                i++;
             }
 
             Detalle = listaDetalles;

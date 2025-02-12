@@ -353,7 +353,10 @@ function cargarTablaDetallesIva(data) {
 
     tableDataDetallesIVA = $("#tbDetallesIva").DataTable({
         responsive: true,
-        pageLength: 5,
+        paging: false,  // Desactiva la paginación
+        searching: false,  // Opcional: Desactiva la barra de búsqueda
+        info: false,  // Oculta el texto de "Mostrando X de Y registros"
+        //ordering: false,
         data: data,
         "columns": [
             {
@@ -393,7 +396,8 @@ function cargarTablaDetallesIva(data) {
                 }
             }
         ],
-        order: [[4, "desc"]],
-        dom: "rtip"
+        order: [[1, "desc"]],
+        dom: "t"  // Solo muestra la tabla sin controles
     });
+
 }

@@ -667,6 +667,7 @@ $("#btnSave").on("click", async function () {
 
 
 })
+
 async function healthcheck() {
     isHealthyAjustes = await getHealthcheck();
 
@@ -695,12 +696,14 @@ function FormatearQuill(texto, textoAlerta) {
 async function getPrintersTienda() {
     try {
         let printers = await getPrinters();
+        if (printers) {
 
-        printers.forEach(printer => {
-            $("#cboNombreImpresora").append(
-                $("<option>").val(printer).text(printer)
-            );
-        });
+            printers.forEach(printer => {
+                $("#cboNombreImpresora").append(
+                    $("<option>").val(printer).text(printer)
+                );
+            });
+        }
 
     } catch (error) {
         console.error('Error fetching printers:', error);
