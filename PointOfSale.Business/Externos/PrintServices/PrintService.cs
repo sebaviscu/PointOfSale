@@ -166,7 +166,7 @@ namespace PointOfSale.Business.Externos.PrintServices
 
             try
             {
-                var response = await FetchWithTimeoutAsync("/getLastAuthorizedReceipt", content, HttpMethod.Post, timeout: 150000);
+                var response = await FetchWithTimeoutAsync("/getLastAuthorizedReceipt", content, HttpMethod.Post, timeout: 60000);
 
                 var responseData = await response.Content.ReadAsStringAsync();
                 var data = JsonSerializer.Deserialize<LastAuthorizedReceiptResponse>(responseData);
@@ -197,7 +197,7 @@ namespace PointOfSale.Business.Externos.PrintServices
 
             try
             {
-                var response = await FetchWithTimeoutAsync("/invoice", content, HttpMethod.Post, timeout: 200000);
+                var response = await FetchWithTimeoutAsync("/invoice", content, HttpMethod.Post, timeout: 120000);
 
                 var responseData = await response.Content.ReadAsStringAsync();
                 var data = JsonSerializer.Deserialize<InvoiceResponse>(responseData);
