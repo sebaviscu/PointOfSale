@@ -8,6 +8,7 @@ using PointOfSale.Utilities.Response;
 using System.Security.Claims;
 using static PointOfSale.Model.Enum;
 using PointOfSale.Model.Input;
+using PointOfSale.Model.Afip.Factura;
 
 namespace PointOfSale.Controllers
 {
@@ -174,11 +175,11 @@ namespace PointOfSale.Controllers
                 var user = ValidarAutorizacion();
 
                 var turnoAbierto = await _turnoService.CheckTurnoAbierto(user.IdTienda);
-                if(!turnoAbierto)
+                if (!turnoAbierto)
                 {
                     throw new Exception("Debe haber un turno abierto");
                 }
-                
+
                 var inouinput = new RegistrationSaleInput()
                 {
                     MultiplesFormaDePago = _mapper.Map<List<MultiplesFormaPago>>(model.MultiplesFormaDePago),
@@ -194,6 +195,12 @@ namespace PointOfSale.Controllers
                 model.RegistrationUser = user.UserName;
 
                 var result = await _saleService.RegisterSale(_mapper.Map<Sale>(model), inouinput);
+
+                if (result.Ajustes.FacturaElectronica.HasValue && result.Ajustes.FacturaElectronica.Value)
+                {
+                    var facturas = await _afipFacturacionService.GetFacturaByVentas(result.SaleList, result.Ajustes, model.CuilFactura, model.IdClienteFactura);
+                    result.FacturasAFIP.AddRange(facturas);
+                }
 
                 var errores = $"{result.ErrorFacturacion} {result.Errores}";
                 gResponse.State = string.IsNullOrEmpty(result.Errores);

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AFIP.Facturacion.Model;
+using Microsoft.AspNetCore.Http;
 using PointOfSale.Model;
 using PointOfSale.Model.Afip.Factura;
 using System;
@@ -29,9 +30,15 @@ namespace PointOfSale.Business.Contracts
 
         Task<FacturaEmitida> GetBySaleId(int idSale);
 
+        Task<List<FacturaEmitida>> GetListBySaleId(int idSale);
+
         Task<FacturaEmitida?> FacturarVenta(Sale sale, Ajustes ajustes, string cuil, int? idCliente);
 
         Task<FacturaEmitida?> NotaCredito(int idFacturaemitida, string registrationUser);
         Task<FacturaEmitida?> Refacturar(int idFacturaemitida, string cuil, string registrationUser);
+
+        Task<List<FacturaAFIP>> GetFacturaByVentas(List<Sale> sales, Ajustes ajustes, string cuil, int? idCliente);
+
+        Task<FacturaEmitida> SaveFacturaEmitida(FacturacionResponse facturacion, int idSale);
     }
 }

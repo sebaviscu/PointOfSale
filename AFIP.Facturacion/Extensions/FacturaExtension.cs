@@ -99,9 +99,9 @@ namespace AFIP.Facturacion.Extensions
             {
                 var iva = new AlicIva
                 {
-                    Id = (int)detalle.ImporteIva.TipoIva,
-                    BaseImp = detalle.ImporteIva.ImporteNeto,
-                    Importe = detalle.ImporteIva.ImporteIVA
+                    Id = (int)detalle.ImporteIvaObj.TipoIva,
+                    BaseImp = detalle.ImporteIvaObj.ImporteNeto,
+                    Importe = detalle.ImporteIvaObj.ImporteIVA
                 };
 
                 var detalleProduct = new FECAEDetRequest

@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using AFIP.Facturacion.Extensions;
+using AFIP.Facturacion.Model;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Models;
@@ -141,6 +143,40 @@ namespace PointOfSale.Controllers
                 return HandleException(ex, "Error al recuperar facturas", _logger, idFacturaEmitida);
             }
         }
+        
+        [HttpPost]
+        public async Task<IActionResult> SaveInvoice([FromBody] SaveInvoiceRequest request)
+        {
+            var gResponse = new GenericResponse<VMFacturaEmitida>();
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador]);
+
+                var factura = await _afipService.SaveFacturaEmitida(request.Facturacion, request.IdSale);
+
+                var vmFactura = _mapper.Map<VMFacturaEmitida>(factura);
+
+                if (factura.Observaciones == null)
+                {
+                    vmFactura.QR = await _afipService.GenerateLinkAfipFactura(factura);
+                }
+
+                gResponse.State = true;
+                gResponse.Object = vmFactura;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al guardar factura", _logger, request.Facturacion);
+            }
+        }
 
     }
+
+    public class SaveInvoiceRequest
+    {
+        public FacturacionResponse Facturacion { get; set; }
+        public int IdSale { get; set; }
+    }
+
 }

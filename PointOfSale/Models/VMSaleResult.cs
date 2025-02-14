@@ -1,4 +1,5 @@
 ﻿using PointOfSale.Model;
+using PointOfSale.Model.Afip.Factura;
 
 namespace PointOfSale.Models
 {
@@ -19,5 +20,8 @@ namespace PointOfSale.Models
         public List<Images> ImagesTicket { get; set; }
         public string? Errores { get; set; }
         public string TipoVenta { get; set; }
+        public List<FacturaAFIP>? FacturasAFIP { get; set; } = new List<FacturaAFIP>();
+        public bool Facturar => FacturasAFIP != null && FacturasAFIP.Any();
+
     }
 }

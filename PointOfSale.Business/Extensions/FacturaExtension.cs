@@ -31,9 +31,9 @@ namespace AFIP.Facturacion.Extensions
             {
                 var iva = new AlicIva
                 {
-                    Id = (int)detalle.ImporteIva.TipoIva,
-                    BaseImp = detalle.ImporteIva.ImporteNeto,
-                    Importe = detalle.ImporteIva.ImporteIVA
+                    Id = (int)detalle.ImporteIvaObj.TipoIva,
+                    BaseImp = detalle.ImporteIvaObj.ImporteNeto,
+                    Importe = detalle.ImporteIvaObj.ImporteIVA
                 };
 
                 var detalleProduct = new FECAEDetRequest
@@ -175,6 +175,23 @@ namespace AFIP.Facturacion.Extensions
             }
 
             return facturaRecibida;
+        }
+
+        public static void ToFacturaEmitida(FECAEDetResponse fECAECabResponse, FacturaEmitida facturaEmitida)
+        {
+            facturaEmitida.CAE = fECAECabResponse.CAE;
+            facturaEmitida.CAEVencimiento = fECAECabResponse.CAEFchVto != string.Empty ? DateTime.ParseExact(fECAECabResponse.CAEFchVto, "yyyyMMdd", CultureInfo.InvariantCulture) : null;
+            facturaEmitida.FechaEmicion = DateTime.ParseExact(fECAECabResponse.CbteFch, "yyyyMMdd", CultureInfo.InvariantCulture);
+            facturaEmitida.NroDocumento = fECAECabResponse.DocNro;
+            facturaEmitida.TipoDocumentoId = fECAECabResponse.DocTipo;
+            facturaEmitida.TipoDocumento = TipoDocumento.GetById(fECAECabResponse.DocTipo).Description;
+            facturaEmitida.Resultado = fECAECabResponse.Resultado;
+            facturaEmitida.RegistrationDate = TimeHelper.GetArgentinaTime();
+            facturaEmitida.NroFactura = (int)fECAECabResponse.CbteDesde;
+            if (fECAECabResponse.Observaciones != null && fECAECabResponse.Observaciones.Any())
+            {
+                facturaEmitida.Observaciones = string.Join(Environment.NewLine, fECAECabResponse.Observaciones.Select(_ => _.Msg));
+            }
         }
 
 

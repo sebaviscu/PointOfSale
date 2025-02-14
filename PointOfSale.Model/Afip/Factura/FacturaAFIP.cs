@@ -23,7 +23,7 @@ namespace PointOfSale.Model.Afip.Factura
         /// <param name="nroComprobante"></param>
         /// <param name="ptoVenta"></param>
         /// <param name="documento"></param>
-        public FacturaAFIP(List<DetailSale> detailSale, DateTime fechaComprobante, TipoComprobante tipoComprobante, int nroComprobante, int ptoVenta, long documento)
+        public FacturaAFIP(List<DetailSale> detailSale, DateTime fechaComprobante, TipoComprobante tipoComprobante, int? nroComprobante, int ptoVenta, long documento)
         {
             Cabecera = CrearCabecera(tipoComprobante, ptoVenta);
             var tipoDocumento = ObtenerTipoDocumento(tipoComprobante, documento);
@@ -158,7 +158,7 @@ namespace PointOfSale.Model.Afip.Factura
             };
         }
 
-        private void AgregarDetalle(List<DetailSale> detailSale, DateTime fechaComprobante, int nroComprobante, long documento, TipoDocumento tipoDocumento, TipoComprobante tipoComprobante)
+        private void AgregarDetalle(List<DetailSale> detailSale, DateTime fechaComprobante, int? nroComp, long documento, TipoDocumento tipoDocumento, TipoComprobante tipoComprobante)
         {
             var listaDetalles = new List<DetalleFacturaAFIP>();
 
@@ -169,13 +169,15 @@ namespace PointOfSale.Model.Afip.Factura
             {
                 var importeIva = CalcularImportes(tiposIVA, tipoComprobante);
 
+                var nroComprobante = nroComp != null ? (long)(nroComp + i) : (long)0;
+                
                 var detalleNew = new DetalleFacturaAFIP
                 {
                     Concepto = Concepto.Producto,
                     TipoDocumento = tipoDocumento,
                     NroDocumento = documento,
-                    NroComprobanteDesde = nroComprobante + i,
-                    NroComprobanteHasta = nroComprobante + i,
+                    NroComprobanteDesde = nroComprobante,
+                    NroComprobanteHasta = nroComprobante,
                     FechaComprobante = fechaComprobante,
                     ImporteTotalConc = 0,
                     ImporteNeto = importeIva.ImporteNeto,
@@ -185,7 +187,7 @@ namespace PointOfSale.Model.Afip.Factura
                     Moneda = TipoMoneda.PesoArgentino,
                     CotizacionMoneda = 1,
                     CondicionIVAReceptorId = 15, // 1 =>IVA Responsable Inscripto, 6 => Responsable Monotributo, 15 => IVA No Alcanzado
-                    ImporteIva = importeIva
+                    ImporteIvaObj = importeIva
                 };
                 listaDetalles.Add(detalleNew);
                 i++;

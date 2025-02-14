@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using iText.StyledXmlParser.Jsoup.Safety;
+using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Data.Repository;
@@ -203,6 +204,7 @@ namespace PointOfSale.Business.Services
 
                 var ajustes = await ajustesTask;
                 var lastNumber = await lastNumberTask;
+                modelResponde.Ajustes = ajustes;
 
                 var paso = false;
 
@@ -240,41 +242,41 @@ namespace PointOfSale.Business.Services
                         _ = await _repositorySale.Edit(sale_created);
                     }
 
-                    FacturaEmitida facturaEmitida = null;
-                    try
-                    {
-                        if (ajustes.FacturaElectronica.HasValue && ajustes.FacturaElectronica.Value)
-                        {
-                            facturaEmitida = await _afipService.FacturarVenta(sale_created, ajustes, saleInput.CuilFactura, saleInput.IdClienteFactura);
+                    //FacturaEmitida facturaEmitida = null;
+                    //try
+                    //{
+                    //    if (ajustes.FacturaElectronica.HasValue && ajustes.FacturaElectronica.Value)
+                    //    {
+                    //        facturaEmitida = await _afipService.FacturarVenta(sale_created, ajustes, saleInput.CuilFactura, saleInput.IdClienteFactura);
 
-                            if (facturaEmitida != null && facturaEmitida.Resultado != "A")
-                            {
-                                modelResponde.ErrorFacturacion = facturaEmitida.Observaciones;
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        modelResponde.ErrorFacturacion = e.Message;
-                        sale_created.ResultadoFacturacion = false;
-                        await _repositorySale.Edit(sale_created);
-                    }
+                    //        if (facturaEmitida != null && facturaEmitida.Resultado != "A")
+                    //        {
+                    //            modelResponde.ErrorFacturacion = facturaEmitida.Observaciones;
+                    //        }
+                    //    }
+                    //}
+                    //catch (Exception e)
+                    //{
+                    //    modelResponde.ErrorFacturacion = e.Message;
+                    //    sale_created.ResultadoFacturacion = false;
+                    //    await _repositorySale.Edit(sale_created);
+                    //}
 
-                    if (!string.IsNullOrEmpty(modelResponde.ErrorFacturacion))
-                    {
-                        var notific = new Notifications(sale_created, string.Concat(modelResponde.Errores, modelResponde.ErrorFacturacion));
-                        await _notificationService.Save(notific);
-                    }
+                    //if (!string.IsNullOrEmpty(modelResponde.ErrorFacturacion))
+                    //{
+                    //    var notific = new Notifications(sale_created, string.Concat(modelResponde.Errores, modelResponde.ErrorFacturacion));
+                    //    await _notificationService.Save(notific);
+                    //}
 
-                    if (saleInput.ImprimirTicket && !string.IsNullOrEmpty(ajustes.NombreImpresora))
-                    {
-                        var ticket = await RegistrationTicketPrinting(ajustes, sale_created, facturaEmitida);
-                        if (ticket != null)
-                        {
-                            modelResponde.Ticket += ticket.Ticket;
-                            modelResponde.ImagesTicket.AddRange(ticket.ImagesTicket);
-                        }
-                    }
+                    //if (saleInput.ImprimirTicket && !string.IsNullOrEmpty(ajustes.NombreImpresora))
+                    //{
+                    //    var ticket = await RegistrationTicketPrinting(ajustes, sale_created, facturaEmitida);
+                    //    if (ticket != null)
+                    //    {
+                    //        modelResponde.Ticket += ticket.Ticket;
+                    //        modelResponde.ImagesTicket.AddRange(ticket.ImagesTicket);
+                    //    }
+                    //}
 
                     if (sale_created.IdTypeDocumentSale != null)
                     {
@@ -295,6 +297,7 @@ namespace PointOfSale.Business.Services
                         modelResponde.TipoVenta = "Mov. Cliente";
                     }
 
+                    modelResponde.SaleList.Add(sale_created);
                 }
 
             }

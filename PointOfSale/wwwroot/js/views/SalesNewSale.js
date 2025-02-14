@@ -691,70 +691,135 @@ $("#btnFinalizarVentaParcial").off("click").on("click", function () {
     registrationSale(currentTabId);
 });
 
+
 function registrationSale(currentTabId) {
     showLoading();
 
     let sale = getVentaForRegister();
 
-    fetch("/Sales/RegisterSale", {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json;charset=utf-8' },
-        body: JSON.stringify(sale)
-    }).then(response => {
+    try {
 
-        return response.json();
-    }).then(responseJson => {
-        removeLoading();
-        //localStorage.removeItem('ventaActual');
-        deleteVentaFromIndexedDB(parseInt(currentTabId));
+        fetch("/Sales/RegisterSale", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json;charset=utf-8' },
+            body: JSON.stringify(sale)
+        }).then(response => {
 
-        if (responseJson.state) {
+            return response.json();
+        }).then(responseJson => {
+            removeLoading();
+            //localStorage.removeItem('ventaActual');
+            deleteVentaFromIndexedDB(parseInt(currentTabId));
 
-            if (responseJson.message != null && responseJson.message != '') {
-                swal("Error al Facturar", "La venta fué registrada correctamente, pero no se ha podido facturar.\n", "warning");
-            } else if (responseJson.object.errores != null && responseJson.object.errores != '') {
-                swal("Error", responseJson.object.errores, "warning");
-            }
+            if (responseJson.state) {
 
-            let nuevaVentaSpan = document.getElementById('profile-tab' + currentTabId).querySelector('span');
-            if (nuevaVentaSpan != null) {
-                nuevaVentaSpan.textContent = responseJson.object.tipoVenta + '-' + responseJson.object.saleNumber;
-            }
+                let invoice;
 
-            if (responseJson.object.idSale != null) {
-                $("#btnImprimirTicket" + currentTabId).attr("idSale", responseJson.object.idSale);
-            }
-            else {
-                let newIdSaleMultiple = responseJson.object.idSaleMultiple.slice(0, -1);  // Elimina el último carácter
-                $("#btnImprimirTicket" + currentTabId).attr("idSalesMultiple", newIdSaleMultiple);
-            }
+                if (responseJson.state) {
+                    if (responseJson.object.facturar) {
+                        showLoading();
+
+                        for (let f of responseJson.object.facturasAFIP) {
+                            getLastAuthorizedReceipt(f.cabecera.puntoVenta, f.cabecera.tipoComprobante.id)
+                                .then(nroComprobante => {
+                                    f.detalle.forEach(d => {
+                                        nroComprobante++;
+                                        d.nroComprobanteDesde = nroComprobante;
+                                        d.nroComprobanteHasta = nroComprobante;
 
 
-            AllTabsForSale = AllTabsForSale.filter(p => p.idTab != currentTabId);
-            cleanSaleParcial();
+                                        getInvoicing(f)
+                                            .then(i => {
+                                                removeLoading();
+                                                invoice = i;
 
-            if ($(".tab-venta").length > 2) {
 
-                // para cerrar la ultima venta de 3
-                let firstTabID = document.getElementsByClassName("tab-venta")[0].getAttribute("data-bs-target");
+                                                let saveInvoice = {
+                                                    facturacion: i,
+                                                    idSale: parseInt(responseJson.object.idSale)
+                                                };
 
-                if ($('#btnAgregarProducto' + firstTabID[firstTabID.length - 1]).is(':disabled')) { // si no esta cerrada la venta, no se cierra
-                    $(firstTabID).remove();
-                    document.getElementsByClassName("li-tab")[0].remove();
+                                                fetch("/Facturacion/SaveInvoice", {
+                                                    method: "POST",
+                                                    headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                                                    body: JSON.stringify(saveInvoice)
+                                                }).then(response => {
+
+                                                    swal("Facturado", "Se facturó!!.\n", "success");
+
+                                                });
+
+                                            })
+                                            .catch(error => {
+                                                removeLoading();
+                                                console.error("Error al facturar:", error)
+                                            });
+
+                                    });
+                                })
+                                .catch(error => {
+                                    removeLoading();
+                                    console.error("Error al obtener el último comprobante:", error)
+                                });
+
+
+
+                        }
+                    }
                 }
+
+
+
+                if (responseJson.message != null && responseJson.message != '') {
+                    swal("Error al Facturar", "La venta fué registrada correctamente, pero no se ha podido facturar.\n", "warning");
+                } else if (responseJson.object.errores != null && responseJson.object.errores != '') {
+                    swal("Error", responseJson.object.errores, "warning");
+                }
+
+                let nuevaVentaSpan = document.getElementById('profile-tab' + currentTabId).querySelector('span');
+                if (nuevaVentaSpan != null) {
+                    nuevaVentaSpan.textContent = responseJson.object.tipoVenta + '-' + responseJson.object.saleNumber;
+                }
+
+                if (responseJson.object.idSale != null) {
+                    $("#btnImprimirTicket" + currentTabId).attr("idSale", responseJson.object.idSale);
+                }
+                else {
+                    let newIdSaleMultiple = responseJson.object.idSaleMultiple.slice(0, -1);  // Elimina el último carácter
+                    $("#btnImprimirTicket" + currentTabId).attr("idSalesMultiple", newIdSaleMultiple);
+                }
+
+
+                AllTabsForSale = AllTabsForSale.filter(p => p.idTab != currentTabId);
+                cleanSaleParcial();
+
+                if ($(".tab-venta").length > 2) {
+
+                    // para cerrar la ultima venta de 3
+                    let firstTabID = document.getElementsByClassName("tab-venta")[0].getAttribute("data-bs-target");
+
+                    if ($('#btnAgregarProducto' + firstTabID[firstTabID.length - 1]).is(':disabled')) { // si no esta cerrada la venta, no se cierra
+                        $(firstTabID).remove();
+                        document.getElementsByClassName("li-tab")[0].remove();
+                    }
+                }
+                disableAfterVenta(currentTabId);
+
+                if (isHealthySale && sale.imprimirTicket && responseJson.object.nombreImpresora != null && responseJson.object.nombreImpresora != '' && responseJson.object.ticket != null && responseJson.object.ticket != '') {
+                    printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora, responseJson.object.imagesTicket);
+                }
+
+                newTab();
+
+            } else {
+                swal("Lo sentimos", "La venta no fué registrada. Error: " + responseJson.message, "error");
             }
-            disableAfterVenta(currentTabId);
+        });
+    } catch (exceptionVar) {
 
-            if (isHealthySale && sale.imprimirTicket && responseJson.object.nombreImpresora != null && responseJson.object.nombreImpresora != '' && responseJson.object.ticket != null && responseJson.object.ticket != '') {
-                printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora, responseJson.object.imagesTicket);
-            }
-
-            newTab();
-
-        } else {
-            swal("Lo sentimos", "La venta no fué registrada. Error: " + responseJson.message, "error");
-        }
-    });
+        removeLoading();
+        swal("Lo sentimos", exceptionVar, "error");
+    }
 }
 
 function disableAfterVenta(tabID) {

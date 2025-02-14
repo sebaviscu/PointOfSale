@@ -1,4 +1,6 @@
-﻿namespace PointOfSale.Model.Output
+﻿using PointOfSale.Model.Afip.Factura;
+
+namespace PointOfSale.Model.Output
 {
     public class RegisterSaleOutput
     {
@@ -15,8 +17,13 @@
         public string? NombreImpresora { get; set; }
         public string? Ticket { get; set; }
         public List<Images> ImagesTicket { get; set; }
-        public string? Errores {  get; set; }
+        public string? Errores { get; set; }
         public string TipoVenta { get; set; }
         public string? ErrorFacturacion { get; set; }
+
+        public Ajustes Ajustes { get; set; }
+        public List<Sale> SaleList { get; set; } = new List<Sale>();
+        public List<FacturaAFIP> FacturasAFIP { get; set; } = new List<FacturaAFIP>();
+        public int PuntoVenta { get; set; }
     }
 }

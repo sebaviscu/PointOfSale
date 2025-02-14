@@ -6,6 +6,9 @@ using Microsoft.Extensions.Configuration;
 using AfipServiceReference;
 using AFIP.Facturacion.Model;
 using PointOfSale.Model.Afip.Factura;
+using ExcelDataReader.Log;
+using Microsoft.Extensions.Logging;
+using PointOfSale.Business.Services;
 
 namespace PointOfSale.Business.Externos.PrintServices
 {
@@ -14,10 +17,12 @@ namespace PointOfSale.Business.Externos.PrintServices
         private readonly IHttpClientFactory _httpClientFactory;
         private const string UrlPrintService = "https://localhost:4568";
         private readonly string BearerToken;
+        private readonly ILogger<PrintService> _logger;
 
-        public PrintService(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+        public PrintService(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<PrintService> logger)
         {
             _httpClientFactory = httpClientFactory;
+            _logger = logger;
             BearerToken = configuration["PrintToken"] ?? throw new Exception("El PrintToken no está configurado");
         }
 
@@ -32,7 +37,7 @@ namespace PointOfSale.Business.Externos.PrintServices
             };
 
             // Agregar el encabezado de autorización con el token Bearer
-            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", BearerToken);
+            //request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", BearerToken);
 
             try
             {
@@ -54,7 +59,9 @@ namespace PointOfSale.Business.Externos.PrintServices
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    Console.Error.WriteLine($"Healthcheck fallido: {response.ReasonPhrase}");
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogError("Healthcheck failed: {StatusCode} {ReasonPhrase} {Content}", response.StatusCode, response.ReasonPhrase, responseContent);
+                    _logger.LogError($"Healthcheck fallido: {response.ReasonPhrase}");
                     return false;
                 }
 
@@ -66,12 +73,13 @@ namespace PointOfSale.Business.Externos.PrintServices
             }
             catch (TimeoutException)
             {
-                Console.Error.WriteLine("La solicitud de Healthcheck ha excedido el tiempo de espera.");
+                _logger.LogError("La solicitud de Healthcheck ha excedido el tiempo de espera.");
                 return false;
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine($"Error durante el Healthcheck: {ex.Message}");
+                _logger.LogError(ex, "An error occurred during the Healthcheck request to {Url}", $"{UrlPrintService}/healthcheck");
+                _logger.LogError($"Error durante el Healthcheck: {ex.Message}");
                 return false;
             }
         }
@@ -98,22 +106,18 @@ namespace PointOfSale.Business.Externos.PrintServices
                 var responseData = await response.Content.ReadAsStringAsync();
                 var data = JsonSerializer.Deserialize<ResponseModel>(responseData);
 
-                if (data?.Success == true)
+                if (data?.Success != true)
                 {
-                    Console.WriteLine("Documento enviado a la impresora con éxito");
-                }
-                else
-                {
-                    Console.Error.WriteLine($"Error al enviar el documento a la impresora: {data?.Error}");
+                    _logger.LogError($"Error al enviar el documento a la impresora: {data?.Error}");
                 }
             }
             catch (TimeoutException)
             {
-                Console.Error.WriteLine("Error: La solicitud de impresión ha excedido el tiempo de espera.");
+                _logger.LogError("Error: La solicitud de impresión ha excedido el tiempo de espera.");
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine($"Error al enviar el documento a la impresora: {ex.Message}");
+                _logger.LogError($"Error al enviar el documento a la impresora: {ex.Message}");
             }
         }
 
@@ -138,18 +142,18 @@ namespace PointOfSale.Business.Externos.PrintServices
                 }
                 else
                 {
-                    Console.Error.WriteLine($"Error fetching printers: {data?.Error}");
+                    _logger.LogError($"Error fetching printers: {data?.Error}");
                     return new List<string>();
                 }
             }
             catch (TimeoutException)
             {
-                Console.Error.WriteLine("GetPrinters request timed out.");
+                _logger.LogError("GetPrinters request timed out.");
                 return new List<string>();
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine($"Error fetching printers: {ex.Message}");
+                _logger.LogError($"Error fetching printers: {ex.Message}");
                 return new List<string>();
             }
         }
@@ -180,12 +184,12 @@ namespace PointOfSale.Business.Externos.PrintServices
             }
             catch (TimeoutException)
             {
-                Console.Error.WriteLine("Error: La solicitud de ultimo comprobante ha excedido el tiempo de espera.");
+                _logger.LogError("Error: La solicitud de ultimo comprobante ha excedido el tiempo de espera.");
                 throw;
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine($"Error a al solicitud de ultimo comprobante: {ex.Message}");
+                _logger.LogError($"Error a al solicitud de ultimo comprobante: {ex.Message}");
                 throw;
             }
         }
@@ -211,12 +215,12 @@ namespace PointOfSale.Business.Externos.PrintServices
             }
             catch (TimeoutException)
             {
-                Console.Error.WriteLine("Error: La solicitud de facturar ha excedido el tiempo de espera.");
+                _logger.LogError("Error: La solicitud de facturar ha excedido el tiempo de espera.");
                 throw;
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine($"Error a la solicitud de facturar: {ex.Message}");
+                _logger.LogError($"Error a la solicitud de facturar: {ex.Message}");
                 throw;
             }
         }

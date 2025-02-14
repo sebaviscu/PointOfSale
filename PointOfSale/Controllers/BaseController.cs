@@ -149,7 +149,7 @@ namespace PointOfSale.Controllers
                 logParams.Add(model.ToJson());
             }
 
-            if (additionalData != null)
+            if (additionalData != null) 
             {
                 foreach (var data in additionalData)
                 {

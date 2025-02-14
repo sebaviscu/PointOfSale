@@ -458,8 +458,6 @@ namespace PointOfSale.Utilities.Automapper
                 opt => opt.MapFrom(source => source.ListaPrecios.Any() && source.ListaPrecios.Count > 1 ? source.ListaPrecios[2].PorcentajeProfit : 0));
 
 
-            CreateMap<FacturaEmitida, VMFacturaEmitida>().ReverseMap();
-
             CreateMap<Product, VMProductReport>()
                     .ForMember(user => user.ProductName, opt => opt.MapFrom(userEdit => userEdit.Description))
                     .ForMember(user => user.Precio1, opt => opt.MapFrom(userEdit => userEdit.ListaPrecios.Any() && userEdit.ListaPrecios.Count > 0 ? userEdit.ListaPrecios[0].Precio.ToString() : "0"))
@@ -469,8 +467,12 @@ namespace PointOfSale.Utilities.Automapper
                     ;
 
             CreateMap<FacturaEmitida, VMFacturaEmitida>()
-                    .ForMember(user => user.NroFacturaString, opt => opt.MapFrom(userEdit => userEdit.NroFactura.Value != 0 ? userEdit.NroFactura.Value.ToString("D8") : string.Empty))
-                    .ForMember(user => user.PuntoVentaString, opt => opt.MapFrom(userEdit => userEdit.PuntoVenta.ToString("D4")));
+                .ForMember(dest => dest.NroFacturaString,
+                           opt => opt.MapFrom(src => src.NroFactura.HasValue && src.NroFactura.Value != 0
+                                                     ? src.NroFactura.Value.ToString("D8")
+                                                     : string.Empty))
+                .ForMember(dest => dest.PuntoVentaString,
+                           opt => opt.MapFrom(src => src.PuntoVenta.ToString("D4")));
 
 
             CreateMap<Tag, VMCategoriaWeb>()

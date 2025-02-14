@@ -30,13 +30,13 @@ namespace PointOfSale.Models
         public string? FacturaAnulada { get; set; }
 
         public int? IdSale { get; set; }
-        public VMSale? Sale { get; set; }
+        //public VMSale? Sale { get; set; }
 
         public int? IdCliente { get; set; }
-        public VMCliente? Cliente { get; set; }
+        //public VMCliente? Cliente { get; set; }
 
         public int? IdTienda { get; set; }
-        public VMTienda? Tienda { get; set; }
+        //public VMTienda? Tienda { get; set; }
 
         public ICollection<VMDetalleFacturaIva>? DetalleFacturaIvas { get; set; }
 
