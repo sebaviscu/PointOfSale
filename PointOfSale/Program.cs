@@ -196,23 +196,6 @@ public class Program
                 name: "default",
                 pattern: "{controller=Access}/{action=Login}/{id?}");
 
-            app.MapGet("/logs", async (HttpContext context) =>
-            {
-                var logPath = Path.Combine(builder.Environment.ContentRootPath, "logs", "logfile.txt");
-
-                if (File.Exists(logPath))
-                {
-                    context.Response.ContentType = "text/plain";
-                    var logContent = await File.ReadAllTextAsync(logPath);
-                    await context.Response.WriteAsync(logContent);
-                }
-                else
-                {
-                    context.Response.StatusCode = 404;
-                    await context.Response.WriteAsync("No hay logs disponibles.");
-                }
-            });
-
 
             app.Use(async (context, next) =>
             {

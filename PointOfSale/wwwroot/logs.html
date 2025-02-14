@@ -36,22 +36,50 @@
 <body>
     <h1>Visor de Logs</h1>
     <button onclick="cargarLogs()">Actualizar Logs</button>
+
+    <!-- Campo para la búsqueda -->
+    <input type="text" id="searchInput" placeholder="Buscar palabra..." oninput="resaltarPalabras()">
+
     <pre id="logContent">Cargando...</pre>
 
     <script>
+        let logs = ""; // Variable para almacenar los logs
+
+        // Función para cargar los logs desde el servidor
         async function cargarLogs() {
             try {
-                let response = await fetch('/logs');
-                if (!response.ok) throw new Error('No se pudo obtener el log');
-                let text = await response.text();
-                document.getElementById('logContent').textContent = text;
+                let response = await fetch('/logs/getLogs');
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.statusText}`);
+                }
+                logs = await response.text();
+                mostrarLogs(logs); // Mostrar los logs
             } catch (error) {
-                document.getElementById('logContent').textContent = "Error al cargar los logs.";
+                document.getElementById('logContent').textContent = `Error al cargar los logs: ${error.message}`;
             }
+        }
+
+        // Función para mostrar los logs
+        function mostrarLogs(text) {
+            document.getElementById('logContent').innerHTML = text; // Se usa innerHTML para aplicar formato
+        }
+
+        // Función para resaltar palabras en los logs
+        function resaltarPalabras() {
+            const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+            if (!searchTerm) {
+                mostrarLogs(logs); // Si no hay búsqueda, mostrar los logs sin cambios
+                return;
+            }
+
+            const regex = new RegExp(`(${searchTerm})`, 'gi'); // Crear una expresión regular para la búsqueda
+            const highlightedLogs = logs.replace(regex, `<span style="background-color: yellow;">$1</span>`); // Resaltar las palabras
+            mostrarLogs(highlightedLogs); // Mostrar los logs con los resaltados
         }
 
         cargarLogs();
         setInterval(cargarLogs, 5000); // Actualiza cada 5 segundos
     </script>
 </body>
+
 </html>
