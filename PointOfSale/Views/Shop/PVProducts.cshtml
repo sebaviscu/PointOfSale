@@ -2,99 +2,108 @@
 @model List<VMProduct>;
 
 <div class="row">
-    @foreach (var prod in Model.OrderBy(_ => _.Description))
-    {
+	@foreach (var prod in Model.OrderBy(_ => _.Description))
+	{
 
-        var claseDestacado = prod.Destacado ? "destacado" : "";
+		var claseDestacado = prod.Destacado ? "destacado" : "";
 
 
-        <div class="col-md-2 ftco-animate product-list" category-prod="@prod.IdCategory" description-prd="@prod.Description">
-            <div class="product @claseDestacado">
-                <!-- Imagen del producto -->
-                <div class="product-column">
+		<div class="col-md-2 ftco-animate product-list" category-prod="@prod.IdCategory" description-prd="@prod.Description">
+			<div class="product @claseDestacado">
+				<!-- Imagen del producto -->
+				<div class="product-column">
 
-                    <a href="javascript:void(0)" class="img-prod d-md-block" style="text-align: center;">
-                        <img class="img-fluid" src="data:image/png;base64,@prod.PhotoBase64" alt="Imagen">
-                        <div class="tags-container">
-                            @foreach (var tag in prod.Tags)
-                            {
-                                <span class="status" style="background-color: @tag.Color">@tag.Nombre</span>
-                            }
-                        </div>
-                        <div class="overlay"></div>
-                    </a>
-                </div>
+					<a href="javascript:void(0)" class="img-prod d-md-block" style="text-align: center;">
+						<img class="img-fluid" src="data:image/png;base64,@prod.PhotoBase64" alt="Imagen">
+						<div class="tags-container">
+							@foreach (var tag in prod.Tags)
+							{
+								<span class="status" style="background-color: @tag.Color">@tag.Nombre</span>
+							}
+						</div>
+						<div class="overlay"></div>
+					</a>
+				</div>
+				@{
+					var altura = 130;
+					if (!string.IsNullOrEmpty(prod.Comentario))
+					{
+						altura += 20;
+					}
+					if (prod.Description.Length > 55)
+					{
+						altura += 20;
+					}
+					var alturaString = altura + "px";
+				}
 
-                <!-- Información del producto -->
-                <div class="text text-center product-info" style="height: 130px; padding:0;">
-                    <hr id="hr-div" />
-                    @{
-                        var altura = string.IsNullOrEmpty(prod.Comentario) ? "90px" : "auto";
-                    }
-                    <div class="div-text-price-container" style="height:@altura;">
-                        <div class="div-text-price">
-                            <h3>
-                                <a href="javascript:void(0)" class="product-description" descProd="@prod.Description" iva="@prod.Iva" id="desc-@prod.IdProduct">@prod.Description</a>
-                            </h3>
-                            <div class="product-pricing">
-                                <div class="pricing">
-                                    @{
-                                        var precio = prod.PrecioFormatoWeb != null && Convert.ToDecimal(prod.PrecioFormatoWeb) > 0 ? prod.PrecioFormatoWeb : prod.Price;
-                                        var tipoVenta = prod.FormatoWeb switch
-                                        {
-                                            1 => "U",
-                                            1000 => "Kg",
-                                            > 1000 => $"{prod.FormatoWeb / 1000}Kg",
-                                            _ => $"{prod.FormatoWeb}gr"
-                                        };
-                                        var precioSinDecimales = Math.Floor(Convert.ToDecimal(precio));
+				<!-- Información del producto -->
+				<div class="text text-center product-info" style="height: @alturaString; padding:0;">
+					<hr id="hr-div" />
+					<div class="div-text-price-container">
+						<div class="div-text-price">
+							<h3>
+								<a href="javascript:void(0)" class="product-description" descProd="@prod.Description" iva="@prod.Iva" id="desc-@prod.IdProduct">@prod.Description</a>
+							</h3>
+							<div class="product-pricing">
+								<div class="pricing">
+									@{
+										var precio = prod.PrecioFormatoWeb != null && Convert.ToDecimal(prod.PrecioFormatoWeb) > 0 ? prod.PrecioFormatoWeb : prod.Price;
+										var tipoVenta = prod.FormatoWeb switch
+										{
+											1 => "U",
+											1000 => "Kg",
+											> 1000 => $"{prod.FormatoWeb / 1000}Kg",
+											_ => $"{prod.FormatoWeb}gr"
+										};
+										var precioSinDecimales = Math.Floor(Convert.ToDecimal(precio));
 
-                                    }
-                                    <p class="price">
-                                        <span class="price-sale" id="price-@prod.IdProduct" precio="@precioSinDecimales">$@precioSinDecimales</span><small> / @tipoVenta</small>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+									}
+									<p class="price">
+										<span class="price-sale" id="price-@prod.IdProduct" precio="@precioSinDecimales">$@precioSinDecimales</span><small> / @tipoVenta</small>
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
 
-                    @if (!string.IsNullOrEmpty(prod.Comentario))
-                    {
-                        <small>@prod.Comentario</small>
-                    }
+					@if (!string.IsNullOrEmpty(prod.Comentario))
+					{
+						<small>@prod.Comentario</small>
+					}
 
-                    @{
-                        var cantidad = prod.Quantity != null && prod.Quantity > 0 ? prod.Quantity : 0;
-                        var visible = prod.Quantity > 0 ? "opacity:1;" : null;
-                    }
+					@{
+						var cantidad = prod.Quantity != null && prod.Quantity > 0 ? prod.Quantity : 0;
+						var visible = prod.Quantity > 0 ? "opacity:1;" : null;
+					}
 
-                    <!-- Área inferior con botones de agregar/quitar -->
-                    <div class="bottom-area d-flex px-3" id="bottom-area-@prod.IdProduct" @(visible != null ? $"style={visible}" : "")>
-                        <div class="m-auto d-flex justify-content-center">
-                            <a href="javascript:void(0)" class="add-to-cart d-flex justify-content-center align-items-center text-center mx-1 less-button" idProduct="@prod.IdProduct" style="background-color: #f87272;">
-                                <span class="mdi mdi mdi-minus mdi-24px"></span>
+					<!-- Área inferior con botones de agregar/quitar -->
+					<div class="bottom-area d-flex px-3" id="bottom-area-@prod.IdProduct" @(visible != null ? $"style={visible}" : "")>
+						<div class="m-auto d-flex justify-content-center">
+							<a href="javascript:void(0)" class="add-to-cart d-flex justify-content-center align-items-center text-center mx-1 less-button" idProduct="@prod.IdProduct" style="background-color: #f87272;">
+								<span class="mdi mdi mdi-minus mdi-24px"></span>
 
-                            </a>
+							</a>
 
-                            <input type="text"
-                                   value="@cantidad"
-                                   typeInput="@prod.TipoVenta"
-                                   formatoWeb="@prod.FormatoWeb"
-                                   id="prod-@prod.IdProduct"
-                                   class="form-outline w-50 input-producto"
-                                   style="border-color:lightgray; text-align:center; background-color:white"
-                                   disabled>
+							<input type="text"
+								   value="@cantidad"
+								   typeInput="@prod.TipoVenta"
+								   formatoWeb="@prod.FormatoWeb"
+								   id="prod-@prod.IdProduct"
+								   class="form-outline w-50 input-producto"
+								   style="border-color:lightgray; text-align:center; background-color:white"
+								   disabled>
 
-                            <a href="javascript:void(0)" class="remove-to-cart buy-now d-flex justify-content-center align-items-center mx-1 pluss-button" style="background-color:#82ae46;" idProduct="@prod.IdProduct">
-                                <span class="mdi mdi-plus mdi-24px"></span>
+							<a href="javascript:void(0)" class="remove-to-cart buy-now d-flex justify-content-center align-items-center mx-1 pluss-button" style="background-color:#82ae46;" idProduct="@prod.IdProduct">
+								<span class="mdi mdi-plus mdi-24px"></span>
 
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
 </div>
 
 

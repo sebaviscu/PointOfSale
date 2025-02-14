@@ -14291,17 +14291,30 @@ textarea.form-control {
     margin-bottom: 15px
 }
 
+.product-description {
+    font-size: 17px;
+    color: black;
+}
+
+.product-column .img-fluid {
+    object-fit: cover; /* Ajusta la imagen sin distorsión */
+    max-width: 100%; /* Previene que se expanda más allá del contenedor */
+}
+
 @media all and (max-width: 1200px) and (min-width: 771px) {
     .pl-3, .px-3 {
         padding-left: initial;
     }
 }
 
-
-.product-column .img-fluid {
-    object-fit: cover; /* Ajusta la imagen sin distorsión */
-    max-width: 100%; /* Previene que se expanda más allá del contenedor */
+@@media all and (min-width: 771px) {
+    .img-fluid {
+        min-height: 160px;
+        max-height: 160px;
+        width: auto;
+    }
 }
+
 
 @media all and (max-width: 770px) and (min-width: 50px) {
 
@@ -14317,7 +14330,6 @@ textarea.form-control {
         display: block;
         margin: 10px 0;
         z-index: 10;
-        top: -12px; /* Ajusta según sea necesario */
         left: 70px;
         opacity:0.5;
     }

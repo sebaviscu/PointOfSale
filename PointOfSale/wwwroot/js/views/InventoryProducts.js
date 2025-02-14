@@ -1286,7 +1286,8 @@ function calcularPrecio() {
 
     if (aumento !== '' && precio !== '') {
         let precioFinal = parseFloat(precio) * (1 + (parseFloat(aumento) / 100));
-        $("#txtPriceWeb").val(precioFinal.toFixed(redondeoToFix));
+        let roundedPriceWeb = roundToDigits(precioFinal, redondeoToFix);
+        $("#txtPriceWeb").val(roundedPriceWeb);
     }
 
     calcularPrecioFormatoVenta();

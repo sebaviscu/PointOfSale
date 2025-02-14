@@ -33,6 +33,7 @@
 		<None Include="wwwroot\css\fonts\ionicons\fonts\ionicons.svg" />
 		<None Include="wwwroot\css\fonts\ionicons\fonts\ionicons.woff2" />
 		<None Include="wwwroot\css\fonts\open-iconic\open-iconic.svg" />
+		<None Include="wwwroot\logs.html" />
 		<None Include="wwwroot\plugins\printService.js" />
 	</ItemGroup>
 
@@ -44,6 +45,10 @@
 		<PackageReference Include="Neodynamic.SDK.WebClientPrint" Version="6.0.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
 		<PackageReference Include="UAParser" Version="3.1.47" />
+		<PackageReference Include="Serilog" Version="4.2.0" />
+		<PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

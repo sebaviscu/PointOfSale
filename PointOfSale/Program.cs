@@ -3,7 +3,6 @@ using AFIP.Facturacion.Services;
 using DinkToPdf;
 using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Externos.PrintServices;
@@ -14,21 +13,62 @@ using PointOfSale.Data.Repository;
 using PointOfSale.Utilities.Automapper;
 using System.Globalization;
 using System.Text.Json.Serialization;
+using Serilog;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Antiforgery;
 
 public class Program
 {
     public static void Main(string[] args)
     {
-        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-        var configuration = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json")
-            .AddJsonFile($"appsettings.{environment}.json", optional: true)
-            .Build();
+        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Delevopment";
 
+
+        var configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .AddJsonFile($"appsettings.{environment}.json", optional: true)
+                .Build();
+
+        // Crear y verificar carpeta de logs
+        string logsDirectory = Path.Combine(AppContext.BaseDirectory, "logs");
+        if (!Directory.Exists(logsDirectory))
+        {
+            Directory.CreateDirectory(logsDirectory);
+        }
         try
         {
-
             var builder = WebApplication.CreateBuilder(args);
+
+            var logDirectory = Path.Combine(builder.Environment.ContentRootPath, "logs");
+
+            if (!Directory.Exists(logDirectory))
+            {
+                Directory.CreateDirectory(logDirectory); // Crear la carpeta si no existe
+            }
+
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Error()
+                .Enrich.FromLogContext()
+                .WriteTo.File(Path.Combine(logDirectory, "logfile.txt"),
+                    rollingInterval: RollingInterval.Day,
+                    restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
+                .CreateLogger();
+
+            // Configurar Serilog
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Information() // Solo registrar errores
+                .Enrich.FromLogContext()
+        .WriteTo.File(Path.Combine(builder.Environment.ContentRootPath, "logs", "logfile.txt"),
+                    rollingInterval: RollingInterval.Day,
+                    restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
+                .CreateLogger();
+
+
+            builder.Services.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "keys")))
+                .SetApplicationName("PuntoDeVenta");
+
+            builder.Host.UseSerilog();
 
             builder.Services.AddHttpClient();
 
@@ -53,7 +93,6 @@ public class Program
                     option.LoginPath = "/Access/Login"; // Ruta de inicio de sesión
                     option.SlidingExpiration = true; // Renueva la cookie en cada solicitud activa
                     option.ExpireTimeSpan = TimeSpan.FromMinutes(120); // Tiempo de inactividad permitido
-                    option.Cookie.MaxAge = TimeSpan.FromMinutes(120);
 
                     // Configuración de persistencia de la cookie
                     option.Cookie.MaxAge = TimeSpan.FromDays(1); // Persistencia de la cookie por 1 día
@@ -129,8 +168,6 @@ public class Program
                 x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
 
-            //builder.Host.UseSerilog();
-
             var rutaInicioWeb = builder.Configuration["RutaInicioWeb"];
             bool usarShopIndex = !string.IsNullOrEmpty(rutaInicioWeb) && bool.TryParse(rutaInicioWeb, out bool parsedValue) && parsedValue;
 
@@ -159,10 +196,50 @@ public class Program
                 name: "default",
                 pattern: "{controller=Access}/{action=Login}/{id?}");
 
+            app.MapGet("/logs", async (HttpContext context) =>
+            {
+                var logPath = Path.Combine(builder.Environment.ContentRootPath, "logs", "logfile.txt");
+
+                if (File.Exists(logPath))
+                {
+                    context.Response.ContentType = "text/plain";
+                    var logContent = await File.ReadAllTextAsync(logPath);
+                    await context.Response.WriteAsync(logContent);
+                }
+                else
+                {
+                    context.Response.StatusCode = 404;
+                    await context.Response.WriteAsync("No hay logs disponibles.");
+                }
+            });
+
+
+            app.Use(async (context, next) =>
+            {
+                try
+                {
+                    var antiforgery = context.RequestServices.GetRequiredService<IAntiforgery>();
+                    var tokens = antiforgery.GetAndStoreTokens(context);
+                    Log.Information("Antiforgery token generado: {Token}", tokens.RequestToken);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Error al generar/verificar el token antiforgery");
+                }
+
+                await next();
+            });
+
+
             app.Run();
         }
         catch (Exception ex)
         {
+            Log.Fatal(ex, "Error crítico en la aplicación");
+        }
+        finally
+        {
+            Log.CloseAndFlush();
         }
     }
 }

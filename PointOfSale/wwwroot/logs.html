@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visor de Logs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        pre {
+            background: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        button {
+            display: block;
+            margin: 10px auto;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Visor de Logs</h1>
+    <button onclick="cargarLogs()">Actualizar Logs</button>
+    <pre id="logContent">Cargando...</pre>
+
+    <script>
+        async function cargarLogs() {
+            try {
+                let response = await fetch('/logs');
+                if (!response.ok) throw new Error('No se pudo obtener el log');
+                let text = await response.text();
+                document.getElementById('logContent').textContent = text;
+            } catch (error) {
+                document.getElementById('logContent').textContent = "Error al cargar los logs.";
+            }
+        }
+
+        cargarLogs();
+        setInterval(cargarLogs, 5000); // Actualiza cada 5 segundos
+    </script>
+</body>
+</html>
