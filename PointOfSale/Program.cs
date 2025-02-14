@@ -47,18 +47,9 @@ public class Program
             }
 
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Error()
+                .MinimumLevel.Information()
                 .Enrich.FromLogContext()
                 .WriteTo.File(Path.Combine(logDirectory, "logfile.txt"),
-                    rollingInterval: RollingInterval.Day,
-                    restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
-                .CreateLogger();
-
-            // Configurar Serilog
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Information() // Solo registrar errores
-                .Enrich.FromLogContext()
-        .WriteTo.File(Path.Combine(builder.Environment.ContentRootPath, "logs", "logfile.txt"),
                     rollingInterval: RollingInterval.Day,
                     restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
                 .CreateLogger();
@@ -197,20 +188,28 @@ public class Program
                 pattern: "{controller=Access}/{action=Login}/{id?}");
 
 
-            app.Use(async (context, next) =>
-            {
-                try
-                {
-                    var antiforgery = context.RequestServices.GetRequiredService<IAntiforgery>();
-                    var tokens = antiforgery.GetAndStoreTokens(context);
-                    Log.Information("Antiforgery token generado: {Token}", tokens.RequestToken);
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "Error al generar/verificar el token antiforgery");
-                }
+            //app.Use(async (context, next) =>
+            //{
+            //    try
+            //    {
+            //        var antiforgery = context.RequestServices.GetRequiredService<IAntiforgery>();
+            //        var tokens = antiforgery.GetAndStoreTokens(context);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Log.Error(ex, "Error al generar/verificar el token antiforgery");
+            //    }
 
-                await next();
+            //    await next();
+            //});
+
+            app.UseExceptionHandler(errorApp =>
+            {
+                errorApp.Run(async context =>
+                {
+                    context.Response.StatusCode = 500;
+                    await context.Response.WriteAsync("Ocurrió un error en el servidor.");
+                });
             });
 
 

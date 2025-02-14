@@ -21,6 +21,7 @@
 
 	<ItemGroup>
 		<None Include="..\.editorconfig" Link=".editorconfig" />
+		<None Include="Views\Access\logs.cshtml" />
 		<None Include="wwwroot\css\fonts\flaticon\.DS_Store" />
 		<None Include="wwwroot\css\fonts\flaticon\font\.DS_Store" />
 		<None Include="wwwroot\css\fonts\flaticon\font\Flaticon.svg" />
@@ -33,7 +34,6 @@
 		<None Include="wwwroot\css\fonts\ionicons\fonts\ionicons.svg" />
 		<None Include="wwwroot\css\fonts\ionicons\fonts\ionicons.woff2" />
 		<None Include="wwwroot\css\fonts\open-iconic\open-iconic.svg" />
-		<None Include="wwwroot\logs.html" />
 		<None Include="wwwroot\plugins\printService.js" />
 	</ItemGroup>
 
@@ -56,10 +56,6 @@
 		<ProjectReference Include="..\PointOfSale.Business\PointOfSale.Business.csproj" />
 		<ProjectReference Include="..\PointOfSale.Data\PointOfSale.Data.csproj" />
 		<ProjectReference Include="..\PointOfSale.Model\PointOfSale.Model.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="logs\" />
 	</ItemGroup>
 
 	<ProjectExtensions>

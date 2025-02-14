@@ -1,0 +1,76 @@
+﻿@{
+	ViewData["Title"] = "Cliente";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@section StylesPOS {
+
+	<link href="~/plugins/data-tables/datatables.bootstrap4.min.css" rel="stylesheet">
+	<link href="~/plugins/data-tables/buttons.bootstrap4.min.css" rel="stylesheet">
+	<link href="~/plugins/data-tables/responsive.datatables.min.css" rel="stylesheet">
+
+
+}
+<h1 class="mb-4">Visor de Logs</h1>
+
+<!-- Botones de acción -->
+<button id="actualizarLogs" class="btn btn-primary mb-2">Actualizar Logs</button>
+<button id="borrarLogsViejos" class="btn btn-danger mb-2">Borrar Logs Viejos</button>
+
+<!-- Área donde se mostrarán los logs -->
+<pre id="logContent" class="border p-3">Cargando...</pre>
+
+<script>
+
+	async function cargarLogs() {
+
+		 let response = await fetch('/logs/getLogs');
+			if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+			let logs = await response.text();
+			$('#logContent').text(logs);
+	}
+
+	function borrarLogsViejos() {
+		if (confirm("¿Estás seguro de borrar los logs viejos?")) {
+			$.ajax({
+				url: '/logs/deleteOldLogs',
+				method: 'DELETE',
+				success: function(response) {
+					alert(response);
+					cargarLogs();
+				},
+				error: function() {
+					alert("Error al intentar borrar los logs.");
+				}
+			});
+		}
+	}
+
+	cargarLogs();
+
+	// Actualizar logs cada 5 segundos
+	// setInterval(cargarLogs, 5000);
+
+	$('#actualizarLogs').click(function() {
+		cargarLogs();
+	});
+
+	$('#borrarLogsViejos').click(function() {
+		borrarLogsViejos();
+	});
+</script>
+
+
+@section Scripts {
+	<script src="~/plugins/data-tables/jquery.datatables.min.js"></script>
+	<script src="~/plugins/data-tables/datatables.bootstrap4.min.js"></script>
+	<script src="~/plugins/data-tables/datatables.responsive.min.js"></script>
+	<script src="~/plugins/data-tables/dataTables.buttons.min.js"></script>
+	<script src="~/plugins/data-tables/buttons.bootstrap4.min.js"></script>
+	<script src="~/plugins/data-tables/jszip.min.js"></script>
+	<script src="~/plugins/data-tables/buttons.html5.min.js"></script>
+	<script src="~/plugins/data-tables/buttons.print.min.js"></script>
+
+}
+

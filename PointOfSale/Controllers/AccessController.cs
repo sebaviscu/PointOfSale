@@ -34,6 +34,11 @@ namespace PointOfSale.Controllers
             _ajusteService = ajusteService;
         }
 
+        public IActionResult Logs()
+        {
+            return View();
+        }
+
         public async Task<IActionResult> Login()
         {
             try
