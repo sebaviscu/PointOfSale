@@ -1431,7 +1431,7 @@ function cargarTabla(productosFiltrados) {
             'min': 0
         }));
         $tr.append($('<td>').text(`$ ${precio1}`).addClass('editable').attr({
-            'data-profit': producto.porcentajeProfit,
+            'data-profit': producto.porcentajeProfit1,
             'data-web': 0,
             'data-iva': producto.iva,
             'data-incluye-iva': producto.incluirIvaEnPrecio,
@@ -1461,7 +1461,7 @@ function cargarTabla(productosFiltrados) {
             'min': 0
         }));
         $tr.append($('<td>').text(`$ ${priceWeb}`).addClass('editable').attr({
-            'data-profit': producto.porcentajeProfit,
+            'data-profit': producto.porcentajeProfit1,
             'data-web': ajustesWeb.aumentoWeb,
             'data-iva': producto.iva,
             'data-incluye-iva': producto.incluirIvaEnPrecio,

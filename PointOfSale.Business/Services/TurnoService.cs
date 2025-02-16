@@ -216,9 +216,14 @@ namespace PointOfSale.Business.Services
             var diferenciaTotales = 0m;
             var respError = string.Empty;
 
-            var ventasRegistradasSistema = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, entity.IdTurno, entity.IdTienda, TimeHelper.GetArgentinaTime());
-
             var turno = await GetTurno(entity.IdTurno);
+
+            if(turno.ValidacionRealizada.HasValue && turno.ValidacionRealizada.Value)
+            {
+                throw new Exception("La validación ya fué realizada.");
+            }
+
+            var ventasRegistradasSistema = await _dashBoardService.GetSalesByTypoVentaByTurnoByDate(TypeValuesDashboard.Dia, entity.IdTurno, entity.IdTienda, TimeHelper.GetArgentinaTime());
 
             var totalMovimiento = turno.MovimientosCaja != null && turno.MovimientosCaja.Any() ? turno.MovimientosCaja.Sum(_ => _.Importe) : 0m;
             if (!ventasRegistradasSistema.Any(_ => _.Key == "Efectivo") && (totalMovimiento > 0 || turno.TotalInicioCaja > 0))

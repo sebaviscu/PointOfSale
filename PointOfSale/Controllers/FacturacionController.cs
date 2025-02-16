@@ -75,7 +75,7 @@ namespace PointOfSale.Controllers
 
                 var vmFactura = _mapper.Map<VMFacturaEmitida>(factura);
 
-                if (factura.Observaciones == null)
+                if (factura.Observaciones == null && factura.NroDocumento.HasValue)
                 {
                     vmFactura.QR = await _afipService.GenerateLinkAfipFactura(factura);
                 }

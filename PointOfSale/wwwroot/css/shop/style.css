@@ -14330,8 +14330,9 @@ textarea.form-control {
         display: block;
         margin: 10px 0;
         z-index: 10;
+        top: -12px;
         left: 70px;
-        opacity:0.5;
+        opacity: 0.5;
     }
 
         .product .img-prod .tags-container .status {
@@ -14478,6 +14479,10 @@ html, body {
 }
 
 .scroll-top {
+    display: flex; /* Asegura que el ícono esté centrado */
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
     z-index: 9999;
     position: fixed;
     bottom: 50%;

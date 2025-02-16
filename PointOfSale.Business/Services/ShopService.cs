@@ -133,7 +133,7 @@ namespace PointOfSale.Business.Services
                                    original.IdFormaDePago != updated.IdFormaDePago ||
                                    original.CostoEnvio != updated.CostoEnvio ||
                                    original.DescuentoRetiroLocal != updated.DescuentoRetiroLocal ||
-                                   original.ObservacionesUsuario != updated.ObservacionesUsuario ||
+                                   (original.ObservacionesUsuario != updated.ObservacionesUsuario && !string.IsNullOrEmpty(updated.ObservacionesUsuario)) ||
                                    original.CruceCallesDireccion != updated.CruceCallesDireccion;
 
             // Verificar cambios en los DetailSales

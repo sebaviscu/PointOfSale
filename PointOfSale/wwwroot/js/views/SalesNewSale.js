@@ -88,7 +88,11 @@ $(document).ready(function () {
                                         if (index > 0) {
                                             newTab(); // Ejecutar solo a partir de la segunda venta
                                         }
+
+                                        deleteVentaFromIndexedDB(currentTab.idTab);
                                         currentTab.idTab = idTab;
+                                        saveVentaToIndexedDB(currentTab);
+
                                         showProducts_Prices(currentTab.idTab, currentTab);
                                         $("#lblFechaUsuario" + currentTab.idTab).html(currentTab.date + " &nbsp;&nbsp; " + currentTab.user);
                                         idTab++;

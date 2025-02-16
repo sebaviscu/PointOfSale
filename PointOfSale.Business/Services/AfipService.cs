@@ -245,6 +245,11 @@ namespace PointOfSale.Business.Services
 
         public async Task<string> GenerateLinkAfipFactura(FacturaEmitida factura)
         {
+            if (!factura.NroFactura.HasValue)
+            {
+                return null;
+            }
+
             var ajustes = await _ajusteService.GetAjustesFacturacion(factura.IdTienda);
 
             var tipoComprobante = TipoComprobante.GetByDescription(factura.TipoFactura);
