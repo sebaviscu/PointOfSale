@@ -712,105 +712,18 @@ function registrationSale(currentTabId) {
             return response.json();
         }).then(responseJson => {
             removeLoading();
-            //localStorage.removeItem('ventaActual');
-            deleteVentaFromIndexedDB(parseInt(currentTabId));
 
             if (responseJson.state) {
+                deleteVentaFromIndexedDB(parseInt(currentTabId));
 
-                let invoice;
-
-                if (responseJson.state) {
-                    if (responseJson.object.facturar) {
-                        showLoading();
-
-                        for (let f of responseJson.object.facturasAFIP) {
-                            getLastAuthorizedReceipt(f.cabecera.puntoVenta, f.cabecera.tipoComprobante.id)
-                                .then(nroComprobante => {
-                                    f.detalle.forEach(d => {
-                                        nroComprobante++;
-                                        d.nroComprobanteDesde = nroComprobante;
-                                        d.nroComprobanteHasta = nroComprobante;
-
-
-                                        getInvoicing(f)
-                                            .then(i => {
-                                                removeLoading();
-                                                invoice = i;
-
-
-                                                let saveInvoice = {
-                                                    facturacion: i,
-                                                    idSale: parseInt(responseJson.object.idSale)
-                                                };
-
-                                                fetch("/Facturacion/SaveInvoice", {
-                                                    method: "POST",
-                                                    headers: { 'Content-Type': 'application/json;charset=utf-8' },
-                                                    body: JSON.stringify(saveInvoice)
-                                                }).then(response => {
-
-                                                    swal("Facturado", "Se facturó!!.\n", "success");
-
-                                                });
-
-                                            })
-                                            .catch(error => {
-                                                removeLoading();
-                                                console.error("Error al facturar:", error)
-                                            });
-
-                                    });
-                                })
-                                .catch(error => {
-                                    removeLoading();
-                                    console.error("Error al obtener el último comprobante:", error)
-                                });
-
-
-
-                        }
-                    }
-                }
-
-
-
-                if (responseJson.message != null && responseJson.message != '') {
-                    swal("Error al Facturar", "La venta fué registrada correctamente, pero no se ha podido facturar.\n", "warning");
-                } else if (responseJson.object.errores != null && responseJson.object.errores != '') {
-                    swal("Error", responseJson.object.errores, "warning");
-                }
-
-                let nuevaVentaSpan = document.getElementById('profile-tab' + currentTabId).querySelector('span');
-                if (nuevaVentaSpan != null) {
-                    nuevaVentaSpan.textContent = responseJson.object.tipoVenta + '-' + responseJson.object.saleNumber;
-                }
-
-                if (responseJson.object.idSale != null) {
-                    $("#btnImprimirTicket" + currentTabId).attr("idSale", responseJson.object.idSale);
+                if (responseJson.object.facturar) {
+                    afterRegistrationSale(currentTabId, responseJson.object);
+                    InvoiceSale(sale.imprimirTicket, responseJson.object);
                 }
                 else {
-                    let newIdSaleMultiple = responseJson.object.idSaleMultiple.slice(0, -1);  // Elimina el último carácter
-                    $("#btnImprimirTicket" + currentTabId).attr("idSalesMultiple", newIdSaleMultiple);
-                }
 
-
-                AllTabsForSale = AllTabsForSale.filter(p => p.idTab != currentTabId);
-                cleanSaleParcial();
-
-                if ($(".tab-venta").length > 2) {
-
-                    // para cerrar la ultima venta de 3
-                    let firstTabID = document.getElementsByClassName("tab-venta")[0].getAttribute("data-bs-target");
-
-                    if ($('#btnAgregarProducto' + firstTabID[firstTabID.length - 1]).is(':disabled')) { // si no esta cerrada la venta, no se cierra
-                        $(firstTabID).remove();
-                        document.getElementsByClassName("li-tab")[0].remove();
-                    }
-                }
-                disableAfterVenta(currentTabId);
-
-                if (isHealthySale && sale.imprimirTicket && responseJson.object.nombreImpresora != null && responseJson.object.nombreImpresora != '' && responseJson.object.ticket != null && responseJson.object.ticket != '') {
-                    printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora, responseJson.object.imagesTicket);
+                    afterRegistrationSale(currentTabId, responseJson.object);
+                    printTicketSale(sale.imprimirTicket, responseJson.object, null);
                 }
 
                 newTab();
@@ -826,10 +739,40 @@ function registrationSale(currentTabId) {
     }
 }
 
+function afterRegistrationSale(currentTabId, saleResult) {
+    let nuevaVentaSpan = document.getElementById('profile-tab' + currentTabId).querySelector('span');
+    if (nuevaVentaSpan != null) {
+        nuevaVentaSpan.textContent = saleResult.tipoVenta + '-' + saleResult.saleNumber;
+    }
+
+    if (saleResult.idSale != null) {
+        $("#btnImprimirTicket" + currentTabId).attr("idSale", saleResult.idSale);
+    }
+    else {
+        let newIdSaleMultiple = saleResult.idSaleMultiple.slice(0, -1);  // Elimina el último carácter
+        $("#btnImprimirTicket" + currentTabId).attr("idSalesMultiple", newIdSaleMultiple);
+    }
+
+
+    AllTabsForSale = AllTabsForSale.filter(p => p.idTab != currentTabId);
+    cleanSaleParcial();
+
+    if ($(".tab-venta").length > 2) {
+
+        // para cerrar la ultima venta de 3
+        let firstTabID = document.getElementsByClassName("tab-venta")[0].getAttribute("data-bs-target");
+
+        if ($('#btnAgregarProducto' + firstTabID[firstTabID.length - 1]).is(':disabled')) { // si no esta cerrada la venta, no se cierra
+            $(firstTabID).remove();
+            document.getElementsByClassName("li-tab")[0].remove();
+        }
+    }
+    disableAfterVenta(currentTabId);
+}
+
 function disableAfterVenta(tabID) {
     $('#btnAgregarProducto' + tabID).prop('disabled', true);
     $('#cboSearchProduct' + tabID).prop('disabled', true);
-    //$('#cboDescRec' + tabID).prop('disabled', true);
     $('#txtPeso' + tabID).prop('disabled', true);
     $('#cboCliente' + tabID).prop('disabled', true);
     $('.delete-item-' + tabID).prop('disabled', true)
@@ -841,6 +784,7 @@ function disableAfterVenta(tabID) {
     $('#btnTicketEmail' + tabID).prop('hidden', false);
     $('#btnTicketPdf' + tabID).prop('hidden', false);
 }
+
 
 document.onkeyup = async function (e) {
     let currentTabId = getTabActiveId();

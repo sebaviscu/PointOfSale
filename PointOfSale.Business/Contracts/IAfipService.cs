@@ -24,15 +24,15 @@ namespace PointOfSale.Business.Contracts
 
         VMX509Certificate2 GetCertificateAfipInformation(string certificatePath, string certificatePassword);
 
-        string ValidateCertificate(AjustesFacturacion? ajustes);
+        //string ValidateCertificate(AjustesFacturacion? ajustes);
 
         Task CheckVencimientoCertificado(int idTienda);
 
         Task<FacturaEmitida> GetBySaleId(int idSale);
 
-        Task<List<FacturaEmitida>> GetListBySaleId(int idSale);
+        //Task<List<FacturaEmitida>> GetListBySaleId(int idSale);
 
-        Task<FacturaEmitida?> FacturarVenta(Sale sale, Ajustes ajustes, string cuil, int? idCliente);
+        //Task<FacturaEmitida?> FacturarVenta(Sale sale, Ajustes ajustes, string cuil, int? idCliente);
 
         Task<FacturaEmitida?> NotaCredito(int idFacturaemitida, string registrationUser);
         Task<FacturaEmitida?> Refacturar(int idFacturaemitida, string cuil, string registrationUser);

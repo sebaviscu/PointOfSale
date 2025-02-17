@@ -211,9 +211,6 @@ $("#printTicket").click(function () {
                     if (isHealthySaleWeb && response.object.nombreImpresora != '' && response.object.ticket != '') {
 
                         printTicket(response.object.ticket, response.object.nombreImpresora, response.object.imagesTicket);
-
-
-                        swal("Exitoso!", "Ticket impreso!", "success");
                     }
 
                 } else {
@@ -294,7 +291,7 @@ const openModalEditVentaWeb = (model = BASIC_MODEL_VENTA_WEB) => {
     $("#tbProducts tbody").html("");
 
     model.detailSales.forEach((item) => {
-        addNewProduct(item.idDetailSale, item.descriptionProduct, item.quantity, item.tipoVenta == 2 ? "U" : "Kg", item.price, item.total, item.idProduct ,item.iva , item.recogido != null ? item.recogido : false);
+        addNewProduct(item.idDetailSale, item.descriptionProduct, item.quantity, item.tipoVenta == 2 ? "U" : "Kg", item.price, item.total, item.idProduct, item.iva, item.recogido != null ? item.recogido : false);
     });
 
     updateTotal();
@@ -359,7 +356,7 @@ function functionAddProducto() {
     $("#txtPeso").val(0)
 }
 
-function addNewProduct(idDetailSale, description, cantidad, tipoVenta, precio, total, idProducto,iva, recogido) {
+function addNewProduct(idDetailSale, description, cantidad, tipoVenta, precio, total, idProducto, iva, recogido) {
     const isEditVisible = $('#divSearchproducts').is(':visible');
     let checkRecogido = recogido ? 'checked' : '';
 
@@ -485,9 +482,10 @@ async function editarVentaWeb() {
             return;
     }
 
+    let imprimirTicket = document.querySelector('#cboImprimirTicket').checked;
     model["estado"] = estadoVenta;
     model["idFormaDePago"] = estadoVenta == 3 ? parseInt($("#cboTypeDocumentSale").val()) : parseInt($("#txtFormaPago").val());
-    model["imprimirTicket"] = document.querySelector('#cboImprimirTicket').checked;
+    model["imprimirTicket"] = imprimirTicket;
     //model["total"] = parseFloat($("#txtTotal").val());
     model["total"] = parseFloat($("#txtTotal").attr("totalReal"));
     model["comentario"] = $("#txtComentario").val();
@@ -547,14 +545,14 @@ async function editarVentaWeb() {
         $("#modalData").LoadingOverlay("hide")
         if (responseJson.state) {
 
-            tableDataVentaWeb.row(rowSelectedVentaWeb).data(responseJson.object).draw(false);
+            tableDataVentaWeb.row(rowSelectedVentaWeb).data(responseJson.object.ventaWeb).draw(false);
             rowSelectedVentaWeb = null;
             $("#modalData").modal("hide");
-            if (isHealthySaleWeb && responseJson.object.nombreImpresora != '' && estadoVenta == 3 && responseJson.object.ticket != '') {
-                printTicket(responseJson.object.ticket, responseJson.object.nombreImpresora, responseJson.object.imagesTicket);
 
-            } else {
-
+            if (responseJson.object.saleResult.facturar) {
+                InvoiceSale(imprimirTicket, responseJson.object.saleResult);
+            }
+            else {
                 swal("Exitoso!", "La Venta Web fué modificada", "success");
             }
 

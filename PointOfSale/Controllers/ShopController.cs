@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
+using PointOfSale.Model.Afip.Factura;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
 using System.Collections.Generic;
@@ -245,11 +246,12 @@ namespace PointOfSale.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateVentaWeb([FromBody] VMVentaWeb model)
         {
-            GenericResponse<VMVentaWeb> gResponse = new GenericResponse<VMVentaWeb>();
+            var gResponse = new GenericResponse<VMSaleWebResult>();
 
             try
             {
                 var user = ValidarAutorizacion();
+                var result = new VMSaleWebResult();
 
                 model.ModificationUser = user.UserName;
                 model.ModificationDate = TimeHelper.GetArgentinaTime();
@@ -257,24 +259,24 @@ namespace PointOfSale.Controllers
                 var ajustes = model.IdTienda.HasValue ? await _ajusteService.GetAjustes(model.IdTienda.Value) : null;
                 VentaWeb edited_VemntaWeb = await _shopService.Update(ajustes, _mapper.Map<VentaWeb>(model));
 
-                model = _mapper.Map<VMVentaWeb>(edited_VemntaWeb);
+                result.VentaWeb = _mapper.Map<VMVentaWeb>(edited_VemntaWeb);
+                result.SaleResult.NombreImpresora = ajustes.NombreImpresora;
+
                 if (model.Estado == EstadoVentaWeb.Finalizada && model.IdTienda.HasValue)
                 {
                     var sale = await _saleService.GetSale(edited_VemntaWeb.IdSale.Value);
+                    result.SaleResult.IdSale = sale.IdSale;
+                    result.SaleResult.SaleNumber = sale.SaleNumber;
 
-                    var facturaEmitida = await _afipService.FacturarVenta(sale, ajustes, model.CuilFactura, model.IdClienteFactura);
-
-                    if (model.ImprimirTicket)
+                    if (ajustes.FacturaElectronica.HasValue && ajustes.FacturaElectronica.Value)
                     {
-                        var ticket = await _ticketService.TicketSale(sale, ajustes, facturaEmitida);
-                        model.Ticket = ticket.Ticket;
-                        model.ImagesTicket.AddRange(ticket.ImagesTicket);
-                        model.NombreImpresora = model.ImprimirTicket && !string.IsNullOrEmpty(ajustes.NombreImpresora) ? ajustes.NombreImpresora : null;
+                        var facturas = await _afipService.GetFacturaByVentas(new List<Sale> { sale }, ajustes, model.CuilFactura, model.IdClienteFactura);
+                        result.SaleResult.FacturasAFIP.AddRange(facturas);
                     }
                 }
 
                 gResponse.State = true;
-                gResponse.Object = model;
+                gResponse.Object = result;
             }
             catch (Exception ex)
             {
@@ -353,6 +355,15 @@ namespace PointOfSale.Controllers
             }
 
         }
+
+    }
+
+    public class VMSaleWebResult
+    {
+
+        public VMSaleResult SaleResult { get; set; } = new VMSaleResult();
+
+        public VMVentaWeb VentaWeb { get; set; }
 
     }
 }

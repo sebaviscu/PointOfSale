@@ -13,12 +13,12 @@ namespace PointOfSale.Business.Contracts
     public interface IPrintService
     {
 
-        Task<int> GetLastAuthorizedReceiptAsync(int ptoVenta, int idTipoComprobante);
-        Task<FacturacionResponse> FacturarAsync(FacturaAFIP factura);
+        //Task<int> GetLastAuthorizedReceiptAsync(int ptoVenta, int idTipoComprobante);
+        //Task<FacturacionResponse> FacturarAsync(FacturaAFIP factura);
 
-        Task<bool> GetHealthcheckAsync();
-        Task PrintTicketAsync(string text, string printerName, string[] imagesTicket);
-        Task<List<string>> GetPrintersAsync();
+        //Task<bool> GetHealthcheckAsync();
+        //Task PrintTicketAsync(string text, string printerName, string[] imagesTicket);
+        //Task<List<string>> GetPrintersAsync();
 
     }
 }

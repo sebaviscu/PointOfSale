@@ -1,50 +1,70 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Controllers;
+using PointOfSale.Model.Afip.Factura;
+using PointOfSale.Model;
+using PointOfSale.Models;
+using AutoMapper;
+using PointOfSale.Utilities.Response;
+using ZXing;
+using PointOfSale.Business.Utilities;
 
 namespace PointOfSale.Web.Controllers
 {
     public class PrintController : BaseController
     {
-        private readonly IPrintService _printService;
-        public PrintController(IPrintService printService)
+        private readonly ITicketService _ticketService;
+        private readonly IAjusteService _ajusteService;
+        private readonly ISaleService _saleService;
+        private readonly ILogger<PrintController> _logger;
+        private readonly IMapper _mapper;
+
+        public PrintController(ITicketService ticketService, IAjusteService ajusteService, ISaleService saleService, ILogger<PrintController> logger, IMapper mapper)
         {
-            _printService = printService;
+            _ticketService = ticketService;
+            _ajusteService = ajusteService;
+            _saleService = saleService;
+            _logger = logger;
+            _mapper = mapper;
         }
-        
-        [HttpGet]
-        public async Task<IActionResult> Healthcheck()
-        {
-            var result = await _printService.GetHealthcheckAsync();
-            if (result)
-            {
-                return Ok(new { success = true });
-            }
-            else
-            {
-                return StatusCode(500, new { success = false });
-            }
-        }
+
 
         [HttpPost]
-        public async Task<IActionResult> Imprimir([FromBody] PrintTicketRequest request)
+        public async Task<IActionResult> Imprimir([FromBody] PrintTicketRequest printTicketRequest)
         {
-            await _printService.PrintTicketAsync(request.Text, request.PrinterName, request.ImagesTicket);
-            return Ok(new { success = true });
+            var gResponse = new GenericResponse<TicketModel>();
+
+            var user = ValidarAutorizacion();
+            try
+            {
+                var ajustes = await _ajusteService.GetAjustes(user.IdTienda);
+                var saleCreated = await _saleService.GetSale(printTicketRequest.IdSale);
+
+                FacturaEmitida facturaEmitida = null;
+
+                if (printTicketRequest.FacturaEmitida != null)
+                {
+                    facturaEmitida = _mapper.Map<FacturaEmitida>(printTicketRequest.FacturaEmitida);
+                }
+
+                var ticket = await _ticketService.TicketSale(saleCreated, ajustes, facturaEmitida);
+
+                gResponse.State = true;
+                gResponse.Object = ticket;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al crear ticket para imprimir.", _logger, printTicketRequest);
+            }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetPrinters()
-        {
-            var printers = await _printService.GetPrintersAsync();
-            return Ok(new { success = true, printers });
-        }
     }
 
     public class PrintTicketRequest
     {
-        public string Text { get; set; }
-        public string PrinterName { get; set; }
-        public string[] ImagesTicket { get; set; }
+        public int IdSale { get; set; }
+        public VMFacturaEmitida? FacturaEmitida { get; set; }
     }
 }

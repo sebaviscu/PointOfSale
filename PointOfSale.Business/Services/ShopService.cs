@@ -110,6 +110,7 @@ namespace PointOfSale.Business.Services
 
                 var sale = await _saleRepository.CreatSaleFromVentaWeb(VentaWeb_found, turno, ajustes);
                 VentaWeb_found.IdSale = sale.IdSale;
+                VentaWeb_found.TipoFactura = sale.TipoFactura;
             }
 
             bool response = await _repository.Edit(VentaWeb_found);

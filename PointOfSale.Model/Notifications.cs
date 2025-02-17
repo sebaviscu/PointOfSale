@@ -71,7 +71,7 @@ namespace PointOfSale.Model
 
         public Notifications(MovimientoCaja movCaja)
         {
-            var tipo =  movCaja.RazonMovimientoCaja != null ? movCaja.RazonMovimientoCaja.Tipo.ToString() : string.Empty;
+            var tipo = movCaja.RazonMovimientoCaja != null ? movCaja.RazonMovimientoCaja.Tipo.ToString() : string.Empty;
 
             Descripcion = $"El usuario {movCaja.RegistrationUser} ha realizado un {tipo} de ${movCaja.Importe}.";
             IsActive = true;
@@ -81,14 +81,14 @@ namespace PointOfSale.Model
             IdTienda = movCaja.IdTienda;
         }
 
-        public Notifications(Sale sale, string error)
+        public Notifications(string saleNumber, string error, int idTienda)
         {
-            Descripcion = $"Ha ocurrido un error al Facturar la venta Nro: {sale.SaleNumber}.<br> Error: {error}";
+            Descripcion = $"Ha al Facturar venta Nro: {saleNumber}.<br> Error: {error}";
             IsActive = true;
             RegistrationDate = TimeHelper.GetArgentinaTime();
             Accion = "";
             Rols = $"{(int)Roles.Administrador},{(int)Roles.Encargado},{(int)Roles.Empleado}";
-            IdTienda=sale.IdTienda;
+            IdTienda = idTienda;
         }
 
         /// <summary>

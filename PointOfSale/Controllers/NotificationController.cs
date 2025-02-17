@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AFIP.Facturacion.Model;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol;
 using PointOfSale.Business.Contracts;
@@ -119,6 +120,28 @@ namespace PointOfSale.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateNotificationsFailInvoice([FromBody] FailInvoiceRequest model)
+        {
+            var gResponse = new GenericResponse<VMNotifications>();
+            var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
+
+            try
+            {
+                var norificacion = new Notifications(model.SaleNumnber, model.Error, user.IdTienda);
+
+                var Notifications_created = await _notificationService.Save(norificacion);
+
+                gResponse.Object = _mapper.Map<VMNotifications>(Notifications_created);
+                gResponse.State = true;
+                return StatusCode(StatusCodes.Status200OK, gResponse);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al crear notificacion de error de facturacion.", _logger, model);
+            }
+        }
+
         [HttpPut]
         public async Task<IActionResult> UpdateNotificacion(int idNotificacion)
         {
@@ -224,5 +247,11 @@ namespace PointOfSale.Controllers
             }
 
         }
+    }
+
+    public class FailInvoiceRequest
+    {
+        public string Error { get; set; }
+        public string SaleNumnber { get; set; }
     }
 }

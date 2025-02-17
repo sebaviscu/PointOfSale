@@ -474,6 +474,7 @@ namespace PointOfSale.Utilities.Automapper
                 .ForMember(dest => dest.PuntoVentaString,
                            opt => opt.MapFrom(src => src.PuntoVenta.ToString("D4")));
 
+            CreateMap<VMFacturaEmitida, FacturaEmitida>();
 
             CreateMap<Tag, VMCategoriaWeb>()
                     .ForMember(user => user.IdTag, opt => opt.MapFrom(userEdit => userEdit.IdTag))

@@ -44,6 +44,7 @@ namespace PointOfSale.Models
         public string? ObservacionesUsuario { get; set; }
         public TipoFactura? TipoFactura { get; set; }
 
+        public int? IdSale { get; set; }
 
         public decimal? TotalFinal => Total + CostoEnvio - DescuentoRetiroLocal;
         public decimal? TotalConEnvio => Total + (CostoEnvio != null ? CostoEnvio : 0);

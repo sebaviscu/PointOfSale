@@ -201,7 +201,6 @@ namespace PointOfSale.Controllers
                     var facturas = await _afipFacturacionService.GetFacturaByVentas(result.SaleList, result.Ajustes, model.CuilFactura, model.IdClienteFactura);
                     result.FacturasAFIP.AddRange(facturas);
                 }
-
                 var errores = $"{result.ErrorFacturacion} {result.Errores}";
                 gResponse.State = string.IsNullOrEmpty(result.Errores);
                 gResponse.Message = errores.Trim();

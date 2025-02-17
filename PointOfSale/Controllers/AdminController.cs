@@ -1,22 +1,14 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
-using NuGet.Protocol;
 using PointOfSale.Business.Contracts;
 using PointOfSale.Business.Services;
 using PointOfSale.Business.Utilities;
 using PointOfSale.Model;
-using PointOfSale.Model.Afip.Factura;
-using PointOfSale.Model.Auditoria;
 using PointOfSale.Models;
-using PointOfSale.Utilities;
 using PointOfSale.Utilities.Response;
-using System;
 using System.Globalization;
-using System.Runtime.ConstrainedExecution;
 using System.Security.Claims;
 using static PointOfSale.Model.Enum;
 
@@ -28,51 +20,27 @@ namespace PointOfSale.Controllers
         private readonly IUserService _userService;
         private readonly IRolService _rolService;
         private readonly IDashBoardService _dashboardService;
-        private readonly ITypeDocumentSaleService _typeDocumentSaleService;
         private readonly IClienteService _clienteService;
-        private readonly IProveedorService _proveedorService;
-        private readonly IPromocionService _promocionService;
         private readonly IMapper _mapper;
         private readonly IProductService _productService;
-        private readonly ICategoryService _categoryService;
-        private readonly IAjusteService _ajusteService;
-        private readonly IAfipService _afipService;
         private readonly ILogger<AdminController> _logger;
-        private readonly ITurnoService _turnoService;
-        private readonly INotificationService _notificationService;
 
         public AdminController(
             IDashBoardService dashboardService,
             IUserService userService,
             IRolService rolService,
-            ITypeDocumentSaleService typeDocumentSaleService,
             IClienteService clienteService,
-            IProveedorService proveedorService,
             IMapper mapper,
-            IPromocionService promocionService,
             IProductService productService,
-            ICategoryService categoryService,
-            IAjusteService ajusteService,
-            IAfipService afipService,
-            ILogger<AdminController> logger,
-            ITurnoService turnoService,
-            INotificationService notificationService)
+            ILogger<AdminController> logger)
         {
             _dashboardService = dashboardService;
             _userService = userService;
             _rolService = rolService;
             _mapper = mapper;
-            _typeDocumentSaleService = typeDocumentSaleService;
             _clienteService = clienteService;
-            _proveedorService = proveedorService;
-            _promocionService = promocionService;
             _productService = productService;
-            _categoryService = categoryService;
-            _ajusteService = ajusteService;
-            _afipService = afipService;
             _logger = logger;
-            _turnoService = turnoService;
-            _notificationService = notificationService;
         }
 
         public IActionResult DashBoard()
