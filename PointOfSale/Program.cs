@@ -47,11 +47,11 @@ public class Program
             }
 
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Information()
+                .MinimumLevel.Warning()
                 .Enrich.FromLogContext()
                 .WriteTo.File(Path.Combine(logDirectory, "logfile.txt"),
                     rollingInterval: RollingInterval.Day,
-                    restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
+                    restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning)
                 .CreateLogger();
 
 

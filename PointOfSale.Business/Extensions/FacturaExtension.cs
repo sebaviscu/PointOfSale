@@ -192,6 +192,11 @@ namespace AFIP.Facturacion.Extensions
             {
                 facturaEmitida.Observaciones = string.Join(Environment.NewLine, fECAECabResponse.Observaciones.Select(_ => _.Msg));
             }
+
+            if(facturaEmitida.Resultado == "A" && !string.IsNullOrEmpty(facturaEmitida.Observaciones))
+            {
+                facturaEmitida.Observaciones = $"REFACTURADA, antiguo error: {facturaEmitida.Observaciones}";
+            }
         }
 
 

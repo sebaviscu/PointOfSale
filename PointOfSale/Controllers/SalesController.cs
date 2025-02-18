@@ -420,14 +420,15 @@ namespace PointOfSale.Controllers
 
         public async Task<IActionResult> AnularSale(int idSale)
         {
-            GenericResponse<VMSale> gResponse = new GenericResponse<VMSale>();
+            var gResponse = new GenericResponse<List<int>>();
 
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador, Roles.Encargado]);
 
-                _ = await _saleService.AnularSale(idSale, user.UserName);
+                var listaIdsFacturas = await _saleService.AnularSale(idSale, user.UserName);
 
+                gResponse.Object = listaIdsFacturas;
                 gResponse.State = true;
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }

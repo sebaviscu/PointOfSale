@@ -256,7 +256,7 @@ namespace PointOfSale.Controllers
                 model.ModificationUser = user.UserName;
                 model.ModificationDate = TimeHelper.GetArgentinaTime();
 
-                var ajustes = model.IdTienda.HasValue ? await _ajusteService.GetAjustes(model.IdTienda.Value) : null;
+                var ajustes = await _ajusteService.GetAjustes(model.IdTienda.HasValue ? model.IdTienda.Value : user.IdTienda);
                 VentaWeb edited_VemntaWeb = await _shopService.Update(ajustes, _mapper.Map<VentaWeb>(model));
 
                 result.VentaWeb = _mapper.Map<VMVentaWeb>(edited_VemntaWeb);

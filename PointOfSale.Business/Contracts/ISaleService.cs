@@ -33,7 +33,7 @@ namespace PointOfSale.Business.Contracts
 
         Task<List<Sale>> HistoryTurnoActual(int idTurno);
 
-        Task<Sale> AnularSale(int idSale, string registrationUser);
+        Task<List<int>> AnularSale(int idSale, string registrationUser);
 
         Task<List<ListaPrecio>> GetProductsSearchAndIdListaWithTags(string search, ListaDePrecio listaPrecios);
 

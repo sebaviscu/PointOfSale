@@ -127,7 +127,7 @@ $(document).ready(function () {
 
 
     $("#txtDay").datepicker();
-    changeChart(1);
+    changeChart(0);
 })
 
 $('#switchVisionGlobal').change(function () {

@@ -12,7 +12,7 @@ namespace PointOfSale.Model.Afip.Factura
         public List<DetalleFacturaAFIP> Detalle { get; set; } = new List<DetalleFacturaAFIP>();
         public ComprobanteAsociado ComprobanteAsociado { get; set; }
         public List<ImporteIva> ImportesIva { get; set; } = new List<ImporteIva>();
-
+        public int IdFacturaEmitida { get; set; }
         public FacturaAFIP() { }
 
         /// <summary>
@@ -36,8 +36,10 @@ namespace PointOfSale.Model.Afip.Factura
         /// <param name="tipoComprobante"></param>
         /// <param name="nroComprobante"></param>
         /// <param name="facturaEmitida"></param>
-        public FacturaAFIP(List<DetailSale> detailSale, TipoComprobante tipoComprobante, int nroComprobante, FacturaEmitida facturaEmitida, long documento, bool isNotaCredito)
+        public FacturaAFIP(List<DetailSale> detailSale, TipoComprobante tipoComprobante, int? nroComprobante, FacturaEmitida facturaEmitida, long documento, bool isNotaCredito)
         {
+            IdFacturaEmitida = facturaEmitida.IdFacturaEmitida;
+
             Cabecera = CrearCabecera(tipoComprobante, facturaEmitida.PuntoVenta);
             if (isNotaCredito)
                 ComprobanteAsociado = CrearComprobanteAsociado(tipoComprobante, facturaEmitida);

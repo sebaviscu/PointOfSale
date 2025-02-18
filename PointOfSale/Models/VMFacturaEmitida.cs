@@ -28,6 +28,7 @@ namespace PointOfSale.Models
         public string? QR { get; set; }
         public int? IdFacturaAnulada { get; set; }
         public string? FacturaAnulada { get; set; }
+        public string? FacturaRefacturada { get; set; }
 
         public int? IdSale { get; set; }
         public VMSale? Sale { get; set; }

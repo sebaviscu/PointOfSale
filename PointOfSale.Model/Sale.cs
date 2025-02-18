@@ -28,7 +28,7 @@ namespace PointOfSale.Model
         public Tienda Tienda { get; set; }
         public decimal? DescuentoRecargo { get; set; }
         public int? IdFacturaEmitida { get; set; }
-        public virtual FacturaEmitida FacturaEmitida { get; set; }
+        public virtual ICollection<FacturaEmitida>? FacturasEmitidas { get; set; }
         public bool? IsWeb { get; set; }
         public string? Observaciones { get; set; }
         public bool IsDelete { get; set; } = false;

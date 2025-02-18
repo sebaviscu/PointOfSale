@@ -403,26 +403,23 @@ namespace PointOfSale.Business.Services
             return sale_found;
         }
 
-        public async Task<Sale> AnularSale(int idSale, string registrationUser)
+        public async Task<List<int>> AnularSale(int idSale, string registrationUser)
         {
-            Sale sale_found = await _repositorySale.Get(c => c.IdSale == idSale);
+            var query = await _repositorySale.Query(v => v.IdSale == idSale);
+            query = query.Include(_ => _.FacturasEmitidas);
+
+            var sale_found = query.FirstOrDefault();
 
             sale_found.IsDelete = true;
 
             bool response = await _repositorySale.Edit(sale_found);
 
-            var facruturasQuery = await _repositoryFacturaEmitida.Query(v => v.IdSale == idSale);
-            var facturas = facruturasQuery.ToList();
-
-            foreach (var f in facturas.Where(_ => _.Resultado == "A"))
-            {
-                await _afipService.NotaCredito(f.IdFacturaEmitida, registrationUser);
-            }
-
             if (!response)
                 throw new TaskCanceledException("Venta no se pudo eliminar.");
 
-            return sale_found;
+            var listFacturas = sale_found.FacturasEmitidas.Where(_ => _.Resultado == "A").Select(_ => _.IdFacturaEmitida).ToList();
+
+            return listFacturas;
         }
 
 

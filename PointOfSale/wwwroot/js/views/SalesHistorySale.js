@@ -398,6 +398,7 @@ function turnoActual() {
 
 $("#btnAnular").on("click", function (event) {
     event.preventDefault();
+
     swal({
         title: "¿Está seguro?",
         text: `Anular la venta`,
@@ -408,30 +409,37 @@ $("#btnAnular").on("click", function (event) {
         cancelButtonText: "No, cancelar",
         closeOnConfirm: false,
         closeOnCancel: true
-    },
-        function (respuesta) {
+    }, async function (respuesta) {
+        if (!respuesta) return;
 
-            if (respuesta) {
+        showLoading();
+        $(".showSweetAlert").LoadingOverlay("show");
 
-                $(".showSweetAlert").LoadingOverlay("show")
+        try {
+            let response = await fetch(`/Sales/AnularSale?idSale=${idSale}`, {
+                method: "DELETE"
+            });
 
-                fetch(`/Sales/AnularSale?idSale=${idSale}`, {
-                    method: "DELETE"
-                }).then(response => {
-                    $(".showSweetAlert").LoadingOverlay("hide")
-                    return response.json();
-                }).then(responseJson => {
-                    if (responseJson.state) {
+            $(".showSweetAlert").LoadingOverlay("hide");
 
-                        swal("Exitoso!", "La venta fué anulada", "success");
-                        location.reload();
-                    } else {
-                        swal("Lo sentimos", responseJson.message, "error");
-                    }
-                })
-                    .catch((error) => {
-                        $(".showSweetAlert").LoadingOverlay("hide")
-                    })
+            let responseJson = await response.json();
+
+            if (responseJson.state) {
+                for (let idFact of responseJson.object) {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    NotaCredito(idFact);
+
+                }
+                    swal("Exitoso!", "La venta fué anulada", "success");
+                    removeLoading();
+                    location.reload();
+            } else {
+                swal("Lo sentimos", responseJson.message, "error");
             }
-        });
-})
+        } catch (error) {
+            $(".showSweetAlert").LoadingOverlay("hide");
+            console.error("Error:", error);
+        }
+    });
+});
+

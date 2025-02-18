@@ -83,7 +83,7 @@ namespace PointOfSale.Model
 
         public Notifications(string saleNumber, string error, int idTienda)
         {
-            Descripcion = $"Ha al Facturar venta Nro: {saleNumber}.<br> Error: {error}";
+            Descripcion = $"Error al Facturar venta Nro: {saleNumber}.<br> Error: {error}";
             IsActive = true;
             RegistrationDate = TimeHelper.GetArgentinaTime();
             Accion = "";

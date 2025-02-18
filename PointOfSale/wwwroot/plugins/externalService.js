@@ -111,6 +111,7 @@ async function getLastAuthorizedReceipt(ptoVenta, idTipoComprobante) {
         if (error.name === 'AbortError') {
             console.error('get Last Authorized Receipt timed out');
         } else {
+            toastr.warning(error.message, "Error al recuperar ultimo comrpobante");
             console.error('Error querer recuperar ultimo comrpobante:', error);
         }
         throw error;
@@ -174,51 +175,74 @@ function printTicketSale(imprimirTicket, saleResult, facturaEmitida) {
     }
 }
 
-function InvoiceSale(imprimirTicket, saleResult) {
+
+async function InvoiceSale(imprimirTicket, saleResult) {
     showLoading();
 
-    for (let f of saleResult.facturasAFIP) {
-        getLastAuthorizedReceipt(f.cabecera.puntoVenta, f.cabecera.tipoComprobante.id)
-            .then(nroComprobante => {
-                f.detalle.forEach(d => {
+    if (!saleResult.facturasAFIP || !Array.isArray(saleResult.facturasAFIP)) {
+        console.error("Error: saleResult.facturasAFIP no está definido o no es un array", saleResult.facturasAFIP);
+        return;
+    }
+
+    try {
+        for (let f of saleResult.facturasAFIP) {
+            try {
+                let nroComprobante = await getLastAuthorizedReceipt(f.cabecera.puntoVenta, f.cabecera.tipoComprobante.id);
+
+                for (let d of f.detalle) {
                     nroComprobante++;
                     d.nroComprobanteDesde = nroComprobante;
                     d.nroComprobanteHasta = nroComprobante;
 
-                    getInvoicing(f)
-                        .then(i => {
+                    await new Promise(resolve => setTimeout(resolve, 500)); // Espera 0.5 segundos
 
-                            let saveInvoice = {
-                                facturacion: i,
-                                idSale: parseInt(saleResult.idSale)
-                            };
+                    try {
+                        let i = await getInvoicing(f);
 
-                            fetch("/Facturacion/SaveInvoice", {
-                                method: "POST",
-                                headers: { 'Content-Type': 'application/json;charset=utf-8' },
-                                body: JSON.stringify(saveInvoice)
-                            }).then(response => {
-                                return response.json();
-                            }).then(responseInvoice => {
-                                removeLoading();
-                                printTicketSale(imprimirTicket, saleResult, responseInvoice.object);
+                        let saveInvoice = {
+                            facturacion: i,
+                            idFacturaEmitida: parseInt(f.idFacturaEmitida)
+                        };
 
-                            });
-                        })
-                        .catch(error => {
-                            saveNotificationInvoiceError(saleResult.saleNumber, error)
+                        let response = await fetch("/Facturacion/SaveInvoice", {
+                            method: "POST",
+                            headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                            body: JSON.stringify(saveInvoice)
                         });
-                });
-            })
-            .catch(error => {
-                saveNotificationInvoiceError(saleResult.saleNumber, error)
-            });
+
+                        let responseInvoice = await response.json();
+
+                        removeLoading();
+                        printTicketSale(imprimirTicket, saleResult, responseInvoice.object);
+                    } catch (error) {
+                        toastr.warning("La venta fue registrada correctamente, pero no se ha podido facturar.", "Error al Facturar");
+                        saveNotificationInvoiceError(saleResult.saleNumber, error, parseInt(f.idFacturaEmitida));
+                    }
+                }
+            } catch (error) {
+                toastr.warning("La venta fue registrada correctamente, pero no se ha podido facturar.", "Error al Facturar");
+                saveNotificationInvoiceError(saleResult.saleNumber, error, null);
+            }
+
+            await new Promise(resolve => setTimeout(resolve, 500)); // Espera 0.5 segundos
+        }
+    } catch (error) {
+        console.error('Error en external service: ', error);
     }
 }
 
-function saveNotificationInvoiceError(saleNumber, error) {
+
+function saveNotificationInvoiceError(saleNumber, error, idFacturaEmitida) {
     removeLoading();
-    swal("Error al Facturar", "La venta fué registrada correctamente, pero no se ha podido facturar.\n", "warning");
+
+    if (idFacturaEmitida != null) {
+
+        fetch(`/Facturacion/ErrorInvoice?idFacturaEmitida=${idFacturaEmitida}&error=${error}`, {
+            method: "PUT",
+            headers: { 'Content-Type': 'application/json;charset=utf-8' }
+        });
+    }
+
 
     let failInvoice = {
         saleNumnber: saleNumber,
@@ -230,4 +254,146 @@ function saveNotificationInvoiceError(saleNumber, error) {
         headers: { 'Content-Type': 'application/json;charset=utf-8' },
         body: JSON.stringify(failInvoice)
     });
+}
+
+
+function NotaCredito(idFact) {
+    showLoading();
+
+
+    fetch(`/Facturacion/NotaCredito?idFacturaEmitida=${idFact}`, {
+        method: "DELETE"
+    }).then(response => {
+        $(".showSweetAlert").LoadingOverlay("hide");
+        return response.json();
+    }).then(responseJson => {
+        if (responseJson.state) {
+
+
+            if (responseJson.state) {
+                let factura = responseJson.object;
+
+                getLastAuthorizedReceipt(factura.cabecera.puntoVenta, factura.cabecera.tipoComprobante.id)
+                    .then(nroComprobante => {
+                        factura.detalle.forEach(d => {
+                            nroComprobante++;
+                            d.nroComprobanteDesde = nroComprobante;
+                            d.nroComprobanteHasta = nroComprobante;
+
+                            getInvoicing(factura)
+                                .then(i => {
+
+                                    let saveInvoice = {
+                                        facturacion: i,
+                                        idFacturaEmitida: parseInt(factura.idFacturaEmitida)
+                                    };
+
+                                    fetch("/Facturacion/SaveInvoice", {
+                                        method: "POST",
+                                        headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                                        body: JSON.stringify(saveInvoice)
+                                    }).then(response => {
+                                        return response.json();
+                                    }).then(responseInvoice => {
+                                        removeLoading();
+                                        swal("Exitoso!", "La factura fué anulada", "success");
+
+                                        location.reload();
+
+                                    });
+                                })
+                                .catch(error => {
+                                    saveNotificationInvoiceError(saleResult.saleNumber, error)
+                                });
+                        });
+                    })
+                    .catch(error => {
+                        saveNotificationInvoiceError(saleResult.saleNumber, error)
+                    });
+
+
+            } else {
+                swal("Lo sentimos", "No se ha podido realizar la nota de credito. Error: " + responseJson.message, "error");
+            }
+
+
+        } else {
+            swal("Lo sentimos", responseJson.message, "error");
+        }
+    })
+        .catch((error) => {
+            $(".showSweetAlert").LoadingOverlay("hide")
+        })
+
+
+}
+
+
+function Refacturar(idFact) {
+    showLoading();
+
+    fetch(`/Facturacion/Refacturar?idFacturaEmitida=${idFact}`, {
+        method: "POST"
+    }).then(response => {
+        $(".showSweetAlert").LoadingOverlay("hide");
+        return response.json();
+    }).then(responseJson => {
+        if (responseJson.state) {
+
+
+            if (responseJson.state) {
+                let factura = responseJson.object;
+
+                getLastAuthorizedReceipt(factura.cabecera.puntoVenta, factura.cabecera.tipoComprobante.id)
+                    .then(nroComprobante => {
+                        factura.detalle.forEach(d => {
+                            nroComprobante++;
+                            d.nroComprobanteDesde = nroComprobante;
+                            d.nroComprobanteHasta = nroComprobante;
+
+                            getInvoicing(factura)
+                                .then(i => {
+
+                                    let saveInvoice = {
+                                        facturacion: i,
+                                        idFacturaEmitida: parseInt(factura.idFacturaEmitida)
+                                    };
+
+                                    fetch("/Facturacion/SaveInvoice", {
+                                        method: "POST",
+                                        headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                                        body: JSON.stringify(saveInvoice)
+                                    }).then(response => {
+                                        return response.json();
+                                    }).then(responseInvoice => {
+                                        removeLoading();
+                                        swal("Exitoso!", "La factura fué refacturada", "success");
+
+                                        location.reload();
+                                    });
+                                })
+                                .catch(error => {
+                                    saveNotificationInvoiceError("Refacturada", error)
+                                });
+                        });
+                    })
+                    .catch(error => {
+                        saveNotificationInvoiceError("Refacturada", error)
+                    });
+
+
+            } else {
+                swal("Lo sentimos", "No se ha podido realizar la nota de credito. Error: " + responseJson.message, "error");
+            }
+
+
+        } else {
+            swal("Lo sentimos", responseJson.message, "error");
+        }
+    })
+        .catch((error) => {
+            $(".showSweetAlert").LoadingOverlay("hide")
+        })
+
+
 }

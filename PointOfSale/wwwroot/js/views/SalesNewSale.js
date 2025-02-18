@@ -917,9 +917,15 @@ $('#btn-add-tab').click(function () {
 });
 
 $('#tab-list').on('click', '.close', async function () {
-    const isValidCode = await validateCode("cerrar venta sin finalizar");
-    if (!isValidCode) {
-        return false;
+
+    let firstTabID = document.getElementsByClassName("tab-venta")[0].getAttribute("data-bs-target");
+    let isClose = $('#btnAgregarProducto' + firstTabID[firstTabID.length - 1]).is(':disabled');
+
+    if (!isClose) {
+        const isValidCode = await validateCode("cerrar venta sin finalizar");
+        if (!isValidCode) {
+            return false;
+        }
     }
 
     let tabId = getTabActiveId();

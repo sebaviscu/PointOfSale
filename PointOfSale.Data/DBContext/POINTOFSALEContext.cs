@@ -265,8 +265,8 @@ namespace PointOfSale.Data.DBContext
                 entity.ToTable("FacturasEmitidas");
 
                 entity.HasOne(d => d.Sale)
-                      .WithOne(p => p.FacturaEmitida)
-                      .HasForeignKey<FacturaEmitida>(d => d.IdSale)
+                      .WithMany(p => p.FacturasEmitidas)
+                      .HasForeignKey(d => d.IdSale)
                       .OnDelete(DeleteBehavior.ClientSetNull);
 
                 entity.HasOne(d => d.Cliente)
@@ -902,9 +902,9 @@ namespace PointOfSale.Data.DBContext
                     .WithOne(p => p.Sale)
                     .HasForeignKey<Sale>(c => c.IdClienteMovimiento);
 
-                entity.HasOne(e => e.FacturaEmitida)
-                  .WithOne(f => f.Sale)
-                  .HasForeignKey<FacturaEmitida>(f => f.IdSale);
+                //entity.HasOne(e => e.FacturaEmitida)
+                //  .WithOne(f => f.Sale)
+                //  .HasForeignKey<FacturaEmitida>(f => f.IdSale);
 
                 entity.HasOne(d => d.Tienda)
                     .WithMany(p => p.Sales)

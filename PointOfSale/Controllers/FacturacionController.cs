@@ -3,6 +3,7 @@ using AFIP.Facturacion.Model;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PointOfSale.Business.Contracts;
+using PointOfSale.Model.Afip.Factura;
 using PointOfSale.Models;
 using PointOfSale.Utilities.Response;
 using static PointOfSale.Model.Enum;
@@ -52,7 +53,7 @@ namespace PointOfSale.Controllers
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
-                var facturas = await _afipService.GetAll(user.IdTienda);
+                var facturas = await _afipService.GetAllTakeLimit(user.IdTienda);
                 var vmFactura = _mapper.Map<List<VMFacturaEmitida>>(facturas);
 
                 return StatusCode(StatusCodes.Status200OK, new { data = vmFactura });
@@ -93,22 +94,15 @@ namespace PointOfSale.Controllers
         [HttpDelete]
         public async Task<IActionResult> NotaCredito(int idFacturaEmitida)
         {
-            var gResponse = new GenericResponse<VMFacturaEmitida>();
+            var gResponse = new GenericResponse<FacturaAFIP>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
 
                 var credito = await _afipService.NotaCredito(idFacturaEmitida, user.UserName);
 
-                var vmFactura = _mapper.Map<VMFacturaEmitida>(credito);
-
-                if (credito.Observaciones == null)
-                {
-                    vmFactura.QR = await _afipService.GenerateLinkAfipFactura(credito);
-                }
-
                 gResponse.State = true;
-                gResponse.Object = vmFactura;
+                gResponse.Object = credito;
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
@@ -118,24 +112,22 @@ namespace PointOfSale.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Refacturar(int idFacturaEmitida, string cuil)
+        public async Task<IActionResult> Refacturar(int idFacturaEmitida, string? cuil = null)
         {
-            var gResponse = new GenericResponse<VMFacturaEmitida>();
+            var gResponse = new GenericResponse<FacturaAFIP>();
             try
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
 
                 var factura = await _afipService.Refacturar(idFacturaEmitida, cuil, user.UserName);
 
-                var vmFactura = _mapper.Map<VMFacturaEmitida>(factura);
-
-                if (factura.Observaciones == null)
-                {
-                    vmFactura.QR = await _afipService.GenerateLinkAfipFactura(factura);
-                }
+                //if (factura.Observaciones == null)
+                //{
+                //    vmFactura.QR = await _afipService.GenerateLinkAfipFactura(factura);
+                //}
 
                 gResponse.State = true;
-                gResponse.Object = vmFactura;
+                gResponse.Object = factura;
                 return StatusCode(StatusCodes.Status200OK, gResponse);
             }
             catch (Exception ex)
@@ -152,7 +144,7 @@ namespace PointOfSale.Controllers
             {
                 var user = ValidarAutorizacion([Roles.Administrador]);
 
-                var factura = await _afipService.SaveFacturaEmitida(request.Facturacion, request.IdSale);
+                var factura = await _afipService.SaveFacturaEmitida(request.Facturacion, request.IdFacturaEmitida);
 
                 var vmFactura = _mapper.Map<VMFacturaEmitida>(factura);
 
@@ -171,12 +163,31 @@ namespace PointOfSale.Controllers
             }
         }
 
+        [HttpPut]
+        public async Task<IActionResult> ErrorInvoice(int IdFacturaEmitida, string error)
+        {
+            try
+            {
+                var user = ValidarAutorizacion([Roles.Administrador]);
+
+                var factura = await _afipService.EditeFacturaError(IdFacturaEmitida, error);
+
+                var vmFactura = _mapper.Map<VMFacturaEmitida>(factura);
+
+                return StatusCode(StatusCodes.Status200OK);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex, "Error al crear error en invoice", _logger, IdFacturaEmitida);
+            }
+        }
+
     }
 
     public class SaveInvoiceRequest
     {
         public FacturacionResponse Facturacion { get; set; }
-        public int IdSale { get; set; }
+        public int IdFacturaEmitida { get; set; }
     }
 
 }

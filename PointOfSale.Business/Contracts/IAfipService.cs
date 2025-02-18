@@ -15,7 +15,7 @@ namespace PointOfSale.Business.Contracts
     public interface IAfipService
     {
         Task<List<FacturaEmitida>> GetAll(int idTienda);
-
+        Task<List<FacturaEmitida>> GetAllTakeLimit(int idTienda, int limit = 500);
         Task<FacturaEmitida> GetById(int idFacturaEmitida);
 
         Task<string> GenerateLinkAfipFactura(FacturaEmitida factura);
@@ -24,21 +24,17 @@ namespace PointOfSale.Business.Contracts
 
         VMX509Certificate2 GetCertificateAfipInformation(string certificatePath, string certificatePassword);
 
-        //string ValidateCertificate(AjustesFacturacion? ajustes);
-
         Task CheckVencimientoCertificado(int idTienda);
 
         Task<FacturaEmitida> GetBySaleId(int idSale);
 
-        //Task<List<FacturaEmitida>> GetListBySaleId(int idSale);
-
-        //Task<FacturaEmitida?> FacturarVenta(Sale sale, Ajustes ajustes, string cuil, int? idCliente);
-
-        Task<FacturaEmitida?> NotaCredito(int idFacturaemitida, string registrationUser);
-        Task<FacturaEmitida?> Refacturar(int idFacturaemitida, string cuil, string registrationUser);
+        Task<FacturaAFIP> NotaCredito(int idFacturaemitida, string registrationUser);
+        Task<FacturaAFIP?> Refacturar(int idFacturaemitida, string? cuil, string registrationUser);
 
         Task<List<FacturaAFIP>> GetFacturaByVentas(List<Sale> sales, Ajustes ajustes, string cuil, int? idCliente);
 
-        Task<FacturaEmitida> SaveFacturaEmitida(FacturacionResponse facturacion, int idSale);
+        Task<FacturaEmitida> SaveFacturaEmitida(FacturacionResponse facturacion, int idFacturaEmitida);
+
+        Task<FacturaEmitida> EditeFacturaError(int idFacturaEmitida, string error);
     }
 }
