@@ -99,9 +99,9 @@ namespace PointOfSale.Business.Services
             {
                 Ticket.LineasGuion();
 
-                string label = descuentoRecargo > 0 ? "Recargo" : "Descuento";
+                string label = descuentoRecargo > 0 ? "Recargo" : "Total Ahorrado";
                 decimal amount = Math.Abs(descuentoRecargo.Value);
-                Ticket.TextoBetween(label, amount.ToString());
+                Ticket.TextoBetween(label, "$" + amount.ToString());
                 Ticket.TextoIzquierda(" ");
             }
 
@@ -109,7 +109,10 @@ namespace PointOfSale.Business.Services
             Ticket.AgregaTotales("Total", double.Parse(total.ToString()));
             Ticket.LineasTotal();
 
+            Ticket.TextoIzquierda(" ");
+            Ticket.ChangeFont(6, FontStyle.Bold);
             Ticket.TextoBetween($"IVA Contenido", "$" + ivaAcumulado.ToString("N2"));
+            Ticket.ChangeFont(7, FontStyle.Bold);
             Ticket.LineasGuion();
 
 
