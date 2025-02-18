@@ -511,6 +511,9 @@ $('#modalDividirPago').on('shown.bs.modal', function () {
             $(this).click(); // Ejecutar el click del botón
         }
     });
+
+    document.getElementById('cboImprimirTicket').checked = ajustes.imprimirDefault;
+
 });
 
 $('#modalDividirPago').on('hidden.bs.modal', function (e) {
@@ -688,7 +691,7 @@ $("#btnFinalizarVentaParcial").off("click").on("click", function () {
     }
 
     $("#modalDividirPago").modal("hide")
-    document.getElementById('cboImprimirTicket').checked = ajustes.imprimirDefault;
+    //document.getElementById('cboImprimirTicket').checked = ajustes.imprimirDefault;
 
     let currentTabId = $("#modalDividirPago").attr("idtab");
 

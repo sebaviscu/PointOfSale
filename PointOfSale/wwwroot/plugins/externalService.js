@@ -69,7 +69,9 @@ async function printTicket(text, printerName, imagesTicket) {
 
         const data = await response.json();
         if (data.success) {
-            swal("", "Imprimiendo ticket", "success");
+            toastr.success("", "Imprimiendo ticket");
+
+            //swal("", "Imprimiendo ticket", "success");
         } else {
             swal("", "Error al imprimir el ticket: " + data.error, "warning");
         }
