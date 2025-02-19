@@ -87,7 +87,7 @@ namespace PointOfSale.Model
             IsActive = true;
             RegistrationDate = TimeHelper.GetArgentinaTime();
             Accion = "";
-            Rols = $"{(int)Roles.Administrador},{(int)Roles.Encargado}";
+            Rols = $"{(int)Roles.Administrador},{(int)Roles.Encargado},{(int)Roles.Empleado}";
             IdTienda = idTienda;
         }
 
