@@ -198,9 +198,19 @@ namespace PointOfSale.Controllers
 
                 if (result.Ajustes.FacturaElectronica.HasValue && result.Ajustes.FacturaElectronica.Value)
                 {
-                    var facturas = await _afipFacturacionService.GetFacturaByVentas(result.SaleList, result.Ajustes, model.CuilFactura, model.IdClienteFactura);
-                    result.FacturasAFIP.AddRange(facturas);
+                    var salesFacturar = result.SaleList.Where(_ => (int)_.TipoFactura < 3);
+
+                    if (salesFacturar.Any())
+                    {
+                        var saleFactura = salesFacturar.First();
+                        saleFactura.Total = salesFacturar.Sum(_ => _.Total);
+                        saleFactura.DetailSales = result.SaleList.First(_ => _.DetailSales != null).DetailSales;
+
+                        var facturas = await _afipFacturacionService.GetFacturaByVentas(saleFactura, result.Ajustes, model.CuilFactura, model.IdClienteFactura);
+                        result.FacturaAFIP = facturas;
+                    }
                 }
+
                 var errores = $"{result.ErrorFacturacion} {result.Errores}";
                 gResponse.State = string.IsNullOrEmpty(result.Errores);
                 gResponse.Message = errores.Trim();

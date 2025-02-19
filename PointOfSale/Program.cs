@@ -83,10 +83,8 @@ public class Program
                 {
                     option.LoginPath = "/Access/Login"; // Ruta de inicio de sesión
                     option.SlidingExpiration = true; // Renueva la cookie en cada solicitud activa
-                    option.ExpireTimeSpan = TimeSpan.FromMinutes(120); // Tiempo de inactividad permitido
-
-                    // Configuración de persistencia de la cookie
-                    option.Cookie.MaxAge = TimeSpan.FromDays(1); // Persistencia de la cookie por 1 día
+                    option.ExpireTimeSpan = TimeSpan.FromMinutes(120);
+                    option.Cookie.MaxAge = option.ExpireTimeSpan;
                     option.Cookie.HttpOnly = true; // Mejora de seguridad para evitar acceso desde JavaScript
                     option.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Solo se envía en conexiones HTTPS
                 });

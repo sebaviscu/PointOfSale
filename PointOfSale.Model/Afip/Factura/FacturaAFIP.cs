@@ -23,11 +23,11 @@ namespace PointOfSale.Model.Afip.Factura
         /// <param name="nroComprobante"></param>
         /// <param name="ptoVenta"></param>
         /// <param name="documento"></param>
-        public FacturaAFIP(List<DetailSale> detailSale, DateTime fechaComprobante, TipoComprobante tipoComprobante, int? nroComprobante, int ptoVenta, long documento)
+        public FacturaAFIP(List<DetailSale> detailSale, decimal importeVenta, DateTime fechaComprobante, TipoComprobante tipoComprobante, int? nroComprobante, int ptoVenta, long documento)
         {
             Cabecera = CrearCabecera(tipoComprobante, ptoVenta);
             var tipoDocumento = ObtenerTipoDocumento(tipoComprobante, documento);
-            AgregarDetalle(detailSale, fechaComprobante, nroComprobante, documento, tipoDocumento, tipoComprobante);
+            AgregarDetalle(detailSale, importeVenta, fechaComprobante, nroComprobante, documento, tipoDocumento, tipoComprobante);
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace PointOfSale.Model.Afip.Factura
         /// <param name="tipoComprobante"></param>
         /// <param name="nroComprobante"></param>
         /// <param name="facturaEmitida"></param>
-        public FacturaAFIP(List<DetailSale> detailSale, TipoComprobante tipoComprobante, int? nroComprobante, FacturaEmitida facturaEmitida, long documento, bool isNotaCredito)
+        public FacturaAFIP(List<DetailSale> detailSale, decimal importeVenta, TipoComprobante tipoComprobante, int? nroComprobante, FacturaEmitida facturaEmitida, long documento, bool isNotaCredito)
         {
             IdFacturaEmitida = facturaEmitida.IdFacturaEmitida;
 
@@ -45,7 +45,7 @@ namespace PointOfSale.Model.Afip.Factura
                 ComprobanteAsociado = CrearComprobanteAsociado(tipoComprobante, facturaEmitida);
 
             var tipoDocumento = ObtenerTipoDocumento(tipoComprobante, documento);
-            AgregarDetalle(detailSale, TimeHelper.GetArgentinaTime(), nroComprobante, documento, tipoDocumento, tipoComprobante);
+            AgregarDetalle(detailSale, importeVenta, TimeHelper.GetArgentinaTime(), nroComprobante, documento, tipoDocumento, tipoComprobante);
         }
 
         private CabeceraFacturaAFIP CrearCabecera(TipoComprobante tipoComprobante, int ptoVenta)
@@ -58,7 +58,7 @@ namespace PointOfSale.Model.Afip.Factura
             };
         }
 
-        private ImporteIva CalcularImportes(IGrouping<decimal?, DetailSale> detalle, TipoComprobante tipoComprobante)
+        private ImporteIva CalcularImportes(IGrouping<decimal?, DetailSale> detalle, decimal importeVenta, TipoComprobante tipoComprobante)
         {
             var importeIva = new ImporteIva();
             if (tipoComprobante.Id != TipoComprobante.Factura_C.Id)
@@ -80,13 +80,22 @@ namespace PointOfSale.Model.Afip.Factura
                         break;
                 }
 
-                var importeIVA = (double)detalle.Sum(_ => _.ImporteIva);
-                var importeNeto = (double)detalle.Sum(_ => _.ImporteNeto);
-                var importeTotal = (double)detalle.Sum(_ => _.Total);
 
-                if (importeNeto + importeIVA != importeTotal)
-                    importeIVA = importeTotal - importeNeto;
+                //if (detalle.Sum(_ => _.Total) == importeVenta) // si se divide pago
+                //{
+                var iva = detalle.Key.Value;
+                var totalIva = Math.Truncate((importeVenta - (importeVenta / (1 + (iva / 100)))) * 100) / 100;
 
+                double importeIVA = (double)totalIva;
+                double importeNeto = (double)(importeVenta - totalIva);
+                double importeTotal = (double)importeVenta;
+                //}
+                //else
+                //{
+                //    importeIVA = (double)detalle.Sum(_ => _.ImporteIva);
+                //    importeNeto = (double)detalle.Sum(_ => _.ImporteNeto);
+                //    importeTotal = (double)detalle.Sum(_ => _.Total);
+                //}
 
                 importeIva.TipoIva = tipoIva;
                 importeIva.ImporteIVA = importeIVA;
@@ -102,25 +111,6 @@ namespace PointOfSale.Model.Afip.Factura
             }
 
             return importeIva;
-        }
-
-        private (decimal, decimal) CalcularImportes2(decimal total, TipoComprobante tipoComprobante)
-        {
-            decimal importeNeto = total;
-            decimal importeIVA = 0;
-
-            if (tipoComprobante.Id != TipoComprobante.Factura_C.Id)
-            {
-                importeNeto = Math.Truncate(total / 1.21m * 100) / 100;
-                importeIVA = Math.Truncate((total - importeNeto) * 100) / 100;
-
-                if (importeNeto + importeIVA != total)
-                {
-                    importeIVA = total - importeNeto;
-                }
-            }
-
-            return (importeNeto, importeIVA);
         }
 
         private TipoDocumento ObtenerTipoDocumento(TipoComprobante tipoComprobante, long documento)
@@ -160,19 +150,29 @@ namespace PointOfSale.Model.Afip.Factura
             };
         }
 
-        private void AgregarDetalle(List<DetailSale> detailSale, DateTime fechaComprobante, int? nroComp, long documento, TipoDocumento tipoDocumento, TipoComprobante tipoComprobante)
+        private void AgregarDetalle(List<DetailSale> detailSale, decimal importeVenta, DateTime fechaComprobante, int? nroComp, long documento, TipoDocumento tipoDocumento, TipoComprobante tipoComprobante)
         {
             var listaDetalles = new List<DetalleFacturaAFIP>();
 
             var imporetsIva = detailSale.GroupBy(_ => _.Iva).ToList();
             int i = 0;
             // ver numero de comrpobante que onda
+            var nroComprobante = nroComp != null ? (long)(nroComp + i) : (long)0;
             foreach (var tiposIVA in imporetsIva)
             {
-                var importeIva = CalcularImportes(tiposIVA, tipoComprobante);
+                var importeTotalIVA = tiposIVA.Sum(_ => _.Total);
+                var totalDetalle = detailSale.Sum(_ => _.Total);
 
-                var nroComprobante = nroComp != null ? (long)(nroComp + i) : (long)0;
-                
+                // Calcular la proporción del importe total de IVA en la venta parcial
+                if (importeVenta != totalDetalle)
+                {
+                    // Calcular la proporción del importeTotalIVA en el importeVenta
+                    var proporcion = importeVenta / totalDetalle;
+                    importeTotalIVA = importeTotalIVA * proporcion;
+                }
+
+                var importeIva = CalcularImportes(tiposIVA, importeTotalIVA, tipoComprobante);
+
                 var detalleNew = new DetalleFacturaAFIP
                 {
                     Concepto = Concepto.Producto,

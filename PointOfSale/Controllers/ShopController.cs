@@ -270,8 +270,8 @@ namespace PointOfSale.Controllers
 
                     if (ajustes.FacturaElectronica.HasValue && ajustes.FacturaElectronica.Value)
                     {
-                        var facturas = await _afipService.GetFacturaByVentas(new List<Sale> { sale }, ajustes, model.CuilFactura, model.IdClienteFactura);
-                        result.SaleResult.FacturasAFIP.AddRange(facturas);
+                        var facturas = await _afipService.GetFacturaByVentas(sale, ajustes, model.CuilFactura, model.IdClienteFactura);
+                        result.SaleResult.FacturaAFIP = facturas;
                     }
                 }
 

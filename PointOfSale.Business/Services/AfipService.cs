@@ -201,42 +201,36 @@ namespace PointOfSale.Business.Services
             }
         }
 
-        public async Task<List<FacturaAFIP>> GetFacturaByVentas(List<Sale> sales, Ajustes ajustes, string cuil, int? idCliente)
+        public async Task<FacturaAFIP?> GetFacturaByVentas(Sale sales, Ajustes ajustes, string cuil, int? idCliente)
         {
             if (!ajustes.FacturaElectronica.HasValue || !ajustes.FacturaElectronica.Value)
             {
-                return default;
+                return null;
             }
 
-            var idTienda = sales.First().IdTienda;
-            var facturasList = new List<FacturaAFIP>();
+            var idTienda = sales.IdTienda;
+            FacturaAFIP factura = null;
             AjustesFacturacion ajustesFacturacion;
-            var fechaFactura = TimeHelper.GetArgentinaTime();
 
-            if (sales.Any(_ => _.TipoFactura.HasValue && (int)_.TipoFactura < 3))
+            if (sales.TipoFactura.HasValue && (int)sales.TipoFactura < 3)
             {
                 ajustesFacturacion = await _ajusteService.GetAjustesFacturacion(idTienda);
+                var fechaFactura = TimeHelper.GetArgentinaTime();
 
-                foreach (var s in sales)
-                {
-                    if (s.TipoFactura.HasValue && (int)s.TipoFactura < 3)
-                    {
-                        var tipoFactura = ObtenerTipoFactura(s.TipoFactura.Value, cuil);
-                        var tipoDoc = TipoComprobante.ConvertTipoFactura(tipoFactura);
-                        var documentoAFacturar = ObtenerDocumentoAFacturar(tipoDoc, cuil);
+                var tipoFactura = ObtenerTipoFactura(sales.TipoFactura.Value, cuil);
+                var tipoDoc = TipoComprobante.ConvertTipoFactura(tipoFactura);
+                var documentoAFacturar = ObtenerDocumentoAFacturar(tipoDoc, cuil);
 
-                        var factura = new FacturaAFIP(s.DetailSales.ToList(), s.RegistrationDate.Value, tipoDoc, nroComprobante: null, ajustesFacturacion.PuntoVenta.Value, documentoAFacturar);
+                factura = new FacturaAFIP(sales.DetailSales.ToList(), sales.Total.Value, sales.RegistrationDate.Value, tipoDoc, nroComprobante: null, ajustesFacturacion.PuntoVenta.Value, documentoAFacturar);
 
-                        var facturaEmitida = CrearFacturaEmitida(idCliente, s.RegistrationUser, fechaFactura, factura, idTienda, s.IdSale);
-                        var factCreada = await _repository.Add(facturaEmitida);
+                var facturaEmitida = CrearFacturaEmitida(idCliente, sales.RegistrationUser, fechaFactura, factura, idTienda, sales.IdSale);
+                var factCreada = await _repository.Add(facturaEmitida);
 
-                        factura.IdFacturaEmitida = factCreada.IdFacturaEmitida;
-                        facturasList.Add(factura);
-                    }
-                }
+                factura.IdFacturaEmitida = factCreada.IdFacturaEmitida;
+
             }
 
-            return facturasList;
+            return factura;
         }
 
         public async Task<FacturaEmitida> SaveFacturaEmitida(FacturacionResponse facturacion, int idFacturaEmitida)
@@ -274,7 +268,7 @@ namespace PointOfSale.Business.Services
 
             var tipoDoc = ObtenerTipoNotaCredito(facturaOriginal);
 
-            var factura = new FacturaAFIP(facturaOriginal.Sale.DetailSales.ToList(), tipoDoc, nroComprobante: null, facturaOriginal, facturaOriginal.NroDocumento.Value, isNotaCredito: true);
+            var factura = new FacturaAFIP(facturaOriginal.Sale.DetailSales.ToList(), facturaOriginal.Sale.Total.Value, tipoDoc, nroComprobante: null, facturaOriginal, facturaOriginal.NroDocumento.Value, isNotaCredito: true);
 
             var notaCredito = CrearFacturaEmitida(facturaOriginal.IdCliente, registrationUser, TimeHelper.GetArgentinaTime(), factura, facturaOriginal.IdTienda, facturaOriginal.IdSale.Value);
             notaCredito.IdFacturaAnulada = facturaOriginal.IdFacturaEmitida;
@@ -298,7 +292,7 @@ namespace PointOfSale.Business.Services
             var tipoDoc = TipoComprobante.GetByDescription(facturaEmitida.TipoFactura);
             var documentoAFacturar = ObtenerDocumentoAFacturar(tipoDoc, cuil);
 
-            var factura = new FacturaAFIP(facturaEmitida.Sale.DetailSales.ToList(), tipoDoc, null, facturaEmitida, documentoAFacturar, isNotaCredito: false);
+            var factura = new FacturaAFIP(facturaEmitida.Sale.DetailSales.ToList(), facturaEmitida.Sale.Total.Value, tipoDoc, null, facturaEmitida, documentoAFacturar, isNotaCredito: false);
 
             facturaEmitida.FacturaRefacturada = "Refacturada";
             await _repository.Edit(facturaEmitida);

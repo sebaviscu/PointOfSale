@@ -528,16 +528,22 @@ const openModalProduct = (model = BASIC_MODEL_PRODUCTOS) => {
 
     setChoices(tagSelector, model.tags.map(d => d.idTag));
 
-    if (ajustesWeb.habilitarComodin1) {
-        setChoices(comodin1Selector, model.comodin1.map(d => d.id));
-    }
+    if (ajustesWeb != null) {
 
-    if (ajustesWeb.habilitarComodin2) {
-        setChoices(comodin2Selector, model.comodin2.map(d => d.id));
-    }
+        if (ajustesWeb.habilitarComodin1) {
+            setChoices(comodin1Selector, model.comodin1.map(d => d.id));
+        }
 
-    if (ajustesWeb.habilitarComodin3) {
-        setChoices(comodin3Selector, model.comodin3.map(d => d.id));
+        if (ajustesWeb.habilitarComodin2) {
+            setChoices(comodin2Selector, model.comodin2.map(d => d.id));
+        }
+
+        if (ajustesWeb.habilitarComodin3) {
+            setChoices(comodin3Selector, model.comodin3.map(d => d.id));
+        }
+    }
+    else {
+        console.log("no hay ajustes web");
     }
 }
 

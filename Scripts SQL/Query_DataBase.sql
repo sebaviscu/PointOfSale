@@ -514,13 +514,16 @@ alter table Tienda add IdCorrelativeNumber int references CorrelativeNumber(IdCo
 
 
 
-create table Stock(
-idStock int primary key identity(1,1),
-StockActual decimal(10,2) not null,
-StockMinimo int not null,
-idProducto int references Product(idProduct) not null,
-idTienda int references Tienda(idTienda) not null,
+CREATE TABLE Stock(
+    idStock INT PRIMARY KEY IDENTITY(1,1),
+    StockActual DECIMAL(10,2) NOT NULL,
+    StockMinimo INT NOT NULL,
+    idProducto INT NOT NULL,
+    idTienda INT NOT NULL,
+    CONSTRAINT FK_Stock_Product FOREIGN KEY (idProducto) REFERENCES Product(idProduct) ON DELETE CASCADE,
+    CONSTRAINT FK_Stock_Tienda FOREIGN KEY (idTienda) REFERENCES Tienda(idTienda) ON DELETE CASCADE
 );
+
 
 
 CREATE TABLE FacturasEmitidas (

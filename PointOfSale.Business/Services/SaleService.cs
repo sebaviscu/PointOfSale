@@ -192,7 +192,7 @@ namespace PointOfSale.Business.Services
             Sale sale_created = null;
             try
             {
-                if(saleInput.MultiplesFormaDePago.Any(_=>_.FormaDePago == null) && saleInput.ClientId == null)
+                if (saleInput.MultiplesFormaDePago.Any(_ => _.FormaDePago == null) && saleInput.ClientId == null)
                 {
                     throw new Exception("Es necesario Agregar una forma de pago.");
                 }
@@ -236,47 +236,11 @@ namespace PointOfSale.Business.Services
                     sale_created = await _repositorySale.Register(newVMSale, ajustes);
 
                     await _clienteService.RegistrarionClient(sale_created, newVMSale.Total.Value, model.RegistrationUser, model.IdTienda, sale_created.IdSale, saleInput.TipoMovimiento, saleInput.ClientId);
-                    
-                    if(sale_created.IdClienteMovimiento != null)
+
+                    if (sale_created.IdClienteMovimiento != null)
                     {
                         _ = await _repositorySale.Edit(sale_created);
                     }
-
-                    //FacturaEmitida facturaEmitida = null;
-                    //try
-                    //{
-                    //    if (ajustes.FacturaElectronica.HasValue && ajustes.FacturaElectronica.Value)
-                    //    {
-                    //        facturaEmitida = await _afipService.FacturarVenta(sale_created, ajustes, saleInput.CuilFactura, saleInput.IdClienteFactura);
-
-                    //        if (facturaEmitida != null && facturaEmitida.Resultado != "A")
-                    //        {
-                    //            modelResponde.ErrorFacturacion = facturaEmitida.Observaciones;
-                    //        }
-                    //    }
-                    //}
-                    //catch (Exception e)
-                    //{
-                    //    modelResponde.ErrorFacturacion = e.Message;
-                    //    sale_created.ResultadoFacturacion = false;
-                    //    await _repositorySale.Edit(sale_created);
-                    //}
-
-                    //if (!string.IsNullOrEmpty(modelResponde.ErrorFacturacion))
-                    //{
-                    //    var notific = new Notifications(sale_created, string.Concat(modelResponde.Errores, modelResponde.ErrorFacturacion));
-                    //    await _notificationService.Save(notific);
-                    //}
-
-                    //if (saleInput.ImprimirTicket && !string.IsNullOrEmpty(ajustes.NombreImpresora))
-                    //{
-                    //    var ticket = await RegistrationTicketPrinting(ajustes, sale_created, facturaEmitida);
-                    //    if (ticket != null)
-                    //    {
-                    //        modelResponde.Ticket += ticket.Ticket;
-                    //        modelResponde.ImagesTicket.AddRange(ticket.ImagesTicket);
-                    //    }
-                    //}
 
                     if (sale_created.IdTypeDocumentSale != null)
                     {
@@ -309,17 +273,6 @@ namespace PointOfSale.Business.Services
             return modelResponde;
         }
 
-        private async Task<TicketModel?> RegistrationTicketPrinting(Ajustes ajustes, Sale saleCreated, FacturaEmitida? facturaEmitida)
-        {
-            if (string.IsNullOrEmpty(ajustes.NombreImpresora))
-            {
-                return null;
-            }
-
-            var ticket = await _ticketService.TicketSale(saleCreated, ajustes, facturaEmitida);
-            return ticket;
-        }
-
         public async Task<string> GetLastSerialNumberSale(int idTienda)
         {
             return await _correlativeNumberService.GetSerialNumberAndSave(idTienda, "Sale");
@@ -327,7 +280,7 @@ namespace PointOfSale.Business.Services
 
         public async Task<List<Sale>> SaleHistory(string saleNumber, string startDate, string endDate, string presupuestos, int idTienda)
         {
-            IQueryable<Sale> query = await _repositorySale.Query(_=>_.IdTienda == idTienda);
+            IQueryable<Sale> query = await _repositorySale.Query(_ => _.IdTienda == idTienda);
             startDate = startDate ?? "";
             endDate = endDate ?? "";
 

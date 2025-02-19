@@ -31,7 +31,7 @@ namespace PointOfSale.Business.Contracts
         Task<FacturaAFIP> NotaCredito(int idFacturaemitida, string registrationUser);
         Task<FacturaAFIP?> Refacturar(int idFacturaemitida, string? cuil, string registrationUser);
 
-        Task<List<FacturaAFIP>> GetFacturaByVentas(List<Sale> sales, Ajustes ajustes, string cuil, int? idCliente);
+        Task<FacturaAFIP> GetFacturaByVentas(Sale sales, Ajustes ajustes, string cuil, int? idCliente);
 
         Task<FacturaEmitida> SaveFacturaEmitida(FacturacionResponse facturacion, int idFacturaEmitida);
 
