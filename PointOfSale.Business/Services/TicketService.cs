@@ -110,9 +110,8 @@ namespace PointOfSale.Business.Services
             Ticket.LineasTotal();
 
             Ticket.TextoIzquierda(" ");
-            Ticket.ChangeFont(6, FontStyle.Bold);
+            Ticket.TextoIzquierda(" ");
             Ticket.TextoBetween($"IVA Contenido", "$" + ivaAcumulado.ToString("N2"));
-            Ticket.ChangeFont(7, FontStyle.Bold);
             Ticket.LineasGuion();
 
 

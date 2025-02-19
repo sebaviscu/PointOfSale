@@ -1,7 +1,7 @@
 ﻿const urlPrintService = 'https://localhost:4568';
 
 async function fetchWithTimeout(resource, options = {}) {
-    const { timeout = 10000 } = options; // 10 segundos de timeout por defecto
+    const { timeout = 30000 } = options; // 30 segundos de timeout por defecto
 
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), timeout);
@@ -15,7 +15,7 @@ async function fetchWithTimeout(resource, options = {}) {
 
 async function getHealthcheck() {
     try {
-        const response = await fetchWithTimeout(urlPrintService + '/healthcheck', { timeout: 5000 });
+        const response = await fetchWithTimeout(urlPrintService + '/healthcheck', { timeout: 30000 });
         if (!response.ok) {
             console.error(`Healthcheck failed: ${response.statusText}`);
             return false;
@@ -34,7 +34,7 @@ async function getHealthcheck() {
 
 async function getPrinters() {
     try {
-        const response = await fetchWithTimeout(urlPrintService + '/getprinters', { timeout: 10000 });
+        const response = await fetchWithTimeout(urlPrintService + '/getprinters', { timeout: 30000 });
         if (!response.ok) {
             throw new Error(`Network response was not ok: ${response.statusText}`);
         }
@@ -64,7 +64,7 @@ async function printTicket(text, printerName, imagesTicket) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ nombreImpresora: printerName, text: text, images: imagesTicket }),
-            timeout: 15000 // Timeout de 15 segundos para la impresión
+            timeout: 30000 // Timeout de 15 segundos para la impresión
         });
 
         const data = await response.json();
@@ -118,32 +118,96 @@ async function getLastAuthorizedReceipt(ptoVenta, idTipoComprobante) {
     }
 }
 
+
+//async function getInvoicing(factura) {
+
+//    try {
+//        const response = await fetchWithTimeout(urlPrintService + '/invoice', {
+//            method: 'POST',
+//            headers: {
+//                'Content-Type': 'application/json'
+//            },
+//            body: JSON.stringify(factura),
+//            timeout: 120000 // Timeout de 120 segundos para la solicitud
+//        });
+
+//        const data = await response.json();
+
+//        if (!data.success) {
+//            throw new Error(data.error);
+//        }
+
+//        return data.invoice;
+//    } catch (error) {
+//        if (error.name === 'AbortError') {
+//            console.error('Error: La solicitud de facturar ha excedido el tiempo de espera.');
+//        } else {
+//            console.error('Error a la solicitud de facturar:', error.message);
+//        }
+//        throw error; // Vuelve a lanzar el error para manejarlo en otro lugar si es necesario
+//    }
+//}
+
 async function getInvoicing(factura) {
+    let maxIntentos = 5;
+    let baseTimeout = 2500; // 2 segundos de espera inicial
 
-    try {
-        const response = await fetchWithTimeout(urlPrintService + '/invoice', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(factura),
-            timeout: 120000 // Timeout de 120 segundos para la solicitud
-        });
+    for (let intento = 1; intento <= maxIntentos; intento++) {
+        try {
+            const timeoutActual = Math.min(baseTimeout * intento, 120000);
 
-        const data = await response.json();
+            await new Promise(resolve => setTimeout(resolve, timeoutActual));
 
-        if (!data.success) {
-            throw new Error(data.error);
+            const response = await fetchWithTimeout(urlPrintService + '/invoice', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(factura)
+            });
+
+            const data = await response.json();
+            if (!data.success) {
+                throw new Error(data.error);
+            }
+
+            toastr.options.timeOut = 1500;
+            toastr.info("Facturación realizada");
+
+            return data.invoice;
+        } catch (error) {
+            if (error.name === 'AbortError') {
+                console.error(`Intento ${intento}: La solicitud de facturar ha excedido el tiempo de espera (${baseTimeout * intento}ms).`);
+            } else {
+                let matches = error.message.match(/\b(500|501|502|503)\b/g);
+
+                if (intento != maxIntentos && matches !== null && matches.length > 0) {
+
+                    toastr.options = {
+                        "progressBar": true,
+                        "timeOut": (baseTimeout * intento) + 1500
+                    };
+
+                    toastr.warning(`Intento ${intento}, próximo en ${(baseTimeout * intento) / 1000}s`, "Facturación");
+
+                    //console.error(`Intento ${intento}, próximo en ${(baseTimeout * intento) / 1000}s: Error en la solicitud de facturar:`, error.message);
+                }
+
+                if (intento == 2) {
+                    removeLoading();
+                }
+
+                if (intento === maxIntentos || matches.length === 0) {
+                    showLoading();
+                    throw error; // Si ya intentó 5 veces, lanza el error final
+                }
+            }
+        } finally {
+            toastr.options = {
+                "progressBar": true,
+                "timeOut": 5000
+            };
         }
-
-        return data.invoice;
-    } catch (error) {
-        if (error.name === 'AbortError') {
-            console.error('Error: La solicitud de facturar ha excedido el tiempo de espera.');
-        } else {
-            console.error('Error a la solicitud de facturar:', error.message);
-        }
-        throw error; // Vuelve a lanzar el error para manejarlo en otro lugar si es necesario
     }
 }
 
