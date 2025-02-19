@@ -94,9 +94,9 @@ public class Program
                 options.UseSqlServer(builder.Configuration.GetConnectionString("SQL"), sqlServerOptionsAction: sqlOptions =>
                 {
                     sqlOptions.EnableRetryOnFailure(
-                        maxRetryCount: 5, // Número máximo de reintentos
-                        maxRetryDelay: TimeSpan.FromSeconds(10), // Tiempo máximo de espera entre reintentos
-                        errorNumbersToAdd: null // Especifica números de error adicionales para los que se realizará un reintento
+                        maxRetryCount: 5,
+                        maxRetryDelay: TimeSpan.FromSeconds(10),
+                        errorNumbersToAdd: null
                     );
                 });
             });

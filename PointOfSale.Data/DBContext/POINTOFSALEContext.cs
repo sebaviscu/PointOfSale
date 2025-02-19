@@ -110,6 +110,12 @@ namespace PointOfSale.Data.DBContext
 
                 entity.ToTable("VentasPorTipoDeVentaTurno");
 
+                entity.Property(e => e.TotalSistema)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.TotalUsuario)
+                      .HasColumnType("decimal(10, 2)");
+
                 entity.HasOne(e => e.Turno)
                 .WithMany(_ => _.VentasPorTipoDeVenta)
                 .HasForeignKey(e => e.IdTurno)
@@ -120,6 +126,30 @@ namespace PointOfSale.Data.DBContext
             {
 
                 entity.ToTable("BackupProducto");
+
+                entity.Property(e => e.CostPrice)
+              .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.Iva)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.Precio1)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.Precio2)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.Precio3)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.PrecioFormatoWeb)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.Price)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.PriceWeb)
+                      .HasColumnType("decimal(10, 2)");
 
             });
 
@@ -143,6 +173,18 @@ namespace PointOfSale.Data.DBContext
 
             modelBuilder.Entity<PagoEmpresa>(entity =>
             {
+
+                entity.Property(e => e.Importe)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.ImporteSinIva)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.Iva)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.IvaImporte)
+                      .HasColumnType("decimal(10, 2)");
 
                 modelBuilder.Entity<PagoEmpresa>()
                            .HasOne(h => h.Empresa)
@@ -231,6 +273,9 @@ namespace PointOfSale.Data.DBContext
 
                 entity.ToTable("MovimientoCaja");
 
+                entity.Property(e => e.Importe)
+                      .HasColumnType("decimal(10, 2)");
+
                 // Relación con RazonMovimientoCaja
                 entity.HasOne(d => d.RazonMovimientoCaja)
                     .WithMany(p => p.MovimientoCajas)
@@ -264,7 +309,16 @@ namespace PointOfSale.Data.DBContext
 
                 entity.ToTable("FacturasEmitidas");
 
-                entity.HasOne(d => d.Sale)
+                entity.Property(e => e.ImporteIVA)
+                    .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.ImporteNeto)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.ImporteTotal)
+                      .HasColumnType("decimal(10, 2)");
+        
+                        entity.HasOne(d => d.Sale)
                       .WithMany(p => p.FacturasEmitidas)
                       .HasForeignKey(d => d.IdSale)
                       .OnDelete(DeleteBehavior.ClientSetNull);
@@ -286,6 +340,9 @@ namespace PointOfSale.Data.DBContext
 
                 entity.ToTable("Stock");
 
+                entity.Property(e => e.StockActual)
+                      .HasColumnType("decimal(10, 2)");
+
                 entity.HasOne(d => d.Tienda)
                     .WithMany(p => p.Stocks)
                     .HasForeignKey(d => d.IdTienda)
@@ -304,7 +361,22 @@ namespace PointOfSale.Data.DBContext
 
                 entity.ToTable("AjustesWeb");
 
-                entity.HasMany(a => a.HorariosWeb)
+                entity.Property(e => e.AumentoWeb)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.CompraMinima)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.CostoEnvio)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.MontoEnvioGratis)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.TakeAwayDescuento)
+                        .HasColumnType("decimal(10, 2)");
+
+                    entity.HasMany(a => a.HorariosWeb)
                     .WithOne(h => h.AjustesWeb)
                     .HasForeignKey(h => h.IdAjusteWeb)
                     .OnDelete(DeleteBehavior.Cascade);
@@ -358,6 +430,12 @@ namespace PointOfSale.Data.DBContext
 
                 entity.ToTable("Pedidos");
 
+                entity.Property(e => e.ImporteEstimado)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.ImporteFinal)
+                      .HasColumnType("decimal(10, 2)");
+
                 entity.HasOne(d => d.Proveedor)
                     .WithMany(p => p.Pedidos)
                     .HasForeignKey(d => d.IdProveedor);
@@ -393,6 +471,9 @@ namespace PointOfSale.Data.DBContext
 
                 entity.ToTable("ListaPrecios");
 
+                entity.Property(e => e.Precio)
+                      .HasColumnType("decimal(10, 2)");
+
                 entity.HasOne(d => d.Producto)
                     .WithMany(p => p.ListaPrecios)
                     .HasForeignKey(d => d.IdProducto);
@@ -422,6 +503,12 @@ namespace PointOfSale.Data.DBContext
                     .HasColumnType("decimal(10, 2)")
                     .HasColumnName("total");
 
+                entity.Property(e => e.CostoEnvio)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.DescuentoRetiroLocal)
+                      .HasColumnType("decimal(10, 2)");
+
                 entity.HasOne(d => d.FormaDePago)
                     .WithMany(p => p.VentasWeb)
                     .HasForeignKey(d => d.IdFormaDePago);
@@ -430,6 +517,9 @@ namespace PointOfSale.Data.DBContext
             modelBuilder.Entity<TipoDeGasto>(entity =>
             {
                 entity.HasKey(e => e.IdTipoGastos);
+
+                entity.Property(e => e.Iva)
+                      .HasColumnType("decimal(10, 2)");
 
                 entity.ToTable("TipoGastos");
 
@@ -450,6 +540,18 @@ namespace PointOfSale.Data.DBContext
                     .HasColumnName("registrationDate")
                     .HasDefaultValueSql("(getdate())");
 
+                entity.Property(e => e.Importe)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.ImporteSinIva)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.Iva)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.IvaImporte)
+                      .HasColumnType("decimal(10, 2)");
+
                 entity.HasOne(d => d.Tienda)
                     .WithMany(p => p.Gastos)
                     .HasForeignKey(d => d.IdTienda);
@@ -460,6 +562,12 @@ namespace PointOfSale.Data.DBContext
                 entity.HasKey(e => e.IdPromocion);
 
                 entity.ToTable("Promocion");
+
+                entity.Property(e => e.Porcentaje)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.Precio)
+                      .HasColumnType("decimal(10, 2)");
 
                 entity.Property(e => e.RegistrationDate)
                     .HasColumnType("datetime")
@@ -482,6 +590,17 @@ namespace PointOfSale.Data.DBContext
                     .HasColumnName("registrationDate")
                     .HasDefaultValueSql("(getdate())");
 
+                entity.Property(e => e.Importe)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.ImporteSinIva)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.Iva)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.IvaImporte)
+                      .HasColumnType("decimal(10, 2)");
 
                 entity.HasOne(d => d.Tienda)
                     .WithMany(p => p.ProveedorMovimientos)
@@ -493,6 +612,9 @@ namespace PointOfSale.Data.DBContext
                 entity.HasKey(e => e.IdProveedor);
 
                 entity.ToTable("Proveedor");
+
+                entity.Property(e => e.Iva)
+                      .HasColumnType("decimal(10, 2)");
 
                 entity.Property(e => e.RegistrationDate)
                     .HasColumnType("datetime")
@@ -510,9 +632,8 @@ namespace PointOfSale.Data.DBContext
                     .WithMany(p => p.ClienteMovimientos)
                     .HasForeignKey(d => d.IdCliente);
 
-                //entity.HasOne(d => d.Sale)
-                //    .WithOne(p => p.ClienteMovimiento)
-                //    .HasForeignKey<Sale>(c => c.IdSale);
+                entity.Property(e => e.Total)
+                      .HasColumnType("decimal(10, 2)");
 
                 entity.Property(e => e.RegistrationDate)
                     .HasColumnType("datetime")
@@ -547,6 +668,15 @@ namespace PointOfSale.Data.DBContext
                     .HasColumnName("idTurno");
 
                 entity.Property(e => e.IdTurno).HasColumnName("idTurno");
+
+                entity.Property(e => e.TotalCierreCajaReal)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.TotalCierreCajaSistema)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.TotalInicioCaja)
+                      .HasColumnType("decimal(10, 2)");
 
                 entity.HasOne(d => d.Tienda)
                     .WithMany(p => p.Turnos)
@@ -646,6 +776,12 @@ namespace PointOfSale.Data.DBContext
                 entity.Property(e => e.Total)
                     .HasColumnType("decimal(10, 2)")
                     .HasColumnName("total");
+
+                entity.Property(e => e.Iva)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.Quantity)
+                      .HasColumnType("decimal(10, 2)");
 
                 entity.HasOne(d => d.IdSaleNavigation)
                     .WithMany(p => p.DetailSales)
@@ -763,6 +899,18 @@ namespace PointOfSale.Data.DBContext
                 entity.Property(e => e.Price)
                     .HasColumnType("decimal(10, 2)")
                     .HasColumnName("price");
+
+                entity.Property(e => e.CostPrice)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.Iva)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.PrecioFormatoWeb)
+                      .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.PriceWeb)
+                      .HasColumnType("decimal(10, 2)");
 
                 entity.Property(e => e.RegistrationDate)
                     .HasColumnType("datetime")
@@ -887,6 +1035,8 @@ namespace PointOfSale.Data.DBContext
                     .HasColumnType("decimal(10, 2)")
                     .HasColumnName("total");
 
+                entity.Property(e => e.DescuentoRecargo)
+                      .HasColumnType("decimal(10, 2)");
 
                 entity.HasOne(d => d.TypeDocumentSaleNavigation)
                     .WithMany(p => p.Sales)
@@ -924,6 +1074,9 @@ namespace PointOfSale.Data.DBContext
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("description");
+
+                entity.Property(e => e.Comision)
+                      .HasColumnType("decimal(10, 2)");
 
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
 

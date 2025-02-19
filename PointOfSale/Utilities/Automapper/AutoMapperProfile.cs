@@ -466,15 +466,22 @@ namespace PointOfSale.Utilities.Automapper
                     .ForMember(user => user.Categoria, opt => opt.MapFrom(userEdit => userEdit.IdCategoryNavigation.Description))
                     ;
 
+            CreateMap<VMDetalleFacturaIva, DetalleFacturaIva>()
+                .ForMember(dest => dest.FacturaEmitida, opt => opt.Ignore()) // Evita problemas con referencias circulares
+                .ReverseMap();
+
+            CreateMap<VMFacturaEmitida, FacturaEmitida>()
+                .ForMember(dest => dest.DetalleFacturaIvas, opt => opt.MapFrom(src => src.DetalleFacturaIvas));
+
             CreateMap<FacturaEmitida, VMFacturaEmitida>()
                 .ForMember(dest => dest.NroFacturaString,
                            opt => opt.MapFrom(src => src.NroFactura.HasValue && src.NroFactura.Value != 0
                                                      ? src.NroFactura.Value.ToString("D8")
                                                      : string.Empty))
                 .ForMember(dest => dest.PuntoVentaString,
-                           opt => opt.MapFrom(src => src.PuntoVenta.ToString("D4")));
+                           opt => opt.MapFrom(src => src.PuntoVenta.ToString("D4")))
+                .ForMember(dest => dest.DetalleFacturaIvas, opt => opt.MapFrom(src => src.DetalleFacturaIvas));
 
-            CreateMap<VMFacturaEmitida, FacturaEmitida>();
 
             CreateMap<Tag, VMCategoriaWeb>()
                     .ForMember(user => user.IdTag, opt => opt.MapFrom(userEdit => userEdit.IdTag))
@@ -505,7 +512,6 @@ namespace PointOfSale.Utilities.Automapper
             CreateMap<Product, BackupProducto>().ReverseMap();
             CreateMap<VMHistorialLogin, HistorialLogin>().ReverseMap();
             CreateMap<VMHorarioWeb, HorarioWeb>().ReverseMap();
-            CreateMap<VMDetalleFacturaIva, DetalleFacturaIva>().ReverseMap();
         }
     }
 }

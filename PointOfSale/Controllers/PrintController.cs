@@ -44,7 +44,23 @@ namespace PointOfSale.Web.Controllers
 
                 if (printTicketRequest.FacturaEmitida != null)
                 {
+
+                    var detalleIvaVM = printTicketRequest.FacturaEmitida.DetalleFacturaIvas;
+                    printTicketRequest.FacturaEmitida.DetalleFacturaIvas = null;
+
                     facturaEmitida = _mapper.Map<FacturaEmitida>(printTicketRequest.FacturaEmitida);
+
+                    var detalleIva = detalleIvaVM.Select(d => new DetalleFacturaIva
+                    {
+                        Id = d.Id,
+                        TipoIva = d.TipoIva,
+                        ImporteIVA = d.ImporteIVA,
+                        ImporteNeto = d.ImporteNeto,
+                        ImporteTotal = d.ImporteTotal,
+                        IdFacturaEmitida = d.IdFacturaEmitida
+                    }).ToList();
+
+                    facturaEmitida.DetalleFacturaIvas = detalleIva;
                 }
 
                 var ticket = await _ticketService.TicketSale(saleCreated, ajustes, facturaEmitida);
