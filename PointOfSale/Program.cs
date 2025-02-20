@@ -157,6 +157,12 @@ public class Program
                 x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
 
+            builder.Services.AddAntiforgery(options =>
+            {
+                options.Cookie.Name = "X-CSRF-TOKEN";
+                options.HeaderName = "X-CSRF-TOKEN";
+            });
+
             var rutaInicioWeb = builder.Configuration["RutaInicioWeb"];
             bool usarShopIndex = !string.IsNullOrEmpty(rutaInicioWeb) && bool.TryParse(rutaInicioWeb, out bool parsedValue) && parsedValue;
 
@@ -185,21 +191,6 @@ public class Program
                 name: "default",
                 pattern: "{controller=Access}/{action=Login}/{id?}");
 
-
-            //app.Use(async (context, next) =>
-            //{
-            //    try
-            //    {
-            //        var antiforgery = context.RequestServices.GetRequiredService<IAntiforgery>();
-            //        var tokens = antiforgery.GetAndStoreTokens(context);
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Log.Error(ex, "Error al generar/verificar el token antiforgery");
-            //    }
-
-            //    await next();
-            //});
 
             app.UseExceptionHandler(errorApp =>
             {

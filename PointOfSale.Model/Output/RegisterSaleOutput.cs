@@ -23,7 +23,7 @@ namespace PointOfSale.Model.Output
 
         public Ajustes Ajustes { get; set; }
         public List<Sale> SaleList { get; set; } = new List<Sale>();
-        public FacturaAFIP FacturaAFIP { get; set; } = new FacturaAFIP();
+        public FacturaAFIP FacturaAFIP { get; set; }
         public int PuntoVenta { get; set; }
     }
 }

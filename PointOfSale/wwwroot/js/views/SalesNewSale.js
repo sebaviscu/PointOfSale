@@ -1105,7 +1105,7 @@ function addFunctions(idTab) {
                 }
 
                 productRow[0].price = nuevoPrecio;
-                productRow[0].total = (nuevoPrecio * parseFloat(productRow[0].quantity)).toFixed(2);
+                productRow[0].total = (nuevoPrecio * parseFloat(productRow[0].quantity)).toFixed(0);
 
                 showProducts_Prices(idTab, currentTab);
 
